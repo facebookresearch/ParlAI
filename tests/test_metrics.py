@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
+from typing import Dict
 import torch
 import random
 
@@ -20,8 +21,10 @@ from parlai.core.metrics import (
     aggregate_named_reports,
     InterDistinctMetric,
     IntraDistinctMetric,
+    FairseqBleuMetric,
 )
 from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
+import parlai.utils.testing as testing_utils
 
 
 class TestMetric(unittest.TestCase):
@@ -437,6 +440,60 @@ class TestDistinct(unittest.TestCase):
         m2 = IntraDistinctMetric.compute("this test test test test", 1)
         self.assertAlmostEqual(m2, 2 / 5)
         self.assertAlmostEqual(m1 + m2, 3 / 5)
+
+
+@testing_utils.skipUnlessFairseq
+class TestFairseqBleuMetric(unittest.TestCase):
+    """
+    We're just going to compare that scores from Fairseq's Bleu scorer are the same as
+    our scorer.
+    """
+
+    def test_scorer(self):
+        import random
+
+        vocab_length = num_ex = 100
+        ex_length = 10
+        pad_idx = 0
+        eos_idx = 1
+        unk_idx = 2
+
+        try:
+            from fairseq.scoring.bleu import Scorer
+            from fairseq.scoring.bleu import BleuConfig
+
+            fairseq_metrics: Scorer = Scorer(
+                BleuConfig(pad=pad_idx, eos=eos_idx, unk=unk_idx)
+            )
+        except ImportError:
+            # Bleuconfig is a recent version of fairseq
+            fairseq_metrics: Scorer = Scorer(pad_idx, eos_idx, unk_idx)
+
+        parlai_metrics: Dict[int, FairseqBleuMetric] = {k: [] for k in range(1, 5)}
+
+        for _ in range(num_ex):
+            guess = torch.LongTensor(random.sample(range(vocab_length), ex_length))
+            answer = torch.LongTensor(random.sample(range(vocab_length), ex_length))
+
+            parlai_bleu = FairseqBleuMetric.compute_many(
+                guess, answer.unsqueeze(0), pad_idx, eos_idx, unk_idx
+            )
+            for i, bleu in enumerate(parlai_bleu):
+                parlai_metrics[i + 1].append(bleu)
+            fairseq_metrics.add(answer.int(), guess.int())
+
+        parlai_bleus = {}
+        for k, v in parlai_metrics.items():
+            total = v[0]
+            for vv in v[1:]:
+                total = total + vv
+            parlai_bleus[k] = total
+
+        fairseq_bleus = {k: fairseq_metrics.score(order=k) for k in range(1, 5)}
+
+        assert all(
+            parlai_bleus[k] == fairseq_bleus[k] for k in range(1, 5)
+        ), f'{parlai_bleus}\n{fairseq_bleus}'
 
 
 if __name__ == '__main__':

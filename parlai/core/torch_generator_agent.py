@@ -33,13 +33,7 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-from parlai.core.metrics import (
-    Metric,
-    SumMetric,
-    AverageMetric,
-    BleuMetric,
-    FairseqBleuMetric,
-)
+from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.torch import (
     neginf,
@@ -510,6 +504,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
 
+            if self.fp16:
+                self.model = self.model.half()
+
             if init_model is not None:
                 # load model parameters if available
                 logging.info(f'Loading existing model params from {init_model}')
@@ -536,9 +533,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
             )
-
-        if shared is None and self.fp16:
-            self.model = self.model.half()
 
         self.reset()
 
@@ -659,6 +653,18 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
+
+    def batchify(self, obs_batch, sort=True):
+        batch = super().batchify(obs_batch, sort=sort)
+        if (
+            self.beam_block_full_context
+            and obs_batch
+            and any('full_text_vec' in o for o in obs_batch)
+        ):
+            batch['full_text_vec'], _ = self._pad_tensor(
+                [obs_batch[i].get('full_text_vec', []) for i in batch.valid_indices]
+            )
+        return batch
 
     def _model_input(self, batch):
         """
@@ -801,7 +807,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert label_vec is not None, "label_vec must exist for fairseq bleu"
         for i, t in enumerate(preds):
             result = FairseqBleuMetric.compute_many(
-                t[1:],
+                t,
                 label_vec[i].unsqueeze(0),
                 pad_idx=self.NULL_IDX,
                 end_idx=self.END_IDX,
@@ -814,44 +820,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         bleu_scores = list(zip(*all_results))
         for k in range(4):
             self.record_local_metric(f'fairseq_bleu{k + 1}', bleu_scores[k])
-
-    def _compute_nltk_bleu(self, batch: Batch, texts: List[str]):
-        """
-        Compute BLEU score between text and label(s), using the NLTK BLEU Scorer.
-
-        Note this differs from BLEU in ParlAI metrics in that the answers
-        are unnormalized (no removal of stop words, etc.)
-
-        :param batch:
-            Batch of observations
-        :param texts:
-            list of string predictions
-        """
-
-        results: Dict[int, List[Metric]] = {}
-        observations = batch.observations
-        assert observations is not None, 'observations must not be none in nltk bleu'
-        for i, p in enumerate(texts):
-            obs = observations[i]
-            references = []
-            for lbl in obs['eval_labels']:
-                references.append(
-                    self._v2t(
-                        self._vectorize_text(
-                            lbl, True, True, self.label_truncate, False
-                        )
-                    )
-                )
-            for k in range(1, 5):
-                b = BleuMetric.compute(p, references, k)
-                if b is None:
-                    b = BleuMetric(0)
-                if k not in results:
-                    results[k] = []
-                results[k].append(b)
-
-        for k in range(1, 5):
-            self.record_local_metric(f'nltk_bleu{k}', results[k])
 
     def _add_generation_metrics(self, batch, preds):
         """
@@ -876,6 +844,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             num_cands = len(batch.candidate_vecs[i])
             enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
             cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            cands = cands.to(batch.label_vec.device)
             scores, _ = self.model.decode_forced(enc, cands)
             score_view = scores.reshape(num_cands * cands.size(1), -1)
             cand_losses = F.cross_entropy(
@@ -942,7 +911,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
-            self._compute_nltk_bleu(batch, text)
         retval = Output(
             text, cand_choices, token_losses=token_losses, cand_scores=cand_scores
         )
@@ -1028,10 +996,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         ctxt = batch.text_vec[batch_idx]
         if self.beam_block_full_context:
-            full_ctxt = batch.observations[batch_idx].get('full_text_vec', ctxt)
-            if not isinstance(full_ctxt, torch.Tensor):
-                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
-            ctxt = full_ctxt
+            ctxt = batch.full_text_vec[batch_idx]
         return ctxt
 
     def _get_initial_decoder_input(
@@ -1118,13 +1083,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             assert batch.label_vec is not None, "need label_vec for _generate"
             dev = batch.label_vec.device
 
-        bsz = (
-            len(batch.text_lengths)
-            if batch.text_lengths is not None
-            else len(batch.image)  # type: ignore
-        )
+        bsz = batch.batchsize
         if batch.text_vec is not None:
-            batchsize = batch.text_vec.size(0)
+            batchsize = batch.batchsize
             beams = [
                 self._treesearch_factory(dev)
                 .set_context(self._get_context(batch, batch_idx))

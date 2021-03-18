@@ -417,34 +417,5 @@ If you find a metric not listed here,
 please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issues/new?assignees=&labels=Docs,Metrics&template=other.md).
 :::
 
-| Metric                  | Explanation  |
-| ----------------------- | ------------ |
-| `accuracy`              | Exact match text accuracy |
-| `bleu-4`                | BLEU-4 of the generation, under a standardized (model-independent) tokenizer |
-| `clip`                  | Fraction of batches with clipped gradients |
-|`context_truncate`       | Ratio of samples' contexts being truncated per batch |
-|`context_length`         | Average length of context tokens per batch |
-| `ctpb`                  | Context tokens per batch |
-| `ctps`                  | Context tokens per second |
-| `exps`                  | Examples per second |
-| `exs`                   | Number of examples processed since last print |
-| `f1`                    | Unigram F1 overlap, under a standardized (model-independent) tokenizer |
-| `gnorm`                 | Gradient norm |
-| `gpu_mem`               | Fraction of GPU memory used. May slightly underestimate true value. |
-| `hits@1`, `hits@5`, ... | Fraction of correct choices in K guesses. (Similar to recall@K) |
-| `interdistinct-1`, `interdictinct-2` | Fraction of n-grams unique across _all_ generations |
-| `intradistinct-1`, `intradictinct-2` | Fraction of n-grams unique _within_ each utterance |
-| `jga`                   | Joint Goal Accuracy |
-|`label_length`           | Average length of label tokens per batch |
-|`label_truncate`         | Ratio of samples' labels being truncated per batch |
-| `loss`                  | Loss |
-| `lr`                    | The most recent learning rate applied |
-| `ltpb`                  | Label tokens per batch |
-| `ltps`                  | Label tokens per second |
-| `rouge-1`, `rouge-1`, `rouge-L` | ROUGE metrics |
-| `token_acc`             | Token-wise accuracy (generative only) |
-| `token_em`              | Utterance-level token accuracy. Roughly corresponds to perfection under greedy search (generative only) |
-| `total_train_updates`   | Number of SGD steps taken across all batches |
-| `tpb`                   | Total tokens (context + label) per batch |
-| `tps`                   | Total tokens (context + label) per second |
-| `ups`                   | Updates per second (approximate) |
+```{include} metric_list.inc
+```
