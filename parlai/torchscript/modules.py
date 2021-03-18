@@ -92,11 +92,16 @@ class TorchScriptGreedySearch(nn.Module):
 
         agent.model.eval()
 
+        # Create versions of the model and decoder that will flatten the incremental
+        # state dict, as required by TorchScript
+        wrapped_decoder = DecoderIncrStateFlattener(agent.model.decoder)
+        wrapped_model = ModelIncrStateFlattener(agent.model)
+
         # Create sample inputs for tracing
         sample_tokens = torch.tensor([[1, 2, 3, 4, 5]], dtype=torch.long)
         encoder_states = agent.model.encoder(sample_tokens)
         initial_generations = self._get_initial_decoder_input(sample_tokens)
-        latent, initial_incr_state = agent.model.decoder(
+        latent, initial_incr_state = wrapped_decoder(
             initial_generations, encoder_states
         )
         logits = agent.model.output(latent[:, -1:, :])
@@ -105,7 +110,7 @@ class TorchScriptGreedySearch(nn.Module):
         # Copy the initial incremental state, used when tracing the
         # .reorder_decoder_incremental_state() method below, to avoid having it be
         # mutated by the following line
-        incr_state = agent.model.reorder_decoder_incremental_state(
+        incr_state = wrapped_model.reorder_decoder_incremental_state(
             incr_state, torch.tensor([0], dtype=torch.long, device=sample_tokens.device)
         )
         generations = torch.cat([initial_generations, preds], dim=1)
@@ -113,14 +118,12 @@ class TorchScriptGreedySearch(nn.Module):
         # Do tracing
         self.encoder = torch.jit.trace(agent.model.encoder, sample_tokens)
         self.decoder_first_pass = torch.jit.trace(
-            DecoderIncrStateFlattener(agent.model.decoder),
-            (initial_generations, encoder_states),
-            strict=False,
+            wrapped_decoder, (initial_generations, encoder_states), strict=False
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
         self.partially_traced_model = torch.jit.trace_module(
-            ModelIncrStateFlattener(agent.model),
+            wrapped_model,
             {
                 'output': (latent[:, -1:, :]),
                 'reorder_decoder_incremental_state': (
@@ -131,9 +134,7 @@ class TorchScriptGreedySearch(nn.Module):
             strict=False,
         )
         self.decoder_later_pass = torch.jit.trace(
-            DecoderIncrStateFlattener(agent.model.decoder),
-            (generations, encoder_states, incr_state),
-            strict=False,
+            wrapped_decoder, (generations, encoder_states, incr_state), strict=False
         )
 
     def _get_initial_decoder_input(self, x: torch.Tensor) -> torch.Tensor:
@@ -321,7 +322,10 @@ class DecoderIncrStateFlattener(BaseIncrStateFlattener):
         encoder_state: Tuple[torch.Tensor, torch.Tensor],
         flat_incr_state: Optional[Dict[str, torch.Tensor]] = None,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
-        structured_incr_state = self._unflatten_incr_state(flat_incr_state)
+        if flat_incr_state is not None:
+            structured_incr_state = self._unflatten_incr_state(flat_incr_state)
+        else:
+            structured_incr_state = None
         tensor, new_structured_incr_state = self.module.forward(
             input=input_, encoder_state=encoder_state, incr_state=structured_incr_state
         )

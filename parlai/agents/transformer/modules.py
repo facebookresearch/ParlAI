@@ -797,8 +797,9 @@ class TransformerDecoder(nn.Module):
         encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
-        positions = input.new(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = torch.arange(
+            seq_len, dtype=torch.long, device=input.device
+        ).unsqueeze(0)
 
         if incr_state is not None:
             # We're doing incremental decoding, so select only the most recent position
