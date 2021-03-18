@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from typing import List, Dict, Tuple
+
+from collections import defaultdict
+from typing import List, Dict, Optional, Tuple
 
 import torch.jit
 from torch import nn as nn
@@ -111,12 +113,14 @@ class TorchScriptGreedySearch(nn.Module):
         # Do tracing
         self.encoder = torch.jit.trace(agent.model.encoder, sample_tokens)
         self.decoder_first_pass = torch.jit.trace(
-            agent.model.decoder, (initial_generations, encoder_states), strict=False
+            DecoderIncrStateFlattener(agent.model.decoder),
+            (initial_generations, encoder_states),
+            strict=False,
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
         self.partially_traced_model = torch.jit.trace_module(
-            agent.model,
+            ModelIncrStateFlattener(agent.model),
             {
                 'output': (latent[:, -1:, :]),
                 'reorder_decoder_incremental_state': (
@@ -127,7 +131,9 @@ class TorchScriptGreedySearch(nn.Module):
             strict=False,
         )
         self.decoder_later_pass = torch.jit.trace(
-            agent.model.decoder, (generations, encoder_states, incr_state), strict=False
+            DecoderIncrStateFlattener(agent.model.decoder),
+            (generations, encoder_states, incr_state),
+            strict=False,
         )
 
     def _get_initial_decoder_input(self, x: torch.Tensor) -> torch.Tensor:
@@ -243,6 +249,106 @@ class TorchScriptGreedySearch(nn.Module):
         label = self._v2t(generation_tokens)
 
         return label
+
+
+class BaseIncrStateFlattener(nn.Module):
+    """
+    Flatten/unflatten the incremental state for use with TorchScripting.
+
+    Typically, the incremental state will be stored as a Dict[int, Dict[str, Dict[str,
+    torch.Tensor]]], where the 3 dictionary levels map decoder layer, attention type,
+    and previous key/value/mask, respectively. However, TorchScript expects dicts to be
+    of type Dict[str, torch.Tensor], and thus all input incremental states when
+    TorchScripting will have to be of that type. We thus unflatten the input incremental
+    state, already of type Dict[str, torch.Tensor], to pass it into whatever method
+    needs it, and we flatten it again after the updated incremental state is passed back
+    out.
+
+    This is a base class that provides methods for flattening/unflattening: subclasses
+    will call these methods as the incremental state is passed into and out of their own
+    methods.
+    """
+
+    def __init__(self, module: nn.Module):
+        super().__init__()
+        self.module = module
+
+    def _unflatten_incr_state(
+        self, flat_incr_state: Dict[str, torch.Tensor]
+    ) -> Dict[int, Dict[str, Dict[str, torch.Tensor]]]:
+        """
+        Unflatten the input incremental state.
+
+        For instance, flat_incr_state['layer_0__self_attn__prev_key'] will be stored in
+        structured_incr_state[0]['self_attn']['prev_key'].
+        """
+        structured_incr_state = defaultdict(lambda: defaultdict(dict))
+        for key, state in flat_incr_state.items():
+            layer_idx_str, attn_type, state_type = key.split('__')
+            structured_incr_state[int(layer_idx_str)][attn_type][state_type] = state
+        return dict({k: dict(v) for k, v in structured_incr_state.items()})
+        # Turn the nested defaultdicts back into regular dicts
+
+    def _flatten_incr_state(
+        self, structured_incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]]
+    ) -> Dict[str, torch.Tensor]:
+        """
+        Flatten the input incremental state.
+
+        For instance, structured_incr_state[0]['self_attn']['prev_key'] will be stored
+        in flat_incr_state['layer_0__self_attn__prev_key'].
+        """
+        flat_incr_state = {}
+        for layer_idx, dict1 in structured_incr_state.items():
+            for attn_type, dict2 in dict1.items():
+                for state_type, state in dict2.items():
+                    key = f'{layer_idx:d}__{attn_type}__{state_type}'
+                    flat_incr_state[key] = state
+        return flat_incr_state
+
+
+class DecoderIncrStateFlattener(BaseIncrStateFlattener):
+    """
+    Wrapper for a TransformerDecoder that will unflatten/flatten the incremental state.
+
+    Unflattening/flattening will occur before passing the incremental state into and out
+    of .forward().
+    """
+
+    def forward(
+        self,
+        input_: torch.LongTensor,
+        encoder_state: Tuple[torch.Tensor, torch.Tensor],
+        flat_incr_state: Optional[Dict[str, torch.Tensor]] = None,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+        structured_incr_state = self._unflatten_incr_state(flat_incr_state)
+        tensor, new_structured_incr_state = self.module.forward(
+            input=input_, encoder_state=encoder_state, incr_state=structured_incr_state
+        )
+        new_flat_incr_state = self._flatten_incr_state(new_structured_incr_state)
+        return tensor, new_flat_incr_state
+
+
+class ModelIncrStateFlattener(BaseIncrStateFlattener):
+    """
+    Wrapper for a TransformerGeneratorModel to unflatten/flatten the incremental state.
+
+    Unflattening/flattening will occur before passing the incremental state into and out
+    of .reorder_decoder_incremental_state(). We also support .output(), which is also
+    traced.
+    """
+
+    def reorder_decoder_incremental_state(
+        self, flat_incr_state: Dict[str, torch.Tensor], inds: torch.Tensor
+    ) -> Dict[str, torch.Tensor]:
+        structured_incr_state = self._unflatten_incr_state(flat_incr_state)
+        new_structured_incr_state = self.module.reorder_decoder_incremental_state(
+            incremental_state=structured_incr_state, inds=inds
+        )
+        return self._flatten_incr_state(new_structured_incr_state)
+
+    def output(self, tensor: torch.Tensor) -> torch.Tensor:
+        return self.module.output(tensor)
 
 
 @torch.jit.script
