@@ -11,7 +11,7 @@ fout = open('metric_list.inc', 'w')
 
 fout.write('| Metric | Explanation |\n')
 fout.write('| ------ | ----------- |\n')
-for metric, display in METRICS_DISPLAY_DATA.items():
+for metric, display in sorted(METRICS_DISPLAY_DATA.items()):
     fout.write(f'| `{metric}` | {display.description} |\n')
 
 fout.close()
