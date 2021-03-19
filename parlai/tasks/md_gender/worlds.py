@@ -115,14 +115,15 @@ class InteractiveWorld(DialogPartnerWorld):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        parser = parser.add_argument_group('Gender Multiclass Interactive World')
-        parser.add_argument(
+        super().add_cmdline_args(parser, partial_opt)
+        group = parser.add_argument_group('Gender Multiclass Interactive World')
+        group.add_argument(
             '--self-threshold',
             type=float,
             default=0.52,
             help='Threshold for choosing unknown for self',
         )
-        parser.add_argument(
+        group.add_argument(
             '--partner-threshold',
             type=float,
             default=0.52,

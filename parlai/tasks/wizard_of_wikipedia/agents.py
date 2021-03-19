@@ -15,7 +15,9 @@ for unseen) after the last colon in the task.
 E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
-from typing import Optional
+from typing import Optional, Tuple
+from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 import copy
@@ -213,6 +215,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('Wizard Dialog Knowledge arguments')
         agent.add_argument(
             '--label-type',
@@ -353,6 +356,81 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             action['checked_sentence'] = sentence
         return action
 
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ):
+        """
+        Custom Evaluations for Wizard of Wikipedia.
+
+        When the label is `chosen_sent`, evaluate whether the model response...
+        1) Is the correct document (title)
+        2) _contains_ the correct chosen sentence (even if it's not wholly the answer)
+
+        When the label is `response`, we compute F1 of model generation w.r.t checked sentence.
+
+        :param teacher_action:
+            The message last sent from this teacher.
+        :param labels:
+            The previous correct labels, if there were any.
+        :param model_response:
+            The raw response from the model. Generally you want to rely on the
+            text field, but others may be necessary in specific situations.
+        """
+        if (
+            self.label_type == 'response'
+            and 'text' in model_response
+            and 'checked_sentence' in teacher_action
+        ):
+            self.metrics.add(
+                'knowledge_f1',
+                F1Metric.compute(
+                    model_response['text'], [teacher_action['checked_sentence']]
+                ),
+            )
+        elif (
+            self.label_type == 'chosen_sent'
+            and TOKEN_KNOWLEDGE in model_response['text']
+        ):
+            try:
+                correct_title, correct_passage = [
+                    normalize_answer(a) for a in labels[0].split(TOKEN_KNOWLEDGE)
+                ]
+            except ValueError:
+                # Knowledge not chosen
+                correct_title, correct_passage = TOKEN_NOCHOSEN, TOKEN_NOCHOSEN
+            title, passage = [
+                normalize_answer(a)
+                for a in model_response['text'].split(TOKEN_KNOWLEDGE)
+            ]
+
+            self.metrics.add('title_r@1', AverageMetric(int(correct_title == title)))
+            self.metrics.add(
+                'passage_r@1', AverageMetric(int(correct_passage in passage))
+            )
+            if 'title_candidates' in model_response:
+                title_candidates = [
+                    normalize_answer(t) for t in model_response['title_candidates']
+                ][:5]
+                self.metrics.add(
+                    'title_r@5',
+                    AverageMetric(
+                        int(any(correct_title == t for t in title_candidates))
+                    ),
+                )
+            if 'text_candidates' in model_response:
+                text_candidates = [
+                    normalize_answer(t) for t in model_response['text_candidates']
+                ][:5]
+                self.metrics.add(
+                    'passage_r@5',
+                    AverageMetric(
+                        int(any(correct_passage in t for t in text_candidates))
+                    ),
+                )
+
 
 class BasicdialogTeacher(WizardOfWikipediaTeacher):
     """
@@ -369,6 +447,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('Basic Dialog Arguments')
         agent.add_argument(
             '--speaker-label',
@@ -720,6 +799,7 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         WizardDialogKnowledgeTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
         parser.add_argument(
             '--teacher-type',

@@ -23,6 +23,7 @@ from parlai.core.params import ParlaiParser
 from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 import random
+import warnings
 import torch
 import parlai.utils.logging as logging
 from torch import optim
@@ -36,13 +37,13 @@ from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
 from parlai.utils.fp16 import (
-    fp16_apex_available,
-    fp16_optimizer_wrapper,
+    SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
     MemoryEfficientFP16Adam,
     Adafactor,
 )
 from parlai.core.metrics import (
+    AverageMetric,
     Metrics,
     Metric,
     GlobalAverageMetric,
@@ -57,31 +58,34 @@ class Batch(AttrDict):
     """
     Batch is a namedtuple containing data being sent to an agent.
 
-    This is the input type of the train_step and eval_step functions.
-    Agents can override the batchify function to return an extended namedtuple
-    with additional fields if they would like, though we recommend calling the
-    parent function to set up these fields as a base.
+    This is the input type of the train_step and eval_step functions. Agents
+    can override the batchify function to return a Batch with additional fields
+    if they would like, though we recommend calling the parent function to set
+    up these fields as a base.
+
+    Batch objects contain some magic semantics when dealing with CUDA. Namely,
+    Batch objects have a to() method that can be used to send all tensors to
+    a particular device (GPU). This is undesireable in some instances, as some
+    fields may be used only for accumulating metrics, or are only used on CPU.
+    Prefixing a field with an underscore will prevent it from being transferred
+    to GPU.
+
+    Note that in upcoming versions of ParlAI, we will enable features for getting
+    speedups in training which work best when the number of non-Tensor objects
+    in a batch is minimal.
 
     :param text_vec:
         bsz x seqlen tensor containing the parsed text data.
 
-    :param text_lengths:
-        list of length bsz containing the lengths of the text in same order as
-        text_vec; necessary for pack_padded_sequence.
-
     :param label_vec:
         bsz x seqlen tensor containing the parsed label (one per batch row).
-
-    :param label_lengths:
-        list of length bsz containing the lengths of the labels in same order as
-        label_vec.
 
     :param labels:
         list of length bsz containing the selected label for each batch row (some
         datasets have multiple labels per input example).
 
     :param valid_indices:
-        list of length bsz containing the original indices of each example in the
+        tensor of length bsz containing the original indices of each example in the
         batch. we use these to map predictions back to their proper row, since e.g.
         we may sort examples by their length or some examples may be invalid.
 
@@ -96,21 +100,24 @@ class Batch(AttrDict):
     :param image:
         list of image features in the format specified by the --image-mode arg.
 
-    :param observations:
-        the original observations in the batched order
+    :param reward:
+        Tensor containing the "reward" field of observations, if present
     """
 
     batchsize: int
     text_vec: Optional[torch.LongTensor]
-    text_lengths: Optional[List[int]]
     label_vec: Optional[torch.LongTensor]
-    label_lengths: Optional[List[int]]
     labels: Optional[List[str]]
-    valid_indices: Optional[List[int]]
+    valid_indices: Optional[torch.LongTensor]
     candidates: Optional[List[List[str]]]
     candidate_vecs: Optional[List[List[torch.LongTensor]]]
     image: Optional[List[Any]]
-    observations: Optional[List[Message]]
+    _context_original_length: Optional[torch.LongTensor]
+    _context_truncate_rate: Optional[torch.LongTensor]
+    _context_truncated_length: Optional[torch.LongTensor]
+    _label_original_length: Optional[torch.LongTensor]
+    _label_truncate_rate: Optional[torch.LongTensor]
+    _label_truncated_length: Optional[torch.LongTensor]
 
     def __init__(
         self,
@@ -122,8 +129,14 @@ class Batch(AttrDict):
         valid_indices=None,
         candidates=None,
         candidate_vecs=None,
+        reward=None,
         image=None,
-        observations=None,
+        _context_original_length: Optional[torch.LongTensor] = None,
+        _context_truncate_rate: Optional[torch.LongTensor] = None,
+        _context_truncated_length: Optional[torch.LongTensor] = None,
+        _label_original_length: Optional[torch.LongTensor] = None,
+        _label_truncate_rate: Optional[torch.LongTensor] = None,
+        _label_truncated_length: Optional[torch.LongTensor] = None,
         **kwargs,
     ):
         super().__init__(
@@ -136,9 +149,51 @@ class Batch(AttrDict):
             candidates=candidates,
             candidate_vecs=candidate_vecs,
             image=image,
-            observations=observations,
+            _context_original_length=_context_original_length,
+            _context_truncate_rate=_context_truncate_rate,
+            _context_truncated_length=_context_truncated_length,
+            _label_original_length=_label_original_length,
+            _label_truncate_rate=_label_truncate_rate,
+            _label_truncated_length=_label_truncated_length,
             **kwargs,
         )
+
+    def to(self, dev):
+        """
+        Move all tensors in the batch to a device.
+
+        Note that valid_indices and fields starting with an underscore are
+        always kept on CPU and never moved GPU.
+
+        :return:
+            self
+        """
+        for key in self.keys():
+            # never move valid_indices or keys starting with a _
+            if key == 'valid_indices' or key.startswith('_'):
+                continue
+            if torch.is_tensor(self[key]):
+                self[key] = self[key].to(dev)
+        # just to enable batch = batch.to(dev) idomatics
+        return self
+
+    def __repr__(self):
+        output = ['Batch({']
+        for key in sorted(self.keys()):
+            value = self[key]
+            if key == 'observations' and value is None:
+                output.append(f'  {key}: {value} (use --debug to include),')
+            elif value is None:
+                output.append(f'  {key}: {value},')
+            elif isinstance(value, torch.Tensor):
+                typ = value.type().replace("torch.", "")
+                shape = ", ".join(str(s) for s in value.shape)
+                output.append(f'  {key}: {typ}[{shape}],')
+            else:
+                s = repr(value)
+                output.append(f'  {key}: {s},')
+        output.append('})')
+        return "\n".join(output)
 
 
 class Output(AttrDict):
@@ -294,7 +349,7 @@ class History(object):
 
         self.temp_history = temp_history
 
-    def get_history_str(self):
+    def get_history_str(self) -> Optional[str]:
         """
         Return the string version of the history.
         """
@@ -345,6 +400,9 @@ class History(object):
         else:
             return token + ' ' + text
 
+    def __str__(self) -> str:
+        return self.get_history_str() or ''
+
 
 class TorchAgent(ABC, Agent):
     """
@@ -382,22 +440,10 @@ class TorchAgent(ABC, Agent):
             if not k.startswith('__') and k[0].isupper()
         }
         try:
-            import apex.optimizers.fused_adam as fused_adam
-            import apex.optimizers.fused_lamb as fused_lamb
+            from fairscale.optim import Adam as FusedAdam
 
-            optims['fused_adam'] = fused_adam.FusedAdam
-            optims['fused_lamb'] = fused_lamb.FusedLAMB
+            optims['fusedadam'] = FusedAdam
         except ImportError:
-            pass
-
-        try:
-            # https://openreview.net/pdf?id=S1fUpoR5FQ
-            from qhoptim.pyt import QHM, QHAdam
-
-            optims['qhm'] = QHM
-            optims['qhadam'] = QHAdam
-        except ImportError:
-            # no QHM installed
             pass
 
         # now pull in memory efficient implementations
@@ -479,8 +525,8 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '--fp16-impl',
             type=str,
-            default='apex',
-            choices=['apex', 'mem_efficient'],
+            default='safe',
+            choices=['safe', 'mem_efficient'],
             help='Implementation of FP16 to use',
         )
         agent.add_argument(
@@ -685,6 +731,7 @@ class TorchAgent(ABC, Agent):
         Initialize agent.
         """
         super().__init__(opt, shared)
+        self.is_debug = opt.get('is_debug', False)
         opt = self.opt
 
         # Safety checkers to ensure TorchAgent assumptions aren't being violated.
@@ -719,9 +766,7 @@ class TorchAgent(ABC, Agent):
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
             # check that the implementation requested is available
-            self.fp16_impl = self.opt.get('fp16_impl', 'apex')
-            if self.fp16_impl == 'apex' and not fp16_apex_available():
-                self.fp16 = False
+            self.fp16_impl = self.opt.get('fp16_impl', 'safe')
 
         if shared is None:
             # intitialize any important structures from scratch
@@ -901,7 +946,7 @@ class TorchAgent(ABC, Agent):
         is_train = 'train' in datatype and 'evalmode' not in datatype
         return is_train
 
-    def init_optim(self, params, optim_states=None, saved_optim_type=None):
+    def init_optim(self, params, optim_states=None, saved_optim_type=None) -> bool:
         """
         Initialize optimizer with model parameters.
 
@@ -914,6 +959,10 @@ class TorchAgent(ABC, Agent):
         :param saved_optim_type:
             type of optimizer being loaded, if changed will skip loading
             optimizer states
+
+        :returns:
+            boolean indicating whether the optimizer was initialized with
+            optim_states.
         """
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
@@ -983,8 +1032,8 @@ class TorchAgent(ABC, Agent):
         optim_class = self.optim_opts()[opt['optimizer']]
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
-            if self.fp16_impl == 'apex':
-                self.optimizer = fp16_optimizer_wrapper(self.optimizer)
+            if self.fp16_impl == 'safe':
+                self.optimizer = SafeFP16Optimizer(self.optimizer)
             else:
                 # Using memory efficient optimizer
                 opt_name = opt['optimizer']
@@ -1004,31 +1053,30 @@ class TorchAgent(ABC, Agent):
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
             logging.warn('Not loading optim state since optim class changed.')
+            return False
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
             if self.fp16 and optimstate_fp16:
                 # previously trained in fp16, now we're training in fp16.
-                # ideally no action needed, but APEX broke backwards
-                # compatibility and this is the hack around it.
-                optim_states['loss_scaler'] = self.optimizer.state_dict()['loss_scaler']
+                pass
             elif optimstate_fp16 and not self.fp16:
                 # old optimizer was fp16 but now we're doing fp32,
-                # if apex, drop the fp16 wrapper from the state_dict and just load
+                # if pytorch, drop the fp16 wrapper from the state_dict and just load
                 # the fp16 weights into the fp32 tensors
                 if 'optimizer_state_dict' in optim_states:
-                    # trained with apex
+                    # trained with apex, pull in the old state
                     optim_states = optim_states['optimizer_state_dict']
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
                 try:
-                    self.optimizer.optimizer.load_state_dict(optim_states)
+                    self.optimizer.load_state_dict(optim_states)
                 except ValueError:
                     warn_once(
                         'WARNING: not loading optim state since model params changed.'
                     )
-                return
+                return True
             else:
                 # previously trained in fp32, loading in fp32.
                 # no special treatment needed.
@@ -1037,10 +1085,12 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
+                return False
             except (ValueError, KeyError):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
+                return False
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -1301,7 +1351,7 @@ class TorchAgent(ABC, Agent):
             new_vec.append(i)
         return self.dict.vec2txt(new_vec)
 
-    def _vectorize_text(
+    def _vectorize_text_with_truncate_stats(
         self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
     ):
         """
@@ -1325,9 +1375,37 @@ class TorchAgent(ABC, Agent):
         """
         vec = self.dict.txt2vec(text)
         vec = self._add_start_end_tokens(vec, add_start, add_end)
+        original_length = len(vec)
         vec = self._check_truncate(vec, truncate, truncate_left)
+        if_truncated = original_length > len(vec)
         tensor = torch.LongTensor(vec)
-        return tensor
+        return tensor, original_length, if_truncated
+
+    def _vectorize_text(
+        self, text, add_start=False, add_end=False, truncate=None, truncate_left=True
+    ):
+        """
+        Return vector from text.
+
+        :param text:
+            String to vectorize.
+
+        :param add_start:
+            Add the start token to the front of the tensor.
+
+        :param add_end:
+            Add the end token to the end of the tensor.
+
+        :param truncate:
+            Truncate to this many tokens >= 0, or None.
+
+        :param truncate_left:
+            Truncate from the left side (keep the rightmost tokens). You
+            probably want this True for inputs, False for targets.
+        """
+        return self._vectorize_text_with_truncate_stats(
+            text, add_start, add_end, truncate, truncate_left
+        )[0]
 
     def _check_truncate(self, vec, truncate, truncate_left=False):
         """
@@ -1348,7 +1426,6 @@ class TorchAgent(ABC, Agent):
 
         Useful to override to change vectorization behavior
         """
-
         if 'text' not in obs:
             return obs
 
@@ -1368,8 +1445,14 @@ class TorchAgent(ABC, Agent):
         # check truncation
         if obs.get('text_vec') is not None:
             truncate_left = not self.history_reversed
+            text_length = len(obs['text_vec'])
             truncated_vec = self._check_truncate(
                 obs['text_vec'], truncate, truncate_left
+            )
+            obs.force_set('context_original_length', text_length)
+            obs.force_set('context_truncate_rate', text_length != len(truncated_vec))
+            obs.force_set(
+                'context_truncated_length', max(text_length - len(truncated_vec), 0)
             )
             obs.force_set('text_vec', torch.LongTensor(truncated_vec))
 
@@ -1394,13 +1477,26 @@ class TorchAgent(ABC, Agent):
 
         elif label_type + '_vec' in obs:
             # check truncation of pre-computed vector
+            vec_label_length = len(obs[label_type + '_vec'])
             truncated_vec = self._check_truncate(obs[label_type + '_vec'], truncate)
+            obs.force_set('label_original_length', vec_label_length)
+            obs.force_set('label_truncate_rate', vec_label_length > len(truncated_vec))
+            obs.force_set(
+                'label_truncated_length', max(vec_label_length - len(truncated_vec), 0)
+            )
             obs.force_set(label_type + '_vec', torch.LongTensor(truncated_vec))
         else:
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label = self._vectorize_text(label, add_start, add_end, truncate, False)
+            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
+                label, add_start, add_end, truncate, False
+            )
+            obs.force_set('label_original_length', vec_label_length)
+            obs.force_set('label_truncate_rate', vec_label_truncated)
+            obs.force_set(
+                'label_truncated_length', max(vec_label_length - len(vec_label), 0)
+            )
             obs[label_type + '_vec'] = vec_label
             obs[label_type + '_choice'] = label
 
@@ -1498,19 +1594,13 @@ class TorchAgent(ABC, Agent):
         This is intentionally overridable so that models can control how
         to pad their input.
         """
-        return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            fp16friendly=self.fp16,
-            device=self.opt['gpu'],
-        )
+        return padded_tensor(items, pad_idx=self.NULL_IDX, fp16friendly=self.fp16)
 
     def is_valid(self, obs):
         """
         Determine if an observation is valid or not.
         """
-        return 'text_vec' in obs or 'image' in obs
+        return not obs.is_padding()
 
     def batchify(self, obs_batch, sort=False):
         """
@@ -1550,8 +1640,20 @@ class TorchAgent(ABC, Agent):
         valid_inds, exs = zip(*valid_obs)
 
         # TEXT
-        xs, x_lens = None, None
+        xs = x_lens = context_original_lengths = None
+        context_truncate_rate = context_truncated_lengths = None
         if any(ex.get('text_vec') is not None for ex in exs):
+            if any('context_original_length' in ex for ex in exs):
+                context_truncate_rate = torch.LongTensor(
+                    [ex.get('context_truncate_rate', 0) for ex in exs]
+                )
+                context_original_lengths = torch.LongTensor(
+                    [ex.get('context_original_length', 0) for ex in exs]
+                )
+            if any('context_truncated_length' in ex for ex in exs):
+                context_truncated_lengths = torch.LongTensor(
+                    [ex.get('context_truncated_length', 0) for ex in exs]
+                )
             _xs = [ex.get('text_vec', self.EMPTY) for ex in exs]
             xs, x_lens = self._pad_tensor(_xs)
             if sort:
@@ -1564,8 +1666,20 @@ class TorchAgent(ABC, Agent):
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
 
-        ys, y_lens, labels = None, None, None
+        ys = y_lens = labels = label_original_lengths = None
+        label_truncate_rate = label_truncated_lengths = None
         if some_labels_avail:
+            if any('label_original_length' in ex for ex in exs):
+                label_truncate_rate = torch.LongTensor(
+                    [ex.get('label_truncate_rate', 0) for ex in exs]
+                )
+                label_original_lengths = torch.LongTensor(
+                    [ex.get('label_original_length', 0) for ex in exs]
+                )
+            if any('label_truncated_length' in ex for ex in exs):
+                label_truncated_lengths = torch.LongTensor(
+                    [ex.get('label_truncated_length') for ex in exs]
+                )
             field = 'labels' if labels_avail else 'eval_labels'
 
             label_vecs = [ex.get(field + '_vec', self.EMPTY) for ex in exs]
@@ -1590,18 +1704,31 @@ class TorchAgent(ABC, Agent):
         if any('image' in ex for ex in exs):
             imgs = [ex.get('image', None) for ex in exs]
 
+        # reward
+        rewards = None
+        if any('reward' in ex for ex in exs):
+            rewards = torch.Tensor([ex.get('reward', 0) for ex in exs])
+
+        # make sure we're only passing around tensors
+        valid_inds = torch.LongTensor(valid_inds)
+
         return Batch(
             batchsize=len(valid_inds),
             text_vec=xs,
-            text_lengths=x_lens,
             label_vec=ys,
-            label_lengths=y_lens,
             labels=labels,
             valid_indices=valid_inds,
             candidates=cands,
             candidate_vecs=cand_vecs,
             image=imgs,
-            observations=exs,
+            rewards=rewards,
+            observations=exs if self.is_debug else None,
+            _context_original_length=context_original_lengths,
+            _context_truncate_rate=context_truncate_rate,
+            _context_truncated_length=context_truncated_lengths,
+            _label_original_length=label_original_lengths,
+            _label_truncate_rate=label_truncate_rate,
+            _label_truncated_length=label_truncated_lengths,
         )
 
     def match_batch(self, batch_reply, valid_inds, output=None):
@@ -1828,7 +1955,10 @@ class TorchAgent(ABC, Agent):
         # lr scheduler
         states['number_training_updates'] = self._number_training_updates
         if getattr(self, 'scheduler', None):
-            states['lr_scheduler'] = self.scheduler.get_state_dict()
+            with warnings.catch_warnings():
+                # prevent an annoying pytorch warning us to save optimizer state
+                warnings.simplefilter("ignore")
+                states['lr_scheduler'] = self.scheduler.get_state_dict()
             states['lr_scheduler_type'] = self.opt['lr_scheduler']
             states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
@@ -1906,6 +2036,11 @@ class TorchAgent(ABC, Agent):
     def upgrade_opt(cls, opt_from_disk: Opt):
         # call the parent upgrades
         opt_from_disk = super(TorchAgent, cls).upgrade_opt(opt_from_disk)
+
+        if 'fp16_impl' in opt_from_disk:
+            # 2021-02-23: we removed apex and replaced it with our own thing
+            if opt_from_disk['fp16_impl'] == 'apex':
+                opt_from_disk['fp16_impl'] = 'safe'
 
         if 'hf_skip_special_tokens' in opt_from_disk:
             # 2020-10-28: we killed the --hf-skip-special-tokens option
@@ -1985,6 +2120,31 @@ class TorchAgent(ABC, Agent):
 
         # create a batch from the vectors
         batch = self.batchify(observations)
+
+        # truncation statistics
+        if batch._context_original_length is not None:
+            self.record_local_metric(
+                'clen', AverageMetric.many(batch._context_original_length)
+            )
+            self.record_local_metric(
+                'ctrunc', AverageMetric.many(batch._context_truncate_rate)
+            )
+        if batch._context_truncated_length is not None:
+            self.record_local_metric(
+                'ctrunclen', AverageMetric.many(batch._context_truncated_length)
+            )
+        if batch._label_original_length is not None:
+            self.record_local_metric(
+                'llen', AverageMetric.many(batch._label_original_length)
+            )
+            self.record_local_metric(
+                'ltrunc', AverageMetric.many(batch._label_truncate_rate)
+            )
+        if batch._label_truncated_length is not None:
+            self.record_local_metric(
+                'ltrunclen', AverageMetric.many(batch._label_truncated_length)
+            )
+
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
         if (
@@ -2009,6 +2169,10 @@ class TorchAgent(ABC, Agent):
             ttpb = GlobalAverageMetric(ct + lt, float(is_primary_worker()))
             self.global_metrics.add('tpb', ttpb)
             self.global_metrics.add('tps', GlobalTimerMetric(ct + lt))
+
+        # move to GPU if necessary
+        if self.use_cuda:
+            batch = batch.to(0 if self.opt['gpu'] == -1 else self.opt['gpu'])
 
         if self.is_training:
             # register the start of updates for later counting when they occur
@@ -2126,18 +2290,21 @@ class TorchAgent(ABC, Agent):
             # finally time to perform the update.
             self.optimizer.update_master_grads()
 
-        if self.opt.get('gradient_clip', -1) > 0:
+        if self.opt.get('gradient_clip', -1) > 0 or self.fp16:
             if self.fp16:
+                # clip grad norm is where we check for fp16 overflows, so we need
+                # to do it regardless of whether gradient clipping is off
                 grad_norm = self.optimizer.clip_master_grads(self.opt['gradient_clip'])
             else:
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
-            self.global_metrics.add(
-                'clip',
-                GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
-            )
+            if self.opt.get('gradient_clip', -1) > 0:
+                self.global_metrics.add(
+                    'clip',
+                    GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
+                )
         else:
             parameters = self.model.parameters()
             grad_norm = compute_grad_norm(parameters)

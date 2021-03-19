@@ -39,17 +39,18 @@ All worlds are initialized with the following parameters:
 import copy
 import random
 
-from typing import List, Dict, Union
+from typing import Dict, List, Optional, Union
 
+import parlai.utils.logging as logging
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.metrics import aggregate_named_reports
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
-import parlai.utils.logging as logging
 
 
 def validate(observation):
@@ -303,6 +304,17 @@ class DialogPartnerWorld(World):
     This basic world switches back and forth between two agents, giving each agent one
     chance to speak per turn and passing that back to the other one.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Return the parser as-is.
+
+        Self-chat-specific world flags can be added here.
+        """
+        return parser
 
     def __init__(self, opt: Opt, agents=None, shared=None):
         if not ((agents is not None) ^ (shared is not None)):
@@ -1094,7 +1106,7 @@ class DynamicBatchWorld(World):
             # we log the task act and the index of the act
             # in the buffer for world logging purposes
             self._task_acts[i] = act  # for world logging
-            self._task_acts[i]['dyn_batch_idx'] = i
+            self._task_acts[i].force_set('dyn_batch_idx', i)
 
             obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
@@ -1170,7 +1182,7 @@ class DynamicBatchWorld(World):
             # we log the task act and the index of the act
             # in the buffer for world logging purposes
             self._task_acts[i] = act
-            self._task_acts[i]['dyn_batch_idx'] = i
+            self._task_acts[i].force_set('dyn_batch_idx', i)
             # save the observations to form a batch
             obs = self.worlds[i].get_model_agent().observe(act)
             self._scores[i] = self._score(obs)

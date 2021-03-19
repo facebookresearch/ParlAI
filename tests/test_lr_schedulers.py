@@ -13,8 +13,8 @@ import parlai.utils.testing as testing_utils
 class TestLRSchedulers(unittest.TestCase):
     def _run_pass(self, max_lr=1.0, warmup_updates=0, total_steps=1000, **args):
         args['warmup_updates'] = warmup_updates
-        if 'max_lr_steps' not in args:
-            args['max_lr_steps'] = total_steps - warmup_updates
+        if 'max_train_steps' not in args:
+            args['max_train_steps'] = total_steps - warmup_updates
         p = torch.nn.Parameter(torch.randn(4, 4))
         optimizer = torch.optim.SGD([p], lr=max_lr)
         scheduler = lr_scheduler.ParlAILRScheduler.lr_scheduler_factory(
@@ -41,8 +41,8 @@ class TestLRSchedulers(unittest.TestCase):
 
     def _run_resume(self, max_lr=1.0, warmup_updates=0, total_steps=200, **args):
         args['warmup_updates'] = warmup_updates
-        if 'max_lr_steps' not in args:
-            args['max_lr_steps'] = total_steps - warmup_updates
+        if 'max_train_steps' not in args:
+            args['max_train_steps'] = total_steps - warmup_updates
         p = torch.nn.Parameter(torch.randn(4, 4))
         optimizer = torch.optim.SGD([p], lr=max_lr)
         scheduler = lr_scheduler.ParlAILRScheduler.lr_scheduler_factory(
@@ -80,13 +80,13 @@ class TestLRSchedulers(unittest.TestCase):
         self._run_pass(lr_scheduler='cosine', warmup_updates=0)
         self._run_pass(lr_scheduler='cosine', warmup_updates=50)
         with self.assertRaises(lr_scheduler.StopTrainException):
-            self._run_pass(lr_scheduler='cosine', max_lr_steps=100, total_steps=1000)
+            self._run_pass(lr_scheduler='cosine', max_train_steps=100, total_steps=1000)
 
     def test_linear(self):
         self._run_pass(lr_scheduler='linear', warmup_updates=0)
         self._run_pass(lr_scheduler='linear', warmup_updates=50)
         with self.assertRaises(lr_scheduler.StopTrainException):
-            self._run_pass(lr_scheduler='linear', max_lr_steps=100, total_steps=1000)
+            self._run_pass(lr_scheduler='linear', max_train_steps=100, total_steps=1000)
 
     def test_invsqrt(self):
         self._run_pass(lr_scheduler='invsqrt', warmup_updates=0)
@@ -125,7 +125,7 @@ class TestLRSchedulers(unittest.TestCase):
                 'model': 'test_agents/unigram',
                 'skip_generation': True,
                 'lr_scheduler': lr_scheduler,
-                'max_lr_steps': total_steps,
+                'max_train_steps': total_steps,
                 'warmup_updates': warmup_updates,
                 'learningrate': max_lr,
             }

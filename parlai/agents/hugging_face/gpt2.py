@@ -311,11 +311,7 @@ class Gpt2Agent(TorchGeneratorAgent):
         Override to always set fp16friendly to False and left_pad to True.
         """
         return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            left_padded=True,
-            fp16friendly=False,
+            items, pad_idx=self.NULL_IDX, left_padded=True, fp16friendly=False
         )
 
     def load_state_dict(self, state_dict):

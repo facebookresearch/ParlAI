@@ -85,6 +85,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
         self.acceptability_checker = AcceptabilityChecker()
 
+    def get_results_path_base(self) -> str:
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder, f'results_{now.strftime("%Y%m%d_%H%M%S")}'
+        )
+
     def compile_results(self) -> pd.DataFrame:
 
         read_folders = []
@@ -108,13 +114,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         print(f'Date folders: ' + ', '.join(date_strings))
 
         now = datetime.now()
-        results_file = os.path.join(
-            self.output_folder,
-            f'results_{"".join([d + "_" for d in date_strings])[:-1]}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
-        )
         worker_results_file = os.path.join(
-            self.output_folder,
-            f'worker_results_{"".join([d + "_" for d in date_strings])[:-1]}_{now.strftime("%Y%m%d_%H%M%S")}.csv',
+            self.output_folder, f'worker_results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
         )
         # Read in each file
         num_incomplete_convos = 0
@@ -474,8 +475,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         all_conversations_df = pd.DataFrame()
         for df in conversation_dfs:
             all_conversations_df = all_conversations_df.append(df)
-        all_conversations_df.to_csv(results_file, index=False)
-        print(f'\nWrote all conversation results to: {results_file}')
         print(f'\nWorker conversation counts: {worker_conversation_counts}')
 
         return all_conversations_df
@@ -484,4 +483,4 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 if __name__ == '__main__':
     parser_ = ModelChatResultsCompiler.setup_args()
     args_ = parser_.parse_args()
-    ModelChatResultsCompiler(vars(args_)).compile_results()
+    ModelChatResultsCompiler(vars(args_)).compile_and_save_results()
