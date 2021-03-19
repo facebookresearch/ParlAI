@@ -48,8 +48,8 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
             self.freq[tok] = 1
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
 
-        self.override_special_tokens(opt)
         self._unk_token_idx = self.hf_tokenizer.unk_token_id
+        self.override_special_tokens(opt)
 
         self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
         self.tokenizer = 'hf'

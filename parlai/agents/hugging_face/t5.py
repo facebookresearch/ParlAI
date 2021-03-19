@@ -20,7 +20,7 @@ except ModuleNotFoundError:
     # Prior versions of transformers package do not have T5Stack
     T5Stack = object
 
-from parlai.agents.hugging_face.hugging_face import version
+from parlai.agents.hugging_face.hugging_face import HF_VERSION
 from parlai.agents.hugging_face.dict import T5DictionaryAgent
 
 from parlai.core.opt import Opt
@@ -30,7 +30,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGenerato
 
 
 def build_t5(opt: Opt) -> T5ForConditionalGeneration:
-    if not version >= 4.3:
+    if not HF_VERSION >= 4.3:
         raise RuntimeError('Must use transformers package >= 4.3 to use t5')
     return T5ForConditionalGeneration.from_pretrained(
         opt['t5_model_arch'], dropout_rate=opt['t5_dropout']

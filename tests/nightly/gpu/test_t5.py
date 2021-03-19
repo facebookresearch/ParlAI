@@ -17,11 +17,11 @@ import unittest
 
 try:
     import transformers  # noqa
-    from parlai.agents.hugging_face.hugging_face import version
+    from parlai.agents.hugging_face.hugging_face import HF_VERSION
     from parlai.agents.hugging_face.t5 import TASK_CONFIGS
     from parlai.agents.hugging_face.t5 import set_device
 
-    HF_AVAILABLE = version >= 4.3
+    HF_AVAILABLE = HF_VERSION >= 4.3
 except ImportError:
     TASK_CONFIGS = None
     set_device = unittest.skip

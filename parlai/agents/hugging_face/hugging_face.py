@@ -17,7 +17,7 @@ except ImportError:
     raise ImportError('Please run `pip install transformers`.')
 
 
-version = float('.'.join(transformers.__version__.split('.')[:2]))
+HF_VERSION = float('.'.join(transformers.__version__.split('.')[:2]))
 
 
 class HuggingFaceAgent:
