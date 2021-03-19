@@ -492,10 +492,7 @@ workflows:
           requires:
             - unittests_gpu17
             - unittests_37
-      - long_gpu_tests:
-          requires:
-            - unittests_gpu17
-            - unittests_37
+      - long_gpu_tests
       - crowdsourcing_tests:
           requires:
             - unittests_gpu17
