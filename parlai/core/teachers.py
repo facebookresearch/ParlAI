@@ -2452,7 +2452,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if self.is_train:
                 self._enqueue_chunks()
                 next_chunk, chunk_reset_cnt = self.chunks.get()
-                while next_chunk is None:
+                if next_chunk is None:
                     # See the race condition described around "gross hack" in
                     # _enqueue_chunks.  if we win the race condition, then
                     # catch it here
