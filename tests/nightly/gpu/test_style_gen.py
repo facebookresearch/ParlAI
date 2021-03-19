@@ -52,7 +52,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
             opt={
                 'batchsize': 4,
                 'fp16': False,
-                'num_examples': 16,
+                'num_examples': 8,
                 'model_file': 'zoo:style_gen/prev_curr_classifier/model',
                 'model': 'projects.style_gen.classifier:ClassifierAgent',
                 'classes_from_file': 'image_chat_personalities_file',
