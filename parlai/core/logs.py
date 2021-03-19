@@ -21,7 +21,7 @@ import json
 import numbers
 import datetime
 from parlai.core.opt import Opt
-from parlai.core.metrics import Metric, dict_report
+from parlai.core.metrics import Metric, dict_report, get_metric_display_data
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
@@ -87,12 +87,18 @@ class TensorboardLogger(object):
             The report to log
         """
         for k, v in report.items():
-            if isinstance(v, numbers.Number):
-                self.writer.add_scalar(f'{k}/{setting}', v, global_step=step)
-            elif isinstance(v, Metric):
-                self.writer.add_scalar(f'{k}/{setting}', v.value(), global_step=step)
-            else:
+            v = v.value() if isinstance(v, Metric) else v
+            if not isinstance(v, numbers.Number):
                 logging.error(f'k {k} v {v} is not a number')
+                continue
+            display = get_metric_display_data(metric=k)
+            self.writer.add_scalar(
+                f'{k}/{setting}',
+                v,
+                global_step=step,
+                display_name=f"{display.title}",
+                summary_description=display.description,
+            )
 
     def flush(self):
         self.writer.flush()

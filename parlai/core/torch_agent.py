@@ -2131,8 +2131,7 @@ class TorchAgent(ABC, Agent):
             )
         if batch._context_truncated_length is not None:
             self.record_local_metric(
-                'context_average_tokens_truncated',
-                AverageMetric.many(batch._context_truncated_length),
+                'ctrunclen', AverageMetric.many(batch._context_truncated_length)
             )
         if batch._label_original_length is not None:
             self.record_local_metric(
@@ -2143,8 +2142,7 @@ class TorchAgent(ABC, Agent):
             )
         if batch._label_truncated_length is not None:
             self.record_local_metric(
-                'label_average_tokens_truncated',
-                AverageMetric.many(batch._label_truncated_length),
+                'ltrunclen', AverageMetric.many(batch._label_truncated_length)
             )
 
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
