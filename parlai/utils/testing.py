@@ -85,16 +85,6 @@ def skipUnlessTorch(testfn, reason='pytorch is not installed'):
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
 
 
-def skipUnlessTorch17(testfn, reason='Test requires pytorch 1.7+'):
-    if not TORCH_AVAILABLE:
-        skip = True
-    else:
-        from packaging import version
-
-        skip = version.parse(torch.__version__) < version.parse('1.7.0')
-    return unittest.skipIf(skip, reason)(testfn)
-
-
 def skipIfGPU(testfn, reason='Test is CPU-only'):
     """
     Decorate a test to skip if a GPU is available.
