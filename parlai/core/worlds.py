@@ -1310,7 +1310,6 @@ class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
 
     def handle_batch(self, batch):
         batchified = self.world.get_model_agent().batchify(batch)
-        logging.debug(f"Putting batch onto queue (Worker {self.index})")
         self.process_queue.put((self.index, batchified))
         acts = [{} for i in batch]
         return acts
