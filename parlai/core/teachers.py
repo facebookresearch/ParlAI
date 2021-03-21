@@ -2304,7 +2304,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             ]
 
         # deal with --num-workers
-        self.threading = not (opt.get('num_workers') > 0 and self.is_train)
+        self.threading = not (opt.get('num_workers', 0) > 0 and self.is_train)
         if not self.threading and opt.get('background_index') is None:
             # don't start loading data on the main driver, we don't need it
             opt['no_auto_enqueues'] = True
