@@ -40,7 +40,7 @@ class GPT2Decoder(torch.nn.Module):
         # add special tokens
         if opt["add_special_tokens"]:
             size_before = self.transformer.wte.weight.size(0)
-            self.transformer.resize_token_embeddings(len(dict.tokenizer))
+            self.transformer.resize_token_embeddings(len(dict.hf_tokenizer))
             with torch.no_grad():
                 # first reduce the random jitter of the initialization
                 self.transformer.wte.weight[size_before:] *= 0.1
@@ -185,7 +185,13 @@ class HFGPT2Model(TorchGeneratorModel):
     def reorder_decoder_incremental_state(self, incremental_state, inds):
         new_incr_state = []
         for layer_past in incremental_state:
-            new_incr_state.append(torch.index_select(layer_past, 1, inds))
+            if torch.is_tensor(layer_past):
+                new_incr_state.append(torch.index_select(layer_past, 1, inds))
+            else:
+                # newer versions of HF split up the intermediate outputs
+                assert isinstance(layer_past, tuple)
+                layer_past = torch.stack(layer_past, dim=0)
+                new_incr_state.append(torch.index_select(layer_past, 1, inds))
 
         return tuple(new_incr_state)
 
@@ -311,11 +317,7 @@ class Gpt2Agent(TorchGeneratorAgent):
         Override to always set fp16friendly to False and left_pad to True.
         """
         return padded_tensor(
-            items,
-            pad_idx=self.NULL_IDX,
-            use_cuda=self.use_cuda,
-            left_padded=True,
-            fp16friendly=False,
+            items, pad_idx=self.NULL_IDX, left_padded=True, fp16friendly=False
         )
 
     def load_state_dict(self, state_dict):

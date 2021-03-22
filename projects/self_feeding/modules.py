@@ -190,6 +190,12 @@ class SelfFeedingModel(nn.Module):
             embedding=embeddings,
             vocabulary_size=self.vocab_size,
             padding_idx=self.pad_idx,
+            dropout=0.0,
+            n_positions=1024,
+            n_segments=0,
+            activation='relu',
+            variant='aiayn',
+            output_scaling=1.0,
         )
 
     def build_head(self, opt, outdim=1, num_layers=1):

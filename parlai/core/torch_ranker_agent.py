@@ -711,6 +711,7 @@ class TorchRankerAgent(TorchAgent):
                         cands_to_id[cand] = len(cands_to_id)
                         all_cands_vecs.append(batch.candidate_vecs[i][j])
             cand_vecs, _ = self._pad_tensor(all_cands_vecs)
+            cand_vecs = cand_vecs.to(batch.label_vec.device)
             label_inds = label_vecs.new_tensor(
                 [cands_to_id[label] for label in batch.labels]
             )
@@ -730,11 +731,12 @@ class TorchRankerAgent(TorchAgent):
 
             cands = batch.candidates
             cand_vecs = padded_3d(
-                batch.candidate_vecs,
-                self.NULL_IDX,
-                use_cuda=self.use_cuda,
-                fp16friendly=self.fp16,
+                batch.candidate_vecs, self.NULL_IDX, fp16friendly=self.fp16
             )
+            if self.use_cuda:
+                cand_vecs = cand_vecs.to(
+                    0 if self.opt['gpu'] == -1 else self.opt['gpu']
+                )
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
