@@ -2456,7 +2456,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                     # See the race condition described around "gross hack" in
                     # _enqueue_chunks.  if we win the race condition, then
                     # catch it here
-                    return (None, chunk_reset_cnt)
+                    next_chunk, chunk_reset_cnt = self.chunks.get()
             else:
                 # if we're in valid/test, we need to actually signal the end
                 return (None, chunk_reset_cnt)

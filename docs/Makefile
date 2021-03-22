@@ -32,5 +32,6 @@ clean:
 	cd "${SOURCEDIR}"; python generate_task_list.py
 	cd "${SOURCEDIR}"; python generate_zoo_list.py
 	cd "${SOURCEDIR}"; python generate_mutator_list.py
+	cd "${SOURCEDIR}"; python generate_metric_list.py
 	cd "${SOURCEDIR}"; python generate_cli.py
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

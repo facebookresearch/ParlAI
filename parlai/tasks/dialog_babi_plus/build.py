@@ -10,16 +10,16 @@ from parlai.core import build_data
 
 RESOURCES = [
     DownloadableFile(
-        'https://drive.google.com/uc?export=download&id=0B2MvoQfXtqZmMTJqclpBdGN2bmc',
-        'dialog-bAbI-plus.zip',
-        'e67dfecbde5e6250833143a6148150a313204237b765d39e7b8ebc111cb3204e',
+        'http://parl.ai/downloads/dialog_babi_plus/dialog-babi-plus-v1.tgz',
+        'dialog-babi-plus-v1.tgz',
+        'c3ca01e970a607d8ad01a47420d6b493c43c9ca70211bfe15b01a461437b950e',
     )
 ]
 
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'dialog-bAbI-plus')
-    version = None
+    version = "v1.1"
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
