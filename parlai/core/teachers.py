@@ -2514,6 +2514,11 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             )  # reset the count of samples loaded
             self._enqueue_request()
 
+    def shutdown(self):
+        # self._drain(self.chunks)
+        self.chunks.put((None, None))
+        self.chunks.put((None, None))
+
 
 def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     """
