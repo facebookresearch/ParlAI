@@ -98,9 +98,10 @@ commands:
           name: Install torch GPU and dependencies
           command: |
             python -m pip install --progress-bar off torch==1.7.1+cu101 torchvision==0.8.2+cu101 -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'fairscale~=0.3.0'
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers<4.0.0'
+            python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -114,7 +115,7 @@ commands:
             python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
             python -m pip install --progress-bar off 'torchtext==0.7.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers<4.0.0'
+            python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -232,26 +233,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20201214-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20200315-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20201214-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20200315-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20201214-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20200315-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20201214-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20200315-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -268,12 +269,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20201214-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200315-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu17
       - save_cache:
-          key: deps-20201214-bw-{{ checksum "requirements.txt" }}
+          key: deps-20200315-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"

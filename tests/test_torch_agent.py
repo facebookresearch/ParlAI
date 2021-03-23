@@ -1048,3 +1048,5 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent._local_metrics['ltrunc'][0].value(), 1.0)
         self.assertEqual(agent._local_metrics['clen'][0].value(), 9)
         self.assertEqual(agent._local_metrics['llen'][0].value(), 11)
+        self.assertEqual(agent._local_metrics['ctrunclen'][0].value(), 4)
+        self.assertEqual(agent._local_metrics['ltrunclen'][0].value(), 6)

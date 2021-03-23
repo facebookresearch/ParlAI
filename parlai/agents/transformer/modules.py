@@ -748,7 +748,7 @@ class TransformerDecoder(nn.Module):
         tensor: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[int, torch.Tensor],
+        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -797,8 +797,9 @@ class TransformerDecoder(nn.Module):
         encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
-        positions = input.new(seq_len).long()
-        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+        positions = torch.arange(
+            seq_len, dtype=torch.long, device=input.device
+        ).unsqueeze(0)
 
         if incr_state is not None:
             # We're doing incremental decoding, so select only the most recent position
