@@ -3,8 +3,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-LAYER_NORM_EPS = 1e-5  # Epsilon for layer norm.
-
+from .constants import LAYER_NORM_EPS  # noqa: F401
 from .functions import (
     create_embeddings,
     create_position_codes,
