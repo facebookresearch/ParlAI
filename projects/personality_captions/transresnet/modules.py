@@ -163,22 +163,12 @@ class TransresnetModel(nn.Module):
             )
 
         self.text_encoder = TransformerEncoder(
-            n_heads=self.opt['n_heads'],
-            n_layers=self.opt['n_layers'],
-            embedding_size=self.opt['embedding_size'],
-            ffn_size=self.opt['ffn_size'],
-            vocabulary_size=len(self.dictionary),
+            opt=self.opt,
             embedding=self.embeddings,
-            dropout=self.opt['dropout'],
-            attention_dropout=self.opt['attention_dropout'],
-            relu_dropout=self.opt['relu_dropout'],
+            vocabulary_size=len(self.dictionary),
             padding_idx=self.dictionary.tok2ind[self.dictionary.null_token],
-            learn_positional_embeddings=self.opt['learn_positional_embeddings'],
             embeddings_scale=False,
-            n_positions=self.opt['n_positions'],
-            activation=self.opt['activation'],
-            variant=self.opt['variant'],
-            n_segments=self.opt['n_segments'],
+            output_scaling=1.0,
         )
         if self.opt.get('load_encoder_from') is not None:
             self._load_text_encoder_state()

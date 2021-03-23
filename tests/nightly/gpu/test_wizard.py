@@ -17,7 +17,7 @@ from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import
 END2END_OPTIONS = {
     'task': 'wizard_of_wikipedia:generator:random_split',
     'model_file': 'zoo:wizard_of_wikipedia/end2end_generator/model',
-    'batchsize': 32,
+    'batchsize': 4,
     'log_every_n_secs': 30,
     'embedding_type': 'random',
 }
@@ -29,7 +29,7 @@ RETRIEVAL_OPTIONS = {
     'model_file': 'zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
     'datatype': 'test',
     'n_heads': 6,
-    'batchsize': 32,
+    'batchsize': 4,
     'ffn_size': 1200,
     'embeddings_scale': False,
     'delimiter': ' __SOC__ ',

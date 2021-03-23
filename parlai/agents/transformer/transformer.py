@@ -34,9 +34,11 @@ def add_common_cmdline_args(parser):
         '--embedding-size',
         type=int,
         default=300,
-        help='Size of all embedding layers',
+        help='Size of all embedding layers. Must be a multiple of --n-heads.',
     )
-    parser.add_argument('-nl', '--n-layers', type=int, default=2)
+    parser.add_argument(
+        '-nl', '--n-layers', type=int, default=2, help='Number of transformer layers.'
+    )
     parser.add_argument(
         '-hid',
         '--ffn-size',
@@ -45,24 +47,35 @@ def add_common_cmdline_args(parser):
         help='Hidden size of the FFN layers',
     )
     parser.add_argument(
-        '--dropout', type=float, default=0.0, help='Dropout used in Vaswani 2017.'
+        '--dropout',
+        type=float,
+        default=0.0,
+        help='Dropout used around embeddings and before layer layer normalizations. '
+        'This is used in Vaswani 2017 and works well on large datasets.',
     )
     parser.add_argument(
         '--attention-dropout',
         type=float,
         default=0.0,
-        help='Dropout used after attention softmax.',
+        help='Dropout used after attention softmax. This is not used in Vaswani 2017.',
     )
     parser.add_argument(
         '--relu-dropout',
         type=float,
         default=0.0,
-        help='Dropout used after ReLU. From tensor2tensor.',
+        help='Dropout used after the ReLU in the FFN. Not used in Vaswani 2017, '
+        'but used in Tensor2Tensor.',
     )
     parser.add_argument(
         '--n-heads', type=int, default=2, help='Number of multihead attention heads'
     )
-    parser.add_argument('--learn-positional-embeddings', type='bool', default=False)
+    parser.add_argument(
+        '--learn-positional-embeddings',
+        type='bool',
+        default=False,
+        help='If off, sinusoidal embeddings are used. If on, position embeddings are '
+        'learned from scratch.',
+    )
     parser.add_argument('--embeddings-scale', type='bool', default=True)
     parser.add_argument(
         '--n-positions',
@@ -284,9 +297,7 @@ class TransformerRankerAgent(TorchRankerAgent):
             and batch.memory_vecs is not None
             and sum(len(m) for m in batch.memory_vecs)
         ):
-            mems = padded_3d(
-                batch.memory_vecs, use_cuda=self.use_cuda, pad_idx=self.NULL_IDX
-            )
+            mems = padded_3d(batch.memory_vecs, pad_idx=self.NULL_IDX)
         else:
             mems = None
 

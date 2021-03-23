@@ -186,17 +186,16 @@ class SelfFeedingModel(nn.Module):
 
     def build_encoder(self, opt, embeddings):
         return TransformerEncoder(
-            n_heads=opt['n_heads'],
-            n_layers=opt['n_layers'],
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
-            vocabulary_size=self.vocab_size,
+            opt=opt,
             embedding=embeddings,
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
+            vocabulary_size=self.vocab_size,
             padding_idx=self.pad_idx,
-            learn_positional_embeddings=opt.get('learn_positional_embeddings', False),
-            embeddings_scale=opt['embeddings_scale'],
+            dropout=0.0,
+            n_positions=1024,
+            n_segments=0,
+            activation='relu',
+            variant='aiayn',
+            output_scaling=1.0,
         )
 
     def build_head(self, opt, outdim=1, num_layers=1):
