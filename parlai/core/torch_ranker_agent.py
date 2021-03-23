@@ -162,7 +162,7 @@ class TorchRankerAgent(TorchAgent):
             'single candidate according to the ranking.',
         )
         agent.add_argument(
-            '--inference',
+            '--ranker-inference',
             choices={'max', 'topk'},
             default='max',
             help='Final response output algorithm',
