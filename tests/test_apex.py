@@ -17,10 +17,6 @@ class TestNoApex(unittest.TestCase):
     They should load on CPU and GPU, even if the user doesn't have apex installed.
     """
 
-    def test_import(self):
-        with self.assertRaises(ImportError):
-            import apex as _  # noqa: F401
-
     def test_fused_adam(self):
         with self.assertRaises(ImportError):
             # we should crash if the user tries not giving --opt adam

@@ -114,7 +114,7 @@ class MockTorchAgent(TorchAgent):
         """
         Return confirmation of training.
         """
-        return Output(['Training {}!'.format(i) for i in range(len(batch.text_vec))])
+        return Output([f'Training {i}!' for i in range(batch.batchsize)])
 
     def eval_step(self, batch):
         """
@@ -122,10 +122,8 @@ class MockTorchAgent(TorchAgent):
         """
         return Output(
             [
-                'Evaluating {} (responding to {})!'.format(
-                    i, batch.observations[i]['text']
-                )
-                for i in range(len(batch.text_vec))
+                f'Evaluating {i} (responding to {batch.text_vec.tolist()})!'
+                for i in range(batch.batchsize)
             ]
         )
 
@@ -164,3 +162,19 @@ class SilentTorchAgent(TorchAgent):
         Null output.
         """
         return Output()
+
+
+class MockTrainUpdatesAgent(MockTorchAgent):
+    """
+    Simulate training updates.
+    """
+
+    def train_step(self, batch):
+        ret = super().train_step(batch)
+        update_freq = self.opt.get('update_freq', 1)
+        if update_freq == 1:
+            self._number_training_updates += 1
+        else:
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            self._number_training_updates += int(self._number_grad_accum == 0)
+        return ret

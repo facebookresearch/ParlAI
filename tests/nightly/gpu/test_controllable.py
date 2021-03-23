@@ -21,6 +21,7 @@ NUM_EXAMPLES = 512 if FAST_MODE else -1
 NO_REPETITION = 'extrep_2gram:-3.5,extrep_nonstopword:-1e20,intrep_nonstopword:-1e20'
 
 
+@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestControllableDialogue(unittest.TestCase):
     def test_dataset_integrity(self):
@@ -61,6 +62,7 @@ class TestControllableDialogue(unittest.TestCase):
         opt = parser.parse_args([])
         tcs2s.TrainLoop(opt).train()
 
+    @unittest.skip
     def test_convai2_finetuned_greedy(self):
         """
         Check the greedy model produces correct results.
@@ -78,6 +80,7 @@ class TestControllableDialogue(unittest.TestCase):
         self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
         self.assertAlmostEqual(valid['f1'], 0.1702, delta=0.0002)
 
+    @unittest.skip
     def test_convai2_finetuned_beamsearch(self):
         """
         Check the beamsearch baseline produces correct results.
@@ -101,6 +104,7 @@ class TestControllableDialogue(unittest.TestCase):
             self.assertAlmostEqual(valid['ppl'], 22.86, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1516, delta=0.0002)
 
+    @unittest.skip
     def test_convai2_finetuned_norepetition(self):
         """
         Checks the finetuned model with repetition blocking produces correct results.

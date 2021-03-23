@@ -132,6 +132,18 @@ class TestDynamicBatching(unittest.TestCase):
         # intentionally an edgecase in the world
         self._test_correct_processed(NUM_TEST, batchsize=4)
 
+    def test_chunky(self):
+        """
+        Test dynamic batching with chunk teachers end to end.
+        """
+        self._test_correct_processed(
+            NUM_TEST,
+            model='test_agents/unigram',  # important we use a real model here
+            task='integration_tests:chunky',
+            datatype='train:stream',
+            num_epochs=2,  # important we use num epochs > 1
+        )
+
 
 class TestBatchSort(unittest.TestCase):
     def _test_correct_processed(self, num_goal: int, **kwargs: Dict[str, Any]):

@@ -6,15 +6,17 @@
 
 import os
 
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
+from collections import defaultdict
 from typing import List
 
 from parlai.core.dict import DictionaryAgent
+from parlai.core.opt import Opt
 from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer
+    from transformers import GPT2Tokenizer, T5TokenizerFast
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
@@ -31,15 +33,30 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
     Use Hugging Face tokenizers.
     """
 
-    def __init__(self, opt):
-        super().__init__(opt)
-        # initialize from vocab path
-        self.tokenizer = self.get_tokenizer(opt)
+    def __init__(self, opt: Opt, shared=None):
+        if not shared:
+            self.hf_tokenizer = self.get_tokenizer(opt)
+            self.tok2ind = self.hf_tokenizer.get_vocab()
+            self.ind2tok = {v: k for k, v in self.tok2ind.items()}
+        else:
+            self.hf_tokenizer = shared['hf_tokenizer']
+            self.tok2ind = shared['tok2ind']
+            self.ind2tok = shared['ind2tok']
+
+        self.freq = defaultdict(int)
+        for tok in self.tok2ind:
+            self.freq[tok] = 1
+        self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
+
+        self._unk_token_idx = self.hf_tokenizer.unk_token_id
         self.override_special_tokens(opt)
-        for i in range(self.tokenizer.vocab_size):
-            token = self.tokenizer._convert_id_to_token(i)
-            self.add_token(token)
-            self.freq[token] = 1
+
+        self.lower = opt.get('dict_lower', DictionaryAgent.default_lower)
+        self.tokenizer = 'hf'
+        self.opt = opt
+        self.max_length = (
+            self.opt.get('text_truncate') or self.hf_tokenizer.model_max_length
+        )
 
     @abstractmethod
     def get_tokenizer(self, opt):
@@ -55,20 +72,46 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
         """
         pass
 
-    def txt2vec(self, text, vec_type=list):
-        tokens = self.tokenizer.tokenize(text)
-        tokens_id = self.tokenizer.convert_tokens_to_ids(tokens)
-        return tokens_id
+    @abstractproperty
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+        """
 
-    def vec2txt(self, vec):
-        return self.tokenizer.decode(
-            vec, skip_special_tokens=False, clean_up_tokenization_spaces=True
+    @abstractproperty
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to skip special tokens when converting tokens to text.
+        """
+
+    def share(self):
+        shared = super().share()
+        shared['hf_tokenizer'] = self.hf_tokenizer
+        shared['ind2tok'] = self.ind2tok
+        shared['tok2ind'] = self.tok2ind
+        return shared
+
+    def format_text(self, text: str) -> str:
+        """
+        Format text prior to encoding with tokenizer.
+        """
+        return text
+
+    def txt2vec(self, text, vec_type=list):
+        return self.hf_tokenizer.encode(
+            self.format_text(text),
+            add_special_tokens=self.add_special_tokens,
+            max_length=self.max_length,
+            pad_to_max_length=False,
+            truncation='longest_first',
+        )
+
+    def vec2txt(self, vec, **kwargs):
+        return self.hf_tokenizer.decode(
+            vec, skip_special_tokens=self.skip_decode_special_tokens, **kwargs
         )
 
     def act(self):
-        """
-        Dummy override.
-        """
         return {}
 
 
@@ -78,6 +121,20 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         Indicates whether the dictionary is fixed, and does not require building.
         """
         return True
+
+    @property
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+        """
+        return True
+
+    @property
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to skip special tokens when converting tokens to text.
+        """
+        return False
 
     def get_tokenizer(self, opt):
         """
@@ -107,7 +164,7 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         Add additional special tokens to the dictionary.
         """
         self.additional_special_tokens = additional_special_tokens
-        self.tokenizer.add_special_tokens(
+        self.hf_tokenizer.add_special_tokens(
             {'additional_special_tokens': additional_special_tokens}
         )
         for tok in self.additional_special_tokens:
@@ -116,7 +173,7 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
     def _define_special_tokens(self, opt):
         if opt["add_special_tokens"]:
             # Add addtional start/end/pad tokens
-            self.tokenizer.add_special_tokens(SPECIAL_TOKENS)
+            self.hf_tokenizer.add_special_tokens(SPECIAL_TOKENS)
             self.start_token = SPECIAL_TOKENS["bos_token"]
             self.end_token = SPECIAL_TOKENS["eos_token"]
             self.null_token = SPECIAL_TOKENS["pad_token"]
@@ -130,9 +187,9 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         # define special tokens
         self._define_special_tokens(opt)
         # now override
-        self.start_idx = self.tokenizer.convert_tokens_to_ids([self.start_token])[0]
-        self.end_idx = self.tokenizer.convert_tokens_to_ids([self.end_token])[0]
-        self.null_idx = self.tokenizer.convert_tokens_to_ids([self.null_token])[0]
+        self.start_idx = self.hf_tokenizer.convert_tokens_to_ids([self.start_token])[0]
+        self.end_idx = self.hf_tokenizer.convert_tokens_to_ids([self.end_token])[0]
+        self.null_idx = self.hf_tokenizer.convert_tokens_to_ids([self.null_token])[0]
         # set tok2ind for special tokens
         self.tok2ind[self.end_token] = self.end_idx
         self.tok2ind[self.start_token] = self.start_idx
@@ -151,3 +208,35 @@ class DialoGPTDictionaryAgent(Gpt2DictionaryAgent):
         model_sz = opt["gpt2_size"]
         fle_key = f"microsoft/DialoGPT-{model_sz}"
         return GPT2Tokenizer.from_pretrained(fle_key)
+
+
+class T5DictionaryAgent(HuggingFaceDictionaryAgent):
+    def get_tokenizer(self, opt):
+        return T5TokenizerFast.from_pretrained(opt['t5_model_arch'], truncation=True)
+
+    @property
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+        """
+        return True
+
+    @property
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+        """
+        return True
+
+    def override_special_tokens(self, opt):
+        # now override
+        self.start_token = self.hf_tokenizer.pad_token
+        self.end_token = self.hf_tokenizer.eos_token
+        self.null_token = self.hf_tokenizer.pad_token
+        self.unk_token = self.hf_tokenizer.unk_token
+
+        self._unk_token_idx = self.hf_tokenizer.unk_token_id
+
+        self.start_idx = self[self.start_token]
+        self.end_idx = self[self.end_token]
+        self.null_idx = self[self.null_token]

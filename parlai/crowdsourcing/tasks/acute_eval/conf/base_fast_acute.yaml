@@ -3,7 +3,7 @@ mephisto:
   task:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 600
-    maximum_units_per_worker: 1
+    maximum_units_per_worker: 1  # important for replicability and reliability
     task_description: "Evaluate quality of conversations through comparison."
     task_name: acute_eval_${current_time}
     task_reward: 0.5

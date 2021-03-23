@@ -189,9 +189,7 @@ class YelpTeacher(FixedDialogTeacher):
         extra_data = []
         if self.add_unknown_classes:
             # load about data (unknown but inferred)
-            extra_data = gend_utils.get_inferred_about_data(
-                self.opt['task'], self.opt['datatype']
-            )
+            extra_data = gend_utils.get_inferred_about_data(self.opt['task'], self.opt)
 
             # now create partner/TO data: true neutral
             for ex in data:

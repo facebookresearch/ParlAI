@@ -506,6 +506,7 @@ class Gpt2BpeHelper(BPEHelper):
     )
     DEFAULT_VOCAB_BPE = 'https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe'
     ERRORS_METHOD = 'replace'
+    PATTERN = r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
 
     def __init__(self, opt: Opt, shared: TShared = None):
         """
@@ -542,9 +543,7 @@ class Gpt2BpeHelper(BPEHelper):
             raise ImportError('Please install regex with: pip install regex')
 
         # Should haved added re.IGNORECASE so BPE merges can happen for capitalized versions of contractions
-        self.pat = self.re.compile(
-            r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-        )
+        self.pat = self.re.compile(self.PATTERN)
 
     def _build_data(self) -> Tuple[str, str]:
         """
