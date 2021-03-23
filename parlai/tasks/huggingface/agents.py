@@ -11,6 +11,7 @@ from typing import Optional
 import os
 
 # huggingface imports
+import datasets
 from datasets import load_dataset, concatenate_datasets
 
 
@@ -27,6 +28,11 @@ class HuggingFaceTeacher(DialogTeacher):
             cache_dir=self.data_path,
             split=opt['hf_split'],
         )
+        if opt['hf_split'] is None and isinstance(
+            self.dataset, datasets.dataset_dict.DatasetDict
+        ):
+            # no split specified and there are splits- combine all the splits together
+            self.dataset = concatenate_datasets(list(self.dataset.values()))
 
         self.id = "huggingface"
         super().__init__(opt, shared)
