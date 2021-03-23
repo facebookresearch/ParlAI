@@ -6,7 +6,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import torch
-from typing import Any, Dict, Generic, Optional, Protocol, Tuple, Type, TypeVar, Union
+from typing import Any, Dict, Generic, Optional, Tuple, Type, TypeVar, Union
 
 from parlai.core.opt import Opt
 
@@ -18,17 +18,16 @@ class TComponent(ABC):
 
 
 T = TypeVar('T', bound=TComponent)
-M = TypeVar('M', bound=TComponent.Manifest)
 
 
 # TODO: Figure out a way to get Manifest class directly from T
 @dataclass
-class ComponentSpec(Generic[T, M]):
+class ComponentSpec(Generic[T]):
     klass: Type[T]
-    manifest: M
+    manifest: TComponent.Manifest
 
 
-class TransformerAttention(Protocol):
+class TransformerAttention(ABC):
     @abstractmethod
     def __init__(self, opt: Opt, **kwargs):
         ...
@@ -47,7 +46,7 @@ class TransformerAttention(Protocol):
         ...
 
 
-class TransformerFFN(Protocol):
+class TransformerFFN(ABC):
     @abstractmethod
     def __init__(self, opt: Opt, **kwargs):
         ...
@@ -77,7 +76,7 @@ class TransformerEncoderLayer(TComponent):
 class TransformerEncoder(TComponent):
     @dataclass
     class Manifest:
-        layer: ComponentSpec[TransformerEncoderLayer, TransformerEncoderLayer.Manifest]
+        layer: ComponentSpec[TransformerEncoderLayer]
 
     @abstractmethod
     def __init__(
@@ -125,7 +124,7 @@ class TransformerDecoderLayer(TComponent):
 class TransformerDecoder(TComponent):
     @dataclass
     class Manifest:
-        layer: ComponentSpec[TransformerDecoderLayer, TransformerDecoderLayer.Manifest]
+        layer: ComponentSpec[TransformerDecoderLayer]
 
     @abstractmethod
     def __init__(self, opt: Opt, manifest: Manifest, embedding=None, **kwargs):
@@ -141,8 +140,8 @@ class TransformerDecoder(TComponent):
 class Transformer(TComponent):
     @dataclass
     class Manifest:
-        encoder: ComponentSpec[TransformerEncoder, TransformerEncoder.Manifest]
-        decoder: ComponentSpec[TransformerDecoder, TransformerDecoder.Manifest]
+        encoder: ComponentSpec[TransformerEncoder]
+        decoder: ComponentSpec[TransformerDecoder]
 
     @abstractmethod
     def __init__(self, opt: Opt, dictionary, manifest: Manifest = None, **kwargs):
@@ -172,6 +171,4 @@ class DecoderOnlyTransformerLayer(TComponent):
 class DecoderOnlyTransformer(Transformer):
     @dataclass
     class Manifest:
-        layer: ComponentSpec[
-            DecoderOnlyTransformerLayer, DecoderOnlyTransformerLayer.Manifest
-        ]
+        layer: ComponentSpec[DecoderOnlyTransformerLayer]
