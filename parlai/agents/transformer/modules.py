@@ -1237,23 +1237,8 @@ class TransformerGeneratorModel(TorchGeneratorModel, Transformer):
         decoder: Type[TransformerDecoder] = DefaultTransformerDecoder
         decoder_manifest: Type[TransformerDecoderLayer] = DefaultTransformerDecoderLayer
 
-    @classmethod
-    def build_encoder(
-        cls, opt, dictionary, embedding=None, padding_idx=None, reduction_type='mean'
-    ):
-        return DefaultTransformerEncoder(
-            opt=opt,
-            embedding=embedding,
-            vocabulary_size=len(dictionary),
-            padding_idx=padding_idx,
-            reduction_type=reduction_type,
-        )
-
-    @classmethod
-    def build_decoder(cls, opt, embedding=None):
-        return DefaultTransformerDecoder(opt=opt, embedding=embedding)
-
     def __init__(self, opt: Opt, dictionary, manifest: Manifest = None):
+        manifest = manifest or self.Manifest()
         self.pad_idx = dictionary[dictionary.null_token]
         self.start_idx = dictionary[dictionary.start_token]
         self.end_idx = dictionary[dictionary.end_token]
@@ -1262,10 +1247,17 @@ class TransformerGeneratorModel(TorchGeneratorModel, Transformer):
             dictionary, opt['embedding_size'], self.pad_idx
         )
 
-        self.encoder = self.build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None
+        self.encoder = manifest.encoder(
+            opt,
+            dictionary,
+            self.embeddings,
+            self.pad_idx,
+            reduction_type=None,
+            manifest=manifest.encoder_manifest,
         )
-        self.decoder = self.build_decoder(opt, self.embeddings)
+        self.decoder = manifest.decoder(
+            opt, self.embeddings, manifest=manifest.decoder_manifest
+        )
 
     def reorder_encoder_states(self, encoder_states, indices):
         """
@@ -1387,7 +1379,7 @@ class TransformerDecoderOnlyModel(TorchGeneratorModel, DecoderOnlyTransformer):
             dictionary, opt['embedding_size'], self.pad_idx
         )
 
-        self.decoder = self.build_decoder(opt, self.embeddings)
+        self.decoder = manifest.decoder(opt, self.embeddings, manifest.decoder_manifest)
 
     def reorder_encoder_states(self, encoder_states, indices):
         """
