@@ -289,6 +289,14 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1809.09600"},
     },
     {
+        "id": "HuggingFace",
+        "display_name": "HuggingFace",
+        "task": "huggingface",
+        "tags": [],
+        "description": ("HuggingFace datasets"),
+        "links": {"website": "https://huggingface.co/"},
+    },
+    {
         "id": "LIGHT-Dialogue",
         "display_name": "LIGHT-Dialogue",
         "task": "light_dialog",
