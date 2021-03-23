@@ -66,7 +66,6 @@ def display_data(opt):
 
     # create repeat label agent and assign it to the specified task
     opt.log()
-    fro = opt.copy()
     opt['fixed_response'] = None
     agent = FixedResponseAgent(opt)
     world = create_task(opt, agent)
