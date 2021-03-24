@@ -335,7 +335,7 @@ class FixedDialogTeacher(Teacher):
             self.index = AttrDict(value=-1)
 
         if not hasattr(self, 'data_loader'):
-            if opt.get('num_workers', 0) <= 0:
+            if opt.get('background_index') is None:
                 self.data_loader = DataLoader(opt)
             else:
                 self.data_loader = _ErrorThrowingDataLoader(opt)
