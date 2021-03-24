@@ -1,0 +1,48 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - '1'
+    id: huggingface
+    label_candidates:
+    - '0'
+    - '1'
+    - '2'
+    text: Our friends won't buy this analysis, let alone the next one we propose.
+- - episode_done: true
+    eval_labels:
+    - '1'
+    id: huggingface
+    label_candidates:
+    - '0'
+    - '1'
+    - '2'
+    text: One more pseudo generalization and I'm giving up.
+- - episode_done: true
+    eval_labels:
+    - '1'
+    id: huggingface
+    label_candidates:
+    - '0'
+    - '1'
+    - '2'
+    text: One more pseudo generalization or I'm giving up.
+- - episode_done: true
+    eval_labels:
+    - '1'
+    id: huggingface
+    label_candidates:
+    - '0'
+    - '1'
+    - '2'
+    text: The more we study verbs, the crazier they get.
+- - episode_done: true
+    eval_labels:
+    - '1'
+    id: huggingface
+    label_candidates:
+    - '0'
+    - '1'
+    - '2'
+    text: Day by day the facts are getting murkier.
+num_episodes: 10657
+num_examples: 10657

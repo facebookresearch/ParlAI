@@ -28,11 +28,22 @@ class HuggingFaceTeacher(DialogTeacher):
             cache_dir=self.data_path,
             split=opt['hf_split'],
         )
+
         if opt['hf_split'] is None and isinstance(
             self.dataset, datasets.dataset_dict.DatasetDict
         ):
             # no split specified and there are splits- combine all the splits together
             self.dataset = concatenate_datasets(list(self.dataset.values()))
+
+        # map numerical labels back to strings
+        self.labels = self.dataset.features['label'].names
+        # self.labels.append('unknown')
+
+        def convert_to_str_label(row):
+            row['label'] = self.labels[row['label']]
+            return row
+
+        self.dataset = self.dataset.map(convert_to_str_label)
 
         self.id = "huggingface"
         super().__init__(opt, shared)
@@ -47,15 +58,14 @@ class HuggingFaceTeacher(DialogTeacher):
             '-hfp',
             '--hf_path',
             type=str,
-            default='',
-            required=True,
+            default='glue',
             help="HuggingFace dataset identifier name",
         )
         parser.add_argument(
             '-hfn',
             '--hf_name',
             type=str,
-            default=None,
+            default='cola',
             help="defining the name of the HuggingFace dataset configuration",
         )
         parser.add_argument(
@@ -78,9 +88,7 @@ class HuggingFaceTeacher(DialogTeacher):
             sentence = row.get('sentence', '')
             text = sentence + premise + hypothesis
             label = str(row['label'])
-
-            # specific to glue
-            candidates = ['0', '1', '2']
+            candidates = self.labels
 
             yield (text, [label], None, candidates), True
 
