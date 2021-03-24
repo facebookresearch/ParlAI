@@ -535,6 +535,95 @@ class SequenceVocabUnlikelihoodAgentTrait(_VocabUnlikelihoodTrait):
             return loss
 
 
+class RewardWeightedUnlikelihoodAgentTrait(object):
+    """
+    Abstract Trait.
+
+    Applies unlikelihood loss based on the presence of negative rewards in the task.
+    Reward is weighted as opposed to `RewardUnlikelihoodAgentTrait`.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
+        grp.add_argument('--alpha', default=1.0, type=float)
+        return parser
+
+    def _dummy_batch(self, batchsize, maxlen):
+        batch = super()._dummy_batch(batchsize, maxlen)
+        batch['rewards'] = torch.ones(batchsize, dtype=torch.long).cuda()
+        return batch
+
+    def compute_loss(self, batch, return_output=False):
+        if batch.label_vec is None:
+            raise ValueError('Cannot compute loss without a label.')
+
+        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        scores, preds, *_ = model_output  # scores is bsz x time x vocab
+
+        scores = F.log_softmax(scores, dim=-1)
+        scores_view = scores.view(-1, scores.size(-1))
+        targets = batch.label_vec
+        targets_view = targets.view(-1)
+
+        notnull = targets.ne(self.NULL_IDX)
+        if self.is_training:
+            # note it's >= because convai2 and other teachers all provide a 0 reward
+            mle_notnull = notnull & (batch.rewards >= 0).unsqueeze(1).expand_as(notnull)
+        else:
+            mle_notnull = notnull
+
+        mle_loss = torch.mv(
+            (F.nll_loss(
+                scores_view, targets_view, ignore_index=self.NULL_IDX, reduction='none'
+            ).view_as(mle_notnull)
+            * mle_notnull.float()).T,
+            batch.rewards
+        ).sum()
+
+        # limit loss to only the positive rewards
+        mle_target_tokens = mle_notnull.long().sum()
+        correct = ((targets == preds) * mle_notnull).sum()
+        self.global_metrics.add('token_acc', AverageMetric(correct, mle_target_tokens))
+        self.global_metrics.add('nll_loss', AverageMetric(mle_loss, mle_target_tokens))
+        self.global_metrics.add('ppl', PPLMetric(mle_loss, mle_target_tokens))
+        if mle_target_tokens > 0:
+            mle_loss /= mle_target_tokens  # average loss per token
+
+        if not self.is_training:
+            if return_output:
+                return (mle_loss, model_output)
+            else:
+                return mle_loss
+
+        # and now we want the unlikelihood loss on the negative examples
+        ul_notnull = notnull & (batch.rewards < 0).unsqueeze(1).expand_as(notnull)
+        ul_target_tokens = ul_notnull.long().sum()
+        range_ = torch.arange(targets_view.size(0)).to(batch.label_vec.device)
+        ul_scores = scores_view[range_, targets_view]
+        clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
+        ul_loss = torch.mv(
+            (torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)).view_as(
+                ul_notnull
+            )
+            * ul_notnull.float()).T,
+            batch.rewards
+        ).sum()
+        self.global_metrics.add('ul_loss', AverageMetric(ul_loss, ul_target_tokens))
+        if ul_target_tokens > 0:
+            ul_loss /= ul_target_tokens
+
+        loss = mle_loss + self.opt['alpha'] * ul_loss
+
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss
+
+
+
 class TransformerSequenceVocabUnlikelihoodAgent(
     SequenceVocabUnlikelihoodAgentTrait, TransformerGeneratorAgent
 ):
@@ -564,6 +653,18 @@ class RepetitionUnlikelihoodAgent(RepetitionUnlikelihoodAgentTrait, ImageSeq2seq
     Example usage:
 
     -t convai2 -m parlai_internal.projects.dontsaythat.agents:RepetitionUnlikelihoodAgent
+    """
+
+    pass
+
+
+class TransformerWeightedUnlikelihoodAgent(
+    RewardWeightedUnlikelihoodAgentTrait, TransformerGeneratorAgent
+):
+    """
+    Example usage:
+
+    -t convai2 -m parlai_internal.projects.dontsaythat.agents:TransformerWeightedUnlikelihoodAgent
     """
 
     pass
