@@ -28,6 +28,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
 from parlai.utils.io import PathManager
+from parlai.scripts.vacuum import Vacuum
 
 
 TRANSFORMER_PARAMETER_MAPPING = {
@@ -133,6 +134,8 @@ class ConversionScript(ParlaiScript):
         self.agent.model.load_state_dict(converted, True)
         self.agent.opt.pop('converting', None)
         self.agent.save(self.opt['output'])
+        # kill the optimizer
+        Vacuum.main(model_file=self.opt['output'], no_backup=True)
         # 4. enjoy!
         self.print_agent_act()
 

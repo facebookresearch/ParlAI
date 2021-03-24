@@ -152,7 +152,11 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
         (e.g., learning rate) over that found in the state_dict. This allows us to
         resume training from a checkpoint using a new set of optimizer args.
         """
-        if 'loss_scaler' in state_dict and self.scaler is not None:
+        if (
+            'loss_scaler' in state_dict
+            and self.scaler is not None
+            and isinstance(state_dict['loss_scaler'], float)
+        ):
             self.scaler.loss_scale = state_dict['loss_scaler']
         self.optimizer.load_state_dict(state_dict)
 
