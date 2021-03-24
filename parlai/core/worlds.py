@@ -1287,7 +1287,7 @@ class BackgroundDriverWorld(World):
         return aggregate_unnamed_reports([self.world.report(), self.metrics.report()])
 
     def __del__(self):
-        logging.error("Calling delete!")
+        logging.debug("Killing all the worker processes")
         for p in self._process_pool.processes:
             p.kill()
 

@@ -2308,7 +2308,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         if not self.threading and opt.get('background_index') is None:
             # don't start loading data on the main driver, we don't need it
             opt['no_auto_enqueues'] = True
-            logging.error("Let's skip")
         if not self.threading:
             # if we're in single-threaded (background preprocessing mode), we
             # can't have a max queue size or we will hang if we overfill it
