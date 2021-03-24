@@ -576,11 +576,16 @@ class RewardWeightedUnlikelihoodAgentTrait(object):
             mle_notnull = notnull
 
         mle_loss = torch.mv(
-            (F.nll_loss(
-                scores_view, targets_view, ignore_index=self.NULL_IDX, reduction='none'
-            ).view_as(mle_notnull)
-            * mle_notnull.float()).T,
-            batch.rewards
+            (
+                F.nll_loss(
+                    scores_view,
+                    targets_view,
+                    ignore_index=self.NULL_IDX,
+                    reduction='none',
+                ).view_as(mle_notnull)
+                * mle_notnull.float()
+            ).T,
+            batch.rewards,
         ).sum()
 
         # limit loss to only the positive rewards
@@ -605,11 +610,13 @@ class RewardWeightedUnlikelihoodAgentTrait(object):
         ul_scores = scores_view[range_, targets_view]
         clamp_min = 1e-6 if self.opt['fp16'] else 1e-20
         ul_loss = torch.mv(
-            (torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)).view_as(
-                ul_notnull
-            )
-            * ul_notnull.float()).T,
-            batch.rewards
+            (
+                torch.log(torch.clamp(1.0 - ul_scores.exp(), min=clamp_min)).view_as(
+                    ul_notnull
+                )
+                * ul_notnull.float()
+            ).T,
+            batch.rewards,
         ).sum()
         self.global_metrics.add('ul_loss', AverageMetric(ul_loss, ul_target_tokens))
         if ul_target_tokens > 0:
@@ -621,7 +628,6 @@ class RewardWeightedUnlikelihoodAgentTrait(object):
             return (loss, model_output)
         else:
             return loss
-
 
 
 class TransformerSequenceVocabUnlikelihoodAgent(
