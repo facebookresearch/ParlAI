@@ -84,7 +84,11 @@ class CounterAgent(TorchAgent):
         pass
 
     def _val(self, val):
-        if isinstance(val, list):
+        """
+        Pull out a singleton value if provided a list.
+        """
+        # necessary for labels
+        if isinstance(val, (tuple, list)):
             return val[0]
         else:
             return val
@@ -99,6 +103,7 @@ class CounterAgent(TorchAgent):
         pass
 
     def _to_tuple(self, msg: Message) -> Tuple:
+        # turned into an indexable object
         keys = ['text', 'labels', 'eval_labels']
         return tuple(self._val(msg.get(k)) for k in keys)
 

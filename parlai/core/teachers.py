@@ -2515,7 +2515,10 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._enqueue_request()
 
     def shutdown(self):
-        # self._drain(self.chunks)
+        # Time to wrap up. We should rush out to the worker and tell them
+        # that they're "done" processing data.
+        self._drain(self.chunks)  # seems unnecessary but feels good
+        # same signal as end of epoch
         self.chunks.put((None, None))
         self.chunks.put((None, None))
 
