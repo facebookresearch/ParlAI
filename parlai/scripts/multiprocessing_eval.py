@@ -52,13 +52,14 @@ def launch_and_eval(opt, port):
     Perform a fork() to many processes.
     """
     # Launch multiple subprocesses
-    spawncontext = torch.multiprocessing.spawn(
+    spawncontext = torch.multiprocessing.start_processes(
         multiprocess_eval,
         # need to give rank offset as 1 to cover the fact that the main
         # process is rank 0, but that spawn() doesn't let you control rank
-        (opt, port, 1),
+        args=(opt, port, 1),
         nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
+        start_method='fork',
     )
 
     try:

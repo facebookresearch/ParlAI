@@ -15,19 +15,19 @@ from parlai.tasks.integration_tests.agents import NUM_TEST
 import torch.distributed as dist
 import parlai.scripts.multiprocessing_train as mp_train
 
-BASE_ARGS = {
-    'model': 'test_agents/counter',
-    'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
-    'dict_tokenizer': 'space',
-    'truncate': 8,
-    'num_epochs': 2,
-    'datatype': 'train:stream',
-}
-
 
 class TestNumExamples(TestCase):
+    BASE_ARGS = {
+        'model': 'test_agents/counter',
+        'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
+        'dict_tokenizer': 'space',
+        'truncate': 8,
+        'num_epochs': 2,
+        'datatype': 'train:stream',
+    }
+
     def _run(self, **kwargs):
-        opt = {**BASE_ARGS, **kwargs}
+        opt = {**self.BASE_ARGS, **kwargs}
         valid_report, test_report = testing_utils.train_model(opt)
         assert valid_report['unique'] == NUM_TEST
         assert valid_report['times_seen'] == 1
@@ -36,7 +36,7 @@ class TestNumExamples(TestCase):
         return valid_report, test_report
 
     def _run_mp(self, **kwargs):
-        opt = {**BASE_ARGS, **kwargs}
+        opt = {**self.BASE_ARGS, **kwargs}
         with testing_utils.tempdir() as tmpdir:
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
@@ -193,3 +193,15 @@ class TestNumExamples(TestCase):
             batchsize=2,
             dynamic_batching='batchsort',
         )
+
+
+class TestBackgroundPreprocessorNumExamples(TestNumExamples):
+    BASE_ARGS = {
+        'model': 'test_agents/counter',
+        'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
+        'dict_tokenizer': 'space',
+        'truncate': 8,
+        'num_epochs': 2,
+        'datatype': 'train:stream',
+        'num_workers': 4,
+    }
