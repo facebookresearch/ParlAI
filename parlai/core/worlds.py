@@ -1237,8 +1237,8 @@ class BackgroundDriverWorld(World):
 
         return mp.start_processes(
             fn=BackgroundWorkerDynamicBatchWorld.launch_process,
-            args=(self.opt, self.get_model_agent(), self._process_queue),
             nprocs=self._num_workers,
+            args=(self.opt, self.get_model_agent(), self._process_queue),
             join=False,
             start_method='fork',
         )
