@@ -145,7 +145,7 @@ class _ErrorThrowingDataLoader(object):
     def request_load(self, receive_fn, load_fn, args):
         raise RuntimeError(
             'One of your teachers uses a DataLoader or a thread. You may only '
-            'combine this with --num-wokers 0.'
+            'combine this with --num-workers 0.'
         )
 
     def start(self):
@@ -2319,6 +2319,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.samples = shared['samples']
             self.reset_counter = shared['reset_counter']
             self.rng = shared['rng']
+            self.tot_samples_loaded = shared['tot_samples_loaded']
         else:
             self.is_root_teacher = True
             self.samples = queue.Queue(maxsize=self.buffersize)
@@ -2389,6 +2390,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         shared['chunks'] = self.chunks
         shared['reset_counter'] = self.reset_counter
         shared['rng'] = self.rng
+        shared['tot_samples_loaded'] = self.tot_samples_loaded
         return shared
 
     def _setup_data(self, datatype):
@@ -2555,9 +2557,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
-            self.tot_samples_loaded = defaultdict(
-                int
-            )  # reset the count of samples loaded
+            self.tot_samples_loaded.clear()  # reset the count of samples loaded
             self._enqueue_request()
 
     def shutdown(self):
