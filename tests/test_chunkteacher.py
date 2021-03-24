@@ -68,20 +68,25 @@ class TestNumExamples(TestCase):
             task='integration_tests:chunky', batchsize=2, dynamic_batching='batchsort'
         )
 
+    @testing_utils.skipUnlessGPU
     def test_mp_normal_bs1(self):
         self._run_mp(task='integration_tests:chunky')
 
+    @testing_utils.skipUnlessGPU
     def test_mp_normal_bs2(self):
         self._run_mp(task='integration_tests:chunky', batchsize=2)
 
+    @testing_utils.skipUnlessGPU
     def test_mp_normal_bs3(self):
         self._run_mp(task='integration_tests:chunky', batchsize=3)
 
+    @testing_utils.skipUnlessGPU
     def test_mp_normal_dynb(self):
         self._run_mp(
             task='integration_tests:chunky', batchsize=2, dynamic_batching='full'
         )
 
+    @testing_utils.skipUnlessGPU
     def test_mp_normal_batchsort(self):
         self._run_mp(
             task='integration_tests:chunky', batchsize=2, dynamic_batching='batchsort'
@@ -112,15 +117,19 @@ class TestNumExamples(TestCase):
             dynamic_batching='batchsort',
         )
 
+    @testing_utils.skipUnlessGPU
     def test_mp_small_buffer_bs1(self):
         self._run_mp(task='integration_tests:chunky_small_buffer')
 
+    @testing_utils.skipUnlessGPU
     def test_mp_small_buffer_bs2(self):
         self._run_mp(task='integration_tests:chunky_small_buffer', batchsize=2)
 
+    @testing_utils.skipUnlessGPU
     def test_mp_small_buffer_bs3(self):
         self._run_mp(task='integration_tests:chunky_small_buffer', batchsize=3)
 
+    @testing_utils.skipUnlessGPU
     def test_mp_small_buffer_dynb(self):
         self._run_mp(
             task='integration_tests:chunky_small_buffer',
@@ -128,6 +137,7 @@ class TestNumExamples(TestCase):
             dynamic_batching='full',
         )
 
+    @testing_utils.skipUnlessGPU
     def test_mp_small_buffer_batchsort(self):
         self._run_mp(
             task='integration_tests:chunky_small_buffer',
@@ -158,20 +168,25 @@ class TestNumExamples(TestCase):
             dynamic_batching='batchsort',
         )
 
+    @testing_utils.skipUnlessGPU
     def test_mp_slow_bs1(self):
         self._run_mp(task='integration_tests:chunky_slow')
 
+    @testing_utils.skipUnlessGPU
     def test_mp_slow_bs2(self):
         self._run_mp(task='integration_tests:chunky_slow', batchsize=2)
 
+    @testing_utils.skipUnlessGPU
     def test_mp_slow_bs3(self):
         self._run_mp(task='integration_tests:chunky_slow', batchsize=3)
 
+    @testing_utils.skipUnlessGPU
     def test_mp_slow_dynb(self):
         self._run_mp(
             task='integration_tests:chunky_slow', batchsize=2, dynamic_batching='full'
         )
 
+    @testing_utils.skipUnlessGPU
     def test_mp_slow_batchsort(self):
         self._run_mp(
             task='integration_tests:chunky_slow',
