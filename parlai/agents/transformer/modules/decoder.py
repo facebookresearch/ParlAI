@@ -194,7 +194,12 @@ class TransformerDecoder(nn.Module):
 
         return tensor, new_incr_state
 
-    def forward(self, input, encoder_state, incr_state=None):
+    def forward(
+        self,
+        input: torch.Tensor,
+        encoder_state,
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
 
@@ -282,14 +287,14 @@ class TransformerDecoderLayer(nn.Module):
 
     def __init__(
         self,
-        n_heads,
-        embedding_size,
-        ffn_size,
-        attention_dropout=0.0,
-        relu_dropout=0.0,
-        dropout=0.0,
-        activation='relu',
-        variant='aiayn',
+        n_heads: int,
+        embedding_size: int,
+        ffn_size: int,
+        attention_dropout: float = 0.0,
+        relu_dropout: float = 0.0,
+        dropout: float = 0.0,
+        activation: str = 'relu',
+        variant: str = 'aiayn',
     ):
         super().__init__()
         self.dim = embedding_size
@@ -313,7 +318,13 @@ class TransformerDecoderLayer(nn.Module):
         )
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-    def forward(self, x, encoder_output, encoder_mask, incr_state=None):
+    def forward(
+        self,
+        x: torch.Tensor,
+        encoder_output: torch.Tensor,
+        encoder_mask: torch.Tensor,
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
 

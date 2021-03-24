@@ -7,6 +7,7 @@
 Feedforward neural network, as used in transformer implementation.
 """
 
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -16,7 +17,13 @@ class TransformerFFN(nn.Module):
     Implements the FFN part of the transformer.
     """
 
-    def __init__(self, dim, dim_hidden, relu_dropout=0, activation='relu'):
+    def __init__(
+        self,
+        dim: int,
+        dim_hidden: int,
+        relu_dropout: float = 0,
+        activation: str = 'relu',
+    ):
         super(TransformerFFN, self).__init__()
         self.relu_dropout = nn.Dropout(p=relu_dropout)
         if activation == 'relu':
@@ -33,7 +40,7 @@ class TransformerFFN(nn.Module):
         nn.init.xavier_uniform_(self.lin2.weight)
         # TODO: initialize biases to 0
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass.
         """

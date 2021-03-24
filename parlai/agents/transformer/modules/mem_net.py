@@ -3,7 +3,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import torch
 import torch.nn as nn
+from typing import Optional, Tuple
 
 from parlai.agents.transformer.modules import (
     create_embeddings,
@@ -11,6 +13,8 @@ from parlai.agents.transformer.modules import (
     TransformerEncoder,
     TransformerResponseWrapper,
 )
+from parlai.core.opt import Opt
+from parlai.core.torch_agent import DictionaryAgent
 
 
 class TransformerMemNetModel(nn.Module):
@@ -30,7 +34,7 @@ class TransformerMemNetModel(nn.Module):
             reduction_type=reduction_type,
         )
 
-    def __init__(self, opt, dictionary):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent):
         super().__init__()
         self.opt = opt
         self.pad_idx = dictionary[dictionary.null_token]
@@ -136,7 +140,13 @@ class TransformerMemNetModel(nn.Module):
 
         return weights, context_h
 
-    def forward(self, xs, mems, cands, context_segments=None):
+    def forward(
+        self,
+        xs: torch.LongTensor,
+        mems: torch.LongTensor,
+        cands: torch.LongTensor,
+        context_segments: Optional[torch.LongTensor] = None,
+    ) -> Tuple[torch.LongTensor, torch.LongTensor]:
         """
         Forward pass.
 

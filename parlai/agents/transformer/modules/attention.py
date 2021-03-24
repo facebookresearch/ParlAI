@@ -8,7 +8,7 @@ Implementations of attention.
 """
 
 import math
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Union
 
 import torch
 import torch.nn as nn
@@ -22,7 +22,13 @@ class BasicAttention(nn.Module):
     Implements simple/classical attention.
     """
 
-    def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
+    def __init__(
+        self,
+        dim: int = 1,
+        attn: str = 'cosine',
+        residual: bool = False,
+        get_weights: bool = True,
+    ):
         super().__init__()
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
@@ -31,7 +37,13 @@ class BasicAttention(nn.Module):
         self.get_weights = get_weights
         self.residual = residual
 
-    def forward(self, xs, ys, mask_ys=None, values=None):
+    def forward(
+        self,
+        xs: torch.Tensor,
+        ys: torch.Tensor,
+        mask_ys: Optional[torch.Tensor] = None,
+        values: Optional[torch.Tensor] = None,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         """
         Compute attention.
 
@@ -80,7 +92,7 @@ class MultiHeadAttention(nn.Module):
     See Vaswani (2017) for an extensive description.
     """
 
-    def __init__(self, n_heads, dim, dropout=0):
+    def __init__(self, n_heads: int, dim: int, dropout: float = 0):
         super(MultiHeadAttention, self).__init__()
         self.n_heads = n_heads
         self.dim = dim

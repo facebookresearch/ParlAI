@@ -315,14 +315,14 @@ class TransformerEncoderLayer(nn.Module):
 
     def __init__(
         self,
-        n_heads,
-        embedding_size,
-        ffn_size,
-        attention_dropout=0.0,
-        relu_dropout=0.0,
-        dropout=0.0,
-        activation='relu',
-        variant=None,
+        n_heads: int,
+        embedding_size: int,
+        ffn_size: int,
+        attention_dropout: float = 0.0,
+        relu_dropout: float = 0.0,
+        dropout: float = 0.0,
+        activation: str = 'relu',
+        variant: Optional[str] = None,
     ):
         super().__init__()
         self.dim = embedding_size
@@ -342,7 +342,7 @@ class TransformerEncoderLayer(nn.Module):
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
-    def forward(self, tensor, mask):
+    def forward(self, tensor: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
         """
         Forward pass.
         """
