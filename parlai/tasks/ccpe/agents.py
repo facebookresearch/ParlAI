@@ -20,17 +20,28 @@ class _Abstract(DialogTeacher):
         super().__init__(opt, shared)
 
     def _get_turns_of_speaker(self, utts, idx, speaker):
-        result = {"speaker": speaker, "text": "", "segments": []}
+        """
+        In CCPE, sometimes we'll have multiple ASSISTANT or multiple USER turns all in a
+        row.
+
+        Compress them togetther, separated by newlines.
+        """
+        segments = []
+        text = []
         while idx < len(utts) and utts[idx]["speaker"] == speaker:
-            if len(result["text"]) == 0:
-                result["text"] = utts[idx]["text"]
-            else:
-                result["text"] += "\n" + utts[idx]["text"]
-            result["segments"].extend(utts[idx].get("segments", []))
+            text.append(utts[idx]["text"])
+            segments.extend(utts[idx].get("segments", []))
             idx += 1
-        return result, idx
+        return {"speaker": speaker, "text": "\n".join(text), "segments": segments}, idx
 
     def _load_data(self, fold):
+        """
+        Load this data into a convenient intermediate format for being able to easily
+        parse out which turns should be assistant turns and which should be user turns.
+
+        Specifically, this will always begin with an ASSISTANT turn, be of even length
+        and end with a USER turn.
+        """
         fpath = os.path.join(self.opt['datapath'], 'CCPE', 'ccpe.json')
         with PathManager.open(fpath, 'r') as infile:
             json_data = json.load(infile)
@@ -50,7 +61,8 @@ class _Abstract(DialogTeacher):
             idx = 0
             utts = conversation["utterances"]
             if utts[0]["speaker"] != "ASSISTANT":
-                # Make a dummy assistant turn and add a user turn
+                # Make a dummy assistant turn and add a user turn. Do this for
+                # consistency of structure; gets filtered out later.
                 episode.append({"speaker": "ASSISTANT", "text": "", "segments": []})
                 turn, idx = self._get_turns_of_speaker(utts, idx, "USER")
                 episode.append(turn)
@@ -75,7 +87,7 @@ class CcpeAssistantTeacher(_Abstract):
                 assistant_turn = episode[2 * i]
                 user_turn = episode[2 * i + 1]
                 if len(assistant_turn["text"]) == 0:
-                    continue  # trains fail otherwise
+                    continue  # trains fail if "" is input. This only happens in first turn
                 yield {
                     "text": assistant_turn["text"],
                     "textSegments": assistant_turn["segments"],
@@ -93,8 +105,6 @@ class CcpeUserTeacher(_Abstract):
             for i in range((len(episode) // 2) - 1):
                 user_turn = episode[2 * i + 1]
                 assistant_turn = episode[2 * i + 2]
-                if len(user_turn["text"]) == 0:
-                    continue  # trains fail otherwise
                 yield {
                     "text": user_turn["text"],
                     "textSegments": user_turn["segments"],
