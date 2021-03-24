@@ -56,8 +56,7 @@ class CounterAgent(TorchAgent):
     """
     Simple agent that counts the number of unique things it has seen.
 
-    Could be simpler, but we make it a TorchAgent so it's happy with dynamic
-    batching.
+    Could be simpler, but we make it a TorchAgent so it's happy with dynamic batching.
     """
 
     def __init__(self, opt, shared=None):
