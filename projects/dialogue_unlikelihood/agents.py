@@ -570,7 +570,6 @@ class RewardWeightedUnlikelihoodAgentTrait(object):
 
         notnull = targets.ne(self.NULL_IDX)
         if self.is_training:
-            # note it's >= because convai2 and other teachers all provide a 0 reward
             mle_notnull = notnull & (batch.rewards >= 0).unsqueeze(1).expand_as(notnull)
         else:
             mle_notnull = notnull
