@@ -35,15 +35,25 @@ class HuggingFaceTeacher(DialogTeacher):
             # no split specified and there are splits- combine all the splits together
             self.dataset = concatenate_datasets(list(self.dataset.values()))
 
-        # map numerical labels back to strings
         self.labels = self.dataset.features['label'].names
-        # self.labels.append('unknown')
 
-        def convert_to_str_label(row):
-            row['label'] = self.labels[row['label']]
-            return row
-
-        self.dataset = self.dataset.map(convert_to_str_label)
+        # identify text columns
+        self.text_columns = []
+        text_attr = [
+            'premise',
+            'hypothesis',
+            'sentence',
+            'context',
+            'question',
+            'title',
+            'tokens',
+        ]
+        print(self.dataset.column_names)
+        for col in self.dataset.column_names:
+            for a in text_attr:
+                if a in col:
+                    self.text_columns.append(col)
+                    break
 
         self.id = "huggingface"
         super().__init__(opt, shared)
@@ -83,12 +93,20 @@ class HuggingFaceTeacher(DialogTeacher):
 
     def setup_data(self, path):
         for row in self.dataset:
-            premise = row.get('premise', '')
-            hypothesis = row.get('hypothesis', '')
-            sentence = row.get('sentence', '')
-            text = sentence + premise + hypothesis
-            label = str(row['label'])
+            # construct text
+            text_arr = []
+            for col in self.text_columns:
+                text_arr.append(row.get(col))
+            text = '\n'.join(text_arr)
+
+            # construct label and candidates
+            label = row['label']
             candidates = self.labels
+            if type(label) is int:
+                label = self.labels[label]
+            if label in row:
+                label = row[label]
+                candidates = [row[l] for l in self.labels]
 
             yield (text, [label], None, candidates), True
 
