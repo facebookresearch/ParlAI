@@ -178,8 +178,6 @@ class MultiHeadAttention(nn.Module):
         _, _key_len, dim = key.size()
 
         q = prepare_head(self.q_lin(query))
-        k = prepare_head(self.k_lin(key))
-        v = prepare_head(self.v_lin(value))
 
         # Prepend incremental states. For each of the key, value, and mask, see if
         # a previous incremental state exists, and if so, reshape it to match the shape
@@ -195,7 +193,9 @@ class MultiHeadAttention(nn.Module):
             if static_kv:
                 k = prev_key
             else:
-                k = torch.cat([prev_key, k], dim=1)
+                k = torch.cat([prev_key, prepare_head(self.k_lin(key))], dim=1)
+        else:
+            k = prepare_head(self.k_lin(key))
         if 'prev_value' in incr_state:
             prev_value = incr_state['prev_value'].view(
                 batch_size * n_heads, -1, dim_per_head
@@ -203,7 +203,9 @@ class MultiHeadAttention(nn.Module):
             if static_kv:
                 v = prev_value
             else:
-                v = torch.cat([prev_value, v], dim=1)
+                v = torch.cat([prev_value, prepare_head(self.v_lin(value))], dim=1)
+        else:
+            v = prepare_head(self.v_lin(value))
         if 'prev_mask' in incr_state:
             if static_kv:
                 mask = incr_state['prev_mask']
