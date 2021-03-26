@@ -173,7 +173,6 @@ class TestDistributed(unittest.TestCase):
             build_dict.build_dict(popt)
 
             valid, test = mp_train.launch_and_train(popt, 31338)
-            dist.destroy_process_group()
 
         return (valid, test)
 

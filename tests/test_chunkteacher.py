@@ -42,7 +42,6 @@ class TestNumExamples(TestCase):
                 opt['model_file'] = os.path.join(tmpdir, 'model')
 
             valid_report, test_report = mp_train.MultiProcessTrain.main(**opt)
-            dist.destroy_process_group()
             assert valid_report['unique'] == NUM_TEST
             assert valid_report['times_seen'] == 1
             assert test_report['unique'] == NUM_TEST
