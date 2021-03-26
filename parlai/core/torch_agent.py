@@ -105,6 +105,7 @@ class Batch(AttrDict):
     """
 
     batchsize: int
+    is_training: bool
     text_vec: Optional[torch.LongTensor]
     label_vec: Optional[torch.LongTensor]
     labels: Optional[List[str]]
@@ -131,6 +132,7 @@ class Batch(AttrDict):
         candidate_vecs=None,
         reward=None,
         image=None,
+        is_training: Optional[bool] = None,
         _context_original_length: Optional[torch.LongTensor] = None,
         _context_truncate_rate: Optional[torch.LongTensor] = None,
         _context_truncated_length: Optional[torch.LongTensor] = None,
@@ -149,6 +151,7 @@ class Batch(AttrDict):
             candidates=candidates,
             candidate_vecs=candidate_vecs,
             image=image,
+            is_training=is_training,
             _context_original_length=_context_original_length,
             _context_truncate_rate=_context_truncate_rate,
             _context_truncated_length=_context_truncated_length,
