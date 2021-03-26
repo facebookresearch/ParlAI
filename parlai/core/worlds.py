@@ -1295,12 +1295,24 @@ class BackgroundDriverWorld(World):
 class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
     @classmethod
     def launch_process(cls, index, opt, model_agent, process_queue):
+        import torch
+
+        torch.set_num_threads(1)  # prevent threads from spawning in this worker
         logging.info(f"Launching background on Index {index}")
         opt = copy.deepcopy(opt)
         opt['background_index'] = index
-        world = cls(opt, model_agent=model_agent, process_queue=process_queue)
-        while True:
-            world.parley()
+        try:
+            world = cls(opt, model_agent=model_agent, process_queue=process_queue)
+            while True:
+                world.parley()
+        except Exception:
+            import traceback
+
+            error = traceback.format_exc()
+            logging.critical(
+                f'Exception on background preprocesser index {index}!\n' + error
+            )
+            raise
 
     def __init__(self, opt: Opt, model_agent=None, process_queue=None):
         base_world = create_task_world(opt, [model_agent])

@@ -56,7 +56,7 @@ def launch_and_train(opt, port):
         (opt, port, 1),
         nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
-        start_method='fork',
+        start_method='spawn',
     )
 
     try:

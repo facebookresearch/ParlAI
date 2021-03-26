@@ -136,7 +136,7 @@ class _ErrorThrowingDataLoader(object):
     Since threads cannot be mixed with spawn_method='fork', we need to disallow
     users from combining --num-workers with teachers that utilize threads.
     This placeholder object is only useful for ensuring the user sees a loud
-    error message when 
+    error message when they accidentally use a thread.
     """
 
     def __init__(self, opt):
@@ -2294,6 +2294,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
+        self.bg_index = self.opt.get('background_index', None)
         if (
             shared is None
             and self.is_train
@@ -2433,18 +2434,25 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         if chunk_output is None:
             self.samples.put((None, chunk_reset_cnt))
             return
-        while chunk_output:
-            # self.samples is a queue with maxsize
-            # self.buffersize, so will block if the
-            # buffer gets full
-            sample = chunk_output.pop(0)
-            if (
-                self.is_train
-                or self.tot_samples_loaded[chunk_reset_cnt] % self.dws == self.rank
-            ):
-                # log the reset count at the time the chunk was queued
-                self.samples.put((sample, chunk_reset_cnt))
-            self.tot_samples_loaded[chunk_reset_cnt] += 1
+        if self.threading:
+            while chunk_output:
+                # self.samples is a queue with maxsize
+                # self.buffersize, so will block if the
+                # buffer gets full
+                sample = chunk_output.pop(0)
+                if (
+                    self.is_train
+                    or self.tot_samples_loaded[chunk_reset_cnt] % self.dws == self.rank
+                ):
+                    # log the reset count at the time the chunk was queued
+                    self.samples.put((sample, chunk_reset_cnt))
+                self.tot_samples_loaded[chunk_reset_cnt] += 1
+        else:
+            # we're actually running in single processor mode so we'll just
+            # do a thread-unsafe hit of the python internals, which is much faster
+            # than trying to safely put things onto the queue
+            self.samples.queue.extend((co, chunk_reset_cnt) for co in chunk_output)
+            self.tot_samples_loaded[chunk_reset_cnt] += len(chunk_output)
         if self.threading:
             # and start loading the next chunk
             self._enqueue_request()
@@ -2558,7 +2566,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._drain(self.chunks)
             self._enqueue_chunks()
             self.tot_samples_loaded.clear()  # reset the count of samples loaded
-            self._enqueue_request()
+            if self.threading:
+                self._enqueue_request()
 
     def shutdown(self):
         # Time to wrap up. We should rush out to the worker and tell them
