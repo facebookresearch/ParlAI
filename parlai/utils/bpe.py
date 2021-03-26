@@ -9,7 +9,6 @@ Byte pair encoding (BPE).
 
 Lots of BPE things for ParlAI
 """
-from typing import Optional
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from functools import lru_cache

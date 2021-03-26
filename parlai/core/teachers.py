@@ -133,10 +133,10 @@ class _ErrorThrowingDataLoader(object):
     """
     A fake DataLoader which throws an exception when a work order is placed.
 
-    Since threads cannot be mixed with spawn_method='fork', we need to disallow
-    users from combining --num-workers with teachers that utilize threads.
-    This placeholder object is only useful for ensuring the user sees a loud
-    error message when they accidentally use a thread.
+    Since threads cannot be mixed with spawn_method='fork', we need to disallow users
+    from combining --num-workers with teachers that utilize threads. This placeholder
+    object is only useful for ensuring the user sees a loud error message when they
+    accidentally use a thread.
     """
 
     def __init__(self, opt):

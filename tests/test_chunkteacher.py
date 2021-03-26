@@ -12,7 +12,6 @@ from unittest import TestCase
 import os
 import parlai.utils.testing as testing_utils
 from parlai.tasks.integration_tests.agents import NUM_TEST
-import torch.distributed as dist
 import parlai.scripts.multiprocessing_train as mp_train
 
 

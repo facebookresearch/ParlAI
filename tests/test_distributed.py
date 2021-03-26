@@ -7,7 +7,6 @@
 import os
 import copy
 import unittest
-import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
 import parlai.scripts.multiprocessing_train as mp_train
