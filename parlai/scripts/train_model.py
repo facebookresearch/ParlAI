@@ -681,7 +681,7 @@ class TrainLoop:
                 eta = time_left
 
         max_train_steps = self.opt.get('max_train_steps', -1)
-        if max_train_steps > 0:
+        if max_train_steps > 0 and steps_taken > 0:
             steps_progress = steps_taken / max_train_steps
             eta = (1 - steps_progress) * time_elapsed / steps_progress
 
