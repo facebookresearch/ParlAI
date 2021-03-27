@@ -841,8 +841,9 @@ class TrainLoop:
                     >= self.val_every_n_steps
                 ):
                     try:
-                        # log before we validate
-                        self.log()
+                        if self._last_log_steps:
+                            # log before we validate, unless we haven't done anything
+                            self.log()
                         world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
