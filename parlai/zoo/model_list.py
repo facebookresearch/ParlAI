@@ -208,26 +208,6 @@ model_list = [
         "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",  # noqa: E501
     },
     {
-        "title": "Controllable Dialogue ConvAI2 model",
-        "id": "controllable_dialogue",
-        "path": "zoo:controllable_dialogue/convai2_finetuned_baseline",
-        "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
-        "example": (
-            "parlai eval_model --model "
-            "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:"
-            "ControllableSeq2seqAgent --task "
-            "projects.controllable_dialogue.tasks.agents "
-            "-mf zoo:controllable_dialogue/convai2_finetuned_baseline"
-        ),
-        "result": (
-            "{'exs': 7801, 'accuracy': 0.0006409, 'f1': 0.1702, 'bleu': 0.005205, "
-            "'token_acc': 0.3949, 'loss': 3.129, 'ppl': 22.86}"
-        ),
-        "description": "Seq2Seq model with control trained on ConvAI2",
-    },
-    {
         "title": "TransResNet (ResNet 152) Personality-Captions model",
         "id": "personality_captions",
         "path": "zoo:personality_captions/transresnet",
@@ -538,43 +518,6 @@ model_list = [
         "'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},"
         "'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}"  # noqa: E501
         "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
-    },
-    {
-        "title": "Self-feeding Chatbot",
-        "id": "self_feeding",
-        "path": "zoo:self_feeding/model",
-        "agent": "projects.self_feeding.self_feeding_agent:SelfFeedingAgent",
-        "task": "self_feeding:all:train",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/self_feeding",
-        "description": (
-            "The self-feeding chatbot of Hancock, et al., 2019 "
-            "(https://arxiv.org/abs/1901.05415). This model learns from is mistakes "
-            "when actually talking with users. This particular model corresponds to "
-            "the model with 131k human-human chats + 60k human-bot chats + 60k "
-            "feedback chats."
-        ),
-        "example": (
-            "python projects/self_feeding/interactive.py --model-file "
-            "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model --no-cuda true"
-        ),
-        "result": (
-            "Enter Your Message: hi, my name is stephen. what's yours?\n"
-            "[SelfFeeding]: hi there greg . do you have pets ? i've 2 cats named "
-            "milo and fio .\n"
-            "Enter Your Message: sadly, i have no pets. my landlord isn't a fan.\n"
-            "[SelfFeeding]: sorry to hear that . i always had bad allergies when i "
-            "liven on my farm in kansas ."
-        ),
-        "example2": (
-            "parlai eval_model -mf "
-            "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all"
-        ),
-        "result2": (
-            "[ Finished evaluating tasks ['self_feeding:all'] using datatype valid ]\n"
-            "{'exs': 3500, 'dia_rank': 4.654, 'dia_acc': 0.3525, 'fee_rank': 1.0, "
-            "'fee_acc': 1.0, 'fee_exs': 1000, 'sat_re': 0.4607, 'sat_f1': 0.5605, "
-            "'sat_acc': 0.724}"
-        ),
     },
     {
         "title": "Transformer Classifier Single-turn Dialogue Safety Model",

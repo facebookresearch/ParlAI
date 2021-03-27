@@ -521,17 +521,6 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1808.07036"},
     },
     {
-        "id": "SelfFeedingChatbot",
-        "display_name": "Self-Feeding Chatbot",
-        "task": "self_feeding",
-        "tags": [],
-        "description": (
-            "Learning from Dialogue after Deployment. Leveraging user textual "
-            "feedback to improve the chatbot's abilities."
-        ),
-        "links": {"arXiv": "https://arxiv.org/abs/1901.05415"},
-    },
-    {
         "id": "SimpleQuestions",
         "display_name": "Simple Questions",
         "task": "simplequestions",
