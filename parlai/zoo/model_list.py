@@ -15,7 +15,7 @@ automatically, e.g.:
 ... code-block:
 
    parlai interactive --model-file
-       "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
+       "zoo:blender/blender_3B/model"
 
 
 There are a number of guidelines you should follow in the zoo:
@@ -45,57 +45,13 @@ There are a number of guidelines you should follow in the zoo:
 
 model_list = [
     {
-        "title": "DrQA SQuAD model",
-        "id": "drqa",
-        "path": "zoo:drqa/squad/model",
-        "agent": "drqa",
-        "task": "squad",
-        "description": "DrQA Reader trained on SQuAD",
-        "external_website": "https://github.com/facebookresearch/DrQA",
-        "example": "parlai eval_model -mf zoo:drqa/squad/model -t squad -dt test",
-        "result": (
-            # TODO: this differs slightly from the actual results as of 2019-07-23
-            "{'exs': 10570, 'accuracy': 0.6886, 'f1': 0.7821, 'hits@1': 0.689, 'hits@5': 0.689, 'hits@10': 0.689, 'hits@100': 0.689, 'bleu': 0.1364, 'train_loss': 0}"  # noqa: E501
-        ),
-    },
-    {
-        "title": "Wikipedia Retriever (used for open SQuAD)",
-        "id": "wikipedia_20161221",
-        "path": "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs",
-        "agent": "tfidf_retriever",
-        "external_website": "https://github.com/facebookresearch/DrQA",
-        "task": "wikipedia:full",
-        "example": (
-            "parlai interactive --model tfidf_retriever "
-            "-mf zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
-        ),
-        "result": (
-            """
-            Enter Your Message: Yann LeCun
-            [candidate_scores]: [507.05804682 390.18244433 279.24033928 269.60377042 214.00140589]
-            [SparseTfidfRetrieverAgent]:
-            Deep learning (also known as deep structured learning, hierarchical learning or deep machine learning) is a branch of machine learning based on a set of algorithms that attempt to model high level abstractions in data. In a simple case, you could have two sets of neurons: ones that receive an input signal and ones that send an output signal. When the input layer receives an input it passes on a modified version of the input to the next layer. In a deep network, there are many layers between the input and output (and the layers are not made of neurons but it can help to think of it that way), allowing the algorithm to use multiple processing layers, composed of multiple linear and non-linear transformations.
-
-            Deep learning is part of a broader family of machine learning methods based on ...
-            to commonsense reasoning which operates on concepts in terms of production rules of the grammar, and is a basic goal of both human language acquisition and AI. (See also Grammar induction.)
-            """  # noqa: E501
-        ),
-        "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad "
-            "dataset. This is the dump from the original paper, used for "
-            "replicating results."
-        ),
-    },
-    {
         "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
         "id": "wikipedia_full",
         "path": "zoo:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
-        "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad dataset."
-        ),
+        "description": ("Retrieval over Wikipedia dump, used for Wizard of Wikipedia."),
         "example": (
             "parlai interactive --model tfidf_retriever -mf "
             "zoo:wikipedia_full/tfidf_retriever/model"

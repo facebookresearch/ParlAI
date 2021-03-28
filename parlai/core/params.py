@@ -186,8 +186,9 @@ def str2class(value):
     """
     From import path string, returns the class specified.
 
-    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    For example, the string
+    'parlai.agents.hugging_face.dict:Gpt2DictionaryAgent' returns
+    <class 'parlai.agents.hugging_face.dict.Gpt2DictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
