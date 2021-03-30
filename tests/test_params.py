@@ -58,6 +58,13 @@ class TestParlaiParser(unittest.TestCase):
         assert opt['beam_size'] == 20
         assert opt['inference'] == 'topk'
         assert opt['topk'] == 40
+        # and preference for command line over opt presets
+        opt = pp.parse_args(
+            ['--model', 'transformer/generator', '-o', 'gen/meena', '--topk', '7']
+        )
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['topk'] == 7
 
     def test_upgrade_opt(self):
         """

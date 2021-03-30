@@ -1159,6 +1159,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 "no longer supported. Use opt.log() to print the arguments"
             )
             del kwargs['print_args']
+        self.overridable.clear()
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
 
