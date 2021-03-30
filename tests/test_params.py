@@ -47,6 +47,18 @@ class TestParlaiParser(unittest.TestCase):
         opt = pp.parse_args(["-m", "memnn"])
         print(opt)
 
+    def test_opt_presets(self):
+        """
+        Tests whether opt presets bundled with parlai work as expected.
+        """
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        # hardcoded example
+        opt = pp.parse_args(['--model', 'transformer/generator', '-o', 'gen/meena'])
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['topk'] == 40
+
     def test_upgrade_opt(self):
         """
         Test whether upgrade_opt works.

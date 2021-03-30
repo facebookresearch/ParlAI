@@ -1,0 +1,8 @@
+{
+  "beam_block_context_ngram": 3,
+  "beam_block_ngram": 3,
+  "beam_size": 10,
+  "inference": "beam",
+  "beam_min_length": 20,
+  "beam_block_full_context": false
+}
