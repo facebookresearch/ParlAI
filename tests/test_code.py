@@ -22,7 +22,14 @@ class TestInit(unittest.TestCase):
 
     def test_init_everywhere(self):
         for folder_path in testing_utils.git_ls_dirs('parlai'):
-            excluded_folders = ['conf', 'frontend', 'mturk', 'task_config', 'webapp']
+            excluded_folders = [
+                'conf',
+                'frontend',
+                'mturk',
+                'task_config',
+                'webapp',
+                'opt_presets',
+            ]
             # conf: contains YAML files for Hydra
             # frontend, mturk, webapp: contains frontend code for crowdsourcing tasks
             # task_config: contains JSONs, HTML files, etc. for MTurk/Mephisto tasks
