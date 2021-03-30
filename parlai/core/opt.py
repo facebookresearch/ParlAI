@@ -12,9 +12,10 @@ import copy
 import json
 import pickle
 import traceback
+import io
 import parlai.utils.logging as logging
 
-from typing import List
+from typing import List, Union
 
 from parlai.utils.io import PathManager
 
@@ -119,10 +120,13 @@ class Opt(dict):
             f.write('\n')
 
     @classmethod
-    def load(cls, optfile: str) -> 'Opt':
+    def load(cls, optfile: Union[str, io.IOBase]) -> 'Opt':
         """
         Load an Opt from disk.
         """
+        if isinstance(optfile, io.IOBase):
+            with optfile:
+                return json.load(optfile)
         try:
             # try json first
             with PathManager.open(optfile, 'r', encoding='utf-8') as t_handle:
