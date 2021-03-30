@@ -59,12 +59,31 @@ class TestParlaiParser(unittest.TestCase):
         assert opt['inference'] == 'topk'
         assert opt['topk'] == 40
         # and preference for command line over opt presets
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
         opt = pp.parse_args(
             ['--model', 'transformer/generator', '-o', 'gen/meena', '--topk', '7']
         )
         assert opt['beam_size'] == 20
         assert opt['inference'] == 'topk'
         assert opt['topk'] == 7
+        # double check ordering doesn't matter
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        opt = pp.parse_args(
+            ['--model', 'transformer/generator', '--topk', '8', '-o', 'gen/meena']
+        )
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['topk'] == 8
+        # check composability
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        opt = pp.parse_args(['-o', 'arch/blenderbot_3B,gen/meena'])
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['model'] == 'transformer/generator'
+        assert opt['n_encoder_layers'] == 2
 
     def test_upgrade_opt(self):
         """

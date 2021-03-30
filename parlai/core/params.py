@@ -13,7 +13,6 @@ import os
 import sys as _sys
 import datetime
 import parlai
-import pkg_resources
 
 try:
     import git
@@ -978,33 +977,6 @@ class ParlaiParser(argparse.ArgumentParser):
             args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
         return super().parse_known_args(args, namespace)
 
-    def _find_opt_file(self, optfile: str):
-        """
-        Look for an opt file as an argument to --init-opt.
-
-        First looks for a particular existing file on disk, then checks the
-        folder of option aliases.
-
-        May return a filename or a streaming file of an Opt.
-        """
-        oa_filename = os.path.join("opt_presets", optfile + ".opt")
-        user_filename = os.path.join(os.path.expanduser(f"~/.parlai"), oa_filename)
-        if PathManager.exists(optfile):
-            return optfile
-        elif PathManager.exists(user_filename):
-            # use a user's custom opt preset
-            return user_filename
-        elif pkg_resources.resource_exists("parlai", oa_filename):
-            # Maybe a bundled opt preset
-            return pkg_resources.resource_stream("parlai", oa_filename)
-        else:
-            raise FileNotFoundError(
-                f"Could not find filename or opt preset {optfile}. "
-                "Opt presets should not have the '.opt' suffix. Please "
-                "check https://parl.ai/docs/opt_presets.html for a list "
-                "of available opt presets."
-            )
-
     def _load_known_opts(self, optfile, parsed):
         """
         Pull in CLI args for proper models/tasks/etc.
@@ -1012,7 +984,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = Opt.load(self._find_opt_file(optfile))
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -1020,7 +992,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = Opt.load(self._find_opt_file(optfile))
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
@@ -1159,7 +1131,6 @@ class ParlaiParser(argparse.ArgumentParser):
                 "no longer supported. Use opt.log() to print the arguments"
             )
             del kwargs['print_args']
-        self.overridable.clear()
         self.add_extra_args(args)
         self.args = super().parse_args(args=args)
 
