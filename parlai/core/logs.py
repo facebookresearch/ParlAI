@@ -143,7 +143,7 @@ class WandbLogger(object):
             '--wandb-entity',
             type=str,
             default=None,
-            help='W&B enrity name.',
+            help='W&B entity name.',
             hidden=False,
         )
         return logger
