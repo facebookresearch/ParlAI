@@ -823,7 +823,10 @@ class TrainLoop:
                     logging.info(f'max_train_time elapsed:{train_time}s')
                     break
                 if self._train_steps >= self.max_train_steps:
-                    logging.info(f'max_train_steps elapsed:{self._train_steps}')
+                    logging.info(
+                        f'max_train_steps elapsed:{self._train_steps} '
+                        f'time elapsed:{train_time}s'
+                    )
                     break
                 if (
                     log_time > self.log_every_n_secs
