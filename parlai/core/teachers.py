@@ -2514,6 +2514,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             )  # reset the count of samples loaded
             self._enqueue_request()
 
+    def shutdown(self):
+        # Time to wrap up. We should rush out to the worker and tell them
+        # that they're "done" processing data.
+        # same signal as end of epoch
+        self.chunks.put((None, None))
+        self.chunks.put((None, None))
+
 
 def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     """

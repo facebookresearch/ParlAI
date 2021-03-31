@@ -1025,6 +1025,14 @@ class DynamicBatchWorld(World):
 
         self.reset()
 
+    def shutdown(self):
+        """
+        Shutdown each world.
+        """
+        for w in self.worlds:
+            w.shutdown()
+        self.world.shutdown()
+
     def reset(self):
         super().reset()
         self._task_acts = [None for _ in range(self._BUFFER_SIZE)]

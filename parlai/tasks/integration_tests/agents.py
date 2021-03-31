@@ -490,6 +490,11 @@ class ChunkyTeacher(ChunkTeacher):
         return {'text': text, 'labels': [label], 'episode_done': True}
 
 
+class ChunkySmallBufferTeacher(ChunkyTeacher):
+    def get_buffersize(self):
+        return NUM_TEST // 2
+
+
 class InfiniteTrainTeacher(FixedDialogTeacher):
     """
     Teacher with an effectively infinite number of training examples.
@@ -510,19 +515,14 @@ class InfiniteTrainTeacher(FixedDialogTeacher):
         return Message({'text': '1 2 3 4', field: ['1 2 3 4'], 'episode_done': True})
 
 
-class ChunkyUniqueSlowTeacher(ChunkyTeacher):
+class ChunkySlowTeacher(ChunkyTeacher):
     """
     Unique examples that load slowly.
     """
 
     def load_from_chunk(self, chunk_idx: int):
-        output = []
-        for i in range(10):
-            text = str(i + chunk_idx * 10)
-            resp = str(i + chunk_idx * 10)
-            output.append((text, resp))
         time.sleep(0.1)
-        return output
+        return super().load_from_chunk(chunk_idx)
 
 
 class ShortFixedTeacher(FixedDialogCandidateTeacher):
