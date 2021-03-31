@@ -4,13 +4,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FixedDialogTeacher
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
+from parlai.core.teachers import DialogTeacher
 from parlai.utils.io import PathManager
+from parlai.utils.data import DatatypeHelper
 from .build import build
 import os
 import json
 import re
 import csv
+from typing import Optional
 
 
 def _path(opt):
@@ -38,24 +42,30 @@ def replace_movie_ids(id_string, id_map):
     return re.sub(pattern, lambda s: id_map[s.group()], id_string)
 
 
-class ReDialTeacher(FixedDialogTeacher):
+class ReDialTeacher(DialogTeacher):
     """
-    ReDial Teacher.
+    ReDial Teacher. By default, this learns the suggestor
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        group = parser.add_argument_group('ReDial dataset arguments')
+        group.add_argument(
+            '--redial-include-confounder-options',
+            type=bool,
+            default=False,
+            help="Add other movies as suggestions for first turn",
+        )
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        data_path = _path(opt)
+        opt['datafile'] = DatatypeHelper.fold(opt['datatype'])
+        self.data_path = _path(opt)
         self.title_id_map = {}
-        self.get_title_dict(data_path)
-        if shared is not None:
-            self.episodes = shared['episodes']
-        else:
-            self.episodes = []
-            self._setup_data(data_path)
+        self.get_title_dict(self.data_path)
         self.id = 'redial'
-
-        self.reset()
+        super().__init__(opt, shared)
 
     def get_title_dict(self, path):
         csv_path = os.path.join(path, 'movies_with_mentions.csv')
@@ -64,15 +74,15 @@ class ReDialTeacher(FixedDialogTeacher):
             for row in reader:
                 self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
 
-    def _setup_data(self, data_path):
-        train_path = os.path.join(data_path, 'train_data.jsonl')
-        test_path = os.path.join(data_path, 'test_data.jsonl')
+    def setup_data(self, fold):
+        train_path = os.path.join(self.data_path, 'train_data.jsonl')
+        test_path = os.path.join(self.data_path, 'test_data.jsonl')
         # The test data has 1341 episodes. Making valid this size gives
         # about 80/10/10 train/test/valid split
         test_set_episodes = 1341
-        if self.datatype.startswith('test'):
+        if fold.startswith('test'):
             unmerged_episodes = self.get_data_from_file(test_path)
-        elif self.datatype.startswith('valid'):
+        elif fold.startswith('valid'):
             unmerged_episodes = self.get_data_from_file(train_path)
             unmerged_episodes = unmerged_episodes[:test_set_episodes]
         else:
@@ -81,17 +91,51 @@ class ReDialTeacher(FixedDialogTeacher):
 
         # some speakers speak multiple times in a row.
         for unmerged_episode in unmerged_episodes:
-            episode = []
+            curr_text = []
+            train_text = []
+            first = True
+            seeker_id = unmerged_episode["initiatorWorkerId"]
+            recommmender_id = unmerged_episode["respondentWorkerId"]
             prev_speaker = None
+            curr_speaker = None
             for message in unmerged_episode['messages']:
+                # Multiple turns might come from the same speaker; need to
+                # merge these.
                 curr_speaker = message['senderWorkerId']
+                if prev_speaker is None and curr_speaker != seeker_id:
+                    continue  # Skip turns were recommender starts
                 text = replace_movie_ids(message['text'], self.title_id_map)
                 if curr_speaker == prev_speaker:
-                    episode[-1] = episode[-1] + " " + text
+                    curr_text.append(text)
                 else:
-                    episode.append(text)
+                    if prev_speaker == seeker_id:
+                        train_text = curr_text
+                    elif prev_speaker == recommmender_id:
+                        yield {
+                            "id": self.id,
+                            "movieMentions": unmerged_episode["movieMentions"],
+                            "respondentQuestions": unmerged_episode[
+                                "respondentQuestions"
+                            ],
+                            "initiatorQuestions": unmerged_episode[
+                                "initiatorQuestions"
+                            ],
+                            "text": " ".join(train_text),
+                            "label": " ".join(curr_text),
+                        }, first
+                        first = False
+                    curr_text = []
+                    curr_text.append(text)
                     prev_speaker = curr_speaker
-            self.episodes.append(episode)
+            if curr_speaker == recommmender_id:  # fetch last turn
+                yield {
+                    "id": self.id,
+                    "movieMentions": unmerged_episode["movieMentions"],
+                    "respondentQuestions": unmerged_episode["respondentQuestions"],
+                    "initiatorQuestions": unmerged_episode["initiatorQuestions"],
+                    "text": " ".join(train_text),
+                    "label": " ".join(curr_text),
+                }, first
 
     def get_data_from_file(self, filepath):
         data = []
@@ -99,37 +143,6 @@ class ReDialTeacher(FixedDialogTeacher):
             for line in f:
                 data.append(json.loads(line))
         return data
-
-    def share(self):
-        shared = super().share()
-        shared['episodes'] = self.episodes
-        return shared
-
-    def num_examples(self):
-        examples = 0
-        for data in self.episodes:
-            examples += len(data) // 2
-        return examples
-
-    def num_episodes(self):
-        return len(self.episodes)
-
-    def get(self, episode_idx, entry_idx=0):
-        text_idx = entry_idx * 2
-        entry = self.episodes[episode_idx][text_idx]
-        final_speaker_idx = len(self.episodes[episode_idx]) - 2
-        # sometimes the first speaker is at the end with no reply
-        if len(self.episodes[episode_idx]) % 2 == 1:
-            final_speaker_idx -= 1
-        labels = [self.episodes[episode_idx][text_idx + 1]]
-        episode_done = text_idx >= final_speaker_idx
-        action = {
-            'id': self.id,
-            'text': entry,
-            'episode_done': episode_done,
-            'labels': labels,
-        }
-        return action
 
 
 class DefaultTeacher(ReDialTeacher):
