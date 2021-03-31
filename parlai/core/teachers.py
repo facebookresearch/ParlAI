@@ -61,7 +61,7 @@ import random
 import yaml
 from threading import Thread
 import torch
-from typing import List, Tuple, Optional, TypeVar
+from typing import List, Tuple, Optional, TypeVar, Any
 
 
 ERROR_MESSAGE_NO_DATAFILE = (
@@ -380,7 +380,7 @@ class FixedDialogTeacher(Teacher):
         # TODO: mark as abstract
         pass
 
-    def receive_data(self, future):
+    def receive_data(self, future: concurrent.futures.Future):
         """
         Receive data from the data loader.
 
@@ -2304,7 +2304,18 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 c for c in self.fold_chunks if c % self.dws == self.rank
             ]
 
-        # deal with --num-workers
+        # If we're in training mode with --num-workers > 0, we will run the
+        # chunk teacher in single threaded mode (self.threading is False). In
+        # this mode, we will block on chunk loading.
+
+        # If we're not using --num-workers, or we're in validation/testing, we
+        # _always_ run in normal threading mode, where chunk loading is pushed
+        # to a background thread. However, since python threading is is blocked
+        # by the GIL, this only manages to background I/O.
+
+        # Potentially in the future, we may support --num-workers in validation,
+        # in which case we can get rid of one of these.
+
         self.threading = not (opt.get('num_workers', 0) > 0 and self.is_train)
         if not self.threading and opt.get('background_index') is None:
             # don't start loading data on the main driver, we don't need it
@@ -2419,15 +2430,26 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         if self.threading:
             self.data_loader.request_load(self.receive_data, self.get_chunk, ())
         else:
-            self.receive_data(self.get_chunk(), direct_result=True)
+            self._process_data(self.get_chunk())
 
-    def receive_data(self, future, direct_result=False):
+    def receive_data(self, future):
+        """
+        Receive loaded data and place it onto the sample queue.
+
+        :param future:
+            A Future object which will return a value from a call to get_chunk()
+        """
+        return self._process_data(future.result())
+
+    def _process_data(self, output: Optional[Tuple[Any, int]]):
         """
         Loads data.
 
         Load data into self.samples until buffersize is reached.
+
+        :param output:
+            The output of an item from a call to get_chunk()
         """
-        output = future if direct_result else future.result()
         if output is None:
             return
         chunk_output, chunk_reset_cnt = output

@@ -1010,7 +1010,12 @@ class DynamicBatchWorld(World):
             )
 
         # size of the buffer we will use to find worlds
-        self._BUFFER_SIZE = 1021  # chosen as a prime number
+        if opt['dynamic_batching']:
+            self._BUFFER_SIZE = 1021  # chosen as a prime number
+        else:
+            # we're secretly running in vanilla BS mode, via background
+            # preprocessing
+            self._BUFFER_SIZE = opt['batchsize']
 
         if opt['dynamic_batching'] == 'full':
             # full dynamic batching, we can grow our batchsize
@@ -1238,8 +1243,14 @@ class BackgroundDriverWorld(World):
         return mp.start_processes(
             fn=BackgroundWorkerDynamicBatchWorld.launch_process,
             nprocs=self._num_workers,
+            # note that index is an an implied argument added by start_processes
             args=(self.opt, self.get_model_agent(), self._process_queue),
             join=False,
+            # launch in fork mode so that we can share the model agent easily
+            # note that this prevents us from using ANY threads in ANY of the
+            # subprocesses! (See ChunkTeacher for one example). Fortunately, we
+            # CAN use threads in the MAIN process, and we exploit this at
+            # times.
             start_method='fork',
         )
 
@@ -1405,6 +1416,10 @@ def create_task(opt: Opt, user_agents, default_world=None):
         world = MultiWorld(opt, user_agents, default_world=default_world)
 
     if DatatypeHelper.is_training(opt['datatype']) and opt.get('num_workers', 0) > 0:
+        # note that we never use Background preprocessing in the valid/test
+        # worlds, as we are unable to call Teacher.observe(model_act) in BG
+        # preprocessing, so we are unable to compute Metrics or accurately
+        # differentiate MultiWorld stats.
         world = BackgroundDriverWorld(opt, world)
     elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
         world = DynamicBatchWorld(opt, world)
