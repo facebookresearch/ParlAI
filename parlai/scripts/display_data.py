@@ -64,7 +64,7 @@ def display_data(opt):
     if 'ordered' not in opt['datatype'] and 'train' in opt['datatype']:
         opt['datatype'] = f"{opt['datatype']}:ordered"
 
-    # create repeat label agent and assign it to the specified task
+    # create dummy agent and assign it to the specified task
     opt.log()
     opt['fixed_response'] = None
     agent = FixedResponseAgent(opt)
