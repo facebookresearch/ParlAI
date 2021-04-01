@@ -16,7 +16,9 @@ https://arxiv.org/abs/1810.04805), and a few different variations seen in the
 literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
-from typing import Dict
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Dict, Optional, Type
 
 import torch
 import torch.cuda
@@ -27,46 +29,76 @@ from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerEncoder,
 )
+from parlai.agents.transformer.modules.interfaces import ComponentSpec, TComponent
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
 
-class TransformerGeneratorModel(TorchGeneratorModel):
+class TransformerGeneratorModel(TorchGeneratorModel, TComponent):
     """
     Implements a full generator model, with one encoder and one decoder.
     """
 
+    @dataclass
+    class Manifest:
+        encoder: ComponentSpec[TransformerEncoder] = ComponentSpec(
+            TransformerEncoder, TransformerEncoder.Manifest()
+        )
+        decoder: ComponentSpec[TransformerDecoder] = ComponentSpec(
+            TransformerDecoder, TransformerDecoder.Manifest()
+        )
+
     @classmethod
     def build_encoder(
-        cls, opt, dictionary, embedding=None, padding_idx=None, reduction_type='mean'
+        cls,
+        opt,
+        dictionary,
+        encoder_spec: ComponentSpec,
+        embedding=None,
+        padding_idx=None,
+        reduction_type='mean',
     ):
-        return TransformerEncoder(
+        return encoder_spec.klass(
             opt=opt,
             embedding=embedding,
             vocabulary_size=len(dictionary),
             padding_idx=padding_idx,
             reduction_type=reduction_type,
+            manifest=encoder_spec.manifest,
         )
 
     @classmethod
-    def build_decoder(cls, opt, embedding=None):
-        return TransformerDecoder(opt=opt, embedding=embedding)
+    def build_decoder(cls, opt, decoder_spec: ComponentSpec, embedding=None):
+        return decoder_spec.klass(
+            opt=opt, embedding=embedding, manifest=decoder_spec.manifest
+        )
 
-    def __init__(self, opt: Opt, dictionary: DictionaryAgent):
+    def __init__(
+        self, opt: Opt, dictionary: DictionaryAgent, manifest: Optional[Manifest] = None
+    ):
         self.pad_idx = dictionary[dictionary.null_token]
         self.start_idx = dictionary[dictionary.start_token]
         self.end_idx = dictionary[dictionary.end_token]
         super().__init__(self.pad_idx, self.start_idx, self.end_idx)
+        manifest = manifest or self.Manifest()
+        self.opt = opt
         self.embeddings = create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
 
         self.encoder = self.build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None
+            opt,
+            dictionary,
+            manifest.encoder,
+            self.embeddings,
+            self.pad_idx,
+            reduction_type=None,
         )
-        self.decoder = self.build_decoder(opt, self.embeddings)
+        self.decoder = self.build_decoder(
+            opt, manifest.decoder, embedding=self.embeddings
+        )
 
     def reorder_encoder_states(self, encoder_states, indices):
         """

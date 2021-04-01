@@ -7,7 +7,9 @@
 Transformer encoder implementations.
 """
 
-from typing import Tuple, Optional, Union
+from __future__ import annotations
+from dataclasses import dataclass
+from typing import Tuple, Optional, Type, Union
 
 import numpy as np
 import torch
@@ -20,12 +22,75 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
+from parlai.agents.transformer.modules.interfaces import ComponentSpec, TComponent
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerEncoder(nn.Module):
+class TransformerEncoderLayer(nn.Module, TComponent):
+    """
+    Implements a single Transformer encoder layer.
+    """
+
+    @dataclass
+    class Manifest:
+        self_attention: Type[MultiHeadAttention] = MultiHeadAttention
+        feedforward: Type[TransformerFFN] = TransformerFFN
+
+    def __init__(
+        self,
+        n_heads: int,
+        embedding_size: int,
+        ffn_size: int,
+        attention_dropout: float = 0.0,
+        relu_dropout: float = 0.0,
+        dropout: float = 0.0,
+        activation: str = 'relu',
+        variant: Optional[str] = None,
+        manifest: Optional[Manifest] = None,
+    ):
+        super().__init__()
+        manifest = manifest or self.Manifest()
+        self.dim = embedding_size
+        self.ffn_dim = ffn_size
+        self.activation = activation
+        self.variant = variant
+        self.attention = manifest.self_attention(
+            n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
+        )
+        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.ffn = manifest.feedforward(
+            embedding_size,
+            ffn_size,
+            relu_dropout=relu_dropout,
+            activation=self.activation,
+        )
+        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+        self.dropout = nn.Dropout(p=dropout)
+
+    def forward(self, tensor: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass.
+        """
+        residual = tensor
+        if self.variant == 'prelayernorm':
+            tensor = self.norm1(tensor)
+        attended_tensor = self.attention(tensor, mask=mask)[0]
+        tensor = residual + self.dropout(attended_tensor)
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            tensor = self.norm1(tensor)
+        residual = tensor
+        if self.variant == 'prelayernorm':
+            tensor = self.norm2(tensor)
+        tensor = residual + self.dropout(self.ffn(tensor))
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            tensor = self.norm2(tensor)
+        tensor *= mask.unsqueeze(-1).type_as(tensor)
+        return tensor
+
+
+class TransformerEncoder(nn.Module, TComponent):
     """
     Transformer encoder module.
 
@@ -44,6 +109,12 @@ class TransformerEncoder(nn.Module):
         Found useful in fairseq.
     """
 
+    @dataclass
+    class Manifest:
+        layer: ComponentSpec[TransformerEncoderLayer] = ComponentSpec(
+            TransformerEncoderLayer, TransformerEncoderLayer.Manifest()
+        )
+
     def __init__(
         self,
         opt: Opt,
@@ -58,12 +129,15 @@ class TransformerEncoder(nn.Module):
         activation: Optional[str] = None,
         variant: Optional[str] = None,
         output_scaling: Optional[float] = None,
+        manifest: Optional[Manifest] = None,
     ):
         super(TransformerEncoder, self).__init__()
+        manifest = manifest or self.Manifest()
 
         def _default(val, default):
             return val if val is not None else default
 
+        self.opt = opt
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
         self.n_layers = (
@@ -141,7 +215,7 @@ class TransformerEncoder(nn.Module):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                TransformerEncoderLayer(
+                manifest.layer.klass(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
@@ -150,6 +224,7 @@ class TransformerEncoder(nn.Module):
                     dropout=self.dropout_frac,
                     variant=self.variant,
                     activation=_default(activation, opt.get('activation', 'relu')),
+                    manifest=manifest.layer.manifest,
                 )
             )
         self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))
@@ -306,58 +381,3 @@ class TransformerEncoder(nn.Module):
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
         return tensor_out
-
-
-class TransformerEncoderLayer(nn.Module):
-    """
-    Implements a single Transformer encoder layer.
-    """
-
-    def __init__(
-        self,
-        n_heads: int,
-        embedding_size: int,
-        ffn_size: int,
-        attention_dropout: float = 0.0,
-        relu_dropout: float = 0.0,
-        dropout: float = 0.0,
-        activation: str = 'relu',
-        variant: Optional[str] = None,
-    ):
-        super().__init__()
-        self.dim = embedding_size
-        self.ffn_dim = ffn_size
-        self.activation = activation
-        self.variant = variant
-        self.attention = MultiHeadAttention(
-            n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
-        )
-        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.ffn = TransformerFFN(
-            embedding_size,
-            ffn_size,
-            relu_dropout=relu_dropout,
-            activation=self.activation,
-        )
-        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.dropout = nn.Dropout(p=dropout)
-
-    def forward(self, tensor: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
-        """
-        Forward pass.
-        """
-        residual = tensor
-        if self.variant == 'prelayernorm':
-            tensor = self.norm1(tensor)
-        attended_tensor = self.attention(tensor, mask=mask)[0]
-        tensor = residual + self.dropout(attended_tensor)
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = self.norm1(tensor)
-        residual = tensor
-        if self.variant == 'prelayernorm':
-            tensor = self.norm2(tensor)
-        tensor = residual + self.dropout(self.ffn(tensor))
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            tensor = self.norm2(tensor)
-        tensor *= mask.unsqueeze(-1).type_as(tensor)
-        return tensor
