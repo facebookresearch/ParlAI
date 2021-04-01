@@ -16,7 +16,7 @@ class TransformerVariantAgent(TransformerGeneratorAgent):
     def build_model(self, states=None):
         manifest = TransformerGeneratorModel.Manifest()
         manifest.encoder.klass = MyCustomEncoder
-        return TransformerGeneratorModel(self.opt, self.dict)
+        return TransformerGeneratorModel(self.opt, self.dict, manifest)
 
 
 class MyCustomEncoder(TransformerEncoder):
