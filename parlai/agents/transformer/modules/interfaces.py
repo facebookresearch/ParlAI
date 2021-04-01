@@ -10,14 +10,14 @@ from typing import Generic, Type, TypeVar
 class TComponent(ABC):
     """
     A transformer component, optionally with swappable subcomponents.
-    For an example of how to use this, see
-    parlai/agents/examples/transformer_variant.py
+
+    For an example of how to use this, see parlai/agents/examples/transformer_variant.py
     """
 
     class Manifest:
         """
-        Define any swappable components by adding
-        their class as a parameter of this object.
+        Define any swappable components by adding their class as a parameter of this
+        object.
         """
 
         pass
@@ -33,8 +33,8 @@ T = TypeVar('T', bound=TComponent)
 @dataclass(frozen=True)
 class ComponentSpec(Generic[T]):
     """
-    When a component has swappable subcomponents, use this object to
-    specify both at the same time.
+    When a component has swappable subcomponents, use this object to specify both at the
+    same time.
     """
 
     klass: Type[T]
