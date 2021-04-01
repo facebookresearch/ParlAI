@@ -563,7 +563,7 @@ class RareWordF1Metric:
         """
         A score multiplier that signifies how rare a word is.
         The words with more than `cutoff` occurances in the corpus will
-        have a weight of 0, and very rare words will have a frequency near 1.
+        have a weight of 0, and very rare words will have a weight near 1.
         """
         return max(0, (cutoff - freq_dist[word]) / cutoff)
 
