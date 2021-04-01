@@ -34,7 +34,7 @@ class TransformerEncoderLayer(nn.Module, TComponent):
     """
 
     @dataclass
-    class Manifest:
+    class Manifest(TComponent.Manifest):
         self_attention: Type[MultiHeadAttention] = MultiHeadAttention
         feedforward: Type[TransformerFFN] = TransformerFFN
 
@@ -110,7 +110,7 @@ class TransformerEncoder(nn.Module, TComponent):
     """
 
     @dataclass
-    class Manifest:
+    class Manifest(TComponent.Manifest):
         layer: ComponentSpec[TransformerEncoderLayer] = ComponentSpec(
             TransformerEncoderLayer, TransformerEncoderLayer.Manifest()
         )

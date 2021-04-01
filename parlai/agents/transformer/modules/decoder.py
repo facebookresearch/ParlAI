@@ -39,7 +39,7 @@ class TransformerDecoderLayer(nn.Module, TComponent):
     """
 
     @dataclass
-    class Manifest:
+    class Manifest(TComponent.Manifest):
         self_attention: Type[MultiHeadAttention] = MultiHeadAttention
         encoder_attention: Type[MultiHeadAttention] = MultiHeadAttention
         feedforward: Type[TransformerFFN] = TransformerFFN
@@ -189,7 +189,7 @@ class TransformerDecoder(nn.Module, TComponent):
     """
 
     @dataclass
-    class Manifest:
+    class Manifest(TComponent.Manifest):
         layer: ComponentSpec[TransformerDecoderLayer] = ComponentSpec(
             TransformerDecoderLayer, TransformerDecoderLayer.Manifest()
         )
