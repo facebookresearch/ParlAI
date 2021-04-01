@@ -18,7 +18,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, Optional, Type
+from typing import Dict, Optional
 
 import torch
 import torch.cuda

@@ -17,7 +17,10 @@ T = TypeVar('T', bound=TComponent)
 
 
 # TODO: Figure out a way to get Manifest class directly from T
-@dataclass
+# ComponentSpec should stay immutable, since it is used as a
+# default param. In python, mutating a param default value changes
+# it for all subsequent invocations.
+@dataclass(frozen=True)
 class ComponentSpec(Generic[T]):
     klass: Type[T]
     manifest: TComponent.Manifest
