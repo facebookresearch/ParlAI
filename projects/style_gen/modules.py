@@ -81,7 +81,7 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
     """
 
     @classmethod
-    def build_decoder(cls, opt, embedding=None):
+    def build_decoder(cls, opt, embedding=None, **kwargs):
         """
         Return TransformerDecoderWithEmbeds instead of TransformerDecoder.
         """
