@@ -997,7 +997,7 @@ class ParlaiParser(argparse.ArgumentParser):
             # existing command line parameters take priority.
             if key not in opt:
                 if opt.get('allow_missing_init_opts', False):
-                    logging.warn(
+                    logging.warning(
                         f'The "{key}" key in {optfile} will not be loaded, because it '
                         f'does not exist in the target opt.'
                     )

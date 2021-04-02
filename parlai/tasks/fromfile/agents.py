@@ -100,7 +100,7 @@ class ParlaiformatTeacher(ParlAIDialogTeacher):
             if shared is None and (
                 'valid' in self.opt['datatype'] or 'test' in self.opt['datatype']
             ):
-                logging.warn(
+                logging.warning(
                     'You are using this fromfile data as a valid or test set without setting fromfile_datatype_extension to true. Please be aware this uses directly the file you indicated, make sure this is not the same as your training file.'
                 )
         if shared is None:

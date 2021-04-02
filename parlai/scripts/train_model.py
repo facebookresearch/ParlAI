@@ -60,7 +60,7 @@ def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
     if opt[key] > 0:
         if distributed_warn and is_distributed():
             nicekey = '--' + key.replace('_', '-')
-            logging.warn(
+            logging.warning(
                 f'Using {nicekey} in distributed mode can lead to slowdowns. '
                 'See https://github.com/facebookresearch/ParlAI/pull/3379 for more info.'
             )

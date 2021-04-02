@@ -770,7 +770,7 @@ def warn_once(msg: str) -> None:
     global _seen_logs
     if msg not in _seen_logs:
         _seen_logs.add(msg)
-        logging.warn(msg)
+        logging.warning(msg)
 
 
 def error_once(msg: str) -> None:

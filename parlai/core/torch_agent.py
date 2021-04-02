@@ -966,7 +966,7 @@ class TorchAgent(ABC, Agent):
         """
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
-            logging.warn('Not loading optimizer due to resize in token embeddings')
+            logging.warning('Not loading optimizer due to resize in token embeddings')
 
         opt = self.opt
 
@@ -1052,7 +1052,7 @@ class TorchAgent(ABC, Agent):
         # will remain the behavior for the time being.
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
-            logging.warn('Not loading optim state since optim class changed.')
+            logging.warning('Not loading optim state since optim class changed.')
             return False
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do

@@ -317,7 +317,7 @@ class TorchRankerAgent(TorchAgent):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
         if PathManager.exists(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
             return path
-        logging.warn(f'Building candidates file as they do not exist: {path}')
+        logging.warning(f'Building candidates file as they do not exist: {path}')
         from parlai.scripts.build_candidates import build_cands
         from copy import deepcopy
 
