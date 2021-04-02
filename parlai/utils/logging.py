@@ -180,10 +180,6 @@ def error(*args, **kwargs):
     return logger.error(*args, **kwargs)
 
 
-def warn(*args, **kwargs):
-    return logger.warn(*args, **kwargs)
-
-
 def warning(*args, **kwargs):
     return logger.warn(*args, **kwargs)
 

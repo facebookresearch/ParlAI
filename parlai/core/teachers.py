@@ -1975,7 +1975,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             with PathManager.open(image_mode_features_dict_path, 'rb') as f:
                 self.image_features_dict = torch.load(f, map_location='cpu')
         else:
-            logging.warn('No existing image features, attempting to build.')
+            logging.warning('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
