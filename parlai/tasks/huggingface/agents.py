@@ -17,6 +17,12 @@ from datasets import load_dataset, concatenate_datasets
 
 
 class HuggingFaceTeacher(DialogTeacher, ABC):
+    """
+    Abstract parent class for HuggingFace teachers.
+    Not meant to be a standalone teacher. 
+    Implement the setup_data function based on the dataset used.
+    """
+
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         self.data_path = HuggingFaceTeacher._path(opt)
@@ -80,7 +86,7 @@ class HuggingFaceTeacher(DialogTeacher, ABC):
             '--label_feature',
             type=str,
             default='label',
-            help="name of feature that contains the text to use for the ParlAI label",
+            help="name of feature that contains the text to use for the ParlAI label attribute",
         )
         return parser
 
@@ -93,7 +99,12 @@ class HuggingFaceTeacher(DialogTeacher, ABC):
         pass
 
 
-class DefaultTeacher(HuggingFaceTeacher):
+class GlueTeacher(HuggingFaceTeacher):
+    """
+    For Glue (https://huggingface.co/datasets/glue) and 
+    Super Glue (https://huggingface.co/datasets/super_glue) datasets.
+    """
+
     def setup_data(self, path):
         pre_candidates = self.dataset.features[self.label_feature].names
         for row in self.dataset:
@@ -116,4 +127,6 @@ class DefaultTeacher(HuggingFaceTeacher):
                 candidates = [row[l] for l in pre_candidates]
             yield (query, [label], None, candidates), True
 
+
+class DefaultTeacher(GlueTeacher):
     pass
