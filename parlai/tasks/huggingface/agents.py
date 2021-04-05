@@ -9,13 +9,14 @@ from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from typing import Optional
 import os
+from ABC import ABC, abstractmethod
 
 # huggingface imports
 import datasets
 from datasets import load_dataset, concatenate_datasets
 
 
-class HuggingFaceTeacher(DialogTeacher):
+class HuggingFaceTeacher(DialogTeacher, ABC):
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
         self.data_path = HuggingFaceTeacher._path(opt)
@@ -34,26 +35,6 @@ class HuggingFaceTeacher(DialogTeacher):
         ):
             # no split specified and there are splits- combine all the splits together
             self.dataset = concatenate_datasets(list(self.dataset.values()))
-
-        self.labels = self.dataset.features['label'].names
-
-        # identify text columns
-        self.text_columns = []
-        text_attr = [
-            'premise',
-            'hypothesis',
-            'sentence',
-            'context',
-            'question',
-            'title',
-            'tokens',
-        ]
-        print(self.dataset.column_names)
-        for col in self.dataset.column_names:
-            for a in text_attr:
-                if a in col:
-                    self.text_columns.append(col)
-                    break
 
         self.id = "huggingface"
         super().__init__(opt, shared)
@@ -91,19 +72,37 @@ class HuggingFaceTeacher(DialogTeacher):
         path = os.path.join(opt['datapath'], 'huggingface')
         return path
 
+    @abstractmethod
     def setup_data(self, path):
+        # identify text columns
+        text_columns = []
+        text_attr = [
+            'premise',
+            'hypothesis',
+            'sentence',
+            'context',
+            'question',
+            'title',
+            'tokens',
+        ]
+        for col in self.dataset.column_names:
+            for a in text_attr:
+                if a in col:
+                    text_columns.append(col)
+                    break
+
+        candidates = self.dataset.features['label'].names
         for row in self.dataset:
             # construct text
             text_arr = []
-            for col in self.text_columns:
+            for col in text_columns:
                 text_arr.append(row.get(col))
             text = '\n'.join(text_arr)
 
             # construct label and candidates
             label = row['label']
-            candidates = self.labels
             if type(label) is int:
-                label = self.labels[label]
+                label = candidates[label]
             if label in row:
                 label = row[label]
                 candidates = [row[l] for l in self.labels]
