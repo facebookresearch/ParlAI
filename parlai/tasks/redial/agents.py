@@ -5,6 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.opt import Opt
+from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric, normalize_answer
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.io import PathManager
@@ -84,6 +86,7 @@ class ReDialTeacher(DialogTeacher):
         self.id = 'redial'
         self.random = random.Random(42)
         super().__init__(opt, shared)
+        self.movies_suggested_episode = set()
 
     def get_title_dict(self, path):
         csv_path = os.path.join(path, 'movies_with_mentions.csv')
@@ -93,22 +96,24 @@ class ReDialTeacher(DialogTeacher):
                 self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
 
     def _setup_first_turn_context(self, suggested, movieMentions):
-        suggested_formatted = ["@" + str(o) for o in suggested]
         if self.opt['redial_include_confounder_movie_names']:
             picks = random.sample(self.title_id_map.keys(), 15 + len(movieMentions))
             for movie in movieMentions:
                 if movie in picks:
                     picks.remove(movie)
-            options = picks + suggested_formatted
+            options = [
+                replace_movie_ids(p, self.title_id_map) for p in picks
+            ] + suggested
         else:
-            options = suggested_formatted
-        options = [replace_movie_ids(o, self.title_id_map) for o in options]
+            options = suggested
         return "\n".join(options)
 
     def _make_message(self, train_text, curr_text, unmerged_episode, first):
         respondentQuestions = unmerged_episode['respondentQuestions']
         suggested = [
-            x for x in respondentQuestions if respondentQuestions[x]["suggested"] == 1
+            replace_movie_ids("@" + str(x), self.title_id_map)
+            for x in respondentQuestions
+            if respondentQuestions[x]["suggested"] == 1
         ]
         movieMentions = unmerged_episode["movieMentions"]
         train_text_processed = " ".join(
@@ -186,6 +191,25 @@ class ReDialTeacher(DialogTeacher):
             for line in f:
                 data.append(json.loads(line))
         return data
+
+    def custom_evaluation(
+        self, teacher_action: Message, labels, model_response: Message
+    ):
+        if "text" in model_response:
+            for suggestion in teacher_action["suggested"]:
+                if normalize_answer(suggestion) in normalize_answer(
+                    model_response["text"]
+                ):
+                    self.movies_suggested_episode.add(suggestion)
+            if teacher_action["episode_done"]:
+                self.metrics.add(
+                    "movie_suggestion_mention",
+                    AverageMetric(
+                        len(self.movies_suggested_episode),
+                        len(teacher_action['suggested']),
+                    ),
+                )
+                self.movies_suggested_episode = set()
 
 
 class DefaultTeacher(ReDialTeacher):
