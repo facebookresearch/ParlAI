@@ -9,7 +9,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from typing import Optional
 import os
-from ABC import ABC, abstractmethod
+from abc import ABC, abstractmethod
 
 # huggingface imports
 import datasets
@@ -36,6 +36,8 @@ class HuggingFaceTeacher(DialogTeacher, ABC):
             # no split specified and there are splits- combine all the splits together
             self.dataset = concatenate_datasets(list(self.dataset.values()))
 
+        self.query_features = opt['query_features']
+        self.label_feature = opt['label_feature']
         self.id = "huggingface"
         super().__init__(opt, shared)
 
@@ -66,6 +68,20 @@ class HuggingFaceTeacher(DialogTeacher, ABC):
             default=None,
             help="which split of the HuggingFace dataset to load",
         )
+        parser.add_argument(
+            '-qf',
+            '--query_features',
+            nargs='+',
+            default=['sentence'],
+            help="name of features that should be included in the ParlAI query attribute",
+        )
+        parser.add_argument(
+            '-lf',
+            '--label_feature',
+            type=str,
+            default='label',
+            help="name of feature that contains the text to use for the ParlAI label",
+        )
         return parser
 
     def _path(opt):
@@ -74,41 +90,30 @@ class HuggingFaceTeacher(DialogTeacher, ABC):
 
     @abstractmethod
     def setup_data(self, path):
-        # identify text columns
-        text_columns = []
-        text_attr = [
-            'premise',
-            'hypothesis',
-            'sentence',
-            'context',
-            'question',
-            'title',
-            'tokens',
-        ]
-        for col in self.dataset.column_names:
-            for a in text_attr:
-                if a in col:
-                    text_columns.append(col)
-                    break
-
-        candidates = self.dataset.features['label'].names
-        for row in self.dataset:
-            # construct text
-            text_arr = []
-            for col in text_columns:
-                text_arr.append(row.get(col))
-            text = '\n'.join(text_arr)
-
-            # construct label and candidates
-            label = row['label']
-            if type(label) is int:
-                label = candidates[label]
-            if label in row:
-                label = row[label]
-                candidates = [row[l] for l in self.labels]
-
-            yield (text, [label], None, candidates), True
+        pass
 
 
 class DefaultTeacher(HuggingFaceTeacher):
+    def setup_data(self, path):
+        pre_candidates = self.dataset.features[self.label_feature].names
+        for row in self.dataset:
+            # construct text
+            text_arr = []
+            for col in self.query_features:
+                text_part = row.get(col)
+                if text_part is None:
+                    raise Exception(f'Feature "{col}" not found in data.')
+                text_arr.append(text_part)
+            query = '\n'.join(text_arr)
+
+            # construct label and candidates
+            label = row[self.label_feature]
+            if type(label) is int:
+                label = pre_candidates[label]
+                candidates = pre_candidates
+            if label in row:
+                label = row[label]
+                candidates = [row[l] for l in pre_candidates]
+            yield (query, [label], None, candidates), True
+
     pass
