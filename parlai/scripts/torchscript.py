@@ -6,6 +6,7 @@
 
 from typing import List
 
+import torch
 import torch.jit
 import torch.nn as nn
 from packaging import version
@@ -47,8 +48,16 @@ def export_model(opt: Opt):
     agent = create_agent(opt, requireModelExists=True)
     original_module = TorchScriptGreedySearch(agent)
 
+    # Optionally quantize the model
+    if opt['quantize']:
+        maybe_quantized_module = torch.quantization.quantize_dynamic(
+            model=original_module, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
+        )
+    else:
+        maybe_quantized_module = original_module
+
     # Script the module and save
-    scripted_module = torch.jit.script(TorchScriptGreedySearch(agent))
+    scripted_module = torch.jit.script(maybe_quantized_module)
     with PathManager.open(opt['scripted_model_file'], 'wb') as f:
         torch.jit.save(scripted_module, f)
 
@@ -69,6 +78,12 @@ def setup_args() -> ParlaiParser:
         type=str,
         default='_scripted.pt',
         help='Where the scripted model checkpoint will be saved',
+    )
+    parser.add_argument(
+        "--quantize",
+        type='bool',
+        default=False,
+        help="Run dynamic quantization (int8) on the model before TorchScripting",
     )
     parser.add_argument(
         "-i",
