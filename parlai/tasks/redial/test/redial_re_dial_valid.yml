@@ -3,11 +3,136 @@ acts:
     eval_labels:
     - I am doing okay. What kind of movies do you like?
     id: redial
-    text: Hi there, how are you? I'm looking for movie recommendations
+    initiatorQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    movieMentions:
+      '122159': Mary and Max (2009)
+      '151313': A Scanner Darkly  (2006)
+      '165710': The Boss Baby (2017)
+      '191602': Waking Life (2001)
+      '203371': 'Final Fantasy: The Spirits Within (2001)'
+      '84779': The Triplets of Belleville (2003)
+    respondentQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    suggested:
+    - '203371'
+    - '165710'
+    text: "Thor: The Dark World\nOne of Us \nOnce Upon a Time in the West\nThe Devil\
+      \ Inside Me\nNanook of the North\nAnnie Hall\nVeronica \nTurner & Hooch\nFree\
+      \ Willy\nWildcat \nNine Months\nWaking Life\nThe Postman \nOrphan \nRed 2 \n\
+      Fast & Furious \nPuncture \nDrag Me to Hell\nMarry Me \nD-17 \nKing of New York\n\
+      Final Fantasy: The Spirits Within\nThe Boss Baby\nHi there, how are you? I'm\
+      \ looking for movie recommendations"
 - - episode_done: false
     eval_labels:
     - You might like The Boss Baby that was a good movie.
     id: redial
+    initiatorQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    movieMentions:
+      '122159': Mary and Max (2009)
+      '151313': A Scanner Darkly  (2006)
+      '165710': The Boss Baby (2017)
+      '191602': Waking Life (2001)
+      '203371': 'Final Fantasy: The Spirits Within (2001)'
+      '84779': The Triplets of Belleville (2003)
+    respondentQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    suggested:
+    - '203371'
+    - '165710'
     text: I like animations like The Triplets of Belleville and Waking Life I also
       enjoy Mary and Max Anything artistic
 - - episode_done: false
@@ -15,12 +140,132 @@ acts:
     - It has Alec Baldwin it is about a baby that works for a company and gets adopted
       it is very funny
     id: redial
+    initiatorQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    movieMentions:
+      '122159': Mary and Max (2009)
+      '151313': A Scanner Darkly  (2006)
+      '165710': The Boss Baby (2017)
+      '191602': Waking Life (2001)
+      '203371': 'Final Fantasy: The Spirits Within (2001)'
+      '84779': The Triplets of Belleville (2003)
+    respondentQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    suggested:
+    - '203371'
+    - '165710'
     text: What's it about?
 - - episode_done: false
     eval_labels:
     - 'That is a tough one but I will remember something Final Fantasy: The Spirits
       Within was a good one'
     id: redial
+    initiatorQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    movieMentions:
+      '122159': Mary and Max (2009)
+      '151313': A Scanner Darkly  (2006)
+      '165710': The Boss Baby (2017)
+      '191602': Waking Life (2001)
+      '203371': 'Final Fantasy: The Spirits Within (2001)'
+      '84779': The Triplets of Belleville (2003)
+    respondentQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    suggested:
+    - '203371'
+    - '165710'
     text: That seems like a nice comedy Do you have any animated recommendations that
       are a bit more dramatic? Like A Scanner Darkly  for example I like comedies
       but I prefer films with a little more depth
@@ -28,6 +273,66 @@ acts:
     eval_labels:
     - It is animated, sci fi, and has action Glad I could help
     id: redial
+    initiatorQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    movieMentions:
+      '122159': Mary and Max (2009)
+      '151313': A Scanner Darkly  (2006)
+      '165710': The Boss Baby (2017)
+      '191602': Waking Life (2001)
+      '203371': 'Final Fantasy: The Spirits Within (2001)'
+      '84779': The Triplets of Belleville (2003)
+    respondentQuestions:
+      '122159':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151313':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '165710':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '191602':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '203371':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '84779':
+        liked: 1
+        seen: 1
+        suggested: 0
+    suggested:
+    - '203371'
+    - '165710'
     text: Ooh that seems cool! Thanks for the input. I'm ready to submit if you are.
-num_episodes: 1341
-num_examples: 8287
+num_episodes: 1340
+num_examples: 7958

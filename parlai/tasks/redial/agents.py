@@ -13,6 +13,7 @@ from .build import build
 import os
 import json
 import re
+import random
 import csv
 from typing import Optional
 
@@ -44,7 +45,9 @@ def replace_movie_ids(id_string, id_map):
 
 class ReDialTeacher(DialogTeacher):
     """
-    ReDial Teacher. By default, this learns the suggestor
+    ReDial Teacher.
+
+    By default, this learns the suggestor
     """
 
     @classmethod
@@ -53,10 +56,24 @@ class ReDialTeacher(DialogTeacher):
     ) -> ParlaiParser:
         group = parser.add_argument_group('ReDial dataset arguments')
         group.add_argument(
-            '--redial-include-confounder-options',
+            '--redial-include-context',
             type=bool,
-            default=False,
-            help="Add other movies as suggestions for first turn",
+            default=True,
+            help="Include respondent suggested movie names as context to first turn",
+        )
+
+        group.add_argument(
+            '--redial-include-confounder-movie-names',
+            type=bool,
+            default=True,
+            help="Add confounder movie names to first turn",
+        )
+
+        group.add_argument(
+            '--redial-remove-year-from-title',
+            type=bool,
+            default=True,
+            help="Add confounder movie names to first turn",
         )
 
     def __init__(self, opt, shared=None):
@@ -65,6 +82,7 @@ class ReDialTeacher(DialogTeacher):
         self.title_id_map = {}
         self.get_title_dict(self.data_path)
         self.id = 'redial'
+        self.random = random.Random(42)
         super().__init__(opt, shared)
 
     def get_title_dict(self, path):
@@ -73,6 +91,50 @@ class ReDialTeacher(DialogTeacher):
             reader = csv.reader(f)
             for row in reader:
                 self.title_id_map['@' + row[0]] = remove_year_from_title(row[1])
+
+    def _setup_first_turn_context(self, suggested, movieMentions):
+        suggested_formatted = ["@" + str(o) for o in suggested]
+        if self.opt['redial_include_confounder_movie_names']:
+            picks = random.sample(self.title_id_map.keys(), 15 + len(movieMentions))
+            for movie in movieMentions:
+                if movie in picks:
+                    picks.remove(movie)
+            options = picks + suggested_formatted
+        else:
+            options = suggested_formatted
+        options = [replace_movie_ids(o, self.title_id_map) for o in options]
+        return "\n".join(options)
+
+    def _make_message(self, train_text, curr_text, unmerged_episode, first):
+        respondentQuestions = unmerged_episode['respondentQuestions']
+        suggested = [
+            x for x in respondentQuestions if respondentQuestions[x]["suggested"] == 1
+        ]
+        movieMentions = unmerged_episode["movieMentions"]
+        train_text_processed = " ".join(
+            [replace_movie_ids(t, self.title_id_map) for t in train_text]
+        )
+        if first and self.opt["redial_include_context"]:
+            train_text_processed = (
+                self._setup_first_turn_context(suggested, movieMentions)
+                + "\n"
+                + train_text_processed
+            )
+        curr_text_processed = " ".join(
+            [replace_movie_ids(t, self.title_id_map) for t in curr_text]
+        )
+        return (
+            {
+                "id": self.id,
+                "suggested": suggested,
+                "movieMentions": movieMentions,
+                "respondentQuestions": unmerged_episode["respondentQuestions"],
+                "initiatorQuestions": unmerged_episode["initiatorQuestions"],
+                "text": train_text_processed,
+                "label": curr_text_processed,
+            },
+            first,
+        )
 
     def setup_data(self, fold):
         train_path = os.path.join(self.data_path, 'train_data.jsonl')
@@ -104,38 +166,19 @@ class ReDialTeacher(DialogTeacher):
                 curr_speaker = message['senderWorkerId']
                 if prev_speaker is None and curr_speaker != seeker_id:
                     continue  # Skip turns were recommender starts
-                text = replace_movie_ids(message['text'], self.title_id_map)
-                if curr_speaker == prev_speaker:
-                    curr_text.append(text)
-                else:
+                if curr_speaker != prev_speaker:
                     if prev_speaker == seeker_id:
                         train_text = curr_text
                     elif prev_speaker == recommmender_id:
-                        yield {
-                            "id": self.id,
-                            "movieMentions": unmerged_episode["movieMentions"],
-                            "respondentQuestions": unmerged_episode[
-                                "respondentQuestions"
-                            ],
-                            "initiatorQuestions": unmerged_episode[
-                                "initiatorQuestions"
-                            ],
-                            "text": " ".join(train_text),
-                            "label": " ".join(curr_text),
-                        }, first
+                        yield self._make_message(
+                            train_text, curr_text, unmerged_episode, first
+                        )
                         first = False
                     curr_text = []
-                    curr_text.append(text)
                     prev_speaker = curr_speaker
-            if curr_speaker == recommmender_id:  # fetch last turn
-                yield {
-                    "id": self.id,
-                    "movieMentions": unmerged_episode["movieMentions"],
-                    "respondentQuestions": unmerged_episode["respondentQuestions"],
-                    "initiatorQuestions": unmerged_episode["initiatorQuestions"],
-                    "text": " ".join(train_text),
-                    "label": " ".join(curr_text),
-                }, first
+                curr_text.append(message['text'])
+            if curr_speaker == recommmender_id:  # handle last turn
+                yield self._make_message(train_text, curr_text, unmerged_episode, first)
 
     def get_data_from_file(self, filepath):
         data = []

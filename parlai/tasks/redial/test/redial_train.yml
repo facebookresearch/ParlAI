@@ -1,33 +1,342 @@
 acts:
 - - episode_done: false
     id: redial
+    initiatorQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
     labels:
-    - Hello!
-    text: Hi!
+    - What movies are you interested in?
+    movieMentions:
+      '103257': The Emperor's New Groove (2000)
+      '149829': The Lego Batman Movie (2017)
+      '174626': A Goofy Movie (1995)
+      '175121': The Lego Movie (2014)
+      '187645': 'Fullmetal Alchemist: Brotherhood'
+      '204849': 'Captain Underpants: The First Epic Movie'
+    respondentQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
+    suggested:
+    - '204849'
+    - '175121'
+    - '174626'
+    text: "Thor: The Dark World\nOne of Us \nOnce Upon a Time in the West\nThe Devil\
+      \ Inside Me\nNanook of the North\nAnnie Hall\nVeronica \nTurner & Hooch\nFree\
+      \ Willy\nWildcat \nNine Months\nWaking Life\nThe Postman \nOrphan \nRed 2 \n\
+      Fast & Furious \nPuncture \nDrag Me to Hell\nMarry Me \nD-17 \nKing of New York\n\
+      Captain Underpants: The First Epic Movie\nThe Lego Movie\nA Goofy Movie\nHello!"
 - - episode_done: false
     id: redial
+    initiatorQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
     labels:
-    - 'I tend to like animated movies. Some of my favorites are The Emperor''s New
-      Groove and Fullmetal Alchemist: Brotherhood .'
-    text: What movies are you interested in?
+    - Okay, I've seen a few animated. I also liked the Emperor. I really like A Goofy
+      Movie as well
+    movieMentions:
+      '103257': The Emperor's New Groove (2000)
+      '149829': The Lego Batman Movie (2017)
+      '174626': A Goofy Movie (1995)
+      '175121': The Lego Movie (2014)
+      '187645': 'Fullmetal Alchemist: Brotherhood'
+      '204849': 'Captain Underpants: The First Epic Movie'
+    respondentQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
+    suggested:
+    - '204849'
+    - '175121'
+    - '174626'
+    text: 'I tend to like animated movies. Some of my favorites are The Emperor''s
+      New Groove and Fullmetal Alchemist: Brotherhood .'
 - - episode_done: false
     id: redial
+    initiatorQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
     labels:
-    - That was one of my favorites as a child! Can you recommend any more recent animated
-      movies?
-    text: Okay, I've seen a few animated. I also liked the Emperor. I really like
-      A Goofy Movie as well
+    - It's definitely a good one! Have you seen  The Lego Movie not super recent but
+      it is good
+    movieMentions:
+      '103257': The Emperor's New Groove (2000)
+      '149829': The Lego Batman Movie (2017)
+      '174626': A Goofy Movie (1995)
+      '175121': The Lego Movie (2014)
+      '187645': 'Fullmetal Alchemist: Brotherhood'
+      '204849': 'Captain Underpants: The First Epic Movie'
+    respondentQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
+    suggested:
+    - '204849'
+    - '175121'
+    - '174626'
+    text: That was one of my favorites as a child! Can you recommend any more recent
+      animated movies?
 - - episode_done: false
     id: redial
+    initiatorQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
     labels:
-    - Thanks! I've been meaning to watch that since I saw The Lego Batman Movie
-    text: It's definitely a good one! Have you seen  The Lego Movie not super recent
-      but it is good
+    - 'Or the new Captain Underpants: The First Epic Movie I loved the books as a
+      kid Hope this helps!'
+    movieMentions:
+      '103257': The Emperor's New Groove (2000)
+      '149829': The Lego Batman Movie (2017)
+      '174626': A Goofy Movie (1995)
+      '175121': The Lego Movie (2014)
+      '187645': 'Fullmetal Alchemist: Brotherhood'
+      '204849': 'Captain Underpants: The First Epic Movie'
+    respondentQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
+    suggested:
+    - '204849'
+    - '175121'
+    - '174626'
+    text: Thanks! I've been meaning to watch that since I saw The Lego Batman Movie
 - - episode_done: true
     id: redial
+    initiatorQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
     labels:
-    - Thanks! I think that definitely helps.
-    text: 'Or the new Captain Underpants: The First Epic Movie I loved the books as
-      a kid Hope this helps!'
-num_episodes: 8665
-num_examples: 51045
+    - Great! Have a great day!
+    movieMentions:
+      '103257': The Emperor's New Groove (2000)
+      '149829': The Lego Batman Movie (2017)
+      '174626': A Goofy Movie (1995)
+      '175121': The Lego Movie (2014)
+      '187645': 'Fullmetal Alchemist: Brotherhood'
+      '204849': 'Captain Underpants: The First Epic Movie'
+    respondentQuestions:
+      '103257':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '149829':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '174626':
+        liked: 1
+        seen: 1
+        suggested: 1
+      '175121':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '187645':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '204849':
+        liked: 2
+        seen: 0
+        suggested: 1
+    suggested:
+    - '204849'
+    - '175121'
+    - '174626'
+    text: Thanks! I think that definitely helps.
+num_episodes: 8664
+num_examples: 48446

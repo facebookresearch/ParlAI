@@ -3,28 +3,439 @@ acts:
     eval_labels:
     - 'You should watch Police Academy '
     id: redial
-    text: Hi I am looking for a movie like Super Troopers
+    initiatorQuestions:
+      '101794':
+        liked: 2
+        seen: 2
+        suggested: 0
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    movieMentions:
+      '101794': Lethal Weapon (1987)
+      '111776': Super Troopers (2001)
+      '124771': 48 Hrs. (1982)
+      '134643': American Pie  (1999)
+      '151656': Police Academy  (1984)
+      '192131': 'American Pie '
+      '91481': Beverly Hills Cop (1984)
+      '94688': 'Police Academy 2: Their First Assignment (1985)'
+    respondentQuestions:
+      '101794':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    suggested:
+    - '91481'
+    - '151656'
+    - '124771'
+    - '94688'
+    - '101794'
+    text: "Thor: The Dark World\nOne of Us \nOnce Upon a Time in the West\nThe Devil\
+      \ Inside Me\nNanook of the North\nAnnie Hall\nVeronica \nTurner & Hooch\nFree\
+      \ Willy\nWildcat \nNine Months\nWaking Life\nThe Postman \nOrphan \nRed 2 \n\
+      Fast & Furious \nPuncture \nDrag Me to Hell\nMarry Me \nD-17 \nKing of New York\n\
+      Holes \nJohn Wick: Chapter 2\nBeverly Hills Cop\nPolice Academy \n48 Hrs.\n\
+      Police Academy 2: Their First Assignment\nLethal Weapon\nHi I am looking for\
+      \ a movie like Super Troopers"
 - - episode_done: false
     eval_labels:
     - 'Yes Police Academy  is very funny and so is Police Academy 2: Their First Assignment'
     id: redial
+    initiatorQuestions:
+      '101794':
+        liked: 2
+        seen: 2
+        suggested: 0
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    movieMentions:
+      '101794': Lethal Weapon (1987)
+      '111776': Super Troopers (2001)
+      '124771': 48 Hrs. (1982)
+      '134643': American Pie  (1999)
+      '151656': Police Academy  (1984)
+      '192131': 'American Pie '
+      '91481': Beverly Hills Cop (1984)
+      '94688': 'Police Academy 2: Their First Assignment (1985)'
+    respondentQuestions:
+      '101794':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    suggested:
+    - '91481'
+    - '151656'
+    - '124771'
+    - '94688'
+    - '101794'
     text: 'Is that a great one? I have never seen it. I have seen American Pie  I
       mean American Pie '
 - - episode_done: false
     eval_labels:
     - yes you will enjoy them
     id: redial
+    initiatorQuestions:
+      '101794':
+        liked: 2
+        seen: 2
+        suggested: 0
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    movieMentions:
+      '101794': Lethal Weapon (1987)
+      '111776': Super Troopers (2001)
+      '124771': 48 Hrs. (1982)
+      '134643': American Pie  (1999)
+      '151656': Police Academy  (1984)
+      '192131': 'American Pie '
+      '91481': Beverly Hills Cop (1984)
+      '94688': 'Police Academy 2: Their First Assignment (1985)'
+    respondentQuestions:
+      '101794':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    suggested:
+    - '91481'
+    - '151656'
+    - '124771'
+    - '94688'
+    - '101794'
     text: It sounds like I need to check them out
 - - episode_done: false
     eval_labels:
     - yes Lethal Weapon
     id: redial
+    initiatorQuestions:
+      '101794':
+        liked: 2
+        seen: 2
+        suggested: 0
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    movieMentions:
+      '101794': Lethal Weapon (1987)
+      '111776': Super Troopers (2001)
+      '124771': 48 Hrs. (1982)
+      '134643': American Pie  (1999)
+      '151656': Police Academy  (1984)
+      '192131': 'American Pie '
+      '91481': Beverly Hills Cop (1984)
+      '94688': 'Police Academy 2: Their First Assignment (1985)'
+    respondentQuestions:
+      '101794':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    suggested:
+    - '91481'
+    - '151656'
+    - '124771'
+    - '94688'
+    - '101794'
     text: I appreciate your time. I will need to check those out. Are there any others
       you would recommend?
 - - episode_done: false
     eval_labels:
     - and also Beverly Hills Cop
     id: redial
+    initiatorQuestions:
+      '101794':
+        liked: 2
+        seen: 2
+        suggested: 0
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    movieMentions:
+      '101794': Lethal Weapon (1987)
+      '111776': Super Troopers (2001)
+      '124771': 48 Hrs. (1982)
+      '134643': American Pie  (1999)
+      '151656': Police Academy  (1984)
+      '192131': 'American Pie '
+      '91481': Beverly Hills Cop (1984)
+      '94688': 'Police Academy 2: Their First Assignment (1985)'
+    respondentQuestions:
+      '101794':
+        liked: 2
+        seen: 0
+        suggested: 1
+      '111776':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '124771':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '134643':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '151656':
+        liked: 1
+        seen: 0
+        suggested: 1
+      '192131':
+        liked: 1
+        seen: 1
+        suggested: 0
+      '91481':
+        liked: 2
+        seen: 2
+        suggested: 1
+      '94688':
+        liked: 1
+        seen: 0
+        suggested: 1
+    suggested:
+    - '91481'
+    - '151656'
+    - '124771'
+    - '94688'
+    - '101794'
     text: Thank you i will watch that too
 num_episodes: 1342
-num_examples: 7505
+num_examples: 7087
