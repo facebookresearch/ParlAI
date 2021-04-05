@@ -19,7 +19,7 @@ from datasets import load_dataset, concatenate_datasets
 class HuggingFaceTeacher(DialogTeacher, ABC):
     """
     Abstract parent class for HuggingFace teachers.
-    Not meant to be a standalone teacher. 
+    Not meant to be a standalone teacher.
     Implement the setup_data function based on the dataset used.
     """
 
