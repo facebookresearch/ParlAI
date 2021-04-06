@@ -104,6 +104,12 @@ def setup_args(parser=None) -> ParlaiParser:
             'setting as --dynamic-batching.'
         ),
     )
+    train.add_argument(
+        '--num-workers',
+        default=0,
+        type=int,
+        help='Number of background workers (training only)',
+    )
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
     train.add_argument('-ttim', '--max-train-time', type=float, default=-1)
@@ -817,7 +823,10 @@ class TrainLoop:
                     logging.info(f'max_train_time elapsed:{train_time}s')
                     break
                 if self._train_steps >= self.max_train_steps:
-                    logging.info(f'max_train_steps elapsed:{self._train_steps}')
+                    logging.info(
+                        f'max_train_steps elapsed:{self._train_steps} '
+                        f'time elapsed:{train_time}s'
+                    )
                     break
                 if (
                     log_time > self.log_every_n_secs

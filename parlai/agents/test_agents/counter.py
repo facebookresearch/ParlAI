@@ -52,6 +52,12 @@ class UniqueMetric(_CounterMetric):
         return len(self._counter)
 
 
+class FakeList(list):
+    @property
+    def batchsize(self):
+        return len(self)
+
+
 class CounterAgent(TorchAgent):
     """
     Simple agent that counts the number of unique things it has seen.
@@ -101,6 +107,9 @@ class CounterAgent(TorchAgent):
 
     def eval_step(self):
         pass
+
+    def batchify(self, observations):
+        return FakeList(observations)
 
     def _to_tuple(self, msg: Message) -> Tuple:
         # turned into an indexable object

@@ -6,7 +6,6 @@
 
 import unittest
 from parlai.core.agents import create_agent
-import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.multiprocessing_train as mp_train
 import parlai.scripts.build_dict as build_dict
@@ -173,7 +172,6 @@ class TestDistributed(unittest.TestCase):
             build_dict.build_dict(popt)
 
             valid, test = mp_train.launch_and_train(popt, 31338)
-            dist.destroy_process_group()
 
         return (valid, test)
 

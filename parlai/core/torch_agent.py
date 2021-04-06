@@ -105,6 +105,7 @@ class Batch(AttrDict):
     """
 
     batchsize: int
+    is_training: bool
     text_vec: Optional[torch.LongTensor]
     label_vec: Optional[torch.LongTensor]
     labels: Optional[List[str]]
@@ -131,6 +132,7 @@ class Batch(AttrDict):
         candidate_vecs=None,
         reward=None,
         image=None,
+        is_training: Optional[bool] = None,
         _context_original_length: Optional[torch.LongTensor] = None,
         _context_truncate_rate: Optional[torch.LongTensor] = None,
         _context_truncated_length: Optional[torch.LongTensor] = None,
@@ -149,6 +151,7 @@ class Batch(AttrDict):
             candidates=candidates,
             candidate_vecs=candidate_vecs,
             image=image,
+            is_training=is_training,
             _context_original_length=_context_original_length,
             _context_truncate_rate=_context_truncate_rate,
             _context_truncated_length=_context_truncated_length,
@@ -162,20 +165,26 @@ class Batch(AttrDict):
         """
         Move all tensors in the batch to a device.
 
+        NOT in place.
+
         Note that valid_indices and fields starting with an underscore are
-        always kept on CPU and never moved GPU.
+        always kept on CPU.
 
         :return:
             self
         """
+        output = {}
         for key in self.keys():
+            value = getattr(self, key)
             # never move valid_indices or keys starting with a _
             if key == 'valid_indices' or key.startswith('_'):
+                output[key] = value
                 continue
-            if torch.is_tensor(self[key]):
-                self[key] = self[key].to(dev)
-        # just to enable batch = batch.to(dev) idomatics
-        return self
+            if torch.is_tensor(value):
+                output[key] = value.to(dev)
+            else:
+                output[key] = value
+        return type(self)(**output)
 
     def __repr__(self):
         output = ['Batch({']
@@ -1712,8 +1721,11 @@ class TorchAgent(ABC, Agent):
         # make sure we're only passing around tensors
         valid_inds = torch.LongTensor(valid_inds)
 
+        is_training = any('labels' in obs for obs in obs_batch)
+
         return Batch(
             batchsize=len(valid_inds),
+            is_training=is_training,
             text_vec=xs,
             label_vec=ys,
             labels=labels,
@@ -2110,16 +2122,22 @@ class TorchAgent(ABC, Agent):
         # clear local metrics before anything else
         self._local_metrics.clear()
 
+        # create a batch from the vectors
+        if isinstance(observations, Batch):
+            # it may already be batchified by a background worker
+            batch = observations
+            num_observations = batch.valid_indices.max() + 1
+        else:
+            batch = self.batchify(observations)
+            num_observations = len(observations)
+
         # initialize a list of replies with this agent's id
         batch_reply = [
-            Message({'id': self.getID(), 'episode_done': False}) for _ in observations
+            Message({'id': self.getID(), 'episode_done': False})
+            for _ in range(num_observations)
         ]
 
-        # check if there are any labels available, if so we will train on them
-        self.is_training = any('labels' in obs for obs in observations)
-
-        # create a batch from the vectors
-        batch = self.batchify(observations)
+        self.is_training = batch.is_training
 
         # truncation statistics
         if batch._context_original_length is not None:

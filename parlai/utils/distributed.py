@@ -290,7 +290,10 @@ def distributed_context(
         # force a sync so that no one gets ahead, and all are seeded together
         sync_object(None)
 
-        yield opt
+        try:
+            yield opt
+        finally:
+            dist.destroy_process_group()
 
 
 @contextlib.contextmanager
