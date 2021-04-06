@@ -12,10 +12,11 @@ Note that you will want to freshly tune your learning rate when using
 these tricks, or simply use these options in the first place.
 
 This tutorial is only for illustration purposes of how to speed up training,
-and may not get you the best _performing_ model.
+and may not get you the best _performing_ model. You will need to tune
+other hyperparameters like Learning Rate.
 :::
 
-A summary of the speedups is in this table:
+A summary of the speedups, for an 8 layer Transformer, is in this table:
 
 | Method                   | Train | Eval | Total | Speedup |
 | ------------------------ | ----: | ---: | ----: | ------: |
@@ -109,10 +110,10 @@ batching, to compensate for the fewer steps.
 ## FP16
 
 If you have access to an NVIDIA GPU with FP16 CUDA Cores (V100, GTX 2080, etc),
-then you can get large speedups by switching on the option `--fp16 true`. The
-default version of FP16 requires that you install
-[APEX](https://github.com/NVIDIA/apex), but you can use a simplified version
-(which doesn't depend on APEX) with `--fp16 true --fp16-impl mem_efficient`.
+then you can get large speedups by switching on the option `--fp16 true`. There
+are two version of FP16 you may use: `--fp16-impl safe` and
+`--fp16-impl mem_efficient`. The latter trades some numerical stability in exhange
+for lower memory consumption, and typically works well in practice.
 
 Note that in order to get the full benefit of fp16, we need to make sure all
 our hidden dimensions are _multiples of 8_, otherwise the hardware won't use
@@ -153,8 +154,7 @@ We can further speed things up by doing some preprocessing, such as
 tokenization and dialogue state tracking, in the background thread. This can be
 enabled by setting `--num-workers` to a value greater than 0. A good rule of
 thumb is to set `--num-workers` to the number of CPU cores you have PER GPU.
-Sometimes you can go a bit over, but you will need to play. On my server, there
-are 4 cores per GPU, so I will set it to 4.
+On my server, there are 8 cores per GPU, so I will set it to 8.
 
     parlai train --dict-file dictfile --model transformer/generator --task \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
@@ -186,8 +186,8 @@ Note that launching a multiprocessing train can take time to "warm up" and it
 may take time for you to realize speed improvements when using small, toy
 training runs like in this document. If we train for 4 epochs instead, our FP16
 large-batch run takes 614 seconds and the multi-GPU training takes 222 seconds.
-Also, if you have access to a SLURM cluster, distributed_train is sometimes
-faster than multiprocessin_train. With SLURM, multi-GPU training takes 167 seconds
+Also, if you have access to a SLURM cluster, `distributed_train` is sometimes
+faster than `multiprocessing_train`. With SLURM, multi-GPU training takes 167 seconds
 for 4 epochs, or about a 3.7x speedup compared to single GPU.
 
 Similarly, we also have the `multiprocessing_eval` command, for using multiple
