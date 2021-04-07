@@ -19,8 +19,9 @@ from datasets import load_dataset, concatenate_datasets
 class HuggingFaceTeacher(DialogTeacher, ABC):
     """
     Abstract parent class for HuggingFace teachers.
-    Not meant to be a standalone teacher.
-    Implement the setup_data function based on the dataset used.
+
+    Not meant to be a standalone teacher. Implement the setup_data function based on the
+    dataset used.
     """
 
     def __init__(self, opt, shared=None):
@@ -101,8 +102,8 @@ class HuggingFaceTeacher(DialogTeacher, ABC):
 
 class GlueTeacher(HuggingFaceTeacher):
     """
-    For Glue (https://huggingface.co/datasets/glue) and 
-    Super Glue (https://huggingface.co/datasets/super_glue) datasets.
+    For Glue (https://huggingface.co/datasets/glue) and Super Glue
+    (https://huggingface.co/datasets/super_glue) datasets.
     """
 
     def setup_data(self, path):

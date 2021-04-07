@@ -1,6 +1,6 @@
 Task: HuggingFace
 ===============
-Description: Currently supporting [HuggingFace glue dataset](https://huggingface.co/datasets/glue).
+Description: Can load HuggingFace datasets. 
 
 Website: https://huggingface.co/
 
