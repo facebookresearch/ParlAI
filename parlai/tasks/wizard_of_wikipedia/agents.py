@@ -17,7 +17,12 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 
 from typing import Optional, Tuple
 from parlai.core.message import Message
-from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
+from parlai.core.metrics import (
+    AverageMetric,
+    normalize_answer,
+    F1Metric,
+    RareWordF1Calculator,
+)
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 import copy
@@ -181,6 +186,15 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 ###############################################################
 
 
+def _build_rare_word_f1(datapath: str) -> RareWordF1Calculator:
+    all_text = ''
+    data_path = os.path.join(datapath, 'wizard_of_wikipedia', 'data.json')
+    with PathManager.open(data_path) as f:
+        data = json.load(f)
+        all_text += ' '.join(m['text'] for d in data for m in d['dialog']) + ' '
+    return RareWordF1Calculator(all_text, top_p=0.5)
+
+
 class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
     Teacher that returns the following action dict:
@@ -210,6 +224,10 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         self.knowledge_separator = opt.get('include_knowledge_separator', False)
         self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
+        if shared and 'rare_word_f1' in shared:
+            self.rare_word_f1 = shared['rare_word_f1']
+        elif self.label_type == 'response':
+            self.rare_word_f1 = _build_rare_word_f1(opt['datapath'])
 
     @classmethod
     def add_cmdline_args(
@@ -257,6 +275,12 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             'the human will have',
         )
         return parser
+
+    def share(self):
+        shared = super().share()
+        if hasattr(self, 'rare_word_f1'):
+            shared['rare_word_f1'] = self.rare_word_f1
+        return shared
 
     def len_episode(self, ep):
         d = self.data[ep]
@@ -389,6 +413,10 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
                 F1Metric.compute(
                     model_response['text'], [teacher_action['checked_sentence']]
                 ),
+            )
+            self.metrics.add(
+                'rare_word_f1',
+                self.rare_word_f1.compute(model_response['text'], labels),
             )
         elif (
             self.label_type == 'chosen_sent'

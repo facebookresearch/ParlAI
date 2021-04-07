@@ -530,19 +530,21 @@ class F1Metric(AverageMetric):
         return F1Metric(max(f1 for p, r, f1 in scores), 1)
 
 
-class RareWordF1Metric:
+class RareWordF1Calculator:
     """
     Helper class for computing F1 with an emphasis on infrequent words.
     """
 
-    def __init__(self, corpus: str, top_p: Optional[float] = 0.5):
+    def __init__(self, corpus: str, top_p: float = 0.5):
         try:
             import nltk
         except ImportError:
             raise ImportError('Please install nltk (e.g. pip install nltk).')
         words = normalize_answer(corpus).split()
         self._freq_dist = nltk.FreqDist(words)
-        self._cutoff = RareWordF1Metric._find_cutoff_count(self._freq_dist, top_p)
+        self._cutoff_count = RareWordF1Calculator._find_cutoff_count(
+            self._freq_dist, top_p
+        )
 
     @staticmethod
     def _find_cutoff_count(freq_dist, top_p: float) -> int:
@@ -557,43 +559,24 @@ class RareWordF1Metric:
             cumul += v
             if cumul > target:
                 return v
+        raise RuntimeError(f"Invalid top {top_p*100}% of the corpus distribution")
 
     @staticmethod
-    def _rarity_weight(freq_dist, word: str, cutoff: int) -> float:
+    def _filter(freq_dist, cutoff: int, text: str) -> str:
         """
-        A score multiplier that signifies how rare a word is.
-        The words with more than `cutoff` occurances in the corpus will
-        have a weight of 0, and very rare words will have a weight near 1.
+        For words that are found in the reference distribution, filters those
+        with an occurrence count less than the cutoff.
         """
-        return max(0, (cutoff - freq_dist[word]) / cutoff)
-
-    def _weighted_f1_score(self, pred_items: List[str], gold_items: List[str]) -> float:
-        """
-        Compute f1 given a set of gold and prediction items, weighted by the infrequency of each word.
-        """
-        weights = {
-            w: RareWordF1Metric._rarity_weight(
-                freq_dist=self._freq_dist, word=w, cutoff=self._cutoff
-            )
-            for w in set(pred_items + gold_items)
-        }
-        common = Counter(gold_items) & Counter(pred_items)
-        weighted_common = {w: c * weights[w] for w, c in common.items()}
-        true_pos_score = sum(weighted_common.values())
-        if true_pos_score == 0:
-            return 0
-        precision = true_pos_score / sum(weights[w] for w in pred_items)
-        recall = true_pos_score / sum(weights[w] for w in gold_items)
-        f1 = (2 * precision * recall) / (precision + recall)
-        return f1
+        words = normalize_answer(text).split()
+        return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
 
     def compute(self, guess: str, answers: List[str]) -> F1Metric:
-        g_tokens = normalize_answer(guess).split()
-        scores = [
-            self._weighted_f1_score(g_tokens, normalize_answer(a).split())
+        guess = RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, guess)
+        answers = [
+            RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
             for a in answers
         ]
-        return F1Metric(max(scores), 1)
+        return F1Metric.compute(guess, answers)
 
 
 class ExactMatchMetric(AverageMetric):
