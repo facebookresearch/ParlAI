@@ -9,6 +9,7 @@ from typing import List
 import torch
 import torch.jit
 import torch.nn as nn
+from torch.quantization import convert, float_qparams_weight_only_qconfig, prepare
 from packaging import version
 
 from parlai.core.agents import create_agent
@@ -50,11 +51,33 @@ def export_model(opt: Opt):
 
     # Optionally quantize the model
     if opt['quantize']:
-        maybe_quantized_module = torch.quantization.quantize_dynamic(
-            model=original_module, qconfig_spec={torch.nn.Linear}, dtype=torch.qint8
+
+        print('Performing dynamic quantization of linear layers.')
+        model = torch.quantization.quantize_dynamic(
+            model=agent.model,
+            qconfig_spec={
+                torch.nn.Linear: torch.quantization.per_channel_dynamic_qconfig
+            },
+            dtype=torch.qint8,
+            inplace=False,
         )
+
+        print('Performing quantization of embeddings.')
+        for module in model.modules():
+            if isinstance(module, torch.nn.Embedding):
+                module.qconfig = float_qparams_weight_only_qconfig
+        prepare(model, inplace=True)
+        convert(model, inplace=True)
+
+        agent.model = model
+
+        agent.save(opt['scripted_model_file'] + '._quantized_unscripted')
+
+        quantized_module = TorchScriptGreedySearch(agent)
+
     else:
-        maybe_quantized_module = original_module
+
+        quantized_module = None
 
     # Script the module and save
     scripted_module = torch.jit.script(maybe_quantized_module)
@@ -66,6 +89,9 @@ def export_model(opt: Opt):
         inputs = opt['input'].split('|')
         print('\nGenerating given the original unscripted module:')
         _run_conversation(module=original_module, inputs=inputs)
+        if quantized_module is not None:
+            print('\nGenerating given the quantized module:')
+            _run_conversation(module=quantized_module, inputs=inputs)
         print('\nGenerating given the scripted module:')
         _run_conversation(module=scripted_module, inputs=inputs)
 

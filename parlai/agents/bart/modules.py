@@ -23,7 +23,10 @@ class BartModel(TransformerGeneratorModel):
         Override standard TGM output to _not_ prevent generation of BOS.
         """
         # project back to vocabulary
-        output = F.linear(tensor, self.embeddings.weight)
+        if callable(self.embeddings.weight):
+            output = F.linear(tensor, self.embeddings.weight().dequantize())
+        else:
+            output = F.linear(tensor, self.embeddings.weight)
 
         return output
 
