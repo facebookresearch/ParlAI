@@ -7,14 +7,14 @@ from dataclasses import dataclass
 from typing import Generic, Type, TypeVar
 
 
-class TComponent(ABC):
+class ModularComponent(ABC):
     """
     A transformer component, optionally with swappable subcomponents.
 
     For an example of how to use this, see parlai/agents/examples/transformer_variant.py
     """
 
-    class Manifest:
+    class Template:
         """
         Define any swappable components by adding their class as a parameter of this
         object.
@@ -23,7 +23,7 @@ class TComponent(ABC):
         pass
 
 
-T = TypeVar('T', bound=TComponent)
+MC = TypeVar('MC', bound=ModularComponent)
 
 
 # TODO: Figure out a way to get Manifest class directly from T
@@ -31,11 +31,11 @@ T = TypeVar('T', bound=TComponent)
 # default param. In python, mutating a param default value changes
 # it for all subsequent invocations.
 @dataclass(frozen=True)
-class ComponentSpec(Generic[T]):
+class ModularComponentSpec(Generic[MC]):
     """
-    When a component has swappable subcomponents, use this object to specify both at the
-    same time.
+    When a component has swappable subcomponents, use this object to specify both the
+    component type and it's subcomponent types at the same time.
     """
 
-    klass: Type[T]
-    manifest: TComponent.Manifest
+    klass: Type[MC]
+    template: ModularComponent.Template

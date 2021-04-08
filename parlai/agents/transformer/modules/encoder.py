@@ -22,19 +22,22 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import ComponentSpec, TComponent
+from parlai.agents.transformer.modules.interfaces import (
+    ModularComponentSpec,
+    ModularComponent,
+)
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerEncoderLayer(nn.Module, TComponent):
+class TransformerEncoderLayer(nn.Module, ModularComponent):
     """
     Implements a single Transformer encoder layer.
     """
 
     @dataclass
-    class Manifest(TComponent.Manifest):
+    class Template(ModularComponent.Template):
         self_attention: Type[MultiHeadAttention] = MultiHeadAttention
         feedforward: Type[TransformerFFN] = TransformerFFN
 
@@ -48,19 +51,19 @@ class TransformerEncoderLayer(nn.Module, TComponent):
         dropout: float = 0.0,
         activation: str = 'relu',
         variant: Optional[str] = None,
-        manifest: Optional[Manifest] = None,
+        template: Optional[Template] = None,
     ):
         super().__init__()
-        manifest = manifest or self.Manifest()
+        template = template or self.Template()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = manifest.self_attention(
+        self.attention = template.self_attention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.ffn = manifest.feedforward(
+        self.ffn = template.feedforward(
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
@@ -90,7 +93,7 @@ class TransformerEncoderLayer(nn.Module, TComponent):
         return tensor
 
 
-class TransformerEncoder(nn.Module, TComponent):
+class TransformerEncoder(nn.Module, ModularComponent):
     """
     Transformer encoder module.
 
@@ -110,9 +113,9 @@ class TransformerEncoder(nn.Module, TComponent):
     """
 
     @dataclass
-    class Manifest(TComponent.Manifest):
-        layer: ComponentSpec[TransformerEncoderLayer] = ComponentSpec(
-            TransformerEncoderLayer, TransformerEncoderLayer.Manifest()
+    class Template(ModularComponent.Template):
+        layer: ModularComponentSpec[TransformerEncoderLayer] = ModularComponentSpec(
+            TransformerEncoderLayer, TransformerEncoderLayer.Template()
         )
 
     def __init__(
@@ -129,10 +132,10 @@ class TransformerEncoder(nn.Module, TComponent):
         activation: Optional[str] = None,
         variant: Optional[str] = None,
         output_scaling: Optional[float] = None,
-        manifest: Optional[Manifest] = None,
+        template: Optional[Template] = None,
     ):
         super(TransformerEncoder, self).__init__()
-        manifest = manifest or self.Manifest()
+        template = template or self.Template()
 
         def _default(val, default):
             return val if val is not None else default
@@ -215,7 +218,7 @@ class TransformerEncoder(nn.Module, TComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                manifest.layer.klass(
+                template.layer.klass(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
@@ -224,7 +227,7 @@ class TransformerEncoder(nn.Module, TComponent):
                     dropout=self.dropout_frac,
                     variant=self.variant,
                     activation=_default(activation, opt.get('activation', 'relu')),
-                    manifest=manifest.layer.manifest,
+                    template=template.layer.template,
                 )
             )
         self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))

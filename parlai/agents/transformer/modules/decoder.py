@@ -22,24 +22,27 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import ComponentSpec, TComponent
+from parlai.agents.transformer.modules.interfaces import (
+    ModularComponentSpec,
+    ModularComponent,
+)
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerDecoderLayer(nn.Module, TComponent):
+class TransformerDecoderLayer(nn.Module, ModularComponent):
     """
     Implements a single Transformer decoder layer.
 
     Decoder layers are similar to encoder layers but:
 
-    1. Self-attention is limited in a casaul (auto-regressive) manner.
+    1. Self-attention is limited in a causal (auto-regressive) manner.
     2. Attend over all of the encoder states.
     """
 
     @dataclass
-    class Manifest(TComponent.Manifest):
+    class Template(ModularComponent.Template):
         self_attention: Type[MultiHeadAttention] = MultiHeadAttention
         encoder_attention: Type[MultiHeadAttention] = MultiHeadAttention
         feedforward: Type[TransformerFFN] = TransformerFFN
@@ -54,27 +57,27 @@ class TransformerDecoderLayer(nn.Module, TComponent):
         dropout: float = 0.0,
         activation: str = 'relu',
         variant: str = 'aiayn',
-        manifest: Optional[Manifest] = None,
+        template: Optional[Template] = None,
     ):
         super().__init__()
-        manifest = manifest or self.Manifest()
+        template = template or self.Template()
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.variant = variant
         self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
-        self.self_attention = manifest.self_attention(
+        self.self_attention = template.self_attention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.encoder_attention = manifest.encoder_attention(
+        self.encoder_attention = template.encoder_attention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.ffn = manifest.feedforward(
+        self.ffn = template.feedforward(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
@@ -175,7 +178,7 @@ class TransformerDecoderLayer(nn.Module, TComponent):
         }
 
 
-class TransformerDecoder(nn.Module, TComponent):
+class TransformerDecoder(nn.Module, ModularComponent):
     """
     Transformer Decoder module.
 
@@ -189,9 +192,9 @@ class TransformerDecoder(nn.Module, TComponent):
     """
 
     @dataclass
-    class Manifest(TComponent.Manifest):
-        layer: ComponentSpec[TransformerDecoderLayer] = ComponentSpec(
-            TransformerDecoderLayer, TransformerDecoderLayer.Manifest()
+    class Template(ModularComponent.Template):
+        layer: ModularComponentSpec[TransformerDecoderLayer] = ModularComponentSpec(
+            TransformerDecoderLayer, TransformerDecoderLayer.Template()
         )
 
     def __init__(
@@ -199,10 +202,10 @@ class TransformerDecoder(nn.Module, TComponent):
         opt: Opt,
         embedding: Optional[nn.Embedding] = None,
         n_positions: Optional[int] = None,
-        manifest: Optional[Manifest] = None,
+        template: Optional[Template] = None,
     ):
         super().__init__()
-        manifest = manifest or self.Manifest()
+        template = template or self.Template()
 
         def _default(val, default):
             return val if val is not None else default
@@ -264,7 +267,7 @@ class TransformerDecoder(nn.Module, TComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                manifest.layer.klass(
+                template.layer.klass(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
@@ -273,7 +276,7 @@ class TransformerDecoder(nn.Module, TComponent):
                     dropout=dropout_frac,
                     activation=self.activation,
                     variant=self.variant,
-                    manifest=manifest.layer.manifest,
+                    template=template.layer.template,
                 )
             )
 
