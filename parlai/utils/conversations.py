@@ -242,7 +242,7 @@ class Conversations:
         if self.metadata is not None:
             logging.info(self.metadata)
         else:
-            logging.warn('No metadata available.')
+            logging.warning('No metadata available.')
 
     def __getitem__(self, index):
         return self.conversations[index]

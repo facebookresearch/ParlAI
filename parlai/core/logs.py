@@ -139,6 +139,13 @@ class WandbLogger(object):
             help='W&B project name. Defaults to timestamp. Usually the name of the sweep.',
             hidden=False,
         )
+        logger.add_argument(
+            '--wandb-entity',
+            type=str,
+            default=None,
+            help='W&B entity name.',
+            hidden=False,
+        )
         return logger
 
     def __init__(self, opt: Opt, model=None):
@@ -160,6 +167,7 @@ class WandbLogger(object):
             project=project,
             dir=os.path.dirname(opt['model_file']),
             notes=f"{opt['model_file']}",
+            entity=opt.get('wandb_entity'),
             reinit=True,  # in case of preemption
         )
         # suppress wandb's output

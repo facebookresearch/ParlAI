@@ -15,7 +15,7 @@ automatically, e.g.:
 ... code-block:
 
    parlai interactive --model-file
-       "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
+       "zoo:blender/blender_3B/model"
 
 
 There are a number of guidelines you should follow in the zoo:
@@ -45,57 +45,13 @@ There are a number of guidelines you should follow in the zoo:
 
 model_list = [
     {
-        "title": "DrQA SQuAD model",
-        "id": "drqa",
-        "path": "zoo:drqa/squad/model",
-        "agent": "drqa",
-        "task": "squad",
-        "description": "DrQA Reader trained on SQuAD",
-        "external_website": "https://github.com/facebookresearch/DrQA",
-        "example": "parlai eval_model -mf zoo:drqa/squad/model -t squad -dt test",
-        "result": (
-            # TODO: this differs slightly from the actual results as of 2019-07-23
-            "{'exs': 10570, 'accuracy': 0.6886, 'f1': 0.7821, 'hits@1': 0.689, 'hits@5': 0.689, 'hits@10': 0.689, 'hits@100': 0.689, 'bleu': 0.1364, 'train_loss': 0}"  # noqa: E501
-        ),
-    },
-    {
-        "title": "Wikipedia Retriever (used for open SQuAD)",
-        "id": "wikipedia_20161221",
-        "path": "zoo:wikipedia_20161221/tfidf_retriever/drqa_docs",
-        "agent": "tfidf_retriever",
-        "external_website": "https://github.com/facebookresearch/DrQA",
-        "task": "wikipedia:full",
-        "example": (
-            "parlai interactive --model tfidf_retriever "
-            "-mf zoo:wikipedia_20161221/tfidf_retriever/drqa_docs"
-        ),
-        "result": (
-            """
-            Enter Your Message: Yann LeCun
-            [candidate_scores]: [507.05804682 390.18244433 279.24033928 269.60377042 214.00140589]
-            [SparseTfidfRetrieverAgent]:
-            Deep learning (also known as deep structured learning, hierarchical learning or deep machine learning) is a branch of machine learning based on a set of algorithms that attempt to model high level abstractions in data. In a simple case, you could have two sets of neurons: ones that receive an input signal and ones that send an output signal. When the input layer receives an input it passes on a modified version of the input to the next layer. In a deep network, there are many layers between the input and output (and the layers are not made of neurons but it can help to think of it that way), allowing the algorithm to use multiple processing layers, composed of multiple linear and non-linear transformations.
-
-            Deep learning is part of a broader family of machine learning methods based on ...
-            to commonsense reasoning which operates on concepts in terms of production rules of the grammar, and is a basic goal of both human language acquisition and AI. (See also Grammar induction.)
-            """  # noqa: E501
-        ),
-        "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad "
-            "dataset. This is the dump from the original paper, used for "
-            "replicating results."
-        ),
-    },
-    {
         "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
         "id": "wikipedia_full",
         "path": "zoo:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
-        "description": (
-            "Retrieval over Wikipedia dump, used for DrQA on the open squad dataset."
-        ),
+        "description": ("Retrieval over Wikipedia dump, used for Wizard of Wikipedia."),
         "example": (
             "parlai interactive --model tfidf_retriever -mf "
             "zoo:wikipedia_full/tfidf_retriever/model"
@@ -206,26 +162,6 @@ model_list = [
         "result": "{'exs': 6623, 'accuracy': 0.7586, 'f1': 0.7802, 'hits@1': 0.759, 'hits@5': 0.965,"  # noqa: E501
         "'hits@10': 0.994, 'hits@100': 1.0, 'bleu': 0.7255, 'lr': 5e-05, 'total_train_updates': 15050,"  # noqa: E501
         "'examples': 6623, 'loss': 5307.0, 'mean_loss': 0.8013, 'mean_rank': 1.599, 'train_accuracy': 0}",  # noqa: E501
-    },
-    {
-        "title": "Controllable Dialogue ConvAI2 model",
-        "id": "controllable_dialogue",
-        "path": "zoo:controllable_dialogue/convai2_finetuned_baseline",
-        "agent": "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:ControllableSeq2seqAgent",  # noqa: E501
-        "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue",
-        "example": (
-            "parlai eval_model --model "
-            "projects.controllable_dialogue.controllable_seq2seq.controllable_seq2seq:"
-            "ControllableSeq2seqAgent --task "
-            "projects.controllable_dialogue.tasks.agents "
-            "-mf zoo:controllable_dialogue/convai2_finetuned_baseline"
-        ),
-        "result": (
-            "{'exs': 7801, 'accuracy': 0.0006409, 'f1': 0.1702, 'bleu': 0.005205, "
-            "'token_acc': 0.3949, 'loss': 3.129, 'ppl': 22.86}"
-        ),
-        "description": "Seq2Seq model with control trained on ConvAI2",
     },
     {
         "title": "TransResNet (ResNet 152) Personality-Captions model",
@@ -538,43 +474,6 @@ model_list = [
         "'second_round': {'hits@1/100': 0.4558, 'loss': -0.002001, 'med_rank': 2.0},"
         "'third_round+': {'hits@1/100': 0.4147, 'loss': -0.002001, 'med_rank': 2.0}}"  # noqa: E501
         "'hits@10': 0.903, 'hits@100': 0.998, 'bleu': 0.4999, 'hits@1/100': 1.0, 'loss': -0.002, 'med_rank': 1.0}",  # noqa: E501
-    },
-    {
-        "title": "Self-feeding Chatbot",
-        "id": "self_feeding",
-        "path": "zoo:self_feeding/model",
-        "agent": "projects.self_feeding.self_feeding_agent:SelfFeedingAgent",
-        "task": "self_feeding:all:train",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/self_feeding",
-        "description": (
-            "The self-feeding chatbot of Hancock, et al., 2019 "
-            "(https://arxiv.org/abs/1901.05415). This model learns from is mistakes "
-            "when actually talking with users. This particular model corresponds to "
-            "the model with 131k human-human chats + 60k human-bot chats + 60k "
-            "feedback chats."
-        ),
-        "example": (
-            "python projects/self_feeding/interactive.py --model-file "
-            "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model --no-cuda true"
-        ),
-        "result": (
-            "Enter Your Message: hi, my name is stephen. what's yours?\n"
-            "[SelfFeeding]: hi there greg . do you have pets ? i've 2 cats named "
-            "milo and fio .\n"
-            "Enter Your Message: sadly, i have no pets. my landlord isn't a fan.\n"
-            "[SelfFeeding]: sorry to hear that . i always had bad allergies when i "
-            "liven on my farm in kansas ."
-        ),
-        "example2": (
-            "parlai eval_model -mf "
-            "zoo:self_feeding/hh131k_hb60k_fb60k_st1k/model -t self_feeding:all"
-        ),
-        "result2": (
-            "[ Finished evaluating tasks ['self_feeding:all'] using datatype valid ]\n"
-            "{'exs': 3500, 'dia_rank': 4.654, 'dia_acc': 0.3525, 'fee_rank': 1.0, "
-            "'fee_acc': 1.0, 'fee_exs': 1000, 'sat_re': 0.4607, 'sat_f1': 0.5605, "
-            "'sat_acc': 0.724}"
-        ),
     },
     {
         "title": "Transformer Classifier Single-turn Dialogue Safety Model",
