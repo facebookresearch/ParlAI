@@ -168,7 +168,7 @@ def download(url, path, fname, redownload=False, num_retries=5):
 
         with requests.Session() as session:
             try:
-                response = session.get(url, stream=True, timeout=5)
+                response = session.get(url, stream=True, timeout=5, allow_redirects=True)
 
                 # negative reply could be 'none' or just missing
                 CHUNK_SIZE = 32768
