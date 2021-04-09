@@ -26,8 +26,8 @@ class ModularComponent(ABC):
 MC = TypeVar('MC', bound=ModularComponent)
 
 
-# TODO: Figure out a way to get Manifest class directly from T
-# ComponentSpec should stay immutable, since it is used as a
+# TODO: Figure out a way to get Template class directly from MC
+# ModularComponentSpec should stay immutable, since it is used as a
 # default param. In python, mutating a param default value changes
 # it for all subsequent invocations.
 @dataclass(frozen=True)
