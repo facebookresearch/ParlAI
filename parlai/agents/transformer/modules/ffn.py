@@ -11,8 +11,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from parlai.agents.transformer.modules.interfaces import StaticComponent
 
-class TransformerFFN(nn.Module):
+
+class TransformerFFN(nn.Module, StaticComponent):
     """
     Implements the FFN part of the transformer.
     """

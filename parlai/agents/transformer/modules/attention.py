@@ -14,10 +14,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from parlai.agents.transformer.modules.interfaces import StaticComponent
 from parlai.utils.torch import neginf
 
 
-class BasicAttention(nn.Module):
+class BasicAttention(nn.Module, StaticComponent):
     """
     Implements simple/classical attention.
     """
@@ -85,7 +86,7 @@ class BasicAttention(nn.Module):
             return lhs_emb.squeeze(self.dim - 1)
 
 
-class MultiHeadAttention(nn.Module):
+class MultiHeadAttention(nn.Module, StaticComponent):
     """
     Implements MultiHeadAttention; this is the core workhorse of the Transformer.
 

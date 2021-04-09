@@ -39,3 +39,14 @@ class ModularComponentSpec(Generic[MC]):
 
     klass: Type[MC]
     template: ModularComponent.Template
+
+
+class StaticComponent(ABC):
+    """
+    This doesn't do anything yet, but it can be used to label components that don't have
+    swappable subcomponents.
+
+    By default, anything that isn't a ModularComponent is a StaticComponent.
+    """
+
+    pass
