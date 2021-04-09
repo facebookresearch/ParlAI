@@ -99,10 +99,10 @@ class TfidfRetrieverAgent(Agent):
             '--index-by-int-id',
             type='bool',
             default=True,
-            help='Whether to index into database by doc id as an integer. This \
-                  defaults to true for DBs built using ParlAI; for the DrQA \
-                  wiki dump, it is necessary to set this to False to \
-                  index into the DB appropriately',
+            help=(
+                'Whether to index into database by doc id as an integer. This '
+                'defaults to true for DBs built using ParlAI.'
+            ),
         )
         parser.add_argument(
             '--tfidf-context-length',

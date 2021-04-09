@@ -245,7 +245,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
     # print warnings
     extra_strs = ['{}: {}'.format(k, v) for k, v in extra_opts.items()]
     if extra_strs:
-        logging.warn(
+        logging.warning(
             'your model is being loaded with opts that do not '
             'exist in the model you are initializing the weights with: '
             '{}'.format(','.join(extra_strs))
@@ -255,7 +255,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
         '--{} {}'.format(k.replace('_', '-'), v) for k, v in different_opts.items()
     ]
     if different_strs:
-        logging.warn(
+        logging.warning(
             'your model is being loaded with opts that differ '
             'from the model you are initializing the weights with. Add the '
             'following args to your run command to change this: \n'
@@ -309,7 +309,7 @@ def create_agent_from_opt_file(opt: Opt):
     if opt.get('override'):
         for k, v in opt['override'].items():
             if k in opt_from_file and str(v) != str(opt_from_file.get(k)):
-                logging.warn(
+                logging.warning(
                     f'Overriding opt["{k}"] to {v} (previously: {opt_from_file.get(k)})'
                 )
             opt_from_file[k] = v
@@ -413,7 +413,7 @@ def create_agent(opt: Opt, requireModelExists=False):
         model = model_class(opt)
         if requireModelExists and hasattr(model, 'load') and not opt.get('model_file'):
             # double check that we didn't forget to set model_file on loadable model
-            logging.warn('model_file unset but model has a `load` function.')
+            logging.warning('model_file unset but model has a `load` function.')
         return model
     else:
         raise RuntimeError('Need to set `model` argument to use create_agent.')

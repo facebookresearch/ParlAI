@@ -1,5 +1,16 @@
 # Controllable Dialogue
 
+**This project has been archived and is no longer being maintained.**
+
+It was archived in March 2021. You can still find the code by checking out the
+`controllable_dialogue_archive` tag in your git repo. You may also browse the code
+[on GitHub](https://github.com/facebookresearch/ParlAI/tree/controllable_dialogue_archive/projects/controllable_dialogue).
+It is known to have been in a working state at that point.
+
+--------------------------------------------------------------------------------
+
+# Original README
+
 ## Paper information
 
 Abigail See, Stephen Roller, Douwe Kiela, Jason Weston. 

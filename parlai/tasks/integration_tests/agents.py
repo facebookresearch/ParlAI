@@ -487,7 +487,7 @@ class ChunkyTeacher(ChunkTeacher):
 
     def create_message(self, sample_item, entry_idx=0):
         text, label = sample_item
-        return {'text': text, 'labels': [label], 'episode_done': True}
+        return Message({'text': text, 'labels': [label], 'episode_done': True})
 
 
 class ChunkySmallBufferTeacher(ChunkyTeacher):

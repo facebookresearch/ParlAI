@@ -1,5 +1,17 @@
 # Self-feeding Chatbot
 
+**This project has been archived and is no longer being maintained.**
+
+It was archived in March 2021. You can still find the code by checking out the
+`self_feeding_archive` tag in your git repo. You may also browse the code
+[on GitHub](https://github.com/facebookresearch/ParlAI/tree/self_feeding_archive/projects/self_feeding).
+It is known to have been in a working state at that point.
+
+--------------------------------------------------------------------------------
+
+# Original README
+
+
 ## Paper information
 Braden Hancock, Antoine Bordes, Pierre-Emmanuel Mazaré, Jason Weston.
 _[Learning from Dialogue after Deployment: Feed Yourself, Chatbot!](https://arxiv.org/abs/1901.05415)_.

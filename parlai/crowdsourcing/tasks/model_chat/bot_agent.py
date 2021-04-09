@@ -103,7 +103,7 @@ class TurkLikeAgent:
             # If we load many models at once, we have to keep it on CPU
             model_overrides['no_cuda'] = no_cuda
         else:
-            logging.warn(
+            logging.warning(
                 'WARNING: MTurk task has no_cuda FALSE. Models will run on GPU. Will '
                 'not work if loading many models at once.'
             )

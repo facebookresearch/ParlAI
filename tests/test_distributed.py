@@ -7,7 +7,6 @@
 import os
 import copy
 import unittest
-import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
 import parlai.scripts.multiprocessing_train as mp_train
@@ -65,7 +64,6 @@ class TestDistributed(unittest.TestCase):
             build_dict.build_dict(popt)
 
             valid, test = mp_train.launch_and_train(popt, 31338)
-            dist.destroy_process_group()
 
         return (valid, test)
 
@@ -202,8 +200,6 @@ class TestDistributed(unittest.TestCase):
                 pass
             else:
                 self.fail('Did not raise RuntimeError')
-            finally:
-                dist.destroy_process_group()
 
 
 @testing_utils.skipUnlessGPU
@@ -227,7 +223,6 @@ class TestDistributedEval(unittest.TestCase):
             self.assertAlmostEquals(
                 valid[key].value(), valid_mp[key].value(), delta=0.001
             )
-        dist.destroy_process_group()
 
 
 if __name__ == '__main__':

@@ -186,8 +186,9 @@ def str2class(value):
     """
     From import path string, returns the class specified.
 
-    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    For example, the string
+    'parlai.agents.hugging_face.dict:Gpt2DictionaryAgent' returns
+    <class 'parlai.agents.hugging_face.dict.Gpt2DictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
@@ -997,7 +998,7 @@ class ParlaiParser(argparse.ArgumentParser):
             # existing command line parameters take priority.
             if key not in opt:
                 if opt.get('allow_missing_init_opts', False):
-                    logging.warn(
+                    logging.warning(
                         f'The "{key}" key in {optfile} will not be loaded, because it '
                         f'does not exist in the target opt.'
                     )
