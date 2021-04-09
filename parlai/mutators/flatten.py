@@ -23,5 +23,5 @@ class FlattenMutator(ManyEpisodeMutator):
         for message in episode:
             history.append(message.pop('text'))
             message['text'] = '\n'.join(history)
-            history.extend(message["labels"])
+            history.extend(message['labels'])
             yield [message]
