@@ -49,7 +49,7 @@ class MetalWozTeacher(DialogTeacher):
                 data.append(pd.read_json(dataf, lines=True))
 
         data = pd.concat(data, axis=0)
-        data = data.sample(frac=1.0, random_state=83741)  # metal in l33t numbers
+        data = data.sample(frac=1.0, random_state=83741)  # metal in l33t numbers, lol
         data = data.merge(tasks_table, on='task_id')
         data['fold'] = data['domain_x'].apply(self._hash)
 
