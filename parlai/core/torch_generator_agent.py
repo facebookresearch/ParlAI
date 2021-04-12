@@ -26,8 +26,10 @@ from operator import attrgetter
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
 
 from parlai.core.opt import Opt
+from parlai.core.search import LexicallyConstrainedBeamSearch
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
@@ -419,9 +421,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
+            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam', 'constrainedbeam'},
             default='greedy',
             help='Generation algorithm',
+        )
+        parser.add_argument(
+            '--constraints',
+            type=str,
+            nargs='+',
+            default=None,
+            help='List of constraints for the constrained beam search',
         )
         agent.add_argument(
             '--topk', type=int, default=10, help='K used in Top K sampling'
@@ -470,6 +479,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         ) or 'token_losses' in opt.get('display_add_fields', '')
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
         self.beam_block_list: Optional[SearchBlocklist] = None
+        self.constraints = opt.get('constraints', None)
 
         if shared:
             # set up shared properties
@@ -664,6 +674,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             batch['full_text_vec'], _ = self._pad_tensor(
                 [obs_batch[i].get('full_text_vec', []) for i in batch.valid_indices]
             )
+        if self.constraints is not None:
+            batch['constraints'] = [torch.LongTensor(self.history.parse(c)) for c in self.constraints]
+
         return batch
 
     def _model_input(self, batch):
@@ -959,6 +972,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
             )
+        elif method == 'constrainedbeam':
+            return ConstrainedBeamSearch(
+                self.dict,
+                "ordered",
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
         elif method == 'topk':
             return TopKSampling(
                 self.opt['topk'],
@@ -985,6 +1012,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
             )
+
         else:
             raise ValueError(f"Can't use inference method {method}")
 
@@ -1101,6 +1129,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
+
+        if batch.get('constraints') is not None:
+            #init constraints for the constrained beam search
+            [b.search.init_constraints(batch['constraints'], beam_size) if b.search is not None else 0 for b in beams]
 
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):
@@ -1669,3 +1701,355 @@ class NucleusSampling(TreeSearch):
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
         return (hyp_ids, tok_ids, best_scores)
+
+class ConstrainedBeamSearch(TreeSearch):
+    """
+    Constrained Beam search.
+    """
+    def __init__(self, dictionary, constraints, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target_dictionary = dictionary
+        self.constraints = constraints
+        self.search = LexicallyConstrainedBeamSearch(
+            self.target_dictionary, constraints
+        )
+        self.max_len=127
+        self.normalize_scores = True
+        self.len_penalty = 1.0
+        self.match_source_len = False
+        #self.pad = dictionary[dictionary.null_token]
+        #self.unk = dictionary[dictionary.unk_token]
+        #self.eos = dictionary[dictionary.end_token]
+        #self.bos = dictionary[dictionary.start_token]
+
+        bsz=1 #batch size - assumed to be 1 for inferrence
+        # initialize buffers
+        self.cbs_scores = (
+            torch.zeros(bsz * self.beam_size, self.max_len + 1).to(self.device).float()
+        )  # +1 for eos; pad is never chosen for scoring
+        self.tokens = (
+            torch.zeros(bsz * self.beam_size, self.max_len + 2)
+                .to(self.device)
+                .long()
+                .fill_(self.pad)
+        )  # +2 for eos and pad
+        self.tokens[:, 0] = self.eos if self.bos is None else self.bos
+
+        # A list that indicates candidates that should be ignored.
+        # For example, suppose we're sampling and have already finalized 2/5
+        # samples. Then cands_to_ignore would mark 2 positions as being ignored,
+        # so that we only finalize the remaining 3 samples.
+        self.cands_to_ignore = (
+            torch.zeros(bsz, self.beam_size).to(self.device).eq(-1)
+        )  # forward and backward-compatible False mask
+
+        # number of candidate hypos per step
+        self.cand_size = 2 * self.beam_size  # 2 x beam size in case half are EOS
+
+        # offset arrays for converting between different indexing schemes
+        self.bbsz_offsets = (torch.arange(0, bsz) * self.beam_size).unsqueeze(1).type_as(self.tokens)
+        self.cand_offsets = torch.arange(0, self.cand_size).type_as(self.tokens)
+
+        self.reorder_state: Optional[Tensor] = None
+        self.batch_idxs: Optional[Tensor] = None
+
+        self.original_batch_idxs: Optional[Tensor] = None
+        self.original_batch_idxs = torch.arange(0, bsz).type_as(self.tokens)
+        self.eos_bbsz_idx = torch.empty(0).to(
+            self.tokens
+        )  # indices of hypothesis ending with eos (finished sentences)
+        self.eos_scores = torch.empty(0).to(
+            self.cbs_scores
+        ) # scores of hypothesis ending with eos (finished sentences)
+        # list of completed sentences
+        self.cbs_finalized = torch.jit.annotate(
+            List[List[Dict[str, Tensor]]],
+            [torch.jit.annotate(List[Dict[str, Tensor]], []) for i in range(bsz)],
+        )  # contains lists of dictionaries of infomation about the hypothesis being finalized at each step
+        self.cbs_finished = [
+            False for i in range(bsz)
+        ]  # a boolean array indicating if the sentence at the index is finished or not
+        self.num_remaining_sent = bsz
+        self.finalized_sents: List[int] = []
+
+    def is_done(self):
+        """
+        Return whether beam search is complete.
+        """
+        return self.num_remaining_sent==0 #or (self.eos_top and self.n_best_counter >= self.beam_size)
+
+        #if self.eos_bbsz_idx.numel() > 0:
+        #    return True
+        #return False
+
+    def select_paths(self, logprobs, prior_scores, current_length):
+        """
+        Select the next vocabulary item in these beams.
+        """
+
+        beam_size, vocab_size = logprobs.size()
+        bsz = 1
+        step=current_length
+        lprobs = logprobs.view(bsz, -1, vocab_size)
+
+        self.cbs_scores = self.cbs_scores.type_as(lprobs)
+
+        # Shape: (batch, cand_size)
+        cand_scores, cand_indices, cand_beams = self.search.step(
+                step=step,
+                lprobs=lprobs.view(bsz, -1, vocab_size),
+                scores=self.cbs_scores.view(bsz, beam_size, -1)[:, :, :step],
+                #prev_output_tokens=self.tokens[:, : step + 1],
+                #original_batch_idxs=self.original_batch_idxs,
+        )
+        #scores, indices, beams = self.cbs.step(step=current_length, lprobs=lprobs,scores=prior_scores.view(1, beam_size, -1)[:, :, :current_length])
+
+        # cand_bbsz_idx contains beam indices for the top candidate
+        # hypotheses, with a range of values: [0, bsz*beam_size),
+        # and dimensions: [bsz, cand_size]
+        cand_bbsz_idx = cand_beams.add(self.bbsz_offsets)
+
+        # finalize hypotheses that end in eos
+        # Shape of eos_mask: (batch size, beam size)
+        self.eos_mask = cand_indices.eq(self.eos) & cand_scores.ne(-math.inf)
+        self.eos_mask[:, :beam_size][self.cands_to_ignore] = torch.tensor(0).to(self.eos_mask)
+
+        # only consider eos when it's among the top beam_size indices
+        # Now we know what beam item(s) to finish
+        # Shape: 1d list of absolute-numbered
+        self.eos_bbsz_idx = torch.masked_select(
+            cand_bbsz_idx[:, :beam_size], mask=self.eos_mask[:, :beam_size]
+        )
+
+        #__________ finished cents omitted
+        finalized_sents: List[int] = []
+        if self.eos_bbsz_idx.numel() > 0:
+            self.eos_scores = torch.masked_select(
+                cand_scores[:, :beam_size], mask=self.eos_mask[:, :beam_size]
+            )
+            attn = None
+            finalized_sents = self.finalize_hypos(
+                step,
+                self.eos_bbsz_idx,
+                self.eos_scores,
+                self.tokens,
+                self.cbs_scores,
+                self.cbs_finalized,
+                self.cbs_finished,
+                beam_size,
+                attn,
+                0,
+                self.max_len,
+            )
+            self.num_remaining_sent -= len(finalized_sents)
+
+        #assert self.num_remaining_sent >= 0
+        #if self.num_remaining_sent == 0:
+        #if self.search.stop_on_max_len and step >= self.max_len:
+
+        assert self.num_remaining_sent >= 0
+        #if num_remaining_sent == 0:
+
+        assert step < self.max_len
+
+        # Set active_mask so that values > cand_size indicate eos hypos
+        # and values < cand_size indicate candidate active hypos.
+        # After, the min values per row are the top candidate active hypos
+
+        # Rewrite the operator since the element wise or is not supported in torchscript.
+
+        self.eos_mask[:, :beam_size] = ~((~self.cands_to_ignore) & (~self.eos_mask[:, :beam_size]))
+        active_mask = torch.add(
+            self.eos_mask.type_as(self.cand_offsets) * self.cand_size,
+            self.cand_offsets[: self.eos_mask.size(1)],
+        )
+
+        # get the top beam_size active hypotheses, which are just
+        # the hypos with the smallest values in active_mask.
+        # {active_hypos} indicates which {beam_size} hypotheses
+        # from the list of {2 * beam_size} candidates were
+        # selected. Shapes: (batch size, beam size)
+        new_cands_to_ignore, active_hypos = torch.topk(
+            active_mask, k=beam_size, dim=1, largest=False
+        )
+
+        # update cands_to_ignore to ignore any finalized hypos.
+        self.cands_to_ignore = new_cands_to_ignore.ge(self.cand_size)[:, :beam_size]
+        # Make sure there is at least one active item for each sentence in the batch.
+        assert (~self.cands_to_ignore).any(dim=1).all()
+
+        # update cands_to_ignore to ignore any finalized hypos
+
+        # {active_bbsz_idx} denotes which beam number is continued for each new hypothesis (a beam
+        # can be selected more than once).
+        active_bbsz_idx = torch.gather(cand_bbsz_idx, dim=1, index=active_hypos)
+        active_scores = torch.gather(cand_scores, dim=1, index=active_hypos)
+
+        active_bbsz_idx = active_bbsz_idx.view(-1)
+        active_scores = active_scores.view(-1)
+
+        # copy tokens and scores for active hypotheses
+
+        # Set the tokens for each beam (can select the same row more than once)
+        self.tokens[:, : step + 1] = torch.index_select(
+            self.tokens[:, : step + 1], dim=0, index=active_bbsz_idx
+        )
+        # Select the next token for each of them
+        self.tokens.view(bsz, beam_size, -1)[:, :, step + 1] = torch.gather(
+            cand_indices, dim=1, index=active_hypos
+        )
+        if step > 0:
+            self.cbs_scores[:, :step] = torch.index_select(
+                self.cbs_scores[:, :step], dim=0, index=active_bbsz_idx
+            )
+        self.cbs_scores.view(bsz, beam_size, -1)[:, :, step] = torch.gather(
+            cand_scores, dim=1, index=active_hypos
+        )
+
+        self.active_hypos_global = active_bbsz_idx
+        # Update constraints based on which candidates were selected for the next beam
+        self.search.update_constraints(active_hypos)
+
+        hyp_ids = active_bbsz_idx
+        tok_ids = self.tokens[:,step+1]
+        best_scores = self.cbs_scores[:,step]
+
+        return (hyp_ids, tok_ids, best_scores)
+
+    def finalize_hypos(
+        self,
+        step: int,
+        bbsz_idx,
+        eos_scores,
+        tokens,
+        scores,
+        finalized: List[List[Dict[str, Tensor]]],
+        finished: List[bool],
+        beam_size: int,
+        attn: Optional[Tensor],
+        src_lengths,
+        max_len: int,
+    ):
+        """Finalize hypothesis, store finalized information in `finalized`, and change `finished` accordingly.
+        A sentence is finalized when {beam_size} finished items have been collected for it.
+
+        Returns number of sentences (not beam items) being finalized.
+        These will be removed from the batch and not processed further.
+        Args:
+            bbsz_idx (Tensor):
+        """
+        assert bbsz_idx.numel() == eos_scores.numel()
+
+        # clone relevant token and attention tensors.
+        # tokens is (batch * beam, max_len). So the index_select
+        # gets the newly EOS rows, then selects cols 1..{step + 2}
+        tokens_clone = tokens.index_select(0, bbsz_idx)[
+            :, 1 : step + 2
+        ]  # skip the first index, which is EOS
+
+        tokens_clone[:, step] = self.eos
+        attn_clone = (
+            attn.index_select(0, bbsz_idx)[:, :, 1 : step + 2]
+            if attn is not None
+            else None
+        )
+
+        # compute scores per token position
+        pos_scores = scores.index_select(0, bbsz_idx)[:, : step + 1]
+        pos_scores[:, step] = eos_scores
+        # convert from cumulative to per-position scores
+        pos_scores[:, 1:] = pos_scores[:, 1:] - pos_scores[:, :-1]
+
+        # normalize sentence-level scores
+        if self.normalize_scores:
+            eos_scores /= (step + 1) ** self.len_penalty
+
+        # cum_unfin records which sentences in the batch are finished.
+        # It helps match indexing between (a) the original sentences
+        # in the batch and (b) the current, possibly-reduced set of
+        # sentences.
+        cum_unfin: List[int] = []
+        prev = 0
+        for f in finished:
+            if f:
+                prev += 1
+            else:
+                cum_unfin.append(prev)
+
+        # set() is not supported in script export
+
+        # The keys here are of the form "{sent}_{unfin_idx}", where
+        # "unfin_idx" is the index in the current (possibly reduced)
+        # list of sentences, and "sent" is the index in the original,
+        # unreduced batch
+        sents_seen: Dict[str, Optional[Tensor]] = {}
+
+        # For every finished beam item
+        for i in range(bbsz_idx.size()[0]):
+            idx = bbsz_idx[i]
+            score = eos_scores[i]
+            # sentence index in the current (possibly reduced) batch
+            unfin_idx = idx // beam_size
+            # sentence index in the original (unreduced) batch
+            sent = unfin_idx + cum_unfin[unfin_idx]
+            # print(f"{step} FINISHED {idx} {score} {sent}={unfin_idx} {cum_unfin}")
+            # Cannot create dict for key type '(int, int)' in torchscript.
+            # The workaround is to cast int to string
+            seen = str(sent.item()) + "_" + str(unfin_idx.item())
+            if seen not in sents_seen:
+                sents_seen[seen] = None
+
+            if self.match_source_len and step > src_lengths[unfin_idx]:
+                score = torch.tensor(-math.inf).to(score)
+
+            # An input sentence (among those in a batch) is finished when
+            # beam_size hypotheses have been collected for it
+            if len(finalized[sent]) < beam_size:
+                if attn_clone is not None:
+                    # remove padding tokens from attn scores
+                    hypo_attn = attn_clone[i]
+                else:
+                    hypo_attn = torch.empty(0)
+
+                finalized[sent].append(
+                    {
+                        "tokens": tokens_clone[i],
+                        "score": score,
+                        "attention": hypo_attn,  # src_len x tgt_len
+                        "alignment": torch.empty(0),
+                        "positional_scores": pos_scores[i],
+                    }
+                )
+
+        newly_finished: List[int] = []
+
+        for seen in sents_seen.keys():
+            # check termination conditions for this sentence
+            sent: int = int(float(seen.split("_")[0]))
+            unfin_idx: int = int(float(seen.split("_")[1]))
+
+            if not finished[sent] and self.is_finished(
+                step, unfin_idx, max_len, len(finalized[sent]), beam_size
+            ):
+                finished[sent] = True
+                newly_finished.append(unfin_idx)
+
+        return newly_finished
+
+    def is_finished(
+        self,
+        step: int,
+        unfin_idx: int,
+        max_len: int,
+        finalized_sent_len: int,
+        beam_size: int,
+    ):
+        """
+        Check whether decoding for a sentence is finished, which
+        occurs when the list of finalized sentences has reached the
+        beam size, or when we reach the maximum length.
+        """
+        assert finalized_sent_len <= beam_size
+        if finalized_sent_len == beam_size or step == max_len:
+            return True
+        return False
