@@ -64,5 +64,5 @@ acts:
       your current location
     user_role: You are interacting with a bot designed to help you book a skiing trip
     utterance_id: c3ec2179
-num_episodes: 30240
-num_examples: 185086
+num_episodes: 31677
+num_examples: 194324

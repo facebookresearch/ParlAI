@@ -8,14 +8,19 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.io import PathManager
 from parlai.utils.data import DatatypeHelper
 from .build import build
+import sys
 import os
 import pandas as pd
+import hashlib
 
 
 class MetalWozTeacher(DialogTeacher):
     def _path(self, opt):
         fold = DatatypeHelper.fold(opt['datatype'])
-        folder = os.path.join(opt['datapath'], 'metalwoz')
+        if fold == 'train' or fold == 'valid':
+            folder = os.path.join(opt['datapath'], 'metalwoz', 'train')
+        else:
+            folder = os.path.join(opt['datapath'], 'metalwoz', 'test')
         return folder, fold
 
     def __init__(self, opt, shared=None):
@@ -25,6 +30,9 @@ class MetalWozTeacher(DialogTeacher):
         self.fold = fold
         opt['datafile'] = os.path.join(folder, fold)
         super().__init__(opt, shared)
+
+    def _hash(self, string):
+        return int(hashlib.sha1(string.encode('utf-8')).hexdigest(), 16) % 10
 
     def setup_data(self, datapath):
         folder, fold = os.path.split(datapath)
@@ -42,15 +50,13 @@ class MetalWozTeacher(DialogTeacher):
 
         data = pd.concat(data, axis=0)
         data = data.sample(frac=1.0, random_state=83741)  # metal in l33t numbers
-        data['fold'] = data['id'].apply(lambda x: (int(x, 16) * 13) % 10)
         data = data.merge(tasks_table, on='task_id')
+        data['fold'] = data['domain_x'].apply(self._hash)
 
         for _, row in data.iterrows():
-            if fold == 'test' and row['fold'] != 9:
+            if fold == 'valid' and row['fold'] != 9:
                 continue
-            if fold == 'valid' and row['fold'] != 8:
-                continue
-            if fold == 'train' and row['fold'] >= 8:
+            if fold == 'train' and row['fold'] == 9:
                 continue
             texts = [row['bot_role']] + list(row['turns'])
             prompts, labels = texts[::2], texts[1::2]

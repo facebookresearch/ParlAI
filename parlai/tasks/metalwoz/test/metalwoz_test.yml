@@ -1,69 +1,69 @@
 acts:
-- - bot_prompt: Tell the user that there are no ski hills in their immediate location
-    bot_role: You are a bot that helps people book skiing trips
-    domain: SKI_BOT
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
     episode_done: false
     eval_labels:
     - Hello how may I help you?
     id: metalwoz
-    task_id: 2511cf64
-    text: You are a bot that helps people book skiing trips
-    user_prompt: You want to know if there are good ski hills an hour's drive from
-      your current location
-    user_role: You are interacting with a bot designed to help you book a skiing trip
-    utterance_id: f04197d9
-- - bot_prompt: Tell the user that there are no ski hills in their immediate location
-    bot_role: You are a bot that helps people book skiing trips
-    domain: SKI_BOT
+    task_id: 290f924c
+    text: You are a bot that provides tourism related advice
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
     episode_done: false
     eval_labels:
-    - I can Help you with that. Looking in the database, no. There are none near your
-      location
+    - I can assist you with your upcoming Montreal trip. What do you need?
     id: metalwoz
-    task_id: 2511cf64
-    text: I need to know if there are some skiing hills about an hour from me.
-    user_prompt: You want to know if there are good ski hills an hour's drive from
-      your current location
-    user_role: You are interacting with a bot designed to help you book a skiing trip
-    utterance_id: f04197d9
-- - bot_prompt: Tell the user that there are no ski hills in their immediate location
-    bot_role: You are a bot that helps people book skiing trips
-    domain: SKI_BOT
+    task_id: 290f924c
+    text: I have some questions about my upcoming travel to Montreal.
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
     episode_done: false
     eval_labels:
-    - Would you like the closest one?
+    - 'Here are a few festivals: BarnFest Steakfest Musicfest'
     id: metalwoz
-    task_id: 2511cf64
-    text: Ok, dang
-    user_prompt: You want to know if there are good ski hills an hour's drive from
-      your current location
-    user_role: You are interacting with a bot designed to help you book a skiing trip
-    utterance_id: f04197d9
-- - bot_prompt: Tell the user that there are no ski hills in their immediate location
-    bot_role: You are a bot that helps people book skiing trips
-    domain: SKI_BOT
+    task_id: 290f924c
+    text: I'm heading there shortly during what is there summer months and was wondering
+      if there are good festivals going on then.
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
     episode_done: false
     eval_labels:
-    - The closest one is 30 miles north, in Duluth.
+    - They are all occuring in July.
     id: metalwoz
-    task_id: 2511cf64
-    text: What is the closest one?
-    user_prompt: You want to know if there are good ski hills an hour's drive from
-      your current location
-    user_role: You are interacting with a bot designed to help you book a skiing trip
-    utterance_id: f04197d9
-- - bot_prompt: Tell the user that there are no ski hills in their immediate location
-    bot_role: You are a bot that helps people book skiing trips
-    domain: SKI_BOT
+    task_id: 290f924c
+    text: Those sound good. Do you have the dates they are happening?
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
     episode_done: false
     eval_labels:
-    - I can do that now.For how many?
+    - Sounds fun! Can I help you with anything else today?
     id: metalwoz
-    task_id: 2511cf64
-    text: Ok great, I would like to book a trip to duluth then
-    user_prompt: You want to know if there are good ski hills an hour's drive from
-      your current location
-    user_role: You are interacting with a bot designed to help you book a skiing trip
-    utterance_id: f04197d9
-num_episodes: 3891
-num_examples: 23806
+    task_id: 290f924c
+    text: That is when I plan on going. They all sound good to me.
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+num_episodes: 2319
+num_examples: 14067
