@@ -66,7 +66,10 @@ class TestIntegrations(unittest.TestCase):
     def test_many_episode(self):
         examples = self._run_through('integration_tests:multiturn', 'flatten')
         for example in examples:
-            assert example['text'].replace('\n', ' ') == example['labels'][0]
+            texts = example['text'].split('\n')
+            labels = example['labels'][0].split(' ')
+            for i, l in enumerate(labels):
+                assert texts[2 * i] == l
 
 
 class TestSpecificMutators(unittest.TestCase):
