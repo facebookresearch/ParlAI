@@ -159,9 +159,13 @@ class TestSpecificMutators(unittest.TestCase):
 
         # check there was a mutation
         assert ex1['text'] == "\n".join(e['text'] for e in [EXAMPLE1])
-        assert ex2['text'] == "\n".join(e['text'] for e in [EXAMPLE1, EXAMPLE2])
+        assert ex2['text'] == "\n".join(
+            h for h in [EXAMPLE1['text'], EXAMPLE1['labels'][0], EXAMPLE2['text']]
+        )
         assert ex3['text'] == "\n".join(e['text'] for e in [EXAMPLE3])
-        assert ex4['text'] == "\n".join(e['text'] for e in [EXAMPLE3, EXAMPLE4])
+        assert ex4['text'] == "\n".join(
+            h for h in [EXAMPLE3['text'], EXAMPLE3['labels'][0], EXAMPLE4['text']]
+        )
 
     def test_last_turn(self):
         from parlai.mutators.last_turn import LastTurnMutator
