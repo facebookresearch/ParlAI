@@ -576,6 +576,9 @@ class RareWordF1Calculator:
             RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
             for a in answers
         ]
+        if not any(len(a) for a in answers):
+            # no rare words in labels, set denominator to zero
+            return F1Metric(0, 0)
         return F1Metric.compute(guess, answers)
 
 
