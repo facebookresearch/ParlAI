@@ -262,7 +262,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         d = self.data[ep]
         wizard_first = 'Wizard' in d['dialog'][0]['speaker']
         if wizard_first:
-            return (len(d['dialog']) - 1) // 2
+            return (len(d['dialog']) - 1) // 2 + 1
         return len(d['dialog']) // 2
 
     def num_examples(self):
@@ -471,7 +471,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         d = self.data[ep]
         first_speaker = d['dialog'][0]['speaker'].lower()
         if self.speaker_label != 'both' and self.speaker_label in first_speaker:
-            return (len(d['dialog']) - 1) // 2
+            return (len(d['dialog']) - 1) // 2 + 1
         return len(d['dialog']) // 2
 
     def get(self, episode_idx, entry_idx=0):
