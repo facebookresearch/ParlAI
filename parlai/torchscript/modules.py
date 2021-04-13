@@ -10,6 +10,7 @@ from typing import List, Dict, Optional, Tuple
 import torch.jit
 from torch import nn as nn
 
+from parlai.agents.transformer.modules import TransformerEncoder
 from parlai.core.dict import DictionaryAgent
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.bpe import Gpt2BpeHelper
@@ -18,7 +19,6 @@ from parlai.utils.bpe import Gpt2BpeHelper
 class TorchScriptGreedySearch(nn.Module):
     """
     A helper class for exporting simple greedy-search models via TorchScript.
-
     Models with extra inputs will need to override to include more variables.
     """
 
@@ -37,7 +37,12 @@ class TorchScriptGreedySearch(nn.Module):
         'bpe_debug': False,
     }
 
-    def __init__(self, agent: TorchAgent):
+    def __init__(
+        self,
+        agent: TorchAgent,
+        embedding_weights: torch.Tensor,
+        encoder: TransformerEncoder,
+    ):
         super().__init__()
 
         self.is_bart = agent.opt['model'] == 'bart'
@@ -97,14 +102,23 @@ class TorchScriptGreedySearch(nn.Module):
         wrapped_decoder = DecoderIncrStateFlattener(agent.model.decoder)
         wrapped_model = ModelIncrStateFlattener(agent.model)
 
+        # Store the token embeddings
+        if callable(embedding_weights):
+            self.embedding_weights = embedding_weights()
+            embedding_weights = self.embedding_weights.dequantize()
+            self.quantized_embedding = True
+        else:
+            self.embedding_weights = embedding_weights
+            self.quantized_embedding = False
+
         # Create sample inputs for tracing
         sample_tokens = torch.tensor([[1, 2, 3, 4, 5]], dtype=torch.long)
-        encoder_states = agent.model.encoder(sample_tokens)
+        encoder_states = encoder(sample_tokens, embedding_weights)
         initial_generations = self._get_initial_decoder_input(sample_tokens)
         latent, initial_incr_state = wrapped_decoder(
-            initial_generations, encoder_states
+            initial_generations, encoder_states, embedding_weights
         )
-        logits = agent.model.output(latent[:, -1:, :])
+        logits = agent.model.output(latent[:, -1:, :], embedding_weights)
         _, preds = logits.max(dim=2)
         incr_state = {k: torch.clone(v) for k, v in initial_incr_state.items()}
         # Copy the initial incremental state, used when tracing the
@@ -116,16 +130,18 @@ class TorchScriptGreedySearch(nn.Module):
         generations = torch.cat([initial_generations, preds], dim=1)
 
         # Do tracing
-        self.encoder = torch.jit.trace(agent.model.encoder, sample_tokens)
+        self.encoder = torch.jit.trace(encoder, (sample_tokens, embedding_weights))
         self.decoder_first_pass = torch.jit.trace(
-            wrapped_decoder, (initial_generations, encoder_states), strict=False
+            wrapped_decoder,
+            (initial_generations, encoder_states, embedding_weights),
+            strict=False,
         )
         # We do strict=False to avoid an error when passing a Dict out of
         # decoder.forward()
         self.partially_traced_model = torch.jit.trace_module(
             wrapped_model,
             {
-                'output': (latent[:, -1:, :]),
+                'output': (latent[:, -1:, :], embedding_weights),
                 'reorder_decoder_incremental_state': (
                     initial_incr_state,
                     torch.tensor([0], dtype=torch.long, device=sample_tokens.device),
@@ -134,13 +150,14 @@ class TorchScriptGreedySearch(nn.Module):
             strict=False,
         )
         self.decoder_later_pass = torch.jit.trace(
-            wrapped_decoder, (generations, encoder_states, incr_state), strict=False
+            wrapped_decoder,
+            (generations, encoder_states, embedding_weights, incr_state),
+            strict=False,
         )
 
     def _get_initial_decoder_input(self, x: torch.Tensor) -> torch.Tensor:
         """
         Workaround because we can't use TGM._get_initial_decoder_input() directly.
-
         When we try to call that function, we get a "RuntimeError: Type 'Tuple[int,
         int]' cannot be traced. Only Tensors and (possibly nested) Lists, Dicts, and
         Tuples of Tensors can be traced" error.
@@ -213,7 +230,11 @@ class TorchScriptGreedySearch(nn.Module):
 
         # Pass through the encoder and decoder to generate tokens
         batch_text_vec = torch.unsqueeze(flattened_text_vec, dim=0)  # Add batch dim
-        encoder_states = self.encoder(batch_text_vec)
+        if self.quantized_embedding:
+            embedding_weights = self.embedding_weights.dequantize()
+        else:
+            embedding_weights = self.embedding_weights
+        encoder_states = self.encoder(batch_text_vec, embedding_weights)
         generations = self._get_initial_decoder_input(batch_text_vec)
         # keep track of early stopping if all generations finish
         seen_end = torch.zeros(
@@ -223,13 +244,15 @@ class TorchScriptGreedySearch(nn.Module):
         for token_idx in range(max_len):
             if token_idx == 0:
                 latent, incr_state = self.decoder_first_pass(
-                    generations, encoder_states
+                    generations, encoder_states, embedding_weights
                 )
             else:
                 latent, incr_state = self.decoder_later_pass(
-                    generations, encoder_states, incr_state
+                    generations, encoder_states, embedding_weights, incr_state
                 )
-            logits = self.partially_traced_model.output(latent[:, -1:, :])
+            logits = self.partially_traced_model.output(
+                latent[:, -1:, :], embedding_weights
+            )
             _, preds = logits.max(dim=2)
             incr_state = self.partially_traced_model.reorder_decoder_incremental_state(
                 incr_state,
@@ -255,7 +278,6 @@ class TorchScriptGreedySearch(nn.Module):
 class BaseIncrStateFlattener(nn.Module):
     """
     Flatten/unflatten the incremental state for use with TorchScripting.
-
     Typically, the incremental state will be stored as a Dict[int, Dict[str, Dict[str,
     torch.Tensor]]], where the 3 dictionary levels map decoder layer, attention type,
     and previous key/value/mask, respectively. However, TorchScript expects dicts to be
@@ -264,7 +286,6 @@ class BaseIncrStateFlattener(nn.Module):
     state, already of type Dict[str, torch.Tensor], to pass it into whatever method
     needs it, and we flatten it again after the updated incremental state is passed back
     out.
-
     This is a base class that provides methods for flattening/unflattening: subclasses
     will call these methods as the incremental state is passed into and out of their own
     methods.
@@ -279,7 +300,6 @@ class BaseIncrStateFlattener(nn.Module):
     ) -> Dict[int, Dict[str, Dict[str, torch.Tensor]]]:
         """
         Unflatten the input incremental state.
-
         For instance, flat_incr_state['layer_0__self_attn__prev_key'] will be stored in
         structured_incr_state[0]['self_attn']['prev_key'].
         """
@@ -295,7 +315,6 @@ class BaseIncrStateFlattener(nn.Module):
     ) -> Dict[str, torch.Tensor]:
         """
         Flatten the input incremental state.
-
         For instance, structured_incr_state[0]['self_attn']['prev_key'] will be stored
         in flat_incr_state['layer_0__self_attn__prev_key'].
         """
@@ -311,7 +330,6 @@ class BaseIncrStateFlattener(nn.Module):
 class DecoderIncrStateFlattener(BaseIncrStateFlattener):
     """
     Wrapper for a TransformerDecoder that will unflatten/flatten the incremental state.
-
     Unflattening/flattening will occur before passing the incremental state into and out
     of .forward().
     """
@@ -320,6 +338,7 @@ class DecoderIncrStateFlattener(BaseIncrStateFlattener):
         self,
         input_: torch.LongTensor,
         encoder_state: Tuple[torch.Tensor, torch.Tensor],
+        embedding_weights: torch.Tensor,
         flat_incr_state: Optional[Dict[str, torch.Tensor]] = None,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         if flat_incr_state is not None:
@@ -327,7 +346,10 @@ class DecoderIncrStateFlattener(BaseIncrStateFlattener):
         else:
             structured_incr_state = None
         tensor, new_structured_incr_state = self.module.forward(
-            input=input_, encoder_state=encoder_state, incr_state=structured_incr_state
+            input=input_,
+            encoder_state=encoder_state,
+            embedding_weights=embedding_weights,
+            incr_state=structured_incr_state,
         )
         new_flat_incr_state = self._flatten_incr_state(new_structured_incr_state)
         return tensor, new_flat_incr_state
@@ -336,7 +358,6 @@ class DecoderIncrStateFlattener(BaseIncrStateFlattener):
 class ModelIncrStateFlattener(BaseIncrStateFlattener):
     """
     Wrapper for a TransformerGeneratorModel to unflatten/flatten the incremental state.
-
     Unflattening/flattening will occur before passing the incremental state into and out
     of .reorder_decoder_incremental_state(). We also support .output(), which is also
     traced.
@@ -351,8 +372,10 @@ class ModelIncrStateFlattener(BaseIncrStateFlattener):
         )
         return self._flatten_incr_state(new_structured_incr_state)
 
-    def output(self, tensor: torch.Tensor) -> torch.Tensor:
-        return self.module.output(tensor)
+    def output(
+        self, tensor: torch.Tensor, embedding_weights: torch.Tensor
+    ) -> torch.Tensor:
+        return self.module.output(tensor, embedding_weights)
 
 
 @torch.jit.script
@@ -470,12 +493,9 @@ class ScriptableGpt2BpeHelper(object):
     def encode(self, text: str) -> List[str]:
         """
         Tokenize text.
-
         Checks for add_prefix_space; handles accordingly.
-
         :param text:
             text to tokenize
-
         :return tokens:
             A list of tokens
         """
@@ -486,12 +506,9 @@ class ScriptableGpt2BpeHelper(object):
     def get_pairs(self, word: List[str]) -> List[Tuple[str, str]]:
         """
         Return set of symbol pairs in a word.
-
         Word is represented as list of symbols (symbols being variable-length strings).
-
         :param word:
             word to symbolize
-
         :return pairs:
             set of tuples of symbols
         """
@@ -505,10 +522,8 @@ class ScriptableGpt2BpeHelper(object):
     def bpe(self, word: List[str]) -> List[str]:
         """
         Convert token to BPE.
-
         :param word:
             list of tokens token to convert
-
         :return bpe_encoding:
             string bpe encoding
         """
@@ -558,10 +573,8 @@ class ScriptableGpt2BpeHelper(object):
     def helper_encode(self, text: str) -> List[str]:
         """
         Tokenize text.
-
         :param text:
             text to tokenize
-
         :return tokens:
             A list of tokens
         """
@@ -579,10 +592,8 @@ class ScriptableGpt2BpeHelper(object):
     def decode(self, tokens: List[str]) -> str:
         """
         Decode list of tokens into a text string.
-
         :param tokens:
             list of tokens
-
         :return text:
             decoded text
         """
@@ -595,10 +606,8 @@ class ScriptableGpt2BpeHelper(object):
     def helper_decode(self, tokens: List[str]) -> str:
         """
         Decode list of tokens into text string.
-
         :param tokens:
             list of tokens
-
         :return:
             decoded text
         """
@@ -629,14 +638,12 @@ class ScriptableGpt2BpeHelper(object):
         right byte order, you'll get unexpected results and likely throw. Torch itself
         takes in unicode strings and encodes them as UTF8, so that should be actively
         hard to do.
-
         The logic is simple: looking at the current start-of-character byte.
         If its high bit is 0, it's a 1-byte character. Otherwise, the number of
         bytes is the number of leading 1s in its binary representation, so
         find that number by comparing it directly to ints with the appropriate
         representation, then append that many bytes as a character and move past
         them to the next start byte.
-
         From pytext.torchscript.utils.
         """
         chars: List[str] = []
@@ -670,7 +677,6 @@ class ScriptableGpt2BpeHelper(object):
 class ScriptableDictionaryAgent:
     """
     Builds and/or loads a dictionary.
-
     All code is TorchScriptable.
     """
 
@@ -736,7 +742,6 @@ class ScriptableDictionaryAgent:
     def tokenize(self, text: str) -> List[str]:
         """
         Return a sequence of tokens from the iterable.
-
         Also handles special tokens for some tokenizers
         """
 
@@ -754,7 +759,6 @@ class ScriptableDictionaryAgent:
     def txt2vec(self, text: str) -> List[int]:
         """
         Convert a string to a vector (list of ints).
-
         First runs a sentence tokenizer, then a word tokenizer.
         """
         itr: List[int] = []
@@ -765,7 +769,6 @@ class ScriptableDictionaryAgent:
     def vec2txt(self, vector: List[int]) -> str:
         """
         Convert a vector of IDs to a string.
-
         Converts a vector (iterable of ints) into a string, with each token separated by
         the delimiter (default ``' '``).
         """

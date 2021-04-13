@@ -9,7 +9,6 @@ from typing import List
 import torch
 import torch.jit
 import torch.nn as nn
-from torch.quantization import convert, float_qparams_weight_only_qconfig, prepare
 from packaging import version
 
 from parlai.core.agents import create_agent
@@ -45,15 +44,37 @@ def export_model(opt: Opt):
         opt[k] = v
         opt['override'][k] = v
 
-    # Create the unscripted greedy-search module
+    print('\nLoading original model.')
     agent = create_agent(opt, requireModelExists=True)
-    original_module = TorchScriptGreedySearch(agent)
+
+    print('\nCreating greedy-search module for the original unscripted model.')
+    original_module = TorchScriptGreedySearch(
+        agent=agent,
+        embedding_weights=agent.model.embeddings.weight,
+        encoder=agent.model.encoder,
+    )
+
+    print('\nDeleting extra copies of the token embedding layer, which won\'t be used.')
+    del agent.model.encoder.embeddings
+    del agent.model.decoder.embeddings
+
+    class DummyEmbeddingWeightsModule(nn.Module):
+        def __init__(self, embedding_weights: torch.Tensor):
+            self.weights = embedding_weights
+
+        def forward(self, tensor: torch.Tensor):
+            return torch.index_select(self.weights, dim=0, index=input[0]).unsqueeze(0)
+
+    print('\nCreating a dummy module containing the embedding weights.')
+    dummy_module = DummyEmbeddingWeightsModule(
+        embedding_weights=agent.model.embeddings.weight
+    )
 
     # Optionally quantize the model
     if opt['quantize']:
 
-        print('Performing dynamic quantization of linear layers.')
-        model = torch.quantization.quantize_dynamic(
+        print('\nPerforming dynamic quantization of linear layers.')
+        agent.model = torch.quantization.quantize_dynamic(
             model=agent.model,
             qconfig_spec={
                 torch.nn.Linear: torch.quantization.per_channel_dynamic_qconfig
@@ -62,25 +83,43 @@ def export_model(opt: Opt):
             inplace=False,
         )
 
-        print('Performing quantization of embeddings.')
-        for module in model.modules():
-            if isinstance(module, torch.nn.Embedding):
-                module.qconfig = float_qparams_weight_only_qconfig
-        prepare(model, inplace=True)
-        convert(model, inplace=True)
+        print('\nPerforming quantization of embeddings.')
+        dummy_module = torch.quantization.quantize_dynamic(
+            model=dummy_module,
+            qconfig_spec={
+                torch.nn.Linear: torch.quantization.per_channel_dynamic_qconfig
+            },
+            dtype=torch.qint8,
+            inplace=False,
+        )
 
-        agent.model = model
-
-        agent.save(opt['scripted_model_file'] + '._quantized_unscripted')
-
-        quantized_module = TorchScriptGreedySearch(agent)
+        print('\nCreating module for quantized model.')
+        quantized_module = TorchScriptGreedySearch(
+            agent=agent,
+            embedding_weights=dummy_module.weights,
+            encoder=agent.model.encoder,
+        )
 
     else:
 
         quantized_module = None
 
-    # Script the module and save
-    scripted_module = torch.jit.script(maybe_quantized_module)
+    print(
+        '\nDeleting extra objects in the model so that they don\'t get duplicated when tracing.'
+    )
+    # It's not as important to delete the decoder because that typically has fewer layers, and the model's `reorder_decoder_incremental_state()` relies on it so it's harder to remove
+    encoder = agent.model.encoder
+    del agent.model.embeddings
+    del agent.model.encoder
+
+    print('\nScripting the module.')
+    scripted_module = torch.jit.script(
+        TorchScriptGreedySearch(
+            agent=agent, embedding_weights=dummy_module.weights, encoder=encoder
+        )
+    )
+
+    print('\nSaving the scripted module.')
     with PathManager.open(opt['scripted_model_file'], 'wb') as f:
         torch.jit.save(scripted_module, f)
 
