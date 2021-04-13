@@ -1297,7 +1297,7 @@ class BackgroundDriverWorld(World):
         response_object = self.get_model_agent().batch_act(batch)
         # compute metrics
         for response in response_object:
-            self.metrics.evaluate_response(response, [])
+            self.metrics._consume_user_metrics(response)
         self.total_parleys += 1
         self.total_exs += batch.batchsize
 
