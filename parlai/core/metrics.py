@@ -530,58 +530,6 @@ class F1Metric(AverageMetric):
         return F1Metric(max(f1 for p, r, f1 in scores), 1)
 
 
-class RareWordF1Calculator:
-    """
-    Helper class for computing F1 with an emphasis on infrequent words.
-    """
-
-    def __init__(self, corpus: str, top_p: float = 0.5):
-        try:
-            import nltk
-        except ImportError:
-            raise ImportError('Please install nltk (e.g. pip install nltk).')
-        words = normalize_answer(corpus).split()
-        self._freq_dist = nltk.FreqDist(words)
-        self._cutoff_count = RareWordF1Calculator._find_cutoff_count(
-            self._freq_dist, top_p
-        )
-
-    @staticmethod
-    def _find_cutoff_count(freq_dist, top_p: float) -> int:
-        """
-        Finds the word occurance for which the cumulative occurances
-        are `top_p` of the overall word count.
-        """
-        assert top_p < 1
-        target = sum(freq_dist.values()) * top_p
-        cumul = 0
-        for _, v in freq_dist.most_common():
-            cumul += v
-            if cumul > target:
-                return v
-        raise RuntimeError(f"Invalid top {top_p*100}% of the corpus distribution")
-
-    @staticmethod
-    def _filter(freq_dist, cutoff: int, text: str) -> str:
-        """
-        For words that are found in the reference distribution, filters those
-        with an occurrence count less than the cutoff.
-        """
-        words = normalize_answer(text).split()
-        return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
-
-    def compute(self, guess: str, answers: List[str]) -> F1Metric:
-        guess = RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, guess)
-        answers = [
-            RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
-            for a in answers
-        ]
-        if not any(len(a) for a in answers):
-            # no rare words in labels, set denominator to zero
-            return F1Metric(0, 0)
-        return F1Metric.compute(guess, answers)
-
-
 class ExactMatchMetric(AverageMetric):
     @staticmethod
     def compute(guess: str, answers: List[str]) -> ExactMatchMetric:
