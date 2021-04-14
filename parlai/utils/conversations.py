@@ -336,7 +336,7 @@ class Conversations:
                             convo['context'].append(turn)
                     if new_pair:
                         convo['dialog'].append(new_pair)
-                json_convo = json.dumps(convo)
+                json_convo = json.dumps(convo, default=lambda v: '<not serializable>')
                 f.write(json_convo + '\n')
         logging.info(f'Conversations saved to file: {to_save}')
 
