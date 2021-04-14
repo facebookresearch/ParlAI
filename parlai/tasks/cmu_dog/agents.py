@@ -49,6 +49,8 @@ def _datafile(split: str, opt: Opt) -> str:
     if split_type == SplitType.ORIGINAL:
         return f"{split}.json"
     if split_type == SplitType.SEEN:
+        if 'test' in split:
+            return "test_seen_split_seen_unseen.json"
         return f"{split}_split_seen_unseen.json"
     if split_type == SplitType.UNSEEN:
         if "test" not in split:
