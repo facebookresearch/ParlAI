@@ -3,17 +3,17 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from __future__ import annotations
-from parlai.agents.transformer.modules.decoder import TransformerDecoder
-from parlai.agents.transformer.modules.interfaces import ModularComponentSpec
 import torch
 from typing import Optional, Tuple, Union
 
 from parlai.agents.transformer.modules import (
     MultiHeadAttention,
+    TransformerDecoder,
     TransformerDecoderLayer,
     TransformerEncoder,
     TransformerGeneratorModel,
 )
+from parlai.agents.transformer.modules.interfaces import ModularComponentBuilder
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 
 
@@ -21,15 +21,13 @@ class TransformerVariantAgent(TransformerGeneratorAgent):
     def build_model(self, states=None):
         # Using a custom encoder and a custom decoder self attention
         template = TransformerGeneratorModel.Template(
-            encoder=ModularComponentSpec(
-                klass=MyCustomEncoder, template=TransformerEncoder.Template()
-            ),
-            decoder=ModularComponentSpec(
-                klass=TransformerDecoder,
-                template=TransformerDecoder.Template(
-                    layer=ModularComponentSpec(
-                        klass=TransformerDecoderLayer,
-                        template=TransformerDecoderLayer.Template(
+            encoder=ModularComponentBuilder(MyCustomEncoder),
+            decoder=ModularComponentBuilder(
+                TransformerDecoder,
+                TransformerDecoder.Template(
+                    layer=ModularComponentBuilder(
+                        TransformerDecoderLayer,
+                        TransformerDecoderLayer.Template(
                             self_attention=MyCustomAttention
                         ),
                     )

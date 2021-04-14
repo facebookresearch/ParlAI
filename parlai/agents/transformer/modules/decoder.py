@@ -23,7 +23,7 @@ from parlai.agents.transformer.modules import (
     TransformerFFN,
 )
 from parlai.agents.transformer.modules.interfaces import (
-    ModularComponentSpec,
+    ModularComponentBuilder,
     ModularComponent,
 )
 from parlai.core.opt import Opt
@@ -31,7 +31,7 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerDecoderLayer(nn.Module, ModularComponent):
+class TransformerDecoderLayer(ModularComponent):
     """
     Implements a single Transformer decoder layer.
 
@@ -178,7 +178,7 @@ class TransformerDecoderLayer(nn.Module, ModularComponent):
         }
 
 
-class TransformerDecoder(nn.Module, ModularComponent):
+class TransformerDecoder(ModularComponent):
     """
     Transformer Decoder module.
 
@@ -193,9 +193,9 @@ class TransformerDecoder(nn.Module, ModularComponent):
 
     @dataclass
     class Template(ModularComponent.Template):
-        layer: ModularComponentSpec[TransformerDecoderLayer] = ModularComponentSpec(
-            TransformerDecoderLayer, TransformerDecoderLayer.Template()
-        )
+        layer: ModularComponentBuilder[
+            TransformerDecoderLayer
+        ] = ModularComponentBuilder(TransformerDecoderLayer)
 
     def __init__(
         self,
@@ -267,7 +267,7 @@ class TransformerDecoder(nn.Module, ModularComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                template.layer.klass(
+                template.layer.build(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
@@ -276,7 +276,6 @@ class TransformerDecoder(nn.Module, ModularComponent):
                     dropout=dropout_frac,
                     activation=self.activation,
                     variant=self.variant,
-                    template=template.layer.template,
                 )
             )
 

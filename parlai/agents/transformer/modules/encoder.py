@@ -23,7 +23,7 @@ from parlai.agents.transformer.modules import (
     TransformerFFN,
 )
 from parlai.agents.transformer.modules.interfaces import (
-    ModularComponentSpec,
+    ModularComponentBuilder,
     ModularComponent,
 )
 from parlai.core.opt import Opt
@@ -31,7 +31,7 @@ from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerEncoderLayer(nn.Module, ModularComponent):
+class TransformerEncoderLayer(ModularComponent):
     """
     Implements a single Transformer encoder layer.
     """
@@ -93,7 +93,7 @@ class TransformerEncoderLayer(nn.Module, ModularComponent):
         return tensor
 
 
-class TransformerEncoder(nn.Module, ModularComponent):
+class TransformerEncoder(ModularComponent):
     """
     Transformer encoder module.
 
@@ -114,9 +114,9 @@ class TransformerEncoder(nn.Module, ModularComponent):
 
     @dataclass
     class Template(ModularComponent.Template):
-        layer: ModularComponentSpec[TransformerEncoderLayer] = ModularComponentSpec(
-            TransformerEncoderLayer, TransformerEncoderLayer.Template()
-        )
+        layer: ModularComponentBuilder[
+            TransformerEncoderLayer
+        ] = ModularComponentBuilder(TransformerEncoderLayer)
 
     def __init__(
         self,
@@ -218,7 +218,7 @@ class TransformerEncoder(nn.Module, ModularComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                template.layer.klass(
+                template.layer.build(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
@@ -227,7 +227,6 @@ class TransformerEncoder(nn.Module, ModularComponent):
                     dropout=self.dropout_frac,
                     variant=self.variant,
                     activation=_default(activation, opt.get('activation', 'relu')),
-                    template=template.layer.template,
                 )
             )
         self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))

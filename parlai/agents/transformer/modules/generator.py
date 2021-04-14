@@ -30,7 +30,7 @@ from parlai.agents.transformer.modules import (
     TransformerEncoder,
 )
 from parlai.agents.transformer.modules.interfaces import (
-    ModularComponentSpec,
+    ModularComponentBuilder,
     ModularComponent,
 )
 from parlai.core.opt import Opt
@@ -39,12 +39,8 @@ from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
 
-ENCODER_DEFAULT_SPEC = ModularComponentSpec(
-    TransformerEncoder, TransformerEncoder.Template()
-)
-DECODER_DEFAULT_SPEC = ModularComponentSpec(
-    TransformerDecoder, TransformerDecoder.Template()
-)
+ENCODER_DEFAULT = ModularComponentBuilder(TransformerEncoder)
+DECODER_DEFAULT = ModularComponentBuilder(TransformerDecoder)
 
 
 class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
@@ -54,8 +50,8 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
 
     @dataclass
     class Template(ModularComponent.Template):
-        encoder: ModularComponentSpec[TransformerEncoder] = ENCODER_DEFAULT_SPEC
-        decoder: ModularComponentSpec[TransformerDecoder] = DECODER_DEFAULT_SPEC
+        encoder: ModularComponentBuilder[TransformerEncoder] = ENCODER_DEFAULT
+        decoder: ModularComponentBuilder[TransformerDecoder] = DECODER_DEFAULT
 
     @classmethod
     def build_encoder(
@@ -65,22 +61,24 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
         embedding=None,
         padding_idx=None,
         reduction_type='mean',
-        spec: ModularComponentSpec = ENCODER_DEFAULT_SPEC,
-    ):
-        return spec.klass(
+        builder: ModularComponentBuilder[TransformerEncoder] = ENCODER_DEFAULT,
+    ) -> TransformerEncoder:
+        return builder.build(
             opt=opt,
             embedding=embedding,
             vocabulary_size=len(dictionary),
             padding_idx=padding_idx,
             reduction_type=reduction_type,
-            template=spec.template,
         )
 
     @classmethod
     def build_decoder(
-        cls, opt, embedding=None, spec: ModularComponentSpec = ENCODER_DEFAULT_SPEC
-    ):
-        return spec.klass(opt=opt, embedding=embedding, template=spec.template)
+        cls,
+        opt,
+        embedding=None,
+        builder: ModularComponentBuilder[TransformerDecoder] = DECODER_DEFAULT,
+    ) -> TransformerDecoder:
+        return builder.build(opt=opt, embedding=embedding)
 
     def __init__(
         self, opt: Opt, dictionary: DictionaryAgent, template: Optional[Template] = None
@@ -101,10 +99,10 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
             self.embeddings,
             self.pad_idx,
             reduction_type=None,
-            spec=template.encoder,
+            builder=template.encoder,
         )
         self.decoder = self.build_decoder(
-            opt, embedding=self.embeddings, spec=template.decoder
+            opt, embedding=self.embeddings, builder=template.decoder
         )
 
     def reorder_encoder_states(self, encoder_states, indices):
