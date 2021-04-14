@@ -142,6 +142,8 @@ class RareWordF1Calculator:
         return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
 
     def compute(self, guess: str, answers: List[str]) -> F1Metric:
+        if guess is None or answers is None:
+            return F1Metric(0, 0)
         guess = RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, guess)
         answers = [
             RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
