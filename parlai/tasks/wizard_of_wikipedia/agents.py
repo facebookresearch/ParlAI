@@ -263,10 +263,9 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             type=str,
             choices=['none', 'train', 'all'],
             default='none',
-            help='To add some previously missing data.'
-                 'For reproducibility, the default "none" is the previous version.'
+            help='For reproducibility, the default "none" is the previous version which misssing some data.'
                  'When "train" is chosen, only the training set is supplemented.'
-                 'When "all" is chosen, all data are supplemented',
+                 'When "all" is chosen, all data are supplemented.',
         )
         return parser
 
@@ -491,10 +490,9 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             type=str,
             choices=['none', 'train', 'all'],
             default='none',
-            help='To add some previously missing data.'
-                 'For reproducibility, the default "none" is the previous version.'
+            help='For reproducibility, the default "none" is the previous version which misssing some data.'
                  'When "train" is chosen, only the training set is supplemented.'
-                 'When "all" is chosen, all data are supplemented',
+                 'When "all" is chosen, all data are supplemented.',
         )
         return parser
 
