@@ -61,7 +61,7 @@ import random
 import yaml
 from threading import Thread
 import torch
-from typing import List, Tuple, Optional, TypeVar
+from typing import List, Tuple, Optional, TypeVar, Any
 
 
 ERROR_MESSAGE_NO_DATAFILE = (
@@ -127,6 +127,29 @@ class DataLoader(Thread):
                     receive_fn(future)
                 except RuntimeError:
                     return
+
+
+class _ErrorThrowingDataLoader(object):
+    """
+    A fake DataLoader which throws an exception when a work order is placed.
+
+    Since threads cannot be mixed with spawn_method='fork', we need to disallow users
+    from combining --num-workers with teachers that utilize threads. This placeholder
+    object is only useful for ensuring the user sees a loud error message when they
+    accidentally use a thread.
+    """
+
+    def __init__(self, opt):
+        pass
+
+    def request_load(self, receive_fn, load_fn, args):
+        raise RuntimeError(
+            'One of your teachers uses a DataLoader or a thread. You may only '
+            'combine this with --num-workers 0.'
+        )
+
+    def start(self):
+        pass
 
 
 class Teacher(Agent):
@@ -312,7 +335,10 @@ class FixedDialogTeacher(Teacher):
             self.index = AttrDict(value=-1)
 
         if not hasattr(self, 'data_loader'):
-            self.data_loader = DataLoader(opt)
+            if opt.get('background_index') is None:
+                self.data_loader = DataLoader(opt)
+            else:
+                self.data_loader = _ErrorThrowingDataLoader(opt)
             self.data_loader.start()
 
         # set up batching
@@ -354,7 +380,7 @@ class FixedDialogTeacher(Teacher):
         # TODO: mark as abstract
         pass
 
-    def receive_data(self, future):
+    def receive_data(self, future: concurrent.futures.Future):
         """
         Receive data from the data loader.
 
@@ -1975,7 +2001,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
             with PathManager.open(image_mode_features_dict_path, 'rb') as f:
                 self.image_features_dict = torch.load(f, map_location='cpu')
         else:
-            logging.warn('No existing image features, attempting to build.')
+            logging.warning('No existing image features, attempting to build.')
             if self.is_image_mode_buildable(self.image_mode):
                 # TODO: Awkward to modify the input opt but needed to use
                 # TODO: ImageLoader functionality. Is from comment_battle,
@@ -2268,6 +2294,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
+        self.bg_index = self.opt.get('background_index', None)
         if (
             shared is None
             and self.is_train
@@ -2277,12 +2304,34 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 c for c in self.fold_chunks if c % self.dws == self.rank
             ]
 
+        # If we're in training mode with --num-workers > 0, we will run the
+        # chunk teacher in single threaded mode (self.threading is False). In
+        # this mode, we will block on chunk loading.
+
+        # If we're not using --num-workers, or we're in validation/testing, we
+        # _always_ run in normal threading mode, where chunk loading is pushed
+        # to a background thread. However, since python threading is is blocked
+        # by the GIL, this only manages to background I/O.
+
+        # Potentially in the future, we may support --num-workers in validation,
+        # in which case we can get rid of one of these.
+
+        self.threading = not (opt.get('num_workers', 0) > 0 and self.is_train)
+        if not self.threading and opt.get('background_index') is None:
+            # don't start loading data on the main driver, we don't need it
+            opt['no_auto_enqueues'] = True
+        if not self.threading:
+            # if we're in single-threaded (background preprocessing mode), we
+            # can't have a max queue size or we will hang if we overfill it
+            self.buffersize = 0
+
         if shared is not None:
             self.is_root_teacher = False
             self.chunks = shared['chunks']
             self.samples = shared['samples']
             self.reset_counter = shared['reset_counter']
             self.rng = shared['rng']
+            self.tot_samples_loaded = shared['tot_samples_loaded']
         else:
             self.is_root_teacher = True
             self.samples = queue.Queue(maxsize=self.buffersize)
@@ -2298,7 +2347,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.tot_samples_loaded = defaultdict(int)
             if not opt.get("no_auto_enqueues", False):
                 # we only enqueue the train thread because the reset() called at
-                # the top of training will
+                # the top of training will handle this
                 self._enqueue_request()
 
         self._episode_done = True
@@ -2353,6 +2402,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         shared['chunks'] = self.chunks
         shared['reset_counter'] = self.reset_counter
         shared['rng'] = self.rng
+        shared['tot_samples_loaded'] = self.tot_samples_loaded
         return shared
 
     def _setup_data(self, datatype):
@@ -2377,32 +2427,57 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Queue a request for loading to the data loader.
         """
-        self.data_loader.request_load(self.receive_data, self.get_chunk, ())
+        if self.threading:
+            self.data_loader.request_load(self.receive_data, self.get_chunk, ())
+        else:
+            self._process_data(self.get_chunk())
 
     def receive_data(self, future):
+        """
+        Receive loaded data and place it onto the sample queue.
+
+        :param future:
+            A Future object which will return a value from a call to get_chunk()
+        """
+        return self._process_data(future.result())
+
+    def _process_data(self, output: Optional[Tuple[Any, int]]):
         """
         Loads data.
 
         Load data into self.samples until buffersize is reached.
+
+        :param output:
+            The output of an item from a call to get_chunk()
         """
-        chunk_output, chunk_reset_cnt = future.result()
+        if output is None:
+            return
+        chunk_output, chunk_reset_cnt = output
         if chunk_output is None:
             self.samples.put((None, chunk_reset_cnt))
             return
-        while chunk_output:
-            # self.samples is a queue with maxsize
-            # self.buffersize, so will block if the
-            # buffer gets full
-            sample = chunk_output.pop(0)
-            if (
-                self.is_train
-                or self.tot_samples_loaded[chunk_reset_cnt] % self.dws == self.rank
-            ):
-                # log the reset count at the time the chunk was queued
-                self.samples.put((sample, chunk_reset_cnt))
-            self.tot_samples_loaded[chunk_reset_cnt] += 1
-        # and start loading the next chunk
-        self._enqueue_request()
+        if self.threading:
+            while chunk_output:
+                # self.samples is a queue with maxsize
+                # self.buffersize, so will block if the
+                # buffer gets full
+                sample = chunk_output.pop(0)
+                if (
+                    self.is_train
+                    or self.tot_samples_loaded[chunk_reset_cnt] % self.dws == self.rank
+                ):
+                    # log the reset count at the time the chunk was queued
+                    self.samples.put((sample, chunk_reset_cnt))
+                self.tot_samples_loaded[chunk_reset_cnt] += 1
+        else:
+            # we're actually running in single processor mode so we'll just
+            # do a thread-unsafe hit of the python internals, which is much faster
+            # than trying to safely put things onto the queue
+            self.samples.queue.extend((co, chunk_reset_cnt) for co in chunk_output)
+            self.tot_samples_loaded[chunk_reset_cnt] += len(chunk_output)
+        if self.threading:
+            # and start loading the next chunk
+            self._enqueue_request()
 
     def _enqueue_chunks(self):
         """
@@ -2469,6 +2544,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return output, chunk_reset_cnt
 
     def get(self, episode_idx, entry_idx=0):
+        if not self.threading and self.samples.empty():
+            self._enqueue_request()
+
         curr_reset_cnt = self.reset_counter.value()
         if self._episode_done:
             # Get the next episode or example
@@ -2509,10 +2587,16 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self._drain(self.samples)
             self._drain(self.chunks)
             self._enqueue_chunks()
-            self.tot_samples_loaded = defaultdict(
-                int
-            )  # reset the count of samples loaded
-            self._enqueue_request()
+            self.tot_samples_loaded.clear()  # reset the count of samples loaded
+            if self.threading:
+                self._enqueue_request()
+
+    def shutdown(self):
+        # Time to wrap up. We should rush out to the worker and tell them
+        # that they're "done" processing data.
+        # same signal as end of epoch
+        self.chunks.put((None, None))
+        self.chunks.put((None, None))
 
 
 def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):

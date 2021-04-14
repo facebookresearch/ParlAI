@@ -18,7 +18,7 @@ parlai display_data --task babi:task1k:1
 """
 
 from parlai.core.params import ParlaiParser
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.core.worlds import create_task
 from parlai.utils.strings import colorize
 from parlai.core.script import ParlaiScript, register_script
@@ -64,9 +64,10 @@ def display_data(opt):
     if 'ordered' not in opt['datatype'] and 'train' in opt['datatype']:
         opt['datatype'] = f"{opt['datatype']}:ordered"
 
-    # create repeat label agent and assign it to the specified task
+    # create dummy agent and assign it to the specified task
     opt.log()
-    agent = RepeatLabelAgent(opt)
+    opt['fixed_response'] = None
+    agent = FixedResponseAgent(opt)
     world = create_task(opt, agent)
 
     # Show some example dialogs.
