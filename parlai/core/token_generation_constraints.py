@@ -228,7 +228,7 @@ class UnorderedConstraintState(ConstraintState):
 
     @staticmethod
     def create(constraint_tensor: torch.Tensor):
-        constraint_list = constraint_tensor #unpack_constraints(constraint_tensor)
+        constraint_list = unpack_constraints(constraint_tensor)
         constraint_trie_root = ConstraintNode.create(constraint_list)
         return UnorderedConstraintState(constraint_trie_root)
 
@@ -395,7 +395,7 @@ class OrderedConstraintState(ConstraintState):
 
     @staticmethod
     def create(constraint_tensor: torch.Tensor):
-        constraint_list = [constraint_tensor]#unpack_constraints(constraint_tensor)
+        constraint_list = unpack_constraints(constraint_tensor)
         return OrderedConstraintState(ConstraintSequence(constraint_list), -1)
 
     def __str__(self):

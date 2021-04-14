@@ -30,6 +30,7 @@ from torch import Tensor
 
 from parlai.core.opt import Opt
 from parlai.core.search import LexicallyConstrainedBeamSearch
+from parlai.core.token_generation_constraints import pack_constraints
 from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
@@ -675,7 +676,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 [obs_batch[i].get('full_text_vec', []) for i in batch.valid_indices]
             )
         if self.constraints is not None:
-            batch['constraints'] = [torch.LongTensor(self.history.parse(c)) for c in self.constraints]
+            batch['constraints'] = pack_constraints([[torch.LongTensor(self.history.parse(c)) for c in self.constraints]])
 
         return batch
 
@@ -1126,13 +1127,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         # repeat encoder outputs and decoder inputs
         decoder_input = self._get_initial_decoder_input(bsz, beam_size, dev)
 
-        inds = torch.arange(bsz).to(dev).unsqueeze(1).repeat(1, beam_size).view(-1)
+        inds = torch.arange(bsz).to(dev).view(-1, 1).repeat(1, beam_size).view(-1)
         encoder_states = model.reorder_encoder_states(encoder_states, inds)
         incr_state = None
+        reorder_state: Optional[Tensor] = None
 
         if batch.get('constraints') is not None:
             #init constraints for the constrained beam search
             [b.search.init_constraints(batch['constraints'], beam_size) if b.search is not None else 0 for b in beams]
+
+        self.pad = self.dict[self.dict.null_token]
+        self.unk = self.dict[self.dict.unk_token]
+        self.eos = self.dict[self.dict.end_token]
+        self.bos = self.dict[self.dict.start_token]
+        self.unk_penalty = 0.0
 
         for _ts in range(max_ts):
             if all((b.is_done() for b in beams)):
@@ -1149,6 +1157,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
             score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
+            score[score != score] = torch.tensor(-math.inf).to(score)
+            score[:,:, self.pad] = -math.inf  # never select pad
+            score[:,:, self.unk] -= self.unk_penalty  # apply unk penalty
+
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
@@ -1164,6 +1176,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
+
+            if True:
+                if _ts >= 1:
+                    for i in range(self.beam_size):
+                        print(f'Tokens[{i}]: {self._v2t(beams[0].tokens[i, : _ts + 1])}')
+                        #print(f'Tokens[{j}]: {self._v2t(tokens[j][ : ])}')
+
             incr_state_inds = torch.cat(
                 [
                     beam_size * i + b.get_backtrack_from_current_step()
@@ -1179,19 +1198,32 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             decoder_input = self._get_next_decoder_input(
                 decoder_input, selection, incr_state_inds
             )
+            encoder_states = model.reorder_encoder_states(encoder_states, incr_state_inds)
 
-        # get all finalized candidates for each sample (and validate them)
-        n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
-
-        if hasattr(self, '_rerank_beams'):
-            n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
-                batch, n_best_beam_preds_scores
-            )
-
-        # get the top prediction for each beam (i.e. minibatch sample)
-        beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
-
-        return beam_preds_scores, beams
+        if isinstance(beams[0].search, LexicallyConstrainedBeamSearch):
+            # sort by score descending
+            finalized = beams[0].cbs_finalized
+            for sent in range(len(finalized)):
+                scores = torch.tensor(
+                    [float(elem["score"].item()) for elem in finalized[sent]]
+                )
+                _, sorted_scores_indices = torch.sort(scores, descending=True)
+                finalized[sent] = [finalized[sent][ssi] for ssi in sorted_scores_indices]
+                finalized[sent] = torch.jit.annotate(
+                    List[Dict[str, Tensor]], finalized[sent]
+                )
+                finalized = [(b['tokens'], b['score']) for b in finalized[sent]]
+            return finalized, beams
+        else:
+            # get all finalized candidates for each sample (and validate them)
+            n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
+            if hasattr(self, '_rerank_beams'):
+                n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
+                    batch, n_best_beam_preds_scores
+                )
+            #get the top prediction for each beam (i.e. minibatch sample)
+            beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
+            return beam_preds_scores, beams
 
     def _load_beam_block_list(self) -> SearchBlocklist:
         """
