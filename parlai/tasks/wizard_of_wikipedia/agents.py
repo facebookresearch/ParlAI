@@ -120,8 +120,8 @@ class RareWordF1Calculator:
     @staticmethod
     def _find_cutoff_count(freq_dist, top_p: float) -> int:
         """
-        Finds the word occurance for which the cumulative occurances
-        are `top_p` of the overall word count.
+        Finds the word occurance for which the cumulative occurances are `top_p` of the
+        overall word count.
         """
         assert top_p < 1
         target = sum(freq_dist.values()) * top_p
@@ -135,8 +135,8 @@ class RareWordF1Calculator:
     @staticmethod
     def _filter(freq_dist, cutoff: int, text: str) -> str:
         """
-        For words that are found in the reference distribution, filters those
-        with an occurrence count less than the cutoff.
+        For words that are found in the reference distribution, filters those with an
+        occurrence count less than the cutoff.
         """
         words = normalize_answer(text).split()
         return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
