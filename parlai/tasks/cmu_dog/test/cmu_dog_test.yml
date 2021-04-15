@@ -1,0 +1,281 @@
+acts:
+- - available_knowledge_raw:
+      cast:
+      - Lindsay Lohan as Cady Heron
+      - Rachel McAdams as Regina George
+      - Lacey Chabert as Gretchen Wieners
+      - Amanda Seyfried as Karen Smith
+      - Lizzy Caplan as Janis Ian
+      critical_response:
+      - Boasts a one-two-three punch in star Lindsay Lohan, screenwriter Tina Fey
+        and director Mark Waters, and, indeed, it delivers a knockout
+      - The screenplay was highly praised by critics with Peter Travers of Rolling
+        Stone calling it 'comic gold'.
+      - In November 2012, Rotten Tomatoes named it in its 'Top 50 Greatest Teen Comedies'.
+      director: 'Mark Waters '
+      genre: Comedy, teeny
+      introduction: Mean Girls is a 2004 American teen comedy film directed by Mark
+        Waters and written by Tina Fey. The film is partially based on Rosalind Wiseman's
+        2002 non-fiction self-help book Queen Bees and Wannabes, which describes female
+        high school social cliques and the damaging effects they can have on girls.
+      movieName: Mean Girls
+      rating:
+      - 'Rotten Tomatoes: 84% and average: 6.9/10'
+      - 'Metacritic Score: 66/100'
+      - 'CinemaScore: A-'
+      year: '2004'
+    available_knowledge_text: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as
+      Regina George,Lacey Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy
+      Caplan as Janis Ian;critical_response:Boasts a one-two-three punch in star Lindsay
+      Lohan, screenwriter Tina Fey and director Mark Waters, and, indeed, it delivers
+      a knockout,The screenplay was highly praised by critics with Peter Travers of
+      Rolling Stone calling it ''comic gold''.,In November 2012, Rotten Tomatoes named
+      it in its ''Top 50 Greatest Teen Comedies''.;director:Mark Waters ;genre:Comedy,
+      teeny;introduction:Mean Girls is a 2004 American teen comedy film directed by
+      Mark Waters and written by Tina Fey. The film is partially based on Rosalind
+      Wiseman''s 2002 non-fiction self-help book Queen Bees and Wannabes, which describes
+      female high school social cliques and the damaging effects they can have on
+      girls.;movieName:Mean Girls;rating:Rotten Tomatoes: 84% and average: 6.9/10,Metacritic
+      Score: 66/100,CinemaScore: A-;year:2004'
+    checked_sentence: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as Regina George,Lacey
+      Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy Caplan as Janis
+      Ian;critical_response:Boasts a one-two-three punch in star Lindsay Lohan, screenwriter
+      Tina Fey and director Mark Waters, and, indeed, it delivers a knockout,The screenplay
+      was highly praised by critics with Peter Travers of Rolling Stone calling it
+      ''comic gold''.,In November 2012, Rotten Tomatoes named it in its ''Top 50 Greatest
+      Teen Comedies''.;director:Mark Waters ;genre:Comedy, teeny;introduction:Mean
+      Girls is a 2004 American teen comedy film directed by Mark Waters and written
+      by Tina Fey. The film is partially based on Rosalind Wiseman''s 2002 non-fiction
+      self-help book Queen Bees and Wannabes, which describes female high school social
+      cliques and the damaging effects they can have on girls.;movieName:Mean Girls;rating:Rotten
+      Tomatoes: 84% and average: 6.9/10,Metacritic Score: 66/100,CinemaScore: A-;year:2004'
+    episode_done: false
+    eval_labels:
+    - Hey there hows it going! You like catch me if you can as much as i do? Opps
+      I meant means girls!
+    id: cmu_dog
+    text: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as Regina George,Lacey
+      Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy Caplan as Janis
+      Ian;critical_response:Boasts a one-two-three punch in star Lindsay Lohan, screenwriter
+      Tina Fey and director Mark Waters, and, indeed, it delivers a knockout,The screenplay
+      was highly praised by critics with Peter Travers of Rolling Stone calling it
+      ''comic gold''.,In November 2012, Rotten Tomatoes named it in its ''Top 50 Greatest
+      Teen Comedies''.;director:Mark Waters ;genre:Comedy, teeny;introduction:Mean
+      Girls is a 2004 American teen comedy film directed by Mark Waters and written
+      by Tina Fey. The film is partially based on Rosalind Wiseman''s 2002 non-fiction
+      self-help book Queen Bees and Wannabes, which describes female high school social
+      cliques and the damaging effects they can have on girls.;movieName:Mean Girls;rating:Rotten
+      Tomatoes: 84% and average: 6.9/10,Metacritic Score: 66/100,CinemaScore: A-;year:2004'
+    title: Mean Girls
+- - available_knowledge_raw:
+      cast:
+      - Lindsay Lohan as Cady Heron
+      - Rachel McAdams as Regina George
+      - Lacey Chabert as Gretchen Wieners
+      - Amanda Seyfried as Karen Smith
+      - Lizzy Caplan as Janis Ian
+      critical_response:
+      - Boasts a one-two-three punch in star Lindsay Lohan, screenwriter Tina Fey
+        and director Mark Waters, and, indeed, it delivers a knockout
+      - The screenplay was highly praised by critics with Peter Travers of Rolling
+        Stone calling it 'comic gold'.
+      - In November 2012, Rotten Tomatoes named it in its 'Top 50 Greatest Teen Comedies'.
+      director: 'Mark Waters '
+      genre: Comedy, teeny
+      introduction: Mean Girls is a 2004 American teen comedy film directed by Mark
+        Waters and written by Tina Fey. The film is partially based on Rosalind Wiseman's
+        2002 non-fiction self-help book Queen Bees and Wannabes, which describes female
+        high school social cliques and the damaging effects they can have on girls.
+      movieName: Mean Girls
+      rating:
+      - 'Rotten Tomatoes: 84% and average: 6.9/10'
+      - 'Metacritic Score: 66/100'
+      - 'CinemaScore: A-'
+      year: '2004'
+    available_knowledge_text: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as
+      Regina George,Lacey Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy
+      Caplan as Janis Ian;critical_response:Boasts a one-two-three punch in star Lindsay
+      Lohan, screenwriter Tina Fey and director Mark Waters, and, indeed, it delivers
+      a knockout,The screenplay was highly praised by critics with Peter Travers of
+      Rolling Stone calling it ''comic gold''.,In November 2012, Rotten Tomatoes named
+      it in its ''Top 50 Greatest Teen Comedies''.;director:Mark Waters ;genre:Comedy,
+      teeny;introduction:Mean Girls is a 2004 American teen comedy film directed by
+      Mark Waters and written by Tina Fey. The film is partially based on Rosalind
+      Wiseman''s 2002 non-fiction self-help book Queen Bees and Wannabes, which describes
+      female high school social cliques and the damaging effects they can have on
+      girls.;movieName:Mean Girls;rating:Rotten Tomatoes: 84% and average: 6.9/10,Metacritic
+      Score: 66/100,CinemaScore: A-;year:2004'
+    checked_sentence: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as Regina George,Lacey
+      Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy Caplan as Janis
+      Ian;critical_response:Boasts a one-two-three punch in star Lindsay Lohan, screenwriter
+      Tina Fey and director Mark Waters, and, indeed, it delivers a knockout,The screenplay
+      was highly praised by critics with Peter Travers of Rolling Stone calling it
+      ''comic gold''.,In November 2012, Rotten Tomatoes named it in its ''Top 50 Greatest
+      Teen Comedies''.;director:Mark Waters ;genre:Comedy, teeny;introduction:Mean
+      Girls is a 2004 American teen comedy film directed by Mark Waters and written
+      by Tina Fey. The film is partially based on Rosalind Wiseman''s 2002 non-fiction
+      self-help book Queen Bees and Wannabes, which describes female high school social
+      cliques and the damaging effects they can have on girls.;movieName:Mean Girls;rating:Rotten
+      Tomatoes: 84% and average: 6.9/10,Metacritic Score: 66/100,CinemaScore: A-;year:2004'
+    episode_done: false
+    eval_labels:
+    - Isn't Lindsey like the best female actress of all time or what? Yeah thats here
+      name in the movie
+    id: cmu_dog
+    text: Oh, Mean Girls? It's a great movie. Do you like Lindsay Lohan's role as
+      Cady Heron?
+    title: Mean Girls
+- - available_knowledge_raw:
+      cast:
+      - Lindsay Lohan as Cady Heron
+      - Rachel McAdams as Regina George
+      - Lacey Chabert as Gretchen Wieners
+      - Amanda Seyfried as Karen Smith
+      - Lizzy Caplan as Janis Ian
+      critical_response:
+      - Boasts a one-two-three punch in star Lindsay Lohan, screenwriter Tina Fey
+        and director Mark Waters, and, indeed, it delivers a knockout
+      - The screenplay was highly praised by critics with Peter Travers of Rolling
+        Stone calling it 'comic gold'.
+      - In November 2012, Rotten Tomatoes named it in its 'Top 50 Greatest Teen Comedies'.
+      director: 'Mark Waters '
+      genre: Comedy, teeny
+      introduction: Mean Girls is a 2004 American teen comedy film directed by Mark
+        Waters and written by Tina Fey. The film is partially based on Rosalind Wiseman's
+        2002 non-fiction self-help book Queen Bees and Wannabes, which describes female
+        high school social cliques and the damaging effects they can have on girls.
+      movieName: Mean Girls
+      rating:
+      - 'Rotten Tomatoes: 84% and average: 6.9/10'
+      - 'Metacritic Score: 66/100'
+      - 'CinemaScore: A-'
+      year: '2004'
+    available_knowledge_text: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as
+      Regina George,Lacey Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy
+      Caplan as Janis Ian;critical_response:Boasts a one-two-three punch in star Lindsay
+      Lohan, screenwriter Tina Fey and director Mark Waters, and, indeed, it delivers
+      a knockout,The screenplay was highly praised by critics with Peter Travers of
+      Rolling Stone calling it ''comic gold''.,In November 2012, Rotten Tomatoes named
+      it in its ''Top 50 Greatest Teen Comedies''.;director:Mark Waters ;genre:Comedy,
+      teeny;introduction:Mean Girls is a 2004 American teen comedy film directed by
+      Mark Waters and written by Tina Fey. The film is partially based on Rosalind
+      Wiseman''s 2002 non-fiction self-help book Queen Bees and Wannabes, which describes
+      female high school social cliques and the damaging effects they can have on
+      girls.;movieName:Mean Girls;rating:Rotten Tomatoes: 84% and average: 6.9/10,Metacritic
+      Score: 66/100,CinemaScore: A-;year:2004'
+    checked_sentence: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as Regina George,Lacey
+      Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy Caplan as Janis
+      Ian;critical_response:Boasts a one-two-three punch in star Lindsay Lohan, screenwriter
+      Tina Fey and director Mark Waters, and, indeed, it delivers a knockout,The screenplay
+      was highly praised by critics with Peter Travers of Rolling Stone calling it
+      ''comic gold''.,In November 2012, Rotten Tomatoes named it in its ''Top 50 Greatest
+      Teen Comedies''.;director:Mark Waters ;genre:Comedy, teeny;introduction:Mean
+      Girls is a 2004 American teen comedy film directed by Mark Waters and written
+      by Tina Fey. The film is partially based on Rosalind Wiseman''s 2002 non-fiction
+      self-help book Queen Bees and Wannabes, which describes female high school social
+      cliques and the damaging effects they can have on girls.;movieName:Mean Girls;rating:Rotten
+      Tomatoes: 84% and average: 6.9/10,Metacritic Score: 66/100,CinemaScore: A-;year:2004'
+    episode_done: false
+    eval_labels:
+    - "Racheal Adams is wonderful as well!!! \nbut i also like Regina George as well\
+      \ so its hard to pick to be honest"
+    id: cmu_dog
+    text: "I think Rachel McAdams had an even\n better role as Regina George however!\
+      \ Would you agree?"
+    title: Mean Girls
+- - available_knowledge_raw:
+      cast:
+      - Lindsay Lohan as Cady Heron
+      - Rachel McAdams as Regina George
+      - Lacey Chabert as Gretchen Wieners
+      - Amanda Seyfried as Karen Smith
+      - Lizzy Caplan as Janis Ian
+      critical_response:
+      - Boasts a one-two-three punch in star Lindsay Lohan, screenwriter Tina Fey
+        and director Mark Waters, and, indeed, it delivers a knockout
+      - The screenplay was highly praised by critics with Peter Travers of Rolling
+        Stone calling it 'comic gold'.
+      - In November 2012, Rotten Tomatoes named it in its 'Top 50 Greatest Teen Comedies'.
+      director: 'Mark Waters '
+      genre: Comedy, teeny
+      introduction: Mean Girls is a 2004 American teen comedy film directed by Mark
+        Waters and written by Tina Fey. The film is partially based on Rosalind Wiseman's
+        2002 non-fiction self-help book Queen Bees and Wannabes, which describes female
+        high school social cliques and the damaging effects they can have on girls.
+      movieName: Mean Girls
+      rating:
+      - 'Rotten Tomatoes: 84% and average: 6.9/10'
+      - 'Metacritic Score: 66/100'
+      - 'CinemaScore: A-'
+      year: '2004'
+    available_knowledge_text: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as
+      Regina George,Lacey Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy
+      Caplan as Janis Ian;critical_response:Boasts a one-two-three punch in star Lindsay
+      Lohan, screenwriter Tina Fey and director Mark Waters, and, indeed, it delivers
+      a knockout,The screenplay was highly praised by critics with Peter Travers of
+      Rolling Stone calling it ''comic gold''.,In November 2012, Rotten Tomatoes named
+      it in its ''Top 50 Greatest Teen Comedies''.;director:Mark Waters ;genre:Comedy,
+      teeny;introduction:Mean Girls is a 2004 American teen comedy film directed by
+      Mark Waters and written by Tina Fey. The film is partially based on Rosalind
+      Wiseman''s 2002 non-fiction self-help book Queen Bees and Wannabes, which describes
+      female high school social cliques and the damaging effects they can have on
+      girls.;movieName:Mean Girls;rating:Rotten Tomatoes: 84% and average: 6.9/10,Metacritic
+      Score: 66/100,CinemaScore: A-;year:2004'
+    checked_sentence: 'cast:Lindsay Lohan as Cady Heron,Rachel McAdams as Regina George,Lacey
+      Chabert as Gretchen Wieners,Amanda Seyfried as Karen Smith,Lizzy Caplan as Janis
+      Ian;critical_response:Boasts a one-two-three punch in star Lindsay Lohan, screenwriter
+      Tina Fey and director Mark Waters, and, indeed, it delivers a knockout,The screenplay
+      was highly praised by critics with Peter Travers of Rolling Stone calling it
+      ''comic gold''.,In November 2012, Rotten Tomatoes named it in its ''Top 50 Greatest
+      Teen Comedies''.;director:Mark Waters ;genre:Comedy, teeny;introduction:Mean
+      Girls is a 2004 American teen comedy film directed by Mark Waters and written
+      by Tina Fey. The film is partially based on Rosalind Wiseman''s 2002 non-fiction
+      self-help book Queen Bees and Wannabes, which describes female high school social
+      cliques and the damaging effects they can have on girls.;movieName:Mean Girls;rating:Rotten
+      Tomatoes: 84% and average: 6.9/10,Metacritic Score: 66/100,CinemaScore: A-;year:2004'
+    episode_done: false
+    eval_labels:
+    - Did you know that tina fey wrote this movie?
+    id: cmu_dog
+    text: Well, Regina George was played by Rachel McAdams. No wonder it's hard for
+      you to pick in that case!
+    title: Mean Girls
+- - available_knowledge_raw: 'Sixteen-year-old homeschooled Cady Heron and her zoologist
+      parents return to the United States after a twelve-year research trip in Africa,
+      settling down in Evanston, Illinois. Attending a public school for the first
+      time, Cady meets new classmates Janis Ian and Damian Leigh. Janis and Damian
+      educate Cady on the school''s various cliques and warn her to avoid the most
+      popular and infamous one, the ''Plastics'', who are led by queen bee Regina
+      George and include insecure rich girl Gretchen Wieners and sweet but dimwitted
+      Karen Smith. The Plastics take an interest in Cady, and invite her to sit with
+      them at lunch. Seeing that Cady is getting along with the Plastics, Janis hatches
+      a plan of revenge against Regina for some past slight, using Cady as the infiltrator. '
+    available_knowledge_text: 'Sixteen-year-old homeschooled Cady Heron and her zoologist
+      parents return to the United States after a twelve-year research trip in Africa,
+      settling down in Evanston, Illinois. Attending a public school for the first
+      time, Cady meets new classmates Janis Ian and Damian Leigh. Janis and Damian
+      educate Cady on the school''s various cliques and warn her to avoid the most
+      popular and infamous one, the ''Plastics'', who are led by queen bee Regina
+      George and include insecure rich girl Gretchen Wieners and sweet but dimwitted
+      Karen Smith. The Plastics take an interest in Cady, and invite her to sit with
+      them at lunch. Seeing that Cady is getting along with the Plastics, Janis hatches
+      a plan of revenge against Regina for some past slight, using Cady as the infiltrator. '
+    checked_sentence: 'Sixteen-year-old homeschooled Cady Heron and her zoologist
+      parents return to the United States after a twelve-year research trip in Africa,
+      settling down in Evanston, Illinois. Attending a public school for the first
+      time, Cady meets new classmates Janis Ian and Damian Leigh. Janis and Damian
+      educate Cady on the school''s various cliques and warn her to avoid the most
+      popular and infamous one, the ''Plastics'', who are led by queen bee Regina
+      George and include insecure rich girl Gretchen Wieners and sweet but dimwitted
+      Karen Smith. The Plastics take an interest in Cady, and invite her to sit with
+      them at lunch. Seeing that Cady is getting along with the Plastics, Janis hatches
+      a plan of revenge against Regina for some past slight, using Cady as the infiltrator. '
+    episode_done: false
+    eval_labels:
+    - I love the revenge plot the best I think
+    id: cmu_dog
+    text: I did! She really delivered a knockout in Mean Girls. What was your favorite
+      scene in Mean Girls? I personally like the scene where Cady met the Plastics.
+    title: Mean Girls
+num_episodes: 899
+num_examples: 10161
