@@ -41,11 +41,10 @@ def _datapath(opt: Opt) -> str:
     return os.path.join(opt['datapath'], 'cmu_dog')
 
 
-def _datafile(split: str, opt: Opt) -> str:
+def _datafile(split: str, split_type: SplitType) -> str:
     """
     Returns the filename, e.g. train.json.
     """
-    split_type = opt.get("cmu_dog_split_type")
     if split_type == SplitType.ORIGINAL:
         return f"{split}.json"
     if split_type == SplitType.SEEN:
@@ -65,8 +64,16 @@ def _datafile(split: str, opt: Opt) -> str:
 
 def _all_split_datafiles(opt: Opt) -> List[str]:
     datafiles = []
-    for split in ['train', 'valid', 'test']:
-        datafiles.append(_datafile(split, opt))
+    split_type = SplitType(opt.get("cmu_dog_split_type"))
+    if split_type in {SplitType.SEEN, SplitType.UNSEEN}:
+        # For seen/unseen split, the full set of dialogs is split
+        # across train, valid, test seen, and test unseen
+        for split in ['train', 'valid', 'test']:
+            datafiles.append(_datafile(split, SplitType.SEEN))
+        datafiles.append(_datafile('test', SplitType.UNSEEN))
+    else:
+        for split in ['train', 'valid', 'test']:
+            datafiles.append(_datafile(split, split_type))
     return datafiles
 
 
@@ -154,7 +161,10 @@ class CMUDocumentGroundedConversationsTeacher(DialogTeacher):
     def __init__(self, opt: Opt, shared: TShared = None):
         opt = copy.deepcopy(opt)
         self.delimiter = opt.get('delimiter', '\n')
-        opt['datafile'] = _datafile(DatatypeHelper.fold(opt['datatype']), opt)
+        opt['datafile'] = _datafile(
+            split=DatatypeHelper.fold(opt['datatype']),
+            split_type=SplitType(opt.get("cmu_dog_split_type")),
+        )
         super().__init__(opt, shared)
         if shared:
             self.rare_word_f1 = shared['rare_word_f1']
