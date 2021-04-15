@@ -81,6 +81,7 @@ _Task & models for chitchat with a given persona._
 
 - **Wizard of Wikipedia** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
   _Knowledge-grounded open domain chitchat task & models._
+- **Retrieval Augmentation Reduces Hallucination in Conversation** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://arxiv.org/abs/TODO). _Reducing hallucination in conversational agents via augmenting dialogue models with retrieval mechanisms._
 
 ## Visually Grounded
 
