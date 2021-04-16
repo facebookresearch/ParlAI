@@ -16,5 +16,13 @@ PRESET_DESCRIPTIONS = {
     "gen/meena": (
         "Inference parameters for the Sample & Rank procedure of Meena. "
         "See [Adiwardana et al. (2020)](https://arxiv.org/abs/2001.09977)."
-    )
+    ),
+    "arch/blenderbot_3B": (
+        "Architecture parameters (number layers, etc) for BlenderBot 3B. See "
+        "[Roller et al. (2020)](https://arxiv.org/abs/2004.13637)"
+    ),
+    "gen/blenderbot": (
+        "Beam search parameters for BlenderBot. See"
+        "[Roller et al. (2020)](https://arxiv.org/abs/2004.13637)"
+    ),
 }

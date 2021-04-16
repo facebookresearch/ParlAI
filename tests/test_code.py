@@ -9,9 +9,11 @@ Unit tests for general checks of code quality.
 """
 
 import pytest
+import glob
 import unittest
 import os
 import parlai.utils.testing as testing_utils
+import parlai.opt_presets as opt_presets
 
 
 @pytest.mark.nofbcode
@@ -42,6 +44,33 @@ class TestInit(unittest.TestCase):
                 '__init__.py',
                 os.listdir(folder_path),
                 '{} does not contain __init__.py'.format(folder_path),
+            )
+
+
+@pytest.mark.nofbcode
+class TestOptPresets(unittest.TestCase):
+    """
+    Ensure all opt presets contain descriptions.
+    """
+
+    def test_opt_preset_docs(self):
+        from parlai.opt_presets.docs import PRESET_DESCRIPTIONS
+
+        folder = os.path.dirname(opt_presets.__file__)
+        has_file = set(x[len(folder) + 1 : -4] for x in glob.glob(f'{folder}/*/*.opt'))
+        has_docs = set(PRESET_DESCRIPTIONS.keys())
+
+        file_no_docs = has_file - has_docs
+        if file_no_docs:
+            raise AssertionError(
+                "The following opt presets have files but no documentation: "
+                f"{', '.join(file_no_docs)}"
+            )
+        docs_no_file = has_docs - has_file
+        if docs_no_file:
+            raise AssertionError(
+                "The following opt presets have documentation but no files: "
+                f"{', '.join(docs_no_file)}"
             )
 
 
