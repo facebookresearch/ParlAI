@@ -13,6 +13,7 @@ import os
 import sys as _sys
 import datetime
 import parlai
+from packaging import version
 
 try:
     import git
@@ -1285,12 +1286,39 @@ class ParlaiParser(argparse.ArgumentParser):
             kwargs['type'] = 'bool'
         return kwargs, action_attr
 
+    def _handle_single_dash_addarg(self, args):
+        """
+        Fixup argparse for parlai-style short args.
+
+        In python 3.8, argparsing was changed such that short arguments are not
+        required to have spaces after them. This causes our many short args to
+        be misinterpetted by the parser. For example `-emb` gets parsed as
+        `-e mb`.
+
+        Here we rewrite them into long args to get around the nonsense.
+        """
+        return args
+        if version.parse(_sys.version) < (3, 8):
+            # older python works fine
+            return args
+
+        out_long = []
+        out_short = []
+        for arg in args:
+            if arg.startswith('-') and not arg.startswith('--'):
+                out_short.append(f'-{arg}')
+            else:
+                out_long.append(arg)
+        # keep long args in front so they are used for the destination
+        return out_long + out_short
+
     def add_argument(self, *args, **kwargs):
         """
         Override to convert underscores to hyphens for consistency.
         """
         kwargs, newattr = self._handle_custom_options(kwargs)
-        action = super().add_argument(*fix_underscores(args), **kwargs)
+        args = self._handle_single_dash_addarg(fix_underscores(args))
+        action = super().add_argument(*args, **kwargs)
         for k, v in newattr.items():
             setattr(action, k, v)
         return action
@@ -1304,7 +1332,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         def ag_add_argument(*args, **kwargs):
             kwargs, newattr = self._handle_custom_options(kwargs)
-            action = original_add_arg(*fix_underscores(args), **kwargs)
+            args = self._handle_single_dash_addarg(fix_underscores(args))
+            action = original_add_arg(*args, **kwargs)
             for k, v in newattr.items():
                 setattr(action, k, v)
             return action
