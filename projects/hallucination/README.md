@@ -12,7 +12,7 @@ Despite showing increasingly human-like conversational abilities, state-of-the-a
 
 ## Paper
 
-[Link to arXiv](https://arxiv.org/abs/TODO)
+[Link to arXiv](https://arxiv.org/abs/2104.07567)
 
 ### Model Evaluations
 
@@ -37,7 +37,7 @@ You can access the [CMU_DoG](https://arxiv.org/abs/1809.07358) dataset in ParlAI
 
     parlai dd -t cmu_dog
 
-To use the modified splits as described in the [paper](https://arxiv.org/abs/TODO), set the following flags for the seen/unseen splits, respectively:
+To use the modified splits as described in the [paper](https://arxiv.org/abs/2104.07567), set the following flags for the seen/unseen splits, respectively:
 
     parlai dd -t cmu_dog --cmu-dog-split-type seen
 
