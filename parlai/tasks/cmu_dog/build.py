@@ -18,7 +18,7 @@ RESOURCES = [
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'cmu_dog')
-    version = '1.0'
+    version = '1.1'
     if not build_data.built(dpath, version):
         print('[building data: ' + dpath + ']')
         if build_data.built(dpath):
