@@ -9,117 +9,57 @@ from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from typing import Optional
 import os
-from abc import ABC, abstractmethod
+from abc import ABC
 
 # huggingface imports
-import datasets
-from datasets import load_dataset, concatenate_datasets
+from datasets import load_dataset
 
 
-class HuggingFaceTeacher(DialogTeacher, ABC):
+class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     """
     Abstract parent class for HuggingFace teachers.
-
-    Not meant to be a standalone teacher. Implement the setup_data function based on the
-    dataset used.
+    Extend this class and specify the attributes below to use a different dataset.
     """
+
+    hf_path = 'glue'
+    hf_name = 'cola'
+    hf_text_fields = ['sentence']
+    hf_label_field = 'label'
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
-        self.data_path = HuggingFaceTeacher._path(opt)
+        self.hf_split = self.datatype.split(':')[0]
+        if self.hf_split == 'valid':
+            self.hf_split = 'validation'
+        self.data_path = self._path(opt)
         opt['datafile'] = self.data_path
 
         # load dataset from HuggingFace
         self.dataset = load_dataset(
-            path=opt['hf_path'],
-            name=opt['hf_name'],
-            cache_dir=self.data_path,
-            split=opt['hf_split'],
+            path=self.hf_path, name=self.hf_name, split=self.hf_split
         )
 
-        if opt['hf_split'] is None and isinstance(
-            self.dataset, datasets.dataset_dict.DatasetDict
-        ):
-            # no split specified and there are splits- combine all the splits together
-            self.dataset = concatenate_datasets(list(self.dataset.values()))
-
-        self.query_features = opt['query_features']
-        self.label_feature = opt['label_feature']
         self.id = "huggingface"
         super().__init__(opt, shared)
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt)
-        parser = parser.add_argument_group('Hugging Face Teacher Arguments')
-        parser.add_argument(
-            '-hfp',
-            '--hf_path',
-            type=str,
-            default='glue',
-            help="HuggingFace dataset identifier name",
-        )
-        parser.add_argument(
-            '-hfn',
-            '--hf_name',
-            type=str,
-            default='cola',
-            help="defining the name of the HuggingFace dataset configuration",
-        )
-        parser.add_argument(
-            '-hfs',
-            '--hf_split',
-            type=str,
-            default=None,
-            help="which split of the HuggingFace dataset to load",
-        )
-        parser.add_argument(
-            '-qf',
-            '--query_features',
-            nargs='+',
-            default=['sentence'],
-            help="name of features that should be included in the ParlAI query attribute",
-        )
-        parser.add_argument(
-            '-lf',
-            '--label_feature',
-            type=str,
-            default='label',
-            help="name of feature that contains the text to use for the ParlAI label attribute",
-        )
-        return parser
-
-    def _path(opt):
+    def _path(self, opt):
         path = os.path.join(opt['datapath'], 'huggingface')
         return path
 
-    @abstractmethod
     def setup_data(self, path):
-        pass
-
-
-class GlueTeacher(HuggingFaceTeacher):
-    """
-    For Glue (https://huggingface.co/datasets/glue) and Super Glue
-    (https://huggingface.co/datasets/super_glue) datasets.
-    """
-
-    def setup_data(self, path):
-        pre_candidates = self.dataset.features[self.label_feature].names
+        pre_candidates = self.dataset.features[self.hf_label_field].names
         for row in self.dataset:
             # construct text
             text_arr = []
-            for col in self.query_features:
+            for col in self.hf_text_fields:
                 text_part = row.get(col)
                 if text_part is None:
-                    raise Exception(f'Feature "{col}" not found in data.')
+                    raise KeyError(f'Feature "{col}" not found in data.')
                 text_arr.append(text_part)
             query = '\n'.join(text_arr)
 
             # construct label and candidates
-            label = row[self.label_feature]
+            label = row[self.hf_label_field]
             if type(label) is int:
                 label = pre_candidates[label]
                 candidates = pre_candidates
@@ -129,5 +69,5 @@ class GlueTeacher(HuggingFaceTeacher):
             yield (query, [label], None, candidates), True
 
 
-class DefaultTeacher(GlueTeacher):
+class DefaultTeacher(AbstractHuggingFaceTeacher):
     pass

@@ -6,7 +6,7 @@ acts:
     label_candidates:
     - unacceptable
     - acceptable
-    text: Our friends won't buy this analysis, let alone the next one we propose.
+    text: The sailors rode the breeze clear of the rocks.
 - - episode_done: true
     eval_labels:
     - acceptable
@@ -14,7 +14,7 @@ acts:
     label_candidates:
     - unacceptable
     - acceptable
-    text: One more pseudo generalization and I'm giving up.
+    text: The weights made the rope stretch over the pulley.
 - - episode_done: true
     eval_labels:
     - acceptable
@@ -22,7 +22,7 @@ acts:
     label_candidates:
     - unacceptable
     - acceptable
-    text: One more pseudo generalization or I'm giving up.
+    text: The mechanical doll wriggled itself loose.
 - - episode_done: true
     eval_labels:
     - acceptable
@@ -30,14 +30,14 @@ acts:
     label_candidates:
     - unacceptable
     - acceptable
-    text: The more we study verbs, the crazier they get.
+    text: If you had eaten more, you would want less.
 - - episode_done: true
     eval_labels:
-    - acceptable
+    - unacceptable
     id: huggingface
     label_candidates:
     - unacceptable
     - acceptable
-    text: Day by day the facts are getting murkier.
+    text: As you eat the most, you want the least.
 num_episodes: 10657
 num_examples: 10657
