@@ -5,9 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
-from parlai.core.params import ParlaiParser
-from parlai.core.opt import Opt
-from typing import Optional
+from typing import List
 import os
 from abc import ABC
 
@@ -19,18 +17,24 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     """
     Abstract parent class for HuggingFace teachers.
     Extend this class and specify the attributes below to use a different dataset.
+
+    hf_path = path parameter passed into hugging face load_dataset function
+    hf_name = name parameter passed into hugging face load_dataset function
+    hf_text_fields = list of names of the data fields from the dataset to be included in the text/query
+    hf_label_field = name of the data field from the hf dataset that specifies the label of the episode
+    hf_splits_mapping = dictionary mapping with the keys 'train', 'valid', and 'test', that map to the 
+    names of the splits of the hf dataset.
     """
 
-    hf_path = 'glue'
-    hf_name = 'cola'
-    hf_text_fields = ['sentence']
-    hf_label_field = 'label'
+    hf_path: str = 'glue'
+    hf_name: str = 'cola'
+    hf_text_fields: List[str] = ['sentence']
+    hf_label_field: str = 'label'
+    hf_splits_mapping: dict = {'train': 'train', 'valid': 'validation', 'test': 'test'}
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
-        self.hf_split = self.datatype.split(':')[0]
-        if self.hf_split == 'valid':
-            self.hf_split = 'validation'
+        self.hf_split = self.hf_splits_mapping[self.datatype.split(':')[0]]
         self.data_path = self._path(opt)
         opt['datafile'] = self.data_path
 
@@ -49,7 +53,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     def setup_data(self, path):
         pre_candidates = self.dataset.features[self.hf_label_field].names
         for row in self.dataset:
-            # construct text
+            # construct text query from the hf_text_fields specified
             text_arr = []
             for col in self.hf_text_fields:
                 text_part = row.get(col)
