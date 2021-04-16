@@ -41,7 +41,7 @@ To use the modified splits as described in the [paper](https://arxiv.org/abs/TOD
 
     parlai dd -t cmu_dog --cmu-dog-split-type seen
 
-    parlai dd -t cmu_dog --cmu-dog-split-type unseen
+    parlai dd -t cmu_dog --cmu-dog-split-type unseen --datatype test
 
 ## Pre-Trained Models
 
