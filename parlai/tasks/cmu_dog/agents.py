@@ -38,6 +38,7 @@ class SplitType(Enum):
 
 
 def _datapath(opt: Opt) -> str:
+    build(opt)
     return os.path.join(opt['datapath'], 'cmu_dog')
 
 
@@ -237,7 +238,6 @@ class CMUDocumentGroundedConversationsTeacher(DialogTeacher):
         return shared
 
     def setup_data(self, datafile: str):
-        build(self.opt)
         datapath = _datapath(self.opt)
         with PathManager.open(os.path.join(datapath, f"conversations/{datafile}")) as f:
             data = json.load(f)
