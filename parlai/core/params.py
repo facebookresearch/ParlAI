@@ -985,7 +985,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = Opt.load(optfile)
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -993,7 +993,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = Opt.load(optfile)
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
