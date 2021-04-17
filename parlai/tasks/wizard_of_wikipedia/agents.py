@@ -490,8 +490,8 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             type=str,
             choices=['none', 'train', 'all'],
             default='none',
-            help='For reproducibility, the default "none" is the previous version which misssing some data.'
-            'When "train" is chosen, only the training set is supplemented.'
+            help='For reproducibility, the default "none" is the previous version which missing some data. '
+            'When "train" is chosen, only the training set is supplemented. '
             'When "all" is chosen, all data are supplemented.',
         )
         return parser
