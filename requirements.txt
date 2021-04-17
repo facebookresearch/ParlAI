@@ -34,7 +34,7 @@ scikit-learn==0.23.1
 scipy==1.4.1
 sh==1.12.14
 sphinx_rtd_theme==0.4.3
-sphinx-autodoc-typehints==1.10.3
+sphinx-autodoc-typehints~=1.10.3
 Sphinx~=2.2.0
 subword-nmt==0.3.7
 tensorboard==2.3.0
