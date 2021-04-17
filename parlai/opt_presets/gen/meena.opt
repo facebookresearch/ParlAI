@@ -1,0 +1,5 @@
+{
+  "beam_size": 20,
+  "inference": "topk",
+  "topk": 40
+}

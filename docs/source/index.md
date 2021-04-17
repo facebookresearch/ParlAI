@@ -45,6 +45,7 @@ zoo
 cli_usage
 cli_advanced
 cli_custom
+opt_presets
 ```
 
 ```{toctree}
