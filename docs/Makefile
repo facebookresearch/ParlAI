@@ -34,4 +34,5 @@ clean:
 	cd "${SOURCEDIR}"; python generate_mutator_list.py
 	cd "${SOURCEDIR}"; python generate_metric_list.py
 	cd "${SOURCEDIR}"; python generate_cli.py
+	cd "${SOURCEDIR}"; python generate_opt_presets.py
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

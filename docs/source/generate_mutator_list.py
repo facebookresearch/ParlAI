@@ -94,9 +94,11 @@ with open('mutators_list.inc', 'w') as fout:
     fout.write(f"```\n{output}\n```\n")
 
     for mutator_name in sorted(mutators.keys()):
-        fout.write('\n------------\n\n')
         mutator = mutators[mutator_name]
         options = _make_argparse_table(mutator)
+        if not mutator.__doc__:
+            continue
+        fout.write('\n------------\n\n')
         fout.write(f'## {mutator_name}\n\n')
         fout.write(textwrap.dedent(mutator.__doc__).strip() + '\n\n')
         fout.write(
