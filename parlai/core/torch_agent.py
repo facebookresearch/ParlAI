@@ -838,7 +838,7 @@ class TorchAgent(ABC, Agent):
         # set interactive mode or not according to options.
         self.set_interactive_mode(opt.get('interactive_mode', False), shared)
 
-        self.buffer_initialized = True
+        self.buffer_initialized = False
 
     def build_history(self):
         """
