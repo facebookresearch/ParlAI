@@ -840,7 +840,6 @@ class TorchAgent(ABC, Agent):
 
         self.buffer_initialized = True
 
-
     def build_history(self):
         """
         Return the constructed history object.
