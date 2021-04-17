@@ -2255,7 +2255,7 @@ class TorchAgent(ABC, Agent):
             # Only print in the non-shared version.
             logging.info(f'{self.id}: full interactive mode on.')
 
-    def backward(self, loss):
+    def backward(self, loss, is_init_buffer=False):
         """
         Perform a backward pass.
 
@@ -2264,7 +2264,7 @@ class TorchAgent(ABC, Agent):
         """
         update_freq = self.opt.get('update_freq', 1)
 
-        if update_freq > 1:
+        if update_freq > 1 and not is_init_buffer:
             # gradient accumulation, but still need to average across the minibatches
             loss = loss / update_freq
             self._number_grad_accum = (self._number_grad_accum + 1) % update_freq

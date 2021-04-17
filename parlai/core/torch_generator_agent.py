@@ -617,7 +617,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
                 self._control_local_metrics(enabled=True)
                 self._temporarily_disable_local_metrics = False
-                self.backward(loss)
+                self.backward(loss, is_init_buffer=True)
                 self.buffer_initialized = True
             except RuntimeError as e:
                 if 'out of memory' in str(e):
