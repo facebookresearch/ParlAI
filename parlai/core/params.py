@@ -985,7 +985,7 @@ class ParlaiParser(argparse.ArgumentParser):
                     newargs.append(darg)
                 else:
                     newargs.append(arg)
-        args = newargs
+            args = newargs
 
         if nohelp:
             # ignore help
