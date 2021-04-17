@@ -22,5 +22,5 @@ for alias in sorted(PRESET_DESCRIPTIONS.keys()):
             key = '--' + key.replace('_', '-')
             expansion_str.append(f'`{key} {value}`')
         expansion_str = " ".join(expansion_str)
-        fout.write(f'`{alias}` | {description} | {expansion_str}')
+        fout.write(f'`{alias}` | {description} | {expansion_str}\n')
 fout.close()
