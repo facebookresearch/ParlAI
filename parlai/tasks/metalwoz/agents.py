@@ -8,7 +8,6 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.io import PathManager
 from parlai.utils.data import DatatypeHelper
 from .build import build
-import sys
 import os
 import pandas as pd
 import hashlib
