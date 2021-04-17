@@ -976,7 +976,7 @@ class ParlaiParser(argparse.ArgumentParser):
         # handle the single dash stuff. See _handle_single_dash_addarg for info
         actions = set()
         for action in self._actions:
-            actions = actions | set(action.option_strings)
+            actions.update(action.option_strings)
         if _sys.version_info >= (3, 8, 0):
             newargs = []
             for arg in args:
