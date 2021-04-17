@@ -7,3 +7,4 @@ mephisto:
     num_self_chats: 5
     root_dir: ${task_dir}/task_config
     task: blended_skill_talk
+    randomize_conversations: True
