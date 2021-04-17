@@ -1,0 +1,16 @@
+{
+  "activation": "gelu",
+  "attention_dropout": 0,
+  "embedding_size": 2560,
+  "ffn_size": 10240,
+  "label_truncate": 128,
+  "model": "transformer/generator",
+  "n_decoder_layers": 24,
+  "n_encoder_layers": 2,
+  "n_heads": 32,
+  "n_positions": 128,
+  "relu_dropout": 0,
+  "text_truncate": 128,
+  "truncate": 128,
+  "variant": "prelayernorm"
+}
