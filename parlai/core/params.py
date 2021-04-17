@@ -1318,6 +1318,8 @@ class ParlaiParser(argparse.ArgumentParser):
             # older python works fine
             return args
 
+        # need the long options specified first, or `dest` will get set to
+        # the short name on accident!
         out_long = []
         out_short = []
         for arg in args:
