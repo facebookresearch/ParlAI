@@ -788,7 +788,7 @@ class TrainLoop:
 
     def train_steps(self):
         """
-        Core training loop
+        Core training loop.
 
         Yields a metrics dict with each log.
         """

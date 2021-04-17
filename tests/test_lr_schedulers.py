@@ -180,7 +180,7 @@ class TestLRIntegration(unittest.TestCase):
 
             # resume training
             logs_second = []
-            for i, train_step_log in enumerate(TrainLoop(opt).train_steps()):
+            for train_step_log in TrainLoop(opt).train_steps():
                 logs_second.append(train_step_log)
 
             # check correctness
