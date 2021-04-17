@@ -838,6 +838,9 @@ class TorchAgent(ABC, Agent):
         # set interactive mode or not according to options.
         self.set_interactive_mode(opt.get('interactive_mode', False), shared)
 
+        self.buffer_initialized = True
+
+
     def build_history(self):
         """
         Return the constructed history object.
@@ -2255,7 +2258,7 @@ class TorchAgent(ABC, Agent):
             # Only print in the non-shared version.
             logging.info(f'{self.id}: full interactive mode on.')
 
-    def backward(self, loss, is_init_buffer=False):
+    def backward(self, loss):
         """
         Perform a backward pass.
 
@@ -2264,7 +2267,7 @@ class TorchAgent(ABC, Agent):
         """
         update_freq = self.opt.get('update_freq', 1)
 
-        if update_freq > 1 and not is_init_buffer:
+        if update_freq > 1 and self.buffer_initialized:
             # gradient accumulation, but still need to average across the minibatches
             loss = loss / update_freq
             self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
