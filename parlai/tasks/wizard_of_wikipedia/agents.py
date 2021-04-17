@@ -24,6 +24,7 @@ from parlai.core.opt import Opt
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from parlai.utils.io import PathManager
+from parlai.utils.misc import warn_once
 from .build import build
 
 import json
@@ -267,6 +268,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
         super().__init__(opt, shared)
         self.label_type = opt.get('label_type', 'response')
         self.include_knowledge = opt.get('include_knowledge', True)
@@ -324,6 +326,15 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             help='in interactive mode, this is the number of topic choices'
             'the human will have',
         )
+        agent.add_argument(
+            '--add-missing-turns',
+            type=str,
+            choices=['none', 'train', 'all'],
+            default='none',
+            help='For reproducibility, the default "none" is the previous version which misssing some data.'
+            'When "train" is chosen, only the training set is supplemented.'
+            'When "all" is chosen, all data are supplemented.',
+        )
         return parser
 
     def share(self):
@@ -336,7 +347,18 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         d = self.data[ep]
         wizard_first = 'Wizard' in d['dialog'][0]['speaker']
         if wizard_first:
-            return (len(d['dialog']) - 1) // 2
+            if self.add_missing_turns == 'none':
+                warn_once(
+                    'Some data not being used. If you are not trying to reproduce '
+                    'the previous results, it is recommended that you run with the '
+                    'flag --add-missing-turns train or --add-missing-turns all.'
+                )
+                len_ep = (len(d['dialog']) - 1) // 2
+            elif self.add_missing_turns == 'train' and 'train' not in self.datatype:
+                len_ep = (len(d['dialog']) - 1) // 2
+            else:
+                len_ep = (len(d['dialog']) - 1) // 2 + 1
+            return len_ep
         return len(d['dialog']) // 2
 
     def num_examples(self):
@@ -517,6 +539,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
         super().__init__(opt, shared)
         self.speaker_label = opt.get('speaker_label', 'both')
         self.add_topic = opt.get('add_topic', False)
@@ -541,6 +564,15 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             default=False,
             help='prepend chosen topic to first turn',
         )
+        agent.add_argument(
+            '--add-missing-turns',
+            type=str,
+            choices=['none', 'train', 'all'],
+            default='none',
+            help='For reproducibility, the default "none" is the previous version which missing some data. '
+            'When "train" is chosen, only the training set is supplemented. '
+            'When "all" is chosen, all data are supplemented.',
+        )
         return parser
 
     def num_examples(self):
@@ -550,7 +582,18 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         d = self.data[ep]
         first_speaker = d['dialog'][0]['speaker'].lower()
         if self.speaker_label != 'both' and self.speaker_label in first_speaker:
-            return (len(d['dialog']) - 1) // 2
+            if self.add_missing_turns == 'none':
+                warn_once(
+                    'Some data not being used. If you are not trying to reproduce '
+                    'the previous results, it is recommended that you run with the '
+                    'flag --add-missing-turns train or --add-missing-turns all.'
+                )
+                len_ep = (len(d['dialog']) - 1) // 2
+            elif self.add_missing_turns == 'train' and 'train' not in self.datatype:
+                len_ep = (len(d['dialog']) - 1) // 2
+            else:
+                len_ep = (len(d['dialog']) - 1) // 2 + 1
+            return len_ep
         return len(d['dialog']) // 2
 
     def get(self, episode_idx, entry_idx=0):
