@@ -13,7 +13,6 @@ import os
 import sys as _sys
 import datetime
 import parlai
-from packaging import version
 
 try:
     import git
@@ -972,11 +971,29 @@ class ParlaiParser(argparse.ArgumentParser):
         if args is None:
             # args default to the system args
             args = _sys.argv[1:]
+
         args = fix_underscores(args)
+        # handle the single dash stuff. See _handle_single_dash_addarg for info
+        actions = set()
+        for action in self._actions:
+            actions = actions | set(action.option_strings)
+        if _sys.version_info >= (3, 8, 0):
+            newargs = []
+            for arg in args:
+                darg = f'-{arg}'
+                if arg.startswith('-') and not arg.startswith('--') and darg in actions:
+                    newargs.append(darg)
+                else:
+                    newargs.append(arg)
+        args = newargs
 
         if nohelp:
             # ignore help
-            args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
+            args = [
+                a
+                for a in args
+                if a != '-h' and a != '--help' and a != '--helpall' and a != '--h'
+            ]
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
@@ -1297,8 +1314,7 @@ class ParlaiParser(argparse.ArgumentParser):
 
         Here we rewrite them into long args to get around the nonsense.
         """
-        return args
-        if version.parse(_sys.version) < (3, 8):
+        if _sys.version_info < (3, 8, 0):
             # older python works fine
             return args
 
