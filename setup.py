@@ -37,7 +37,7 @@ if __name__ == '__main__':
         packages=find_packages(exclude=('data', 'docs', 'tests', 'parlai_internal*')),
         install_requires=reqs,
         include_package_data=True,
-        package_data={'': ['*.txt', '*.md']},
+        package_data={'': ['*.txt', '*.md', '*.opt']},
         entry_points={
             "flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"],
             "console_scripts": ["parlai=parlai.__main__:main"],
