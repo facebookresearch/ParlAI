@@ -34,6 +34,8 @@ def universal_sentence_embedding(sentences, mask, sqrt=True):
     divisor = mask.sum(dim=1).view(-1, 1).float()
     if sqrt:
         divisor = divisor.sqrt()
+
+    divisor[divisor < 1] = 1
     sentence_sums /= divisor
     return sentence_sums
 
