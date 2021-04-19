@@ -106,27 +106,19 @@ commands:
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
-  installtorchgpu16:
+  installtorchgpu18:
     description: Install torch GPU and dependencies
     steps:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.6.0+cu101 torchvision==0.7.0+cu101 -f https://download.pytorch.org/whl/torch_stable.html
-            python -m pip install --progress-bar off 'torchtext==0.7.0'
+            python -m pip install --progress-bar off 'torch==1.8.1' 'torchvision~=0.9.0' 'torchtext~=0.9.0'
+            python -m pip install --progress-bar off 'fairscale~=0.3.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
-
-  installtorchgpu15:
-    description: Install torch GPU and dependencies
-    steps:
-      - run:
-          name: Install torch GPU and dependencies
-          command: |
-            python -m pip install --progress-bar off 'torch==1.5.1'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -156,10 +148,13 @@ commands:
       - run:
           name: Install opencv, vqa-maskrcnn-benchmark
           command: |
-            python -m pip install opencv-python==4.2.0.34
-            git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
-            cd maskbench; git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable
-            python setup.py develop; cd -
+            if (! python -c 'import maskrcnn_benchmark')
+            then
+                python -m pip install opencv-python==4.2.0.34
+                git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
+                cd maskbench; git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable
+                python setup.py develop; cd -
+            fi
 
   installcrowdsourcingdeps:
     description: Install Mephisto
@@ -233,26 +228,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20200315-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20210418-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20200315-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20210418-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20200315-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20210418-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20200315-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20210418-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -269,12 +264,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20200315-bw-{{ checksum "requirements.txt" }}
+          key: deps-20210418-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu17
       - save_cache:
-          key: deps-20200315-bw-{{ checksum "requirements.txt" }}
+          key: deps-20210418-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -361,29 +356,17 @@ jobs:
           cachename: ut38
           marker: unit
 
-  unittests_gpu15:
-    executor: gpu
-    working_directory: ~/ParlAI
-    parallelism: 2
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchgpu15
-          install_cuda: true
-          cachename: gpu15
-          marker: unit
-
-  unittests_gpu16:
+  unittests_gpu18:
     executor: gpu
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
       - runtests:
           more_installs:
-            - installtorchgpu16
+            - installtorchgpu18
             - installdetectrondeps
           install_cuda: true
-          cachename: gpu16
+          cachename: gpu18
           marker: unit
 
   unittests_gpu17:
@@ -394,7 +377,6 @@ jobs:
       - runtests:
           more_installs:
             - installtorchgpu17
-            - installdetectrondeps
           install_cuda: true
           cachename: gpu17
           marker: unit
@@ -474,35 +456,27 @@ workflows:
   commit:
     jobs:
       - cleaninstall_37
-      - unittests_gpu17
-      - unittests_gpu16:
+      - unittests_gpu17:
           requires:
             - unittests_37
-            - unittests_gpu17
-      - unittests_gpu15:
+      - unittests_gpu18:
           requires:
             - unittests_37
-            - unittests_gpu17
       - unittests_38:
           requires:
             - unittests_37
-            - unittests_gpu17
       - unittests_37
       - unittests_osx:
           requires:
-            - unittests_gpu17
             - unittests_37
       - long_gpu_tests:
           requires:
-            - unittests_gpu17
             - unittests_37
       - crowdsourcing_tests:
           requires:
-            - unittests_gpu17
             - unittests_37
       - teacher_tests:
           requires:
-            - unittests_gpu17
             - unittests_37
       - build_website:
           filters:
