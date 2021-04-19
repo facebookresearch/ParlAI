@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import os
 import unittest
 import torch
 import parlai.nn.lr_scheduler as lr_scheduler
@@ -142,3 +143,93 @@ class TestLRSchedulers(unittest.TestCase):
     def test_end2end_invsqrt(self):
         self._run_end2end(lr_scheduler='invsqrt', warmup_updates=0)
         self._run_end2end(lr_scheduler='invsqrt', warmup_updates=50)
+
+
+class TestLRIntegration(unittest.TestCase):
+    """
+    Deep LR scheduler tests to check how we handle preemption.
+    """
+
+    PREEMPT = 30
+
+    def _test_scheduler(self, **kwargs):
+        from parlai.scripts.train_model import TrainModel, TrainLoop
+
+        # shallow copy to prevent overwrites
+        kwargs = kwargs.copy()
+        with testing_utils.tempdir() as tmpdir:
+            kwargs['model'] = 'test_agents/unigram'
+            kwargs['task'] = 'integration_tests'
+            kwargs['skip_generation'] = True
+            kwargs['validation_metric'] = 'loss'
+            kwargs['model_file'] = os.path.join(tmpdir, 'model')
+            kwargs['dict_file'] = 'zoo:unittest/transformer_generator2/model.dict'
+            kwargs['log_every_n_steps'] = 1
+            kwargs['validation_every_n_steps'] = 10
+            kwargs['max_train_steps'] = 100
+            kwargs['save_after_valid'] = True
+            kwargs['learningrate'] = 1
+            opt = TrainModel.setup_args().parse_kwargs(**kwargs)
+
+            logs_first = []
+            for i, train_step_log in enumerate(TrainLoop(opt).train_steps(), 1):
+                logs_first.append(train_step_log)
+                if i >= self.PREEMPT - 2:
+                    # simulate preemption
+                    break
+
+            # resume training
+            logs_second = []
+            for train_step_log in TrainLoop(opt).train_steps():
+                logs_second.append(train_step_log)
+
+            # check correctness
+            assert (
+                logs_first[20]['total_train_updates']
+                == logs_second[0]['total_train_updates']
+            )
+            assert logs_first[20]['lr'] == logs_second[0]['lr']
+
+            if 'warump_updates' in kwargs:
+                full_logs = logs_first[:20] + logs_second
+                assert full_logs[kwargs['warmup_updates']]['lr'] == 1.0
+
+            return logs_first, logs_second
+
+    def test_invsqrt(self):
+        self._test_scheduler(lr_scheduler='invsqrt')
+
+    def test_invsqrt_warmup(self):
+        self._test_scheduler(lr_scheduler='invsqrt', warmup_updates=25)
+
+    def test_invsqrt_long_warmup(self):
+        self._test_scheduler(lr_scheduler='invsqrt', warmup_updates=self.PREEMPT + 30)
+
+    def test_reduceonplateau(self):
+        self._test_scheduler(lr_scheduler='reduceonplateau')
+
+    def test_reduceonplateau_warmup(self):
+        self._test_scheduler(lr_scheduler='reduceonplateau', warmup_updates=25)
+
+    def test_reduceonplateau_long_warmup(self):
+        self._test_scheduler(
+            lr_scheduler='reduceonplateau', warmup_updates=self.PREEMPT + 30
+        )
+
+    def test_linear(self):
+        self._test_scheduler(lr_scheduler='linear')
+
+    def test_linear_warmup(self):
+        self._test_scheduler(lr_scheduler='linear', warmup_updates=25)
+
+    def test_linear_long_warmup(self):
+        self._test_scheduler(lr_scheduler='linear', warmup_updates=self.PREEMPT + 30)
+
+    def test_cosine(self):
+        self._test_scheduler(lr_scheduler='cosine')
+
+    def test_cosine_warmup(self):
+        self._test_scheduler(lr_scheduler='cosine', warmup_updates=25)
+
+    def test_cosine_long_warmup(self):
+        self._test_scheduler(lr_scheduler='cosine', warmup_updates=self.PREEMPT + 30)
