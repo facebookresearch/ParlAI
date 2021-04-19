@@ -82,10 +82,15 @@ def setup_args():
 class MultiProcessTrain(ParlaiScript):
     @classmethod
     def setup_args(cls):
-        return setup_args()
+        argparser = setup_args()
+        argparser.add_argument('--port', type=int, default=None)
+        return argparser
 
     def run(self):
-        port = random.randint(32000, 48000)
+        if self.opt['port'] is None:
+            port = random.randint(32000, 48000)
+        else:
+            port = self.opt['port']
         return launch_and_train(self.opt, port)
 
 

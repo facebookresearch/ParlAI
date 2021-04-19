@@ -15,13 +15,13 @@ from parlai.tasks.integration_tests.agents import NUM_TEST
 import parlai.scripts.multiprocessing_train as mp_train
 
 
-class TestNumExamples(TestCase):
+class _Abstract(TestCase):
     BASE_ARGS = {
         'model': 'test_agents/counter',
         'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
         'dict_tokenizer': 'space',
         'truncate': 8,
-        'num_epochs': 2,
+        'max_train_steps': 10,
         'datatype': 'train:stream',
     }
 
@@ -47,13 +47,11 @@ class TestNumExamples(TestCase):
             assert test_report['times_seen'] == 1
             return valid_report, test_report
 
-    # Regular chunk teacher
 
+class TestNumExamples(_Abstract):
+    # Regular chunk teacher
     def test_normal_bs1(self):
         self._run(task='integration_tests:chunky')
-
-    def test_normal_bs2(self):
-        self._run(task='integration_tests:chunky', batchsize=2)
 
     def test_normal_bs3(self):
         self._run(task='integration_tests:chunky', batchsize=3)
@@ -68,11 +66,7 @@ class TestNumExamples(TestCase):
 
     @testing_utils.skipUnlessGPU
     def test_mp_normal_bs1(self):
-        self._run_mp(task='integration_tests:chunky')
-
-    @testing_utils.skipUnlessGPU
-    def test_mp_normal_bs2(self):
-        self._run_mp(task='integration_tests:chunky', batchsize=2)
+        self._run_mp(task='integration_tests:chunky', batchsize=1)
 
     @testing_utils.skipUnlessGPU
     def test_mp_normal_bs3(self):
@@ -84,19 +78,11 @@ class TestNumExamples(TestCase):
             task='integration_tests:chunky', batchsize=2, dynamic_batching='full'
         )
 
-    @testing_utils.skipUnlessGPU
-    def test_mp_normal_batchsort(self):
-        self._run_mp(
-            task='integration_tests:chunky', batchsize=2, dynamic_batching='batchsort'
-        )
 
+class TestSmallBuffer(_Abstract):
     # Small buffer
-
     def test_small_buffer_bs1(self):
         self._run(task='integration_tests:chunky_small_buffer')
-
-    def test_small_buffer_bs2(self):
-        self._run(task='integration_tests:chunky_small_buffer', batchsize=2)
 
     def test_small_buffer_bs3(self):
         self._run(task='integration_tests:chunky_small_buffer', batchsize=3)
@@ -120,10 +106,6 @@ class TestNumExamples(TestCase):
         self._run_mp(task='integration_tests:chunky_small_buffer')
 
     @testing_utils.skipUnlessGPU
-    def test_mp_small_buffer_bs2(self):
-        self._run_mp(task='integration_tests:chunky_small_buffer', batchsize=2)
-
-    @testing_utils.skipUnlessGPU
     def test_mp_small_buffer_bs3(self):
         self._run_mp(task='integration_tests:chunky_small_buffer', batchsize=3)
 
@@ -143,53 +125,15 @@ class TestNumExamples(TestCase):
             dynamic_batching='batchsort',
         )
 
+
+class TestSlowChunk(_Abstract):
     # Slow chunk
-
-    def test_slow_bs1(self):
-        self._run(task='integration_tests:chunky_slow')
-
-    def test_slow_bs2(self):
-        self._run(task='integration_tests:chunky_slow', batchsize=2)
-
     def test_slow_bs3(self):
         self._run(task='integration_tests:chunky_slow', batchsize=3)
 
     def test_slow_dynb(self):
         self._run(
             task='integration_tests:chunky_slow', batchsize=2, dynamic_batching='full'
-        )
-
-    def test_slow_batchsort(self):
-        self._run(
-            task='integration_tests:chunky_slow',
-            batchsize=2,
-            dynamic_batching='batchsort',
-        )
-
-    @testing_utils.skipUnlessGPU
-    def test_mp_slow_bs1(self):
-        self._run_mp(task='integration_tests:chunky_slow')
-
-    @testing_utils.skipUnlessGPU
-    def test_mp_slow_bs2(self):
-        self._run_mp(task='integration_tests:chunky_slow', batchsize=2)
-
-    @testing_utils.skipUnlessGPU
-    def test_mp_slow_bs3(self):
-        self._run_mp(task='integration_tests:chunky_slow', batchsize=3)
-
-    @testing_utils.skipUnlessGPU
-    def test_mp_slow_dynb(self):
-        self._run_mp(
-            task='integration_tests:chunky_slow', batchsize=2, dynamic_batching='full'
-        )
-
-    @testing_utils.skipUnlessGPU
-    def test_mp_slow_batchsort(self):
-        self._run_mp(
-            task='integration_tests:chunky_slow',
-            batchsize=2,
-            dynamic_batching='batchsort',
         )
 
 
@@ -199,7 +143,7 @@ class TestBackgroundPreprocessorNumExamples(TestNumExamples):
         'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
         'dict_tokenizer': 'space',
         'truncate': 8,
-        'num_epochs': 2,
+        'max_train_steps': 10,
         'datatype': 'train:stream',
         'num_workers': 4,
     }
