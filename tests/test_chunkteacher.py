@@ -8,7 +8,6 @@
 Test correctness of ChunkTeacher in a large number of settings.
 """
 
-import random
 from unittest import TestCase
 import os
 import parlai.utils.testing as testing_utils
