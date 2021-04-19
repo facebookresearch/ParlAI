@@ -108,38 +108,6 @@ class _AbstractTRATest(unittest.TestCase):
         valid, test = testing_utils.train_model(args)
         # no threshold, the model won't generalize on :overfit
 
-    # test eval fixed ecands
-    @testing_utils.retry(ntries=3)
-    def test_eval_fixed(self):
-        args = self._get_args()
-        args['evaltask'] = 'integration_tests'
-        args['eval_candidates'] = 'fixed'
-        args['encode_candidate_vecs'] = True
-        args['ignore_bad_candidates'] = True
-        valid, test = testing_utils.train_model(args)
-
-        # none of the train candidates appear in evaluation, so should have
-        # zero accuracy: this tests whether the fixed candidates were built
-        # properly (i.e., only using candidates from the train set)
-        self.assertEqual(valid['hits@1'], 0)
-
-        # now try again with a fixed candidate file that includes all possible
-        # candidates
-        teacher = CandidateTeacher({'datatype': 'train'})
-        all_cands = teacher.train + teacher.val + teacher.test
-        all_cands_str = '\n'.join([' '.join(x) for x in all_cands])
-
-        with testing_utils.tempdir() as tmpdir:
-            tmp_cands_file = os.path.join(tmpdir, 'all_cands.text')
-            with open(tmp_cands_file, 'w') as f:
-                f.write(all_cands_str)
-            args['fixed_candidates_path'] = tmp_cands_file
-            args['encode_candidate_vecs'] = False  # don't encode before training
-            args['ignore_bad_candidates'] = False
-            args['num_epochs'] = 4
-            valid, test = testing_utils.train_model(args)
-            self.assertGreaterEqual(valid['hits@100'], 0.1)
-
     # test eval vocab ecands
     @testing_utils.retry(ntries=3)
     def test_eval_vocab(self):
