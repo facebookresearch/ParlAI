@@ -126,6 +126,21 @@ task_list = [
         },
     },
     {
+        "id": "CMU_DoG",
+        "display_name": "CMU Document Grounded Conversations",
+        "task": "cmu_dog",
+        "tags": ["ChitChat", "Grounded"],
+        "description": (
+            "A document grounded dataset for text conversations, where the "
+            "documents are Wikipedia articles about popular movies. Consists "
+            "of 4112 conversations with an average of 21.43 turns per conversation."
+        ),
+        "links": {
+            "arXiv": "https://arxiv.org/abs/1809.07358",
+            "github": "https://github.com/festvox/datasets-CMU_DoG",
+        },
+    },
+    {
         "id": "COPA",
         "display_name": "Choice of Plausible Alternatives",
         "task": "copa",

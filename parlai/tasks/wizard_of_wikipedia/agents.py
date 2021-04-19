@@ -118,6 +118,10 @@ class RareWordF1Calculator:
             self._freq_dist, top_p
         )
 
+    @property
+    def freq_dist(self):
+        return self._freq_dist
+
     @staticmethod
     def _find_cutoff_count(freq_dist, top_p: float) -> int:
         """
