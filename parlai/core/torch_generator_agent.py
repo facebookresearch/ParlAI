@@ -1177,11 +1177,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 if not b.is_done():
                     b.advance(score[i])
 
-            if True:
-                if _ts >= 1:
-                    for i in range(self.beam_size):
-                        print(f'Tokens[{i}]: {self._v2t(beams[0].tokens[i, : _ts + 1])}')
-                        #print(f'Tokens[{j}]: {self._v2t(tokens[j][ : ])}')
+            #if True:
+            #    if _ts >= 1:
+            #        for i in range(self.beam_size):
+            #            print(f'Tokens[{i}]: {self._v2t(beams[0].tokens[i, : _ts + 1])}')
+            #            #print(f'Tokens[{j}]: {self._v2t(tokens[j][ : ])}')
 
             incr_state_inds = torch.cat(
                 [
