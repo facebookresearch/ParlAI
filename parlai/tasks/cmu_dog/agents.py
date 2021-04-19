@@ -162,9 +162,15 @@ class CMUDocumentGroundedConversationsTeacher(DialogTeacher):
     def __init__(self, opt: Opt, shared: TShared = None):
         opt = copy.deepcopy(opt)
         self.delimiter = opt.get('delimiter', '\n')
+        split_type = SplitType(opt.get("cmu_dog_split_type"))
+        if split_type == SplitType.ORIGINAL:
+            logger.warning(
+                "`original` split type contains duplicate conversations across train, "
+                "valid, and test. See https://github.com/festvox/datasets-CMU_DoG/issues/2 "
+                "for more detail."
+            )
         opt['datafile'] = _datafile(
-            split=DatatypeHelper.fold(opt['datatype']),
-            split_type=SplitType(opt.get("cmu_dog_split_type")),
+            split=DatatypeHelper.fold(opt['datatype']), split_type=split_type
         )
         super().__init__(opt, shared)
         if shared:
