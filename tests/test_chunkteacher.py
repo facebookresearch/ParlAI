@@ -66,6 +66,10 @@ class TestNumExamples(_Abstract):
         )
 
     @testing_utils.skipUnlessGPU
+    def test_mp_normal_bs1(self):
+        self._run_mp(task='integration_tests:chunky', batchsize=1)
+
+    @testing_utils.skipUnlessGPU
     def test_mp_normal_bs3(self):
         self._run_mp(task='integration_tests:chunky', batchsize=3)
 
