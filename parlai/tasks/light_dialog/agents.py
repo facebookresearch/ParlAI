@@ -284,3 +284,90 @@ class SelfchatTeacher(SimpleTeacher):
     """
 
     pass
+
+
+class ContextGenerator:
+    """
+    Generates contexts shown to crowdsourced workers when collecting LIGHT conversations.
+
+    This generator was used to generate the context information shown to workers at the
+    beginning of a conversation/.
+    """
+
+    SETTING_NAME = '_setting_name '
+    SETTING_DESC = '_setting_desc '
+    SELF_NAME = '_self_name '
+    SELF_PERSONA = '_self_persona '
+    PARTNER_NAME = '_partner_name '
+    SELF_SAY = '_self_say '
+    PARTNER_SAY = '_partner_say '
+
+    def __init__(self, opt, datatype: str = 'test', seed: Optional[int] = None):
+        """
+        Initalize the context generator.
+
+        opt: only a 'datapath' key is required, to specify the ParlAI data folder
+        """
+        import json
+
+        if seed is not None:
+            self.rng = random.Random(seed)
+        else:
+            self.rng = random.Random()
+
+        with open(opt['persona_path']) as f:
+            self.personas = json.load(f)
+
+    def get_context(self) -> dict:
+        """
+        Get context information to be shown at the beginning of one conversation.
+
+        Values in return dict:
+        - context_dataset: the dataset (ConvAI2, EmpatheticDialogues, or Wizard of
+            Wikipedia) used to generate the context information.
+        - persona_1_strings, persona_2_strings: 2 persona strings each for the two
+            speakers, chosen randomly from the ConvAI2 dataset. If context_dataset ==
+            "wizard_of_wikipedia", these persona strings will be matched to the WoW
+            topic returned in the "additional_context" field.
+        - additional_context: provides additional bits of information to give context
+            for the speakers. If context_dataset == "empathetic_dialogues", this is a
+            situation from the start of an ED conversation. If context_dataset ==
+            "wizard_of_wikipedia", this is a topic from the WoW dataset that matches the
+            persona strings. If context_dataset == "convai2", this is None.
+        - person1_seed_utterance, person2_seed_utterance: two lines of a conversation
+            from the dataset specified by "context_dataset". They will be shown to the
+            speakers to "seed" the conversation, and the speakers continue from where
+            the lines left off.
+        """
+        personas = random.sample(self.personas, 2)
+        (human_name, human_persona_text, loc1), (
+            bot_name,
+            bot_persona_text,
+            loc2,
+        ) = personas
+        location = random.choice([loc1, loc2])
+        loc_name, loc_desc = location.split(', ', 1)
+
+        bot_persona_msg = '\n'.join(
+            [
+                "_task_speech",
+                self.SETTING_NAME + loc_name,
+                self.SETTING_DESC + loc_desc,
+                self.PARTNER_NAME + human_name,
+                self.SELF_NAME + bot_name,
+                self.SELF_PERSONA + bot_persona_text,
+            ]
+        )
+
+        human_persona_msg = '\n'.join(
+            [
+                f"You'll be playing the role of: '{human_name}'. Your persona is: '{human_persona_text}'.",
+                f"You are in the '{loc_name}: {loc_desc}' Your chat partner is '{bot_name}'",
+            ]
+        )
+
+        return {
+            'context_dataset': 'light',
+            'persona_1_strings': bot_persona_msg,
+            'persona_2_strings': human_persona_msg,
+        }

@@ -22,6 +22,7 @@ from parlai.core.metrics import Metric
 from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
+from parlai.tasks.light_dialog.agents import ContextGenerator as LIGHTContextGenerator
 
 
 class Compatibility(object):
@@ -43,7 +44,12 @@ class Compatibility(object):
     def maybe_fix_act(incompatible_act):
         if 'id' not in incompatible_act:
             new_act = Compatibility.backward_compatible_force_set(
-                incompatible_act, 'id', 'NULL_ID'
+                incompatible_act, 'id', 'Partner'
+            )
+            return new_act
+        elif 'id' != 'Worker':
+            new_act = Compatibility.backward_compatible_force_set(
+                incompatible_act, 'id', 'Partner'
             )
             return new_act
         return incompatible_act
@@ -421,7 +427,10 @@ def get_context_generator(
     if override_opt is not None:
         argparser.set_params(**override_opt)
     opt = argparser.parse_args([])
-    context_generator = ContextGenerator(opt, datatype='test', seed=0)
+    if override_opt.get('context_generator') == 'light':
+        context_generator = LIGHTContextGenerator(opt)
+    else:
+        context_generator = ContextGenerator(opt, datatype='test', seed=0)
     # We pull from the test set so that the model can't regurgitate
     # memorized conversations
     return context_generator

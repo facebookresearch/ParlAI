@@ -299,7 +299,7 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
         default='hi',
         metadata={
             "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
-            "choices": ['hi', 'bst'],
+            "choices": ['hi', 'bst', 'light'],
         },
     )
     include_persona: bool = field(
@@ -323,6 +323,10 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
     world_file: str = field(
         default=os.path.join(get_task_path(), 'worlds.py'),
         metadata={"help": "Path to file containing parlai world"},
+    )
+    model_opt_path: str = field(
+        default="${mephisto.blueprint.task_config_path}/image_model_opts.yaml",
+        metadata={"help": "Path to YAML of opts for each model"},
     )
 
 
@@ -457,7 +461,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         active_model_opts = {
             model: opt
             for model, opt in all_model_opts.items()
-            if self.conversations_needed[model] > 0
+            if self.conversations_needed.get(model, 0) > 0
         }
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=active_model_opts)
 

@@ -176,16 +176,15 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         f'Bad complete conversation, words from human: {utterances}. Skipping.'
                     )
                     continue
-
                 if not all(
-                    bucket in data['dialog'][1]['problem_data']
+                    bucket in data['dialog'][0]['problem_data']
                     for bucket in self.problem_buckets
                 ):
                     raise ValueError('Bucket(s) are missing from the problem data!')
                 s = read_folder.split('/')[-2]
-                experimental_design = s[s.find('_') + 1 :]
-
-                model_nickname = experimental_design + '/' + data['workers'][1]
+                # experimental_design = s[s.find('_') + 1 :]
+                # model_nickname = experimental_design + '/' + data['workers'][1]
+                model_nickname = s
                 if model_nickname not in problem_counts:
                     problem_counts[model_nickname] = {}
                 if model_nickname in complete_convos_per_model:
@@ -211,7 +210,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 # agents 0 and 1, with 0 speaking first
                 assert all(
                     [
-                        utterance_data['agent_idx'] == utterance_idx % 2
+                        utterance_data['agent_idx'] == (utterance_idx + 1) % 2
                         for utterance_idx, utterance_data in enumerate(data['dialog'])
                     ]
                 )
@@ -266,9 +265,9 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         'turn_idx': -1,
                         'agent_idx': 1,
                         'text': 'your persona: '
-                        + data['personas'][1][0]
-                        + '\nyour persona: '
-                        + data['personas'][1][1]
+                        + data['personas'][0]
+                        + '\n Their persona: '
+                        + data['personas'][1]
                         + additional_context,
                         **{bucket: '' for bucket in self.problem_buckets},
                     },
@@ -372,9 +371,9 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     problem_counts[model_nickname]['count_convos'] = 0
                 problem_counts[model_nickname]['count_convos'] += 1
 
+                if 'convo_clean' not in problem_counts[model_nickname]:
+                    problem_counts[model_nickname]['convo_clean'] = 0
                 if not dialog_has_problems:
-                    if 'convo_clean' not in problem_counts[model_nickname]:
-                        problem_counts[model_nickname]['convo_clean'] = 0
                     problem_counts[model_nickname]['convo_clean'] += 1
 
                 # Adding the full conversation to the list of conversations
@@ -463,8 +462,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 else:
                     html_text += f'<td>{model_problems_dict[k]} ({model_problems_dict[k]/model_problems_dict["total"]:.1%})</td>'
             html_text += f'<td>{model_problems_dict["convo_clean"]/model_problems_dict["count_convos"]:.1%} ({model_problems_dict["count_convos"]} convos)</td>'
-
-            html_text += f'<td>{np.average(model_problems_dict["ratings"]):.2f} ({model_problems_dict["count_ratings"]} ratings)</td>'
+            if "ratings" in model_problems_dict:
+                html_text += f'<td>{np.average(model_problems_dict["ratings"]):.2f} ({model_problems_dict["count_ratings"]} ratings)</td>'
 
             html_text += '</tr>'
 
