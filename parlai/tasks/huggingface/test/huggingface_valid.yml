@@ -39,5 +39,5 @@ acts:
     - unacceptable
     - acceptable
     text: As you eat the most, you want the least.
-num_episodes: 10657
-num_examples: 10657
+num_episodes: 1043
+num_examples: 1043

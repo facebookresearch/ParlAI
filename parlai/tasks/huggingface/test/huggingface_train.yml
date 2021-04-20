@@ -39,5 +39,5 @@ acts:
     labels:
     - acceptable
     text: Day by day the facts are getting murkier.
-num_episodes: 10657
-num_examples: 10657
+num_episodes: 8551
+num_examples: 8551

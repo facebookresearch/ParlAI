@@ -5,8 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.data import DatatypeHelper
 from typing import List
-import os
 from abc import ABC
 
 # huggingface imports
@@ -22,7 +22,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     hf_name = name parameter passed into hugging face load_dataset function
     hf_text_fields = list of names of the data fields from the dataset to be included in the text/query
     hf_label_field = name of the data field from the hf dataset that specifies the label of the episode
-    hf_splits_mapping = dictionary mapping with the keys 'train', 'valid', and 'test', that map to the 
+    hf_splits_mapping = dictionary mapping with the keys 'train', 'valid', and 'test', that map to the
     names of the splits of the hf dataset.
     """
 
@@ -33,26 +33,19 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     hf_splits_mapping: dict = {'train': 'train', 'valid': 'validation', 'test': 'test'}
 
     def __init__(self, opt, shared=None):
-        self.datatype = opt['datatype']
-        self.hf_split = self.hf_splits_mapping[self.datatype.split(':')[0]]
-        self.data_path = self._path(opt)
-        opt['datafile'] = self.data_path
-
-        # load dataset from HuggingFace
-        self.dataset = load_dataset(
-            path=self.hf_path, name=self.hf_name, split=self.hf_split
-        )
+        self.fold = DatatypeHelper.fold(opt['datatype'])
+        self.hf_split = self.hf_splits_mapping[self.fold]
+        opt['datafile'] = self.hf_split
 
         self.id = "huggingface"
         super().__init__(opt, shared)
 
-    def _path(self, opt):
-        path = os.path.join(opt['datapath'], 'huggingface')
-        return path
+    def setup_data(self, split):
+        # load dataset from HuggingFace
+        dataset = load_dataset(path=self.hf_path, name=self.hf_name, split=split)
 
-    def setup_data(self, path):
-        pre_candidates = self.dataset.features[self.hf_label_field].names
-        for row in self.dataset:
+        pre_candidates = dataset.features[self.hf_label_field].names
+        for row in dataset:
             # construct text query from the hf_text_fields specified
             text_arr = []
             for col in self.hf_text_fields:

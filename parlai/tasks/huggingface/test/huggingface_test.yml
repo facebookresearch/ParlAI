@@ -39,5 +39,5 @@ acts:
     - unacceptable
     - acceptable
     text: I demand that the more John eats, the more he pay.
-num_episodes: 10657
-num_examples: 10657
+num_episodes: 1063
+num_examples: 1063
