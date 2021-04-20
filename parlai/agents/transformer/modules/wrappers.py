@@ -3,7 +3,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+import torch
 import torch.nn as nn
+
+from parlai.agents.transformer.modules import TransformerEncoder
 
 
 class TransformerResponseWrapper(nn.Module):
@@ -13,7 +16,7 @@ class TransformerResponseWrapper(nn.Module):
     Pushes input through transformer and MLP.
     """
 
-    def __init__(self, transformer, hdim):
+    def __init__(self, transformer: TransformerEncoder, hdim: int):
         super(TransformerResponseWrapper, self).__init__()
         dim = transformer.out_dim
         self.transformer = transformer
@@ -23,7 +26,7 @@ class TransformerResponseWrapper(nn.Module):
             nn.Linear(hdim, dim),
         )
 
-    def forward(self, *args):
+    def forward(self, *args) -> torch.Tensor:
         """
         Forward pass.
         """
@@ -35,13 +38,13 @@ class TransformerLinearWrapper(nn.Module):
     Wrap a transformer in a linear layer.
     """
 
-    def __init__(self, transformer, output_dim):
+    def __init__(self, transformer: TransformerEncoder, output_dim: int):
         super().__init__()
         self.transformer = transformer
         input_dim = transformer.out_dim
         self.additional_linear_layer = nn.Linear(input_dim, output_dim)
 
-    def forward(self, *args):
+    def forward(self, *args) -> torch.Tensor:
         """
         Forward pass.
 

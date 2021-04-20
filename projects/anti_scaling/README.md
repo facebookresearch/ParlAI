@@ -36,6 +36,7 @@ parlai train_model \
 --allow-missing-init-opts True \
 --init-model None \
 --init-opt data/models/blender/blender_3B/model.opt \
+--dict-file data/models/blender/blender_3B/model.dict \
 --model projects.anti_scaling.distillation:DistillNarrowTransformerAgent \
 --teacher-model data/models/blender/blender_3B/model \
 --batchsize 16 \

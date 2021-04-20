@@ -154,9 +154,7 @@ class TestTrainModel(unittest.TestCase):
             tl.valid_reports[-1]['total_train_updates'], num_train_steps - 1
         )
         self.assertEqual(len(tl.valid_reports), num_validations)
-        self.assertEqual(
-            len(tl.train_reports), num_logs + num_validations
-        )  # log every valid as well
+        self.assertEqual(len(tl.train_reports), num_logs)  # log every valid as well
 
     def test_opt_step(self):
         self._test_opt_step_opts(1)

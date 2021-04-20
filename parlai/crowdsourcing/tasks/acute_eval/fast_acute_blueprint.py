@@ -81,6 +81,12 @@ class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
         default=False,
         metadata={'help': "Use any existing self-chat files without prompting"},
     )
+    randomize_conversations: bool = field(
+        default=True,
+        metadata={
+            'help': "Randomize conversations used for match-ups or take conversations in order"
+        },
+    )
 
 
 @register_mephisto_abstraction()

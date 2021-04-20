@@ -186,8 +186,9 @@ def str2class(value):
     """
     From import path string, returns the class specified.
 
-    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    For example, the string
+    'parlai.agents.hugging_face.dict:Gpt2DictionaryAgent' returns
+    <class 'parlai.agents.hugging_face.dict.Gpt2DictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
@@ -970,11 +971,29 @@ class ParlaiParser(argparse.ArgumentParser):
         if args is None:
             # args default to the system args
             args = _sys.argv[1:]
+
         args = fix_underscores(args)
+        # handle the single dash stuff. See _handle_single_dash_addarg for info
+        actions = set()
+        for action in self._actions:
+            actions.update(action.option_strings)
+        if _sys.version_info >= (3, 8, 0):
+            newargs = []
+            for arg in args:
+                darg = f'-{arg}'
+                if arg.startswith('-') and not arg.startswith('--') and darg in actions:
+                    newargs.append(darg)
+                else:
+                    newargs.append(arg)
+            args = newargs
 
         if nohelp:
             # ignore help
-            args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
+            args = [
+                a
+                for a in args
+                if a != '-h' and a != '--help' and a != '--helpall' and a != '--h'
+            ]
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
@@ -984,7 +1003,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = Opt.load(optfile)
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -992,12 +1011,12 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = Opt.load(optfile)
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
                 if opt.get('allow_missing_init_opts', False):
-                    logging.warn(
+                    logging.warning(
                         f'The "{key}" key in {optfile} will not be loaded, because it '
                         f'does not exist in the target opt.'
                     )
@@ -1284,12 +1303,40 @@ class ParlaiParser(argparse.ArgumentParser):
             kwargs['type'] = 'bool'
         return kwargs, action_attr
 
+    def _handle_single_dash_addarg(self, args):
+        """
+        Fixup argparse for parlai-style short args.
+
+        In python 3.8, argparsing was changed such that short arguments are not
+        required to have spaces after them. This causes our many short args to
+        be misinterpetted by the parser. For example `-emb` gets parsed as
+        `-e mb`.
+
+        Here we rewrite them into long args to get around the nonsense.
+        """
+        if _sys.version_info < (3, 8, 0):
+            # older python works fine
+            return args
+
+        # need the long options specified first, or `dest` will get set to
+        # the short name on accident!
+        out_long = []
+        out_short = []
+        for arg in args:
+            if arg.startswith('-') and not arg.startswith('--'):
+                out_short.append(f'-{arg}')
+            else:
+                out_long.append(arg)
+        # keep long args in front so they are used for the destination
+        return out_long + out_short
+
     def add_argument(self, *args, **kwargs):
         """
         Override to convert underscores to hyphens for consistency.
         """
         kwargs, newattr = self._handle_custom_options(kwargs)
-        action = super().add_argument(*fix_underscores(args), **kwargs)
+        args = self._handle_single_dash_addarg(fix_underscores(args))
+        action = super().add_argument(*args, **kwargs)
         for k, v in newattr.items():
             setattr(action, k, v)
         return action
@@ -1303,7 +1350,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         def ag_add_argument(*args, **kwargs):
             kwargs, newattr = self._handle_custom_options(kwargs)
-            action = original_add_arg(*fix_underscores(args), **kwargs)
+            args = self._handle_single_dash_addarg(fix_underscores(args))
+            action = original_add_arg(*args, **kwargs)
             for k, v in newattr.items():
                 setattr(action, k, v)
             return action

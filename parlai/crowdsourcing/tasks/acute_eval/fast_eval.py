@@ -329,12 +329,15 @@ class FastAcuteExecutor(object):
             self.fast_acute_args.matchups_per_pair
             * self.fast_acute_args.sufficient_matchups_multiplier
         )
-        # Write random pairs of conversations
+        # Write pairs of conversations
         for model_pair in self.combos:
-            for _ in range(pairs_per_model):
-                conversation_indices = [
-                    random.choice(range(len(conversations[m]))) for m in model_pair
-                ]
+            for i in range(pairs_per_model):
+                if self.fast_acute_args.randomize_conversations:
+                    conversation_indices = [
+                        random.choice(range(len(conversations[m]))) for m in model_pair
+                    ]
+                else:
+                    conversation_indices = [i for _ in model_pair]
                 pair = []
                 pair_ids = []
                 for i, c_id in enumerate(conversation_indices):

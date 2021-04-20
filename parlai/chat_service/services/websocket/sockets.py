@@ -23,7 +23,7 @@ class MessageSocketHandler(WebSocketHandler):
         self.subs: Dict[int, T] = kwargs.pop('subs')
 
         def _default_callback(message, socketID):
-            logging.warn(f"No callback defined for new WebSocket messages.")
+            logging.warning(f"No callback defined for new WebSocket messages.")
 
         self.message_callback = kwargs.pop('message_callback', _default_callback)
         self.sid = get_rand_id()

@@ -27,6 +27,8 @@ from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerEncoder,
 )
+from parlai.core.opt import Opt
+from parlai.core.torch_agent import DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
@@ -52,7 +54,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
     def build_decoder(cls, opt, embedding=None):
         return TransformerDecoder(opt=opt, embedding=embedding)
 
-    def __init__(self, opt, dictionary):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent):
         self.pad_idx = dictionary[dictionary.null_token]
         self.start_idx = dictionary[dictionary.start_token]
         self.end_idx = dictionary[dictionary.end_token]

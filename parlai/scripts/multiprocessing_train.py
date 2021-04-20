@@ -49,13 +49,14 @@ def launch_and_train(opt, port):
     Perform a fork() to many processes.
     """
     # Launch multiple subprocesses
-    spawncontext = torch.multiprocessing.spawn(
+    spawncontext = torch.multiprocessing.start_processes(
         multiprocess_train,
         # need to give rank offset as 1 to cover the fact that the main
         # process is rank 0, but that spawn() doesn't let you control rank
         (opt, port, 1),
         nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
+        start_method='spawn',
     )
 
     try:
@@ -81,10 +82,15 @@ def setup_args():
 class MultiProcessTrain(ParlaiScript):
     @classmethod
     def setup_args(cls):
-        return setup_args()
+        argparser = setup_args()
+        argparser.add_argument('--port', type=int, default=None)
+        return argparser
 
     def run(self):
-        port = random.randint(32000, 48000)
+        if self.opt['port'] is None:
+            port = random.randint(32000, 48000)
+        else:
+            port = self.opt['port']
         return launch_and_train(self.opt, port)
 
 

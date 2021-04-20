@@ -181,11 +181,11 @@ def error(*args, **kwargs):
 
 
 def warn(*args, **kwargs):
-    return logger.warn(*args, **kwargs)
+    return logger.warning(*args, **kwargs)
 
 
 def warning(*args, **kwargs):
-    return logger.warn(*args, **kwargs)
+    return logger.warning(*args, **kwargs)
 
 
 def get_all_levels():

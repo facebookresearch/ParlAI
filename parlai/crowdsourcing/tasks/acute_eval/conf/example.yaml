@@ -13,6 +13,7 @@ mephisto:
     s1_choice: "I would prefer to talk to <Speaker 1>"
     s2_choice: "I would prefer to talk to <Speaker 2>"
     subtasks_per_unit: 5
+    randomize_conversations: True
   task:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 600

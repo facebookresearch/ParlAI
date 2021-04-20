@@ -15,7 +15,8 @@ for unseen) after the last colon in the task.
 E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
-from typing import Optional, Tuple
+from __future__ import annotations
+from typing import Iterable, Optional, Tuple
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser
@@ -23,6 +24,7 @@ from parlai.core.opt import Opt
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from parlai.utils.io import PathManager
+from parlai.utils.misc import warn_once
 from .build import build
 
 import json
@@ -98,6 +100,73 @@ def _path(opt, split='random_split'):
     else:
         df = '{}_{}.json'.format(dt, split)
     return os.path.join(dp, df)
+
+
+class RareWordF1Calculator:
+    """
+    Helper class for computing F1 with an emphasis on infrequent words.
+    """
+
+    def __init__(self, corpus: str, top_p: float = 0.5):
+        try:
+            import nltk
+        except ImportError:
+            raise ImportError('Please install nltk (e.g. pip install nltk).')
+        words = normalize_answer(corpus).split()
+        self._freq_dist = nltk.FreqDist(words)
+        self._cutoff_count = RareWordF1Calculator._find_cutoff_count(
+            self._freq_dist, top_p
+        )
+
+    @property
+    def freq_dist(self):
+        return self._freq_dist
+
+    @staticmethod
+    def _find_cutoff_count(freq_dist, top_p: float) -> int:
+        """
+        Finds the word occurance for which the cumulative occurances are `top_p` of the
+        overall word count.
+        """
+        assert top_p < 1
+        target = sum(freq_dist.values()) * top_p
+        cumul = 0
+        for _, v in freq_dist.most_common():
+            cumul += v
+            if cumul > target:
+                return v
+        raise RuntimeError(f"Invalid top {top_p*100}% of the corpus distribution")
+
+    @staticmethod
+    def _filter(freq_dist, cutoff: int, text: str) -> str:
+        """
+        For words that are found in the reference distribution, filters those with an
+        occurrence count less than the cutoff.
+        """
+        words = normalize_answer(text).split()
+        return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
+
+    def compute(self, guess: str, answers: Iterable[str]) -> F1Metric:
+        if guess is None or answers is None:
+            return F1Metric(0, 0)
+        guess = RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, guess)
+        answers = [
+            RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
+            for a in answers
+        ]
+        if not any(len(a) for a in answers):
+            # no rare words in labels, set denominator to zero
+            return F1Metric(0, 0)
+        return F1Metric.compute(guess, answers)
+
+
+def _build_rare_word_f1(datapath: str) -> RareWordF1Calculator:
+    all_text = ''
+    data_path = os.path.join(datapath, 'wizard_of_wikipedia', 'data.json')
+    with PathManager.open(data_path) as f:
+        data = json.load(f)
+        all_text += ' '.join(m['text'] for d in data for m in d['dialog']) + ' '
+    return RareWordF1Calculator(all_text, top_p=0.5)
 
 
 class WizardOfWikipediaTeacher(FixedDialogTeacher):
@@ -203,6 +272,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
         super().__init__(opt, shared)
         self.label_type = opt.get('label_type', 'response')
         self.include_knowledge = opt.get('include_knowledge', True)
@@ -210,6 +280,10 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
         self.knowledge_separator = opt.get('include_knowledge_separator', False)
         self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
         self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
+        if shared and 'rare_word_f1' in shared:
+            self.rare_word_f1 = shared['rare_word_f1']
+        elif self.label_type == 'response':
+            self.rare_word_f1 = _build_rare_word_f1(opt['datapath'])
 
     @classmethod
     def add_cmdline_args(
@@ -256,13 +330,39 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             help='in interactive mode, this is the number of topic choices'
             'the human will have',
         )
+        agent.add_argument(
+            '--add-missing-turns',
+            type=str,
+            choices=['none', 'train', 'all'],
+            default='none',
+            help='For reproducibility, the default "none" is the previous version which misssing some data.'
+            'When "train" is chosen, only the training set is supplemented.'
+            'When "all" is chosen, all data are supplemented.',
+        )
         return parser
+
+    def share(self):
+        shared = super().share()
+        if hasattr(self, 'rare_word_f1'):
+            shared['rare_word_f1'] = self.rare_word_f1
+        return shared
 
     def len_episode(self, ep):
         d = self.data[ep]
         wizard_first = 'Wizard' in d['dialog'][0]['speaker']
         if wizard_first:
-            return (len(d['dialog']) - 1) // 2
+            if self.add_missing_turns == 'none':
+                warn_once(
+                    'Some data not being used. If you are not trying to reproduce '
+                    'the previous results, it is recommended that you run with the '
+                    'flag --add-missing-turns train or --add-missing-turns all.'
+                )
+                len_ep = (len(d['dialog']) - 1) // 2
+            elif self.add_missing_turns == 'train' and 'train' not in self.datatype:
+                len_ep = (len(d['dialog']) - 1) // 2
+            else:
+                len_ep = (len(d['dialog']) - 1) // 2 + 1
+            return len_ep
         return len(d['dialog']) // 2
 
     def num_examples(self):
@@ -390,6 +490,11 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
                     model_response['text'], [teacher_action['checked_sentence']]
                 ),
             )
+            if labels:
+                self.metrics.add(
+                    'rare_word_f1',
+                    self.rare_word_f1.compute(model_response['text'], labels),
+                )
         elif (
             self.label_type == 'chosen_sent'
             and TOKEN_KNOWLEDGE in model_response['text']
@@ -438,6 +543,7 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
     """
 
     def __init__(self, opt, shared=None):
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
         super().__init__(opt, shared)
         self.speaker_label = opt.get('speaker_label', 'both')
         self.add_topic = opt.get('add_topic', False)
@@ -462,6 +568,15 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
             default=False,
             help='prepend chosen topic to first turn',
         )
+        agent.add_argument(
+            '--add-missing-turns',
+            type=str,
+            choices=['none', 'train', 'all'],
+            default='none',
+            help='For reproducibility, the default "none" is the previous version which missing some data. '
+            'When "train" is chosen, only the training set is supplemented. '
+            'When "all" is chosen, all data are supplemented.',
+        )
         return parser
 
     def num_examples(self):
@@ -471,7 +586,18 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         d = self.data[ep]
         first_speaker = d['dialog'][0]['speaker'].lower()
         if self.speaker_label != 'both' and self.speaker_label in first_speaker:
-            return (len(d['dialog']) - 1) // 2
+            if self.add_missing_turns == 'none':
+                warn_once(
+                    'Some data not being used. If you are not trying to reproduce '
+                    'the previous results, it is recommended that you run with the '
+                    'flag --add-missing-turns train or --add-missing-turns all.'
+                )
+                len_ep = (len(d['dialog']) - 1) // 2
+            elif self.add_missing_turns == 'train' and 'train' not in self.datatype:
+                len_ep = (len(d['dialog']) - 1) // 2
+            else:
+                len_ep = (len(d['dialog']) - 1) // 2 + 1
+            return len_ep
         return len(d['dialog']) // 2
 
     def get(self, episode_idx, entry_idx=0):
