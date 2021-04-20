@@ -29,6 +29,24 @@ def setup_mutator_registry():
         return
     for module in pkgutil.iter_modules(parlai.mutators.__path__, 'parlai.mutators.'):
         importlib.import_module(module.name)
+    try:
+        import parlai_fb.mutators
+
+        for module in pkgutil.iter_modules(
+            parlai_fb.mutators.__path__, 'parlai_fb.mutators.'
+        ):
+            importlib.import_module(module.name)
+    except ImportError:
+        pass
+    try:
+        import parlai_internal.mutators
+
+        for module in pkgutil.iter_modules(
+            parlai_internal.mutators.__path__, 'parlai_internal.mutators.'
+        ):
+            importlib.import_module(module.name)
+    except ImportError:
+        pass
     setup_mutator_registry.loaded = True
     return MUTATOR_REGISTRY
 
