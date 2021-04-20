@@ -611,6 +611,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         This is also used in distributed mode to force a worker to sync with others.
         """
+        return
         if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
             try:
                 self._control_local_metrics(disabled=True)
