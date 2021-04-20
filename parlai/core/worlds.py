@@ -104,7 +104,7 @@ class World(object):
         """
         return self.id
 
-    def display(self):
+    def display(self) -> str:
         """
         Return a string describing the current state of the world.
 
@@ -122,13 +122,13 @@ class World(object):
             verbose=self.opt.get('verbose', False),
         )
 
-    def episode_done(self):
+    def episode_done(self) -> bool:
         """
         Whether the episode is done or not.
         """
         return False
 
-    def epoch_done(self):
+    def epoch_done(self) -> bool:
         """
         Whether the epoch is done or not.
 
@@ -201,7 +201,7 @@ class World(object):
         """
         return self.total_exs
 
-    def get_total_epochs(self):
+    def get_total_epochs(self) -> Union[float, int]:
         """
         Return total amount of epochs on which the world has trained.
         """
@@ -234,7 +234,7 @@ class World(object):
         self.shutdown()
         return False
 
-    def num_examples(self):
+    def num_examples(self) -> int:
         """
         Return the number of examples.
 
@@ -243,7 +243,7 @@ class World(object):
         # TODO: mark as abstract?
         return 0
 
-    def num_episodes(self):
+    def num_episodes(self) -> int:
         """
         Return the number of episodes.
 
@@ -1216,7 +1216,7 @@ class DynamicBatchWorld(World):
     def get_total_exs(self):
         return self.total_exs
 
-    def get_total_epochs(self):
+    def get_total_epochs(self) -> Union[float, int]:
         return self.total_exs / self.num_examples()
 
     def report(self):
@@ -1304,7 +1304,7 @@ class BackgroundDriverWorld(World):
     def get_total_exs(self):
         return self.total_exs
 
-    def get_total_epochs(self):
+    def get_total_epochs(self) -> Union[float, int]:
         return self.total_exs / self.num_examples()
 
     def report(self):
@@ -1398,7 +1398,7 @@ def create_task_world(opt: Opt, user_agents, default_world=None):
     return world_class(opt, task_agents + user_agents)
 
 
-def create_task(opt: Opt, user_agents, default_world=None):
+def create_task(opt: Opt, user_agents, default_world=None) -> World:
     """
     Create a world + task_agents (aka a task).
 
