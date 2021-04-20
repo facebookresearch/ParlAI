@@ -1037,6 +1037,9 @@ class TeacherMetrics(Metrics):
         # Ranking metrics.
         self._update_ranking_metrics(observation, labels)
 
+        self._consume_user_metrics(observation)
+
+    def _consume_user_metrics(self, observation):
         # User-reported metrics
         if 'metrics' in observation:
             for uk, v in observation['metrics'].items():

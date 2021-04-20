@@ -784,11 +784,13 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_metrics('train', self.parleys, train_report)
 
-    def train(self):
-        """
-        Perform a training run.
+        return train_report
 
-        :return: tuple of reports (validation_report, test_report)
+    def train_steps(self):
+        """
+        Core training loop.
+
+        Yields a metrics dict with each log.
         """
         logging.info('training...')
         opt = self.opt
@@ -814,7 +816,7 @@ class TrainLoop:
 
                 # check counters and timers
                 if self._total_epochs >= self.max_num_epochs:
-                    self.log()
+                    yield self.log()
                     logging.info(
                         f'num_epochs completed:{self.max_num_epochs} time elapsed:{train_time}s'
                     )
@@ -832,7 +834,7 @@ class TrainLoop:
                     log_time > self.log_every_n_secs
                     or self._last_log_steps >= self.log_every_n_steps
                 ):
-                    self.log()
+                    yield self.log()
                 if (
                     validate_time > self.val_every_n_secs
                     or self._total_epochs - self.last_valid_epoch
@@ -842,7 +844,8 @@ class TrainLoop:
                 ):
                     try:
                         # log before we validate
-                        self.log()
+                        if self._last_log_steps:
+                            yield self.log()
                         world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
@@ -885,6 +888,17 @@ class TrainLoop:
             del self.valid_worlds
             # reload best validation model
             self.agent = create_agent(opt)
+
+    def train(self):
+        """
+        Perform a training run.
+
+        :return: tuple of reports (validation_report, test_report)
+        """
+        opt = self.opt
+        for _train_log in self.train_steps():
+            # we've already done what we need in these
+            pass
 
         # perform final validation/testing
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')

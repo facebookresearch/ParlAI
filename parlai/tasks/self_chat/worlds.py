@@ -50,6 +50,13 @@ def load_openers(opt) -> Optional[List[str]]:
     return list(openers)
 
 
+def load_openers_from_file(filepath: str) -> List[str]:
+    openers = []
+    with open(filepath, 'r') as f:
+        openers = [l.strip() for l in f]
+    return openers
+
+
 class SelfChatWorld(DialogPartnerWorld):
     def __init__(self, opt, agents, shared=None):
         super().__init__(opt, agents, shared)
@@ -81,6 +88,8 @@ class SelfChatWorld(DialogPartnerWorld):
         """
         if self.opt.get('seed_messages_from_task'):
             self._openers = load_openers(self.opt)
+        elif self.opt.get('seed_messages_from_file'):
+            self._openers = load_openers_from_file(self.opt['seed_messages_from_file'])
 
     def get_openers(self, episode_num: int) -> Optional[List[str]]:
         """

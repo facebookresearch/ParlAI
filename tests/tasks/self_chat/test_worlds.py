@@ -6,8 +6,12 @@
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.worlds import create_task
 from parlai.scripts.display_data import setup_args
-from parlai.tasks.self_chat.worlds import SelfChatWorld as SelfChatBaseWorld
+from parlai.tasks.self_chat.worlds import (
+    load_openers_from_file,
+    SelfChatWorld as SelfChatBaseWorld,
+)
 
+from tempfile import NamedTemporaryFile
 import unittest
 from unittest.mock import MagicMock
 
@@ -60,6 +64,13 @@ class TestSelfChat(unittest.TestCase):
 
         assert_contexts_match(['you are a seal', 'you are an ostrich'])
         assert_contexts_match([])
+
+    def test_load_openers_from_file(self):
+        with NamedTemporaryFile() as tmpfile:
+            tmpfile.write(b'hey\nhowdy')
+            tmpfile.seek(0)
+            op = load_openers_from_file(tmpfile.name)
+        self.assertListEqual(op, ['hey', 'howdy'])
 
 
 if __name__ == '__main__':

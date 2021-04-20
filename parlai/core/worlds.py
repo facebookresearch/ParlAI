@@ -1282,12 +1282,22 @@ class BackgroundDriverWorld(World):
     def num_episodes(self):
         return self.world.num_episodes()
 
+    def _queue_get(self):
+        import queue
+
+        while True:
+            try:
+                return self._process_queue.get(timeout=10)
+            except queue.Empty:
+                # not getting anything, let's check for exceptions on the
+                self._process_pool.join(timeout=0.1)
+
     def parley(self):
-        index, batch = self._process_queue.get()
+        index, batch = self._queue_get()
         response_object = self.get_model_agent().batch_act(batch)
         # compute metrics
         for response in response_object:
-            self.metrics.evaluate_response(response, [])
+            self.metrics._consume_user_metrics(response)
         self.total_parleys += 1
         self.total_exs += batch.batchsize
 
