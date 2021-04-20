@@ -30,7 +30,6 @@ from parlai.agents.transformer.modules import (
     TransformerEncoder,
     TransformerEncoderLayer,
     TransformerGeneratorModel,
-    decoder,
 )
 from parlai.agents.transformer.modules.interfaces import ModularComponentBuilder
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
