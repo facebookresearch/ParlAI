@@ -15,8 +15,8 @@ from datasets import load_dataset
 
 class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     """
-    Abstract parent class for HuggingFace teachers.
-    Extend this class and specify the attributes below to use a different dataset.
+    Abstract parent class for HuggingFace teachers. Extend this class and specify the
+    attributes below to use a different dataset.
 
     hf_path = path parameter passed into hugging face load_dataset function
     hf_name = name parameter passed into hugging face load_dataset function
@@ -24,6 +24,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     hf_label_field = name of the data field from the hf dataset that specifies the label of the episode
     hf_splits_mapping = dictionary mapping with the keys 'train', 'valid', and 'test', that map to the
     names of the splits of the hf dataset.
+    render_text_field = bool where if True, will include the text field name in the query (e.g. "sentence: <sentence>")
     """
 
     hf_path: str = 'glue'
@@ -31,6 +32,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     hf_text_fields: List[str] = ['sentence']
     hf_label_field: str = 'label'
     hf_splits_mapping: dict = {'train': 'train', 'valid': 'validation', 'test': 'test'}
+    render_text_field: bool = False
 
     def __init__(self, opt, shared=None):
         self.fold = DatatypeHelper.fold(opt['datatype'])
@@ -41,6 +43,11 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
         super().__init__(opt, shared)
 
     def setup_data(self, split):
+        """
+        Default implementation of setup_data.
+
+        Manually override if needed.
+        """
         # load dataset from HuggingFace
         dataset = load_dataset(path=self.hf_path, name=self.hf_name, split=split)
 
@@ -52,6 +59,8 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
                 text_part = row.get(col)
                 if text_part is None:
                     raise KeyError(f'Feature "{col}" not found in data.')
+                if self.render_text_field:
+                    text_part = col + ': ' + text_part
                 text_arr.append(text_part)
             query = '\n'.join(text_arr)
 
