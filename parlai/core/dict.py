@@ -733,7 +733,7 @@ class DictionaryAgent(Agent):
         else:
             return self.vec2txt(txt_or_vec)
 
-    def txt2vec(self, text, vec_type=list):
+    def txt2vec(self, text: str, vec_type=list):
         """
         Convert a string to a vector (list of ints).
 
@@ -743,7 +743,11 @@ class DictionaryAgent(Agent):
             The type of the returned vector if the input is a string. Suggested
             ``list``, ``tuple``, ``set``, or ``np.ndarray``.
         """
-        itr = (self._word_lookup(token) for token in self.tokenize(str(text)))
+        assert isinstance(
+            text, str
+        ), f'Input to txt2vec must be string, not {type(text)}'
+
+        itr = (self._word_lookup(token) for token in self.tokenize(text))
         if vec_type == list or vec_type == tuple or vec_type == set:
             res = vec_type(itr)
         elif vec_type == np.ndarray:

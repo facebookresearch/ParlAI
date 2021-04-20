@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-TFIDF retriever for Wikipedia (for use with e.g. DrQA+SQuAD).
+TFIDF retriever for Wikipedia (for use with e.g. Wizard of Wikipedia).
 """
 
 from parlai.core.build_data import download_models

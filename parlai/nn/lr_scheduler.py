@@ -9,6 +9,7 @@ Code for LR Schedulers.
 See ParlAILRScheduler (super class) and subclasses for detailed documentation
 """
 
+import math
 from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
@@ -462,9 +463,12 @@ class CosineLRScheduler(ParlAILRScheduler):
         """
         super().__init__(hard_reset, warmup_updates, warmup_rate)
         if max_lr_steps <= 0:
-            raise ValueError('--lr-scheduler cosine requires setting --max-lr-steps')
+            raise ValueError('--lr-scheduler cosine requires setting --max-train-steps')
         self.max_lr_steps = max_lr_steps
-        self.scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, max_lr_steps)
+        self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._cosine_lr)
+
+    def _cosine_lr(self, step):
+        return math.cos(math.pi * step / (2 * self.max_lr_steps))
 
     def train_step(self, scheduler_steps):
         if scheduler_steps >= self.max_lr_steps:
@@ -497,7 +501,7 @@ class LinearLRScheduler(ParlAILRScheduler):
         """
         super().__init__(hard_reset, warmup_updates, warmup_rate)
         if max_lr_steps <= 0:
-            raise ValueError('--lr-scheduler linear requires setting --max-lr-steps')
+            raise ValueError('--lr-scheduler linear requires setting --max-train-steps')
         self.max_lr_steps = max_lr_steps
         self.scheduler = optim.lr_scheduler.LambdaLR(optimizer, self._linear_lr)
 

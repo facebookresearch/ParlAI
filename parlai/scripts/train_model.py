@@ -18,7 +18,6 @@ The user must provide a model (with `--model`) and a task (with
 ```shell
 parlai train_model --model ir_baseline --task dialog_babi:Task:1 --model-file /tmp/model
 parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/model' --batchsize 32 --learningrate 0.5
-parlai train_model --model drqa --task babi:Task10k:1 --model-file /tmp/model --batchsize 10
 ```
 """  # noqa: E501
 
@@ -60,7 +59,7 @@ def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
     if opt[key] > 0:
         if distributed_warn and is_distributed():
             nicekey = '--' + key.replace('_', '-')
-            logging.warn(
+            logging.warning(
                 f'Using {nicekey} in distributed mode can lead to slowdowns. '
                 'See https://github.com/facebookresearch/ParlAI/pull/3379 for more info.'
             )
@@ -104,6 +103,12 @@ def setup_args(parser=None) -> ParlaiParser:
             'train-only dynamic batching. Set to none (default) to use same '
             'setting as --dynamic-batching.'
         ),
+    )
+    train.add_argument(
+        '--num-workers',
+        default=0,
+        type=int,
+        help='Number of background workers (training only)',
     )
     train.add_argument('--display-examples', type='bool', default=False, hidden=True)
     train.add_argument('-eps', '--num-epochs', type=float, default=-1)
@@ -681,7 +686,7 @@ class TrainLoop:
                 eta = time_left
 
         max_train_steps = self.opt.get('max_train_steps', -1)
-        if max_train_steps > 0:
+        if max_train_steps > 0 and steps_taken > 0:
             steps_progress = steps_taken / max_train_steps
             eta = (1 - steps_progress) * time_elapsed / steps_progress
 
@@ -779,11 +784,13 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_metrics('train', self.parleys, train_report)
 
-    def train(self):
-        """
-        Perform a training run.
+        return train_report
 
-        :return: tuple of reports (validation_report, test_report)
+    def train_steps(self):
+        """
+        Core training loop.
+
+        Yields a metrics dict with each log.
         """
         logging.info('training...')
         opt = self.opt
@@ -809,7 +816,7 @@ class TrainLoop:
 
                 # check counters and timers
                 if self._total_epochs >= self.max_num_epochs:
-                    self.log()
+                    yield self.log()
                     logging.info(
                         f'num_epochs completed:{self.max_num_epochs} time elapsed:{train_time}s'
                     )
@@ -818,13 +825,16 @@ class TrainLoop:
                     logging.info(f'max_train_time elapsed:{train_time}s')
                     break
                 if self._train_steps >= self.max_train_steps:
-                    logging.info(f'max_train_steps elapsed:{self._train_steps}')
+                    logging.info(
+                        f'max_train_steps elapsed:{self._train_steps} '
+                        f'time elapsed:{train_time}s'
+                    )
                     break
                 if (
                     log_time > self.log_every_n_secs
                     or self._last_log_steps >= self.log_every_n_steps
                 ):
-                    self.log()
+                    yield self.log()
                 if (
                     validate_time > self.val_every_n_secs
                     or self._total_epochs - self.last_valid_epoch
@@ -834,7 +844,8 @@ class TrainLoop:
                 ):
                     try:
                         # log before we validate
-                        self.log()
+                        if self._last_log_steps:
+                            yield self.log()
                         world.reset_metrics()
                         stop_training = self.validate()
                     except StopTrainException:
@@ -877,6 +888,17 @@ class TrainLoop:
             del self.valid_worlds
             # reload best validation model
             self.agent = create_agent(opt)
+
+    def train(self):
+        """
+        Perform a training run.
+
+        :return: tuple of reports (validation_report, test_report)
+        """
+        opt = self.opt
+        for _train_log in self.train_steps():
+            # we've already done what we need in these
+            pass
 
         # perform final validation/testing
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')

@@ -8,7 +8,7 @@ Implementations of attention.
 """
 
 import math
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Union
 
 import torch
 import torch.nn as nn
@@ -22,7 +22,13 @@ class BasicAttention(nn.Module):
     Implements simple/classical attention.
     """
 
-    def __init__(self, dim=1, attn='cosine', residual=False, get_weights=True):
+    def __init__(
+        self,
+        dim: int = 1,
+        attn: str = 'cosine',
+        residual: bool = False,
+        get_weights: bool = True,
+    ):
         super().__init__()
         if attn == 'cosine':
             self.cosine = nn.CosineSimilarity(dim=dim)
@@ -31,7 +37,13 @@ class BasicAttention(nn.Module):
         self.get_weights = get_weights
         self.residual = residual
 
-    def forward(self, xs, ys, mask_ys=None, values=None):
+    def forward(
+        self,
+        xs: torch.Tensor,
+        ys: torch.Tensor,
+        mask_ys: Optional[torch.Tensor] = None,
+        values: Optional[torch.Tensor] = None,
+    ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         """
         Compute attention.
 
@@ -80,7 +92,7 @@ class MultiHeadAttention(nn.Module):
     See Vaswani (2017) for an extensive description.
     """
 
-    def __init__(self, n_heads, dim, dropout=0):
+    def __init__(self, n_heads: int, dim: int, dropout: float = 0):
         super(MultiHeadAttention, self).__init__()
         self.n_heads = n_heads
         self.dim = dim
@@ -166,8 +178,6 @@ class MultiHeadAttention(nn.Module):
         _, _key_len, dim = key.size()
 
         q = prepare_head(self.q_lin(query))
-        k = prepare_head(self.k_lin(key))
-        v = prepare_head(self.v_lin(value))
 
         # Prepend incremental states. For each of the key, value, and mask, see if
         # a previous incremental state exists, and if so, reshape it to match the shape
@@ -183,7 +193,9 @@ class MultiHeadAttention(nn.Module):
             if static_kv:
                 k = prev_key
             else:
-                k = torch.cat([prev_key, k], dim=1)
+                k = torch.cat([prev_key, prepare_head(self.k_lin(key))], dim=1)
+        else:
+            k = prepare_head(self.k_lin(key))
         if 'prev_value' in incr_state:
             prev_value = incr_state['prev_value'].view(
                 batch_size * n_heads, -1, dim_per_head
@@ -191,7 +203,9 @@ class MultiHeadAttention(nn.Module):
             if static_kv:
                 v = prev_value
             else:
-                v = torch.cat([prev_value, v], dim=1)
+                v = torch.cat([prev_value, prepare_head(self.v_lin(value))], dim=1)
+        else:
+            v = prepare_head(self.v_lin(value))
         if 'prev_mask' in incr_state:
             if static_kv:
                 mask = incr_state['prev_mask']

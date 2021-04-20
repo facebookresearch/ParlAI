@@ -39,11 +39,9 @@ class TestTorchScript(unittest.TestCase):
         compiled_pattern = regex.compile(Gpt2BpeHelper.PATTERN)
 
         with testing_utils.tempdir() as tmpdir:
-            datapath = tmpdir
-
             for task in tasks:
                 opt = TorchScript.setup_args().parse_kwargs(
-                    task=task, datatype='train:ordered', datapath=datapath
+                    task=task, datatype='train:ordered'
                 )
                 agent = RepeatLabelAgent(opt)
                 # TODO(roller): make a proper create_teacher helper
