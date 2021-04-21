@@ -3,36 +3,10 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Script to increase bart size, should be run one-time to increase the position embedding size
-to incorporate more context
-Example usage
-```
-python /private/home/jingxu23/ParlAI/parlai_internal/projects/personal_knowledge/follow_up/model_augment/add_positions.py \
---model_save_path /checkpoint/jingxu23/projects/wiz2/inverse_persona/data/models/pretrainReddit3B_add_positions/ \
---original_model_path /checkpoint/parlai/zoo/meena/20200319_meenav0data_tall_2.7B_adamoptimizer/20200319_13.3ppl_200kupdates \
---n_positions 1024
-```
-args:
---n_positions: default 2048
---model_save_path: the path to save the enlarged mode
---original_model_path: the path to the original model
-"""
-from glob import glob
-import torch
-import numpy as np
 import os
 import json
-from datetime import datetime
 import argparse
 
-from parlai.utils import logging
-import parlai.utils.pickle
-from parlai.utils.torch import atomic_save
-from parlai_internal.projects.param_sweep_utils.param_sweep import bash
-from fairseq.modules.sinusoidal_positional_embedding import (
-    SinusoidalPositionalEmbedding,
-)
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
@@ -88,8 +62,8 @@ if __name__ == "__main__":
             ]
             chatlogs.append(new_episode)
 
-    task_data_path = os.path.join(args.eval_log_dir, 'task_data.jsonl')
-    indices_path = os.path.join(args.eval_log_dir, 'annotation_indices.jsonl')
+    task_data_path = os.path.join(args.eval_logs_dir, 'task_data.jsonl')
+    indices_path = os.path.join(args.eval_logs_dir, 'annotation_indices.jsonl')
     with PathManager.open(task_data_path, 'w') as fw:
         for episode in chatlogs:
             fw.write(json.dumps(episode) + '\n')
