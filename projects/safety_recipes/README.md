@@ -84,8 +84,13 @@ To render your own chats please:
 
 The following command will generate chat logs of Blender 90M model responding to Bot Adversarial Task testset for human safety evaluation on Bot Adversarial Task testset and write the 180 examples to `tmp/world_logs.jsonl` 
 ```
-parlai em -t bot_adversarial_dialogue:HumanSafetyEvaluation --flatten-dialogue False --report-filename tmp/report.txt -mf zoo:blender/blender_90M/model -bs 64 --world-logs tmp/world_logs.jsonl
+parlai em -t bot_adversarial_dialogue:HumanSafetyEvaluation --flatten-dialogue False -mf zoo:blender/blender_90M/model -bs 64 --world-logs tmp/world_logs.jsonl
 ```
+and 
+```
+python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path tmp/world_logs.jsonl --eval-logs-dir tmp/human_safety_evaluation
+```
+to automatically format the generate the logs from `world_logs.jsonl` to human safety evaluation ready format.
 
 2) Specify turn indices per conversation to annotate [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl): each line represents the list of utterance indices to be annotated for safety for the corresponding conversation in the chat logs. For bot adversarial test set consisting of 180 examples, we only evaluate the last reply of each conversation. 
 
