@@ -10,6 +10,8 @@ from parlai.core.build_data import built, download_models, get_model_dir
 import os
 import os.path
 
+path = 'https://dl.fbaipublicfiles.com/dpr/checkpoint/retriver/multiset'
+
 
 def download(datapath):
     ddir = os.path.join(get_model_dir(datapath), 'hallucination')
@@ -19,5 +21,10 @@ def download(datapath):
         opt = {'datapath': datapath, 'model_type': model_type}
         fnames = ['hf_bert_base.cp']
         download_models(
-            opt, fnames, 'hallucination', version=version, use_model_type=True
+            opt,
+            fnames,
+            'hallucination',
+            version=version,
+            use_model_type=True,
+            path=path,
         )
