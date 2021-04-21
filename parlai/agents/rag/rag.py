@@ -10,18 +10,10 @@ Original Paper: https://arxiv.org/abs/2005.11401
 
 As used in ParlAI: https://arxiv.org/abs/2104.07567
 """
-try:
-    import faiss  # noqa: f401
-except ImportError:
-    raise ImportError(
-        'Please install faiss: https://github.com/facebookresearch/faiss/blob/master/INSTALL.md'
-    )
-
 from abc import ABC, abstractmethod
 import os
 import torch
 import torch.nn
-import torch.nn.functional as F
 import torch.cuda
 from typing import Any, Dict, List, Optional, Tuple, Union, Type
 
@@ -40,13 +32,7 @@ from parlai.utils.distributed import sync_parameters
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 import parlai.utils.pickle
-from parlai.utils.torch import (
-    total_parameters,
-    trainable_parameters,
-    PipelineHelper,
-    padded_tensor,
-    FP16_PAD_SIZE,
-)
+from parlai.utils.torch import total_parameters, trainable_parameters, PipelineHelper
 from parlai.utils.typing import TShared
 
 from parlai.agents.rag.args import setup_rag_args

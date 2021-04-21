@@ -10,15 +10,7 @@ RAG Token and RAG Sequence are outlined in https://arxiv.org/abs/2005.11401
 
 RAG Turn is outlined in https://arxiv.org/abs/2104.07567
 """
-try:
-    import faiss  # noqa: f401
-except ImportError:
-    raise ImportError(
-        'Please install faiss: https://github.com/facebookresearch/faiss/blob/master/INSTALL.md'
-    )
-
 from abc import ABC, abstractmethod
-import os
 import torch
 import torch.nn
 import torch.nn.functional as F

@@ -1547,7 +1547,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "FiD model trained with a RAG-DPR-Poly Retriever (DPR-Poly retrieval, trained in a RAG Setup) ",
+            "FiD model trained with a RAG-DPR-Poly Retriever (DPR-Poly retrieval, trained in a RAG Setup) "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": (
@@ -1569,7 +1569,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "FiD model trained with a RAG Retriever (DPR retrieval) ",
+            "FiD model trained with a RAG Retriever (DPR retrieval) "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_fid_rag/model"),
@@ -1589,7 +1589,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "RAG-Token model trained with a DPR Retriever ",
+            "RAG-Token model trained with a DPR Retriever "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_dpr_poly/model"),
@@ -1609,7 +1609,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "RAG-Sequence model trained with a DPR Retriever ",
+            "RAG-Sequence model trained with a DPR Retriever "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_sequence/model"),
@@ -1629,7 +1629,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "RAG-Token model trained with a DPR Retriever ",
+            "RAG-Token model trained with a DPR Retriever "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_token/model"),
@@ -1649,7 +1649,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever ",
+            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_dtt/model"),
@@ -1669,7 +1669,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever ",
+            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
             "and a BART-Large backbone seq2seq generator.",
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_do/model"),
@@ -1747,7 +1747,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "A dump of Wikipedia articles split into 21m 100 word chunks ",
+            "A dump of Wikipedia articles split into 21m 100 word chunks "
             "from DPR (https://github.com/facebookresearch/DPR)",
         ),
         "example": (
@@ -1763,7 +1763,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "A dump of Wikipedia articles split into ~3k paragraphs, comprising the subset of ",
+            "A dump of Wikipedia articles split into ~3k paragraphs, comprising the subset of "
             "Wikipedia present in the WoW dataset.",
         ),
         "example": (
@@ -1779,7 +1779,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "A compressed FAISS Index of embeddings from ~3k paragraphs from ",
+            "A compressed FAISS Index of embeddings from ~3k paragraphs from "
             "Wikipedia present in the WoW dataset.",
         ),
         "example": (
@@ -1795,7 +1795,7 @@ model_list = [
         "task": "wizard_of_wikipedia",
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
-            "A FAISS Index of embeddings from ~3k paragraphs from ",
+            "A FAISS Index of embeddings from ~3k paragraphs from "
             "Wikipedia present in the WoW dataset.",
         ),
         "example": (

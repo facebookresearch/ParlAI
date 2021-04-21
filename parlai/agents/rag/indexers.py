@@ -13,7 +13,6 @@ from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 
 from abc import ABC, abstractmethod
-import faiss
 import math
 import numpy as np
 import os
@@ -50,6 +49,14 @@ class BaseIndexer(ABC):
         self.buffer_size = opt['indexer_buffer_size']
         self.index_id_to_db_id = []
         self.index = None
+        try:
+            import faiss  # noqa: f401
+
+            self.faiss = faiss
+        except ImportError:
+            raise ImportError(
+                'Please install faiss: https://github.com/facebookresearch/faiss/blob/master/INSTALL.md'
+            )
 
     @abstractmethod
     def index_data(self, data: List[torch.Tensor]):
@@ -120,7 +127,7 @@ class BaseIndexer(ABC):
             index_file = f'{file}.index'
             meta_file = f'{file}.index_meta'
 
-        faiss.write_index(self.index, index_file)
+        self.faiss.write_index(self.index, index_file)
         if self.index_id_to_db_id:
             torch.save(self.index_id_to_db_id, meta_file)
 
@@ -145,7 +152,7 @@ class BaseIndexer(ABC):
             index_file = file
             meta_file = f'{index_file}_meta'
 
-        self.index = faiss.read_index(index_file)
+        self.index = self.faiss.read_index(index_file)
         logging.info(f'Loaded index of type {self.index} and size {self.index.ntotal}')
 
         if os.path.exists(meta_file):
@@ -181,13 +188,13 @@ class DenseHNSWFlatIndexer(BaseIndexer):
         self.scalar_quantize = opt['hnsw_indexer_scalar_quantize']
         if self.scalar_quantize:
             logging.warning('scalar quantize')
-            index = faiss.IndexHNSWSQ(
+            index = self.faiss.IndexHNSWSQ(
                 opt['retriever_embedding_size'] + 1,
-                faiss.ScalarQuantizer.QT_8bit,
+                self.faiss.ScalarQuantizer.QT_8bit,
                 opt['hnsw_indexer_store_n'],
             )
         else:
-            index = faiss.IndexHNSWFlat(
+            index = self.faiss.IndexHNSWFlat(
                 opt['retriever_embedding_size'] + 1, opt['hnsw_indexer_store_n']
             )
         index.hnsw.efSearch = opt['hnsw_ef_search']
@@ -283,36 +290,40 @@ class IVFPQIndexer(BaseIndexer):
         if self.index_factory:
             logging.warning(f'Creating Index from Index Factory: {self.index_factory}')
             self.is_ivf_index = 'IVF' in self.index_factory
-            self.index = faiss.index_factory(
-                self.dim, self.index_factory, faiss.METRIC_INNER_PRODUCT
+            self.index = self.faiss.index_factory(
+                self.dim, self.index_factory, self.faiss.METRIC_INNER_PRODUCT
             )
         else:
             self.is_ivf_index = True
-            quantizer = faiss.IndexHNSWFlat(
-                self.dim, opt['hnsw_indexer_store_n'], faiss.METRIC_INNER_PRODUCT
+            quantizer = self.faiss.IndexHNSWFlat(
+                self.dim, opt['hnsw_indexer_store_n'], self.faiss.METRIC_INNER_PRODUCT
             )
             quantizer.hnsw.efConstruction = opt['hnsw_ef_construction']
             quantizer.hnsw.efSearch = opt['hnsw_ef_search']
-            ivf_index = faiss.IndexIVFPQ(
-                quantizer, self.dim, 4096, 128, 8, faiss.METRIC_INNER_PRODUCT
+            ivf_index = self.faiss.IndexIVFPQ(
+                quantizer, self.dim, 4096, 128, 8, self.faiss.METRIC_INNER_PRODUCT
             )
             ivf_index.nprobe = opt['compressed_indexer_nprobe']
             self.index = ivf_index
 
         if self.is_ivf_index:
-            self.index_ivf = faiss.extract_index_ivf(self.index)
-            self.index_ivf.metric_type = faiss.METRIC_INNER_PRODUCT
+            self.index_ivf = self.faiss.extract_index_ivf(self.index)
+            self.index_ivf.metric_type = self.faiss.METRIC_INNER_PRODUCT
             self.nlist = self.index_ivf.nlist
             self.index_ivf.verbose = True
-            self.downcast_quantizer = faiss.downcast_index(self.index_ivf.quantizer)
+            self.downcast_quantizer = self.faiss.downcast_index(
+                self.index_ivf.quantizer
+            )
             self.downcast_quantizer.verbose = True
-            self.downcast_quantizer.metric_type = faiss.METRIC_INNER_PRODUCT
+            self.downcast_quantizer.metric_type = self.faiss.METRIC_INNER_PRODUCT
             if hasattr(self.downcast_quantizer, 'hnsw'):
                 self.downcast_quantizer.hnsw.efSearch = opt['hnsw_ef_search']
                 self.downcast_quantizer.hnsw.efConstruction = opt[
                     'hnsw_ef_construction'
                 ]
-                self.downcast_quantizer.hnsw.metric_type = faiss.METRIC_INNER_PRODUCT
+                self.downcast_quantizer.hnsw.metric_type = (
+                    self.faiss.METRIC_INNER_PRODUCT
+                )
 
             self.setup_gpu_train()
             self.index.nprobe = opt['compressed_indexer_nprobe']
@@ -328,8 +339,8 @@ class IVFPQIndexer(BaseIndexer):
         if self.use_gpu_train:
             logging.warning('Will train index on GPU')
             try:
-                clustering_index = faiss.index_cpu_to_all_gpus(
-                    faiss.IndexFlatIP(self.index_ivf.d)
+                clustering_index = self.faiss.index_cpu_to_all_gpus(
+                    self.faiss.IndexFlatIP(self.index_ivf.d)
                 )
                 self.index.clustering_index = clustering_index
             except NameError:
@@ -399,7 +410,7 @@ class IVFPQIndexer(BaseIndexer):
         """
         super().deserialize_from(file, emb_path)
         if self.is_ivf_index:
-            self.index_ivf = faiss.extract_index_ivf(self.index)
+            self.index_ivf = self.faiss.extract_index_ivf(self.index)
             self.index_ivf.make_direct_map()
             self.index_ivf.nprobe = self.nprobe
             self.index.nprobe = self.nprobe
