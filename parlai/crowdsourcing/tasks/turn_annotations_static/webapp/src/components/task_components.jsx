@@ -211,7 +211,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
         </span>
       </span>)
     }
-    if (responseField !== null) {
+    if (responseField) {
       responseInputElement = (
         <FormControl
         type="text"
