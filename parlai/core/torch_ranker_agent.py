@@ -523,7 +523,7 @@ class TorchRankerAgent(TorchAgent):
             sorted_scores, ranks = scores.sort(1, descending=True)
 
         if self.opt.get('return_cand_scores', False):
-            sorted_scores = sorted_scores.cpu()
+            sorted_scores = sorted_scores.cpu().tolist()
         else:
             sorted_scores = None
 

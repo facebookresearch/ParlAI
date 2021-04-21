@@ -1,0 +1,328 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+import copy
+import os
+import torch.cuda
+from typing import Optional
+import unittest
+
+import parlai.utils.testing as testing_utils
+
+from parlai.agents.rag.args import (
+    DPR_ZOO_MODEL,
+    POLYFAISS_ZOO_MODEL,
+    RAG_TOKEN_ZOO_MODEL,
+    RAG_SEQUENCE_ZOO_MODEL,
+    RAG_TURN_DO_ZOO_MODEL,
+    RAG_TURN_DTT_ZOO_MODEL,
+    RAG_DPR_POLY_ZOO_MODEL,
+    FID_DPR_ZOO_MODEL,
+    FID_RAG_ZOO_MODEL,
+    FID_RAG_DPR_POLY_ZOO_MODEL,
+)
+
+common_opt = {
+    'model': 'rag',
+    'retriever_debug_index': 'compressed',
+    'dpr_model_file': DPR_ZOO_MODEL,
+    'n_docs': 5,
+    'task': 'integration_tests',
+    'num_examples': 5,
+    'label_truncate': 5,
+    'indexer_type': 'compressed',
+    'compressed_indexer_gpu_train': False,
+}
+
+rag_dpr_model_file = RAG_TOKEN_ZOO_MODEL
+polyfaiss_model_file = POLYFAISS_ZOO_MODEL
+
+GENERATION_OPTIONS = ['bart', 't5', 'transformer/generator']
+GENERATION_OPTS = {
+    'bart': {
+        'embedding_size': 1024,
+        'ffn_size': 4096,
+        'n_layers': 12,
+        'n_heads': 16,
+        'n_positions': 1024,
+        'variant': 'bart',
+        'truncate': 512,
+        'dict_tokenizer': 'gpt2',
+        'init_model': 'zoo:bart/bart_large/model',
+        'dict_file': 'zoo:bart/bart_large/model.dict',
+    },
+    't5': {'t5_model_arch': 't5-large'},
+    'transformer/generator': {
+        'init_model': 'zoo:tutorial_transformer_generator/model',
+        'dict_file': 'zoo:tutorial_transformer_generator/model.dict',
+        'dict_tokenizer': 'bpe',
+        'variant': 'xlm',
+        'activation': 'gelu',
+        'text_truncate': 512,
+        'label_truncate': 128,
+        'n_positions': 512,
+        'ffn_size': 2048,
+        'n_layers': 8,
+        'n_encoder_layers': 8,
+        'n_decoder_layers': 8,
+        'embedding_size': 512,
+        'n_heads': 16,
+    },
+}
+
+RAG_MODEL_TYPES = ['token', 'sequence', 'turn']
+RAG_TOKEN_OPTIONS = {}
+RAG_SEQUENCE_OPTIONS = {}
+RAG_MODEL_TYPE_OPTIONS = {
+    'token': {'thorough': [False]},
+    'sequence': {'thorough': [False, True]},
+    'turn': {
+        'thorough': [False, True],
+        'rag_turn_marginalize': ['doc_then_turn', 'doc_only'],
+        'rag_turn_n_turns': [2, 3],
+    },
+}
+
+DEBUG = False
+
+
+@testing_utils.skipUnlessGPU
+class TestRagDpr(unittest.TestCase):
+    """
+    Test all RAG DPR Model Types with Base Generators.
+    """
+
+    def _test_rag_type(self, model_type: str, gen_model: str):
+        opt = copy.deepcopy(common_opt)
+        opt['generation_model'] = gen_model
+        opt.update(GENERATION_OPTS[gen_model])
+        opt['rag_model_type'] = model_type
+        for option, vals in RAG_MODEL_TYPE_OPTIONS[model_type].items():
+            for val in vals:
+                opt[option] = val
+                testing_utils.eval_model(opt, skip_test=True)
+
+    def test_bart_rag_sequence(self):
+        self._test_rag_type('sequence', 'bart')
+
+    def test_bart_rag_token(self):
+        self._test_rag_type('token', 'bart')
+
+    def test_bart_rag_turn(self):
+        self._test_rag_type('turn', 'bart')
+
+    def test_t5_rag_sequence(self):
+        self._test_rag_type('sequence', 't5')
+
+    def test_t5_rag_token(self):
+        self._test_rag_type('token', 't5')
+
+    def test_t5_rag_turn(self):
+        self._test_rag_type('turn', 't5')
+
+    def test_reddit_rag_sequence(self):
+        self._test_rag_type('sequence', 'transformer/generator')
+
+    def test_reddit_rag_token(self):
+        self._test_rag_type('token', 'transformer/generator')
+
+    def test_reddit_rag_turn(self):
+        self._test_rag_type('turn', 'transformer/generator')
+
+
+@testing_utils.skipUnlessGPU
+class TestFidDpr(unittest.TestCase):
+    """
+    Test FiD DPR Model.
+    """
+
+    def _test_fid(self, gen_model: str):
+        opt = copy.deepcopy(common_opt)
+        opt['model'] = 'fid'
+        opt['generation_model'] = gen_model
+        opt.update(GENERATION_OPTS[gen_model])
+        testing_utils.eval_model(opt, skip_test=True)
+
+    def test_bart_fid(self):
+        self._test_fid('bart')
+
+    @unittest.skipIf(DEBUG, 'true')
+    def test_t5_fid(self):
+        self._test_fid('t5')
+
+    @unittest.skipIf(DEBUG, 'true')
+    def test_reddit_fid(self):
+        self._test_fid('transformer/generator')
+
+
+@testing_utils.skipUnlessGPU
+class TestRagDprPoly(unittest.TestCase):
+    """
+    Test RAG DPR Poly model.
+    """
+
+    def _test_rag_type(self, model_type: str):
+        opt = copy.deepcopy(common_opt)
+        opt.update(GENERATION_OPTS['bart'])
+        opt['generation_model'] = 'bart'
+        opt['rag_retriever_type'] = 'dpr_then_poly'
+        opt['rag_model_type'] = model_type
+        for option, vals in RAG_MODEL_TYPE_OPTIONS[model_type].items():
+            for val in vals:
+                opt[option] = val
+                testing_utils.eval_model(opt, skip_test=True)
+
+    def test_bart_rag_sequence(self):
+        self._test_rag_type('sequence')
+
+    def test_bart_rag_token(self):
+        self._test_rag_type('token')
+
+    def test_bart_rag_turn(self):
+        self._test_rag_type('turn')
+
+
+@testing_utils.skipUnlessGPU
+class TestRagTfidf(unittest.TestCase):
+    """
+    Test RAG TFIDF model.
+    """
+
+    def test_bart_rag_token(self):
+        opt = copy.deepcopy(common_opt)
+        opt.update(GENERATION_OPTS['bart'])
+        opt['generation_model'] = 'bart'
+        opt['rag_retriever_type'] = 'tfidf'
+        opt['rag_model_type'] = 'token'
+        testing_utils.eval_model(opt, skip_test=True)
+
+
+@testing_utils.skipUnlessGPU
+class TestFidRag(unittest.TestCase):
+    """
+    Test Fid Rag.
+    """
+
+    def _test_fid(self, gen_model: str):
+        opt = copy.deepcopy(common_opt)
+        opt['generation_model'] = gen_model
+        opt['model'] = 'fid'
+        opt['query_model'] = 'bert_from_parlai_rag'
+        opt['dpr_model_file'] = rag_dpr_model_file
+        opt.update(GENERATION_OPTS[gen_model])
+        testing_utils.eval_model(opt, skip_test=True)
+
+    def test_bart_fid(self):
+        self._test_fid('bart')
+
+    def test_t5_fid(self):
+        self._test_fid('t5')
+
+    def test_reddit_fid(self):
+        self._test_fid('transformer/generator')
+
+
+@testing_utils.skipUnlessGPU
+class TestRagPolyfaiss(unittest.TestCase):
+    """
+    Test Rag PolyFAISS.
+    """
+
+    def test_bart_rag_token(self):
+        opt = copy.deepcopy(common_opt)
+        opt['generation_model'] = 'bart'
+        opt['query_model'] = 'dropout_poly'
+        opt['rag_retriever_type'] = 'poly_faiss'
+        opt['poly_faiss_model_file'] = polyfaiss_model_file
+        opt.update(GENERATION_OPTS['bart'])
+        opt['rag_model_type'] = 'token'
+        testing_utils.eval_model(opt, skip_test=True)
+
+
+@testing_utils.skipUnlessGPU
+class TestRegret(unittest.TestCase):
+    """
+    Test ReGReT.
+    """
+
+    def _test_regret(self, regret_mf: Optional[str] = None):
+        opt = copy.deepcopy(common_opt)
+        opt['regret_model_file'] = regret_mf
+        opt['generation_model'] = 'bart'
+        opt.update(GENERATION_OPTS['bart'])
+        opt['rag_model_type'] = 'token'
+        testing_utils.eval_model(opt, skip_test=True)
+
+    def test_rag_regret_sep(self):
+        self._test_regret(RAG_TOKEN_ZOO_MODEL)
+
+    def test_rag_regret_same(self):
+        self._test_regret()
+
+
+@testing_utils.skipUnlessGPU
+class TestOtherOptions(unittest.TestCase):
+    """
+    Test other RAG Options.
+    """
+
+    def test_n_positions(self):
+        opt = copy.deepcopy(common_opt)
+        opt['generation_model'] = 'bart'
+        opt.update(GENERATION_OPTS['bart'])
+        opt['rag_model_type'] = 'token'
+        opt['n_extra_positions'] = 128
+        testing_utils.eval_model(opt, skip_test=True)
+
+
+@testing_utils.skipUnlessGPU
+class TestZooModels(unittest.TestCase):
+    """
+    Test ZOO Models
+    """
+
+    def _test_zoo_file(self, mf: str, fid: bool = False, fid_rag: bool = False):
+        opt = copy.deepcopy(common_opt)
+        if fid:
+            opt['model'] = 'fid'
+        if fid_rag:
+            opt['dpr_model_file'] = RAG_TOKEN_ZOO_MODEL
+        opt.update(GENERATION_OPTS['bart'])
+        opt['model_file'] = mf
+        opt['generation_model'] = 'bart'
+        opt['task'] = 'wizard_of_wikipedia'
+        opt['label_truncate'] = 10
+        valid, _ = testing_utils.eval_model(opt, skip_test=True)
+        assert valid['ppl'] < 25.0
+        assert valid['f1'] > 15.0
+        torch.cuda.empty_cache()
+
+    def test_bart_rag_token(self):
+        self._test_zoo_file(RAG_TOKEN_ZOO_MODEL)
+
+    def test_bart_rag_sequence(self):
+        self._test_zoo_file(RAG_SEQUENCE_ZOO_MODEL)
+
+    def test_bart_rag_dpr_poly(self):
+        self._test_zoo_file(RAG_DPR_POLY_ZOO_MODEL)
+
+    def test_bart_rag_turn_dtt(self):
+        self._test_zoo_file(RAG_TURN_DTT_ZOO_MODEL)
+
+    def test_bart_rag_turn_do(self):
+        self._test_zoo_file(RAG_TURN_DO_ZOO_MODEL)
+
+    def test_bart_fid_dpr(self):
+        self._test_zoo_file(FID_DPR_ZOO_MODEL, True)
+
+    def test_bart_fid_rag(self):
+        self._test_zoo_file(FID_RAG_ZOO_MODEL, True, True)
+
+    def test_bart_fid_rag_dpr_poly(self):
+        self._test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
+
+
+if __name__ == '__main__':
+    unittest.main()

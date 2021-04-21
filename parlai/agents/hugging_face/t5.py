@@ -197,10 +197,10 @@ class T5Agent(TorchGeneratorAgent):
 
 
 class ParlaiT5Encoder(torch.nn.Module):
-    def __init__(self, opt: Opt, encoder: T5Stack, dictionary: T5DictionaryAgent):
+    def __init__(self, opt: Opt, encoder: T5Stack, padding_idx: Optional[int] = None):
         super().__init__()
         self.stack = encoder
-        self.padding_idx = dictionary[dictionary.null_token]
+        self.padding_idx = padding_idx
         self.paralleled = not opt[
             't5_model_parallel'
         ]  # need to parallel in forward; bug in HF
@@ -233,10 +233,10 @@ class ParlaiT5Encoder(torch.nn.Module):
 
 
 class ParlaiT5Decoder(torch.nn.Module):
-    def __init__(self, opt: Opt, decoder: T5Stack, dictionary: T5DictionaryAgent):
+    def __init__(self, opt: Opt, decoder: T5Stack, padding_idx: Optional[int] = None):
         super().__init__()
         self.stack = decoder
-        self.padding_idx = dictionary[dictionary.null_token]
+        self.padding_idx = padding_idx
         self.paralleled = not opt[
             't5_model_parallel'
         ]  # need to parallel in forward; bug in HF
@@ -283,8 +283,8 @@ class ParlaiT5Model(TorchGeneratorModel):
         self.end_idx = dictionary[dictionary.end_token]
         super().__init__(self.pad_idx, self.start_idx, self.end_idx)
         self.t5 = build_t5(opt)
-        self.encoder = ParlaiT5Encoder(opt, self.t5.get_encoder(), dictionary)
-        self.decoder = ParlaiT5Decoder(opt, self.t5.get_decoder(), dictionary)
+        self.encoder = ParlaiT5Encoder(opt, self.t5.get_encoder(), self.pad_idx)
+        self.decoder = ParlaiT5Decoder(opt, self.t5.get_decoder(), self.pad_idx)
 
     @set_device
     def _get_initial_forced_decoder_input(self, bsz: int, inputs: torch.LongTensor):
