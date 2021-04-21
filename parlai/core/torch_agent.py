@@ -1791,7 +1791,7 @@ class TorchAgent(ABC, Agent):
         Intentionally overrideable so more complex models can insert temporary history
         strings, i.e. strings that are removed from the history after a single turn.
         """
-        return None
+        return observation.get('temp_history')
 
     def observe(self, observation):
         """
