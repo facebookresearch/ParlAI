@@ -85,8 +85,6 @@ RAG_MODEL_TYPE_OPTIONS = {
     },
 }
 
-DEBUG = False
-
 
 @testing_utils.skipUnlessGPU
 class TestRagDpr(unittest.TestCase):
@@ -148,11 +146,9 @@ class TestFidDpr(unittest.TestCase):
     def test_bart_fid(self):
         self._test_fid('bart')
 
-    @unittest.skipIf(DEBUG, 'true')
     def test_t5_fid(self):
         self._test_fid('t5')
 
-    @unittest.skipIf(DEBUG, 'true')
     def test_reddit_fid(self):
         self._test_fid('transformer/generator')
 

@@ -16,7 +16,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.agents.transformer.transformer import TransformerGeneratorModel
 
-from parlai.agents.rag.modules import RagModel, Document
+from parlai.agents.rag.modules import RagModel, Document, T5RagModel
 from parlai.agents.rag.rag import RagAgent
 from parlai.agents.rag.model_types import RagToken, get_forced_decoder_inputs
 
@@ -160,6 +160,10 @@ class FidModel(RagModel):
         return dec_out, incr_state
 
 
+class T5FidModel(FidModel, T5RagModel):
+    pass
+
+
 class FidAgent(RagAgent):
     """
     Fusion in Decoder is very similar to RAG; each requires a retrieval and subsequent
@@ -185,7 +189,10 @@ class FidAgent(RagAgent):
         self._rag_model_interface = Fid(self.opt, self.NULL_IDX)
 
     def build_model(self) -> FidModel:
-        model = FidModel(self.opt, self.dict)
+        if self.generation_model == 't5':
+            model = T5FidModel(self.opt, self.dict)
+        else:
+            model = FidModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
                 model.encoder.embeddings.weight, self.opt['embedding_type']
