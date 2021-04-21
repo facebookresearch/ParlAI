@@ -13,6 +13,7 @@ from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from functools import lru_cache
 import json
+import copy
 import os
 import random
 import re
@@ -540,6 +541,7 @@ class Gpt2BpeHelper(BPEHelper):
         self.byte_encoder = self.bytes_to_unicode()
         self.byte_decoder = {v: k for k, v in self.byte_encoder.items()}
         self.bpe_ranks = dict(zip(bpe_merges, range(len(bpe_merges))))
+        self._dropped_bpe_ranks = copy.deepcopy(self.bpe_ranks)
 
         if regex is None:
             raise ImportError('Please install regex with: pip install regex')
@@ -635,23 +637,27 @@ class Gpt2BpeHelper(BPEHelper):
             prev_char = char
         return pairs
 
-    def _dropout_pairs(self, pairs):
+    def dropout_bpe_ranks(self):
         """
-        Implements BPE dropout (Provlikov et al., 2019).
+        Implements BPE dropout (Provlikov et al., 2019)
+        https://arxiv.org/abs/1910.13267.
 
-        https://arxiv.org/abs/1910.13267
-
-        Randomly removes merges from the list of possible merges. This can
-        result in different subwords being used to realized the same string,
-        and effectively regularizes representations.
+        Randomly removes merges from the list of possible merges. This can result in
+        different subwords being used to realized the same string, and effectively
+        regularizes representations.
         """
         if not self.bpe_dropout or not self._bpe_dropout_enabled:
-            return pairs
-
-        dropped_pairs = [p for p in pairs if random.random() > self.bpe_dropout]
-        if not dropped_pairs:
-            dropped_pairs = [random.choice(pairs)]
-        return dropped_pairs
+            return
+        # reset bpe ranks
+        self._dropped_bpe_ranks = {}
+        #  randomly sample
+        for pair, rank in self.bpe_ranks.items():
+            if random.random() > self.bpe_dropout:
+                self._dropped_bpe_ranks[pair] = rank
+        if not self._dropped_bpe_ranks:
+            self._dropped_bpe_ranks = dict(
+                [random.choice(list(self.bpe_ranks.items()))]
+            )
 
     def bpe(self, token: str) -> str:
         """
@@ -670,11 +676,10 @@ class Gpt2BpeHelper(BPEHelper):
             return token
 
         while True:
-            dropped_pairs = self._dropout_pairs(pairs)
             bigram = min(
-                dropped_pairs, key=lambda pair: self.bpe_ranks.get(pair, float('inf'))
+                pairs, key=lambda pair: self._dropped_bpe_ranks.get(pair, float('inf'))
             )
-            if bigram not in self.bpe_ranks:
+            if bigram not in self._dropped_bpe_ranks:
                 break
             first, second = bigram
             new_word: List[str] = []

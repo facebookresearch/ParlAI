@@ -248,9 +248,6 @@ class DictionaryAgent(Agent):
             'dict_textfields', DictionaryAgent.default_textfields
         ).split(",")
 
-        # used to signal whether we should use training time tricks, like bpe droput
-        self._tokenization_mode = TokenizationMode.TEST_TIME_LABEL
-
         try:
             self.tokenizer_fun = getattr(self, self.tokenizer + '_tokenize')
         except AttributeError:
@@ -827,7 +824,7 @@ class DictionaryAgent(Agent):
         """
         return str(self.freq)
 
-    def set_tokenization_mode(self, mode: TokenizationMode):
+    def set_tokenization_mode(self, mode: TokenizationMode, resample_bpe: bool = False):
         """
         Indicate what "kind" of tokenization is being done.
 
@@ -838,10 +835,17 @@ class DictionaryAgent(Agent):
         to enable things like BPE dropout. It is NOT used to indicate whether
         the dictionary itself is in training time.
 
-        Use True for training time, False for not.
+        mode: use True for training time, False for not.
+        resample_bpe: if True, reset the dropout of the merge rules for BPE
         """
         self._context_mode = mode
         if hasattr(self, 'bpe'):
-            # enable bpe dropout only in texts at training time. disable all
-            # other times
-            self.bpe.enable_bpe_dropout(mode == TokenizationMode.TRAIN_TIME_TEXT)
+            # enable bpe dropout in both text and label at train time.
+            should_enable = mode in [
+                TokenizationMode.TRAIN_TIME_TEXT,
+                TokenizationMode.TRAIN_TIME_LABEL,
+            ]
+            self.bpe.enable_bpe_dropout(should_enable)
+            # update the bpe ranks if needed
+            if hasattr(self.bpe, 'dropout_bpe_ranks') and resample_bpe:
+                self.bpe.dropout_bpe_ranks()

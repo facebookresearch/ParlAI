@@ -1498,7 +1498,11 @@ class TorchAgent(ABC, Agent):
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
+            (
+                vec_label,
+                vec_label_length,
+                vec_label_truncated,
+            ) = self._vectorize_text_with_truncate_stats(
                 label, add_start, add_end, truncate, False
             )
             obs.force_set('label_original_length', vec_label_length)
@@ -1816,14 +1820,17 @@ class TorchAgent(ABC, Agent):
         # keep around the observation for updating history based on label
         self.observation = observation
 
-        # possibly change tokenization methodology based on if this is a
-        # training example
-        is_training_mode = 'labels' in observation
+        # possibly change tokenization methodology based on if this is a training example
         if hasattr(self.dict, 'set_tokenization_mode'):
+            is_training_mode = 'labels' in observation
             if is_training_mode:
-                self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
+                self.dict.set_tokenization_mode(
+                    TokenizationMode.TRAIN_TIME_TEXT, resample_bpe=True
+                )
+                self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_LABEL)
             else:
                 self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
+                self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_LABEL)
 
         # Update the history using the observation.
         # We may also consider adding a temporary string to the history
@@ -1832,12 +1839,6 @@ class TorchAgent(ABC, Agent):
         self.history.update_history(
             observation, temp_history=self.get_temp_history(observation)
         )
-
-        if hasattr(self.dict, 'set_tokenization_mode'):
-            if is_training_mode:
-                self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_LABEL)
-            else:
-                self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_LABEL)
 
         return self.vectorize(
             observation,

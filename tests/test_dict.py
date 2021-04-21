@@ -605,22 +605,63 @@ class SpecialTokenTests(unittest.TestCase):
 
 
 class TestBpeDropout(unittest.TestCase):
+    def test_dropout_reset(self):
+        parser = ParlaiParser()
+        parser.set_params(
+            dict_tokenizer='gpt2',
+            bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+            bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+            bpe_dropout=0.0,
+        )
+        opt = parser.parse_args([])
+        da = DictionaryAgent(opt)
+        # call set tokenization to init the correct bpe enable flags (but don't resample for bpe_dropout)
+        da.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT, resample_bpe=False)
+        # bpe ranks dict should have same # items at start as bpe ranks with dropout
+        assert len(da.bpe.bpe_ranks) == len(da.bpe._dropped_bpe_ranks)
+        da.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT, resample_bpe=True)
+        # Even after dropout, the counts should be the same b/c we set bpe_dropout to 0.
+        assert len(da.bpe.bpe_ranks) == len(da.bpe._dropped_bpe_ranks)
+
+        da.bpe.bpe_dropout = 0.1
+        da.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT, resample_bpe=True)
+        # Now, there should be fewer merge rules in the dropped out bpe ranks, since we forced ~30% to dropout
+        assert len(da.bpe.bpe_ranks) > len(da.bpe._dropped_bpe_ranks)
+        dropout_len_tmp = len(da.bpe._dropped_bpe_ranks)
+
+        da.bpe.bpe_dropout = 0.6
+        da.bpe.dropout_bpe_ranks()  # This fn should work directly as well as the set tokenization mode above.
+        # let's make sure a dropout rate of 0.6 gives us fewer items than when we did 0.1
+        assert len(da.bpe._dropped_bpe_ranks) < dropout_len_tmp
+        tmp_bpe_ranks = da.bpe._dropped_bpe_ranks
+        da.bpe.dropout_bpe_ranks()
+        # and that we get new items dropped, even if we have the same dropout rate
+        assert da.bpe._dropped_bpe_ranks != tmp_bpe_ranks
+
+        da.bpe.bpe_dropout = 1.0
+        da.bpe.dropout_bpe_ranks()
+        # A dropout rate of 1 should get rid of all items, but we always make sure there's at least 1 item.
+        assert len(da.bpe._dropped_bpe_ranks) == 1
+
     def _test_bpe_dropout(self, **dict_args):
         pp = ParlaiParser(False, False)
         DictionaryAgent.add_cmdline_args(pp, partial_opt=None)
         opt = pp.parse_kwargs(bpe_dropout=0.5, **dict_args)
         da = DictionaryAgent(opt)
-        da.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
+        da.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT, resample_bpe=False)
         s = (
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
             "Donec vitae metus sollicitudin, ullamcorper tortor ut, rhoncus lacus. "
             "Praesent sollicitudin commodo turpis, ut pharetra tortor gravida nec."
         )
         no_dropout = da.txt2vec(s)
-        da.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
         not_the_same = 0
         for _ in range(30):
             r = da.txt2vec(s)
+            # need to resample bpe merge dictionary to get a new dropout.
+            da.set_tokenization_mode(
+                TokenizationMode.TRAIN_TIME_TEXT, resample_bpe=True
+            )
             assert da.vec2txt(r) == s
             if r != no_dropout:
                 not_the_same += 1
