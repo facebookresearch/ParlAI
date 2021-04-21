@@ -1590,7 +1590,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "RAG-Token model trained with a DPR Retriever "
-            "and a BART-Large backbone seq2seq generator.",
+            "and a BART-Large backbone seq2seq generator."
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_dpr_poly/model"),
         "result": (
@@ -1610,7 +1610,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "RAG-Sequence model trained with a DPR Retriever "
-            "and a BART-Large backbone seq2seq generator.",
+            "and a BART-Large backbone seq2seq generator."
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_sequence/model"),
         "result": (
@@ -1630,7 +1630,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "RAG-Token model trained with a DPR Retriever "
-            "and a BART-Large backbone seq2seq generator.",
+            "and a BART-Large backbone seq2seq generator."
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_token/model"),
         "result": (
@@ -1650,7 +1650,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
-            "and a BART-Large backbone seq2seq generator.",
+            "and a BART-Large backbone seq2seq generator."
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_dtt/model"),
         "result": (
@@ -1670,7 +1670,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
-            "and a BART-Large backbone seq2seq generator.",
+            "and a BART-Large backbone seq2seq generator."
         ),
         "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_do/model"),
         "result": (
@@ -1748,7 +1748,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "A dump of Wikipedia articles split into 21m 100 word chunks "
-            "from DPR (https://github.com/facebookresearch/DPR)",
+            "from DPR (https://github.com/facebookresearch/DPR)"
         ),
         "example": (
             "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wiki_index_compressed/compressed --path-to-dpr-passages zoo:hallucination/wiki_passages/psgs_w100.tsv -ne 100"
@@ -1764,7 +1764,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "A dump of Wikipedia articles split into ~3k paragraphs, comprising the subset of "
-            "Wikipedia present in the WoW dataset.",
+            "Wikipedia present in the WoW dataset."
         ),
         "example": (
             "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wow_passages/exact --path-to-dpr-passages zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv -ne 100"
@@ -1780,7 +1780,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "A compressed FAISS Index of embeddings from ~3k paragraphs from "
-            "Wikipedia present in the WoW dataset.",
+            "Wikipedia present in the WoW dataset."
         ),
         "example": (
             "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type compressed --path-to-index zoo:hallucination/wow_passages/compressed --path-to-dpr-passages zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv -ne 100"
@@ -1796,7 +1796,7 @@ model_list = [
         "project": "https://parl.ai/projects/hallucination/",
         "description": (
             "A FAISS Index of embeddings from ~3k paragraphs from "
-            "Wikipedia present in the WoW dataset.",
+            "Wikipedia present in the WoW dataset."
         ),
         "example": (
             "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wow_passages/exact --path-to-dpr-passages zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv -ne 100"
