@@ -15,6 +15,7 @@ import torch
 import torch.cuda
 import torch.nn
 from transformers import BertConfig
+from tqdm import tqdm
 
 try:
     from transformers import BertTokenizerFast as BertTokenizer
@@ -50,7 +51,7 @@ from parlai.agents.rag.args import (
 )
 
 
-def load_passage_reader(ctx_file: str):
+def load_passage_reader(ctx_file: str, return_dict: bool = True):
     """
     Load passages from file, corresponding to a FAISS index.
 
@@ -65,31 +66,60 @@ def load_passage_reader(ctx_file: str):
     :return reader:
         return a reader over the passages
     """
-
-    def _get_reader():
-        f_open = gzip.open if ctx_file.endswith(".gz") else open
-        try:
-            with f_open(ctx_file) as tsvfile:
-                reader = csv.reader(tsvfile, delimiter='\t')  # type: ignore
-                reader = [row for row in reader]
-            for idx, row in enumerate(reader):
-                if idx <= 1:
-                    continue
-                assert int(row[0]) == int(reader[idx - 1][0]) + 1, "invalid load"
-        except (csv.Error, AssertionError) as e:
-            logging.error(f'Exception: {e}')
-            logging.warning('Error in loading csv; loading via readlines')
-            with f_open(ctx_file) as tsvfile:
-                reader = [
-                    l.replace('\n', '').split('\t')
-                    for l in tsvfile.readlines()  # type: ignore
-                ]
-                assert [len(l) == 3 for l in reader]
-        return reader
-
     logging.info(f'Reading data from: {ctx_file}')
-    reader = _get_reader()
-    return reader
+    # def _get_reader():
+    f_open = gzip.open if ctx_file.endswith(".gz") else open
+    try:
+        passages = {} if return_dict else []
+        with f_open(ctx_file) as tsvfile:
+            _reader = csv.reader(tsvfile, delimiter='\t')  # type: ignore
+            # reader = []
+            # reader = [row for row in reader]
+            ids = []
+            for idx, row in tqdm(enumerate(_reader)):
+                if idx == 0:
+                    assert row[0] == 'id'
+                    ids.append(-1)
+                elif idx <= 1:
+                    ids.append(row[0])
+                    if return_dict:
+                        passages[row[0]] = (row[1], row[2])  # type: ignore
+                    else:
+                        passages.append((row[0], row[1], row[2]))  # type: ignore
+                    continue
+                else:
+                    assert int(row[0]) == int(ids[idx - 1]) + 1, "invalid load"
+                    if return_dict:
+                        passages[row[0]] = (row[1], row[2])  # type: ignore
+                    else:
+                        passages.append((row[0], row[1], row[2]))  # type: ignore
+                    ids.append(row[0])
+
+        del ids
+    except (csv.Error, AssertionError) as e:
+        passages = {} if return_dict else []
+        logging.error(f'Exception: {e}')
+        logging.warning('Error in loading csv; loading via readlines')
+        with f_open(ctx_file) as tsvfile:
+            for idx, l in tqdm(enumerate(tsvfile.readlines())):
+                line = l.replace('\n', '').split('\t')  # type: ignore
+                assert len(line) == 3
+                if idx == 0:
+                    assert line[0] == 'id'
+                if line[0] != 'id':
+                    if return_dict:
+                        passages[row[0]] = (row[1], row[2])  # type: ignore
+                    else:
+                        passages.append((row[0], row[1], row[2]))  # type: ignore
+            # reader = [
+            #     l.replace('\n', '').split('\t')
+            #     for l in tsvfile.readlines()  # type: ignore
+            # ]
+            # assert [len(l) == 3 for l in reader]
+    return passages
+
+    # reader = _get_reader()
+    # return reader
 
 
 def load_passages_dict(ctx_file: str) -> Dict[str, Tuple[str, str]]:
@@ -102,14 +132,16 @@ def load_passages_dict(ctx_file: str) -> Dict[str, Tuple[str, str]]:
     :return passages_dict:
         return a dict mapping passage id to a tuple of (text, title)
     """
-    reader = load_passage_reader(ctx_file)
-    docs = {}
-    for idx, row in enumerate(reader):
-        if idx == 0:
-            assert row[0] == 'id'
-        if row[0] != 'id':
-            docs[row[0]] = (row[1], row[2])
-    return docs
+    return load_passage_reader(ctx_file, return_dict=True)
+    # reader = load_passage_reader(ctx_file)
+    # docs = {}
+    # for idx, row in enumerate(reader):
+    #     if idx == 0:
+    #         assert row[0] == 'id'
+    #     if row[0] != 'id':
+    #         docs[row[0]] = (row[1], row[2])
+    # del reader
+    # return docs
 
 
 def load_passages_list(ctx_file: str) -> List[Tuple[str, str, str]]:
@@ -122,14 +154,16 @@ def load_passages_list(ctx_file: str) -> List[Tuple[str, str, str]]:
     :return passages_dict:
         return a list of 3-tuples (id, text, title)
     """
-    reader = load_passage_reader(ctx_file)
-    docs = []
-    for idx, row in enumerate(reader):
-        if idx == 0:
-            assert row[0] == 'id'
-        if row[0] != 'id':
-            docs.append((row[0], row[1], row[2]))
-    return docs
+    return load_passage_reader(ctx_file, return_dict=False)
+    # reader = load_passage_reader(ctx_file)
+    # docs = []
+    # for idx, row in enumerate(reader):
+    #     if idx == 0:
+    #         assert row[0] == 'id'
+    #     if row[0] != 'id':
+    #         docs.append((row[0], row[1], row[2]))
+    # del reader
+    # return docs
 
 
 class Document:

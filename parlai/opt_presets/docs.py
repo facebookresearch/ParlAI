@@ -25,4 +25,8 @@ PRESET_DESCRIPTIONS = {
         "Beam search parameters for BlenderBot. See"
         "[Roller et al. (2020)](https://arxiv.org/abs/2004.13637)"
     ),
+    "arch/bart_large": (
+        "Architecture parameters (number layers, etc.) for BART-Large. See "
+        "[Lewis et. al. (2019](https://arxiv.org/abs/1910.13461)"
+    ),
 }

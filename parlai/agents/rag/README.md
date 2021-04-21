@@ -16,13 +16,22 @@ Before using RAG, you'll need to make sure that you have installed FAISS; prefer
 
 To train a RAG model with the default options -- RAG-Token with BART-Large generator, and DPR Retrieval over all of Wikipedia -- you'll need the following system requirements:
 
-### **TODO**
+#### RAM
+
+Loading the Wikipedia passages into memory requires ~22GB of RAM.
+
+If you use `--indexer-type compressed --path-to-index zoo:hallucination/wiki_passages_compressed/compressed_pq`, you'll only require an additional ~3GB of RAM; if you use `--indexer-type exact --path-to-index zoo:hallucination/wiki_passages_exact/exact`, you'll need an additional ~80GB of RAM.
+
+#### GPU
+
+To train BART-Large RAG / FiD models, with a batchsize of 16 (or DPR-Poly models with a batchsize of 8), you'll want to have at least 4x32gb GPUs. You can adjust the batchsize to fit your GPU memory constraints.
+
+To evaluate / interact with any pre-trained models (e.g., those [mentioned here](https://parl.ai/projects/hallucination/)), you'll only need 1 16gb GPU.
 
 
 ## RAG Quick Start
 You can use RAG like any other model in ParlAI; simply specify `-m rag`, and you're good to go! Here's an example command to train RAG on the [Wizard of Wikipedia](https://parl.ai/projects/wizard_of_wikipedia/) Dataset:
 
-**TODO: Verify this command works with zoo**
 ```python
 parlai train_model -m rag -t wizard_of_wikipedia -mf /path/to/model_file \
 # standard optimization/truncation parameters
@@ -31,10 +40,7 @@ parlai train_model -m rag -t wizard_of_wikipedia -mf /path/to/model_file \
 --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
 -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
 # BART-Large parameters
---embedding-size 1024 --ffn-size 4096 --n-decoder-layers 12 --n-encoder-layers 12 --n-heads 16 \
---n-positions 1024 --variant bart --dict-tokenizer gpt2 \
---activation gelu --dropout 0.1 ----attention-dropout 0.0 --relu-dropout 0.0 \
- --init-model zoo:bart/bart_large/model --dict-file zoo:bart/bart_large/model.dict \
+-o arch/bart_large
 ```
 
 

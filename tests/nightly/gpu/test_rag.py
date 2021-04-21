@@ -292,7 +292,7 @@ class TestZooModels(unittest.TestCase):
         opt['label_truncate'] = 10
         valid, _ = testing_utils.eval_model(opt, skip_test=True)
         assert valid['ppl'] < 25.0
-        assert valid['f1'] > 15.0
+        assert (100 * float(valid['f1'])) > 15.0
         torch.cuda.empty_cache()
 
     def test_bart_rag_token(self):
