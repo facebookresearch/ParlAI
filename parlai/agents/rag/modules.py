@@ -67,7 +67,7 @@ class RagModel(TorchGeneratorModel):
         self.rag_model_interface = RAG_MODELS[opt['rag_model_type']](opt, self.pad_idx)
         self.generation_model = opt['generation_model']
         self.n_extra_positions = opt['n_extra_positions']
-        self.n_positions = get_n_positions_from_options(opt)
+        self.n_positions = get_n_positions_from_options(opt) + opt['n_extra_positions']
         assert opt['n_extra_positions'] >= 0
         self.expanded_input_truncate = min(
             opt['text_truncate'] or opt['truncate'], get_n_positions_from_options(opt)
@@ -100,11 +100,8 @@ class RagModel(TorchGeneratorModel):
         encoder_class: Optional[Type] = None,
         **kwargs,
     ):
-        """
-        As we call super().__init__() first, the query_encoder, query_tokenizer, and
-        retriever are all None the first time around.
-        """
         if encoder_class is None:
+            assert dictionary is not None
             return RagEncoder(
                 opt=opt, dictionary=dictionary, embedding=embedding, **kwargs
             )
@@ -211,7 +208,7 @@ class RagModel(TorchGeneratorModel):
         :return (output, new_incr_state):
             return the output token distribution, as well as new incremental state.
         """
-        # 1. Get decoder outputs get
+        # 1. Get decoder outputs
         enc_out, enc_mask, input_turns_cnt, docs, doc_scores = encoder_state
         dec_out, new_incr_state = self.seq2seq_decoder(
             input, (enc_out, enc_mask), incr_state
@@ -395,14 +392,11 @@ class RagModel(TorchGeneratorModel):
             pad_idx=self.pad_idx,
         )
         expanded_input = expanded_input.to(input.device)
-        return expanded_input
+        return expanded_input  # type: ignore
 
     def output(self, tensor: torch.Tensor) -> torch.Tensor:
         """
-        Compute output logits.
-
-        Override TGM.output, as we already scale back to vocabulary in
-        `self.decoder.forward`
+        RAG "output" is already scaled in RagModel.decoder.
         """
         return tensor
 

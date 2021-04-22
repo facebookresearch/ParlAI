@@ -185,18 +185,9 @@ class DenseHNSWFlatIndexer(BaseIndexer):
         super().__init__(opt)
         # IndexHNSWFlat supports L2 similarity only
         # so we have to apply DOT -> L2 similairy space conversion with the help of an extra dimension
-        self.scalar_quantize = opt['hnsw_indexer_scalar_quantize']
-        if self.scalar_quantize:
-            logging.warning('scalar quantize')
-            index = self.faiss.IndexHNSWSQ(
-                opt['retriever_embedding_size'] + 1,
-                self.faiss.ScalarQuantizer.QT_8bit,
-                opt['hnsw_indexer_store_n'],
-            )
-        else:
-            index = self.faiss.IndexHNSWFlat(
-                opt['retriever_embedding_size'] + 1, opt['hnsw_indexer_store_n']
-            )
+        index = self.faiss.IndexHNSWFlat(
+            opt['retriever_embedding_size'] + 1, opt['hnsw_indexer_store_n']
+        )
         index.hnsw.efSearch = opt['hnsw_ef_search']
         index.hnsw.efConstruction = opt['hnsw_ef_construction']
         self.index = index
@@ -231,8 +222,6 @@ class DenseHNSWFlatIndexer(BaseIndexer):
             norms_i = norms[i : i + self.buffer_size]
             aux_dims = torch.sqrt(phi - norms_i)
             hnsw_vectors = torch.cat([vectors_i, aux_dims.unsqueeze(1)], dim=1)
-            if self.scalar_quantize:
-                self.index.train(hnsw_vectors.numpy())
             self.index.add(hnsw_vectors.numpy())
             logging.info(
                 f'{time.time() - start}s Elapsed: data indexed {i + len(vectors_i)}'
@@ -261,11 +250,15 @@ class DenseHNSWFlatIndexer(BaseIndexer):
         self.built = True
 
 
-class IVFPQIndexer(BaseIndexer):
+class CompressedIndexer(BaseIndexer):
     """
-    IVFQ Indexer.
+    Compressed Indexer.
 
-    Uses a FlatL2/IP index, and a IVFQ Quantizer.
+    If a FAISS index factory is specified, we build that.
+    (see https://github.com/facebookresearch/faiss/wiki/The-index-factory)
+
+    The default is IVF4096_HNSW128,PQ128; this also translates directly to the
+    default when index_factory is specified as ''.
 
     See https://github.com/facebookresearch/faiss/wiki/Faiss-indexes#cell-probe-methods-indexivf-indexes
     for more details.
@@ -406,7 +399,9 @@ class IVFPQIndexer(BaseIndexer):
 
     def deserialize_from(self, file: str, emb_path: Optional[str] = None):
         """
-        Compute full document tensor and document indices into tensor.
+        If we're using an IVF index, we need to reset the nprobe parameter.
+
+        `Make Direct Map` allows us to reconstruct vectors as well.
         """
         super().deserialize_from(file, emb_path)
         if self.is_ivf_index:
@@ -431,14 +426,16 @@ def indexer_factory(opt: Opt) -> BaseIndexer:
             logging.warning(
                 f'Changing index path to compressed index: {WIKIPEDIA_COMPRESSED_INDEX}'
             )
-            opt['path_to_index'] = modelzoo_path(WIKIPEDIA_COMPRESSED_INDEX)
-        indexer = IVFPQIndexer(opt)
+            opt['path_to_index'] = modelzoo_path(
+                opt['datapath'], WIKIPEDIA_COMPRESSED_INDEX
+            )
+        indexer = CompressedIndexer(opt)
     elif opt['indexer_type'] == 'exact':
         if opt['path_to_index'] == WIKIPEDIA_COMPRESSED_INDEX:
             logging.warning(
                 f'Changing index path to exact index: {WIKIPEDIA_EXACT_INDEX}'
             )
-            opt['path_to_index'] = modelzoo_path(WIKIPEDIA_EXACT_INDEX)
+            opt['path_to_index'] = modelzoo_path(opt['datapath'], WIKIPEDIA_EXACT_INDEX)
         indexer = DenseHNSWFlatIndexer(opt)
     else:
         raise ValueError(f"Unsupported indexer type: {opt['indexer_type']}")

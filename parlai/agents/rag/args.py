@@ -330,13 +330,6 @@ def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
         help='Granularity of  DenseHNSWIndexer. Higher == more accurate, more RAM',
     )
     indexer_group.add_argument(
-        '--hnsw-indexer-scalar-quantize',
-        type='bool',
-        default=False,
-        hidden=True,
-        help='Whether to scalar quantize hnsw indexer',
-    )
-    indexer_group.add_argument(
         '--hnsw-ef-search',
         type=int,
         default=128,

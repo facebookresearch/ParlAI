@@ -14,7 +14,6 @@ import os
 import torch
 import torch.cuda
 import torch.nn
-from transformers import BertConfig
 from tqdm import tqdm
 
 try:
@@ -25,8 +24,6 @@ from typing import Tuple, List, Dict, Union, Optional, Any
 from typing_extensions import final
 
 from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
-from parlai.agents.transformer.polyencoder import PolyEncoderModule
-from parlai.agents.transformer.modules import TransformerEncoder
 from parlai.core.agents import create_agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
@@ -37,12 +34,11 @@ import parlai.utils.logging as logging
 from parlai.utils.torch import padded_tensor
 from parlai.utils.typing import TShared
 
+from parlai.agents.rag.dpr import DprQueryEncoder
+from parlai.agents.rag.polyfaiss import RagDropoutPolyWrapper
 from parlai.agents.rag.indexers import DenseHNSWFlatIndexer, indexer_factory
-from parlai.agents.transformer.dropout_poly import DropoutPolyAgent, reduce_ctxt
-from parlai.agents.rag.conversion_utils import BertConversionUtils
 from parlai.agents.rag.args import (
     RetrieverType,
-    DPR_ZOO_MODEL,
     WOW_INDEX_PATH,
     WOW_PASSAGES_PATH,
     POLYENCODER_OPT_KEYS,
@@ -51,7 +47,9 @@ from parlai.agents.rag.args import (
 )
 
 
-def load_passage_reader(ctx_file: str, return_dict: bool = True):
+def load_passage_reader(
+    ctx_file: str, return_dict: bool = True
+) -> Union[Dict[str, Tuple[str, str]], List[Tuple[str, str, str]]]:
     """
     Load passages from file, corresponding to a FAISS index.
 
@@ -67,14 +65,11 @@ def load_passage_reader(ctx_file: str, return_dict: bool = True):
         return a reader over the passages
     """
     logging.info(f'Reading data from: {ctx_file}')
-    # def _get_reader():
     f_open = gzip.open if ctx_file.endswith(".gz") else open
     try:
         passages = {} if return_dict else []
         with f_open(ctx_file) as tsvfile:
             _reader = csv.reader(tsvfile, delimiter='\t')  # type: ignore
-            # reader = []
-            # reader = [row for row in reader]
             ids = []
             for idx, row in tqdm(enumerate(_reader)):
                 if idx == 0:
@@ -111,15 +106,7 @@ def load_passage_reader(ctx_file: str, return_dict: bool = True):
                         passages[row[0]] = (row[1], row[2])  # type: ignore
                     else:
                         passages.append((row[0], row[1], row[2]))  # type: ignore
-            # reader = [
-            #     l.replace('\n', '').split('\t')
-            #     for l in tsvfile.readlines()  # type: ignore
-            # ]
-            # assert [len(l) == 3 for l in reader]
     return passages
-
-    # reader = _get_reader()
-    # return reader
 
 
 def load_passages_dict(ctx_file: str) -> Dict[str, Tuple[str, str]]:
@@ -132,16 +119,9 @@ def load_passages_dict(ctx_file: str) -> Dict[str, Tuple[str, str]]:
     :return passages_dict:
         return a dict mapping passage id to a tuple of (text, title)
     """
-    return load_passage_reader(ctx_file, return_dict=True)
-    # reader = load_passage_reader(ctx_file)
-    # docs = {}
-    # for idx, row in enumerate(reader):
-    #     if idx == 0:
-    #         assert row[0] == 'id'
-    #     if row[0] != 'id':
-    #         docs[row[0]] = (row[1], row[2])
-    # del reader
-    # return docs
+    psgs_dict = load_passage_reader(ctx_file, return_dict=True)
+    assert isinstance(psgs_dict, dict)
+    return psgs_dict
 
 
 def load_passages_list(ctx_file: str) -> List[Tuple[str, str, str]]:
@@ -154,16 +134,9 @@ def load_passages_list(ctx_file: str) -> List[Tuple[str, str, str]]:
     :return passages_dict:
         return a list of 3-tuples (id, text, title)
     """
-    return load_passage_reader(ctx_file, return_dict=False)
-    # reader = load_passage_reader(ctx_file)
-    # docs = []
-    # for idx, row in enumerate(reader):
-    #     if idx == 0:
-    #         assert row[0] == 'id'
-    #     if row[0] != 'id':
-    #         docs.append((row[0], row[1], row[2]))
-    # del reader
-    # return docs
+    psgs_list = load_passage_reader(ctx_file, return_dict=False)
+    assert isinstance(psgs_list, list)
+    return psgs_list
 
 
 class Document:
@@ -349,7 +322,7 @@ class RagRetrieverTokenizer:
 
     def decode(self, vec: torch.LongTensor) -> str:
         """
-        Decode a token vector into a string
+        Decode a token vector into a string.
         """
         if self.query_model in ['bert', 'bert_from_parlai_rag']:
             return self.tokenizer.decode(
@@ -616,7 +589,7 @@ class DPRRetriever(RagRetriever):
             self.indexer = shared['indexer']
             self.passages = shared['passages']
         self.n_docs = opt['n_docs']
-        self.query_encoder = RagDprQueryEncoder(
+        self.query_encoder = DprQueryEncoder(
             opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
         )
 
@@ -1018,207 +991,6 @@ class RagTfidfRetrieverAgent(TfidfRetrieverAgent):
         else:
             text = self.docid_to_text[docid]
         return text
-
-
-class RagRetrievalEncoder(torch.nn.Module, ABC):
-    """
-    Abstract class for RAG Retrieval Encoders (Doc/Query).
-
-    Mostly a way to unify typing.
-    """
-
-
-class RagParlaiEncoder(RagRetrievalEncoder, ABC):
-    """
-    Wrapper around ParlAI Models for use in query/document encoding.
-    """
-
-    def __init__(self, opt: Opt):
-        super().__init__()
-        self.model, self.dict = self._build_model(opt)
-
-    @abstractmethod
-    def _build_model(self, opt: Opt) -> Tuple[torch.nn.Module, DictionaryAgent]:
-        """
-        Build model and dictionary.
-
-        :param opt:
-            options
-
-        :return (model, dict):
-            return the build model and it's respective dictionary.
-        """
-
-    @property
-    @abstractmethod
-    def embedding_size(self) -> int:
-        """
-        Return model embedding size.
-        """
-
-
-class RagDropoutPolyWrapper(RagParlaiEncoder):
-    """
-    Wrapper for a DropoutPoly agent.
-
-    Provides interface to RagModel as query/document encoder (separate), and provides
-    interface to retrievers as a full poly-encoder.
-    """
-
-    def __init__(self, opt: Opt):
-        super().__init__(opt)
-        model_file = modelzoo_path(opt['datapath'], opt['poly_faiss_model_file'])
-        model_opt = Opt.load(f"{model_file}.opt")
-        self.reduction_type = model_opt['poly_dropout_reduction_type']
-        self.use_codes = model_opt.get('poly_dropout_use_codes', True)
-
-    def _build_model(self, opt: Opt) -> Tuple[PolyEncoderModule, DictionaryAgent]:
-        """
-        Build poly-encoder module.
-
-        :param opt:
-            options from base RAG Model
-
-        :return dropout poly-encoder:
-            return dropout poly agent.
-        """
-        model_file = modelzoo_path(opt['datapath'], opt['poly_faiss_model_file'])
-        model_opt = Opt.load(f'{model_file}.opt')
-
-        create_model_opt = {
-            **{k: model_opt[k] for k in TRANSFORMER_RANKER_BASE_OPT},
-            **{k: model_opt[k] for k in POLYENCODER_OPT_KEYS},
-            'model': 'transformer/dropout_poly',
-            'init_model': model_file,
-            'dict_file': f'{model_file}.dict',
-            # necessary opt args
-            'multitask_weights': [1],
-            # dropout_poly args
-            'poly_dropout_reduction_type': model_opt['poly_dropout_reduction_type'],
-            'poly_dropout_use_codes': model_opt.get('poly_dropout_use_codes', True),
-        }
-        logging.disable()
-        agent = create_agent(create_model_opt)
-        logging.enable()
-        assert isinstance(agent, DropoutPolyAgent)
-        return agent.model, agent.dict
-
-    def forward(self, query_vecs: torch.LongTensor) -> torch.Tensor:
-        if self.use_codes:
-            ctxt_rep, ctxt_mask, _ = self.model(ctxt_tokens=query_vecs)
-        else:
-            model = self.model.module if hasattr(self.model, 'module') else self.model
-            old_type = model.type
-            model.type = 'n_first'  # type: ignore
-
-            ctxt_rep, ctxt_mask, _ = self.model(ctxt_tokens=query_vecs)
-            model.type = old_type  # type: ignore
-
-        ctxt_rep = reduce_ctxt(ctxt_rep, ctxt_mask, self.reduction_type)
-        return ctxt_rep
-
-    @property
-    def embedding_size(self) -> int:
-        model = self.model.module if hasattr(self.model, 'module') else self.model
-        return model.encoder_ctxt.embedding_size  # type: ignore
-
-
-class RagDprEncoder(TransformerEncoder, RagRetrievalEncoder):
-    """
-    Basically provide a wrapper around TransformerEncoder to load RAG Query/Document
-    models.
-    """
-
-    def __init__(
-        self,
-        opt: Opt,
-        dpr_model: str = 'bert',
-        pretrained_path: str = DPR_ZOO_MODEL,
-        encoder_type: str = 'query',
-    ):
-        # Override options
-        config: BertConfig = BertConfig.from_pretrained('bert-base-uncased')
-        pretrained_path = modelzoo_path(opt['datapath'], pretrained_path)
-        if not os.path.exists(pretrained_path):
-            # when initializing from parlai rag models, the pretrained path
-            # may not longer exist. This is fine if we've alread trained
-            # the model.
-            assert dpr_model == 'bert_from_parlai_rag'
-            logging.error(f'Pretrained Path does not exist: {pretrained_path}')
-            pretrained_path = modelzoo_path(opt['datapath'], DPR_ZOO_MODEL)
-            dpr_model = 'bert'
-            logging.error(f'Setting to zoo model: {pretrained_path}')
-        enc_opt = {
-            "n_heads": config.num_attention_heads,
-            "n_layers": config.num_hidden_layers,
-            "embedding_size": config.hidden_size,
-            "ffn_size": config.intermediate_size,
-            "dropout": config.hidden_dropout_prob,
-            "attention_dropout": config.attention_probs_dropout_prob,
-            "activation": config.hidden_act,
-            "variant": 'xlm',
-            "reduction_type": 'first',
-            "n_positions": config.max_position_embeddings,
-            "n_segments": config.type_vocab_size,
-        }
-        embedding = torch.nn.Embedding(
-            config.vocab_size, config.hidden_size, padding_idx=config.pad_token_id
-        )
-        super().__init__(
-            enc_opt,
-            vocabulary_size=config.vocab_size,
-            padding_idx=config.pad_token_id,
-            embedding=embedding,
-            reduction_type='first',
-        )
-
-        self._load_state(dpr_model, pretrained_path, encoder_type)
-
-    def _load_state(self, dpr_model: str, pretrained_path: str, encoder_type: str):
-        """
-        Load pre-trained model states.
-
-        :param dpr_model:
-            which dpr model type we're using
-        :param pretrained_path:
-            path to pretrained model
-        :param encoder_type:
-            whether this is a query or document encoder
-        """
-        if dpr_model == 'bert':
-            state_dict = BertConversionUtils.load_bert_state(
-                self.state_dict(),
-                pretrained_dpr_path=pretrained_path,
-                encoder_type=encoder_type,
-            )
-            self.load_state_dict(state_dict)
-        elif dpr_model == 'bert_from_parlai_rag':
-            state_dict = torch.load(pretrained_path, map_location='cpu')["model"]
-            key = f"{encoder_type}_encoder."
-            state_dict = {
-                k.split(key)[-1]: v for k, v in state_dict.items() if key in k
-            }
-            self.load_state_dict(state_dict)
-
-
-class RagDprQueryEncoder(RagDprEncoder):
-    """
-    Query Encoder for DPR.
-    """
-
-    def __init__(self, *args, **kwargs):
-        kwargs['encoder_type'] = 'query'
-        super().__init__(*args, **kwargs)
-
-
-class RagDprDocumentEncoder(RagDprEncoder):
-    """
-    Document Encoder for DPR.
-    """
-
-    def __init__(self, *args, **kwargs):
-        kwargs['encoder_type'] = 'document'
-        super().__init__(*args, **kwargs)
 
 
 def retriever_factory(

@@ -15,7 +15,7 @@ from parlai.core.torch_agent import Batch
 
 import random
 import torch
-from typing import Optional
+from typing import Optional, Tuple
 
 
 def reduce_ctxt(
@@ -84,62 +84,39 @@ class DropoutPolyAgent(PolyencoderAgent):
         return parser
 
     def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
         self.poly_dropout_reduction_type = opt['poly_dropout_reduction_type']
         self.poly_dropout_prob = opt['poly_dropout_prob']
         self.use_codes = opt.get('poly_dropout_use_codes', True)
-        self.poly_type = opt['polyencoder_type']
         assert 0 <= self.poly_dropout_prob <= 1
 
-        super().__init__(opt, shared)
-
-    def score_candidates(
-        self,
-        batch: Batch,
-        cand_vecs: torch.Tensor,
-        cand_encs: Optional[torch.Tensor] = None,
-    ) -> torch.Tensor:
+    def get_ctxt_rep(self, batch: Batch) -> Tuple[torch.Tensor, torch.BoolTensor]:
         """
-        Score candidates.
-
-        Essentially copies most of the PolyencoderAgent.score_candidates function,
-        except for the final step.
-
-        :param batch:
-            batch to consider
-        :param cand_vecs:
-            tokenized candidate vectors
-        :param cand_encs:
-            optional tensor of encoded candidates
-
-        :return score:
-            return scores for each candidate for each batch sample
+        Encode context representation.
         """
-        bsz = self._get_batch_size(batch)
         if self.use_codes:
             ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
         else:
+            # In dataparallel, the model is the `model.module`
             model = self.model.module if hasattr(self.model, 'module') else self.model
             model.type = 'n_first'
             ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
-            model.type = self.poly_type
+            model.type = self.opt['polyencoder_type']
 
-        if cand_encs is not None:
-            if bsz == 1:
-                cand_rep = cand_encs
-            else:
-                cand_rep = cand_encs.expand(bsz, cand_encs.size(1), -1)
-        # bsz x num cands x seq len
-        elif len(cand_vecs.shape) == 3:
-            _, _, cand_rep = self.model(cand_tokens=cand_vecs)
-        # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
-        elif len(cand_vecs.shape) == 2:
-            _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
-            num_cands = cand_rep.size(0)  # will be bsz if using batch cands
-            cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-        else:
-            raise RuntimeError('Cand vecs must be 2D or 3D')
+        return ctxt_rep, ctxt_rep_mask
 
-        ### PERFORM DROPOUT ###
+    def get_scores(
+        self,
+        ctxt_rep: torch.Tensor,
+        ctxt_rep_mask: torch.BoolTensor,
+        cand_rep: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Score context with candidates.
+
+        During training, with some probability we fall back to the Bi-encoder scoring
+        method.
+        """
         if self.is_training and random.random() < self.poly_dropout_prob:
             ctxt_rep = reduce_ctxt(
                 ctxt_rep, ctxt_rep_mask, self.poly_dropout_reduction_type

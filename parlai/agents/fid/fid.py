@@ -23,9 +23,8 @@ from parlai.agents.rag.model_types import RagToken, get_forced_decoder_inputs
 
 class Fid(RagToken):
     """
-    FiD mimics RAG Token interface in many ways; we simply need to adjust the
-    decoder inputs to not repeat, as FiD attends over all encoder outputs
-    jointly.
+    FiD mimics RAG Token interface in many ways; we simply need to adjust the decoder
+    inputs to not repeat, as FiD attends over all encoder outputs jointly.
     """
 
     def get_initial_forced_decoder_input(
@@ -59,8 +58,8 @@ class FidModel(RagModel):
     """
     The FiD Model is a simpler version of the RAG Model.
 
-    We override the encoder and decoder methods to join encoder outputs, and
-    decode normally, respectively.
+    We override the encoder and decoder methods to join encoder outputs, and decode
+    normally, respectively.
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
@@ -74,11 +73,7 @@ class FidModel(RagModel):
         indices: Union[List[int], torch.LongTensor],
     ) -> Tuple[torch.Tensor, torch.Tensor, List[List[Document]], torch.Tensor]:
         """
-        Reorder the encoder states.
-
-        Override TGM.reorder_encoder_states to make sure we only pass enc, mask.
-
-        See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
+        Override RagModel.reorder_encoder_states to make sure we only pass enc, mask.
         """
         enc, mask, *_ = encoder_states
         return TransformerGeneratorModel.reorder_encoder_states(
@@ -166,6 +161,8 @@ class T5FidModel(FidModel, T5RagModel):
 
 class FidAgent(RagAgent):
     """
+    Fusion in Decoder Agent.
+
     Fusion in Decoder is very similar to RAG; each requires a retrieval and subsequent
     generation step.
 

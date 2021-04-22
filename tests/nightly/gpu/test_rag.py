@@ -4,13 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import copy
-import os
 import torch.cuda
 from typing import Optional
 import unittest
 
 import parlai.utils.testing as testing_utils
-
+import parlai.agents.rag.dpr  # noqa: F401
 from parlai.agents.rag.args import (
     DPR_ZOO_MODEL,
     POLYFAISS_ZOO_MODEL,
@@ -36,6 +35,18 @@ common_opt = {
     'compressed_indexer_gpu_train': False,
 }
 
+test_opt = {
+    **common_opt,
+    'init_model': 'zoo:unittest/transformer_generator2/model',
+    'dict_file': 'zoo:unittest/transformer_generator2/model.dict',
+    'n_layers': 2,
+    'n_heads': 2,
+    'embedding_size': 32,
+    'ffn_size': 128,
+    'dict_tokenizer': 're',
+    'generation_model': 'transformer/generator',
+}
+
 rag_dpr_model_file = RAG_TOKEN_ZOO_MODEL
 polyfaiss_model_file = POLYFAISS_ZOO_MODEL
 
@@ -52,8 +63,9 @@ GENERATION_OPTS = {
         'dict_tokenizer': 'gpt2',
         'init_model': 'zoo:bart/bart_large/model',
         'dict_file': 'zoo:bart/bart_large/model.dict',
+        'fp16': True,
     },
-    't5': {'t5_model_arch': 't5-large'},
+    't5': {'t5_model_arch': 't5-large', 'fp16': True},
     'transformer/generator': {
         'init_model': 'zoo:tutorial_transformer_generator/model',
         'dict_file': 'zoo:tutorial_transformer_generator/model.dict',
@@ -69,6 +81,7 @@ GENERATION_OPTS = {
         'n_decoder_layers': 8,
         'embedding_size': 512,
         'n_heads': 16,
+        'fp16': True,
     },
 }
 
@@ -160,9 +173,7 @@ class TestRagDprPoly(unittest.TestCase):
     """
 
     def _test_rag_type(self, model_type: str):
-        opt = copy.deepcopy(common_opt)
-        opt.update(GENERATION_OPTS['bart'])
-        opt['generation_model'] = 'bart'
+        opt = copy.deepcopy(test_opt)
         opt['rag_retriever_type'] = 'dpr_then_poly'
         opt['rag_model_type'] = model_type
         for option, vals in RAG_MODEL_TYPE_OPTIONS[model_type].items():
@@ -170,13 +181,13 @@ class TestRagDprPoly(unittest.TestCase):
                 opt[option] = val
                 testing_utils.eval_model(opt, skip_test=True)
 
-    def test_bart_rag_sequence(self):
+    def test_rag_sequence(self):
         self._test_rag_type('sequence')
 
-    def test_bart_rag_token(self):
+    def test_rag_token(self):
         self._test_rag_type('token')
 
-    def test_bart_rag_turn(self):
+    def test_rag_turn(self):
         self._test_rag_type('turn')
 
 
@@ -186,10 +197,8 @@ class TestRagTfidf(unittest.TestCase):
     Test RAG TFIDF model.
     """
 
-    def test_bart_rag_token(self):
-        opt = copy.deepcopy(common_opt)
-        opt.update(GENERATION_OPTS['bart'])
-        opt['generation_model'] = 'bart'
+    def test_rag_token(self):
+        opt = copy.deepcopy(test_opt)
         opt['rag_retriever_type'] = 'tfidf'
         opt['rag_model_type'] = 'token'
         testing_utils.eval_model(opt, skip_test=True)
@@ -227,12 +236,10 @@ class TestRagPolyfaiss(unittest.TestCase):
     """
 
     def test_bart_rag_token(self):
-        opt = copy.deepcopy(common_opt)
-        opt['generation_model'] = 'bart'
+        opt = copy.deepcopy(test_opt)
         opt['query_model'] = 'dropout_poly'
         opt['rag_retriever_type'] = 'poly_faiss'
         opt['poly_faiss_model_file'] = polyfaiss_model_file
-        opt.update(GENERATION_OPTS['bart'])
         opt['rag_model_type'] = 'token'
         testing_utils.eval_model(opt, skip_test=True)
 
@@ -244,10 +251,8 @@ class TestRegret(unittest.TestCase):
     """
 
     def _test_regret(self, regret_mf: Optional[str] = None):
-        opt = copy.deepcopy(common_opt)
+        opt = copy.deepcopy(test_opt)
         opt['regret_model_file'] = regret_mf
-        opt['generation_model'] = 'bart'
-        opt.update(GENERATION_OPTS['bart'])
         opt['rag_model_type'] = 'token'
         testing_utils.eval_model(opt, skip_test=True)
 
@@ -265,18 +270,52 @@ class TestOtherOptions(unittest.TestCase):
     """
 
     def test_n_positions(self):
-        opt = copy.deepcopy(common_opt)
-        opt['generation_model'] = 'bart'
-        opt.update(GENERATION_OPTS['bart'])
+        opt = copy.deepcopy(test_opt)
         opt['rag_model_type'] = 'token'
         opt['n_extra_positions'] = 128
         testing_utils.eval_model(opt, skip_test=True)
 
 
 @testing_utils.skipUnlessGPU
+class TestQueryModels(unittest.TestCase):
+    """
+    Test other RAG Options.
+    """
+
+    def test_dpr_agent(self):
+        # eval only
+        opt = {
+            'task': 'integration_tests:overfit',
+            'model': 'dpr_agent',
+            'model_file': DPR_ZOO_MODEL,
+            'num_examples': 5,
+        }
+        testing_utils.eval_model(opt, skip_test=True)
+
+    def test_dropout_poly(self):
+        opt = {
+            'task': 'integration_tests:overfit',
+            'model': 'transformer/dropout_poly',
+            'optimizer': 'adam',
+            'learningrate': 1e-2,
+            'batchsize': 4,
+            'validation_every_n_epochs': 5,
+            'validation_patience': 10,
+            'lr_scheduler': 'none',
+            'embedding_size': 8,
+            'gradient_clip': 0.5,
+            'n_layers': 1,
+            'n_heads': 4,
+            'ffn_size': 32,
+        }
+        valid, _ = testing_utils.train_model(opt)
+        assert float(valid['accuracy']) >= 0.6
+
+
+@testing_utils.skipUnlessGPU
 class TestZooModels(unittest.TestCase):
     """
-    Test ZOO Models
+    Test ZOO Models.
     """
 
     def _test_zoo_file(self, mf: str, fid: bool = False, fid_rag: bool = False):

@@ -16,7 +16,7 @@ from parlai.core.script import ParlaiScript
 import parlai.utils.logging as logging
 
 from parlai.agents.rag.rag import RagAgent
-from parlai.agents.rag.indexers import indexer_factory, IVFPQIndexer
+from parlai.agents.rag.indexers import indexer_factory, CompressedIndexer
 
 
 class Indexer(ParlaiScript):
@@ -131,7 +131,7 @@ class Indexer(ParlaiScript):
 
         If we're only training... then don't add!!
         """
-        assert isinstance(self.index, IVFPQIndexer)
+        assert isinstance(self.index, CompressedIndexer)
         # Train
         random.seed(42)
 

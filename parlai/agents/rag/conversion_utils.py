@@ -27,8 +27,6 @@ BERT_EMB_DICT_MAP = {
 # List of weight keys not necessary in ParlAI Model
 BERT_COMPATIBILITY_KEYS = ['embeddings.position_ids']
 
-RAG_OPT_KEYS = ['generation_model', 'query_model', 'rag_model_type', 'thorough']
-
 
 class BertConversionUtils:
     """

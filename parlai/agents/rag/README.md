@@ -89,7 +89,7 @@ For RAG-Sequence, and RAG-Turn Doc-Only, you can specify `--thorough True` to us
 
 We provide two indexes in our model zoo, which can be specified via the `--path-to-index` flag:
 
-1. `--path-to-index zoo:hallucination/wiki_passages/exact --indexer-type exact`: The "exact" representation of the document embeddings in a FAISS Index. This index is over 140gb of RAM but provides the fastest/most accurate results.
+1. `--path-to-index zoo:hallucination/wiki_passages/exact --indexer-type exact`: The "exact" representation of the document embeddings in a FAISS Index. This index is over 80gb of RAM but provides the fastest/most accurate results.
 2. **`--path-to-index zoo:hallucination/wiki_passages/compressed --indexer-type compressed`**: The "compressed" representation of the document embeddings a FAISS Index. This index is only ~3gb of RAM but comes at the price of performance degradation. This is the default option as it works quite well despite the compression.
 
 ## Generating your own FAISS Index.
@@ -130,7 +130,7 @@ An example command would look like this:
 ```bash
 python generate_dense_embeddings.py -mf zoo:hallucination/multiset_dpr/hf_bert_base.cp --dpr-model True \
 --passages-file zoo:hallucination/wiki_passages/psgs_w100.tsv  \
---outfile /tmp/wiki_passage_embeddings/wiki_passages --shard-id 0 -bs 32
+--outfile /tmp/wiki_passage_embeddings/wiki_passages --num-shards 50 --shard-id 0 -bs 32
 ```
 
 ### 3. Index the Dense Embeddings
@@ -161,7 +161,7 @@ I will outline here the structure of the RAG directory, and where you might want
 
 - `args.py`: Contains the parameters used to train RAG Models. Explore at your leisure
 - `conversion_utils.py`: Utility functions for converting DPR models to ParlAI-style models
-- `dpr_biencoder.py`: A wrapper around DPR Models for use in ParlAI.
+- `dpr_agent.py`: A wrapper around DPR Models for use in ParlAI.
 - `indexers.py`: Contains implementations of "Indexers", which are essentially wrappers for interacting with FAISS Indexes.
 - `model_types.py`: Contains the interfaces for RAG-Token, RAG-Sequence, and RAG-Turn. The interfaces define the model-type-specific functionality for each RAG type.
 - `modules.py`: Contains the actual `RagModel` implementation. The components of a `RagModel` are model-type-agnostic, and thus they are separate from the implementations in `model_types.py`

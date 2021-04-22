@@ -10,7 +10,7 @@ Original Paper: https://arxiv.org/abs/2005.11401
 
 As used in ParlAI: https://arxiv.org/abs/2104.07567
 """
-from abc import ABC, abstractmethod
+from abc import ABC, abstractstaticmethod
 import os
 import torch
 import torch.nn
@@ -51,10 +51,10 @@ class BaseGenerationAgentMixin(ABC):
     A Base Generation Agent Mixin.
     """
 
-    @abstractmethod
+    @abstractstaticmethod
     def build_rag_model(opt: Opt, dictionary: DictionaryAgent) -> RagModel:
         """
-        Build and return a RAG Model
+        Build and return a RAG Model.
         """
 
 
@@ -89,8 +89,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     """
     RagAgent.
 
-    The RAG Agent interacts with the RAG model appropriately, mostly
-    via it's RAG Model interface.
+    The RAG Agent interacts with the RAG model mostly via it's RAG Model interface.
     """
 
     _generation_agent: Union[
@@ -105,12 +104,14 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         Add RAG Args.
         """
-        TransformerGeneratorRagAgent.add_cmdline_args(parser)
         PolyencoderAgent.add_cmdline_args(parser, partial_opt=None)
+        TransformerGeneratorRagAgent.add_cmdline_args(parser, partial_opt)
         parser = setup_rag_args(parser)
         RagTurn.add_cmdline_args(parser, partial_opt)
         BartRagAgent.add_cmdline_args(parser, partial_opt=partial_opt)
         T5RagAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        # BART Agent sets these to True; doesn't let you set anything else
+        parser.set_defaults(fp16=False, force_fp16_tokens=False)
         return parser
 
     @property
@@ -235,10 +236,10 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         Override BartAgent._convert_model to use RagConversionScript.
         """
-        return self._generation_agent._convert_model(self, opt)
+        return self._generation_agent._convert_model(self, opt)  # type: ignore
 
     def _initialize_bart(self, opt: Opt) -> Opt:
-        return self._generation_agent._initialize_bart(self, opt)
+        return self._generation_agent._initialize_bart(self, opt)  # type: ignore
 
     ########################################
     # TorchGeneratorAgent Overrides        #
@@ -289,7 +290,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         Optional[torch.LongTensor],
     ]:
         """
-        Called directly when generating. Some RAG Model Types require different encoder inputs.
+        Called directly when generating.
+
+        Some RAG Model Types require different encoder inputs.
 
         :param batch:
             batch to process
@@ -365,7 +368,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 for k, v in model.retriever.state_dict().items()  # type: ignore
             }
             state_dict.update(retriever_state)
-        # # 2. Handle n_positional difference
+        # 3. Handle n_positional difference
         if opt.get('n_extra_positions', 0) > 0:
             key = 'seq2seq_encoder.position_embeddings.weight'
             init_weight = (
@@ -439,7 +442,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         self, obs: Message, history: History, truncate: Optional[int]
     ) -> Message:
         """
-        Override TA._set_text_vec to ensure proper super class handles _set_text_vec.
+        Override TA._set_text_vec to ensure proper gen agent handles _set_text_vec.
         """
         return self._generation_agent._set_text_vec(self, obs, history, truncate)
 
@@ -517,8 +520,6 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     ) -> torch.LongTensor:
         """
         Override TGA._get_next_decoder_input to repeat decoder input appropriately.
-
-        Only necessary to override for RAG-Token, as we marginalize each generation.
         """
         if hasattr(self._rag_model_interface, 'get_next_decoder_input'):
             dec_input = self._rag_model_interface.get_next_decoder_input(  # type: ignore
@@ -538,7 +539,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
 
     def _get_context(self, batch: Batch, batch_idx: int) -> torch.LongTensor:
         """
-        Override TGA._get_context for rag-sequence models.
+        Override TGA._get_context for rag-sequence/turn models.
 
         Reason: the batchsize is artificially higher (n_docs * batchsize)
         """
@@ -578,22 +579,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
     ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
         """
-        Rerank beams in RAG-Sequence, accounting for document probabilities as well.
-
-        Iteration for non-thorough decoding is as follows:
-            for each example x_i:
-                for each document d_i:
-                    marginalize probability over
-                    gen. beams. [b_i, ..., b_n] for d_i
-
-        Iteration for thorough decoding is as follows:
-            for each example x_i:
-                obtain unique hypotheses
-                rescore with model, xs=text_vec, ys=hyps
-                sort by lowest loss (highest score)
-
-        Thorough decoding impl. verified via OSS impl:
-        https://github.com/huggingface/transformers/blob/master/src/transformers/models/rag/modeling_rag.py#L954
+        Optionall rerank beams, according to RAG Model type.
 
         :param batch:
             current batch

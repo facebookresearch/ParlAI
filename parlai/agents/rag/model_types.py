@@ -78,6 +78,13 @@ def get_forced_decoder_inputs(
     generation_model: str,
     start_param: Optional[torch.nn.Parameter] = None,
 ) -> torch.LongTensor:
+    """
+    Return the forced decoder inputs, depending on given parameters.
+
+    These inputs are not formatted for RAG models.
+
+    They merely correspond to the appropriate seq2seq_decoder input.
+    """
     if generation_model == 'bart':
         tens = torch.LongTensor([end_idx, start_idx]).to(inputs).detach().expand(bsz, 2)
     elif start_param is not None:
@@ -90,7 +97,7 @@ def get_forced_decoder_inputs(
 
 class RagModelInterface(ABC):
     """
-    Define an interface for the RAG Model Types
+    Define an interface for the RAG Model Types.
     """
 
     def __init__(self, opt: Opt, null_idx: int):
@@ -120,7 +127,7 @@ class RagModelInterface(ABC):
         input_turns_cnt: Optional[torch.LongTensor] = None,
     ) -> torch.LongTensor:
         """
-        Return initial input to the decoder.
+        Return the initial input to the decoder during training.
 
         :param bsz:
             batchsize
@@ -186,7 +193,7 @@ class RagModelInterface(ABC):
         torch.Tensor,
     ]:
         """
-        Reorder the encoder states, for bean search.
+        Reorder the encoder states, for beam search.
 
         See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
         """
@@ -204,7 +211,7 @@ class RagModelInterface(ABC):
         label_vec: torch.LongTensor,
     ) -> Tuple[torch.Tensor, List[int], torch.Tensor, torch.Tensor]:
         """
-        Compute Loss
+        Compute Loss.
 
         :param criterion:
             torch criterion module
@@ -274,7 +281,7 @@ class RagSequence(RagModelInterface):
         input_turns_cnt: Optional[torch.LongTensor] = None,
     ) -> torch.LongTensor:
         """
-        Return initial input to the decoder.
+        Return the initial input to the decoder during training.
 
         Repeat each input n_docs times.
 
@@ -311,6 +318,7 @@ class RagSequence(RagModelInterface):
         """
         For RAG Sequence, we retrieve prior to generation.
         """
+        assert batch.text_vec is not None
         return (batch.text_vec, None, None, None)
 
     def reorder_encoder_states(
@@ -344,7 +352,7 @@ class RagSequence(RagModelInterface):
         :return mapped_idx:
             return the appropriate batch index
         """
-        n_docs = batch.doc_log_probs.size(1)
+        n_docs = batch.doc_log_probs.size(1)  # type: ignore
         return batch_idx // n_docs
 
     def rerank_beams(
@@ -385,7 +393,7 @@ class RagSequence(RagModelInterface):
             return a re-ranked version of the n_best_beam_preds_scores
         """
         new_n_best: List[List[List[torch.LongTensor]]] = []
-        doc_log_probs = batch.doc_log_probs
+        doc_log_probs = batch.doc_log_probs  # type: ignore
         bsz, n_docs = doc_log_probs.shape
         for i in range(bsz):
             if self.thorough:
@@ -395,7 +403,10 @@ class RagSequence(RagModelInterface):
                     for hyp in h
                 ]
                 sorted_by_score = self.thorough_generation(
-                    hyps, batch.src_text_vec[i : i + 1], self.null_idx, model
+                    hyps,
+                    batch.src_text_vec[i : i + 1],
+                    self.null_idx,
+                    model,  # type: ignore
                 )
             else:
                 # mapping from tokens to (tokens, score)
@@ -487,7 +498,7 @@ class RagSequence(RagModelInterface):
         model: RagModel,
     ) -> List[Tuple[torch.LongTensor, torch.Tensor]]:
         """
-        Apply RAG-sequence thorough generation.
+        Apply RAG-sequence thorough generation for a single batch item.
 
         Recomputes model scores with given hypotheses, sorts accordingly.
 
@@ -649,7 +660,7 @@ class RagToken(RagModelInterface):
     """
     Provides an interface for RAG-Token.
 
-    RAG Token considers turns jointly during training and inference; output
+    RAG Token considers documents jointly during training and inference; output
     distributions are computed via summing across latent document probabilities.
     """
 
@@ -669,7 +680,7 @@ class RagToken(RagModelInterface):
         input_turns_cnt: Optional[torch.LongTensor] = None,
     ) -> torch.LongTensor:
         """
-        Return initial input to the decoder.
+        Return the initial input to the decoder during training.
 
         Repeat inputs n_docs times.
 
@@ -740,9 +751,7 @@ class RagToken(RagModelInterface):
         torch.Tensor,
     ]:
         """
-        Reorder the encoder states.
-
-        Override TGM.reorder_encoder_states to reorder doc log probs when using rag-token.
+        Reorder all RAG encoder states.
         """
         enc, mask, input_turns_cnt, docs, doc_probs = encoder_states
         n_docs = doc_probs.shape[1]
@@ -865,7 +874,7 @@ class RagTurn(RagModelInterface):
     RAG Turn Doc-Then-Turn marginalizes over documents, then over turns.
 
     RAG Turn Doc Only considers each turn's documents independently, and thus
-    resembles RAG Token on a doc level, and RAG Sequence on a doc level.
+    resembles RAG Token on a doc level, and RAG Sequence on a turn level.
     """
 
     def __init__(self, opt: Opt, null_idx: int):
@@ -920,7 +929,7 @@ class RagTurn(RagModelInterface):
         input_turns_cnt: Optional[torch.LongTensor] = None,
     ) -> torch.LongTensor:
         """
-        Return initial input to the decoder.
+        Return the initial input to the decoder during training.
 
         Repeat inputs n_docs * n_turns times.
 
@@ -989,7 +998,7 @@ class RagTurn(RagModelInterface):
         """
         Map the batch_idx back to the appropriate batch item during generation.
 
-        For Doc Only marginalization, we have n_turns*bsz batch items.
+        For RAG Turn Doc-Only, we have n_turns*bsz batch items.
         This means we need to map back to the appropriate context idx.
 
         :param batch:
@@ -1100,7 +1109,7 @@ class RagTurn(RagModelInterface):
         Augment batch for doc_only turn marginalization.
 
         src_text_vec and input_turns_cnt are each used during beam re-ranking;
-        setting batch.batchsize lets this interact nicely with TGM._generate.
+        setting batch.batchsize lets this interact nicely with TGA._generate.
 
         :param batch:
             batch to augment

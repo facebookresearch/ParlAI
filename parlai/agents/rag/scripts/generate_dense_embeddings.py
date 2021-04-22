@@ -25,6 +25,7 @@ from parlai.agents.transformer.polyencoder import PolyencoderAgent
 from parlai.core.agents import create_agent_from_model_file, create_agent
 from parlai.core.build_data import modelzoo_path
 from parlai.core.message import Message
+from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
 from parlai.core.torch_ranker_agent import TorchRankerAgent
@@ -34,7 +35,7 @@ from parlai.agents.transformer.dropout_poly import DropoutPolyAgent
 from parlai.agents.rag.retrievers import load_passages_list
 
 # import the below to have the agent registered.
-import parlai.agents.rag.dpr_biencoder  # noqa: f401
+import parlai.agents.rag.dpr  # noqa: F401
 
 
 class Generator(ParlaiScript):
@@ -84,15 +85,15 @@ class Generator(ParlaiScript):
         if self.opt['dpr_model']:
             overrides.update(
                 {
-                    'model': 'dpr_biencoder',
+                    'model': 'dpr_agent',
                     'model_file': self.opt['model_file'],
                     'override': {
-                        'model': 'dpr_biencoder',
+                        'model': 'dpr_agent',
                         'interactive_candidates': 'inline',
                     },
                 }
             )
-            agent = create_agent(overrides)
+            agent = create_agent(Opt(overrides))
         else:
             agent = create_agent_from_model_file(self.opt['model_file'], overrides)
         model = agent.model.module if hasattr(agent.model, 'module') else agent.model
@@ -173,7 +174,9 @@ class Generator(ParlaiScript):
         """
         logging.info(f"Loading {self.opt['passages_file']}")
         rows = load_passages_list(
-            modelzoo_path(self.opt['datapath'], self.opt['passages_file'])
+            modelzoo_path(
+                self.opt['datapath'], self.opt['passages_file']
+            )  # type: ignore
         )
         shard_id, num_shards = self.opt['shard_id'], self.opt['num_shards']
         shard_size = int(len(rows) / num_shards)
