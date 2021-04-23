@@ -137,7 +137,7 @@ def build_deduped_split(dpath: str):
 def split_into_seen_unseen(dpath: str):
     """
     Following WoW, we have overlap in train, valid, and test seen but none in test
-    valid. Do an 80:10:5:5 split between train, valid, test_seen, test_unseen or as
+    unseen. Do an 80:10:5:5 split between train, valid, test_seen, test_unseen or as
     close to it.
 
     ~205 documents for test_unseen to do this, and movies 1 and 3 have 90 and 117
