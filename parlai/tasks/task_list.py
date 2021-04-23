@@ -289,6 +289,19 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1706.05125"},
     },
     {
+        "id": "Glue",
+        "display_name": "Glue",
+        "task": "glue",
+        "tags": [],
+        "description": (
+            "GLUE, the General Language Understanding Evaluation benchmark is a collection of resources for training, evaluating, and analyzing natural language understanding systems."
+        ),
+        "links": {
+            "website": "https://gluebenchmark.com/",
+            "website2": "https://huggingface.co/datasets/glue",
+        },
+    },
+    {
         "id": "HotpotQA",
         "display_name": "HotpotQA",
         "task": "hotpotqa",
@@ -302,14 +315,6 @@ task_list = [
             "to correctly answer the question."
         ),
         "links": {"arXiv": "https://arxiv.org/abs/1809.09600"},
-    },
-    {
-        "id": "HuggingFace",
-        "display_name": "HuggingFace",
-        "task": "huggingface",
-        "tags": [],
-        "description": ("HuggingFace datasets"),
-        "links": {"website": "https://huggingface.co/"},
     },
     {
         "id": "LIGHT-Dialogue",

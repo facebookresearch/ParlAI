@@ -6,9 +6,8 @@
 
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple
 from typing_extensions import TypedDict
-from abc import ABC
 import os
 
 # huggingface imports
@@ -21,7 +20,7 @@ class SplitsMappingDict(TypedDict):
     test: str
 
 
-class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
+class AbstractHuggingFaceTeacher(DialogTeacher):
     """
     Abstract parent class for HuggingFace teachers. Extend this class and specify the
     attributes below to use a different dataset.
@@ -35,26 +34,22 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
     render_text_field = bool where if True, will include the text field name in the query (e.g. "sentence: <sentence>")
     """
 
-    hf_path: str
-    hf_name: Optional[str]
-    hf_text_fields: List[str]
-    hf_label_field: str
-    hf_splits_mapping: SplitsMappingDict
-
     def __init__(self, opt, shared=None):
         self.fold = DatatypeHelper.fold(opt['datatype'])
         self.hf_split = self.hf_splits_mapping[self.fold]
-        if self.hf_name:
-            opt['datafile'] = os.path.join(
-                opt['datapath'], 'huggingface', self.hf_path, self.hf_name, self.fold
-            )
-        else:
-            opt['datafile'] = os.path.join(
-                opt['datapath'], 'huggingface', self.hf_path, self.fold
-            )
+        self.data_path = self._path(opt)
+        opt['datafile'] = self.data_path
 
         self.id = "huggingface"
         super().__init__(opt, shared)
+        self.reset()
+
+    def _path(self, opt):
+        if self.hf_name:
+            return os.path.join(
+                opt['datapath'], 'huggingface', self.hf_path, self.hf_name, self.fold
+            )
+        return os.path.join(opt['datapath'], 'huggingface', self.hf_path, self.fold)
 
     @property
     def hf_path(self) -> str:
@@ -124,14 +119,6 @@ class AbstractHuggingFaceTeacher(DialogTeacher, ABC):
             episode_dict['label'] = label
             episode_dict['label_candidates'] = candidates
             yield episode_dict, True
-
-
-class GlueColaTeacher(AbstractHuggingFaceTeacher):
-    hf_path = 'glue'
-    hf_name = 'cola'
-    hf_text_fields = ['sentence']
-    hf_label_field = 'label'
-    hf_splits_mapping = {'train': 'train', 'valid': 'validation', 'test': 'test'}
 
 
 class DefaultTeacher(AbstractHuggingFaceTeacher):
