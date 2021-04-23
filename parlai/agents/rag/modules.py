@@ -151,9 +151,9 @@ class RagModel(TorchGeneratorModel):
         Optional[torch.Tensor],
     ]:
         """
-        Expand input to seq2seq encoder via concatenating retrieved documents.
+        Retrieve documents and expand input via concatenation.
 
-        Then, encode as usual.
+        Then, encode as usual in the seq2seq encoder.
 
         :param input:
             2D [bsz, seqlen] input to the encoder
@@ -521,6 +521,7 @@ class T5RagModel(RagModel):
         else:
             opt['t5'].deparallelize()
         super().__init__(opt, dictionary, retriever_shared)
+        self.embedding_size = opt['t5'].model_dim
         self.t5 = opt.pop('t5', None)
 
     @classmethod

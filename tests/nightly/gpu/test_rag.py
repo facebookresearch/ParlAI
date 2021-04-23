@@ -65,7 +65,12 @@ GENERATION_OPTS = {
         'dict_file': 'zoo:bart/bart_large/model.dict',
         'fp16': True,
     },
-    't5': {'t5_model_arch': 't5-large', 'fp16': True},
+    't5': {
+        't5_model_arch': 't5-large',
+        'fp16': True,
+        'text_truncate': 512,
+        'label_truncate': 128,
+    },
     'transformer/generator': {
         'init_model': 'zoo:tutorial_transformer_generator/model',
         'dict_file': 'zoo:tutorial_transformer_generator/model.dict',

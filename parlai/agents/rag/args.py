@@ -309,7 +309,7 @@ def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
     indexer_group.add_argument(
         '--compressed-indexer-gpu-train',
         type='bool',
-        default=True,
+        default=False,
         hidden=True,
         help='Set False to not train compressed indexer on the gpu.',
     )

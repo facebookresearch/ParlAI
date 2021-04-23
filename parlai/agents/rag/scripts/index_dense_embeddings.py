@@ -60,6 +60,7 @@ class Indexer(ParlaiScript):
             help='shard id for this worker. should be between 0 and num_shards',
         )
         parser = RagAgent.add_cmdline_args(parser)
+        parser.set_defaults(compressed_indexer_gpu_train=True)
         return parser
 
     def run(self):

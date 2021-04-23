@@ -9,7 +9,6 @@ Leveraging Passage Retrieval with Generative Models for Open Domain Question Ans
 See https://arxiv.org/abs/2007.01282
 """
 import torch
-import torch.nn.functional as F
 from typing import Tuple, Union, Optional, List, Dict, Any
 
 from parlai.core.dict import DictionaryAgent
@@ -74,6 +73,8 @@ class FidModel(RagModel):
     ) -> Tuple[torch.Tensor, torch.Tensor, List[List[Document]], torch.Tensor]:
         """
         Override RagModel.reorder_encoder_states to make sure we only pass enc, mask.
+
+        See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
         """
         enc, mask, *_ = encoder_states
         return TransformerGeneratorModel.reorder_encoder_states(
@@ -151,12 +152,14 @@ class FidModel(RagModel):
         dec_out, incr_state = self.seq2seq_decoder(
             input, (enc_out, enc_mask), incr_state
         )  # type: ignore
-        dec_out = F.linear(dec_out, self.embeddings.weight)
+        dec_out = self.decoder_output(dec_out)
         return dec_out, incr_state
 
 
 class T5FidModel(FidModel, T5RagModel):
-    pass
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
+        super().__init__(opt, dictionary, retriever_shared=retriever_shared)
+        self.embedding_size = self.t5.model_dim
 
 
 class FidAgent(RagAgent):
