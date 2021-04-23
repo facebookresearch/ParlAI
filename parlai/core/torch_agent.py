@@ -1786,7 +1786,11 @@ class TorchAgent(ABC, Agent):
 
     def get_temp_history(self, observation) -> Optional[str]:
         """
-        Return a string to temporarily insert into history.
+        Return a string to temporarily insert into history for a single turn.
+
+        *NOTE*: This does NOT attempt to provide any sort of delimiter or spacing
+        between the original history and the temporary history. If you require
+        such delimiter or spacing, you should include it in the temp history.
 
         Intentionally overrideable so more complex models can insert temporary history
         strings, i.e. strings that are removed from the history after a single turn.
