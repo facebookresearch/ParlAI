@@ -73,6 +73,7 @@ commands:
     steps:
       - run:
           name: Coverage report
+          when: always
           command: |
             python -m codecov --flags $CIRCLE_JOB
             mkdir -p ~/ParlAI/data

@@ -32,7 +32,7 @@ common_opt = {
     'model': 'rag',
     'retriever_debug_index': 'compressed',
     'dpr_model_file': DPR_ZOO_MODEL,
-    'n_docs': 5,
+    'n_docs': 2,
     'task': 'integration_tests',
     'num_examples': 5,
     'label_truncate': 5,
