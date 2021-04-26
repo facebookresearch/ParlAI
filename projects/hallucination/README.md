@@ -92,7 +92,7 @@ The following commands demonstrate how to train some of the models above; we int
     parlai train_model -m rag -t wizard_of_wikipedia \
     --rag-model-type turn --rag-turn-marginalize doc_then_turn --rag-retriever-type dpr \
     --generation-model t5 --t5-model-arch t5-large \
-    --batchsize 16 --fp16 True --gradient-clip 0.1 --label-truncate 128 \
+    --batchsize 8 --fp16 True --gradient-clip 0.1 --label-truncate 128 \
     --log-every-n-secs 30 --lr-scheduler reduceonplateau --lr-scheduler-patience 1 \
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
     -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
