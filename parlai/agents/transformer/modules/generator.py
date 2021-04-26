@@ -18,7 +18,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, Optional
+from typing import Dict
 
 import torch
 import torch.cuda
@@ -29,18 +29,15 @@ from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerEncoder,
 )
-from parlai.agents.transformer.modules.interfaces import (
-    ModularComponentBuilder,
-    ModularComponent,
-)
+from parlai.agents.transformer.modules.interfaces import modular_type, ModularComponent
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
 
-ENCODER_DEFAULT = ModularComponentBuilder(TransformerEncoder)
-DECODER_DEFAULT = ModularComponentBuilder(TransformerDecoder)
+EncoderType = modular_type(TransformerEncoder)
+DecoderType = modular_type(TransformerDecoder)
 
 
 class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
@@ -49,9 +46,11 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
     """
 
     @dataclass
-    class Template(ModularComponent.Template):
-        encoder: ModularComponentBuilder[TransformerEncoder] = ENCODER_DEFAULT
-        decoder: ModularComponentBuilder[TransformerDecoder] = DECODER_DEFAULT
+    class Subcomponents:
+        encoder: EncoderType = TransformerEncoder
+        decoder: DecoderType = TransformerDecoder
+
+    components: Subcomponents
 
     @classmethod
     def build_encoder(
@@ -61,14 +60,16 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
         embedding=None,
         padding_idx=None,
         reduction_type='mean',
-        builder: ModularComponentBuilder[TransformerEncoder] = ENCODER_DEFAULT,
+        encoder_class: EncoderType = TransformerEncoder,
+        **kwargs,
     ) -> TransformerEncoder:
-        return builder.build(
+        return encoder_class(
             opt=opt,
             embedding=embedding,
             vocabulary_size=len(dictionary),
             padding_idx=padding_idx,
             reduction_type=reduction_type,
+            **kwargs,
         )
 
     @classmethod
@@ -76,18 +77,16 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
         cls,
         opt,
         embedding=None,
-        builder: ModularComponentBuilder[TransformerDecoder] = DECODER_DEFAULT,
+        decoder_class: DecoderType = TransformerDecoder,
+        **kwargs,
     ) -> TransformerDecoder:
-        return builder.build(opt=opt, embedding=embedding)
+        return decoder_class(opt=opt, embedding=embedding, **kwargs)
 
-    def __init__(
-        self, opt: Opt, dictionary: DictionaryAgent, template: Optional[Template] = None
-    ):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, **kwargs):
         self.pad_idx = dictionary[dictionary.null_token]
         self.start_idx = dictionary[dictionary.start_token]
         self.end_idx = dictionary[dictionary.end_token]
-        super().__init__(self.pad_idx, self.start_idx, self.end_idx)
-        template = template or self.Template()
+        super().__init__(self.pad_idx, self.start_idx, self.end_idx, **kwargs)
         self.opt = opt
         self.embeddings = create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
@@ -99,10 +98,10 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
             self.embeddings,
             self.pad_idx,
             reduction_type=None,
-            builder=template.encoder,
+            encoder_class=self.components.encoder,
         )
         self.decoder = self.build_decoder(
-            opt, embedding=self.embeddings, builder=template.decoder
+            opt, embedding=self.embeddings, decoder_class=self.components.decoder
         )
 
     def reorder_encoder_states(self, encoder_states, indices):

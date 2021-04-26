@@ -119,8 +119,9 @@ class TorchGeneratorModel(nn.Module, ABC):
         unknown_idx=3,
         input_dropout=0,
         longest_label=1,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(**kwargs)
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
         self.START_IDX = start_idx

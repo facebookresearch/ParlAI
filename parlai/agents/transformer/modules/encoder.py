@@ -22,10 +22,7 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import (
-    ModularComponentBuilder,
-    ModularComponent,
-)
+from parlai.agents.transformer.modules.interfaces import modular_type, ModularComponent
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
@@ -37,9 +34,11 @@ class TransformerEncoderLayer(ModularComponent):
     """
 
     @dataclass
-    class Template(ModularComponent.Template):
+    class Subcomponents:
         self_attention: Type[MultiHeadAttention] = MultiHeadAttention
         feedforward: Type[TransformerFFN] = TransformerFFN
+
+    components: Subcomponents
 
     def __init__(
         self,
@@ -51,19 +50,18 @@ class TransformerEncoderLayer(ModularComponent):
         dropout: float = 0.0,
         activation: str = 'relu',
         variant: Optional[str] = None,
-        template: Optional[Template] = None,
+        **kwargs,
     ):
-        super().__init__()
-        template = template or self.Template()
+        super().__init__(**kwargs)
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = template.self_attention(
+        self.attention = self.components.self_attention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.ffn = template.feedforward(
+        self.ffn = self.components.feedforward(
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
@@ -93,6 +91,9 @@ class TransformerEncoderLayer(ModularComponent):
         return tensor
 
 
+LayerType = modular_type(TransformerEncoderLayer)
+
+
 class TransformerEncoder(ModularComponent):
     """
     Transformer encoder module.
@@ -113,10 +114,10 @@ class TransformerEncoder(ModularComponent):
     """
 
     @dataclass
-    class Template(ModularComponent.Template):
-        layer: ModularComponentBuilder[
-            TransformerEncoderLayer
-        ] = ModularComponentBuilder(TransformerEncoderLayer)
+    class Subcomponents:
+        layer: LayerType = TransformerEncoderLayer
+
+    components: Subcomponents
 
     def __init__(
         self,
@@ -132,10 +133,9 @@ class TransformerEncoder(ModularComponent):
         activation: Optional[str] = None,
         variant: Optional[str] = None,
         output_scaling: Optional[float] = None,
-        template: Optional[Template] = None,
+        **kwargs,
     ):
-        super(TransformerEncoder, self).__init__()
-        template = template or self.Template()
+        super().__init__(**kwargs)
 
         def _default(val, default):
             return val if val is not None else default
@@ -218,7 +218,7 @@ class TransformerEncoder(ModularComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                template.layer.build(
+                self.components.layer(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,

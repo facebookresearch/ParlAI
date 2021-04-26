@@ -9,7 +9,7 @@ Transformer decoder implementations.
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, Optional, Tuple, Type
+from typing import Dict, Optional, Tuple, Type, Union
 
 import numpy as np
 import torch
@@ -22,10 +22,7 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import (
-    ModularComponentBuilder,
-    ModularComponent,
-)
+from parlai.agents.transformer.modules.interfaces import modular_type, ModularComponent
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
@@ -42,10 +39,12 @@ class TransformerDecoderLayer(ModularComponent):
     """
 
     @dataclass
-    class Template(ModularComponent.Template):
+    class Subcomponents:
         self_attention: Type[MultiHeadAttention] = MultiHeadAttention
         encoder_attention: Type[MultiHeadAttention] = MultiHeadAttention
         feedforward: Type[TransformerFFN] = TransformerFFN
+
+    components: Subcomponents
 
     def __init__(
         self,
@@ -57,27 +56,26 @@ class TransformerDecoderLayer(ModularComponent):
         dropout: float = 0.0,
         activation: str = 'relu',
         variant: str = 'aiayn',
-        template: Optional[Template] = None,
+        **kwargs,
     ):
-        super().__init__()
-        template = template or self.Template()
+        super().__init__(**kwargs)
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.variant = variant
         self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
-        self.self_attention = template.self_attention(
+        self.self_attention = self.components.self_attention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.encoder_attention = template.encoder_attention(
+        self.encoder_attention = self.components.encoder_attention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.ffn = template.feedforward(
+        self.ffn = self.components.feedforward(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
@@ -178,6 +176,9 @@ class TransformerDecoderLayer(ModularComponent):
         }
 
 
+LayerType = modular_type(TransformerDecoderLayer)
+
+
 class TransformerDecoder(ModularComponent):
     """
     Transformer Decoder module.
@@ -192,20 +193,19 @@ class TransformerDecoder(ModularComponent):
     """
 
     @dataclass
-    class Template(ModularComponent.Template):
-        layer: ModularComponentBuilder[
-            TransformerDecoderLayer
-        ] = ModularComponentBuilder(TransformerDecoderLayer)
+    class Subcomponents:
+        layer: LayerType = TransformerDecoderLayer
+
+    components: Subcomponents
 
     def __init__(
         self,
         opt: Opt,
         embedding: Optional[nn.Embedding] = None,
         n_positions: Optional[int] = None,
-        template: Optional[Template] = None,
+        **kwargs,
     ):
-        super().__init__()
-        template = template or self.Template()
+        super().__init__(**kwargs)
 
         def _default(val, default):
             return val if val is not None else default
@@ -267,7 +267,7 @@ class TransformerDecoder(ModularComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                template.layer.build(
+                self.components.layer(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,

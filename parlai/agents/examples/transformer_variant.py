@@ -31,7 +31,6 @@ from parlai.agents.transformer.modules import (
     TransformerEncoderLayer,
     TransformerGeneratorModel,
 )
-from parlai.agents.transformer.modules.interfaces import ModularComponentBuilder
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
@@ -51,21 +50,15 @@ class TransformerVariantAgent(TransformerGeneratorAgent):
     """
 
     def build_model(self, states=None):
-        template = TransformerGeneratorModel.Template(
-            encoder=ModularComponentBuilder(MyCustomEncoder),
-            decoder=ModularComponentBuilder(
-                TransformerDecoder,
-                TransformerDecoder.Template(
-                    layer=ModularComponentBuilder(
-                        TransformerDecoderLayer,
-                        TransformerDecoderLayer.Template(
-                            self_attention=MyCustomAttention
-                        ),
-                    )
-                ),
+        components = TransformerGeneratorModel.Subcomponents(
+            encoder=MyCustomEncoder,
+            decoder=TransformerDecoder.with_components(
+                layer=TransformerDecoderLayer.with_components(
+                    self_attention=MyCustomAttention
+                )
             ),
         )
-        return TransformerGeneratorModel(self.opt, self.dict, template)
+        return TransformerGeneratorModel(self.opt, self.dict, components=components)
 
 
 class MyCustomEncoder(TransformerEncoder):
@@ -81,6 +74,7 @@ class MyCustomEncoder(TransformerEncoder):
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
+        logging.info("Custom encoder called!")
         # Comment out the following line and write your custom `forward` instead.
         return super().forward(input, positions, segments)
 
@@ -92,7 +86,25 @@ class MyCustomAttention(MultiHeadAttention):
     __init__ and forward signature as MultiHeadAttention
     """
 
-    pass
+    def forward(
+        self,
+        query: torch.Tensor,
+        key: Optional[torch.Tensor] = None,
+        value: Optional[torch.Tensor] = None,
+        mask: torch.Tensor = None,
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        static_kv: bool = False,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
+        logging.info("Custom attention called!")
+        # Comment out the following line and write your custom `forward` instead.
+        return super().forward(
+            query,
+            key=key,
+            value=value,
+            mask=mask,
+            incr_state=incr_state,
+            static_kv=static_kv,
+        )
 
 
 #######################################
@@ -102,41 +114,28 @@ class MyCustomAttention(MultiHeadAttention):
 
 class VerboseTransformerAgent(TransformerGeneratorAgent):
     """
-    Doesn't make any changes to TransformerGeneratorModel, just
-    specifies all subcomponents explicitly as a refernce of what's
-    swappable.
+    Doesn't make any changes to TransformerGeneratorModel, just specifies
+    all subcomponents explicitly. This is meant to be a reference for how
+    to swap any component within TransformerGeneratorModel.
     """
 
     def build_model(self, states=None):
-        transformer_template = TransformerGeneratorModel.Template(
-            encoder=ModularComponentBuilder(
-                TransformerEncoder,
-                TransformerEncoder.Template(
-                    layer=ModularComponentBuilder(
-                        TransformerEncoderLayer,
-                        TransformerEncoderLayer.Template(
-                            self_attention=MultiHeadAttention,
-                            feedforward=TransformerFFN,
-                        ),
-                    )
-                ),
+        components = TransformerGeneratorModel.Subcomponents(
+            encoder=TransformerEncoder.with_components(
+                layer=TransformerEncoderLayer.with_components(
+                    self_attention=MultiHeadAttention, feedforward=TransformerFFN
+                )
             ),
-            decoder=ModularComponentBuilder(
-                TransformerDecoder,
-                TransformerDecoder.Template(
-                    layer=ModularComponentBuilder(
-                        TransformerDecoderLayer,
-                        TransformerDecoderLayer.Template(
-                            encoder_attention=MultiHeadAttention,
-                            self_attention=MultiHeadAttention,
-                            feedforward=TransformerFFN,
-                        ),
-                    )
-                ),
+            decoder=TransformerDecoder.with_components(
+                layer=TransformerDecoderLayer.with_components(
+                    encoder_attention=MultiHeadAttention,
+                    self_attention=MultiHeadAttention,
+                    feedforward=TransformerFFN,
+                )
             ),
         )
         return TransformerGeneratorModel(
-            opt=self.opt, dictionary=self.dict, template=transformer_template
+            opt=self.opt, dictionary=self.dict, components=components
         )
 
 
@@ -190,17 +189,13 @@ class ConfigurableTransformerAgent(TransformerGeneratorAgent):
             )
             decoder_ffn_class = TransformerFFN
 
-        transformer_template = TransformerGeneratorModel.Template(
-            decoder=ModularComponentBuilder(
-                TransformerDecoder,
-                TransformerDecoder.Template(
-                    layer=ModularComponentBuilder(
-                        TransformerDecoderLayer,
-                        TransformerDecoderLayer.Template(feedforward=decoder_ffn_class),
-                    )
-                ),
+        components = TransformerGeneratorModel.Subcomponents(
+            decoder=TransformerDecoder.with_components(
+                layer=TransformerDecoderLayer.with_components(
+                    feedforward=decoder_ffn_class
+                )
             )
         )
         return TransformerGeneratorModel(
-            opt=self.opt, dictionary=self.dict, template=transformer_template
+            opt=self.opt, dictionary=self.dict, components=components
         )
