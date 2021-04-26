@@ -38,7 +38,7 @@ class TestDistributed(unittest.TestCase):
         learningrate=1e-2,
         batchsize=BATCHSIZE,
         validation_every_n_epochs=5,
-        num_epochs=100,
+        num_epochs=150,
         n_layers=1,
         n_heads=1,
         ffn_size=32,
@@ -67,20 +67,18 @@ class TestDistributed(unittest.TestCase):
 
         return (valid, test)
 
-    @testing_utils.retry()
     def test_generator_distributed(self):
         config = copy.deepcopy(self._base_config)
         valid, test = self._distributed_train_model(config)
 
-        self.assertLessEqual(valid['ppl'], 1.50)
-        self.assertLessEqual(test['ppl'], 1.50)
+        self.assertLessEqual(valid['ppl'], 1.60)
+        self.assertLessEqual(test['ppl'], 1.60)
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
         self.assertEqual(valid['exs'].value(), BATCHSIZE)
         self.assertEqual(test['exs'].value(), BATCHSIZE)
 
-    @testing_utils.retry()
     def test_multitask_distributed(self):
         config = copy.deepcopy(self._base_config)
         config['num_epochs'] = 50
