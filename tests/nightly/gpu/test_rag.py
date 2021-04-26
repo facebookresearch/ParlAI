@@ -9,7 +9,12 @@ from typing import Optional
 import unittest
 
 import parlai.utils.testing as testing_utils
-import parlai.agents.rag.dpr  # noqa: F401
+
+try:
+    import parlai.agents.rag.dpr  # noqa: F401
+except (ImportError, ModuleNotFoundError):
+    pass
+
 from parlai.agents.rag.args import (
     DPR_ZOO_MODEL,
     POLYFAISS_ZOO_MODEL,
