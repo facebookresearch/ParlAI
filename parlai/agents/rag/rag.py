@@ -108,7 +108,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         TransformerGeneratorRagAgent.add_cmdline_args(parser, partial_opt)
         parser = setup_rag_args(parser)
         RagTurn.add_cmdline_args(parser, partial_opt)
-        if partial_opt.get('generation_model') == 'bart':
+        if partial_opt and partial_opt.get('generation_model') == 'bart':
             BartRagAgent.add_cmdline_args(parser, partial_opt=partial_opt)
         T5RagAgent.add_cmdline_args(parser, partial_opt=partial_opt)
         # BART Agent sets these to True; doesn't let you set anything else
