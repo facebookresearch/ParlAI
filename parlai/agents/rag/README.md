@@ -71,7 +71,7 @@ We provide a few of the several retrievers considered in [our work](https://parl
 1. **`--rag-retriever-type dpr`**: The canonical retrieval system for RAG uses a [Dense Passage Retriever](https://github.com/facebookresearch/DPR) for retrieval over a FAISS Index. The default options retrieve over all of Wikipedia.
 2. `--rag-retriever-type tfidf`: One can additionally use a [TFIDF retriever](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/tfidf_retriever); the default retrieves over all of Wikipedia.
 3. `--rag-retriever-type dpr_then_poly`: The RAG DPR-Poly model adds a re-ranking step with a Poly-encoder that re-ranks the retrieved documents from a DPR model.
-4. `--rag-retriever-type poly_faiss`: If you have trained a [Dropout Poly-encoder](path) and have built an index with that model, you can use the PolyFAISS method, which uses a Poly-encoder model directly to both query FAISS and re-rank retrieved documents.
+4. `--rag-retriever-type poly_faiss`: If you have trained a [Dropout Poly-encoder](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/transformer/dropout_poly) and have built an index with that model, you can use the PolyFAISS method, which uses a Poly-encoder model directly to both query FAISS and re-rank retrieved documents.
 
 ### Other RAG Options
 
