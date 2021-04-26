@@ -42,7 +42,6 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
 
         self.id = "huggingface"
         super().__init__(opt, shared)
-        self.reset()
 
     def _path(self, opt):
         if self.hf_name:
@@ -71,48 +70,52 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
     def hf_splits_mapping(self) -> SplitsMappingDict:
         raise NotImplementedError
 
+    def _get_text_value(self, row) -> Tuple[str, Dict[str, str]]:
+        """
+        return the constructed text query and dict mapping text field names to values.
+        """
+        # construct text query from the hf_text_fields specified
+        text_dict = {}
+        for col in self.hf_text_fields:
+            text_part = row.get(col)
+            if text_part is None:
+                raise KeyError(f'Feature "{col}" not found in data.')
+            text_dict[col] = text_part
+        return '\n'.join(text_dict.values()), text_dict
+
+    def _get_label_value(self, row):
+        """
+        return the label value from the data row.
+        """
+        return row[self.hf_label_field]
+
+    def _get_label_candidates(self, row, label) -> str:
+        """
+        try to return the true label text value from the row and the candidates.
+        """
+        pre_candidates = self.dataset.features[self.hf_label_field].names
+        # construct label and candidates
+        if type(label) is int:
+            return pre_candidates[label], pre_candidates
+        if label in row:
+            return row[label], [row[l] for l in pre_candidates]
+        return label, pre_candidates
+
     def setup_data(self, path: str) -> Iterable[tuple]:
         """
         Default implementation of setup_data.
 
         Manually override if needed.
         """
-
-        def _get_text_value(row) -> Tuple[str, Dict[str, str]]:
-            """
-            return the constructed text query and dict mapping text field names to
-            values.
-            """
-            # construct text query from the hf_text_fields specified
-            text_dict = {}
-            for col in self.hf_text_fields:
-                text_part = row.get(col)
-                if text_part is None:
-                    raise KeyError(f'Feature "{col}" not found in data.')
-                text_dict[col] = text_part
-            return '\n'.join(text_dict.values()), text_dict
-
-        def _get_label_value(row):
-            return row[self.hf_label_field]
-
-        def _get_label_candidates(row, label) -> str:
-            pre_candidates = dataset.features[self.hf_label_field].names
-            # construct label and candidates
-            if type(label) is int:
-                return pre_candidates[label], pre_candidates
-            if label in row:
-                return row[label], [row[l] for l in pre_candidates]
-            return label, pre_candidates
-
         # load dataset from HuggingFace
-        dataset = load_dataset(
+        self.dataset = load_dataset(
             path=self.hf_path, name=self.hf_name, split=self.hf_split
         )
 
-        for row in dataset:
-            query, text_dict = _get_text_value(row)
-            label = _get_label_value(row)
-            label, candidates = _get_label_candidates(row, label)
+        for row in self.dataset:
+            query, text_dict = self._get_text_value(row)
+            label = self._get_label_value(row)
+            label, candidates = self._get_label_candidates(row, label)
 
             episode_dict = text_dict
             episode_dict['text'] = query
@@ -121,8 +124,8 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
             yield episode_dict, True
 
 
-class DefaultTeacher(AbstractHuggingFaceTeacher):
-    def __init__():
+class DefaultTeacher:
+    def __init__(self, opt):
         raise NotImplementedError(
             "There is no default teacher for HuggingFace datasets. Please use a specific one."
         )
