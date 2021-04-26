@@ -16,13 +16,13 @@ Before using RAG, you'll need to make sure that you have installed FAISS; prefer
 
 To train a RAG model with the default options -- RAG-Token with BART-Large generator, and DPR Retrieval over all of Wikipedia -- you'll need the following system requirements:
 
-#### RAM
+### RAM
 
 Loading the Wikipedia passages into memory requires ~22GB of RAM.
 
 If you use `--indexer-type compressed --path-to-index zoo:hallucination/wiki_passages_compressed/compressed_pq`, you'll only require an additional ~3GB of RAM; if you use `--indexer-type exact --path-to-index zoo:hallucination/wiki_passages_exact/exact`, you'll need an additional ~80GB of RAM.
 
-#### GPU
+### GPU
 
 To train BART-Large RAG / FiD models, with a batchsize of 16 (or DPR-Poly models with a batchsize of 8), you'll want to have at least 4x32gb GPUs. You can adjust the batchsize to fit your GPU memory constraints.
 
