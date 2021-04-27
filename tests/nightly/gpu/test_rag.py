@@ -12,7 +12,7 @@ import parlai.utils.testing as testing_utils
 
 try:
     import parlai.agents.rag.dpr  # noqa: F401
-except (ImportError, ModuleNotFoundError):
+except ImportError:
     pass
 
 from parlai.agents.rag.args import (
@@ -34,10 +34,11 @@ common_opt = {
     'dpr_model_file': DPR_ZOO_MODEL,
     'n_docs': 2,
     'task': 'integration_tests',
-    'num_examples': 5,
+    'num_examples': 1,
     'label_truncate': 5,
     'indexer_type': 'compressed',
     'compressed_indexer_gpu_train': False,
+    'rag_turn_n_turns': 2,
 }
 
 test_opt = {
@@ -64,26 +65,21 @@ GENERATION_OPTS = {
         'n_heads': 16,
         'n_positions': 1024,
         'variant': 'bart',
-        'truncate': 512,
+        'truncate': 64,
         'dict_tokenizer': 'gpt2',
         'init_model': 'zoo:bart/bart_large/model',
         'dict_file': 'zoo:bart/bart_large/model.dict',
         'fp16': True,
     },
-    't5': {
-        't5_model_arch': 't5-large',
-        'fp16': True,
-        'text_truncate': 512,
-        'label_truncate': 128,
-    },
+    't5': {'t5_model_arch': 't5-small', 'fp16': True, 'truncate': 64},
     'transformer/generator': {
         'init_model': 'zoo:tutorial_transformer_generator/model',
         'dict_file': 'zoo:tutorial_transformer_generator/model.dict',
         'dict_tokenizer': 'bpe',
         'variant': 'xlm',
         'activation': 'gelu',
-        'text_truncate': 512,
-        'label_truncate': 128,
+        'text_truncate': 64,
+        'label_truncate': 64,
         'n_positions': 512,
         'ffn_size': 2048,
         'n_layers': 8,
@@ -101,11 +97,8 @@ RAG_SEQUENCE_OPTIONS = {}
 RAG_MODEL_TYPE_OPTIONS = {
     'token': {'thorough': [False]},
     'sequence': {'thorough': [False, True]},
-    'turn': {
-        'thorough': [False, True],
-        'rag_turn_marginalize': ['doc_then_turn', 'doc_only'],
-        'rag_turn_n_turns': [2, 3],
-    },
+    'turn': {'rag_turn_marginalize': ['doc_then_turn', 'doc_only']},
+    'turn:thorough=True': {'rag_turn_marginalize': ['doc_only']},
 }
 
 
@@ -115,11 +108,16 @@ class TestRagDpr(unittest.TestCase):
     Test all RAG DPR Model Types with Base Generators.
     """
 
-    def _test_rag_type(self, model_type: str, gen_model: str):
+    def _test_rag_type(self, model_type: str, gen_model: str, no_cuda: bool = False):
         opt = copy.deepcopy(common_opt)
         opt['generation_model'] = gen_model
         opt.update(GENERATION_OPTS[gen_model])
-        opt['rag_model_type'] = model_type
+        opt['rag_model_type'] = model_type.split(':')[0]
+        opt['no_cuda'] = no_cuda
+        for vals in model_type.split(':'):
+            if '=' in vals:
+                k, v = vals.split('=')
+                opt[k] = bool(v)
         for option, vals in RAG_MODEL_TYPE_OPTIONS[model_type].items():
             for val in vals:
                 opt[option] = val
@@ -129,28 +127,37 @@ class TestRagDpr(unittest.TestCase):
         self._test_rag_type('sequence', 'bart')
 
     def test_bart_rag_token(self):
-        self._test_rag_type('token', 'bart')
+        self._test_rag_type('token', 'bart', no_cuda=True)
 
     def test_bart_rag_turn(self):
-        self._test_rag_type('turn', 'bart')
+        self._test_rag_type('turn', 'bart', no_cuda=True)
+
+    def test_bart_rag_turn_thorough(self):
+        self._test_rag_type('turn:thorough=True', 'bart', no_cuda=True)
 
     def test_t5_rag_sequence(self):
-        self._test_rag_type('sequence', 't5')
+        self._test_rag_type('sequence', 't5', no_cuda=True)
 
     def test_t5_rag_token(self):
         self._test_rag_type('token', 't5')
 
     def test_t5_rag_turn(self):
-        self._test_rag_type('turn', 't5')
+        self._test_rag_type('turn', 't5', no_cuda=True)
+
+    def test_t5_rag_turn_thorough(self):
+        self._test_rag_type('turn:thorough=True', 't5', no_cuda=True)
 
     def test_reddit_rag_sequence(self):
-        self._test_rag_type('sequence', 'transformer/generator')
+        self._test_rag_type('sequence', 'transformer/generator', no_cuda=True)
 
     def test_reddit_rag_token(self):
-        self._test_rag_type('token', 'transformer/generator')
+        self._test_rag_type('token', 'transformer/generator', no_cuda=True)
 
     def test_reddit_rag_turn(self):
         self._test_rag_type('turn', 'transformer/generator')
+
+    def test_reddit_rag_turn_thorough(self):
+        self._test_rag_type('turn:thorough=True', 'transformer/generator', no_cuda=True)
 
 
 @testing_utils.skipUnlessGPU
@@ -159,18 +166,19 @@ class TestFidDpr(unittest.TestCase):
     Test FiD DPR Model.
     """
 
-    def _test_fid(self, gen_model: str):
+    def _test_fid(self, gen_model: str, no_cuda: bool = False):
         opt = copy.deepcopy(common_opt)
         opt['model'] = 'fid'
         opt['generation_model'] = gen_model
+        opt['no_cuda'] = no_cuda
         opt.update(GENERATION_OPTS[gen_model])
         testing_utils.eval_model(opt, skip_test=True)
 
     def test_bart_fid(self):
-        self._test_fid('bart')
+        self._test_fid('bart', no_cuda=True)
 
     def test_t5_fid(self):
-        self._test_fid('t5')
+        self._test_fid('t5', no_cuda=True)
 
     def test_reddit_fid(self):
         self._test_fid('transformer/generator')
@@ -182,23 +190,24 @@ class TestRagDprPoly(unittest.TestCase):
     Test RAG DPR Poly model.
     """
 
-    def _test_rag_type(self, model_type: str):
+    def _test_rag_type(self, model_type: str, no_cuda: bool = False):
         opt = copy.deepcopy(test_opt)
         opt['rag_retriever_type'] = 'dpr_then_poly'
         opt['rag_model_type'] = model_type
+        opt['no_cuda'] = no_cuda
         for option, vals in RAG_MODEL_TYPE_OPTIONS[model_type].items():
             for val in vals:
                 opt[option] = val
                 testing_utils.eval_model(opt, skip_test=True)
 
     def test_rag_sequence(self):
-        self._test_rag_type('sequence')
+        self._test_rag_type('sequence', no_cuda=True)
 
     def test_rag_token(self):
         self._test_rag_type('token')
 
     def test_rag_turn(self):
-        self._test_rag_type('turn')
+        self._test_rag_type('turn', no_cuda=True)
 
 
 @testing_utils.skipUnlessGPU
@@ -220,20 +229,21 @@ class TestFidRag(unittest.TestCase):
     Test Fid Rag.
     """
 
-    def _test_fid(self, gen_model: str):
+    def _test_fid(self, gen_model: str, no_cuda: bool = False):
         opt = copy.deepcopy(common_opt)
         opt['generation_model'] = gen_model
         opt['model'] = 'fid'
         opt['query_model'] = 'bert_from_parlai_rag'
         opt['dpr_model_file'] = rag_dpr_model_file
+        opt['no_cuda'] = no_cuda
         opt.update(GENERATION_OPTS[gen_model])
         testing_utils.eval_model(opt, skip_test=True)
 
     def test_bart_fid(self):
-        self._test_fid('bart')
+        self._test_fid('bart', no_cuda=True)
 
     def test_t5_fid(self):
-        self._test_fid('t5')
+        self._test_fid('t5', no_cuda=True)
 
     def test_reddit_fid(self):
         self._test_fid('transformer/generator')
@@ -264,6 +274,7 @@ class TestRegret(unittest.TestCase):
         opt = copy.deepcopy(test_opt)
         opt['regret_model_file'] = regret_mf
         opt['rag_model_type'] = 'token'
+        opt['no_cuda'] = True
         testing_utils.eval_model(opt, skip_test=True)
 
     def test_rag_regret_sep(self):
@@ -322,51 +333,59 @@ class TestQueryModels(unittest.TestCase):
         assert float(valid['accuracy']) >= 0.6
 
 
+def _test_zoo_file(mf: str, fid: bool = False, fid_rag: bool = False):
+    opt = copy.deepcopy(common_opt)
+    if fid:
+        opt['model'] = 'fid'
+    if fid_rag:
+        opt['dpr_model_file'] = RAG_TOKEN_ZOO_MODEL
+    opt.update(GENERATION_OPTS['bart'])
+    opt['model_file'] = mf
+    opt['generation_model'] = 'bart'
+    opt['task'] = 'wizard_of_wikipedia'
+    opt['label_truncate'] = 10
+    valid, _ = testing_utils.eval_model(opt, skip_test=True)
+    assert valid['ppl'] < 15.0
+    assert (100 * float(valid['f1'])) > 10.0
+    torch.cuda.empty_cache()
+
+
 @testing_utils.skipUnlessGPU
-class TestZooModels(unittest.TestCase):
+class TestRagZooModels(unittest.TestCase):
     """
     Test ZOO Models.
     """
 
-    def _test_zoo_file(self, mf: str, fid: bool = False, fid_rag: bool = False):
-        opt = copy.deepcopy(common_opt)
-        if fid:
-            opt['model'] = 'fid'
-        if fid_rag:
-            opt['dpr_model_file'] = RAG_TOKEN_ZOO_MODEL
-        opt.update(GENERATION_OPTS['bart'])
-        opt['model_file'] = mf
-        opt['generation_model'] = 'bart'
-        opt['task'] = 'wizard_of_wikipedia'
-        opt['label_truncate'] = 10
-        valid, _ = testing_utils.eval_model(opt, skip_test=True)
-        assert valid['ppl'] < 25.0
-        assert (100 * float(valid['f1'])) > 15.0
-        torch.cuda.empty_cache()
-
     def test_bart_rag_token(self):
-        self._test_zoo_file(RAG_TOKEN_ZOO_MODEL)
+        _test_zoo_file(RAG_TOKEN_ZOO_MODEL)
 
     def test_bart_rag_sequence(self):
-        self._test_zoo_file(RAG_SEQUENCE_ZOO_MODEL)
+        _test_zoo_file(RAG_SEQUENCE_ZOO_MODEL)
 
     def test_bart_rag_dpr_poly(self):
-        self._test_zoo_file(RAG_DPR_POLY_ZOO_MODEL)
+        _test_zoo_file(RAG_DPR_POLY_ZOO_MODEL)
 
     def test_bart_rag_turn_dtt(self):
-        self._test_zoo_file(RAG_TURN_DTT_ZOO_MODEL)
+        _test_zoo_file(RAG_TURN_DTT_ZOO_MODEL)
 
     def test_bart_rag_turn_do(self):
-        self._test_zoo_file(RAG_TURN_DO_ZOO_MODEL)
+        _test_zoo_file(RAG_TURN_DO_ZOO_MODEL)
+
+
+@testing_utils.skipUnlessGPU
+class TestFidZooModels(unittest.TestCase):
+    """
+    Test FiD zoo models.
+    """
 
     def test_bart_fid_dpr(self):
-        self._test_zoo_file(FID_DPR_ZOO_MODEL, True)
+        _test_zoo_file(FID_DPR_ZOO_MODEL, True)
 
     def test_bart_fid_rag(self):
-        self._test_zoo_file(FID_RAG_ZOO_MODEL, True, True)
+        _test_zoo_file(FID_RAG_ZOO_MODEL, True, True)
 
     def test_bart_fid_rag_dpr_poly(self):
-        self._test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
+        _test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
 
 
 if __name__ == '__main__':
