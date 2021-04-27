@@ -1,7 +1,7 @@
 # Option Aliases
 
 This folder contains a set of "option aliases" that are automatically packaged
-and provided with ParlAI. They are used as shorthand for 
+and provided with ParlAI. They are used as shorthand for
 
 ## Adding option aliases
 
