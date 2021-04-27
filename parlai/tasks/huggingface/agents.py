@@ -11,7 +11,7 @@ from typing_extensions import TypedDict
 import os
 
 # huggingface imports
-from datasets import load_dataset
+import datasets
 
 
 class SplitsMappingDict(TypedDict):
@@ -93,13 +93,17 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
         """
         try to return the true label text value from the row and the candidates.
         """
-        pre_candidates = self.dataset.features[self.hf_label_field].names
-        # construct label and candidates
-        if type(label) is int:
-            return pre_candidates[label], pre_candidates
-        if label in row:
-            return row[label], [row[l] for l in pre_candidates]
-        return label, pre_candidates
+        if isinstance(self.dataset.features['label'], datasets.features.ClassLabel):
+            pre_candidates = self.dataset.features[self.hf_label_field].names
+            # construct label and candidates
+            if type(label) is int:
+                return pre_candidates[label], pre_candidates
+            if label in row:
+                return row[label], [row[l] for l in pre_candidates]
+            return label, pre_candidates
+        else:
+            label = str(label)
+            return label, [label]
 
     def setup_data(self, path: str) -> Iterable[tuple]:
         """
@@ -108,7 +112,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
         Manually override if needed.
         """
         # load dataset from HuggingFace
-        self.dataset = load_dataset(
+        self.dataset = datasets.load_dataset(
             path=self.hf_path, name=self.hf_name, split=self.hf_split
         )
 
