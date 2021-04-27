@@ -8,8 +8,7 @@ Transformer decoder implementations.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Dict, Optional, Tuple, Type, Union
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -22,13 +21,18 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import modular_type, ModularComponent
+from parlai.agents.transformer.modules.interfaces import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerDecoderLayer(ModularComponent):
+@swappable(
+    self_attention=MultiHeadAttention,
+    encoder_attention=MultiHeadAttention,
+    feedforward=TransformerFFN,
+)
+class TransformerDecoderLayer(nn.Module):
     """
     Implements a single Transformer decoder layer.
 
@@ -37,14 +41,6 @@ class TransformerDecoderLayer(ModularComponent):
     1. Self-attention is limited in a causal (auto-regressive) manner.
     2. Attend over all of the encoder states.
     """
-
-    @dataclass
-    class Subcomponents:
-        self_attention: Type[MultiHeadAttention] = MultiHeadAttention
-        encoder_attention: Type[MultiHeadAttention] = MultiHeadAttention
-        feedforward: Type[TransformerFFN] = TransformerFFN
-
-    components: Subcomponents
 
     def __init__(
         self,
@@ -65,17 +61,17 @@ class TransformerDecoderLayer(ModularComponent):
         self.activation = activation
         self.dropout = nn.Dropout(p=dropout)
 
-        self.self_attention = self.components.self_attention(
+        self.self_attention = self.swappables.self_attention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.encoder_attention = self.components.encoder_attention(
+        self.encoder_attention = self.swappables.encoder_attention(
             n_heads, embedding_size, dropout=attention_dropout
         )
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.ffn = self.components.feedforward(
+        self.ffn = self.swappables.feedforward(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
         )
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
@@ -176,10 +172,8 @@ class TransformerDecoderLayer(ModularComponent):
         }
 
 
-LayerType = modular_type(TransformerDecoderLayer)
-
-
-class TransformerDecoder(ModularComponent):
+@swappable(layer=TransformerDecoderLayer)
+class TransformerDecoder(nn.Module):
     """
     Transformer Decoder module.
 
@@ -191,12 +185,6 @@ class TransformerDecoder(ModularComponent):
         If none, one is created for this encoder.
     :param int n_positions: Size of the position embeddings matrix.
     """
-
-    @dataclass
-    class Subcomponents:
-        layer: LayerType = TransformerDecoderLayer
-
-    components: Subcomponents
 
     def __init__(
         self,
@@ -267,7 +255,7 @@ class TransformerDecoder(ModularComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                self.components.layer(
+                self.swappables.layer(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,

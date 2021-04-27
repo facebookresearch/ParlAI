@@ -17,8 +17,7 @@ literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Type
 
 import torch
 import torch.cuda
@@ -29,28 +28,18 @@ from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerEncoder,
 )
-from parlai.agents.transformer.modules.interfaces import modular_type, ModularComponent
+from parlai.agents.transformer.modules.interfaces import swappable
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
 
-EncoderType = modular_type(TransformerEncoder)
-DecoderType = modular_type(TransformerDecoder)
-
-
-class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
+@swappable(encoder=TransformerEncoder, decoder=TransformerDecoder)
+class TransformerGeneratorModel(TorchGeneratorModel):
     """
     Implements a full generator model, with one encoder and one decoder.
     """
-
-    @dataclass
-    class Subcomponents:
-        encoder: EncoderType = TransformerEncoder
-        decoder: DecoderType = TransformerDecoder
-
-    components: Subcomponents
 
     @classmethod
     def build_encoder(
@@ -60,7 +49,7 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
         embedding=None,
         padding_idx=None,
         reduction_type='mean',
-        encoder_class: EncoderType = TransformerEncoder,
+        encoder_class: Type[TransformerEncoder] = TransformerEncoder,
         **kwargs,
     ) -> TransformerEncoder:
         return encoder_class(
@@ -77,7 +66,7 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
         cls,
         opt,
         embedding=None,
-        decoder_class: DecoderType = TransformerDecoder,
+        decoder_class: Type[TransformerDecoder] = TransformerDecoder,
         **kwargs,
     ) -> TransformerDecoder:
         return decoder_class(opt=opt, embedding=embedding, **kwargs)
@@ -98,10 +87,10 @@ class TransformerGeneratorModel(TorchGeneratorModel, ModularComponent):
             self.embeddings,
             self.pad_idx,
             reduction_type=None,
-            encoder_class=self.components.encoder,
+            encoder_class=self.swappables.encoder,
         )
         self.decoder = self.build_decoder(
-            opt, embedding=self.embeddings, decoder_class=self.components.decoder
+            opt, embedding=self.embeddings, decoder_class=self.swappables.decoder
         )
 
     def reorder_encoder_states(self, encoder_states, indices):

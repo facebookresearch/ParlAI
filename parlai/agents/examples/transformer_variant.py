@@ -8,19 +8,19 @@ Example code for specifying custom transformer variants.
 TransformerVariantAgent:
 - Minimal changes needed to:
     - Swap out a high-level component (encoder)
-    - Swap out a low-level component (decoder.layer.self_attention)
+    - Swap out a low-level component (decoder->layer->self_attention)
 
 VerboseTransformerAgent:
 - Doesn't swap out anything
-- Fully-specifies all components, for illustration
+- Fully specifies all components, for illustration
 
 ConfigurableTransformerAgent:
-- Swaps out implementations based on command line args
+- Swaps out components based on command line args
 """
 from __future__ import annotations
 import torch
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Dict, Optional, Tuple, Union
 
 from parlai.agents.transformer.modules import (
     TransformerFFN,
@@ -45,8 +45,9 @@ import parlai.utils.logging as logging
 class TransformerVariantAgent(TransformerGeneratorAgent):
     """
     Swapping out two things:
-    1) Encoder (high-level component)
-    2) Decoder self attention (low-level component)
+
+    1. Encoder (high-level component)
+    2. Decoder self attention (low-level component)
     """
 
     def build_model(self, states=None):
@@ -63,9 +64,9 @@ class TransformerVariantAgent(TransformerGeneratorAgent):
 
 class MyCustomEncoder(TransformerEncoder):
     """
-    For brevity this subclasses TransformerEncoder, but you could
-    write your own nn.Module from scratch as long as the __init__
-    and forward signatures match TransformerEncoder.
+    For brevity this subclasses TransformerEncoder, but you could write your own
+    nn.Module from scratch as long as the __init__ and forward signatures match
+    TransformerEncoder.
     """
 
     def forward(  # type: ignore
@@ -81,9 +82,8 @@ class MyCustomEncoder(TransformerEncoder):
 
 class MyCustomAttention(MultiHeadAttention):
     """
-    For brevity this just renames MultiHeadAttention, but
-    ideally you'd define a new nn.Module with the same
-    __init__ and forward signature as MultiHeadAttention
+    For brevity this just renames MultiHeadAttention, but ideally you'd define a new
+    nn.Module with the same __init__ and forward signature as MultiHeadAttention.
     """
 
     def forward(
@@ -114,13 +114,15 @@ class MyCustomAttention(MultiHeadAttention):
 
 class VerboseTransformerAgent(TransformerGeneratorAgent):
     """
-    Doesn't make any changes to TransformerGeneratorModel, just specifies
-    all subcomponents explicitly. This is meant to be a reference for how
-    to swap any component within TransformerGeneratorModel.
+    Doesn't make any changes to TransformerGeneratorModel, just specifies all
+    subcomponents explicitly.
+
+    This is meant to be a reference for how to swap any component within
+    TransformerGeneratorModel.
     """
 
     def build_model(self, states=None):
-        components = TransformerGeneratorModel.Subcomponents(
+        wrapped_class = TransformerGeneratorModel.with_components(
             encoder=TransformerEncoder.with_components(
                 layer=TransformerEncoderLayer.with_components(
                     self_attention=MultiHeadAttention, feedforward=TransformerFFN
@@ -134,9 +136,7 @@ class VerboseTransformerAgent(TransformerGeneratorAgent):
                 )
             ),
         )
-        return TransformerGeneratorModel(
-            opt=self.opt, dictionary=self.dict, components=components
-        )
+        return wrapped_class(opt=self.opt, dictionary=self.dict)
 
 
 ################################################
@@ -150,16 +150,21 @@ class DecoderFeedForwardVariant(Enum):
 
 
 class DecoderFFNOne(TransformerFFN):
-    logging.info("Using Decoder FFN Variant One")
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        logging.info("Using Decoder FFN Variant One")
+        return super().forward(x)
 
 
 class DecoderFFNTwo(TransformerFFN):
-    logging.info("Using Decoder FFN Variant Two")
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        logging.info("Using Decoder FFN Variant Two")
+        return super().forward(x)
 
 
 class ConfigurableTransformerAgent(TransformerGeneratorAgent):
     """
     Illustrates swapping out components based on command line args.
+
     Specifically, swaps out the decoder ffn between two options.
     """
 

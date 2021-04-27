@@ -9,11 +9,20 @@ Test many variants of transformers.
 """
 
 import os
+import torch
 import unittest
+from unittest.mock import MagicMock
 import pytest
 import parlai.utils.testing as testing_utils
+from parlai.agents.transformer.modules import (
+    TransformerFFN,
+    TransformerGeneratorModel,
+    TransformerEncoder,
+    TransformerEncoderLayer,
+)
 from parlai.core.agents import create_agent
 from parlai.core.agents import create_agent_from_model_file
+from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from .test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
 from parlai.core.params import ParlaiParser
@@ -870,6 +879,29 @@ class TestImagePolyencoder(unittest.TestCase):
         assert (
             valid['accuracy'] > 0.1
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+
+class TestSwappableComponents(unittest.TestCase):
+    def _opt(self):
+        return Opt(n_layers=1, n_heads=4, ffn_size=64, embedding_size=8)
+
+    def test_swap_encoder_attention(self):
+        CustomFFN = type('CustomFFN', (TransformerFFN,), {})
+        CustomFFN.forward = MagicMock()
+        wrapped_class = TransformerGeneratorModel.with_components(
+            encoder=TransformerEncoder.with_components(
+                layer=TransformerEncoderLayer.with_components(feedforward=CustomFFN)
+            )
+        )
+        opt = self._opt()
+        CustomFFN.forward.assert_not_called
+        model = wrapped_class(opt=opt, dictionary=DictionaryAgent(opt))
+        try:
+            model(torch.zeros(1, 1).long(), ys=torch.zeros(1, 1).long())
+        except TypeError:
+            pass
+        finally:
+            CustomFFN.forward.assert_called
 
 
 if __name__ == '__main__':

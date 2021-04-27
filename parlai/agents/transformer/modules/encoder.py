@@ -8,8 +8,7 @@ Transformer encoder implementations.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Tuple, Optional, Type, Union
+from typing import Tuple, Optional, Union
 
 import numpy as np
 import torch
@@ -22,23 +21,17 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import modular_type, ModularComponent
+from parlai.agents.transformer.modules.interfaces import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
-class TransformerEncoderLayer(ModularComponent):
+@swappable(self_attention=MultiHeadAttention, feedforward=TransformerFFN)
+class TransformerEncoderLayer(nn.Module):
     """
     Implements a single Transformer encoder layer.
     """
-
-    @dataclass
-    class Subcomponents:
-        self_attention: Type[MultiHeadAttention] = MultiHeadAttention
-        feedforward: Type[TransformerFFN] = TransformerFFN
-
-    components: Subcomponents
 
     def __init__(
         self,
@@ -57,11 +50,11 @@ class TransformerEncoderLayer(ModularComponent):
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = self.components.self_attention(
+        self.attention = self.swappables.self_attention(
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.ffn = self.components.feedforward(
+        self.ffn = self.swappables.feedforward(
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
@@ -91,10 +84,8 @@ class TransformerEncoderLayer(ModularComponent):
         return tensor
 
 
-LayerType = modular_type(TransformerEncoderLayer)
-
-
-class TransformerEncoder(ModularComponent):
+@swappable(layer=TransformerEncoderLayer)
+class TransformerEncoder(nn.Module):
     """
     Transformer encoder module.
 
@@ -112,12 +103,6 @@ class TransformerEncoder(ModularComponent):
     :param bool embeddings_scale: Scale embeddings relative to their dimensionality.
         Found useful in fairseq.
     """
-
-    @dataclass
-    class Subcomponents:
-        layer: LayerType = TransformerEncoderLayer
-
-    components: Subcomponents
 
     def __init__(
         self,
@@ -218,7 +203,7 @@ class TransformerEncoder(ModularComponent):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                self.components.layer(
+                self.swappables.layer(
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
