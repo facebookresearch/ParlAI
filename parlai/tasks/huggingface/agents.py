@@ -97,7 +97,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
             pre_candidates = self.dataset.features[self.hf_label_field].names
             # construct label and candidates
             if type(label) is int:
-                return pre_candidates[label], pre_candidates
+                label = pre_candidates[label]
             if label in row:
                 return row[label], [row[l] for l in pre_candidates]
             return label, pre_candidates
