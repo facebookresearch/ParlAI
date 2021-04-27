@@ -1,11 +1,11 @@
 # *I like fish <span>&#x1F41F;</span>, especially dolphins <span>&#x1F42C;</span>:*<sup>[∗](#dolphion)</sup> Addressing Contradictions in Dialogue Modeling
 
-A study on *contradiction* detection and *non-contradiction* generation in dialogue modeling.  
+A study on *contradiction* detection and *non-contradiction* generation in dialogue modeling.
 The paper can be found here: [Nie et al. (2020)](https://arxiv.org/abs/2012.13391).
 
 ## Abstract
 
-To quantify how well natural language understanding models can capture consistency in a general conversation, we introduce the **D**ialogu**E** **CO**ntradiction **DE**tection task (**DECODE**) and a new conversational dataset containing both human-human and human-bot contradictory dialogues. We then compare a structured utterance-based approach of using pre-trained Transformer models for contradiction detection with the typical unstructured approach. 
+To quantify how well natural language understanding models can capture consistency in a general conversation, we introduce the **D**ialogu**E** **CO**ntradiction **DE**tection task (**DECODE**) and a new conversational dataset containing both human-human and human-bot contradictory dialogues. We then compare a structured utterance-based approach of using pre-trained Transformer models for contradiction detection with the typical unstructured approach.
 
 Results reveal that:
 <ol>
@@ -48,7 +48,7 @@ See [download data from s3 with raw format](https://github.com/facebookresearch/
 If you use the dataset or models in your own work, please cite with the following BibTex entry:
 ```
 @misc{nie2020i,
-      title={I like fish, especially dolphins: Addressing Contradictions in Dialogue Modelling}, 
+      title={I like fish, especially dolphins: Addressing Contradictions in Dialogue Modelling},
       author={Yixin Nie and Mary Williamson and Mohit Bansal and Douwe Kiela and Jason Weston},
       year={2020},
       eprint={2012.13391},

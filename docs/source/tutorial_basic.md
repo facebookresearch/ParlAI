@@ -409,7 +409,7 @@ parlai interactive --model-file zoo:pretrained_transformers/model_poly/model --t
 parlai interactive --model projects:wizard_of_wikipedia:interactive_retrieval --task wizard_of_wikipedia
 ```
 
-To view additional fields from the model output, try use the flag `--display-add-fields`. For example, 
+To view additional fields from the model output, try use the flag `--display-add-fields`. For example,
 ```
 parlai interactive --model-file zoo:blender/blender_90M/model --task convai2 --display-add-fields beam_texts
 ```

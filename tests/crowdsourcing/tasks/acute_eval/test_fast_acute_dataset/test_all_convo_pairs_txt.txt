@@ -119,6 +119,3 @@ LOSING DIALOGUE: convai2_logs
 QUESTION: Who would you prefer to talk to for a long conversation?
 TURKER'S CHOICE: ed_logs
 REASON: Makes more sense
-
-
-
