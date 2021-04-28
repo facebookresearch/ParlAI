@@ -51,7 +51,7 @@ class TransformerVariantAgent(TransformerGeneratorAgent):
     """
 
     def build_model(self, states=None):
-        components = TransformerGeneratorModel.Subcomponents(
+        wrapped_class = TransformerGeneratorModel.with_components(
             encoder=MyCustomEncoder,
             decoder=TransformerDecoder.with_components(
                 layer=TransformerDecoderLayer.with_components(
@@ -59,7 +59,7 @@ class TransformerVariantAgent(TransformerGeneratorAgent):
                 )
             ),
         )
-        return TransformerGeneratorModel(self.opt, self.dict, components=components)
+        return wrapped_class(self.opt, self.dict)
 
 
 class MyCustomEncoder(TransformerEncoder):
@@ -69,7 +69,7 @@ class MyCustomEncoder(TransformerEncoder):
     TransformerEncoder.
     """
 
-    def forward(  # type: ignore
+    def forward(
         self,
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
@@ -77,7 +77,7 @@ class MyCustomEncoder(TransformerEncoder):
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
         logging.info("Custom encoder called!")
         # Comment out the following line and write your custom `forward` instead.
-        return super().forward(input, positions, segments)
+        return super().forward(input, positions, segments)  # type: ignore
 
 
 class MyCustomAttention(MultiHeadAttention):
@@ -180,7 +180,7 @@ class ConfigurableTransformerAgent(TransformerGeneratorAgent):
             default=DecoderFeedForwardVariant.ONE,
             help='Some variants in the decoder FFN implementation',
         )
-        return agent
+        return agent  # type: ignore
 
     def build_model(self, states=None):
         decoder_variant: DecoderFeedForwardVariant = self.opt['decoder_ffn_variants']
@@ -194,13 +194,11 @@ class ConfigurableTransformerAgent(TransformerGeneratorAgent):
             )
             decoder_ffn_class = TransformerFFN
 
-        components = TransformerGeneratorModel.Subcomponents(
+        wrapped_class = TransformerGeneratorModel.with_components(
             decoder=TransformerDecoder.with_components(
                 layer=TransformerDecoderLayer.with_components(
                     feedforward=decoder_ffn_class
                 )
             )
         )
-        return TransformerGeneratorModel(
-            opt=self.opt, dictionary=self.dict, components=components
-        )
+        return wrapped_class(opt=self.opt, dictionary=self.dict)

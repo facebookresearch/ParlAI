@@ -28,7 +28,7 @@ from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerEncoder,
 )
-from parlai.agents.transformer.modules.interfaces import swappable
+from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorModel
@@ -87,10 +87,12 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             self.embeddings,
             self.pad_idx,
             reduction_type=None,
-            encoder_class=self.swappables.encoder,
+            encoder_class=self.swappables.encoder,  # type: ignore
         )
         self.decoder = self.build_decoder(
-            opt, embedding=self.embeddings, decoder_class=self.swappables.decoder
+            opt,
+            embedding=self.embeddings,
+            decoder_class=self.swappables.decoder,  # type: ignore
         )
 
     def reorder_encoder_states(self, encoder_states, indices):

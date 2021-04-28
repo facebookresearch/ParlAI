@@ -21,7 +21,7 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import swappable
+from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
@@ -63,17 +63,17 @@ class TransformerDecoderLayer(nn.Module):
 
         self.self_attention = self.swappables.self_attention(
             n_heads, embedding_size, dropout=attention_dropout
-        )
+        )  # type: ignore
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.encoder_attention = self.swappables.encoder_attention(
             n_heads, embedding_size, dropout=attention_dropout
-        )
+        )  # type: ignore
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = self.swappables.feedforward(
             embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
-        )
+        )  # type: ignore
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
     def forward(
@@ -82,6 +82,7 @@ class TransformerDecoderLayer(nn.Module):
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
@@ -264,7 +265,7 @@ class TransformerDecoder(nn.Module):
                     dropout=dropout_frac,
                     activation=self.activation,
                     variant=self.variant,
-                )
+                )  # type: ignore
             )
 
     def forward_embedding(
@@ -348,6 +349,7 @@ class TransformerDecoder(nn.Module):
         input: torch.Tensor,
         encoder_state,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.

@@ -21,7 +21,7 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
-from parlai.agents.transformer.modules.interfaces import swappable
+from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
@@ -50,11 +50,11 @@ class TransformerEncoderLayer(nn.Module):
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = self.swappables.self_attention(
+        self.attention = self.swappables.self_attention(  # type: ignore
             n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-        self.ffn = self.swappables.feedforward(
+        self.ffn = self.swappables.feedforward(  # type: ignore
             embedding_size,
             ffn_size,
             relu_dropout=relu_dropout,
@@ -63,7 +63,9 @@ class TransformerEncoderLayer(nn.Module):
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.dropout = nn.Dropout(p=dropout)
 
-    def forward(self, tensor: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, tensor: torch.Tensor, mask: torch.Tensor, **kwargs
+    ) -> torch.Tensor:
         """
         Forward pass.
         """
@@ -203,7 +205,7 @@ class TransformerEncoder(nn.Module):
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
-                self.swappables.layer(
+                self.swappables.layer(  # type: ignore
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,
@@ -318,6 +320,7 @@ class TransformerEncoder(nn.Module):
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
+        **kwargs,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.BoolTensor]]:
         """
         Forward pass.
