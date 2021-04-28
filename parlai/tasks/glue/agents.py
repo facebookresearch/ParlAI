@@ -4,15 +4,22 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.teachers import MultiTaskTeacher
 from parlai.tasks.huggingface.agents import AbstractHuggingFaceTeacher
+from copy import deepcopy
 
 
 class AxTeacher(AbstractHuggingFaceTeacher):
+    """
+    Note: this is an evaluation dataset so it only has a test split
+    Use a model trained on MulitNLI to produce predictions for this dataset.
+    """
+
     hf_path = 'glue'
     hf_name = 'ax'
     hf_text_fields = ['premise', 'hypothesis']
     hf_label_field = 'label'
-    hf_splits_mapping = {'train': 'test', 'valid': 'test', 'test': 'test'}
+    hf_splits_mapping = {'train': None, 'valid': None, 'test': 'test'}
 
 
 class ColaTeacher(AbstractHuggingFaceTeacher):
@@ -91,5 +98,24 @@ class WnliTeacher(AbstractHuggingFaceTeacher):
     hf_splits_mapping = {'train': 'train', 'valid': 'validation', 'test': 'test'}
 
 
-class DefaultTeacher(ColaTeacher):
+class GlueTeacher(MultiTaskTeacher):
+    def __init__(self, opt, shared=None):
+        glue_tasks = [
+            'cola',
+            'mnli',
+            'mrpc',
+            'qnli',
+            'qqp',
+            'rte',
+            'sst2',
+            'stsb',
+            'wnli',
+        ]
+        glue_tasks = ['glue:' + t for t in glue_tasks]
+        opt = deepcopy(opt)
+        opt['task'] = ', '.join(glue_tasks)
+        super().__init__(opt, shared)
+
+
+class DefaultTeacher(GlueTeacher):
     pass

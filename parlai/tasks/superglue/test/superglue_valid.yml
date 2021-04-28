@@ -47,6 +47,34 @@ acts:
       does ethanol take more energy make that produces'
 - - episode_done: true
     eval_labels:
+    - contradiction
+    hypothesis: Valence was helping
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: Valence the void-brain, Valence the virtuous valet. Why couldn't the
+      figger choose his own portion of titanic anatomy to shaft? Did he think he was
+      helping?
+    text: 'Valence the void-brain, Valence the virtuous valet. Why couldn''t the figger
+      choose his own portion of titanic anatomy to shaft? Did he think he was helping?
+
+      Valence was helping'
+- - episode_done: true
+    eval_labels:
+    - Water flowed from the spout.
+    id: huggingface
+    label_candidates:
+    - The toilet filled with water.
+    - Water flowed from the spout.
+    premise: The man turned on the faucet.
+    question: effect
+    text: 'The man turned on the faucet.
+
+      effect'
+- - episode_done: true
+    eval_labels:
     - 'True'
     id: huggingface
     label_candidates:
@@ -89,69 +117,18 @@ acts:
       is house tax and property tax are same'
 - - episode_done: true
     eval_labels:
-    - 'True'
+    - neutral
+    hypothesis: there is a shipment
     id: huggingface
     label_candidates:
-    - 'False'
-    - 'True'
-    passage: Phantom pain -- Phantom pain sensations are described as perceptions
-      that an individual experiences relating to a limb or an organ that is not physically
-      part of the body. Limb loss is a result of either removal by amputation or congenital
-      limb deficiency. However, phantom limb sensations can also occur following nerve
-      avulsion or spinal cord injury.
-    question: is pain experienced in a missing body part or paralyzed area
-    text: 'Phantom pain -- Phantom pain sensations are described as perceptions that
-      an individual experiences relating to a limb or an organ that is not physically
-      part of the body. Limb loss is a result of either removal by amputation or congenital
-      limb deficiency. However, phantom limb sensations can also occur following nerve
-      avulsion or spinal cord injury.
+    - entailment
+    - contradiction
+    - neutral
+    premise: '``Who knows? The point is, do we go with it or not?'''' Do we assume
+      there is a shipment?'
+    text: '``Who knows? The point is, do we go with it or not?'''' Do we assume there
+      is a shipment?
 
-      is pain experienced in a missing body part or paralyzed area'
-- - episode_done: true
-    eval_labels:
-    - 'True'
-    id: huggingface
-    label_candidates:
-    - 'False'
-    - 'True'
-    passage: Harry Potter and the Escape from Gringotts -- Harry Potter and the Escape
-      from Gringotts is an indoor steel roller coaster at Universal Studios Florida,
-      a theme park located within the Universal Orlando Resort. Similar to dark rides,
-      the roller coaster utilizes special effects in a controlled-lighting environment
-      and also employs motion-based 3-D projection of both animation and live-action
-      sequences to enhance the experience. The ride, which is themed to the Gringotts
-      Wizarding Bank, became the flagship attraction for the expanded Wizarding World
-      of Harry Potter when it opened on July 8, 2014.
-    question: is harry potter and the escape from gringotts a roller coaster ride
-    text: 'Harry Potter and the Escape from Gringotts -- Harry Potter and the Escape
-      from Gringotts is an indoor steel roller coaster at Universal Studios Florida,
-      a theme park located within the Universal Orlando Resort. Similar to dark rides,
-      the roller coaster utilizes special effects in a controlled-lighting environment
-      and also employs motion-based 3-D projection of both animation and live-action
-      sequences to enhance the experience. The ride, which is themed to the Gringotts
-      Wizarding Bank, became the flagship attraction for the expanded Wizarding World
-      of Harry Potter when it opened on July 8, 2014.
-
-      is harry potter and the escape from gringotts a roller coaster ride'
-- - episode_done: true
-    eval_labels:
-    - 'True'
-    id: huggingface
-    label_candidates:
-    - 'False'
-    - 'True'
-    passage: Hydroxyzine -- Hydroxyzine preparations require a doctor's prescription.
-      The drug is available in two formulations, the pamoate and the dihydrochloride
-      or hydrochloride salts. Vistaril, Equipose, Masmoran, and Paxistil are preparations
-      of the pamoate salt, while Atarax, Alamon, Aterax, Durrax, Tran-Q, Orgatrax,
-      Quiess, and Tranquizine are of the hydrochloride salt.
-    question: is there a difference between hydroxyzine hcl and hydroxyzine pam
-    text: 'Hydroxyzine -- Hydroxyzine preparations require a doctor''s prescription.
-      The drug is available in two formulations, the pamoate and the dihydrochloride
-      or hydrochloride salts. Vistaril, Equipose, Masmoran, and Paxistil are preparations
-      of the pamoate salt, while Atarax, Alamon, Aterax, Durrax, Tran-Q, Orgatrax,
-      Quiess, and Tranquizine are of the hydrochloride salt.
-
-      is there a difference between hydroxyzine hcl and hydroxyzine pam'
-num_episodes: 3270
-num_examples: 3270
+      there is a shipment'
+num_episodes: 3426
+num_examples: 3426

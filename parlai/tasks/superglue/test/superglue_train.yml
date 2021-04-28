@@ -26,6 +26,33 @@ acts:
 
       do iran and afghanistan speak the same language'
 - - episode_done: true
+    hypothesis: the language was peeled down
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: It was a complex language. Not written down but handed down. One might
+      say it was peeled down.
+    text: 'It was a complex language. Not written down but handed down. One might
+      say it was peeled down.
+
+      the language was peeled down'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - The sun was rising.
+    - The grass was cut.
+    labels:
+    - The sun was rising.
+    premise: My body cast a shadow over the grass.
+    question: cause
+    text: 'My body cast a shadow over the grass.
+
+      cause'
+- - episode_done: true
     id: huggingface
     label_candidates:
     - 'False'
@@ -58,80 +85,27 @@ acts:
 
       do good samaritan laws protect those who help at an accident'
 - - episode_done: true
+    hypothesis: no women are allowed to take part in this ritual
     id: huggingface
     label_candidates:
-    - 'False'
-    - 'True'
+    - entailment
+    - contradiction
+    - neutral
     labels:
-    - 'True'
-    passage: Windows Movie Maker -- Windows Movie Maker (formerly known as Windows
-      Live Movie Maker in Windows 7) is a discontinued video editing software by Microsoft.
-      It is a part of Windows Essentials software suite and offers the ability to
-      create and edit videos as well as to publish them on OneDrive, Facebook, Vimeo,
-      YouTube, and Flickr.
-    question: is windows movie maker part of windows essentials
-    text: 'Windows Movie Maker -- Windows Movie Maker (formerly known as Windows Live
-      Movie Maker in Windows 7) is a discontinued video editing software by Microsoft.
-      It is a part of Windows Essentials software suite and offers the ability to
-      create and edit videos as well as to publish them on OneDrive, Facebook, Vimeo,
-      YouTube, and Flickr.
+    - entailment
+    premise: It is part of their religion, a religion I do not scoff at as it holds
+      many elements which match our own even though it lacks the truth of ours. At
+      one of their great festivals they have the ritual of driving out the devils
+      from their bodies. First the drummers come on - I may say that no women are
+      allowed to take part in this ritual and the ladies here will perhaps agree with
+      me that they are fortunate in that omission.
+    text: 'It is part of their religion, a religion I do not scoff at as it holds
+      many elements which match our own even though it lacks the truth of ours. At
+      one of their great festivals they have the ritual of driving out the devils
+      from their bodies. First the drummers come on - I may say that no women are
+      allowed to take part in this ritual and the ladies here will perhaps agree with
+      me that they are fortunate in that omission.
 
-      is windows movie maker part of windows essentials'
-- - episode_done: true
-    id: huggingface
-    label_candidates:
-    - 'False'
-    - 'True'
-    labels:
-    - 'True'
-    passage: Powdered sugar -- Powdered sugar, also called confectioners' sugar, icing
-      sugar, and icing cake, is a finely ground sugar produced by milling granulated
-      sugar into a powdered state. It usually contains a small amount of anti-caking
-      agent to prevent clumping and improve flow. Although most often produced in
-      a factory, powdered sugar can also be made by processing ordinary granulated
-      sugar in a coffee grinder, or by crushing it by hand in a mortar and pestle.
-    question: is confectionary sugar the same as powdered sugar
-    text: 'Powdered sugar -- Powdered sugar, also called confectioners'' sugar, icing
-      sugar, and icing cake, is a finely ground sugar produced by milling granulated
-      sugar into a powdered state. It usually contains a small amount of anti-caking
-      agent to prevent clumping and improve flow. Although most often produced in
-      a factory, powdered sugar can also be made by processing ordinary granulated
-      sugar in a coffee grinder, or by crushing it by hand in a mortar and pestle.
-
-      is confectionary sugar the same as powdered sugar'
-- - episode_done: true
-    id: huggingface
-    label_candidates:
-    - 'False'
-    - 'True'
-    labels:
-    - 'False'
-    passage: 'The Elder Scrolls Online -- As with other games in The Elder Scrolls
-      series, the game is set on the continent of Tamriel. The events of the game
-      occur a millennium before those of The Elder Scrolls V: Skyrim and around 800
-      years before The Elder Scrolls III: Morrowind and The Elder Scrolls IV: Oblivion.
-      It has a broadly similar structure to Skyrim, with two separate conflicts progressing
-      at the same time, one with the fate of the world in the balance, and one where
-      the prize is supreme power on Tamriel. In The Elder Scrolls Online, the first
-      struggle is against the Daedric Prince Molag Bal, who is attempting to meld
-      the plane of Mundus with his realm of Coldharbour, and the second is to capture
-      the vacant imperial throne, contested by three alliances of the mortal races.
-      The player character has been sacrificed to Molag Bal, and Molag Bal has stolen
-      their soul, the recovery of which is the primary game objective.'
-    question: is elder scrolls online the same as skyrim
-    text: 'The Elder Scrolls Online -- As with other games in The Elder Scrolls series,
-      the game is set on the continent of Tamriel. The events of the game occur a
-      millennium before those of The Elder Scrolls V: Skyrim and around 800 years
-      before The Elder Scrolls III: Morrowind and The Elder Scrolls IV: Oblivion.
-      It has a broadly similar structure to Skyrim, with two separate conflicts progressing
-      at the same time, one with the fate of the world in the balance, and one where
-      the prize is supreme power on Tamriel. In The Elder Scrolls Online, the first
-      struggle is against the Daedric Prince Molag Bal, who is attempting to meld
-      the plane of Mundus with his realm of Coldharbour, and the second is to capture
-      the vacant imperial throne, contested by three alliances of the mortal races.
-      The player character has been sacrificed to Molag Bal, and Molag Bal has stolen
-      their soul, the recovery of which is the primary game objective.
-
-      is elder scrolls online the same as skyrim'
-num_episodes: 9427
-num_examples: 9427
+      no women are allowed to take part in this ritual'
+num_episodes: 10077
+num_examples: 10077

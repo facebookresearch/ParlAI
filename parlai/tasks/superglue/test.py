@@ -11,14 +11,6 @@ class TestDefaultTeacher(AutoTeacherTest):
     task = "superglue"
 
 
-class TestAxbTeacher(AutoTeacherTest):
-    task = "superglue:axb"
-
-
-class TestAxgTeacher(AutoTeacherTest):
-    task = "superglue:axg"
-
-
 class TestBoolqTeacher(AutoTeacherTest):
     task = "superglue:boolq"
 
@@ -27,5 +19,5 @@ class TestCbTeacher(AutoTeacherTest):
     task = "superglue:cb"
 
 
-class TestCopqTeacher(AutoTeacherTest):
+class TestCopaTeacher(AutoTeacherTest):
     task = "superglue:copa"

@@ -11,10 +11,6 @@ class TestDefaultTeacher(AutoTeacherTest):
     task = "glue"
 
 
-class TestAxTeacher(AutoTeacherTest):
-    task = "glue:ax"
-
-
 class TestColaTeacher(AutoTeacherTest):
     task = "glue:cola"
 

@@ -19,6 +19,35 @@ acts:
       is the first series 20 euro note still legal tender'
 - - episode_done: true
     eval_labels:
+    - neutral
+    hypothesis: Polly was not an experienced ocean sailor
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: Polly had to think quickly. They were still close enough to shore for
+      him to return her to the police if she admitted she was not an experienced ocean
+      sailor.
+    text: 'Polly had to think quickly. They were still close enough to shore for him
+      to return her to the police if she admitted she was not an experienced ocean
+      sailor.
+
+      Polly was not an experienced ocean sailor'
+- - episode_done: true
+    eval_labels:
+    - It was small.
+    id: huggingface
+    label_candidates:
+    - It was fragile.
+    - It was small.
+    premise: The item was packaged in bubble wrap.
+    question: cause
+    text: 'The item was packaged in bubble wrap.
+
+      cause'
+- - episode_done: true
+    eval_labels:
     - 'True'
     id: huggingface
     label_candidates:
@@ -47,72 +76,22 @@ acts:
       tournament'
 - - episode_done: true
     eval_labels:
-    - 'True'
+    - neutral
+    hypothesis: the Kiwi Keith and the Mackenzie houses had prospered
     id: huggingface
     label_candidates:
-    - 'False'
-    - 'True'
-    passage: Bullsnake -- Bullsnakes are very powerful constrictors who eat small
-      mammals, such as mice, moles, rats, pocket gophers, ground squirrels, and rabbits,
-      as well as ground nesting birds, birds' eggs and lizards. Their climbing proficiency
-      enables them to raid bird nests (and birdhouses) to eat the nestlings or sitting
-      mother. One snake can eat five small birds within 15 minutes. Juvenile bullsnakes
-      depend on small lizards, frogs, and baby mice.
-    question: can a bull snake kill a small dog
-    text: 'Bullsnake -- Bullsnakes are very powerful constrictors who eat small mammals,
-      such as mice, moles, rats, pocket gophers, ground squirrels, and rabbits, as
-      well as ground nesting birds, birds'' eggs and lizards. Their climbing proficiency
-      enables them to raid bird nests (and birdhouses) to eat the nestlings or sitting
-      mother. One snake can eat five small birds within 15 minutes. Juvenile bullsnakes
-      depend on small lizards, frogs, and baby mice.
+    - entailment
+    - contradiction
+    - neutral
+    premise: Nevertheless, life went on as it always does. By the accidents of distance
+      and dates of birth both the Kiwi Keith and the Mackenzie houses had been spared
+      the effects of war and neither knew the pain of loss or the sadness of wounds
+      in young bodies. Indeed it could be said that they had prospered.
+    text: 'Nevertheless, life went on as it always does. By the accidents of distance
+      and dates of birth both the Kiwi Keith and the Mackenzie houses had been spared
+      the effects of war and neither knew the pain of loss or the sadness of wounds
+      in young bodies. Indeed it could be said that they had prospered.
 
-      can a bull snake kill a small dog'
-- - episode_done: true
-    eval_labels:
-    - 'True'
-    id: huggingface
-    label_candidates:
-    - 'False'
-    - 'True'
-    passage: NBA playoffs -- All rounds are best-of-seven series. Series are played
-      in a 2--2--1--1--1 format, meaning the team with home-court advantage hosts
-      games 1, 2, 5, and 7, while their opponent hosts games 3, 4, and 6, with games
-      5--7 being played if needed. This format has been used since 2014, after NBA
-      team owners unanimously voted to change from a 2--3--2 format on October 23,
-      2013.
-    question: are all nba playoff games best of 7
-    text: 'NBA playoffs -- All rounds are best-of-seven series. Series are played
-      in a 2--2--1--1--1 format, meaning the team with home-court advantage hosts
-      games 1, 2, 5, and 7, while their opponent hosts games 3, 4, and 6, with games
-      5--7 being played if needed. This format has been used since 2014, after NBA
-      team owners unanimously voted to change from a 2--3--2 format on October 23,
-      2013.
-
-      are all nba playoff games best of 7'
-- - episode_done: true
-    eval_labels:
-    - 'True'
-    id: huggingface
-    label_candidates:
-    - 'False'
-    - 'True'
-    passage: Manchester station group -- The Manchester station group is a station
-      group (for fares purposes) of four railway stations in Manchester city centre,
-      England consisting of Manchester Piccadilly, Manchester Oxford Road, Manchester
-      Victoria and Deansgate. The station group is printed on national railway tickets
-      as MANCHESTER STNS. For commuters in Greater Manchester the four stations are
-      printed as MANCHESTER CTLZ which additionally permits the use of Metrolink tram
-      services in the City Zone (between Deansgate-Castlefield, New Islington and
-      Victoria).
-    question: can i use my train ticket on the tram in manchester
-    text: 'Manchester station group -- The Manchester station group is a station group
-      (for fares purposes) of four railway stations in Manchester city centre, England
-      consisting of Manchester Piccadilly, Manchester Oxford Road, Manchester Victoria
-      and Deansgate. The station group is printed on national railway tickets as MANCHESTER
-      STNS. For commuters in Greater Manchester the four stations are printed as MANCHESTER
-      CTLZ which additionally permits the use of Metrolink tram services in the City
-      Zone (between Deansgate-Castlefield, New Islington and Victoria).
-
-      can i use my train ticket on the tram in manchester'
-num_episodes: 3245
-num_examples: 3245
+      the Kiwi Keith and the Mackenzie houses had prospered'
+num_episodes: 3995
+num_examples: 3995

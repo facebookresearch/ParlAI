@@ -10,39 +10,57 @@ acts:
     text: The sailors rode the breeze clear of the rocks.
 - - episode_done: true
     eval_labels:
-    - acceptable
+    - neutral
+    hypothesis: 'Everyone really likes the newest benefits '
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
-    sentence: The weights made the rope stretch over the pulley.
-    text: The weights made the rope stretch over the pulley.
+    - entailment
+    - neutral
+    - contradiction
+    premise: The new rights are nice enough
+    text: 'The new rights are nice enough
+
+      Everyone really likes the newest benefits '
 - - episode_done: true
     eval_labels:
-    - acceptable
+    - equivalent
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
-    sentence: The mechanical doll wriggled itself loose.
-    text: The mechanical doll wriggled itself loose.
+    - not_equivalent
+    - equivalent
+    sentence1: He said the foodservice pie business doesn 't fit the company 's long-term
+      growth strategy .
+    sentence2: '" The foodservice pie business does not fit our long-term growth strategy
+      .'
+    text: 'He said the foodservice pie business doesn ''t fit the company ''s long-term
+      growth strategy .
+
+      " The foodservice pie business does not fit our long-term growth strategy .'
 - - episode_done: true
     eval_labels:
-    - acceptable
+    - entailment
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
-    sentence: If you had eaten more, you would want less.
-    text: If you had eaten more, you would want less.
+    - entailment
+    - not_entailment
+    question: What came into force after the new constitution was herald?
+    sentence: As of that day, the new constitution heralding the Second Republic came
+      into force.
+    text: 'As of that day, the new constitution heralding the Second Republic came
+      into force.
+
+      What came into force after the new constitution was herald?'
 - - episode_done: true
     eval_labels:
-    - unacceptable
+    - not_duplicate
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
-    sentence: As you eat the most, you want the least.
-    text: As you eat the most, you want the least.
-num_episodes: 1043
-num_examples: 1043
+    - not_duplicate
+    - duplicate
+    question1: Why are African-Americans so beautiful?
+    question2: Why are hispanics so beautiful?
+    text: 'Why are African-Americans so beautiful?
+
+      Why are hispanics so beautiful?'
+num_episodes: 59879
+num_examples: 59879

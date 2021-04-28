@@ -9,40 +9,63 @@ acts:
     sentence: Our friends won't buy this analysis, let alone the next one we propose.
     text: Our friends won't buy this analysis, let alone the next one we propose.
 - - episode_done: true
+    hypothesis: 'Product and geography are what make cream skimming work. '
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
+    - entailment
+    - neutral
+    - contradiction
     labels:
-    - acceptable
-    sentence: One more pseudo generalization and I'm giving up.
-    text: One more pseudo generalization and I'm giving up.
+    - neutral
+    premise: Conceptually cream skimming has two basic dimensions - product and geography.
+    text: 'Conceptually cream skimming has two basic dimensions - product and geography.
+
+      Product and geography are what make cream skimming work. '
 - - episode_done: true
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
+    - not_equivalent
+    - equivalent
     labels:
-    - acceptable
-    sentence: One more pseudo generalization or I'm giving up.
-    text: One more pseudo generalization or I'm giving up.
+    - equivalent
+    sentence1: Amrozi accused his brother , whom he called " the witness " , of deliberately
+      distorting his evidence .
+    sentence2: Referring to him as only " the witness " , Amrozi accused his brother
+      of deliberately distorting his evidence .
+    text: 'Amrozi accused his brother , whom he called " the witness " , of deliberately
+      distorting his evidence .
+
+      Referring to him as only " the witness " , Amrozi accused his brother of deliberately
+      distorting his evidence .'
 - - episode_done: true
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
+    - entailment
+    - not_entailment
     labels:
-    - acceptable
-    sentence: The more we study verbs, the crazier they get.
-    text: The more we study verbs, the crazier they get.
+    - not_entailment
+    question: When did the third Digimon series begin?
+    sentence: Unlike the two seasons before it and most of the seasons that followed,
+      Digimon Tamers takes a darker and more realistic approach to its story featuring
+      Digimon who do not reincarnate after their deaths and more complex character
+      development in the original Japanese.
+    text: 'Unlike the two seasons before it and most of the seasons that followed,
+      Digimon Tamers takes a darker and more realistic approach to its story featuring
+      Digimon who do not reincarnate after their deaths and more complex character
+      development in the original Japanese.
+
+      When did the third Digimon series begin?'
 - - episode_done: true
     id: huggingface
     label_candidates:
-    - unacceptable
-    - acceptable
+    - not_duplicate
+    - duplicate
     labels:
-    - acceptable
-    sentence: Day by day the facts are getting murkier.
-    text: Day by day the facts are getting murkier.
-num_episodes: 8551
-num_examples: 8551
+    - not_duplicate
+    question1: How is the life of a math student? Could you describe your own experiences?
+    question2: Which level of prepration is enough for the exam jlpt5?
+    text: 'How is the life of a math student? Could you describe your own experiences?
+
+      Which level of prepration is enough for the exam jlpt5?'
+num_episodes: 949733
+num_examples: 949733
