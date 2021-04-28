@@ -191,7 +191,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             results_folder=results_folder, file_suffix=file_suffix
         )
         with open(file_path) as f:
-            contents = f.read()
+            contents = f.read().rstrip('\n') + '\n'
         file_regression.check(contents=contents)
 
     def _get_matching_file_path(self, results_folder: str, file_suffix: str) -> str:
