@@ -1,0 +1,58 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - '-1.0'
+    id: huggingface
+    label_candidates:
+    - '-1.0'
+    sentence1: A girl is styling her hair.
+    sentence2: A girl is brushing her hair.
+    text: 'A girl is styling her hair.
+
+      A girl is brushing her hair.'
+- - episode_done: true
+    eval_labels:
+    - '-1.0'
+    id: huggingface
+    label_candidates:
+    - '-1.0'
+    sentence1: A group of men play soccer on the beach.
+    sentence2: A group of boys are playing soccer on the beach.
+    text: 'A group of men play soccer on the beach.
+
+      A group of boys are playing soccer on the beach.'
+- - episode_done: true
+    eval_labels:
+    - '-1.0'
+    id: huggingface
+    label_candidates:
+    - '-1.0'
+    sentence1: One woman is measuring another woman's ankle.
+    sentence2: A woman measures another woman's ankle.
+    text: 'One woman is measuring another woman''s ankle.
+
+      A woman measures another woman''s ankle.'
+- - episode_done: true
+    eval_labels:
+    - '-1.0'
+    id: huggingface
+    label_candidates:
+    - '-1.0'
+    sentence1: A man is cutting up a cucumber.
+    sentence2: A man is slicing a cucumber.
+    text: 'A man is cutting up a cucumber.
+
+      A man is slicing a cucumber.'
+- - episode_done: true
+    eval_labels:
+    - '-1.0'
+    id: huggingface
+    label_candidates:
+    - '-1.0'
+    sentence1: A man is playing a harp.
+    sentence2: A man is playing a keyboard.
+    text: 'A man is playing a harp.
+
+      A man is playing a keyboard.'
+num_episodes: 1379
+num_examples: 1379

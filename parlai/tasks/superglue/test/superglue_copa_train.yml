@@ -1,0 +1,63 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - The sun was rising.
+    - The grass was cut.
+    labels:
+    - The sun was rising.
+    premise: My body cast a shadow over the grass.
+    question: cause
+    text: 'My body cast a shadow over the grass.
+
+      cause'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - The woman knew her friend was going through a hard time.
+    - The woman felt that her friend took advantage of her kindness.
+    labels:
+    - The woman knew her friend was going through a hard time.
+    premise: The woman tolerated her friend's difficult behavior.
+    question: cause
+    text: 'The woman tolerated her friend''s difficult behavior.
+
+      cause'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - The cafe reopened in a new location.
+    - They wanted to catch up with each other.
+    labels:
+    - They wanted to catch up with each other.
+    premise: The women met for coffee.
+    question: cause
+    text: 'The women met for coffee.
+
+      cause'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - The forecast predicted high temperatures.
+    - She planned to run along the beach.
+    labels:
+    - The forecast predicted high temperatures.
+    premise: The runner wore shorts.
+    question: cause
+    text: 'The runner wore shorts.
+
+      cause'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - It was a surprise party.
+    - It was a birthday party.
+    labels:
+    - It was a surprise party.
+    premise: The guests of the party hid behind the couch.
+    question: cause
+    text: 'The guests of the party hid behind the couch.
+
+      cause'
+num_episodes: 400
+num_examples: 400

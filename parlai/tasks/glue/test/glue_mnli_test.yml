@@ -1,0 +1,84 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: Hierbas is a name worth looking out for.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: Hierbas, ans seco, ans dulce, and frigola are just a few names worth
+      keeping a look-out for.
+    text: 'Hierbas, ans seco, ans dulce, and frigola are just a few names worth keeping
+      a look-out for.
+
+      Hierbas is a name worth looking out for.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: Many people would be very unhappy to loose control over their own
+      money.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: The extent of the behavioral effects would depend in part on the structure
+      of the individual account program and any limits on accessing the funds.
+    text: 'The extent of the behavioral effects would depend in part on the structure
+      of the individual account program and any limits on accessing the funds.
+
+      Many people would be very unhappy to loose control over their own money.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: It is in everyone's best interest to have access to information in
+      a timely manner.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: Timely access to information is in the best interests of both GAO and
+      the agencies.
+    text: 'Timely access to information is in the best interests of both GAO and the
+      agencies.
+
+      It is in everyone''s best interest to have access to information in a timely
+      manner.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: The French government passed anti-Jewish laws aimed at helping the
+      Nazi.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: Based in the Auvergnat spa town of Vichy, the French government often
+      proved more zealous than its masters in suppressing civil liberties and drawing
+      up anti-Jewish legislation.
+    text: 'Based in the Auvergnat spa town of Vichy, the French government often proved
+      more zealous than its masters in suppressing civil liberties and drawing up
+      anti-Jewish legislation.
+
+      The French government passed anti-Jewish laws aimed at helping the Nazi.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: It was constructed in 1870 and has the oldest canopy in Dublin.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: Built in 1870, its canopy of stained glass and cast iron is the oldest
+      in Dublin; its enthusiastic interior decoration is also typical of the era.
+    text: 'Built in 1870, its canopy of stained glass and cast iron is the oldest
+      in Dublin; its enthusiastic interior decoration is also typical of the era.
+
+      It was constructed in 1870 and has the oldest canopy in Dublin.'
+num_episodes: 9796
+num_examples: 9796

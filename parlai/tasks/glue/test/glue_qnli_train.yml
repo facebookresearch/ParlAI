@@ -1,0 +1,93 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    question: When did the third Digimon series begin?
+    sentence: Unlike the two seasons before it and most of the seasons that followed,
+      Digimon Tamers takes a darker and more realistic approach to its story featuring
+      Digimon who do not reincarnate after their deaths and more complex character
+      development in the original Japanese.
+    text: 'Unlike the two seasons before it and most of the seasons that followed,
+      Digimon Tamers takes a darker and more realistic approach to its story featuring
+      Digimon who do not reincarnate after their deaths and more complex character
+      development in the original Japanese.
+
+      When did the third Digimon series begin?'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    question: Which missile batteries often have individual launchers several kilometres
+      from one another?
+    sentence: When MANPADS is operated by specialists, batteries may have several
+      dozen teams deploying separately in small sections; self-propelled air defence
+      guns may deploy in pairs.
+    text: 'When MANPADS is operated by specialists, batteries may have several dozen
+      teams deploying separately in small sections; self-propelled air defence guns
+      may deploy in pairs.
+
+      Which missile batteries often have individual launchers several kilometres from
+      one another?'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - entailment
+    question: What two things does Popper argue Tarski's theory involves in an evaluation
+      of truth?
+    sentence: 'He bases this interpretation on the fact that examples such as the
+      one described above refer to two things: assertions and the facts to which they
+      refer.'
+    text: 'He bases this interpretation on the fact that examples such as the one
+      described above refer to two things: assertions and the facts to which they
+      refer.
+
+      What two things does Popper argue Tarski''s theory involves in an evaluation
+      of truth?'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - entailment
+    question: What is the name of the village 9 miles north of Calafat where the Ottoman
+      forces attacked the Russians?
+    sentence: On 31 December 1853, the Ottoman forces at Calafat moved against the
+      Russian force at Chetatea or Cetate, a small village nine miles north of Calafat,
+      and engaged them on 6 January 1854.
+    text: 'On 31 December 1853, the Ottoman forces at Calafat moved against the Russian
+      force at Chetatea or Cetate, a small village nine miles north of Calafat, and
+      engaged them on 6 January 1854.
+
+      What is the name of the village 9 miles north of Calafat where the Ottoman forces
+      attacked the Russians?'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    question: What famous palace is located in London?
+    sentence: 'London contains four World Heritage Sites: the Tower of London; Kew
+      Gardens; the site comprising the Palace of Westminster, Westminster Abbey, and
+      St Margaret''s Church; and the historic settlement of Greenwich (in which the
+      Royal Observatory, Greenwich marks the Prime Meridian, 0° longitude, and GMT).'
+    text: 'London contains four World Heritage Sites: the Tower of London; Kew Gardens;
+      the site comprising the Palace of Westminster, Westminster Abbey, and St Margaret''s
+      Church; and the historic settlement of Greenwich (in which the Royal Observatory,
+      Greenwich marks the Prime Meridian, 0° longitude, and GMT).
+
+      What famous palace is located in London?'
+num_episodes: 104743
+num_examples: 104743

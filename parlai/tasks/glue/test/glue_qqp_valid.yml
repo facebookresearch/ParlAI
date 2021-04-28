@@ -1,0 +1,67 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - not_duplicate
+    id: huggingface
+    label_candidates:
+    - not_duplicate
+    - duplicate
+    question1: Why are African-Americans so beautiful?
+    question2: Why are hispanics so beautiful?
+    text: 'Why are African-Americans so beautiful?
+
+      Why are hispanics so beautiful?'
+- - episode_done: true
+    eval_labels:
+    - not_duplicate
+    id: huggingface
+    label_candidates:
+    - not_duplicate
+    - duplicate
+    question1: I want to pursue PhD in Computer Science about social network,what
+      is the open problem in social networks?
+    question2: I handle social media for a non-profit. Should I start going to social
+      media networking events? Are there any good ones in the bay area?
+    text: 'I want to pursue PhD in Computer Science about social network,what is the
+      open problem in social networks?
+
+      I handle social media for a non-profit. Should I start going to social media
+      networking events? Are there any good ones in the bay area?'
+- - episode_done: true
+    eval_labels:
+    - duplicate
+    id: huggingface
+    label_candidates:
+    - not_duplicate
+    - duplicate
+    question1: Is there a reason why we should travel alone?
+    question2: What are some reasons to travel alone?
+    text: 'Is there a reason why we should travel alone?
+
+      What are some reasons to travel alone?'
+- - episode_done: true
+    eval_labels:
+    - not_duplicate
+    id: huggingface
+    label_candidates:
+    - not_duplicate
+    - duplicate
+    question1: Why are people so obsessed with having a girlfriend/boyfriend?
+    question2: How can a single male have a child?
+    text: 'Why are people so obsessed with having a girlfriend/boyfriend?
+
+      How can a single male have a child?'
+- - episode_done: true
+    eval_labels:
+    - not_duplicate
+    id: huggingface
+    label_candidates:
+    - not_duplicate
+    - duplicate
+    question1: What are some good baby girl names starting with D?
+    question2: What are some good baby girl names starting with D or H?
+    text: 'What are some good baby girl names starting with D?
+
+      What are some good baby girl names starting with D or H?'
+num_episodes: 40430
+num_examples: 40430

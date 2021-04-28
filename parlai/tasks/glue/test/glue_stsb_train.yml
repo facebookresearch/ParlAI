@@ -1,0 +1,58 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - '5.0'
+    labels:
+    - '5.0'
+    sentence1: A plane is taking off.
+    sentence2: An air plane is taking off.
+    text: 'A plane is taking off.
+
+      An air plane is taking off.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - '3.799999952316284'
+    labels:
+    - '3.799999952316284'
+    sentence1: A man is playing a large flute.
+    sentence2: A man is playing a flute.
+    text: 'A man is playing a large flute.
+
+      A man is playing a flute.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - '3.799999952316284'
+    labels:
+    - '3.799999952316284'
+    sentence1: A man is spreading shreded cheese on a pizza.
+    sentence2: A man is spreading shredded cheese on an uncooked pizza.
+    text: 'A man is spreading shreded cheese on a pizza.
+
+      A man is spreading shredded cheese on an uncooked pizza.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - '2.5999999046325684'
+    labels:
+    - '2.5999999046325684'
+    sentence1: Three men are playing chess.
+    sentence2: Two men are playing chess.
+    text: 'Three men are playing chess.
+
+      Two men are playing chess.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - '4.25'
+    labels:
+    - '4.25'
+    sentence1: A man is playing the cello.
+    sentence2: A man seated is playing the cello.
+    text: 'A man is playing the cello.
+
+      A man seated is playing the cello.'
+num_episodes: 5749
+num_examples: 5749

@@ -1,0 +1,63 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Water flowed from the spout.
+    id: huggingface
+    label_candidates:
+    - The toilet filled with water.
+    - Water flowed from the spout.
+    premise: The man turned on the faucet.
+    question: effect
+    text: 'The man turned on the faucet.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - She lost her appetite.
+    id: huggingface
+    label_candidates:
+    - She poured milk in the bowl.
+    - She lost her appetite.
+    premise: The girl found a bug in her cereal.
+    question: effect
+    text: 'The girl found a bug in her cereal.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - She received her pension.
+    id: huggingface
+    label_candidates:
+    - She received her pension.
+    - She paid off her mortgage.
+    premise: The woman retired.
+    question: effect
+    text: 'The woman retired.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - I shut off the light in the unoccupied room.
+    id: huggingface
+    label_candidates:
+    - I swept the floor in the unoccupied room.
+    - I shut off the light in the unoccupied room.
+    premise: I wanted to conserve energy.
+    question: effect
+    text: 'I wanted to conserve energy.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - The cook grilled it.
+    id: huggingface
+    label_candidates:
+    - The cook froze it.
+    - The cook grilled it.
+    premise: The hamburger meat browned.
+    question: cause
+    text: 'The hamburger meat browned.
+
+      cause'
+num_episodes: 100
+num_examples: 100

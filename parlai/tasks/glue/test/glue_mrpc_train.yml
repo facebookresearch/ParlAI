@@ -1,0 +1,83 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    labels:
+    - equivalent
+    sentence1: Amrozi accused his brother , whom he called " the witness " , of deliberately
+      distorting his evidence .
+    sentence2: Referring to him as only " the witness " , Amrozi accused his brother
+      of deliberately distorting his evidence .
+    text: 'Amrozi accused his brother , whom he called " the witness " , of deliberately
+      distorting his evidence .
+
+      Referring to him as only " the witness " , Amrozi accused his brother of deliberately
+      distorting his evidence .'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    labels:
+    - not_equivalent
+    sentence1: Yucaipa owned Dominick 's before selling the chain to Safeway in 1998
+      for $ 2.5 billion .
+    sentence2: Yucaipa bought Dominick 's in 1995 for $ 693 million and sold it to
+      Safeway for $ 1.8 billion in 1998 .
+    text: 'Yucaipa owned Dominick ''s before selling the chain to Safeway in 1998
+      for $ 2.5 billion .
+
+      Yucaipa bought Dominick ''s in 1995 for $ 693 million and sold it to Safeway
+      for $ 1.8 billion in 1998 .'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    labels:
+    - equivalent
+    sentence1: They had published an advertisement on the Internet on June 10 , offering
+      the cargo for sale , he added .
+    sentence2: On June 10 , the ship 's owners had published an advertisement on the
+      Internet , offering the explosives for sale .
+    text: 'They had published an advertisement on the Internet on June 10 , offering
+      the cargo for sale , he added .
+
+      On June 10 , the ship ''s owners had published an advertisement on the Internet
+      , offering the explosives for sale .'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    labels:
+    - not_equivalent
+    sentence1: Around 0335 GMT , Tab shares were up 19 cents , or 4.4 % , at A $ 4.56
+      , having earlier set a record high of A $ 4.57 .
+    sentence2: Tab shares jumped 20 cents , or 4.6 % , to set a record closing high
+      at A $ 4.57 .
+    text: 'Around 0335 GMT , Tab shares were up 19 cents , or 4.4 % , at A $ 4.56
+      , having earlier set a record high of A $ 4.57 .
+
+      Tab shares jumped 20 cents , or 4.6 % , to set a record closing high at A $
+      4.57 .'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    labels:
+    - equivalent
+    sentence1: The stock rose $ 2.11 , or about 11 percent , to close Friday at $
+      21.51 on the New York Stock Exchange .
+    sentence2: PG & E Corp. shares jumped $ 1.63 or 8 percent to $ 21.03 on the New
+      York Stock Exchange on Friday .
+    text: 'The stock rose $ 2.11 , or about 11 percent , to close Friday at $ 21.51
+      on the New York Stock Exchange .
+
+      PG & E Corp. shares jumped $ 1.63 or 8 percent to $ 21.03 on the New York Stock
+      Exchange on Friday .'
+num_episodes: 3668
+num_examples: 3668

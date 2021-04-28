@@ -1,0 +1,48 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: Bill whistled past the house.
+    text: Bill whistled past the house.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: The car honked its way down the road.
+    text: The car honked its way down the road.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: Bill pushed Harry off the sofa.
+    text: Bill pushed Harry off the sofa.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: the kittens yawned awake and played.
+    text: the kittens yawned awake and played.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: I demand that the more John eats, the more he pay.
+    text: I demand that the more John eats, the more he pay.
+num_episodes: 1063
+num_examples: 1063

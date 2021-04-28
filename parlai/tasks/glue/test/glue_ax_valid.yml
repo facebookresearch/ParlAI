@@ -1,0 +1,88 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: The cat did not sit on the mat.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: The cat sat on the mat.
+    text: 'The cat sat on the mat.
+
+      The cat did not sit on the mat.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: The cat sat on the mat.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: The cat did not sit on the mat.
+    text: 'The cat did not sit on the mat.
+
+      The cat sat on the mat.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: When you've got snow, it's really hard to learn a snow sport so we
+      looked at all the different ways I could mimic being on snow without actually
+      being on snow.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: When you've got no snow, it's really hard to learn a snow sport so we
+      looked at all the different ways I could mimic being on snow without actually
+      being on snow.
+    text: 'When you''ve got no snow, it''s really hard to learn a snow sport so we
+      looked at all the different ways I could mimic being on snow without actually
+      being on snow.
+
+      When you''ve got snow, it''s really hard to learn a snow sport so we looked
+      at all the different ways I could mimic being on snow without actually being
+      on snow.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: When you've got no snow, it's really hard to learn a snow sport so
+      we looked at all the different ways I could mimic being on snow without actually
+      being on snow.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: When you've got snow, it's really hard to learn a snow sport so we looked
+      at all the different ways I could mimic being on snow without actually being
+      on snow.
+    text: 'When you''ve got snow, it''s really hard to learn a snow sport so we looked
+      at all the different ways I could mimic being on snow without actually being
+      on snow.
+
+      When you''ve got no snow, it''s really hard to learn a snow sport so we looked
+      at all the different ways I could mimic being on snow without actually being
+      on snow.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: Out of the box, Ouya doesn't support media apps such as Twitch.tv
+      and XBMC media player.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: Out of the box, Ouya supports media apps such as Twitch.tv and XBMC media
+      player.
+    text: 'Out of the box, Ouya supports media apps such as Twitch.tv and XBMC media
+      player.
+
+      Out of the box, Ouya doesn''t support media apps such as Twitch.tv and XBMC
+      media player.'
+num_episodes: 1104
+num_examples: 1104

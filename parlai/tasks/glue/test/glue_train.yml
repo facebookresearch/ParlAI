@@ -1,0 +1,48 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    labels:
+    - acceptable
+    sentence: Our friends won't buy this analysis, let alone the next one we propose.
+    text: Our friends won't buy this analysis, let alone the next one we propose.
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    labels:
+    - acceptable
+    sentence: One more pseudo generalization and I'm giving up.
+    text: One more pseudo generalization and I'm giving up.
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    labels:
+    - acceptable
+    sentence: One more pseudo generalization or I'm giving up.
+    text: One more pseudo generalization or I'm giving up.
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    labels:
+    - acceptable
+    sentence: The more we study verbs, the crazier they get.
+    text: The more we study verbs, the crazier they get.
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    labels:
+    - acceptable
+    sentence: Day by day the facts are getting murkier.
+    text: Day by day the facts are getting murkier.
+num_episodes: 8551
+num_examples: 8551

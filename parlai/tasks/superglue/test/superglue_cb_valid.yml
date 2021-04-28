@@ -1,0 +1,102 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: Valence was helping
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: Valence the void-brain, Valence the virtuous valet. Why couldn't the
+      figger choose his own portion of titanic anatomy to shaft? Did he think he was
+      helping?
+    text: 'Valence the void-brain, Valence the virtuous valet. Why couldn''t the figger
+      choose his own portion of titanic anatomy to shaft? Did he think he was helping?
+
+      Valence was helping'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: there is a shipment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: '``Who knows? The point is, do we go with it or not?'''' Do we assume
+      there is a shipment?'
+    text: '``Who knows? The point is, do we go with it or not?'''' Do we assume there
+      is a shipment?
+
+      there is a shipment'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    hypothesis: Jenny's bedroom's at the rear of the house
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: '``But my father always taught me never to be afraid of pointing out
+      the obvious. I''m sure you have noticed the implication of the letter, that
+      the writer has in fact observed Jenny undressing for bed?'''' I just wondered
+      if you also knew as I''m sure you do that her bedroom''s at the rear of the
+      house?'
+    text: '``But my father always taught me never to be afraid of pointing out the
+      obvious. I''m sure you have noticed the implication of the letter, that the
+      writer has in fact observed Jenny undressing for bed?'''' I just wondered if
+      you also knew as I''m sure you do that her bedroom''s at the rear of the house?
+
+      Jenny''s bedroom''s at the rear of the house'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: they can force another company to not drug test her
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: 'A: so I don''t know if I wasn''t drug tested based on that or because
+      the man who hired me didn''t request the drug test, because I know that my company
+      does drug testing on occasion. B: Right. Well, for instance, does the company
+      you worked for before have the right or do they have the ability to say, hey,
+      we''ve already drug tested her and she came up negative. A: Well, no, I don''t
+      think they can force another company to not drug test me just by saying that
+      I didn''t, I mean,'
+    text: 'A: so I don''t know if I wasn''t drug tested based on that or because the
+      man who hired me didn''t request the drug test, because I know that my company
+      does drug testing on occasion. B: Right. Well, for instance, does the company
+      you worked for before have the right or do they have the ability to say, hey,
+      we''ve already drug tested her and she came up negative. A: Well, no, I don''t
+      think they can force another company to not drug test me just by saying that
+      I didn''t, I mean,
+
+      they can force another company to not drug test her'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: it's going to make much of a difference
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: 'A: for the moment, and that''s what really is getting me about what
+      George Bush''s stand on the budget is right now is that he is saying, I am going
+      to give you this ludicrous little tax cut so that you''ll be happy come November,
+      and you''ll elect me again B: Uh-huh.  Uh-huh. A: and then I''m going to go
+      on and just forget everything that I said B: Uh-huh. A: or you know, it doesn''t
+      seem that it''s going to make much of a difference.'
+    text: 'A: for the moment, and that''s what really is getting me about what George
+      Bush''s stand on the budget is right now is that he is saying, I am going to
+      give you this ludicrous little tax cut so that you''ll be happy come November,
+      and you''ll elect me again B: Uh-huh.  Uh-huh. A: and then I''m going to go
+      on and just forget everything that I said B: Uh-huh. A: or you know, it doesn''t
+      seem that it''s going to make much of a difference.
+
+      it''s going to make much of a difference'
+num_episodes: 56
+num_examples: 56

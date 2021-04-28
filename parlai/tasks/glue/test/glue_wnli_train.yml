@@ -1,0 +1,72 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    labels:
+    - entailment
+    sentence1: I stuck a pin through a carrot. When I pulled the pin out, it had a
+      hole.
+    sentence2: The carrot had a hole.
+    text: 'I stuck a pin through a carrot. When I pulled the pin out, it had a hole.
+
+      The carrot had a hole.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    labels:
+    - entailment
+    sentence1: John couldn't see the stage with Billy in front of him because he is
+      so short.
+    sentence2: John is so short.
+    text: 'John couldn''t see the stage with Billy in front of him because he is so
+      short.
+
+      John is so short.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    labels:
+    - entailment
+    sentence1: The police arrested all of the gang members. They were trying to stop
+      the drug trade in the neighborhood.
+    sentence2: The police were trying to stop the drug trade in the neighborhood.
+    text: 'The police arrested all of the gang members. They were trying to stop the
+      drug trade in the neighborhood.
+
+      The police were trying to stop the drug trade in the neighborhood.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    labels:
+    - not_entailment
+    sentence1: Steve follows Fred's example in everything. He influences him hugely.
+    sentence2: Steve influences him hugely.
+    text: 'Steve follows Fred''s example in everything. He influences him hugely.
+
+      Steve influences him hugely.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    labels:
+    - not_entailment
+    sentence1: When Tatyana reached the cabin, her mother was sleeping. She was careful
+      not to disturb her, undressing and climbing back into her berth.
+    sentence2: mother was careful not to disturb her, undressing and climbing back
+      into her berth.
+    text: 'When Tatyana reached the cabin, her mother was sleeping. She was careful
+      not to disturb her, undressing and climbing back into her berth.
+
+      mother was careful not to disturb her, undressing and climbing back into her
+      berth.'
+num_episodes: 635
+num_examples: 635

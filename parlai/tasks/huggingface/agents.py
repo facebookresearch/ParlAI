@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.build_data import make_dir
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -39,6 +40,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
         self.hf_split = self.hf_splits_mapping[self.fold]
         self.data_path = self._path(opt)
         opt['datafile'] = self.data_path
+        make_dir(opt['datafile'])
 
         self.id = "huggingface"
         super().__init__(opt, shared)

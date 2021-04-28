@@ -1,0 +1,81 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    sentence1: Mangla was summoned after Madhumita's sister Nidhi Shukla, who was
+      the first witness in the case.
+    sentence2: Shukla is related to Mangla.
+    text: 'Mangla was summoned after Madhumita''s sister Nidhi Shukla, who was the
+      first witness in the case.
+
+      Shukla is related to Mangla.'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    sentence1: Authorities in Brazil say that more than 200 people are being held
+      hostage in a prison in the country's remote, Amazonian-jungle state of Rondonia.
+    sentence2: Authorities in Brazil hold 200 people as hostage.
+    text: 'Authorities in Brazil say that more than 200 people are being held hostage
+      in a prison in the country''s remote, Amazonian-jungle state of Rondonia.
+
+      Authorities in Brazil hold 200 people as hostage.'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    sentence1: A mercenary group faithful to the warmongering policy of former Somozist
+      colonel Enrique Bermudez attacked an IFA truck belonging to the interior ministry
+      at 0900 on 26 March in El Jicote, wounded and killed an interior ministry worker
+      and wounded five others.
+    sentence2: An interior ministry worker was killed by a mercenary group.
+    text: 'A mercenary group faithful to the warmongering policy of former Somozist
+      colonel Enrique Bermudez attacked an IFA truck belonging to the interior ministry
+      at 0900 on 26 March in El Jicote, wounded and killed an interior ministry worker
+      and wounded five others.
+
+      An interior ministry worker was killed by a mercenary group.'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    sentence1: The British ambassador to Egypt, Derek Plumbly, told Reuters on Monday
+      that authorities had compiled the list of 10 based on lists from tour companies
+      and from families whose relatives have not been in contact since the bombings.
+    sentence2: Derek Plumbly resides in Egypt.
+    text: 'The British ambassador to Egypt, Derek Plumbly, told Reuters on Monday
+      that authorities had compiled the list of 10 based on lists from tour companies
+      and from families whose relatives have not been in contact since the bombings.
+
+      Derek Plumbly resides in Egypt.'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    sentence1: Tibone estimated diamond production at four mines operated by Debswana
+      -- Botswana's 50-50 joint venture with De Beers -- could reach 33 million carats
+      this year.
+    sentence2: Botswana is a business partner of De Beers.
+    text: 'Tibone estimated diamond production at four mines operated by Debswana
+      -- Botswana''s 50-50 joint venture with De Beers -- could reach 33 million carats
+      this year.
+
+      Botswana is a business partner of De Beers.'
+num_episodes: 3000
+num_examples: 3000

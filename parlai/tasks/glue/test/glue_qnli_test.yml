@@ -1,0 +1,81 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    question: What organization is devoted to Jihad against Israel?
+    sentence: For some decades prior to the First Palestine Intifada in 1987, the
+      Muslim Brotherhood in Palestine took a "quiescent" stance towards Israel, focusing
+      on preaching, education and social services, and benefiting from Israel's "indulgence"
+      to build up a network of mosques and charitable organizations.
+    text: 'For some decades prior to the First Palestine Intifada in 1987, the Muslim
+      Brotherhood in Palestine took a "quiescent" stance towards Israel, focusing
+      on preaching, education and social services, and benefiting from Israel''s "indulgence"
+      to build up a network of mosques and charitable organizations.
+
+      What organization is devoted to Jihad against Israel?'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    question: In what century was the Yarrow-Schlick-Tweedy balancing system used?
+    sentence: In the late 19th century, the Yarrow-Schlick-Tweedy balancing 'system'
+      was used on some marine triple expansion engines.
+    text: 'In the late 19th century, the Yarrow-Schlick-Tweedy balancing ''system''
+      was used on some marine triple expansion engines.
+
+      In what century was the Yarrow-Schlick-Tweedy balancing system used?'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    question: The largest brand of what store in the UK is located in Kingston Park?
+    sentence: Close to Newcastle, the largest indoor shopping centre in Europe, the
+      MetroCentre, is located in Gateshead.
+    text: 'Close to Newcastle, the largest indoor shopping centre in Europe, the MetroCentre,
+      is located in Gateshead.
+
+      The largest brand of what store in the UK is located in Kingston Park?'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    question: What does the IPCC rely on for research?
+    sentence: In principle, this means that any significant new evidence or events
+      that change our understanding of climate science between this deadline and publication
+      of an IPCC report cannot be included.
+    text: 'In principle, this means that any significant new evidence or events that
+      change our understanding of climate science between this deadline and publication
+      of an IPCC report cannot be included.
+
+      What does the IPCC rely on for research?'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    question: What is the principle about relating spin and space variables?
+    sentence: Thus in the case of two fermions there is a strictly negative correlation
+      between spatial and spin variables, whereas for two bosons (e.g. quanta of electromagnetic
+      waves, photons) the correlation is strictly positive.
+    text: 'Thus in the case of two fermions there is a strictly negative correlation
+      between spatial and spin variables, whereas for two bosons (e.g. quanta of electromagnetic
+      waves, photons) the correlation is strictly positive.
+
+      What is the principle about relating spin and space variables?'
+num_episodes: 5463
+num_examples: 5463

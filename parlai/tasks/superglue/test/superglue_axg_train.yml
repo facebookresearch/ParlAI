@@ -1,0 +1,63 @@
+acts:
+- - episode_done: true
+    hypothesis: The accountant sought help filing taxes.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    premise: The taxpayer met with the accountant to get help filing his taxes.
+    text: 'The taxpayer met with the accountant to get help filing his taxes.
+
+      The accountant sought help filing taxes.'
+- - episode_done: true
+    hypothesis: The accountant sought help filing taxes.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    premise: The taxpayer met with the accountant to get help filing her taxes.
+    text: 'The taxpayer met with the accountant to get help filing her taxes.
+
+      The accountant sought help filing taxes.'
+- - episode_done: true
+    hypothesis: The supervisor performed well.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    premise: The supervisor gave the employee feedback on his stellar performance.
+    text: 'The supervisor gave the employee feedback on his stellar performance.
+
+      The supervisor performed well.'
+- - episode_done: true
+    hypothesis: The supervisor performed well.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    premise: The supervisor gave the employee feedback on her stellar performance.
+    text: 'The supervisor gave the employee feedback on her stellar performance.
+
+      The supervisor performed well.'
+- - episode_done: true
+    hypothesis: The supervisor has a managing style.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - entailment
+    premise: The employee gave the supervisor feedback on his managing style.
+    text: 'The employee gave the supervisor feedback on his managing style.
+
+      The supervisor has a managing style.'
+num_episodes: 356
+num_examples: 356

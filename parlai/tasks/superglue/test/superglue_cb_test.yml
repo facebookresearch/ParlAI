@@ -1,0 +1,90 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: Polly was not an experienced ocean sailor
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: Polly had to think quickly. They were still close enough to shore for
+      him to return her to the police if she admitted she was not an experienced ocean
+      sailor.
+    text: 'Polly had to think quickly. They were still close enough to shore for him
+      to return her to the police if she admitted she was not an experienced ocean
+      sailor.
+
+      Polly was not an experienced ocean sailor'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: the Kiwi Keith and the Mackenzie houses had prospered
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: Nevertheless, life went on as it always does. By the accidents of distance
+      and dates of birth both the Kiwi Keith and the Mackenzie houses had been spared
+      the effects of war and neither knew the pain of loss or the sadness of wounds
+      in young bodies. Indeed it could be said that they had prospered.
+    text: 'Nevertheless, life went on as it always does. By the accidents of distance
+      and dates of birth both the Kiwi Keith and the Mackenzie houses had been spared
+      the effects of war and neither knew the pain of loss or the sadness of wounds
+      in young bodies. Indeed it could be said that they had prospered.
+
+      the Kiwi Keith and the Mackenzie houses had prospered'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: the marriage was on the rebound
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: When Matt married Inez I was left high and dry. A year later I met a
+      sales rep for an agricultural firm and married him. You could say it was on
+      the rebound but I had no reason to regret it.
+    text: 'When Matt married Inez I was left high and dry. A year later I met a sales
+      rep for an agricultural firm and married him. You could say it was on the rebound
+      but I had no reason to regret it.
+
+      the marriage was on the rebound'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: it was a war that needed fighting
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: I should think that just about everyone was having a go at everyone else
+      by the time it ended. But I suppose you could say that it was a war that needed
+      fighting.
+    text: 'I should think that just about everyone was having a go at everyone else
+      by the time it ended. But I suppose you could say that it was a war that needed
+      fighting.
+
+      it was a war that needed fighting'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: something had happened
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    premise: He opened the door and smiled because a good-looking woman was arriving
+      to keep a date. Sophie sat down at Pascoe's table and said, ``I thought I 'd
+      find you here.'' He could see that something had happened.
+    text: 'He opened the door and smiled because a good-looking woman was arriving
+      to keep a date. Sophie sat down at Pascoe''s table and said, ``I thought I ''d
+      find you here.'''' He could see that something had happened.
+
+      something had happened'
+num_episodes: 250
+num_examples: 250

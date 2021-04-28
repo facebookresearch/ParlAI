@@ -1,0 +1,52 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: 'it ''s a charming and often affecting journey . '
+    text: 'it ''s a charming and often affecting journey . '
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: 'unflinchingly bleak and desperate '
+    text: 'unflinchingly bleak and desperate '
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: 'allows us to hope that nolan is poised to embark a major career as
+      a commercial yet inventive filmmaker . '
+    text: 'allows us to hope that nolan is poised to embark a major career as a commercial
+      yet inventive filmmaker . '
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: 'the acting , costumes , music , cinematography and sound are all astounding
+      given the production ''s austere locales . '
+    text: 'the acting , costumes , music , cinematography and sound are all astounding
+      given the production ''s austere locales . '
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: 'it ''s slow -- very , very slow . '
+    text: 'it ''s slow -- very , very slow . '
+num_episodes: 872
+num_examples: 872
