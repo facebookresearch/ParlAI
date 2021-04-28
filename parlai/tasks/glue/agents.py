@@ -42,6 +42,30 @@ class MnliTeacher(AbstractHuggingFaceTeacher):
     }
 
 
+class MnliMatchedTeacher(AbstractHuggingFaceTeacher):
+    """
+    Note: this is an evaluation dataset so it only has valid and test splits
+    """
+
+    hf_path = 'glue'
+    hf_name = 'mnli_matched'
+    hf_text_fields = ['premise', 'hypothesis']
+    hf_label_field = 'label'
+    hf_splits_mapping = {'train': None, 'valid': 'validation', 'test': 'test'}
+
+
+class MnliMismatchedTeacher(AbstractHuggingFaceTeacher):
+    """
+    Note: this is an evaluation dataset so it only has valid and test splits
+    """
+
+    hf_path = 'glue'
+    hf_name = 'mnli_mismatched'
+    hf_text_fields = ['premise', 'hypothesis']
+    hf_label_field = 'label'
+    hf_splits_mapping = {'train': None, 'valid': 'validation', 'test': 'test'}
+
+
 class MrpcTeacher(AbstractHuggingFaceTeacher):
     hf_path = 'glue'
     hf_name = 'mrpc'
