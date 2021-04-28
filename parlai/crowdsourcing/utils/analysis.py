@@ -7,13 +7,14 @@
 from __future__ import annotations
 
 import argparse
-import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import Any, Dict, List
 
 import pandas as pd
+
+import parlai.utils.logging as logging
 
 # Defining the class only if Mephisto is installed, since it relies on Mephisto
 try:
