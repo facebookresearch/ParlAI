@@ -191,6 +191,8 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             results_folder=results_folder, file_suffix=file_suffix
         )
         with open(file_path) as f:
+            # correct whitespace to deal with fbcode demanding disk files not
+            # have many trailing newlines
             contents = f.read().rstrip('\n') + '\n'
         file_regression.check(contents=contents)
 
