@@ -7,7 +7,6 @@
 from __future__ import annotations
 
 import argparse
-import logging
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
