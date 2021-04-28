@@ -6,7 +6,7 @@ Sometimes you find yourself wanting to experiment with an architecture that look
 
 To make this easier and avoid copypasta, we provide the `@swappable` decorator.
 
-### Making a Module Swappable
+## Making a Module Swappable
 
 Let's say you have an existing class, `TransformerLayer`, that uses a module that you'd like to modify, `TransformerFFN`. You can make that FFN swappable in two steps:
 
@@ -25,7 +25,7 @@ self.feedforward = self.swappables.ffn(opt, ...)
 
 That's it!
 
-### Making the Swap
+## Making the Swap
 
 You can now replace `TransformerFFN` with whatever class or constructor you want before instantiating `TransformerLayer`:
 ```python
@@ -34,7 +34,7 @@ layer = TransformerLayer.with_components(ffn=NewCustomFFN)(opt, ...)
 
 As long as `NewCustomFFN` has the same `__init__` and `forward` method signatures as `TransformerFFN`, everything should just work.
 
-### Composability
+## Composability
 
 Since the swapping happens before instantiation, decorated components can be transparently composed. For example:
 ```python
@@ -55,6 +55,6 @@ model = TransformerGeneratorModel.with_components(
 )(opt=self.opt, dictionary=self.dict)
 ```
 
-### Implementation
+## Implementation
 
 See `parlai/agents/transformer/modules/modular.py`
