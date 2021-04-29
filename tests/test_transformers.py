@@ -9,11 +9,20 @@ Test many variants of transformers.
 """
 
 import os
+import torch
 import unittest
+from unittest.mock import MagicMock
 import pytest
 import parlai.utils.testing as testing_utils
+from parlai.agents.transformer.modules import (
+    TransformerFFN,
+    TransformerGeneratorModel,
+    TransformerEncoder,
+    TransformerEncoderLayer,
+)
 from parlai.core.agents import create_agent
 from parlai.core.agents import create_agent_from_model_file
+from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from .test_dict import DEFAULT_BYTELEVEL_BPE_VOCAB, DEFAULT_BYTELEVEL_BPE_MERGE
 from parlai.core.params import ParlaiParser
@@ -870,6 +879,103 @@ class TestImagePolyencoder(unittest.TestCase):
         assert (
             valid['accuracy'] > 0.1
         ), f'ImagePolyencoderAgent val-set accuracy on a simple task was {valid["accuracy"].value():0.2f}.'
+
+
+class TestSwappableComponents(unittest.TestCase):
+    def _opt(self, **kwargs):
+        return Opt(
+            batchsize=4,
+            optimizer='adam',
+            n_layers=1,
+            n_heads=4,
+            ffn_size=16,
+            embedding_size=16,
+            skip_generation=True,
+            **kwargs,
+        )
+
+    def test_swap_encoder_attention(self):
+        CustomFFN = type('CustomFFN', (TransformerFFN,), {})
+        CustomFFN.forward = MagicMock()
+        wrapped_class = TransformerGeneratorModel.with_components(
+            encoder=TransformerEncoder.with_components(
+                layer=TransformerEncoderLayer.with_components(feedforward=CustomFFN)
+            )
+        )
+        opt = self._opt()
+        CustomFFN.forward.assert_not_called
+        model = wrapped_class(opt=opt, dictionary=DictionaryAgent(opt))
+        assert isinstance(model, TransformerGeneratorModel)  # type: ignore
+        try:
+            model(torch.zeros(1, 1).long(), ys=torch.zeros(1, 1).long())  # type: ignore
+        except TypeError:
+            pass
+        finally:
+            CustomFFN.forward.assert_called
+
+    def test_swap_is_not_persisted_in_class(self):
+        opt = self._opt()
+        dictionary = DictionaryAgent(opt)
+
+        CustomFFN = type('CustomFFN', (TransformerFFN,), {})
+        wrapped_class = TransformerGeneratorModel.with_components(
+            encoder=TransformerEncoder.with_components(
+                layer=TransformerEncoderLayer.with_components(feedforward=CustomFFN)
+            )
+        )
+        model = wrapped_class(opt=opt, dictionary=dictionary)
+        assert (
+            model.swappables.encoder.swappables.layer.swappables.feedforward
+            == CustomFFN
+        )  # type: ignore
+
+        another_model = TransformerGeneratorModel(opt, dictionary)
+        assert another_model.swappables != model.swappables
+        assert issubclass(
+            another_model.swappables.encoder, TransformerEncoder
+        )  # type: ignore
+
+        wrapped_class.swap_components(
+            encoder=TransformerEncoder.with_components(
+                layer=TransformerEncoderLayer.with_components(
+                    feedforward=TransformerFFN
+                )
+            )
+        )
+        one_more_model = wrapped_class(opt=opt, dictionary=dictionary)
+        assert (
+            one_more_model.swappables.encoder.swappables.layer.swappables.feedforward
+            == TransformerFFN
+        )  # type: ignore
+
+    def test_examples_variant(self):
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model='parlai.agents.examples.transformer_variant:TransformerVariantAgent'
+        )
+        model = create_agent(opt)
+        # send the model a single training example to ensure it can forward/backward
+        model.observe({'text': '1 2 3 4', 'labels': ['1 2 3 4'], 'episode_done': True})
+        model.act()
+        # send the model a single validation example
+        model.observe(
+            {'text': '1 2 3 4', 'eval_labels': ['1 2 3 4'], 'episode_done': True}
+        )
+        model.act()
+
+    def test_examples_configurable(self):
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model='parlai.agents.examples.transformer_variant:ConfigurableTransformerAgent',
+            decoder_ffn_variants='two',
+        )
+        model = create_agent(opt)
+        # send the model a single training example to ensure it can forward/backward
+        model.observe({'text': '1 2 3 4', 'labels': ['1 2 3 4'], 'episode_done': True})
+        model.act()
+        # send the model a single validation example
+        model.observe(
+            {'text': '1 2 3 4', 'eval_labels': ['1 2 3 4'], 'episode_done': True}
+        )
+        model.act()
 
 
 if __name__ == '__main__':
