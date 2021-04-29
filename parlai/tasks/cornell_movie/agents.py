@@ -23,6 +23,7 @@ class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         self.fold = DatatypeHelper.fold(opt['datatype'])
+        build(opt)
         opt['datafile'] = _path(opt, self.fold + '.txt')
         super().__init__(opt, shared)
 
