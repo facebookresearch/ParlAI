@@ -1,0 +1,20 @@
+{
+"activation": "gelu",
+"attention_dropout": 0.0,
+"dict_file": "zoo:bart/bart_large/model.dict",
+"dict_tokenizer": "gpt2",
+"dropout": 0.1,
+"embedding_size": 1024,
+"embeddings_scale": false,
+"ffn_size": 4096,
+"force_fp16_tokens": true,
+"fp16": true,
+"init_model": "zoo:bart/bart_large/model",
+"learn_positional_embeddings": true,
+"model": "bart",
+"n_decoder_layers": 12,
+"n_encoder_layers": 12,
+"n_heads": 16,
+"n_positions": 1024,
+"variant": "bart"
+}

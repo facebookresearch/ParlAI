@@ -109,7 +109,7 @@ python parlai/crowdsourcing/tasks/acute_eval/analysis.py \
 --pairings-filepath ${PATH_TO_PAIRINGS_FILE} \
 --outdir ${OUTPUT_FOLDER}
 ```
-For analyzing results from a Fast ACUTE run (see below), use the `--root-dir` flag to specify the Fast ACUTE root directory (`mephisto.blueprint.root_dir`) instead of specifying the `--pairings-filepath` and `--outdir` flags. 
+For analyzing results from a Fast ACUTE run (see below), use the `--root-dir` flag to specify the Fast ACUTE root directory (`mephisto.blueprint.root_dir`) instead of specifying the `--pairings-filepath` and `--outdir` flags.
 
 The script will analyze the results and save files with information such as the win/loss rate and significance scores.
 

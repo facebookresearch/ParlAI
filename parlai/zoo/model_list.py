@@ -1519,4 +1519,359 @@ model_list = [
             "[MDGender Classifier]: SELF: female"
         ),
     },
+    {
+        "title": "Bart FiD DPR Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_fid_dpr/model",
+        "agent": "fid",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "FiD model trained with a DPR Retriever and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_fid_dpr/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[Fid]: I love Elvis Presley, he is my favorite singer and songwriter. He was born in Memphis, TN and died in Memphis Tennessee."
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_fid_dpr/model -t wizard_of_wikipedia"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid \n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\\n"
+            ".0002539   .1772  .08068  .04245  .02717 76.62 78.62 55.81       0          0 .7098 3939 .2097   .04684            .1024\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen   ppl  \\\n"
+            ".4421            .8833            .9822         .2172 23.61 2.687 23.61 16.76       0          0 14.68\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1547    .2647   .08819    .2244      .4348         0 102.2 72.57\n"
+        ),
+    },
+    {
+        "title": "Bart FiD Rag DPR-Poly Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_fid_rag_dpr_poly/model",
+        "agent": "fid",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "FiD model trained with a RAG-DPR-Poly Retriever (DPR-Poly retrieval, trained in a RAG Setup) "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": (
+            "parlai interactive -mf zoo:hallucination/bart_fid_rag_dpr_poly/model"
+        ),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[Fid]: I love Elvis Presley! He is my favorite singer, songwriter, actor, and producer."
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_fid_rag_dpr_poly/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0002539   .1821  .09088  .05551  .03939 76.62 78.62 53.79       0          0 .6842 3939 .2154   .05641            .1056\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen  ppl  \\n"
+            ".4434            .8964            .9864         .2756 23.61 2.587 23.61 16.16       0          0 13.3\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1686    .2740    .1040    .2351      .4523  .0002539 102.2 69.95"
+        ),
+    },
+    {
+        "title": "Bart FiD Rag Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_fid_rag/model",
+        "agent": "fid",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "FiD model trained with a RAG Retriever (DPR retrieval) "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_fid_rag/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[Fid]: I love Elvis Presley.  I love his music.  My favorite song is \"My Way.\""
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_fid_rag/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0002539   .1719  .07703  .03968  .02529 76.62 78.62 59.55       0          0 .7574 3939 .2036   .04605            .1001\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen  ppl  \\n"
+            ".4326            .8818            .9821         .2379 23.61 2.708 23.61 17.88       0          0   15\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1470    .2604   .08544    .2215      .4297  .0002539 102.2 77.44"
+        ),
+    },
+    {
+        "title": "Bart RAG DPR-Poly Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_rag_dpr_poly/model",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "RAG-Token model trained with a DPR Retriever "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_dpr_poly/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[RAG]: I love Elvis Presley. He is my favorite singer of all time. Do you have a favorite song?"
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_dpr_poly/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0005077   .1884  .09254  .05288  .03484 76.62 78.62 59.44       0          0 .7560 3939 .2230   .08013            .1053\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen   ppl  \\n"
+            ".4343            .9128            .9898         .2424 23.61  2.53 23.61 17.85       0          0 12.56\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1734    .2679   .09963    .2309      .4664  .0002539 102.2 77.29"
+        ),
+    },
+    {
+        "title": "Bart RAG DPR Sequence Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_rag_sequence/model",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "RAG-Sequence model trained with a DPR Retriever "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_sequence/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[RAG]: My favorite Elvis Presley song is \"Stuck on You\". Do you have a favorite Elvis song?"
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_sequence/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0007616   .1771  .08545  .04963  .03463 76.62 78.62 43.95       0          0 .5591 3939 .2102   .05834            .1125\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen   ppl  \\n"
+            ".4500            .9186            .9928         .2566 23.61 2.484 23.61  13.2       0          0 11.99\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1630    .2587   .09407    .2234      .4256         0 102.2 57.15"
+        ),
+    },
+    {
+        "title": "Bart RAG DPR Token Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_rag_token/model",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "RAG-Token model trained with a DPR Retriever "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_token/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[RAG]: I love Elvis Presley.  He is my favorite singer of all time.  Do you have a favorite Elvis song?"
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0002539   .1859  .08962  .04951  .03237 76.62 78.62 55.44       0          0 .7052 3939 .2200   .06284            .1012\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen   ppl  \\n"
+            ".4102            .9101            .9882         .2284 23.61 2.529 23.61 16.65       0          0 12.54\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1693    .2625   .09543    .2265      .4627         0 102.2 72.09"
+        ),
+    },
+    {
+        "title": "Bart RAG DPR Turn Doc-Then-Turn Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_rag_turn_dtt/model",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_dtt/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[RAG]: I love Elvis Presley. He was a great singer and songwriter. Do you have a favorite song?"
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_turn_dtt/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0005077   .1863   .0911  .05345  .03651 76.62 78.62 54.72       0          0 .6960 3939 .2202   .07843            .1032\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen   ppl  \\n"
+            ".4188            .9154            .9915         .2476 23.61 2.527 23.61 16.43       0          0 12.51\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1735    .2648   .09857    .2290      .4599  .0002539 102.2 71.15"
+        ),
+    },
+    {
+        "title": "Bart RAG DPR Turn Doc-Only Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/bart_rag_turn_do/model",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_do/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[RAG]: Hey! I love Elvis Presley. He is one of my favorite musicians. I love his voice."
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_turn_do/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": (
+            "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
+            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
+            ".0002539   .1844  .08733  .04707  .03028 76.62 78.62 51.39       0          0 .6537 3939 .2179   .09101            .1009\n"
+            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen   ppl  \\n"
+            ".4128            .9113            .9890         .2253 23.61 2.658 23.61 15.43       0          0 14.26\n"
+            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
+            ".1656    .2582   .09185    .2228      .4461         0 102.2 66.83"
+        ),
+    },
+    {
+        "title": "Dropout Poly-Encoder",
+        "id": "hallucination",
+        "path": "zoo:hallucination/dropout_poly/model",
+        "agent": "transformer/dropout_poly",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A Dropout Poly-encoder trained on the WoW knowledge selection task"
+        ),
+        "example": (
+            "parlai tm -m rag --rag-retriever-type polyfaiss --query-model dropout_poly --poly-faiss-model-file zoo:hallucination/dropout_poly/model"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "Multiset DPR Model",
+        "id": "hallucination",
+        "path": "zoo:hallucination/multiset_dpr/hf_bert_base.cp",
+        "agent": "rag/dpr_biencoder",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": ("A DPR model pre-trained on Natural Questions and Trivia QA"),
+        "example": (
+            "parlai tm -m rag --rag-retriever-type dpr --dpr-model-file zoo:hallucination/multiset_dpr/hf_bert_base.cp"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "Wikipedia Compressed FAISS Index",
+        "id": "hallucination",
+        "path": "zoo:hallucination/wiki_index_compressed/compressed_pq",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A compressed FAISS Index with embeddings of Wikipedia passages, generated by the Multiset DPR zoo model."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type compressed --path-to-index zoo:hallucination/wiki_index_compressed/compressed_pq -ne 100"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "Wikipedia Exact FAISS Index",
+        "id": "hallucination",
+        "path": "zoo:hallucination/wiki_index_exact/exact",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A FAISS Index with embeddings of Wikipedia passages, generated by the Multiset DPR zoo model."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wiki_index_exact/exact -ne 100"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "Wikipedia Passages",
+        "id": "hallucination",
+        "path": "zoo:hallucination/wiki_passages/psgs_w100.tsv",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A dump of Wikipedia articles split into 21m 100 word chunks "
+            "from DPR (https://github.com/facebookresearch/DPR)"
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wiki_index_compressed/compressed --path-to-dpr-passages zoo:hallucination/wiki_passages/psgs_w100.tsv -ne 100"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "WoW Passages",
+        "id": "hallucination",
+        "path": "zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A dump of Wikipedia articles split into ~3k paragraphs, comprising the subset of "
+            "Wikipedia present in the WoW dataset."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wow_passages/exact --path-to-dpr-passages zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv -ne 100"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "WoW Passages Compressed Index",
+        "id": "hallucination",
+        "path": "zoo:hallucination/wow_passages/compressed",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A compressed FAISS Index of embeddings from ~3k paragraphs from "
+            "Wikipedia present in the WoW dataset."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type compressed --path-to-index zoo:hallucination/wow_passages/compressed --path-to-dpr-passages zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv -ne 100"
+        ),
+        "result": ("TODO"),
+    },
+    {
+        "title": "WoW Passages Exact Index",
+        "id": "hallucination",
+        "path": "zoo:hallucination/wow_passages/exact",
+        "agent": "rag",
+        "task": "wizard_of_wikipedia",
+        "project": "https://parl.ai/projects/hallucination/",
+        "description": (
+            "A FAISS Index of embeddings from ~3k paragraphs from "
+            "Wikipedia present in the WoW dataset."
+        ),
+        "example": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_token/model --indexer-type exact --path-to-index zoo:hallucination/wow_passages/exact --path-to-dpr-passages zoo:hallucination/wow_passages/wow_articles.paragraphs.tsv -ne 100"
+        ),
+        "result": ("TODO"),
+    },
 ]

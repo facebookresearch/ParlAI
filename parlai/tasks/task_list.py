@@ -289,6 +289,19 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1706.05125"},
     },
     {
+        "id": "Glue",
+        "display_name": "Glue",
+        "task": "glue",
+        "tags": [],
+        "description": (
+            "GLUE, the General Language Understanding Evaluation benchmark is a collection of resources for training, evaluating, and analyzing natural language understanding systems."
+        ),
+        "links": {
+            "website": "https://gluebenchmark.com/",
+            "website2": "https://huggingface.co/datasets/glue",
+        },
+    },
+    {
         "id": "HotpotQA",
         "display_name": "HotpotQA",
         "task": "hotpotqa",
@@ -302,6 +315,14 @@ task_list = [
             "to correctly answer the question."
         ),
         "links": {"arXiv": "https://arxiv.org/abs/1809.09600"},
+    },
+    {
+        "id": "HuggingFace",
+        "display_name": "HuggingFace",
+        "task": "huggingface",
+        "tags": [],
+        "description": ("HuggingFace datasets"),
+        "links": {"website": "https://huggingface.co/"},
     },
     {
         "id": "LIGHT-Dialogue",
@@ -1364,5 +1385,19 @@ task_list = [
         "tags": ["ChitChat", "Entailment"],
         "description": "Task for detect whether the last utterance contradicts previous dialogue history.",
         "links": {"arXiv": "https://arxiv.org/abs/2012.13391"},
+    },
+    {
+        "id": "metalwoz",
+        "display_name": "MetaLWOz",
+        "task": "metalwoz",
+        "tags": ["Goal"],
+        "description": (
+            "Meta-Learning Wizard-of-Oz (MetaLWOz) is a dataset designed to help "
+            "develop models capable of predicting user responses in unseen domains."
+        ),
+        "links": {
+            "paper": "http://workshop.colips.org/dstc7/dstc8/DTSC8_multidomain_task_proposal.pdf",
+            "website": "https://www.microsoft.com/en-us/research/project/metalwoz/",
+        },
     },
 ]

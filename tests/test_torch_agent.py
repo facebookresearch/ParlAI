@@ -762,6 +762,38 @@ class TestTorchAgent(unittest.TestCase):
             == 'your persona: filler\nhello i am stephen\ni am bob'
         )
 
+    def test_temp_history_observe(self):
+        """
+        Test temp_history when provided via a field in the observation.
+        """
+        agent = get_agent(dict_file='zoo:unittest/transformer_generator2/model.dict')
+        obs = agent.observe(
+            {'text': '1 2 3', 'temp_history': '4 5 6', 'episode_done': False}
+        )
+        assert len(obs['text_vec']) == 6
+        assert obs['full_text'] == '1 2 34 5 6'
+        obs = agent.observe(
+            {'text': '1 2 3', 'temp_history': '6', 'episode_done': False}
+        )
+        assert len(obs['text_vec']) == 7
+        assert obs['full_text'] == '1 2 3\n1 2 36'
+        obs = agent.observe({'text': '1 2 3', 'episode_done': False})
+        assert len(obs['text_vec']) == 9
+        assert obs['full_text'] == '1 2 3\n1 2 3\n1 2 3'
+
+        # make sure temp history is forgotten after a reset
+        obs = agent.observe(
+            {'text': '1 2 3', 'temp_history': '4', 'episode_done': True}
+        )
+        assert len(obs['text_vec']) == 13
+        assert obs['full_text'] == '1 2 3\n1 2 3\n1 2 3\n1 2 34'
+        agent.act()  # get that self-observe in
+
+        obs = agent.observe({'text': '1 2 3', 'episode_done': True})
+        assert len(obs['text_vec']) == 3
+        assert obs['full_text'] == '1 2 3'
+        agent.act()  # get that self-observe in
+
     def test_observe(self):
         """
         Make sure agent stores and returns observation.

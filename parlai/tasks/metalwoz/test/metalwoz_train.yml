@@ -1,0 +1,68 @@
+acts:
+- - bot_prompt: Tell the user that there are no ski hills in their immediate location
+    bot_role: You are a bot that helps people book skiing trips
+    domain: SKI_BOT
+    episode_done: false
+    id: metalwoz
+    labels:
+    - Hello how may I help you?
+    task_id: 2511cf64
+    text: You are a bot that helps people book skiing trips
+    user_prompt: You want to know if there are good ski hills an hour's drive from
+      your current location
+    user_role: You are interacting with a bot designed to help you book a skiing trip
+    utterance_id: c3ec2179
+- - bot_prompt: Tell the user that there are no ski hills in their immediate location
+    bot_role: You are a bot that helps people book skiing trips
+    domain: SKI_BOT
+    episode_done: false
+    id: metalwoz
+    labels:
+    - There are no ski hills in your location
+    task_id: 2511cf64
+    text: Are there any ski resorts me?
+    user_prompt: You want to know if there are good ski hills an hour's drive from
+      your current location
+    user_role: You are interacting with a bot designed to help you book a skiing trip
+    utterance_id: c3ec2179
+- - bot_prompt: Tell the user that there are no ski hills in their immediate location
+    bot_role: You are a bot that helps people book skiing trips
+    domain: SKI_BOT
+    episode_done: false
+    id: metalwoz
+    labels:
+    - In the mount le
+    task_id: 2511cf64
+    text: What's the nearest ski resort?
+    user_prompt: You want to know if there are good ski hills an hour's drive from
+      your current location
+    user_role: You are interacting with a bot designed to help you book a skiing trip
+    utterance_id: c3ec2179
+- - bot_prompt: Tell the user that there are no ski hills in their immediate location
+    bot_role: You are a bot that helps people book skiing trips
+    domain: SKI_BOT
+    episode_done: false
+    id: metalwoz
+    labels:
+    - 4 hrs
+    task_id: 2511cf64
+    text: How many hours way is that from me?
+    user_prompt: You want to know if there are good ski hills an hour's drive from
+      your current location
+    user_role: You are interacting with a bot designed to help you book a skiing trip
+    utterance_id: c3ec2179
+- - bot_prompt: Tell the user that there are no ski hills in their immediate location
+    bot_role: You are a bot that helps people book skiing trips
+    domain: SKI_BOT
+    episode_done: false
+    id: metalwoz
+    labels:
+    - is there anything else?
+    task_id: 2511cf64
+    text: Okay thanks
+    user_prompt: You want to know if there are good ski hills an hour's drive from
+      your current location
+    user_role: You are interacting with a bot designed to help you book a skiing trip
+    utterance_id: c3ec2179
+num_episodes: 31677
+num_examples: 194324

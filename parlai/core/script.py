@@ -35,6 +35,24 @@ def setup_script_registry():
     """
     for module in pkgutil.iter_modules(parlai.scripts.__path__, 'parlai.scripts.'):
         importlib.import_module(module.name)
+    try:
+        import parlai_fb.scripts
+
+        for module in pkgutil.iter_modules(
+            parlai_fb.scripts.__path__, 'parlai_fb.scripts.'
+        ):
+            importlib.import_module(module.name)
+    except ImportError:
+        pass
+    try:
+        import parlai_internal.scripts
+
+        for module in pkgutil.iter_modules(
+            parlai_internal.scripts.__path__, 'parlai_internal.scripts.'
+        ):
+            importlib.import_module(module.name)
+    except ImportError:
+        pass
 
 
 class ParlaiScript(object):
