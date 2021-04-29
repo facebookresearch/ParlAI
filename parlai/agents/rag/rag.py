@@ -251,8 +251,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         Overrides TA.observe to tokenize the retriever query.
         """
+        observation = Message(observation)
         observation = self._generation_agent.observe(self, observation)
-        if observation.get('batch_padding', False):
+        if observation.is_padding():
             return observation
         if 'query_vec' not in observation:
             self._set_query_vec(observation)
