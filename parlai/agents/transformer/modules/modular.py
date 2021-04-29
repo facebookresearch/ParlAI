@@ -39,7 +39,9 @@ class ModularComponent(Generic[C]):
     @dataclass
     class SwappableSubcomponents:
         """
-        Define any swappable subcomponents by adding the class (or a constructor) of the components as attributes of this object.
+        Define any swappable subcomponents by adding the class (or a constructor) of the
+        components as attributes of this object.
+
         When using the @swappable decorator, this class is created programmatically.
         """
 
@@ -115,7 +117,10 @@ def swappable(**kwargs) -> Callable[[Type[C]], Type[ModularComponent[C]]]:
 
 def _make_class_swappable(cls: Type[C], **kwargs) -> Type[ModularComponent[C]]:
     """
-    Creates a new class that subclasses ModularComponent. Modifies that class to to accept constructors for the components passed to the decorator.
+    Creates a new class that subclasses ModularComponent.
+
+    Modifies that class to to accept constructors for the components passed to the
+    decorator.
     """
 
     def _class_dict(new_fields) -> Dict[str, Any]:

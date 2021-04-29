@@ -1,4 +1,4 @@
-# Swapping Out Model Subcomponents
+# Swapping Out Transformer Subcomponents
 
 __Author__: Spencer Poff
 
