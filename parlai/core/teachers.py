@@ -2353,6 +2353,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self._episode_done = True
         self.last_queue_output = None
+        self._ct_epoch_done = False
 
     def _get_data_folder(self):
         if not self.opt.get('datafile'):
@@ -2526,16 +2527,9 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         next_chunk, chunk_reset_cnt = self.chunks.get()
         if next_chunk is None:
             if self.is_train:
+                # start putting chunks back onto the queue
                 self._enqueue_chunks()
-                next_chunk, chunk_reset_cnt = self.chunks.get()
-                if next_chunk is None:
-                    # See the race condition described around "gross hack" in
-                    # _enqueue_chunks.  if we win the race condition, then
-                    # catch it here
-                    next_chunk, chunk_reset_cnt = self.chunks.get()
-            else:
-                # if we're in valid/test, we need to actually signal the end
-                return (None, chunk_reset_cnt)
+            return (None, chunk_reset_cnt)
         # abstract method `load_from_chunk` returns a list of tuples
         output = self.load_from_chunk(next_chunk)
 
@@ -2543,6 +2537,12 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             # randomize the samples
             random.Random().shuffle(output)
         return output, chunk_reset_cnt
+
+    def next_example(self):
+        retval, fake_epoch_done = super().next_example()
+        real_epoch_done = self._ct_epoch_done
+        self._ct_epoch_done = False
+        return retval, real_epoch_done
 
     def get(self, episode_idx, entry_idx=0):
         if not self.threading and self.samples.empty():
@@ -2560,6 +2560,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 logging.debug(f"Removed {stale_exs} stale examples from the queue.")
             if queue_output is None:
                 self.samples.put((None, reset_cnt))
+                self._ct_epoch_done = True
                 return Message.padding_example()
 
             # Update the last queue output in the case
@@ -2581,6 +2582,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
     def reset(self):
         super().reset()
+        self._ct_epoch_done = False
         if self.is_root_teacher:
             self.reset_counter.increment()
             # drain the queues and refill the chunk queue with a new epoch.
