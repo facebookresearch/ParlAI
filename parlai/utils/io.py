@@ -11,8 +11,8 @@ except ImportError:
         from fvcore.common.file_io import PathManagerBase as _PathManager
     except ImportError:
         raise ImportError(
-            "parlai now requires fvcore for some I/O operations. Please run "
-            "`pip install fvcore==0.1.1.post20200716`"
+            "parlai now requires iopath for some I/O operations. Please run "
+            "`pip install iopath`"
         )
 
 USE_ATOMIC_TORCH_SAVE = True
