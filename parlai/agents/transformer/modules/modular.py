@@ -96,7 +96,7 @@ class ModularComponentBuilder(Generic[MC]):
             setattr(self._subcomponents, name, value)
 
 
-def swappable(**kwargs) -> Callable[[Type[C]], Type[ModularComponent[C]]]:
+def swappable(**kwargs) -> Callable[[Type[C]], Type[C]]:
     """
     Decorator that adds swappable subcomponents to a class.
 
@@ -109,13 +109,13 @@ def swappable(**kwargs) -> Callable[[Type[C]], Type[ModularComponent[C]]]:
 
     # Decorators need to return callables that accept only the decorated object.
     # To comply, bundle kwargs into a function that accepts only one argument.
-    def wrap(cls: Type[C]) -> Type[ModularComponent[C]]:
+    def wrap(cls: Type[C]) -> Type[C]:
         return _make_class_swappable(cls, **kwargs)
 
     return wrap
 
 
-def _make_class_swappable(cls: Type[C], **kwargs) -> Type[ModularComponent[C]]:
+def _make_class_swappable(cls: Type[C], **kwargs) -> Type[C]:
     """
     Creates a new class that subclasses ModularComponent.
 
