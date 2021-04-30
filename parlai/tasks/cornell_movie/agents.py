@@ -4,44 +4,67 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDeprecatedDialogTeacher
+from parlai.core.teachers import DialogTeacher
 from .build import build
 from parlai.utils.data import DatatypeHelper
 
 import copy
 import os
+import codecs
 
 
-def _path(opt, filtered):
-    # Build the data if it doesn't exist.
-    build(opt)
-    dt = opt['datatype'].split(':')[0]
-    return os.path.join(opt['datapath'], 'CornellMovie', dt + filtered + '.txt')
+def _path(opt, *additions):
+    return os.path.join(opt['datapath'], 'CornellMovie', *additions)
 
 
-class DefaultTeacher(FbDeprecatedDialogTeacher):
+class DefaultTeacher(DialogTeacher):
+    DOUBLE = False
+
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
-        opt['datafile'] = _path(opt, '')
-        opt['cands_datafile'] = opt['datafile']
         self.fold = DatatypeHelper.fold(opt['datatype'])
+        build(opt)
+        opt['datafile'] = _path(opt, self.fold + '.txt')
         super().__init__(opt, shared)
 
-    def num_examples(self):
-        if self.fold == 'train':
-            return 133125
-        elif self.fold == 'valid':
-            return 16759
-        elif self.fold == 'test':
-            return 16611
+    def setup_data(self, datafile):
+        lines_file = _path(self.opt, 'cornell movie-dialogs corpus', 'movie_lines.txt')
+        convo_file = _path(
+            self.opt, 'cornell movie-dialogs corpus', 'movie_conversations.txt'
+        )
 
-    def num_episodes(self):
-        if self.fold == 'train':
-            return 66478
-        elif self.fold == 'valid':
-            return 8310
-        elif self.fold == 'test':
-            return 8309
+        lines = {}
+
+        codecs.register_error('strict', codecs.ignore_errors)
+        with codecs.open(lines_file, 'r') as f:
+            for line in f:
+                l = line.split(' +++$+++ ')
+                lines[l[0]] = ' '.join(l[4:]).strip('\n').replace('\t', ' ')
+
+        cnt = 0
+        with codecs.open(convo_file, 'r') as f:
+            for cnt, line in enumerate(f, 1):
+                l = line.split(' ')
+                convo = ' '.join(l[6:]).strip('\n').strip('[').strip(']')
+                c = convo.replace("'", '').replace(' ', '').split(',')
+
+                texts = [lines[l] for l in c]
+
+                if (cnt % 10 == 0) and self.fold != 'test':
+                    continue
+                elif (cnt % 10 == 1) and self.fold != 'valid':
+                    continue
+                elif (cnt % 10 > 1) and self.fold != 'train':
+                    continue
+
+                for i, (prompt, response) in enumerate(zip(texts[::2], texts[1::2])):
+                    yield {'text': prompt, 'label': response}, i == 0
+
+                if self.DOUBLE:
+                    for i, (prompt, response) in enumerate(
+                        zip(texts[1::2], texts[2::2])
+                    ):
+                        yield {'text': prompt, 'label': response}, i == 0
 
 
 class DoubleTeacher(DefaultTeacher):
@@ -49,64 +72,4 @@ class DoubleTeacher(DefaultTeacher):
     This version creates text-label pairs from the perspective of both speakers.
     """
 
-    def num_examples(self):
-        if self.fold == 'train':
-            return 176975
-        elif self.fold == 'valid':
-            return 22349
-        elif self.fold == 'test':
-            return 22013
-
-    def num_episodes(self):
-        if self.fold == 'train':
-            return 102401
-        elif self.fold == 'valid':
-            return 12806
-        elif self.fold == 'test':
-            return 12790
-
-    def _rebuild(self, entries):
-        new_list = []
-        if len(entries) > 0:
-            # add all ( y_t => x_(t+1) ) pairs
-            new_list.extend(
-                [
-                    (entries[i][1][0], [entries[i + 1][0]])
-                    for i in range(len(entries) - 1)
-                ]
-            )
-        return new_list
-
-    def _is_valid(self, entry):
-        if entry[0] == '' or entry[1] is None:
-            return False
-        return True
-
-    def setup_data(self, path):
-        """
-        Adds additional perspectives. For example, in the conversation:
-
-        x1 y1
-        x2 y2
-        x3
-
-        Creates the additional dialog:
-
-        y1 x2
-        y2 x3
-        """
-        # this shows conversations in both directions
-        alternate = []
-        for entry, new in super().setup_data(path):
-            if new:
-                for i, e in enumerate(self._rebuild(alternate)):
-                    if self._is_valid(e):
-                        yield e, i == 0
-                alternate.clear()
-            alternate.append(entry)
-            if self._is_valid(entry):
-                yield entry, new
-        if alternate:
-            for i, e in enumerate(self._rebuild(alternate)):
-                if self._is_valid(e):
-                    yield e, i == 0
+    DOUBLE = True

@@ -1687,7 +1687,7 @@ class TorchAgent(ABC, Agent):
                 )
             if any('label_truncated_length' in ex for ex in exs):
                 label_truncated_lengths = torch.LongTensor(
-                    [ex.get('label_truncated_length') for ex in exs]
+                    [ex.get('label_truncated_length', 0) for ex in exs]
                 )
             field = 'labels' if labels_avail else 'eval_labels'
 
