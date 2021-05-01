@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.core.build_data import make_dir
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -11,7 +12,7 @@ from typing_extensions import TypedDict
 import os
 
 # huggingface imports
-from datasets import load_dataset
+import datasets
 
 
 class SplitsMappingDict(TypedDict):
@@ -39,6 +40,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
         self.hf_split = self.hf_splits_mapping[self.fold]
         self.data_path = self._path(opt)
         opt['datafile'] = self.data_path
+        make_dir(opt['datafile'])
 
         self.id = "huggingface"
         super().__init__(opt, shared)
@@ -93,13 +95,17 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
         """
         try to return the true label text value from the row and the candidates.
         """
-        pre_candidates = self.dataset.features[self.hf_label_field].names
-        # construct label and candidates
-        if type(label) is int:
-            return pre_candidates[label], pre_candidates
-        if label in row:
-            return row[label], [row[l] for l in pre_candidates]
-        return label, pre_candidates
+        if isinstance(self.dataset.features['label'], datasets.features.ClassLabel):
+            pre_candidates = self.dataset.features[self.hf_label_field].names
+            # construct label and candidates
+            if type(label) is int:
+                label = pre_candidates[label]
+            if label in row:
+                return row[label], [row[l] for l in pre_candidates]
+            return label, pre_candidates
+        else:
+            label = str(label)
+            return label, [label]
 
     def setup_data(self, path: str) -> Iterable[tuple]:
         """
@@ -108,7 +114,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
         Manually override if needed.
         """
         # load dataset from HuggingFace
-        self.dataset = load_dataset(
+        self.dataset = datasets.load_dataset(
             path=self.hf_path, name=self.hf_name, split=self.hf_split
         )
 

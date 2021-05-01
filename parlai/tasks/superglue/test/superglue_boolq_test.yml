@@ -1,0 +1,118 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - 'True'
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    passage: 20 euro note -- Until now there has been only one complete series of
+      euro notes; however a new series, similar to the current one, is being released.
+      The European Central Bank will, in due time, announce when banknotes from the
+      first series lose legal tender status.
+    question: is the first series 20 euro note still legal tender
+    text: '20 euro note -- Until now there has been only one complete series of euro
+      notes; however a new series, similar to the current one, is being released.
+      The European Central Bank will, in due time, announce when banknotes from the
+      first series lose legal tender status.
+
+      is the first series 20 euro note still legal tender'
+- - episode_done: true
+    eval_labels:
+    - 'True'
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    passage: 2018–19 UEFA Champions League -- The final will be played at the Wanda
+      Metropolitano in Madrid, Spain. The winners of the 2018--19 UEFA Champions League
+      will earn the right to play against the winners of the 2018--19 UEFA Europa
+      League in the 2019 UEFA Super Cup. They will also automatically qualify for
+      the 2019--20 UEFA Champions League group stage, and if they have already qualified
+      through their league performance, the berth reserved will be given to the champions
+      of the 2018--19 Austrian Bundesliga, the 11th-ranked association according to
+      next season's access list.
+    question: do the champions league winners get automatic qualification for next
+      year's tournament
+    text: '2018–19 UEFA Champions League -- The final will be played at the Wanda
+      Metropolitano in Madrid, Spain. The winners of the 2018--19 UEFA Champions League
+      will earn the right to play against the winners of the 2018--19 UEFA Europa
+      League in the 2019 UEFA Super Cup. They will also automatically qualify for
+      the 2019--20 UEFA Champions League group stage, and if they have already qualified
+      through their league performance, the berth reserved will be given to the champions
+      of the 2018--19 Austrian Bundesliga, the 11th-ranked association according to
+      next season''s access list.
+
+      do the champions league winners get automatic qualification for next year''s
+      tournament'
+- - episode_done: true
+    eval_labels:
+    - 'True'
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    passage: Bullsnake -- Bullsnakes are very powerful constrictors who eat small
+      mammals, such as mice, moles, rats, pocket gophers, ground squirrels, and rabbits,
+      as well as ground nesting birds, birds' eggs and lizards. Their climbing proficiency
+      enables them to raid bird nests (and birdhouses) to eat the nestlings or sitting
+      mother. One snake can eat five small birds within 15 minutes. Juvenile bullsnakes
+      depend on small lizards, frogs, and baby mice.
+    question: can a bull snake kill a small dog
+    text: 'Bullsnake -- Bullsnakes are very powerful constrictors who eat small mammals,
+      such as mice, moles, rats, pocket gophers, ground squirrels, and rabbits, as
+      well as ground nesting birds, birds'' eggs and lizards. Their climbing proficiency
+      enables them to raid bird nests (and birdhouses) to eat the nestlings or sitting
+      mother. One snake can eat five small birds within 15 minutes. Juvenile bullsnakes
+      depend on small lizards, frogs, and baby mice.
+
+      can a bull snake kill a small dog'
+- - episode_done: true
+    eval_labels:
+    - 'True'
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    passage: NBA playoffs -- All rounds are best-of-seven series. Series are played
+      in a 2--2--1--1--1 format, meaning the team with home-court advantage hosts
+      games 1, 2, 5, and 7, while their opponent hosts games 3, 4, and 6, with games
+      5--7 being played if needed. This format has been used since 2014, after NBA
+      team owners unanimously voted to change from a 2--3--2 format on October 23,
+      2013.
+    question: are all nba playoff games best of 7
+    text: 'NBA playoffs -- All rounds are best-of-seven series. Series are played
+      in a 2--2--1--1--1 format, meaning the team with home-court advantage hosts
+      games 1, 2, 5, and 7, while their opponent hosts games 3, 4, and 6, with games
+      5--7 being played if needed. This format has been used since 2014, after NBA
+      team owners unanimously voted to change from a 2--3--2 format on October 23,
+      2013.
+
+      are all nba playoff games best of 7'
+- - episode_done: true
+    eval_labels:
+    - 'True'
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    passage: Manchester station group -- The Manchester station group is a station
+      group (for fares purposes) of four railway stations in Manchester city centre,
+      England consisting of Manchester Piccadilly, Manchester Oxford Road, Manchester
+      Victoria and Deansgate. The station group is printed on national railway tickets
+      as MANCHESTER STNS. For commuters in Greater Manchester the four stations are
+      printed as MANCHESTER CTLZ which additionally permits the use of Metrolink tram
+      services in the City Zone (between Deansgate-Castlefield, New Islington and
+      Victoria).
+    question: can i use my train ticket on the tram in manchester
+    text: 'Manchester station group -- The Manchester station group is a station group
+      (for fares purposes) of four railway stations in Manchester city centre, England
+      consisting of Manchester Piccadilly, Manchester Oxford Road, Manchester Victoria
+      and Deansgate. The station group is printed on national railway tickets as MANCHESTER
+      STNS. For commuters in Greater Manchester the four stations are printed as MANCHESTER
+      CTLZ which additionally permits the use of Metrolink tram services in the City
+      Zone (between Deansgate-Castlefield, New Islington and Victoria).
+
+      can i use my train ticket on the tram in manchester'
+num_episodes: 3245
+num_examples: 3245

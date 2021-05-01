@@ -1,0 +1,48 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: The sailors rode the breeze clear of the rocks.
+    text: The sailors rode the breeze clear of the rocks.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: The weights made the rope stretch over the pulley.
+    text: The weights made the rope stretch over the pulley.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: The mechanical doll wriggled itself loose.
+    text: The mechanical doll wriggled itself loose.
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: If you had eaten more, you would want less.
+    text: If you had eaten more, you would want less.
+- - episode_done: true
+    eval_labels:
+    - unacceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: As you eat the most, you want the least.
+    text: As you eat the most, you want the least.
+num_episodes: 1043
+num_examples: 1043

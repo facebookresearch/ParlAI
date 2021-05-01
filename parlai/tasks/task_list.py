@@ -294,7 +294,9 @@ task_list = [
         "task": "glue",
         "tags": [],
         "description": (
-            "GLUE, the General Language Understanding Evaluation benchmark is a collection of resources for training, evaluating, and analyzing natural language understanding systems."
+            "GLUE, the General Language Understanding Evaluation benchmark is "
+            "a collection of resources for training, evaluating, and analyzing "
+            "natural language understanding systems."
         ),
         "links": {
             "website": "https://gluebenchmark.com/",
@@ -599,6 +601,22 @@ task_list = [
             "Wikipedia."
         ),
         "links": {"arXiv": "https://arxiv.org/abs/1606.05250"},
+    },
+    {
+        "id": "SuperGLUE",
+        "display_name": "SuperGLUE",
+        "task": "superglue",
+        "tags": [],
+        "description": (
+            "SuperGLUE (https://super.gluebenchmark.com/) is a new benchmark "
+            "styled after GLUE with a new set of more difficult language "
+            "understanding tasks, improved resources, and a new public "
+            "leaderboard."
+        ),
+        "links": {
+            "website": "https://super.gluebenchmark.com/",
+            "website2": "https://huggingface.co/datasets/super_glue",
+        },
     },
     {
         "id": "TriviaQA",

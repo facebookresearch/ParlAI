@@ -1,0 +1,51 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - negative
+    sentence: 'hide new secretions from the parental units '
+    text: 'hide new secretions from the parental units '
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - negative
+    sentence: 'contains no wit , only labored gags '
+    text: 'contains no wit , only labored gags '
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - positive
+    sentence: 'that loves its characters and communicates something rather beautiful
+      about human nature '
+    text: 'that loves its characters and communicates something rather beautiful about
+      human nature '
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - negative
+    sentence: 'remains utterly satisfied to remain the same throughout '
+    text: 'remains utterly satisfied to remain the same throughout '
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    labels:
+    - negative
+    sentence: 'on the worst revenge-of-the-nerds clichés the filmmakers could dredge
+      up '
+    text: 'on the worst revenge-of-the-nerds clichés the filmmakers could dredge up '
+num_episodes: 67349
+num_examples: 67349

@@ -1,0 +1,63 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - It was small.
+    id: huggingface
+    label_candidates:
+    - It was fragile.
+    - It was small.
+    premise: The item was packaged in bubble wrap.
+    question: cause
+    text: 'The item was packaged in bubble wrap.
+
+      cause'
+- - episode_done: true
+    eval_labels:
+    - I found a weapon.
+    id: huggingface
+    label_candidates:
+    - I retrieved a ticket stub.
+    - I found a weapon.
+    premise: I emptied my pockets.
+    question: effect
+    text: 'I emptied my pockets.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - The termites ate through the wood in the house.
+    id: huggingface
+    label_candidates:
+    - The termites disappeared from the house.
+    - The termites ate through the wood in the house.
+    premise: Termites invaded the house.
+    question: effect
+    text: 'Termites invaded the house.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - The patrol agent accused them of smuggling.
+    id: huggingface
+    label_candidates:
+    - The patrol agent checked their passports.
+    - The patrol agent accused them of smuggling.
+    premise: The travelers reached the border.
+    question: effect
+    text: 'The travelers reached the border.
+
+      effect'
+- - episode_done: true
+    eval_labels:
+    - It was summer.
+    id: huggingface
+    label_candidates:
+    - It was a holiday.
+    - It was summer.
+    premise: The office was closed.
+    question: cause
+    text: 'The office was closed.
+
+      cause'
+num_episodes: 500
+num_examples: 500
