@@ -71,7 +71,7 @@ def setup_args() -> ParlaiParser:
         help='Where the scripted model checkpoint will be saved',
     )
     parser.add_argument(
-        "-i",
+        "-in",
         "--input",
         type=str,
         default='',
