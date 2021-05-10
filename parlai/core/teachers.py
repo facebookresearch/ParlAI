@@ -465,8 +465,10 @@ class FixedDialogTeacher(Teacher):
                     break
                 buffer_entry_idx += 1
             # apply mutators
-            for mutator in self.mutators:
-                episode_buffer = mutator(episode_buffer)
+            if self.mutators:
+                episode_buffer = [m.copy() for m in episode_buffer]
+                for mutator in self.mutators:
+                    episode_buffer = mutator(episode_buffer)
             self.episode_buffer = list(episode_buffer)
 
             if not self.episode_buffer:
@@ -766,8 +768,10 @@ class DialogTeacher(FixedDialogTeacher):
                     self._saw_epoch_done = epoch_done
                     break
             # perform any mutations there are
-            for mutator in self.mutators:
-                episode_buffer = mutator(episode_buffer)
+            if self.mutators:
+                episode_buffer = [m.copy() for m in episode_buffer]
+                for mutator in self.mutators:
+                    episode_buffer = mutator(episode_buffer)
             # make sure mutations are fully realized (not generators)
             self.episode_buffer = list(episode_buffer)
             # The recursive call has dual purpose:
