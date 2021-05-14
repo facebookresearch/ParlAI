@@ -2291,9 +2291,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         super().__init__(opt, shared)
         self.buffersize = self.get_buffersize()
 
-        if 'stream' not in opt['datatype']:
-            raise ValueError('Chunk teacher should be used with streaming. ')
-
         self.set_datasettings(opt)
 
         self.dws = int(self.opt.get('distributed_world_size', 1))

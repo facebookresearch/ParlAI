@@ -301,27 +301,25 @@ class TestChunkTeacher(unittest.TestCase):
         assert valid['exs'] == 100
         assert test['exs'] == 100
 
-    def test_stream_only(self):
-        with self.assertRaises(ValueError):
-            valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests:chunky',
-                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
-                    batchsize=32,
-                ),
-                valid_datatype='valid',
-            )
+    def test_non_stream_works(self):
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid',
+        )
 
-        with self.assertRaises(ValueError):
-            valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests:chunky',
-                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
-                    batchsize=32,
-                ),
-                valid_datatype='valid:stream',
-                test_datatype='test',
-            )
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test',
+        )
 
 
 class CustomEvaluationTeacher(DialogTeacher):
