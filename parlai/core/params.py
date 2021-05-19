@@ -1155,7 +1155,6 @@ class ParlaiParser(argparse.ArgumentParser):
 
         self._process_args_to_opts(args)
         print_announcements(self.opt)
-        logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         assert '_subparser' not in self.opt
 

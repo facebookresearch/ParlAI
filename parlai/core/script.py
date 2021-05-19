@@ -102,6 +102,7 @@ class ParlaiScript(object):
 
     @classmethod
     def _run_from_parser_and_opt(cls, opt: Opt, parser: ParlaiParser):
+        logging.set_log_level(opt.get('loglevel', 'info').upper())
         script = cls(opt)
         script.parser = parser
         return script.run()
