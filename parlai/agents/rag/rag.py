@@ -3,6 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+
 """
 Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.
 
@@ -27,7 +28,7 @@ from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import History, Batch
-from parlai.core.torch_generator_agent import PPLMetric, TreeSearch
+from parlai.core.torch_generator_agent import PPLMetric, TorchGeneratorAgent, TreeSearch
 from parlai.utils.distributed import sync_parameters
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
@@ -74,6 +75,20 @@ class T5RagAgent(T5Agent, BaseGenerationAgentMixin):
     @staticmethod
     def build_rag_model(opt: Opt, dictionary: DictionaryAgent) -> T5RagModel:
         return T5RagModel(opt, dictionary)
+
+    def _generate(
+        self,
+        batch: Batch,
+        beam_size: int,
+        max_ts: int,
+        prefix_tokens: Optional[torch.LongTensor] = None,
+    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+        """
+        Override since T5 needs to call TGA generate.
+        """
+        return TorchGeneratorAgent._generate(
+            self, batch, beam_size, max_ts, prefix_tokens
+        )
 
 
 GENERATION_AGENTS = {
@@ -805,7 +820,12 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         scores, preds, enc_state, *_ = model_output
 
         self._record_retrieval_metrics(batch, enc_state)
-        loss, metric_loss, metric_correct, metric_target_tokens = self._rag_model_interface.compute_loss(
+        (
+            loss,
+            metric_loss,
+            metric_correct,
+            metric_target_tokens,
+        ) = self._rag_model_interface.compute_loss(
             self.criterion, scores, preds, enc_state, batch.label_vec
         )
 
