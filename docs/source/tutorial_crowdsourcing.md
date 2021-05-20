@@ -210,7 +210,7 @@ Mephisto MTurk Tips and Tricks
 
 ### Preventing and Handling Crashes
 
--   The `max_num_concurrent_units` argument when initializing [`TaskLauncher`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/operations/task_launcher.py) controls how many people can work on your task at any given time: set this sufficiently low for your task. Leaving this too high might cause your Heroku server to run into issues depending on how many messages per second it's trying to
+-   The `mephisto.task.max_num_concurrent_units` argument controls how many people can work on your task at any given time: set this sufficiently low for your task. Leaving this too high might cause your Heroku server to run into issues depending on how many messages per second it's trying to
     process, and on how much data is being sent in those messages (such
     as picture or video data).
 -   If you're running a model on your local machine, try to share the
