@@ -382,6 +382,9 @@ try:
                 '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
                 '+mephisto.blueprint.num_conversations=1',
                 '+mephisto.task.allowed_concurrent=0',
+                '+mephisto.task.assignment_duration_in_seconds=600',
+                '+mephisto.task.max_num_concurrent_units=0',
+                '+mephisto.task.maximum_units_per_worker=0',
                 '+num_turns=3',
                 '+turn_timeout=300',
             ]
