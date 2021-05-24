@@ -347,7 +347,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
-            assert actual_state['inputs'] == expected_state['inputs']
+            try:
+                assert actual_state['inputs'] == expected_state['inputs']
+            except:
+                breakpoint()
             for actual_message, expected_message in zip(
                 actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
