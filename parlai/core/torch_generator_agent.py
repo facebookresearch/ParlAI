@@ -995,6 +995,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         Intentionally overridable for more complex model histories.
         """
+        if self.beam_context_block_ngram <= 0:
+            # We aren't context blocking, return empty tensor
+            return torch.LongTensor()
+
         ctxt = batch.text_vec[batch_idx]
         if self.beam_block_full_context:
             ctxt = batch.full_text_vec[batch_idx]

@@ -112,6 +112,8 @@ class TestTreeSearch(unittest.TestCase):
             'beam',
             '--truncate',
             '1024',
+            '--beam-context-block-ngram',
+            '1',
         ]
         pp = ParlaiParser(True, True)
         agent = create_agent(pp.parse_args(args), True)
