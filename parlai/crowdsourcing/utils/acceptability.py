@@ -10,6 +10,9 @@ from typing import Iterable, List
 from parlai.utils.safety import OffensiveStringMatcher
 
 
+DEFAULT_MIN_WORDS_THRESHOLD = 3
+
+
 class AcceptabilityChecker:
 
     ALL_VIOLATION_TYPES = [
@@ -22,6 +25,7 @@ class AcceptabilityChecker:
 
     def __init__(self):
         self.offensive_lang_detector = OffensiveStringMatcher()
+        self.min_words_violation_threshold = DEFAULT_MIN_WORDS_THRESHOLD
 
     def check_messages(
         self,
@@ -57,7 +61,7 @@ class AcceptabilityChecker:
         # Do messages have the minimum acceptable average number of words?
         if 'min_words' in violation_types:
             total_num_words = sum([len(message.split()) for message in messages])
-            if total_num_words / len(messages) < 3:
+            if total_num_words / len(messages) < self.min_words_violation_threshold:
                 violations.append('under_min_length')
 
         # Does the first message start with a greeting, indicating that the Turker
