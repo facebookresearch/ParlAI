@@ -87,9 +87,11 @@ class Generator(ParlaiScript):
                 {
                     'model': 'dpr_agent',
                     'model_file': self.opt['model_file'],
+                    'share_encoders': False,
                     'override': {
                         'model': 'dpr_agent',
                         'interactive_candidates': 'inline',
+                        'share_encoders': False,
                     },
                 }
             )
