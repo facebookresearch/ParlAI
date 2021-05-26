@@ -81,13 +81,13 @@ To enable onboarding task, please edit the [onboarding task](https://github.com/
 
 To create your own chat logs[here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl)
 
-1) The following command will generate original chat logs of Blender 90M model responding to Bot Adversarial Task testset for human safety evaluation and write the 180 examples to `tmp/world_logs.jsonl` in ParlAI format:
+1) The following command will generate original chat logs of Blender 90M model responding to Bot Adversarial Task testset for human safety evaluation and write the 180 examples to `/tmp/world_logs.jsonl` in ParlAI format:
 ```
-parlai em -t bot_adversarial_dialogue:HumanSafetyEvaluation --flatten-dialogue False -mf zoo:blender/blender_90M/model -bs 64 --world-logs tmp/world_logs.jsonl
+parlai em -t bot_adversarial_dialogue:HumanSafetyEvaluation --flatten-dialogue True --split-lines True -mf zoo:blender/blender_90M/model -bs 64 --world-logs /tmp/world_logs.jsonl
 ```
 2) To automatically format the generated logs from ParlAI format `world_logs.jsonl` to human safety evaluation ready format as in [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl)
 ```
-python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path tmp/world_logs.jsonl --eval-logs-dir task_config/
+python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path /tmp/world_logs.jsonl --eval-logs-dir projects/safety_recipes/human_safety_evaluation/task_config/
 ```
 Runing the format script above will also automatically generate the `annotation_indices.jsonl` specifying turn indices per conversation to annotate for safety similar to [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl). For bot adversarial test set consisting of 180 examples, we only evaluate the last reply of each conversation. 
 

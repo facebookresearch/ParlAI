@@ -12,7 +12,7 @@ import parlai.utils.logging as logging
 
 
 """
-python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path tmp/world_logs.jsonl --eval-logs-dir tmp/human_safety_evaluation
+python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path /tmp/world_logs.jsonl --eval-logs-dir /tmp/human_safety_evaluation
 """
 
 if __name__ == "__main__":
@@ -34,17 +34,20 @@ if __name__ == "__main__":
     with PathManager.open(world_logs_path) as data_file:
         for l in data_file.readlines():
             episode = json.loads(l.strip())
-            # TODO: when conversation format is finished please remove this line;
-            # TODO: 'human_eval_turn_range' unnecessary for WTC
-            if 'human_eval_turn_range' not in episode['dialog'][0][0]:
-                continue
             new_episode = []
-            for turn in episode['dialog']:
+            dialogue_text = episode['dialog'][0][0]['text'].split('\n') + [
+                episode['dialog'][0][1]['text']
+            ]
+            for i in range(0, len(dialogue_text), 2):
                 new_episode.append(
                     [
-                        {'text': turn[0]['text'], 'episode_done': False, 'id': 'human'},
                         {
-                            'text': turn[0]['eval_labels'][0],
+                            'text': dialogue_text[i],
+                            'episode_done': False,
+                            'id': 'human',
+                        },
+                        {
+                            'text': dialogue_text[i + 1],
                             'episode_done': False,
                             'id': 'bot',
                         },
@@ -57,6 +60,7 @@ if __name__ == "__main__":
                 int(x)
                 for x in episode['dialog'][0][0]['human_eval_turn_range'].split('|')
             ]
+            assert len(new_episode) == human_eval_turn_range[1] + 1
             new_episode = new_episode[
                 human_eval_turn_range[0] : human_eval_turn_range[1] + 1
             ]
