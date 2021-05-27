@@ -36,10 +36,8 @@ class StandardTeacher(_BaseSafetyTeacher):
     Data from the standard collection described in the paper `Build it Break it Fix it
     for Dialogue Safety: Robustness from Adversarial Human Attack`
     (<https://arxiv.org/abs/1908.06083>)
-
     To see data from rounds 1, 2, and 3, try running:
     `parlai display_data -t dialogue_safety:standard --round 3`
-
     To see data from round 2 only, try running:
     `parlai display_data -t dialogue_safety:standard --round 2
      --round-only True`
@@ -56,10 +54,8 @@ class AdversarialTeacher(_BaseSafetyTeacher):
     Data from the adversarial collection described in the paper `Build it Break it Fix
     it for Dialogue Safety: Robustness from Adversarial Human Attack`
     (<https://arxiv.org/abs/1908.06083>)
-
     To see data from rounds 1, 2, and 3, try running:
     `parlai display_data -t dialogue_safety:adversarial --round 3`
-
     To see data from round 2 only, try running:
     `parlai display_data -t dialogue_safety:adversarial --round 2
      --round-only True`
@@ -76,10 +72,8 @@ class MultiturnTeacher(FixedDialogTeacher):
     Data from the multi-turn adversarial collection described in the paper `Build it
     Break it Fix it for Dialogue Safety: Robustness from Adversarial Human Attack`
     (<https://arxiv.org/abs/1908.06083>)
-
     To see data containing multi-turn conversations, try running
     `parlai display_data -t dialogue_safety:multiturn`.
-
     Run the above command with the flag `--single-turn True` to only see the
     single turn data.
     """
@@ -149,9 +143,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
     """
     Dataset of comments from Wikipedia's Talk page edits. Taken from the Toxic Comments
     Classification Challenge on Kaggle.
-
     <https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>
-
     We convert this data to a binary classification task.
     """
 
@@ -183,7 +175,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
         self.use_test_set = opt['use_test_set']
         self.balance_data = opt['balance_data']
-
+        self.DATA_SOURCE = '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>'
         self.data_path = os.path.join(
             opt['datapath'], 'dialogue_safety', 'wiki-toxic-comments'
         )
@@ -226,8 +218,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             PathManager.mkdirs(self.data_path)
         if not PathManager.exists(os.path.join(self.data_path, 'train.csv')):
             raise RuntimeError(
-                f'\n\n{stars}\nThis data must be downloaded from '
-                '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>. '
+                f'\n\n{stars}\nThis data must be downloaded from {self.DATA_SOURCE}'
                 '\nIt cannot be automatically downloaded, as one must agree to '
                 'the competition rules outlined on the website before '
                 'gaining access to the data.\n\n'
