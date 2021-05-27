@@ -9,6 +9,8 @@ mephisto:
     onboarding_qualification: turn_annotations_static
   task:
     allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
     maximum_units_per_worker: 5
     task_description: |
       <b><h4>Task Description</h4></b>
