@@ -16,7 +16,7 @@ We actively welcome your pull requests.
 4. If you've added code that should be tested, [add tests](http://parl.ai/docs/tutorial_tests.html).
 5. If you've changed APIs, update the documentation.
 6. Autoformat and lint your code (`bash autoformat.sh`)
-7. Ensure the test suite passes. Run `python -m pytest -m unit`.
+7. (Optional) Ensure the test suite passes. Run `python -m pytest -m unit`.
 8. If you've added a new dataset, you should also run
    `python -m pytest -m data`. Copy-paste the output into a comment in your PR.
 9. If you haven't already, complete the Contributor License Agreement ("CLA").
