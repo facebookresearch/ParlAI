@@ -2292,6 +2292,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.buffersize = self.get_buffersize()
 
         self.set_datasettings(opt)
+        self.datatype = opt['datatype']
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
@@ -2338,7 +2339,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.samples = queue.Queue(maxsize=self.buffersize)
             self.chunks = queue.Queue()
             self.reset_counter = SimpleCounter()  # track no. of resets
-            if self.is_train:
+            if DatatypeHelper.should_shuffle(self.datatype):
                 # TODO: possible need a fixed seed here in the future
                 self.rng = random.Random()
             else:
@@ -2485,7 +2486,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Shuffles and queues fold chunks for loading.
         """
-        if self.is_train:
+        if DatatypeHelper.should_shuffle(self.datatype):
             self.rng.shuffle(self.fold_chunks)
         # save the reset count at the time a chunk was queued
         reset_cnt = self.reset_counter.value()
@@ -2526,14 +2527,14 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         next_chunk, chunk_reset_cnt = self.chunks.get()
         if next_chunk is None:
-            if self.is_train:
+            if DatatypeHelper.should_cycle(self.datatype):
                 # start putting chunks back onto the queue
                 self._enqueue_chunks()
             return (None, chunk_reset_cnt)
         # abstract method `load_from_chunk` returns a list of tuples
         output = self.load_from_chunk(next_chunk)
 
-        if self.is_train:
+        if DatatypeHelper.should_shuffle(self.datatype):
             # randomize the samples
             random.Random().shuffle(output)
         return output, chunk_reset_cnt
