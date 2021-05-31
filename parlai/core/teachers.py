@@ -2354,7 +2354,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         self._episode_done = True
         self.last_queue_output = None
-        self._ct_epoch_done = False
 
     def _get_data_folder(self):
         if not self.opt.get('datafile'):
@@ -2555,7 +2554,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         # never "epochs").
         retval, fake_epoch_done = super().next_example()
         real_epoch_done = retval.is_padding()
-        self._ct_epoch_done = False
         return retval, real_epoch_done
 
     def get(self, episode_idx, entry_idx=0):
@@ -2574,7 +2572,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
                 logging.debug(f"Removed {stale_exs} stale examples from the queue.")
             if queue_output is None:
                 self.samples.put((None, reset_cnt))
-                self._ct_epoch_done = True
                 return Message.padding_example()
 
             # Update the last queue output in the case
@@ -2596,7 +2593,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
     def reset(self):
         super().reset()
-        self._ct_epoch_done = False
         if self.is_root_teacher:
             self.reset_counter.increment()
             # drain the queues and refill the chunk queue with a new epoch.
