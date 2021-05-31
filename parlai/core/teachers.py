@@ -2426,6 +2426,12 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         else:
             return self.num_exs // self.dws + int((self.num_exs % self.dws) > self.rank)
 
+    def next_episode_idx(self):
+        # We don't actually track episodes in ChunkTeacher, we just blindly
+        # trust the queue. This hacks around FixedDialogTeacher's next_example
+        # check that the epoch is done.
+        return 0
+
     def _enqueue_request(self):
         """
         Queue a request for loading to the data loader.
@@ -2540,8 +2546,15 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         return output, chunk_reset_cnt
 
     def next_example(self):
+        # next_example will always fail to provide useful signal on whether
+        # we're at the end of an epoch in chunk teacher. Instead, the queue
+        # empties and we simply start outputting pads forever. As such, we'll
+        # measure epochs when we start receiving only pads.
+
+        # (This isn't relevant for the training loop, which loops for ever and
+        # never "epochs").
         retval, fake_epoch_done = super().next_example()
-        real_epoch_done = self._ct_epoch_done
+        real_epoch_done = retval.is_padding()
         self._ct_epoch_done = False
         return retval, real_epoch_done
 
