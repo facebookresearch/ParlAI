@@ -2535,7 +2535,15 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             if DatatypeHelper.should_cycle(self.datatype):
                 # start putting chunks back onto the queue
                 self._enqueue_chunks()
-            return (None, chunk_reset_cnt)
+                next_chunk, chunk_reset_cnt = self.chunks.get()
+                if next_chunk is None:
+                    # See the race condition described around "gross hack" in
+                    # _enqueue_chunks.  if we win the race condition, then
+                    # catch it here
+                    next_chunk, chunk_reset_cnt = self.chunks.get()
+            else:
+                # if we're in valid/test, we need to actually signal the end
+                return (None, chunk_reset_cnt)
         # abstract method `load_from_chunk` returns a list of tuples
         output = self.load_from_chunk(next_chunk)
 
