@@ -2292,6 +2292,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.buffersize = self.get_buffersize()
 
         self.set_datasettings(opt)
+        self.datatype = opt['datatype']
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
@@ -2338,7 +2339,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
             self.samples = queue.Queue(maxsize=self.buffersize)
             self.chunks = queue.Queue()
             self.reset_counter = SimpleCounter()  # track no. of resets
-            if self.is_train:
+            if DatatypeHelper.should_shuffle(self.datatype):
                 # TODO: possible need a fixed seed here in the future
                 self.rng = random.Random()
             else:
@@ -2424,6 +2425,12 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         else:
             return self.num_exs // self.dws + int((self.num_exs % self.dws) > self.rank)
 
+    def next_episode_idx(self):
+        # We don't actually track episodes in ChunkTeacher, we just blindly
+        # trust the queue. This hacks around FixedDialogTeacher's next_example
+        # check that the epoch is done.
+        return 0
+
     def _enqueue_request(self):
         """
         Queue a request for loading to the data loader.
@@ -2484,7 +2491,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         Shuffles and queues fold chunks for loading.
         """
-        if self.is_train:
+        if DatatypeHelper.should_shuffle(self.datatype):
             self.rng.shuffle(self.fold_chunks)
         # save the reset count at the time a chunk was queued
         reset_cnt = self.reset_counter.value()
@@ -2525,7 +2532,8 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         """
         next_chunk, chunk_reset_cnt = self.chunks.get()
         if next_chunk is None:
-            if self.is_train:
+            if DatatypeHelper.should_cycle(self.datatype):
+                # start putting chunks back onto the queue
                 self._enqueue_chunks()
                 next_chunk, chunk_reset_cnt = self.chunks.get()
                 if next_chunk is None:
@@ -2539,10 +2547,22 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         # abstract method `load_from_chunk` returns a list of tuples
         output = self.load_from_chunk(next_chunk)
 
-        if self.is_train:
+        if DatatypeHelper.should_shuffle(self.datatype):
             # randomize the samples
             random.Random().shuffle(output)
         return output, chunk_reset_cnt
+
+    def next_example(self):
+        # next_example will always fail to provide useful signal on whether
+        # we're at the end of an epoch in chunk teacher. Instead, the queue
+        # empties and we simply start outputting pads forever. As such, we'll
+        # measure epochs when we start receiving only pads.
+
+        # (This isn't relevant for the training loop, which loops for ever and
+        # never "epochs").
+        retval, fake_epoch_done = super().next_example()
+        real_epoch_done = retval.is_padding()
+        return retval, real_epoch_done
 
     def get(self, episode_idx, entry_idx=0):
         if not self.threading and self.samples.empty():
