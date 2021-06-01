@@ -84,8 +84,9 @@ class TestNumExamples(_Abstract):
 
 
 class TestSmallBuffer(_Abstract):
-    TASK = 'integration_tests:chunky_small_buffer'
     # Small buffer
+    TASK = 'integration_tests:chunky_small_buffer'
+
     def test_small_buffer_bs1(self):
         self._run()
 
