@@ -190,7 +190,7 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
             try:
                 unit_data = data_browser.get_data_from_unit(unit)
                 task_data.append(unit_data)
-            except IndexError:
+            except (IndexError, AssertionError):
                 logging.warning(
                     f"Skipping unit {unit.db_id}. No message found for this unit."
                 )
