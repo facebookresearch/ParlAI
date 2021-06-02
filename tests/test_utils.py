@@ -193,7 +193,7 @@ class TestDatatypeHelper(unittest.TestCase):
         assert DatatypeHelper.is_training("test:stream") is False
 
     def test_split_domains_by_fold(self):
-        TOTAL_LEN = random.randint(10, 20)
+        TOTAL_LEN = random.randint(100, 200)
         a_end = random.randrange(1, TOTAL_LEN)
         b_end = random.randrange(a_end, TOTAL_LEN)
         DOMAIN_A = [i for i in range(0, a_end)]
