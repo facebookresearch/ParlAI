@@ -13,8 +13,10 @@ from parlai.core.teachers import ParlAIDialogTeacher
 from parlai.tasks.bot_adversarial_dialogue.build import (
     build_dialogue_datasets,
     build_human_safety_eval_dataset,
+    build_human_nonadv_safety_eval_dataset,
     get_adversarial_dialogue_folder,
     get_human_safety_eval_folder,
+    get_human_nonadv_safety_eval_folder,
 )
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
@@ -242,6 +244,37 @@ class HumanSafetyEvaluationTeacher(ParlAIDialogTeacher):
         if self.opt['flatten_dialogue']:
             self.episodes = new_episodes
             self.num_exs = len(self.episodes)
+
+
+def _human_nonadv_safety_eval_datapath(opt: Opt) -> str:
+    """
+    Return the filepath for the specified datatype of the specified human evaluation
+    task on non adversarial dialogue.
+    """
+    build_human_nonadv_safety_eval_dataset(opt)
+    # Build the data if it doesn't exist.
+    logging.info(
+        f'The data for human non-adversarial safety evaluation is test set only '
+        f'regardless of your chosen datatype, which is {opt["datatype"]} '
+    )
+    data_path = os.path.join(
+        get_human_nonadv_safety_eval_folder(opt['datapath']),
+        'human_nonadv_safety_eval',
+        'test.txt',
+    )
+    return data_path
+
+
+class HumanNonadvSafetyEvaluationTeacher(ParlAIDialogTeacher):
+    """
+    Teacher for non adversarial safety evaluation on bot adversarial dialogues.
+    """
+
+    def __init__(self, opt, shared=None):
+        opt['parlaidialogteacher_datafile'] = _human_nonadv_safety_eval_datapath(
+            opt=opt
+        )
+        super().__init__(opt, shared=shared)
 
 
 class DefaultTeacher(BotAdversarialDialogueTeacher):

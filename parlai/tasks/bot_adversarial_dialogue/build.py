@@ -14,6 +14,7 @@ from parlai.core.opt import Opt
 
 BOT_ADVERSARIAL_DIALOGUE_DATASETS_VERSION = 'v0.2'
 HUMAN_SAFETY_EVAL_TESTSET_VERSION = 'v0.1'
+HUMAN_NONADV_SAFETY_EVAL_TESTSET_VERSION = 'v0.1'
 
 TASK_FOLDER_NAME = 'bot_adversarial_dialogue'
 
@@ -31,6 +32,13 @@ HUMAN_SAFETY_EVAL_TESTSET_RESOURCES = [
         'b8b351c3e5eefcd54fdd73cd6a04847cd1eeb9106fc53b92a87e2a4c7537a7b2',
     )
 ]
+HUMAN_NONADV_SAFETY_EVAL_TESTSET_RESOURCES = [
+    build_data.DownloadableFile(
+        f'http://parl.ai/downloads/bot_adversarial_dialogue/human_nonadv_safety_eval_{HUMAN_NONADV_SAFETY_EVAL_TESTSET_VERSION}.tar.gz',
+        f'human_nonadv_safety_eval_{HUMAN_NONADV_SAFETY_EVAL_TESTSET_VERSION}.tar.gz',
+        'dfa75cd2d101dafe73f94cc8d4be0af2cd0085ea0066c26cecc322b31fd996d6',
+    )
+]
 
 
 def get_adversarial_dialogue_folder(datapath: str) -> str:
@@ -39,6 +47,10 @@ def get_adversarial_dialogue_folder(datapath: str) -> str:
 
 def get_human_safety_eval_folder(datapath: str) -> str:
     return os.path.join(datapath, TASK_FOLDER_NAME, 'human_eval')
+
+
+def get_human_nonadv_safety_eval_folder(datapath: str) -> str:
+    return os.path.join(datapath, TASK_FOLDER_NAME, 'human_nonadv_safety_eval')
 
 
 def build_dialogue_datasets(opt: Opt):
@@ -53,6 +65,14 @@ def build_human_safety_eval_dataset(opt: Opt):
     dpath = get_human_safety_eval_folder(opt['datapath'])
     version = HUMAN_SAFETY_EVAL_TESTSET_VERSION
     downloadable_files = HUMAN_SAFETY_EVAL_TESTSET_RESOURCES
+
+    return build_data_from_path(dpath, version, downloadable_files)
+
+
+def build_human_nonadv_safety_eval_dataset(opt: Opt):
+    dpath = get_human_nonadv_safety_eval_folder(opt['datapath'])
+    version = HUMAN_NONADV_SAFETY_EVAL_TESTSET_VERSION
+    downloadable_files = HUMAN_NONADV_SAFETY_EVAL_TESTSET_RESOURCES
 
     return build_data_from_path(dpath, version, downloadable_files)
 
