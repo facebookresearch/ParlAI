@@ -116,10 +116,26 @@ class TestMetric(unittest.TestCase):
         assert (m1 + m2) == AverageMetric(4, 7)
         assert MacroAverageMetric({'a': m1, 'b': m2}) == 0.5 * (1.0 / 3 + 3.0 / 4)
 
+    def test_from_mask(self):
+        metric_per_tok = torch.FloatTensor([[2.0, 3.0, 2.5, 1.5], [2.0, 0.5, 1.5, 1.5]])
+        tok_mask = torch.Tensor([[True, True, False, True], [True, True, False, False]])
+        singleton, all_metrics, exact_match = AverageMetric.from_mask(
+            metric_per_tok, tok_mask
+        )
+        assert singleton == torch.FloatTensor([1.8])
+        print(all_metrics)
+        assert all_metrics == [
+            AverageMetric(2.167).value(),
+            AverageMetric(1.25).value(),
+        ]
+        assert exact_match == [AverageMetric(0), AverageMetric(1)]
+
+    # for metric_per_token, token_mask, output in input_pairs_and_outputs:
+
 
 class TestMetrics(unittest.TestCase):
     """
-    Test the Metrics aggregator.
+    Test the Metrics aggregator
     """
 
     def test_simpleadd(self):

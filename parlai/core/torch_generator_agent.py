@@ -710,31 +710,31 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         scores, preds, *_ = model_output
         score_view = scores.reshape(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))
-        loss = loss.view(scores.shape[:-1]).sum(dim=1)
+        loss_per_tok = loss.view(scores.shape[:-1])
+
         # save loss to metrics
         notnull = batch.label_vec.ne(self.NULL_IDX)
-        target_tokens = notnull.long().sum(dim=-1)
-        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
+        correct = batch.label_vec == preds
 
+        import ipdb
+
+        ipdb.set_trace()
+        avg_loss, all_loss, _ = AverageMetric.from_mask(loss_per_tok, notnull)
         # cross entropy loss
-        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric('loss', all_loss)
         # perplexity
-        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        _, all_ppl, _ = PPLMetric.from_mask(loss_per_tok, notnull)
+        self.record_local_metric('ppl', all_ppl)
         # token-wise accuracy
-        self.record_local_metric(
-            'token_acc', AverageMetric.many(correct, target_tokens)
-        )
+        _, all_correct, exact_correct = AverageMetric.from_mask(correct, notnull)
+        self.record_local_metric('token_acc', all_correct)
         # utterance-wise exact match
-        self.record_local_metric(
-            'token_em', AverageMetric.many(correct == target_tokens)
-        )
-        # actually do backwards loss
-        loss = loss.sum()
-        loss /= target_tokens.sum()  # average loss per token
+        self.record_local_metric('token_em', exact_correct)
+
         if return_output:
-            return (loss, model_output)
-        else:
-            return loss
+            return (avg_loss, model_output)
+
+        return avg_loss
 
     def train_step(self, batch):
         """

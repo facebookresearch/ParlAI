@@ -90,18 +90,38 @@ class RewardUnlikelihoodAgentTrait(object):
         else:
             mle_notnull = notnull
 
-        mle_loss = (
+        import ipdb
+
+        ipdb.set_trace()
+
+        mle_loss = (  # TODO del
             F.nll_loss(
                 scores_view, targets_view, ignore_index=self.NULL_IDX, reduction='none'
             ).view_as(mle_notnull)
             * mle_notnull.float()
         ).sum()
+        mle_loss_mel = F.nll_loss(
+            scores_view, targets_view, ignore_index=self.NULL_IDX, reduction='none'
+        ).view_as(mle_notnull)
 
         # limit loss to only the positive rewards
-        mle_target_tokens = mle_notnull.long().sum()
+        mle_target_tokens = mle_notnull.long().sum()  # TODO del
+
         correct = ((targets == preds) * mle_notnull).sum()
-        self.global_metrics.add('token_acc', AverageMetric(correct, mle_target_tokens))
-        self.global_metrics.add('nll_loss', AverageMetric(mle_loss, mle_target_tokens))
+        correct_mel = targets == preds
+        sing_correct, all_correct, exact_correct = AverageMetric.from_mask(
+            correct_mel, mle_notnull
+        )
+        sing_loss, all_loss, exact_loss = AverageMetric.from_mask(
+            mle_loss_mel, mle_notnull
+        )
+        sing_ppl, all_ppl, exact_ppl = PPLMetric.from_mask(mle_loss_mel, mle_notnull)
+        self.global_metrics.add(
+            'token_acc', AverageMetric(correct, mle_target_tokens)
+        )  # sing_correct
+        self.global_metrics.add(
+            'nll_loss', AverageMetric(mle_loss, mle_target_tokens)
+        )  # sing_loss
         self.global_metrics.add('ppl', PPLMetric(mle_loss, mle_target_tokens))
         if mle_target_tokens > 0:
             mle_loss /= mle_target_tokens  # average loss per token
@@ -109,8 +129,7 @@ class RewardUnlikelihoodAgentTrait(object):
         if not self.is_training:
             if return_output:
                 return (mle_loss, model_output)
-            else:
-                return mle_loss
+            return mle_loss
 
         # and now we want the unlikelihood loss on the negative examples
         ul_notnull = notnull & (batch.rewards < 0).unsqueeze(1).expand_as(notnull)
@@ -126,14 +145,13 @@ class RewardUnlikelihoodAgentTrait(object):
         ).sum()
         self.global_metrics.add('ul_loss', AverageMetric(ul_loss, ul_target_tokens))
         if ul_target_tokens > 0:
-            ul_loss /= ul_target_tokens
+            ul_loss /= ul_target_tokens  # avg loss per token.
 
         loss = mle_loss + self.opt['alpha'] * ul_loss
 
         if return_output:
             return (loss, model_output)
-        else:
-            return loss
+        return loss
 
 
 class RepetitionUnlikelihoodAgentTrait(object):
