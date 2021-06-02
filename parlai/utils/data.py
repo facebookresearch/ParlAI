@@ -102,6 +102,7 @@ class DatatypeHelper:
         train_frac: float,
         valid_frac: float,
         test_frac: float,
+        seed: int = 42,
     ):
         """
         Need to be careful about how we setup random to not leak examples between trains
@@ -121,7 +122,7 @@ class DatatypeHelper:
 
         result = []
         for domain in domains:
-            random.Random(42).shuffle(domain)
+            random.Random(seed).shuffle(domain)
             result.extend(domain[int(start * len(domain)) : int(end * len(domain))])
-        random.Random(42).shuffle(result)
+        random.Random(seed).shuffle(result)
         return result
