@@ -9,19 +9,13 @@ import torch.cuda
 from typing import Optional
 import unittest
 
-from parlai.agents.rag.args import (
-    DPR_ZOO_MODEL,
-    RAG_TOKEN_ZOO_MODEL,
-    RAG_SEQUENCE_ZOO_MODEL,
-)
-from parlai.agents.rag.dpr import DprQueryEncoder
 from parlai.core.build_data import modelzoo_path
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser, Opt
 import parlai.utils.testing as testing_utils
 
 try:
-    import parlai.agents.rag.dpr  # noqa: F401
+    from parlai.agents.rag.dpr import DprQueryEncoder
 except ImportError:
     pass
 
