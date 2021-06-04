@@ -183,6 +183,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
         self.use_test_set = opt['use_test_set']
         self.balance_data = opt['balance_data']
+        self.DATA_SOURCE = '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>'
 
         self.data_path = os.path.join(
             opt['datapath'], 'dialogue_safety', 'wiki-toxic-comments'
@@ -226,8 +227,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             PathManager.mkdirs(self.data_path)
         if not PathManager.exists(os.path.join(self.data_path, 'train.csv')):
             raise RuntimeError(
-                f'\n\n{stars}\nThis data must be downloaded from '
-                '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>. '
+                f'\n\n{stars}\nThis data must be downloaded from {self.DATA_SOURCE}'
                 '\nIt cannot be automatically downloaded, as one must agree to '
                 'the competition rules outlined on the website before '
                 'gaining access to the data.\n\n'
