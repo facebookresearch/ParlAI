@@ -401,6 +401,10 @@ class TestFidZooModels(unittest.TestCase):
 class TestLoadDPRModel(unittest.TestCase):
     """
     Test loading different DPR models for RAG.
+
+    See RagAgent._should_override_dpr_model_weights for important note
+    regarding specifying the *same* dpr model file as was used to train
+    the model.
     """
 
     def test_load_dpr(self):

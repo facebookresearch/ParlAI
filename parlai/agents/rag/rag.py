@@ -16,7 +16,7 @@ import os
 import torch
 import torch.nn
 import torch.cuda
-from typing import Any, Dict, List, Optional, Tuple, Union, Type, overload
+from typing import Any, Dict, List, Optional, Tuple, Union, Type
 
 from parlai.agents.bart.bart import BartAgent
 from parlai.agents.hugging_face.t5 import T5Agent
@@ -358,16 +358,12 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         return self._generation_agent.build_dictionary(self)
 
+    @staticmethod
     def update_state_dict(
-        self, opt: Opt, state_dict: Dict[str, torch.Tensor], model: torch.nn.Module
+        opt: Opt, state_dict: Dict[str, torch.Tensor], model: torch.nn.Module
     ):
         """
         Update the given state dict to be RAG-ified.
-
-        Under certain circumstances, one may wish to specify a different
-        `--dpr-model-file` for a pre-trained, RAG model. Thus, we additionally
-        check to make sure that the loaded DPR model weights are not overwritten
-        by the state loading.
 
         :param opt:
             options
@@ -410,6 +406,15 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def _should_override_dpr_model_weights(self, opt: Opt):
         """
         Determine if we need to override the DPR Model weights.
+
+        Under certain circumstances, one may wish to specify a different
+        `--dpr-model-file` for a pre-trained, RAG model. Thus, we additionally
+        check to make sure that the loaded DPR model weights are not overwritten
+        by the state loading.
+
+        NOTE: If `--model-file M` was trained with `--dpr-model-file D`, and
+        `--dpr-model-file D` is specified *after training* (i.e., in eval/interactive),
+        we cannot currently handle replacing those weights.
         """
         try:
             init_model, _ = self._get_init_model(opt, None)
