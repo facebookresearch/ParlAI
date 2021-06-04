@@ -1774,7 +1774,7 @@ class TorchAgent(ABC, Agent):
             from model. May be None (default) if model chooses not to answer.
             This method will check for ``text`` and ``text_candidates`` fields.
         """
-        if output is None:
+        if output is None or valid_inds is None:
             return batch_reply
         for k, v in output.items():
             if v is None:

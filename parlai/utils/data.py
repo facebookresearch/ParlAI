@@ -6,6 +6,8 @@
 """
 Utilities related to handling data.
 """
+import random
+from typing import List
 
 
 class DatatypeHelper:
@@ -91,3 +93,36 @@ class DatatypeHelper:
             bool indicating whether we are streaming
         """
         return 'stream' in datatype
+
+    @classmethod
+    def split_domains_by_fold(
+        cls,
+        fold: str,
+        domains: List[List],
+        train_frac: float,
+        valid_frac: float,
+        test_frac: float,
+        seed: int = 42,
+    ):
+        """
+        Need to be careful about how we setup random to not leak examples between trains
+        if we're in a scenario where a single dataset has different ways of mixing +
+        matching subcomponents.
+        """
+        assert train_frac + valid_frac + test_frac == 1
+        if "train" in fold:
+            start = 0.0
+            end = train_frac
+        elif "valid" in fold:
+            start = train_frac
+            end = train_frac + valid_frac
+        else:
+            start = train_frac + valid_frac
+            end = 1.0
+
+        result = []
+        for domain in domains:
+            random.Random(seed).shuffle(domain)
+            result.extend(domain[int(start * len(domain)) : int(end * len(domain))])
+        random.Random(seed).shuffle(result)
+        return result
