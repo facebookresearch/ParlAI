@@ -412,23 +412,16 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         check to make sure that the loaded DPR model weights are not overwritten
         by the state loading.
 
-        NOTE: If `--model-file M` was trained with `--dpr-model-file D`, and
-        `--dpr-model-file D` is specified *after training* (i.e., in eval/interactive),
-        we cannot currently handle replacing those weights.
         """
-        try:
-            init_model, _ = self._get_init_model(opt, None)
-            init_model_opt = Opt.load(f'{init_model}.opt')
-            override_dpr = modelzoo_path(
-                opt['datapath'], opt['dpr_model_file']
-            ) != modelzoo_path(opt['datapath'], init_model_opt['dpr_model_file'])
-            if override_dpr:
-                logging.warning(
-                    f"Overriding DPR Model with {modelzoo_path(opt['datapath'], opt['dpr_model_file'])}"
-                )
-        except FileNotFoundError:
-            override_dpr = False
-
+        override_dpr = False
+        overrides = opt.get('override', {})
+        if overrides.get('dpr_model_file') and os.path.exists(
+            overrides['dpr_model_file']
+        ):
+            override_dpr = True
+            logging.warning(
+                f"Overriding DPR Model with {modelzoo_path(opt['datapath'], opt['dpr_model_file'])}"
+            )
         return override_dpr
 
     def load_state_dict(self, state_dict: Dict[str, torch.Tensor]):
