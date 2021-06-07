@@ -194,7 +194,9 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             f'"~" can\'t currently be parsed in the chat data folder path '
             f'{args.blueprint.chat_data_folder}'
         )
-        # TODO: allow ~ to be parsed correctly
+        # Currently Hydra overrides the tilde key at lower levels as described here: https://hydra.cc/docs/next/advanced/override_grammar/basic/#grammar
+        # Thus the TILDE key cannot be used in replacement for $HOME variable
+        # Some hacky solution can probably be achieved but won't be good code so for now this assert is written as a placeholder
 
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)
