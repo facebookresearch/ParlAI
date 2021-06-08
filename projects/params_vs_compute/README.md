@@ -6,11 +6,15 @@ Today we are announcing the publication of two new methods in deep learning that
 
 ## Hash Layers
 
+<p align="center"><img width="90%" src="hash.png" /></p>
+
+
 In recent years, a trend emerged of making Transformer models bigger and bigger as a way of achieving impressive results on language tasks. The number of parameters in those models extend to billions, and even a trillion. While this shows the potential of deep learning, the bigger models require more computation that makes them less practical. 
 
 One way to make big models use less computation is a sparse mixture-of-experts (MoE) approach. Each expert has its own parameters, which are only used for a small part of the input. Each input is routed to only some of the experts, meaning only some of the parameters need to be used, resulting in less computation. Indeed, recent works showed that Transformers can be made bigger efficiently this way. The key element of MoE is a router that decides which expert to use on which data. 
 In our paper, we propose a routing mechanism based on hashing of input tokens. Unlike previous works, the hashing MoE is much simpler as it does not require any learning or change in objective function. Each word in the dictionary is simply assigned to a fixed expert, which is either chosen at random or assigned such that the distribution is balanced. Despite its simplicity, the method works well on a number of challenging tasks in language and dialogue.
  
+<p align="center"><img width="90%" src="hash_results.png" /></p>
 
 On the pushshift.io Reddit language modeling task, our hashing mechanism outperforms the learning-based Switch baseline, especially when there are more experts. The largest models here have 1.28 billion parameters, but only 17% of them are used for any particular input. We go further by training 4.5 billion parameter models on larger data, where we see the hashing outperforms another competitive sparse MoE model, BASE. The natural balancing of the expert assignment also means that training is efficient and scalable across a cluster, compared to those existing approaches. In our experiments this gives an improvement of about 11% in updates-per-second compared to BASE, and as the number of expert layers increases, we expect this difference to become more exaggerated.
 
@@ -20,6 +24,8 @@ On the pushshift.io Reddit language modeling task, our hashing mechanism outperf
 
 While adding more parameters to Transformers for better performance is a popular topic of study, increasing its computation is underexplored. One reason for that is that the standard Transformer interlocks computation and parameters with the architecture choice, making this impossible.  In this paper, we introduce an alternative family of architectures which detaches these concepts, and show that adding more computation is an alternate route to improving the performance. In particular, we propose a family of models with recurrent applications of Transformers, called Staircase and Ladder models. 
 
+<p align="center"><img width="90%" src="staircase_results.png" /></p>
+
 The Ladder model simply stacks the same Transformer multiple times. This means a parameter in the Transformer will participate in the computation multiple times, increasing the amount of computation while keeping the model size fixed. This straightforward modification brings a significant performance improvement to real-world tasks such as language modeling and dialogue. Furthermore, it indicates increasing computation as an alternate route to better performance. 
 
 The Staircase model stacks Transformers, like Ladder, but shifts each Transformer multiple time steps forward. This change makes it possible to continue stacking Transformers as long as inputs continue, forming a model shaped like a staircase. Unlike Transformers, this continuation makes Staircase recurrent in time, which is crucial for maintaining an internal state for tracking changes. On simple constructed tasks where the model just needs to maintain an internal state and update it with incoming information, feedforward models like Transformer and Ladder struggle, but Staircase can solve them with ease. In addition, Staircase models also enjoy the same performance boost as Ladder models on language modeling tasks because they have more compute per parameter.
@@ -27,6 +33,8 @@ The Staircase model stacks Transformers, like Ladder, but shifts each Transforme
 ## Why not both?
 
 A natural question after introducing these two methods is -- can we combine then? The answer is -- yes! The improvements gained from the two approaches appear to be orthogonal, and we observe significant gains from a Hash Layer + Ladder model compared to either alone. Taken together, these two methods give a fine-grained control over the parameter size and computation size, leading to these improvements.
+
+<p align="center"><img width="90%" src="hash_ladder_results.png" /></p>
 
 In summary, our work has examined the issues of computation vs. parameter size, and shown that these two concepts should be treated quite differently when thinking about new models -- rather than tying them together as in many standard machine learning models. In particular, we present two new types of architecture that explore these tradeoffs -- either increasing the parameter size, or the computation amount -- or showing how their ideas can be combined together. We believe this way of thinking, and the use of our new methods in particular, can be a fruitful way forward for machine learning research.
 
