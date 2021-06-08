@@ -199,6 +199,7 @@ class TransformerDecoder(nn.Module):
         def _default(val, default):
             return val if val is not None else default
 
+        self.opt = opt
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
         self.n_layers = (
