@@ -16,6 +16,8 @@ On the pushshift.io Reddit language modeling task, our hashing mechanism outperf
 
 ## Staircase Attention
 
+<p align="center"><img width="90%" src="staircase.png" /></p>
+
 While adding more parameters to Transformers for better performance is a popular topic of study, increasing its computation is underexplored. One reason for that is that the standard Transformer interlocks computation and parameters with the architecture choice, making this impossible.  In this paper, we introduce an alternative family of architectures which detaches these concepts, and show that adding more computation is an alternate route to improving the performance. In particular, we propose a family of models with recurrent applications of Transformers, called Staircase and Ladder models. 
 
 The Ladder model simply stacks the same Transformer multiple times. This means a parameter in the Transformer will participate in the computation multiple times, increasing the amount of computation while keeping the model size fixed. This straightforward modification brings a significant performance improvement to real-world tasks such as language modeling and dialogue. Furthermore, it indicates increasing computation as an alternate route to better performance. 
