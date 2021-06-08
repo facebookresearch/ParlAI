@@ -1599,12 +1599,10 @@ model_list = [
         ),
         "result2": (
             "Finished evaluating tasks ['wizard_of_wikipedia:WizardDialogKnowledge:random_split'] using datatype valid\n"
-            "accuracy  bleu-1  bleu-2  bleu-3  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  interdistinct-1  \\n"
-            ".0002539   .1719  .07703  .03968  .02529 76.62 78.62 59.55       0          0 .7574 3939 .2036   .04605            .1001\n"
-            "interdistinct-2  intradistinct-1  intradistinct-2  knowledge_f1  llen  loss  ltpb  ltps  ltrunc  ltrunclen  ppl  \\n"
-            ".4326            .8818            .9821         .2379 23.61 2.708 23.61 17.88       0          0   15\n"
-            "rare_word_f1  rouge_1  rouge_2  rouge_L  token_acc  token_em   tpb   tps\n"
-            ".1470    .2604   .08544    .2215      .4297  .0002539 102.2 77.44"
+            "accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  knowledge_f1  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  rare_word_f1  token_acc  \\\n"
+            "       0  .04021 84.71 86.71 26.11       0          0 .3011  100 .2324   .03073         .2381  24.6 2.676 1e-05  24.6 7.407       0          0 14.53         .1678      .4301\n"
+            "token_em   tpb   tps \n"
+            "       0 111.3 33.51"
         ),
     },
     {

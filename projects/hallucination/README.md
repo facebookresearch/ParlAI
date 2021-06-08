@@ -70,7 +70,7 @@ BART RAG Turn DTT | 11.87 | 12.51 | 12.45 | | zoo:hallucination/bart_rag_turn_dt
 BART RAG Turn DO | 13.42 | 14.26 | 14.13 | | zoo:hallucination/bart_rag_turn_do/model |
 BART RAG DPR Poly | 11.71 | 12.56 | 12.31 | | zoo:hallucination/bart_rag_dpr_poly/model |
 BART FiD DPR | 14.34 | 14.68 | 14.64 | | zoo:hallucination/bart_fid_dpr/model |
-BART FiD RAG | 14.65 | 15.00 | 14.95 | | zoo:hallucination/bart_fid_rag/model |
+BART FiD RAG | 11.59 | 12.64 | 12.37 | | zoo:hallucination/bart_fid_rag/model |
 BART FiD RAG DPR Poly | 12.37 | 13.30 | 13.03 | | zoo:hallucination/bart_fid_rag_dpr_poly/model |
 
 ## Train your Own Models
