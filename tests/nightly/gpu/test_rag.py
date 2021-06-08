@@ -4,14 +4,18 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import copy
+import torch
 import torch.cuda
 from typing import Optional
 import unittest
 
+from parlai.core.build_data import modelzoo_path
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser, Opt
 import parlai.utils.testing as testing_utils
 
 try:
-    import parlai.agents.rag.dpr  # noqa: F401
+    from parlai.agents.rag.dpr import DprQueryEncoder
 except ImportError:
     pass
 
@@ -386,6 +390,104 @@ class TestFidZooModels(unittest.TestCase):
 
     def test_bart_fid_rag_dpr_poly(self):
         _test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
+
+
+class TestLoadDPRModel(unittest.TestCase):
+    """
+    Test loading different DPR models for RAG.
+
+    Suppose we have the following models:
+
+    1. A: Default DPR Model
+    2. M: RAG Model trained with A
+    3. B: Resulting DPR Model after training M
+    4. C: DPR Model from training a different RAG Model
+
+    The following should hold true:
+
+    1. `parlai em -mf M` -> M.DPR (B) != A
+    2. `parlai em -mf M --dpr-model-file A` -> M.DPR == A
+    3. `parlai em -mf M --dpr-model-file C` -> M.DPR (C) != B
+    """
+
+    def test_load_dpr(self):
+        opt = ParlaiParser(True, True).parse_args([])
+        # First, we'll load up a DPR model from the zoo dpr file.
+        default_query_encoder = DprQueryEncoder(
+            opt, dpr_model='bert', pretrained_path=DPR_ZOO_MODEL
+        )
+        rag_sequence_query_encoder = DprQueryEncoder(
+            opt,
+            dpr_model='bert_from_parlai_rag',
+            pretrained_path=RAG_SEQUENCE_ZOO_MODEL,
+        )
+        assert not torch.allclose(
+            default_query_encoder.embeddings.weight.float().cpu(),
+            rag_sequence_query_encoder.embeddings.weight.float().cpu(),
+        )
+        # 1. Create a zoo RAG Agent, which involves a trained DPR model
+        rag = create_agent(
+            Opt(
+                {
+                    'model_file': modelzoo_path(opt['datapath'], RAG_TOKEN_ZOO_MODEL),
+                    'override': {'retriever_debug_index': 'compressed', 'fp16': False},
+                }
+            )
+        )
+        # The default rag token model should have different query encoders
+        # from both the RAG_SEQUENCE_ZOO_MODEL, and the default DPR_ZOO_MODEL
+        assert not torch.allclose(
+            rag_sequence_query_encoder.embeddings.weight.float().cpu(),
+            rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
+        )
+        assert not torch.allclose(
+            default_query_encoder.embeddings.weight.float().cpu(),
+            rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
+        )
+
+        # 2. create a RAG Agent with the rag_sequence_zoo_model DPR model
+        rag = create_agent(
+            Opt(
+                {
+                    'model_file': modelzoo_path(opt['datapath'], RAG_TOKEN_ZOO_MODEL),
+                    'override': {
+                        'retriever_debug_index': 'compressed',
+                        'dpr_model_file': modelzoo_path(
+                            opt['datapath'], RAG_SEQUENCE_ZOO_MODEL
+                        ),
+                        'query_model': 'bert_from_parlai_rag',
+                        'fp16': False,
+                    },
+                }
+            )
+        )
+        # If we override the DPR Model file, we should now have the same
+        # weights as the query encoder from above.
+        assert torch.allclose(
+            rag_sequence_query_encoder.embeddings.weight.float().cpu(),
+            rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
+        )
+
+        # 3. Create a RAG Agent with the default DPR zoo model
+        rag = create_agent(
+            Opt(
+                {
+                    'model_file': modelzoo_path(opt['datapath'], RAG_TOKEN_ZOO_MODEL),
+                    'override': {
+                        'retriever_debug_index': 'compressed',
+                        'dpr_model_file': modelzoo_path(opt['datapath'], DPR_ZOO_MODEL),
+                        'fp16': False,
+                    },
+                }
+            )
+        )
+
+        # This model was trained with the DPR_ZOO_MODEL, and yet now should have the same weights
+        # as we explicitly specified it.
+        assert torch.allclose(
+            default_query_encoder.embeddings.weight.float().cpu(),
+            rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
+        )
 
 
 if __name__ == '__main__':

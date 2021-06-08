@@ -22,6 +22,7 @@ from parlai.agents.bart.bart import BartAgent
 from parlai.agents.hugging_face.t5 import T5Agent
 from parlai.agents.transformer.polyencoder import PolyencoderAgent
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
+from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
@@ -402,6 +403,27 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             )
         return state_dict
 
+    def _should_override_dpr_model_weights(self, opt: Opt):
+        """
+        Determine if we need to override the DPR Model weights.
+
+        Under certain circumstances, one may wish to specify a different
+        `--dpr-model-file` for a pre-trained, RAG model. Thus, we additionally
+        check to make sure that the loaded DPR model weights are not overwritten
+        by the state loading.
+
+        """
+        override_dpr = False
+        overrides = opt.get('override', {})
+        if overrides.get('dpr_model_file') and os.path.exists(
+            overrides['dpr_model_file']
+        ):
+            override_dpr = True
+            logging.warning(
+                f"Overriding DPR Model with {modelzoo_path(opt['datapath'], opt['dpr_model_file'])}"
+            )
+        return override_dpr
+
     def load_state_dict(self, state_dict: Dict[str, torch.Tensor]):
         """
         Potentially update state dict with relevant RAG components.
@@ -409,6 +431,13 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         Useful when initializing from a normal seq2seq model.
         """
         try:
+            if self._should_override_dpr_model_weights(self.opt):
+                state_dict.update(
+                    {
+                        f"retriever.{k}": v
+                        for k, v in self.model.retriever.state_dict().items()  # type: ignore
+                    }
+                )
             super().load_state_dict(state_dict)
         except RuntimeError:
             state_dict = self.update_state_dict(self.opt, state_dict, self.model)
