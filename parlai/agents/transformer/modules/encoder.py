@@ -200,6 +200,7 @@ class TransformerEncoder(nn.Module):
 
         if self.n_segments >= 1:
             self.segment_embeddings = nn.Embedding(self.n_segments, self.dim)
+            nn.init.normal_(self.segment_embeddings.weight, 0, self.dim ** -0.5)
 
         # build the model
         self.layers = nn.ModuleList()

@@ -47,6 +47,10 @@ class TurkLikeAgent:
         act_out = Message(act_out)
         # Wrap as a Message for compatibility with older ParlAI models
 
+        if 'metrics' in act_out:
+            # Metrics can't be serialized when saving results as a JSON
+            del act_out['metrics']
+
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
             final_message_text = act_out['text']
