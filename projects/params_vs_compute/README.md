@@ -30,7 +30,7 @@ The Ladder model simply stacks the same Transformer multiple times. This means a
 
 The Staircase model stacks Transformers, like Ladder, but shifts each Transformer multiple time steps forward. This change makes it possible to continue stacking Transformers as long as inputs continue, forming a model shaped like a staircase. Unlike Transformers, this continuation makes Staircase recurrent in time, which is crucial for maintaining an internal state for tracking changes. On simple constructed tasks where the model just needs to maintain an internal state and update it with incoming information, feedforward models like Transformer and Ladder struggle, but Staircase can solve them with ease. In addition, Staircase models also enjoy the same performance boost as Ladder models on language modeling tasks because they have more compute per parameter.
 
-##Why not both?
+## Why not both?
 
 A natural question after introducing these two methods is -- can we combine then? The answer is -- yes! The improvements gained from the two approaches appear to be orthogonal, and we observe significant gains from a Hash Layer + Ladder model compared to either alone. Taken together, these two methods give a fine-grained control over the parameter size and computation size, leading to these improvements.
 
