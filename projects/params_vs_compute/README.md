@@ -2,7 +2,7 @@
 
 When we talk about the power of a deep learning model, often the only metric we pay attention to is its size, which is measured by the number parameters in that model. However, the amount of computation to run that model is an important metric too, but it is often overlooked because it is usually tied to the model size. Practitioners can then tend to think of those two metrics as a single thing. This is true most of the time, as each parameter participates in computation only once per input. So if a model has 1 million parameters, then it will take roughly 1 million floating point operations to process an input. This applies to feedforward models, recurrent models, and even Transformers.
 
-Today we are announcing the publication of two new methods in deep learning that together help study this important question further -- and show that the computation of a model should be considered separately from the model size. Firstly, we can increase the model size without using more computation and improve its performance. The first paper proposes a simple, elegant method to achieve that by proposing hash layers. The second paper shows that the opposite is also true. We can increase the amount of computation without adding any new parameters to the model, which can improve performance significantly. A new family of staircase attention models is proposed that achieves this feat. Taken together, we believe these results open up a new way of thinking about deep learning models, requiring us to disentangle the concepts of parameters and computation. Thinking in this way, we believe we can arrive at more powerful models that are architected with regard to the resources available. 
+We are announcing the publication of two new methods in deep learning that together help study this important question further -- and show that the computation of a model should be considered separately from the model size. Firstly, we can increase the model size without using more computation and improve its performance. The first paper proposes a simple, elegant method to achieve that by proposing hash layers. The second paper shows that the opposite is also true. We can increase the amount of computation without adding any new parameters to the model, which can improve performance significantly. A new family of staircase attention models is proposed that achieves this feat. Taken together, we believe these results open up a new way of thinking about deep learning models, requiring us to disentangle the concepts of parameters and computation. Thinking in this way, we believe we can arrive at more powerful models that are architected with regard to the resources available. 
 
 ## Hash Layers
 
@@ -12,7 +12,7 @@ Today we are announcing the publication of two new methods in deep learning that
 In recent years, a trend emerged of making Transformer models bigger and bigger as a way of achieving impressive results on language tasks. The number of parameters in those models extend to billions, and even a trillion. While this shows the potential of deep learning, the bigger models require more computation that makes them less practical. 
 
 One way to make big models use less computation is a sparse mixture-of-experts (MoE) approach. Each expert has its own parameters, which are only used for a small part of the input. Each input is routed to only some of the experts, meaning only some of the parameters need to be used, resulting in less computation. Indeed, recent works showed that Transformers can be made bigger efficiently this way. The key element of MoE is a router that decides which expert to use on which data. 
-In our paper, we propose a routing mechanism based on hashing of input tokens. Unlike previous works, the hashing MoE is much simpler as it does not require any learning or change in objective function. Each word in the dictionary is simply assigned to a fixed expert, which is either chosen at random or assigned such that the distribution is balanced. Despite its simplicity, the method works well on a number of challenging tasks in language and dialogue.
+In [our paper](https://arxiv.org/abs/2106.04426), we propose a routing mechanism based on hashing of input tokens. Unlike previous works, the hashing MoE is much simpler as it does not require any learning or change in objective function. Each word in the dictionary is simply assigned to a fixed expert, which is either chosen at random or assigned such that the distribution is balanced. Despite its simplicity, the method works well on a number of challenging tasks in language and dialogue.
  
 <p align="center"><img width="90%" src="figs/hash_results.png" /></p>
 
@@ -20,11 +20,9 @@ On the pushshift.io Reddit language modeling task, our hashing mechanism outperf
 
 ## Staircase Attention
 
-While adding more parameters to Transformers for better performance is a popular topic of study, increasing its computation is underexplored. One reason for that is that the standard Transformer interlocks computation and parameters with the architecture choice, making this impossible.  In this paper, we introduce an alternative family of architectures which detaches these concepts, and show that adding more computation is an alternate route to improving the performance. In particular, we propose a family of models with recurrent applications of Transformers, called Staircase and Ladder models. 
-
 <p align="center"><img width="90%" src="figs/staircase.png" /></p>
 
-While adding more parameters to Transformers for better performance is a popular topic of study, increasing its computation is underexplored. One reason for that is that the standard Transformer interlocks computation and parameters with the architecture choice, making this impossible.  In this paper, we introduce an alternative family of architectures which detaches these concepts, and show that adding more computation is an alternate route to improving the performance. In particular, we propose a family of models with recurrent applications of Transformers, called Staircase and Ladder models. 
+While adding more parameters to Transformers for better performance is a popular topic of study, increasing its computation is underexplored. One reason for that is that the standard Transformer interlocks computation and parameters with the architecture choice, making this impossible.  In [our paper](https://arxiv.org/abs/2106.04279), we introduce an alternative family of architectures which detaches these concepts, and show that adding more computation is an alternate route to improving the performance. In particular, we propose a family of models with recurrent applications of Transformers, called Staircase and Ladder models. 
 
 <p align="center"><img width="90%" src="figs/staircase_results.png" /></p>
 
@@ -33,11 +31,6 @@ The Ladder model simply stacks the same Transformer multiple times. This means a
 The Staircase model stacks Transformers, like Ladder, but shifts each Transformer multiple time steps forward. This change makes it possible to continue stacking Transformers as long as inputs continue, forming a model shaped like a staircase. Unlike Transformers, this continuation makes Staircase recurrent in time, which is crucial for maintaining an internal state for tracking changes. On simple constructed tasks where the model just needs to maintain an internal state and update it with incoming information, feedforward models like Transformer and Ladder struggle, but Staircase can solve them with ease. In addition, Staircase models also enjoy the same performance boost as Ladder models on language modeling tasks because they have more compute per parameter.
 
 ##Why not both?
-
-A natural question after introducing these two methods is -- can we combine then? The answer is -- yes! The improvements gained from the two approaches appear to be orthogonal, and we observe significant gains from a Hash Layer + Ladder model compared to either alone. Taken together, these two methods give a fine-grained control over the parameter size and computation size, leading to these improvements.
-
-=======
-## Why not both?
 
 A natural question after introducing these two methods is -- can we combine then? The answer is -- yes! The improvements gained from the two approaches appear to be orthogonal, and we observe significant gains from a Hash Layer + Ladder model compared to either alone. Taken together, these two methods give a fine-grained control over the parameter size and computation size, leading to these improvements.
 
