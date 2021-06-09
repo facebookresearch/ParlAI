@@ -20,22 +20,6 @@ from parlai.agents.transformer.modules import (
     LAYER_NORM_EPS,
 )
 
-
-def _normalize(tensor, norm_layer):
-    """
-    Broadcast layer norm.
-    """
-    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
-    if APEX_LAYER_NORM and not is_cpu:
-        # fused_layer_norm has a bug around multi-device networks.
-        # https://github.com/NVIDIA/apex/issues/770
-        # https://github.com/NVIDIA/apex/issues/371
-        with torch.cuda.device(tensor.device):
-            return norm_layer(tensor)
-    else:
-        return norm_layer(tensor)
-
-
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
@@ -94,6 +78,21 @@ class HashLadderAgent(TransformerGeneratorAgent):
     def build_model(self, states=None):
         wrapped_class = TransformerGeneratorModel.with_components(decoder=Decoder)
         return wrapped_class(self.opt, self.dict)
+
+
+def _normalize(tensor, norm_layer):
+    """
+    Broadcast layer norm.
+    """
+    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
+    if APEX_LAYER_NORM and not is_cpu:
+        # fused_layer_norm has a bug around multi-device networks.
+        # https://github.com/NVIDIA/apex/issues/770
+        # https://github.com/NVIDIA/apex/issues/371
+        with torch.cuda.device(tensor.device):
+            return norm_layer(tensor)
+    else:
+        return norm_layer(tensor)
 
 
 class Decoder(TransformerDecoder):
@@ -231,7 +230,7 @@ class Decoder(TransformerDecoder):
                 tensor, encoder_output, encoder_mask, incr_state
             )
         else:
-            for s in range(0, self.opt['ladder_size']):
+            for _s in range(0, self.opt['ladder_size']):
                 for idx, layer in enumerate(self.layers):
                     if idx == self.opt['hash_layer']:
                         tensor, new_incr_state[idx] = layer(
