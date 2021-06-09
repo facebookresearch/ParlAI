@@ -19,6 +19,23 @@ from parlai.agents.transformer.modules import (
     get_n_positions_from_options,
     LAYER_NORM_EPS,
 )
+
+
+def _normalize(tensor, norm_layer):
+    """
+    Broadcast layer norm.
+    """
+    is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
+    if APEX_LAYER_NORM and not is_cpu:
+        # fused_layer_norm has a bug around multi-device networks.
+        # https://github.com/NVIDIA/apex/issues/770
+        # https://github.com/NVIDIA/apex/issues/371
+        with torch.cuda.device(tensor.device):
+            return norm_layer(tensor)
+    else:
+        return norm_layer(tensor)
+
+
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
@@ -189,6 +206,7 @@ class Decoder(TransformerDecoder):
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
         incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
+        original_input: torch.Tensor,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -217,10 +235,10 @@ class Decoder(TransformerDecoder):
                     if idx == self.opt['hash_layer']:
                         tensor, new_incr_state[idx] = layer(
                             x=tensor,
-                            xi=None,
                             encoder_output=encoder_output,
                             encoder_mask=encoder_mask,
                             incr_state=incr_state.get(idx),
+                            orig_input=original_input,
                         )
                     else:
                         tensor, new_incr_state[idx] = layer(
@@ -229,6 +247,45 @@ class Decoder(TransformerDecoder):
                             encoder_mask=encoder_mask,
                             incr_state=incr_state.get(idx),
                         )
+
+        return tensor, new_incr_state
+
+    def forward(self, input, encoder_state, incr_state=None):
+        """
+        Forward pass.
+
+        :param LongTensor[batch,seqlen] input:
+            The decoder inputs (partial or full decoded token IDs).
+        :param encoder_state:
+            Output from the encoder module forward pass.
+        :param incr_state:
+            The incremental state: a dictionary whose keys index the layers and whose
+            values contain the incremental state for each layer.
+        """
+        encoder_output, encoder_mask = encoder_state
+
+        seq_len = input.size(1)
+        positions = input.new(seq_len).long()
+        positions = torch.arange(seq_len, out=positions).unsqueeze(0)
+
+        if incr_state is not None:
+            # We're doing incremental decoding, so select only the most recent position
+            input = input[:, -1:]
+            if positions is not None:
+                positions = positions[:, -1:]
+        else:
+            incr_state = {}
+
+        tensor = self.forward_embedding(input, positions)
+
+        tensor = self.dropout(tensor)  # --dropout
+
+        tensor, new_incr_state = self.forward_layers(
+            tensor, encoder_output, encoder_mask, incr_state, original_input=input
+        )
+
+        if self.variant == 'prelayernorm':
+            tensor = _normalize(tensor, self.norm_embeddings)
 
         return tensor, new_incr_state
 
@@ -299,7 +356,6 @@ class HashLayer(TransformerDecoderLayer):
             mask=decoder_mask,
             incr_state=incr_state.get('self_attn'),
             static_kv=False,
-            orig_input=orig_input,
         )[:2]
         x = self.dropout(x)  # --dropout
         x = x + residual
@@ -317,7 +373,6 @@ class HashLayer(TransformerDecoderLayer):
             mask=encoder_mask,
             incr_state=incr_state.get('encoder_attn'),
             static_kv=True,
-            orig_input=orig_input,
         )
         x = self.dropout(x)  # --dropout
         x = residual + x
@@ -381,14 +436,14 @@ class HashLayerFFN(nn.Module):
 
     def hash(self, xi):
         # Insert your choice of hash function here.
-        # In this demo code we simply hash based on the given token IDs for simplicity.
-        return xh % self.hashsize
+        # In this demonstration code we currently simply hash based on the given token IDs for simplicity.
+        return xi % self.hashsize
 
-    def forward(self, x, xi):
+    def forward(self, x, orig_input):
         """
         Forward pass.
         """
-        xhs = self.hash(x * 1)
+        xhs = self.hash(orig_input)
 
         # Now do the real work.
         # This implementation could be more efficient -- but it works.
