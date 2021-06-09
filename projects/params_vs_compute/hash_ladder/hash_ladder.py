@@ -49,7 +49,6 @@ parlai train_model -m projects.params_vs_compute.hash_ladder.hash_ladder:HashLad
 class HashLadderAgent(TransformerGeneratorAgent):
     """
     Simple implementation of Hash Layers and the Ladder model from the following papers:
-
     """
 
     @classmethod
@@ -97,8 +96,7 @@ def _normalize(tensor, norm_layer):
 
 class Decoder(TransformerDecoder):
     """
-    Custom Decoder with Ladder model
-
+    Custom Decoder with Ladder model.
     """
 
     def __init__(
