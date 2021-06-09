@@ -46,6 +46,7 @@ A natural question after introducing these two methods is -- can we combine then
 In summary, our work has examined the issues of computation vs. parameter size, and shown that these two concepts should be treated quite differently when thinking about new models -- rather than tying them together as in many standard machine learning models. In particular, we present two new types of architecture that explore these tradeoffs -- either increasing the parameter size, or the computation amount -- or showing how their ideas can be combined together. We believe this way of thinking, and the use of our new methods in particular, can be a fruitful way forward for machine learning research.
 
 
-To get more into the details read the Hash Layers and Staircase Attention papers.
+To get more into the details read the [Hash Layers](https://arxiv.org/abs/2106.04426)
+and [Staircase Attention](https://arxiv.org/abs/2106.04279) papers.
 
-Code is available here.
+Code is available [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/params_vs_compute/hash_ladder).
