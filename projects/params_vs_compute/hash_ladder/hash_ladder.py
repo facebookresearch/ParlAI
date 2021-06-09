@@ -113,6 +113,7 @@ class Decoder(TransformerDecoder):
         def _default(val, default):
             return val if val is not None else default
 
+        opt['dict_size'] = embedding.weight.size(0)
         self.opt = opt
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
@@ -436,8 +437,19 @@ class HashLayerFFN(nn.Module):
 
     def hash(self, xi):
         # Insert your choice of hash function here.
-        # In this demonstration code we currently simply hash based on the given token IDs for simplicity.
-        return xi % self.hashsize
+        # In this code we simply randomly hash based on the given token IDs for simplicity.
+        if not hasattr(self, 'hash_bin_map'):
+            # create random mapping.
+            sz = self.opt['dict_size']
+            self.hash_bin_map = torch.LongTensor(sz).fill_(0)
+            import random
+
+            random.seed(42)
+            for i in range(sz):
+                self.hash_bin_map[i] = random.randrange(0, self.hashsize)
+
+        # Now compute the hash bins given the mapping function (Whatever it is).
+        return self.hash_bin_map[xi]
 
     def forward(self, x, orig_input):
         """
