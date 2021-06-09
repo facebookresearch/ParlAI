@@ -45,6 +45,7 @@ class HashLadderAgent(TransformerGeneratorAgent):
 
     https://arxiv.org/abs/2106.04426
     https://arxiv.org/abs/2106.04279
+
     """
 
     @classmethod
