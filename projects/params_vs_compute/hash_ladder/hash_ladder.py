@@ -26,14 +26,7 @@ from parlai.core.params import ParlaiParser
 from parlai.utils.misc import warn_once
 import torch.nn.functional as F
 
-try:
-    from apex.normalization.fused_layer_norm import FusedLayerNorm as LayerNorm
-
-    APEX_LAYER_NORM = True
-except ImportError:
-    from torch.nn import LayerNorm
-
-    APEX_LAYER_NORM = False
+from torch.nn import LayerNorm
 
 ###########################################
 #         Hash Ladder Transformer         #
@@ -84,14 +77,7 @@ def _normalize(tensor, norm_layer):
     Broadcast layer norm.
     """
     is_cpu = tensor.device == 'cpu' or tensor.device.type == 'cpu'
-    if APEX_LAYER_NORM and not is_cpu:
-        # fused_layer_norm has a bug around multi-device networks.
-        # https://github.com/NVIDIA/apex/issues/770
-        # https://github.com/NVIDIA/apex/issues/371
-        with torch.cuda.device(tensor.device):
-            return norm_layer(tensor)
-    else:
-        return norm_layer(tensor)
+    return norm_layer(tensor)
 
 
 class Decoder(TransformerDecoder):
@@ -170,7 +156,6 @@ class Decoder(TransformerDecoder):
         self.layers = nn.ModuleList()
         for i in range(self.n_layers):
             if self.opt['hash_layer'] == i:
-                # logging.debug(f'Hash Layer on layer: {i}')
                 self.layers.append(
                     HashLayer(
                         opt,
