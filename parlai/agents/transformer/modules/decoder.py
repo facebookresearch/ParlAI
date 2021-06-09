@@ -44,7 +44,6 @@ class TransformerDecoderLayer(nn.Module):
 
     def __init__(
         self,
-        opt: Opt,
         n_heads: int,
         embedding_size: int,
         ffn_size: int,
@@ -200,7 +199,6 @@ class TransformerDecoder(nn.Module):
         def _default(val, default):
             return val if val is not None else default
 
-        self.opt = opt
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
         self.n_layers = (
@@ -259,7 +257,6 @@ class TransformerDecoder(nn.Module):
         for _ in range(self.n_layers):
             self.layers.append(
                 self.swappables.layer(
-                    opt,
                     self.n_heads,
                     self.embedding_size,
                     self.ffn_size,

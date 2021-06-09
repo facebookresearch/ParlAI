@@ -158,7 +158,6 @@ class Decoder(TransformerDecoder):
             if self.opt['hash_layer'] == i:
                 self.layers.append(
                     HashLayer(
-                        opt,
                         self.n_heads,
                         self.embedding_size,
                         self.ffn_size,
@@ -167,12 +166,12 @@ class Decoder(TransformerDecoder):
                         dropout=dropout_frac,
                         activation=self.activation,
                         variant=self.variant,
+                        opt=self.opt,
                     )  # type: ignore
                 )
             else:
                 self.layers.append(
                     self.swappables.layer(
-                        opt,
                         self.n_heads,
                         self.embedding_size,
                         self.ffn_size,
@@ -277,10 +276,10 @@ class Decoder(TransformerDecoder):
 class HashLayer(TransformerDecoderLayer):
     def __init__(
         self,
-        opt: Opt,
         n_heads: int,
         embedding_size: int,
         ffn_size: int,
+        opt: Opt,
         attention_dropout: float = 0.0,
         relu_dropout: float = 0.0,
         dropout: float = 0.0,
@@ -288,8 +287,7 @@ class HashLayer(TransformerDecoderLayer):
         variant: str = 'aiayn',
         **kwargs,
     ):
-        super().__init__(opt, n_heads, embedding_size, ffn_size, **kwargs)
-        self.opt = opt
+        super().__init__(n_heads, embedding_size, ffn_size, **kwargs)
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.variant = variant
