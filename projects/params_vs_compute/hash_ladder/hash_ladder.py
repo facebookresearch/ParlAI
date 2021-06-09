@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 import torch
-from typing import Optional, Tuple
+from typing import Dict, Optional, Tuple
 import torch.nn as nn
 
 from parlai.agents.transformer.modules import (
@@ -23,7 +23,7 @@ from parlai.agents.transformer.modules import (
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.utils.logging import logging
+from parlai.utils.misc import warn_once
 import torch.nn.functional as F
 
 try:
@@ -49,7 +49,7 @@ parlai train_model -m projects.params_vs_compute.hash_ladder.hash_ladder:HashLad
 class HashLadderAgent(TransformerGeneratorAgent):
     """
     Simple implementation of Hash Layers and the Ladder model from the following papers:
-    
+
     """
 
     @classmethod
@@ -98,6 +98,7 @@ def _normalize(tensor, norm_layer):
 class Decoder(TransformerDecoder):
     """
     Custom Decoder with Ladder model
+
     """
 
     def __init__(
