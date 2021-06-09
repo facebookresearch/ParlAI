@@ -188,7 +188,6 @@ class Decoder(TransformerDecoder):
             else:
                 self.layers.append(
                     self.swappables.layer(
-                        opt,
                         self.n_heads,
                         self.embedding_size,
                         self.ffn_size,
