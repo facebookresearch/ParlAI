@@ -42,6 +42,8 @@ parlai train_model -m projects.params_vs_compute.hash_ladder.hash_ladder:HashLad
 class HashLadderAgent(TransformerGeneratorAgent):
     """
     Simple implementation of Hash Layers and the Ladder model from the following papers:
+    https://arxiv.org/abs/2106.04426
+    https://arxiv.org/abs/2106.04279
     """
 
     @classmethod
