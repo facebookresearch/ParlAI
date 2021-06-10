@@ -57,6 +57,8 @@ def get_mturk_id_from_mephisto_wrapper(agent):
     """
     Returns the MTurk worker ID from a ParlAI-Wrapped Mephisto Agent.
     """
+    print(f'MTurk agent: {agent}')
+    print(f'Control agent: {MTurkAgent}')
     if not isinstance(agent, MTurkAgent):
         return f"--NOT-MTURK-AGENT-{agent.mephisto_agent.get_worker().worker_name}"
     return agent.mephisto_agent.get_worker().get_mturk_worker_id()
