@@ -12,6 +12,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from threading import Semaphore, Condition
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing_extensions import IntVar
 
 import numpy as np
 import torch
@@ -447,7 +448,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
             }
         )
 
-    def _process_conversations_needed(self, args: "DictConfig") -> Dict[str, str]:
+    def _process_conversations_needed(self, args: "DictConfig") -> Dict[str, int]:
         # Set the number of conversations needed
         conversations_needed_string = args.blueprint.conversations_needed_string
         conversations_needed = {}

@@ -652,12 +652,16 @@ def make_world(opt, agents):
 
     # Decide on a bot to use
     run_statistics = opt['run_statistics']
+    # breakpoint()
     with statistics_condition:
         remaining_counts_needed = [
             (m, c - run_statistics[m]) for (m, c) in opt['conversations_needed'].items()
         ]
         remaining_counts_needed.sort(reverse=True, key=lambda x: x[1])
         model_name = remaining_counts_needed[0][0]
+        # logger.info(remaining_counts_needed)
+        if remaining_counts_needed[0][1] == 8:
+            breakpoint()
         print(f'Remaining conversation counts needed: {remaining_counts_needed}')
         print(f'Choosing the "{model_name}" model for the bot.')
     bot_worker = get_bot_worker(opt=opt, model_name=model_name)
