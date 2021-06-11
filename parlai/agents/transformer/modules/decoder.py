@@ -44,9 +44,10 @@ class TransformerDecoderLayer(nn.Module):
 
     def __init__(
         self,
-        n_heads: int,
-        embedding_size: int,
-        ffn_size: int,
+        opt: Opt,
+        n_heads: int = None,
+        embedding_size: int = None,
+        ffn_size: int = None,
         attention_dropout: float = 0.0,
         relu_dropout: float = 0.0,
         dropout: float = 0.0,
@@ -55,6 +56,16 @@ class TransformerDecoderLayer(nn.Module):
         **kwargs,
     ):
         super().__init__(**kwargs)
+
+        def _default(val, default):
+            """ shorthand for explicit None check for optional arguments """
+            return val if val is not None else default
+
+        n_heads = _default(n_heads, opt['n_heads'])
+        embedding_size = _default(embedding_size, opt['embedding_size'])
+        ffn_size = _default(ffn_size, opt['ffn_size'])
+
+        self.opt = opt
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.variant = variant
@@ -62,17 +73,21 @@ class TransformerDecoderLayer(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
         self.self_attention = self.swappables.self_attention(
-            n_heads, embedding_size, dropout=attention_dropout
+            opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
         )  # type: ignore
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.encoder_attention = self.swappables.encoder_attention(
-            n_heads, embedding_size, dropout=attention_dropout
+            opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
         )  # type: ignore
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = self.swappables.feedforward(
-            embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
+            opt=self.opt,
+            dim=embedding_size,
+            dim_hidden=ffn_size,
+            relu_dropout=relu_dropout,
+            activation=activation,
         )  # type: ignore
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
@@ -106,6 +121,7 @@ class TransformerDecoderLayer(nn.Module):
             mask=decoder_mask,
             incr_state=incr_state.get('self_attn'),
             static_kv=False,
+            **kwargs,
         )[:2]
         x = self.dropout(x)  # --dropout
         x = x + residual
@@ -123,6 +139,7 @@ class TransformerDecoderLayer(nn.Module):
             mask=encoder_mask,
             incr_state=incr_state.get('encoder_attn'),
             static_kv=True,
+            **kwargs,
         )[:2]
         x = self.dropout(x)  # --dropout
         x = residual + x
@@ -133,7 +150,7 @@ class TransformerDecoderLayer(nn.Module):
         residual = x
         if self.variant == 'prelayernorm':
             x = self.norm3(x)
-        x = self.ffn(x)
+        x = self.ffn(x, **kwargs)
         x = self.dropout(x)  # --dropout
         x = residual + x
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
@@ -195,6 +212,7 @@ class TransformerDecoder(nn.Module):
         **kwargs,
     ):
         super().__init__(**kwargs)
+        self.opt = opt
 
         def _default(val, default):
             return val if val is not None else default
@@ -212,8 +230,7 @@ class TransformerDecoder(nn.Module):
         self.variant = opt.get('variant', 'aiayn')
 
         self.embeddings_scale = opt.get('embeddings_scale', True)
-        dropout_frac = opt.get('dropout', 0.0)
-        self.dropout = nn.Dropout(p=dropout_frac)  # --dropout
+        self.dropout = nn.Dropout(p=opt.get('dropout', 0.0))  # --dropout
 
         self.n_positions = _default(n_positions, get_n_positions_from_options(opt))
         self.out_dim = self.embedding_size
@@ -253,26 +270,29 @@ class TransformerDecoder(nn.Module):
             )
 
         # build the model
-        self.layers = nn.ModuleList()
+        self.layers = self.build_layers()
+
+    def build_layers(self) -> nn.ModuleList:
+        layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
                 self.swappables.layer(
-                    self.n_heads,
-                    self.embedding_size,
-                    self.ffn_size,
-                    attention_dropout=opt.get('attention_dropout', 0.0),
-                    relu_dropout=opt.get('relu_dropout', 0.0),
-                    dropout=dropout_frac,
+                    self.opt,
+                    attention_dropout=self.opt.get('attention_dropout', 0.0),
+                    relu_dropout=self.opt.get('relu_dropout', 0.0),
+                    dropout=self.opt.get('dropout', 0.0),
                     activation=self.activation,
                     variant=self.variant,
                 )  # type: ignore
             )
+        return layers
 
     def forward_embedding(
         self,
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
+        **kwargs,
     ):
         """
         Embed tokens prior to feeding into transformer.
@@ -311,6 +331,7 @@ class TransformerDecoder(nn.Module):
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
         incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -340,6 +361,7 @@ class TransformerDecoder(nn.Module):
                     encoder_output=encoder_output,
                     encoder_mask=encoder_mask,
                     incr_state=incr_state.get(idx),
+                    **kwargs,
                 )
 
         return tensor, new_incr_state
@@ -377,12 +399,12 @@ class TransformerDecoder(nn.Module):
         else:
             incr_state = {}
 
-        tensor = self.forward_embedding(input, positions)
+        tensor = self.forward_embedding(input, positions, **kwargs)
 
         tensor = self.dropout(tensor)  # --dropout
 
         tensor, new_incr_state = self.forward_layers(
-            tensor, encoder_output, encoder_mask, incr_state
+            tensor, encoder_output, encoder_mask, incr_state, **kwargs
         )
 
         if self.variant == 'prelayernorm':

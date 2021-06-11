@@ -35,9 +35,10 @@ class TransformerEncoderLayer(nn.Module):
 
     def __init__(
         self,
-        n_heads: int,
-        embedding_size: int,
-        ffn_size: int,
+        opt: Opt,
+        n_heads: int = None,
+        embedding_size: int = None,
+        ffn_size: int = None,
         attention_dropout: float = 0.0,
         relu_dropout: float = 0.0,
         dropout: float = 0.0,
@@ -46,17 +47,31 @@ class TransformerEncoderLayer(nn.Module):
         **kwargs,
     ):
         super().__init__(**kwargs)
+
+        def _default(val, default):
+            """ shorthand for explicit None check for optional arguments """
+            return val if val is not None else default
+
+        n_heads = _default(n_heads, opt['n_heads'])
+        embedding_size = _default(embedding_size, opt['embedding_size'])
+        ffn_size = _default(ffn_size, opt['ffn_size'])
+
+        self.opt = opt
         self.dim = embedding_size
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
         self.attention = self.swappables.self_attention(  # type: ignore
-            n_heads, embedding_size, dropout=attention_dropout  # --attention-dropout
+            opt=self.opt,
+            n_heads=n_heads,
+            dim=embedding_size,
+            dropout=attention_dropout,  # --attention-dropout
         )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = self.swappables.feedforward(  # type: ignore
-            embedding_size,
-            ffn_size,
+            opt=self.opt,
+            dim=embedding_size,
+            dim_hidden=ffn_size,
             relu_dropout=relu_dropout,
             activation=self.activation,
         )
@@ -145,6 +160,7 @@ class TransformerEncoder(nn.Module):
         # this is --dropout, not --relu-dropout or --attention-dropout
         self.dropout_frac = _default(dropout, opt.get('dropout', 0.0))
         self.dropout = nn.Dropout(p=self.dropout_frac)
+        self.activation = _default(activation, opt.get('activation', 'relu'))
         self.variant = _default(variant, opt.get('variant', 'aiayn'))
         self.n_segments = _default(n_segments, opt.get('n_segments', 0))
 
@@ -203,21 +219,23 @@ class TransformerEncoder(nn.Module):
             nn.init.normal_(self.segment_embeddings.weight, 0, self.dim ** -0.5)
 
         # build the model
-        self.layers = nn.ModuleList()
+        self.layers = self.build_layers()
+        self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))
+
+    def build_layers(self) -> nn.ModuleList:
+        layers = nn.ModuleList()
         for _ in range(self.n_layers):
             self.layers.append(
                 self.swappables.layer(  # type: ignore
-                    self.n_heads,
-                    self.embedding_size,
-                    self.ffn_size,
-                    attention_dropout=opt.get('attention_dropout', 0.0),
-                    relu_dropout=opt.get('relu_dropout', 0.0),
+                    self.opt,
+                    attention_dropout=self.opt.get('attention_dropout', 0.0),
+                    relu_dropout=self.opt.get('relu_dropout', 0.0),
                     dropout=self.dropout_frac,
                     variant=self.variant,
-                    activation=_default(activation, opt.get('activation', 'relu')),
+                    activation=self.activation,
                 )
             )
-        self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))
+        return layers
 
     def forward_embedding(
         self,
