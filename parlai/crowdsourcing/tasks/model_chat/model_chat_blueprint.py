@@ -393,13 +393,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
 
-        # Set the number of conversations needed
-        conversations_needed_string = args.blueprint.conversations_needed_string
-        conversations_needed = {}
-        parts = conversations_needed_string.split(',')
-        for part in parts:
-            model_name, num_string = part.split(':')
-            conversations_needed[model_name] = int(num_string)
+        conversations_needed = self._process_conversations_needed(args)
         self.conversations_needed = conversations_needed
         shared_state.conversations_needed = conversations_needed
         args.blueprint.num_conversations = sum(conversations_needed.values())
@@ -452,6 +446,17 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'include_persona': args.blueprint.include_persona,
             }
         )
+
+    def _process_conversations_needed(self, args: "DictConfig") -> Dict[str, str]:
+        # Set the number of conversations needed
+        conversations_needed_string = args.blueprint.conversations_needed_string
+        conversations_needed = {}
+        parts = conversations_needed_string.split(',')
+        for part in parts:
+            model_name, num_string = part.split(':')
+            conversations_needed[model_name] = int(num_string)
+
+        return conversations_needed
 
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
