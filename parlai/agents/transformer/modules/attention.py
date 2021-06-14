@@ -99,7 +99,9 @@ class MultiHeadAttention(nn.Module):
         super(MultiHeadAttention, self).__init__()
 
         def _default(val, default):
-            """ shorthand for explicit None check for optional arguments """
+            """
+            shorthand for explicit None check for optional arguments.
+            """
             return val if val is not None else default
 
         n_heads = _default(n_heads, opt['n_heads'])
@@ -131,6 +133,7 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
         Forward pass.

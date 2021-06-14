@@ -10,7 +10,6 @@ import torch.nn as nn
 
 from parlai.agents.transformer.modules import (
     TransformerDecoder,
-    TransformerDecoderLayer,
     TransformerGeneratorModel,
 )
 
@@ -38,9 +37,8 @@ class HashLadderAgent(TransformerGeneratorAgent):
     """
     Simple implementation of Hash Layers and the Ladder model from the following papers:
 
-    https://arxiv.org/abs/2106.04426
-    https://arxiv.org/abs/2106.04279
-
+    - https://arxiv.org/abs/2106.04426
+    - https://arxiv.org/abs/2106.04279
     """
 
     @classmethod
@@ -77,11 +75,13 @@ class Decoder(TransformerDecoder):
     """
 
     def build_layers(self) -> nn.ModuleList:
+        # HACK: Adding vocab size to opt for use in HashLayerFFN
+        self.opt['dict_size'] = self.embeddings.weight.size(0)
         layers = nn.ModuleList()
         for i in range(self.n_layers):
             layer_class = self.swappables.layer
             if self.opt['hash_layer'] == i:
-                layer_class = layer_class.with_components(ffn=HashLayerFFN)
+                layer_class = layer_class.with_components(feedforward=HashLayerFFN)
             layers.append(
                 layer_class(
                     self.opt,
@@ -100,7 +100,7 @@ class Decoder(TransformerDecoder):
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
         incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
-        original_input: torch.Tensor,
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Override of forward_layers of TransformerDecoder.
@@ -112,7 +112,7 @@ class Decoder(TransformerDecoder):
                 encoder_output=encoder_output,
                 encoder_mask=encoder_mask,
                 incr_state=incr_state,
-                original_input=original_input,
+                **kwargs,
             )
         return tensor, new_incr_state
 
@@ -127,7 +127,7 @@ class Decoder(TransformerDecoder):
         Overrides TransformerDecoder forward.
         """
         return super().forward(
-            input, encoder_state, incr_state=incr_state, original_input=input, **kwargs
+            input, encoder_state, incr_state=incr_state, orig_input=input, **kwargs
         )
 
 

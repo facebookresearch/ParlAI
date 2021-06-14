@@ -31,7 +31,9 @@ class TransformerFFN(nn.Module):
         super(TransformerFFN, self).__init__(**kwargs)
 
         def _default(val, default):
-            """ shorthand for explicit None check for optional arguments """
+            """
+            shorthand for explicit None check for optional arguments.
+            """
             return val if val is not None else default
 
         dim = _default(dim, opt['embedding_size'])
@@ -53,7 +55,7 @@ class TransformerFFN(nn.Module):
         nn.init.xavier_uniform_(self.lin2.weight)
         # TODO: initialize biases to 0
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, **kwargs) -> torch.Tensor:
         """
         Forward pass.
         """

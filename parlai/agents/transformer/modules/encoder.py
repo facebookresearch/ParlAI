@@ -49,7 +49,9 @@ class TransformerEncoderLayer(nn.Module):
         super().__init__(**kwargs)
 
         def _default(val, default):
-            """ shorthand for explicit None check for optional arguments """
+            """
+            shorthand for explicit None check for optional arguments.
+            """
             return val if val is not None else default
 
         n_heads = _default(n_heads, opt['n_heads'])
@@ -225,7 +227,7 @@ class TransformerEncoder(nn.Module):
     def build_layers(self) -> nn.ModuleList:
         layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            self.layers.append(
+            layers.append(
                 self.swappables.layer(  # type: ignore
                     self.opt,
                     attention_dropout=self.opt.get('attention_dropout', 0.0),
