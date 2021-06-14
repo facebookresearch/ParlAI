@@ -782,6 +782,27 @@ class TestPolyencoder(TestTransformerBase):
     def test_resize_embeddings(self):
         self._test_resize_embeddings('transformer/polyencoder')
 
+    def test_multi_head_attention(self):
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model_file')
+            _, _ = testing_utils.train_model(
+                Opt(
+                    model='transformer/polyencoder',
+                    task='integration_tests:short_fixed',
+                    n_layers=1,
+                    n_encoder_layers=2,
+                    n_decoder_layers=4,
+                    num_epochs=1,
+                    dict_tokenizer='bytelevelbpe',
+                    bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                    bpe_add_prefix_space=False,
+                    model_file=model_file,
+                    save_after_valid=True,
+                    codes_attention_type='multihead',
+                )
+            )
+
 
 @testing_utils.skipUnlessVision
 class TestImagePolyencoder(unittest.TestCase):
