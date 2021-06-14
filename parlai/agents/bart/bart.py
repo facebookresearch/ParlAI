@@ -158,13 +158,19 @@ class BartAgent(TransformerGeneratorAgent):
         if 'text' not in obs or 'text_vec' not in obs:
             return obs
         vec = obs['text_vec']
-        if truncate is not None:
-            vec = torch.LongTensor(  # type: ignore
-                self._check_truncate(obs['text_vec'], truncate - 2, True)
+
+        # add start/end tokens
+        if 'added_start_end_tokens' not in obs:
+            if truncate is not None:
+                vec = torch.LongTensor(  # type: ignore
+                    self._check_truncate(obs['text_vec'], truncate - 2, True)
+                )
+            obs.force_set(
+                'text_vec',
+                self._add_start_end_tokens(vec, add_start=True, add_end=True),
             )
-        obs.force_set(
-            'text_vec', self._add_start_end_tokens(vec, add_start=True, add_end=True)
-        )
+            obs['added_start_end_tokens'] = True
+
         return obs
 
     def _get_initial_decoder_input(
