@@ -159,12 +159,12 @@ def _eval_single_world(opt, agent, task):
     if world_logger is not None:
         # dump world acts to file
         world_logger.reset()  # add final acts to logs
+        base_outfile, extension = os.path.splitext(opt['world_logs'])
         if is_distributed():
             rank = get_rank()
-            base_outfile, extension = os.path.splitext(opt['world_logs'])
-            outfile = base_outfile + f'_{rank}' + extension
+            outfile = base_outfile + f'_{task}_{rank}' + extension
         else:
-            outfile = opt['world_logs']
+            outfile = base_outfile + f'_{task}' + extension
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
