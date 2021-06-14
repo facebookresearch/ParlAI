@@ -163,5 +163,12 @@ class TestTrainModel(unittest.TestCase):
         self._test_opt_step_opts(2)
 
 
+class TestValidationImpatience(unittest.TestCase):
+    def test_impatience(self):
+        from parlai.scripts.train_model import TrainModel, TrainLoop
+
+    pass
+
+
 if __name__ == '__main__':
     unittest.main()
