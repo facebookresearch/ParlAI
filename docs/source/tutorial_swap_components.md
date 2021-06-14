@@ -34,7 +34,9 @@ layer = TransformerLayer.with_components(ffn=NewCustomFFN)(opt, ...)
 
 As long as `NewCustomFFN` has the same `__init__` and `forward` method signatures as `TransformerFFN`, everything should just work.
 
-For examples, see `parlai/agents/examples/transformer_variant.py`
+For examples, see:
+- `parlai/agents/examples/transformer_variant.py`
+- `projects/params_vs_compute/hash_ladder/hash_ladder.py`
 
 ## Composability
 
