@@ -799,6 +799,7 @@ class TestPolyencoder(TestTransformerBase):
                     bpe_add_prefix_space=False,
                     model_file=model_file,
                     save_after_valid=True,
+                    poly_attention_type='multihead',
                     codes_attention_type='multihead',
                 )
             )
