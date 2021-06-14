@@ -11,6 +11,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from parlai.core.opt import Opt
+
 
 class TransformerFFN(nn.Module):
     """
@@ -19,12 +21,25 @@ class TransformerFFN(nn.Module):
 
     def __init__(
         self,
-        dim: int,
-        dim_hidden: int,
+        opt: Opt,
+        dim: int = None,
+        dim_hidden: int = None,
         relu_dropout: float = 0,
         activation: str = 'relu',
+        **kwargs,
     ):
-        super(TransformerFFN, self).__init__()
+        super(TransformerFFN, self).__init__(**kwargs)
+
+        def _default(val, default):
+            """
+            shorthand for explicit None check for optional arguments.
+            """
+            return val if val is not None else default
+
+        dim = _default(dim, opt['embedding_size'])
+        dim_hidden = _default(dim_hidden, opt['ffn_size'])
+
+        self.opt = opt
         self.relu_dropout = nn.Dropout(p=relu_dropout)
         if activation == 'relu':
             self.nonlinear = F.relu
@@ -40,7 +55,7 @@ class TransformerFFN(nn.Module):
         nn.init.xavier_uniform_(self.lin2.weight)
         # TODO: initialize biases to 0
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, **kwargs) -> torch.Tensor:
         """
         Forward pass.
         """
