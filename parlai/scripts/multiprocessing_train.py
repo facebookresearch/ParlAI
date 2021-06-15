@@ -48,6 +48,10 @@ def multiprocess_train(
             import parlai.utils.logging as logging
 
             logging.critical(traceback.format_exc())
+            logging.critical(
+                f"Got the above exception on worker {rank + rank_offset}. "
+                "This may cause hangs requiring manual killing of processes."
+            )
             raise
 
 
