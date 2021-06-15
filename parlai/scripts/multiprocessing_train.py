@@ -27,6 +27,7 @@ import torch
 import random
 import os
 import signal
+import traceback
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
 from parlai.core.script import ParlaiScript, register_script
@@ -41,7 +42,17 @@ def multiprocess_train(
     ) as opt:
         # Run the actual training
         opt['multiprocessing'] = True
-        return single_train.TrainLoop(opt).train()
+        try:
+            return single_train.TrainLoop(opt).train()
+        except Exception:
+            import parlai.utils.logging as logging
+
+            logging.critical(traceback.format_exc())
+            logging.critical(
+                f"Got the above exception on worker {rank + rank_offset}. "
+                "This may cause hangs requiring manual killing of processes."
+            )
+            raise
 
 
 def launch_and_train(opt, port):
