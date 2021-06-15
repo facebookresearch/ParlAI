@@ -8,6 +8,7 @@ from parlai.core.opt import Opt
 from parlai.tasks.integration_tests.agents import NUM_TEST, EXAMPLE_SIZE
 from parlai.utils.conversations import Conversations
 import parlai.utils.testing as testing_utils
+from parlai.core.teachers import register_teacher, DialogTeacher
 
 import os
 from typing import Dict, Any
@@ -201,6 +202,38 @@ class TestBatchSort(unittest.TestCase):
     def test_batchsize4(self):
         # intentionally an edgecase in the world
         self._test_correct_processed(NUM_TEST, batchsize=4)
+
+
+class TestTinyDataset(unittest.TestCase):
+    """
+    Test Dyanmic batching when we have a world size fewer than the number
+    of available GPUs.
+    """
+
+    @testing_utils.skipUnlessGPU
+    def test_tiny_model(self):
+        import parlai.scripts.multiprocessing_train as mp_train
+
+        from torch.cuda import device_count
+
+        if device_count() < 2:
+            raise unittest.SkipTest("Need at least 2 GPUs to test")
+
+        valid_report, test_report = mp_train.MultiProcessTrain.main(
+            model='test_agents/unigram',
+            dict_file='zoo:unittest/transformer_generator2/model.dict',
+            dict_tokenizer='space',
+            task='integration_tests:tiny',
+            batchsize=2,
+            dynamic_batching='full',
+            truncate=8,
+            verbose=True,
+            validation_every_n_steps=5,
+            max_train_steps=10,
+        )
+
+        assert valid_report['exs'] == 1
+        assert test_report['exs'] == 1
 
 
 if __name__ == '__main__':

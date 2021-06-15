@@ -27,6 +27,7 @@ import torch
 import random
 import os
 import signal
+import traceback
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
 from parlai.core.script import ParlaiScript, register_script
@@ -41,7 +42,13 @@ def multiprocess_train(
     ) as opt:
         # Run the actual training
         opt['multiprocessing'] = True
-        return single_train.TrainLoop(opt).train()
+        try:
+            return single_train.TrainLoop(opt).train()
+        except Exception as e:
+            import parlai.utils.logging as logging
+
+            logging.critical(traceback.format_exc())
+            raise
 
 
 def launch_and_train(opt, port):

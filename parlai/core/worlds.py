@@ -1133,8 +1133,14 @@ class DynamicBatchWorld(World):
                 indices.append(i)
 
         # quick invariant checks
-        assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
+        assert (
+            len(indices) != 0 or self.world.num_examples() == 0
+        ), "DynamicBatchWorld ran out of data!"
         assert not any(self._scores[i] is None for i in indices)
+
+        if not indices:
+            assert self.world.num_examples() == 0
+            return
 
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
