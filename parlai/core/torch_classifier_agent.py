@@ -101,62 +101,36 @@ class ConfusionMatrixMetric(Metric):
 
     @staticmethod
     def compute_metrics(
-        predictions: List[str], gold_labels: List[str], positive_class: str
-    ) -> Tuple[
-        List['PrecisionMetric'], List['RecallMetric'], List['ClassificationF1Metric']
-    ]:
-        precisions = []
-        recalls = []
-        f1s = []
-        for predicted, gold_label in zip(predictions, gold_labels):
-            true_positives = int(
-                predicted == positive_class and gold_label == positive_class
-            )
-            true_negatives = int(
-                predicted != positive_class and gold_label != positive_class
-            )
-            false_positives = int(
-                predicted == positive_class and gold_label != positive_class
-            )
-            false_negatives = int(
-                predicted != positive_class and gold_label == positive_class
-            )
-            precision, recall, f1 = ConfusionMatrixMetric.compute_many(
-                true_positives, true_negatives, false_positives, false_negatives
-            )
-            precisions.append(precision)
-            recalls.append(recall)
-            f1s.append(f1)
-        return precisions, recalls, f1s
-
-    @staticmethod
-    def compute_subgroup_metrics(
         predictions: List[str],
         gold_labels: List[str],
-        subgroup_labels: List[List[str]],
         positive_class: str,
-        subgroup_class: str,
+        subgroup_labels: Optional[List[List[str]]] = None,
+        subgroup: str = None,
     ) -> Tuple[
         List['PrecisionMetric'], List['RecallMetric'], List['ClassificationF1Metric']
     ]:
         precisions = []
         recalls = []
         f1s = []
-        for predicted, gold_label, subgroups in zip(
-            predictions, gold_labels, subgroup_labels
-        ):
-            counted = subgroup_class in subgroups
+        if subgroup_labels and subgroup:
+            to_include = [
+                subgroup in subgroup_label for subgroup_label in subgroup_labels
+            ]
+        else:
+            to_include = [True] * len(predictions)
+
+        for predicted, gold_label, include in zip(predictions, gold_labels, to_include):
             true_positives = int(
-                predicted == positive_class and gold_label == positive_class and counted
+                predicted == positive_class and gold_label == positive_class and include
             )
             true_negatives = int(
-                predicted != positive_class and gold_label != positive_class and counted
+                predicted != positive_class and gold_label != positive_class and include
             )
             false_positives = int(
-                predicted == positive_class and gold_label != positive_class and counted
+                predicted == positive_class and gold_label != positive_class and include
             )
             false_negatives = int(
-                predicted != positive_class and gold_label == positive_class and counted
+                predicted != positive_class and gold_label == positive_class and include
             )
             precision, recall, f1 = ConfusionMatrixMetric.compute_many(
                 true_positives, true_negatives, false_positives, false_negatives
@@ -503,8 +477,12 @@ class TorchClassifierAgent(TorchAgent):
                     prec_subgroup_str = f'class_{class_name}_{subgroup}_prec'
                     recall_subgroup_str = f'class_{class_name}_{subgroup}_recall'
                     f1_subgroup_str = f'class_{class_name}_{subgroup}_f1'
-                    precision_sub, recall_sub, f1_sub = ConfusionMatrixMetric.compute_subgroup_metrics(
-                        predictions, batch.labels, batch.subgroups, class_name, subgroup
+                    (
+                        precision_sub,
+                        recall_sub,
+                        f1_sub,
+                    ) = ConfusionMatrixMetric.compute_metrics(
+                        predictions, batch.labels, class_name, batch.subgroups, subgroup
                     )
                     f1_dict[class_name] = f1
                     self.record_local_metric(prec_subgroup_str, precision_sub)
