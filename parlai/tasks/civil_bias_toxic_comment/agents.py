@@ -22,6 +22,40 @@ import os
 import random
 import json
 
+GENDER = ['male', 'female', 'transgender', 'other_gender']
+SEXUAL_ORIENTATION = [
+    'heterosexual',
+    'homosexual_gay_or_lesbian',
+    'bisexual',
+    'other_sexual_orientation',
+]
+RELIGION = [
+    'christian',
+    'jewish',
+    'muslim',
+    'hindu',
+    'buddhist',
+    'atheist',
+    'other_religion',
+]
+ETHNICITY = ['black', 'white', 'asian', 'latino', 'other_race_or_ethnicity']
+DISABILITY = [
+    'physical_disability',
+    'intellectual_or_learning_disability',
+    'psychiatric_or_mental_illness',
+    'other_disability',
+]
+
+BIAS_TYPES = {
+    'gender': GENDER,
+    'sexual_orientation': SEXUAL_ORIENTATION,
+    'religion': RELIGION,
+    'ethnicity': ETHNICITY,
+    'disability': DISABILITY,
+}
+
+ALL_BIAS_LABELS = GENDER + SEXUAL_ORIENTATION + RELIGION + ETHNICITY + DISABILITY
+
 
 class CivilBiasToxicityTeacher(WikiToxicCommentsTeacher):
     """
@@ -42,7 +76,7 @@ class CivilBiasToxicityTeacher(WikiToxicCommentsTeacher):
             'Civil Bias and Toxic Comments Classification Data'
         )
         parser.add_argument(
-            '--threshold',
+            '--data-threshold',
             type=float,
             default=0.5,
             help='The threshold to determine if a comment is safe or not;'
@@ -63,10 +97,10 @@ class CivilBiasToxicityTeacher(WikiToxicCommentsTeacher):
         self.use_test_set = opt['use_test_set']
         self.balance_data = opt['balance_data']
 
-        if opt['threshold'] > 0 and opt['threshold'] < 1:
-            self.threshold = opt['threshold']
+        if opt['data_threshold'] > 0 and opt['data_threshold'] < 1:
+            self.data_threshold = opt['data_threshold']
         else:
-            self.threshold = 0.5
+            self.data_threshold = 0.5
 
         # used to decide whether to consider the smaller subset
         self.bias_subset = opt['bias_subset']
@@ -87,39 +121,9 @@ class CivilBiasToxicityTeacher(WikiToxicCommentsTeacher):
             'identity_annotator_count',
             'toxicity_annotator_count',
         ]
-        self.gender_columns = [
-            'male',
-            'female',
-            'transgender',
-            'other_gender',
-            'heterosexual',
-            'homosexual_gay_or_lesbian',
-            'bisexual',
-            'other_sexual_orientation',
-        ]
-        self.religion_columns = [
-            'christian',
-            'jewish',
-            'muslim',
-            'hindu',
-            'buddhist',
-            'atheist',
-            'other_religion',
-            'black',
-            'white',
-            'asian',
-            'latino',
-            'other_race_or_ethnicity',
-        ]
-        self.disability_columns = [
-            'physical_disability',
-            'intellectual_or_learning_disability',
-            'psychiatric_or_mental_illness',
-            'other_disability',
-        ]
 
         # these ratings have all labels
-        self.rating_columns = [
+        self.rating = [
             'toxicity',
             'severe_toxicity',
             'obscene',
@@ -128,9 +132,6 @@ class CivilBiasToxicityTeacher(WikiToxicCommentsTeacher):
             'insult',
             'threat',
         ]
-        self.bias_labels = (
-            self.gender_columns + self.religion_columns + self.disability_columns
-        )
         self.default_str = 'civil-bias-toxic-comments-default-'
         self.original_train_str = 'civil-bias-toxic-comments-original-train-'
         self.data_path = os.path.join(opt['datapath'], 'civil-bias-toxic-comments')
@@ -247,9 +248,9 @@ class CivilBiasToxicityTeacher(WikiToxicCommentsTeacher):
             self.data = [x for x in self.data if x['bias_labelled']]
 
         # relabelling based on threshold if necessary
-        if self.threshold != 0.5:
+        if self.data_threshold != 0.5:
             for x in self.data:
-                x['is_sensitive'] = x['max_rating'] > self.threshold
+                x['is_sensitive'] = x['max_rating'] > self.data_threshold
 
         # balance data if necessary
         if self.balance_data and 'train' in datatype:
