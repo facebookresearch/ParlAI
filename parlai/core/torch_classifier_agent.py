@@ -129,6 +129,43 @@ class ConfusionMatrixMetric(Metric):
             f1s.append(f1)
         return precisions, recalls, f1s
 
+    @staticmethod
+    def compute_subgroup_metrics(
+        predictions: List[str],
+        gold_labels: List[str],
+        subgroup_labels: List[List[str]],
+        positive_class: str,
+        subgroup_class: str,
+    ) -> Tuple[
+        List['PrecisionMetric'], List['RecallMetric'], List['ClassificationF1Metric']
+    ]:
+        precisions = []
+        recalls = []
+        f1s = []
+        for predicted, gold_label, subgroups in zip(
+            predictions, gold_labels, subgroup_labels
+        ):
+            counted = subgroup_class in subgroups
+            true_positives = int(
+                predicted == positive_class and gold_label == positive_class and counted
+            )
+            true_negatives = int(
+                predicted != positive_class and gold_label != positive_class and counted
+            )
+            false_positives = int(
+                predicted == positive_class and gold_label != positive_class and counted
+            )
+            false_negatives = int(
+                predicted != positive_class and gold_label == positive_class and counted
+            )
+            precision, recall, f1 = ConfusionMatrixMetric.compute_many(
+                true_positives, true_negatives, false_positives, false_negatives
+            )
+            precisions.append(precision)
+            recalls.append(recall)
+            f1s.append(f1)
+        return precisions, recalls, f1s
+
 
 class PrecisionMetric(ConfusionMatrixMetric):
     """
@@ -313,6 +350,9 @@ class TorchClassifierAgent(TorchAgent):
         init_model, self.is_finetune = self._get_init_model(opt, shared)
         super().__init__(opt, shared)
 
+        # set up subgroups
+        self.subgroup_list = None
+
         # set up classes
         if opt.get('classes') is None and opt.get('classes_from_file') is None:
             raise RuntimeError(
@@ -334,6 +374,11 @@ class TorchClassifierAgent(TorchAgent):
             self.class_list = shared['class_list']
             self.class_dict = shared['class_dict']
             self.class_weights = shared['class_weights']
+            if shared.get('subgroup_list'):
+                self.subgroup_list = shared['subgroup_list']
+
+        if not self.subgroup_list and opt['subgroups']:
+            self.subgroup_list = opt['subgroups']
 
         # in binary classfication, opt['threshold'] applies to ref class
         if opt['ref_class'] is None or opt['ref_class'] not in self.class_dict:
@@ -453,6 +498,18 @@ class TorchClassifierAgent(TorchAgent):
             self.record_local_metric(prec_str, precision)
             self.record_local_metric(recall_str, recall)
             self.record_local_metric(f1_str, f1)
+            if self.subgroup_list:
+                for subgroup in self.subgroup_list:
+                    prec_subgroup_str = f'class_{class_name}_{subgroup}_prec'
+                    recall_subgroup_str = f'class_{class_name}_{subgroup}_recall'
+                    f1_subgroup_str = f'class_{class_name}_{subgroup}_f1'
+                    precision_sub, recall_sub, f1_sub = ConfusionMatrixMetric.compute_subgroup_metrics(
+                        predictions, batch.labels, batch.subgroups, class_name, subgroup
+                    )
+                    f1_dict[class_name] = f1
+                    self.record_local_metric(prec_subgroup_str, precision_sub)
+                    self.record_local_metric(recall_subgroup_str, recall_sub)
+                    self.record_local_metric(f1_subgroup_str, f1_sub)
         self.record_local_metric('weighted_f1', WeightedF1Metric.compute_many(f1_dict))
 
     def _format_interactive_output(self, probs, prediction_id):
