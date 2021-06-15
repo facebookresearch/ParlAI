@@ -346,7 +346,7 @@ class PolyEncoderModule(torch.nn.Module):
             # The attention for the codes.
             if self.codes_attention_type == 'multihead':
                 self.code_attention = MultiHeadAttention(
-                    self.codes_attention_num_heads, embed_dim, opt['dropout']
+                    opt, self.codes_attention_num_heads, embed_dim, opt['dropout']
                 )
             elif self.codes_attention_type == 'sqrt':
                 self.code_attention = PolyBasicAttention(
@@ -360,7 +360,7 @@ class PolyEncoderModule(torch.nn.Module):
         # The final attention (the one that takes the candidate as key)
         if self.attention_type == 'multihead':
             self.attention = MultiHeadAttention(
-                self.attention_num_heads, opt['embedding_size'], opt['dropout']
+                opt, self.attention_num_heads, opt['embedding_size'], opt['dropout']
             )
         else:
             self.attention = PolyBasicAttention(
