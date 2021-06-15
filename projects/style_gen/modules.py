@@ -160,6 +160,10 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
                 )
             )
         tensor = tensor + self.position_embeddings(positions).expand_as(tensor)
+
+        if self.variant == 'bart':
+            tensor = self.norm_embeddings(tensor)
+
         tensor = self.dropout(tensor)  # --dropout
 
         new_incr_state = {}
