@@ -1139,6 +1139,8 @@ class DynamicBatchWorld(World):
         assert not any(self._scores[i] is None for i in indices)
 
         if not indices:
+            # this worker got no examples. This can happen when there are fewer
+            # episodes than there are workers. "don't stress the small stuff."
             assert self.world.num_examples() == 0
             return
 
