@@ -106,7 +106,9 @@ class RagModel(TorchGeneratorModel):
                 opt=opt, dictionary=dictionary, embedding=embedding, **kwargs
             )
         else:
-            return encoder_class(opt, *args, **kwargs)
+            return encoder_class(
+                opt, *args, dictionary=dictionary, embedding=embedding, **kwargs
+            )
 
     @classmethod
     def build_decoder(
