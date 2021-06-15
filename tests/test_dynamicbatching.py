@@ -8,7 +8,6 @@ from parlai.core.opt import Opt
 from parlai.tasks.integration_tests.agents import NUM_TEST, EXAMPLE_SIZE
 from parlai.utils.conversations import Conversations
 import parlai.utils.testing as testing_utils
-from parlai.core.teachers import register_teacher, DialogTeacher
 
 import os
 from typing import Dict, Any
@@ -206,8 +205,8 @@ class TestBatchSort(unittest.TestCase):
 
 class TestTinyDataset(unittest.TestCase):
     """
-    Test Dyanmic batching when we have a world size fewer than the number
-    of available GPUs.
+    Test Dyanmic batching when we have a world size fewer than the number of available
+    GPUs.
     """
 
     @testing_utils.skipUnlessGPU

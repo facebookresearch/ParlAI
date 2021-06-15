@@ -572,8 +572,8 @@ class DefaultTeacher(CandidateTeacher):
 
 class TinyTeacher(DialogTeacher):
     """
-    Teacher with a single example, to test data stratification with fewer
-    examples than GPUs.
+    Teacher with a single example, to test data stratification with fewer examples than
+    GPUs.
     """
 
     def __init__(self, opt, shared=None):

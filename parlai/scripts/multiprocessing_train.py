@@ -44,7 +44,7 @@ def multiprocess_train(
         opt['multiprocessing'] = True
         try:
             return single_train.TrainLoop(opt).train()
-        except Exception as e:
+        except Exception:
             import parlai.utils.logging as logging
 
             logging.critical(traceback.format_exc())
