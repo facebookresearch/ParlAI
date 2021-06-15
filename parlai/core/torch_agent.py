@@ -1092,11 +1092,12 @@ class TorchAgent(ABC, Agent):
                 # this is a bit clunky, but alternatives are worse
                 try:
                     self.optimizer.load_state_dict(optim_states)
+                    return False
                 except ValueError:
                     warn_once(
                         'WARNING: not loading optim state since model params changed.'
                     )
-                return True
+                    return True
             else:
                 # previously trained in fp32, loading in fp32.
                 # no special treatment needed.
