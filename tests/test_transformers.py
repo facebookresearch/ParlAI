@@ -131,7 +131,7 @@ class TestTransformerRanker(unittest.TestCase):
                     n_heads=1,
                     ffn_size=4,
                     embedding_size=4,
-                    warmup_updates=1,
+                    warmup_updates=0,
                     lr_scheduler='invsqrt',
                 )
             )
@@ -176,7 +176,7 @@ class TestTransformerRanker(unittest.TestCase):
                     n_heads=1,
                     ffn_size=32,
                     embedding_size=32,
-                    warmup_updates=1,
+                    warmup_updates=0,
                     lr_scheduler='reduceonplateau',
                 )
             )
@@ -724,7 +724,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         Test generators resume correctly.
         """
         GENERATOR_ARGS = dict(
-            model='transformer/generator', skip_generation=True, warmup_updates=1
+            model='transformer/generator', skip_generation=True, warmup_updates=0
         )
         self._test_learning_rate_resuming(GENERATOR_ARGS)
 
@@ -732,7 +732,7 @@ class TestLearningRateScheduler(unittest.TestCase):
         """
         Test resuming learning rate for the ranker.
         """
-        RANKER_ARGS = dict(model='transformer/ranker', warmup_updates=1)
+        RANKER_ARGS = dict(model='transformer/ranker', warmup_updates=0)
         self._test_learning_rate_resuming(RANKER_ARGS)
 
     def test_invsqrt_learning_rate(self):
@@ -741,7 +741,7 @@ class TestLearningRateScheduler(unittest.TestCase):
             model='transformer/generator',
             learningrate=1,
             batchsize=1,
-            warmup_updates=1,
+            warmup_updates=0,
             lr_scheduler='invsqrt',
             n_layers=1,
             n_heads=1,
@@ -752,11 +752,9 @@ class TestLearningRateScheduler(unittest.TestCase):
             short_final_eval=True,
         )
 
-        args['num_epochs'] = 9 / 500
-        args['validation_every_n_epochs'] = 9 / 500
+        args['num_epochs'] = args['validation_every_n_epochs'] = 9 / 500
         valid1, test1 = testing_utils.train_model(args)
-        args['num_epochs'] = 16 / 500
-        args['validation_every_n_epochs'] = 16 / 500
+        args['num_epochs'] = args['validation_every_n_epochs'] = 16 / 500
         valid2, test2 = testing_utils.train_model(args)
 
         self.assertAlmostEqual(

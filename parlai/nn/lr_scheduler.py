@@ -59,7 +59,7 @@ class ParlAILRScheduler(object):
     def _init_warmup_scheduler(self, optimizer, states):
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
-            updates_so_far <= self.warmup_updates or self.hard_reset
+            updates_so_far < self.warmup_updates or self.hard_reset
         ):
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
@@ -110,7 +110,10 @@ class ParlAILRScheduler(object):
         self._number_training_updates = states.get('number_training_updates', 0)
 
         try:
-            self.scheduler.get_last_lr()
+            if self._is_lr_warming_up():
+                self.warmup_scheduler.get_last_lr()
+            else:
+                self.scheduler.get_last_lr()
         except AttributeError:
             # on older pytorches
             self.step(self._number_training_updates)

@@ -524,8 +524,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'),
+                is_finetune=is_finetune,
             )
-            if was_reset and not is_finetune:
+            if was_reset:
                 logging.warning("Optimizer was reset. Also resetting LR scheduler.")
             self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 

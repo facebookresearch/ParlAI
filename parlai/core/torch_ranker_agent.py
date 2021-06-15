@@ -241,10 +241,15 @@ class TorchRankerAgent(TorchAgent):
         elif self._should_initialize_optimizer():
             # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(
-                optim_params, states.get('optimizer'), states.get('optimizer_type')
+            was_reset = self.init_optim(
+                optim_params,
+                states.get('optimizer'),
+                states.get('optimizer_type'),
+                is_finetune=is_finetune,
             )
-            self.build_lr_scheduler(states, hard_reset=is_finetune)
+            if was_reset:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
         if shared is None and is_distributed():
             device_ids = None if self.model_parallel else [self.opt['gpu']]
