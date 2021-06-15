@@ -955,7 +955,13 @@ class TorchAgent(ABC, Agent):
         is_train = 'train' in datatype and 'evalmode' not in datatype
         return is_train
 
-    def init_optim(self, params, optim_states=None, saved_optim_type=None) -> bool:
+    def init_optim(
+        self,
+        params,
+        optim_states=None,
+        saved_optim_type=None,
+        is_finetune: bool = False,
+    ) -> bool:
         """
         Initialize optimizer with model parameters.
 
@@ -969,10 +975,14 @@ class TorchAgent(ABC, Agent):
             type of optimizer being loaded, if changed will skip loading
             optimizer states
 
+        :param is_finetune:
+            bool indicating whether this training run is a fine-tune or not
+
         :returns:
-            boolean indicating whether the optimizer was initialized with
+            boolean indicating whether the optimizer failed to initialize with
             optim_states.
         """
+
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
             logging.warning('Not loading optimizer due to resize in token embeddings')
@@ -1055,14 +1065,15 @@ class TorchAgent(ABC, Agent):
                         f'list:\n{compatible_list}'
                     )
                 self.optimizer = MemoryEfficientFP16Optimizer(self.optimizer)
-        # TODO: we might want to hard reset optimizers here in the
-        # case of fine tuning. Some rudimentary experiments seemed to
-        # indicate that keeping adam weights around was desirable, so this
-        # will remain the behavior for the time being.
+
+        if is_finetune:
+            logging.warning('Detected a fine-tune run. Resetting the optimizer.')
+            return True
+
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
             logging.warning('Not loading optim state since optim class changed.')
-            return False
+            return True
         elif optim_states:
             # check for any fp16/fp32 conversions we need to do
             optimstate_fp16 = 'loss_scaler' in optim_states
@@ -1081,11 +1092,12 @@ class TorchAgent(ABC, Agent):
                 # this is a bit clunky, but alternatives are worse
                 try:
                     self.optimizer.load_state_dict(optim_states)
+                    return False
                 except ValueError:
                     warn_once(
                         'WARNING: not loading optim state since model params changed.'
                     )
-                return True
+                    return True
             else:
                 # previously trained in fp32, loading in fp32.
                 # no special treatment needed.
@@ -1099,7 +1111,7 @@ class TorchAgent(ABC, Agent):
                 warn_once(
                     'WARNING: not loading optim state since model params changed.'
                 )
-                return False
+                return True
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """

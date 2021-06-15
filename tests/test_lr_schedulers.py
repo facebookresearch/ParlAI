@@ -12,10 +12,11 @@ import parlai.utils.testing as testing_utils
 
 
 class TestLRSchedulers(unittest.TestCase):
-    def _run_pass(self, max_lr=1.0, warmup_updates=0, total_steps=1000, **args):
-        args['warmup_updates'] = warmup_updates
+    def _run_pass(self, max_lr=1.0, total_steps=1000, end_zero=False, **args):
         if 'max_train_steps' not in args:
-            args['max_train_steps'] = total_steps - warmup_updates
+            args['max_train_steps'] = total_steps
+        # for checks of correctness, hardcode warmup_rate to be 0
+        args['warmup_rate'] = 0
         p = torch.nn.Parameter(torch.randn(4, 4))
         optimizer = torch.optim.SGD([p], lr=max_lr)
         scheduler = lr_scheduler.ParlAILRScheduler.lr_scheduler_factory(
@@ -25,25 +26,30 @@ class TestLRSchedulers(unittest.TestCase):
         for step in range(total_steps):
             scheduler.step(step)
             output.append(scheduler.get_last_lr())
+        for value in output:
+            assert value >= 0
         for step, o in enumerate(output):  # noqa: B007
             assert o <= max_lr
             assert o > 0 or step == total_steps - 1
         warmup_updates = args.get('warmup_updates', 0)
+        assert warmup_updates >= 0
         if warmup_updates > 0:
             assert output[warmup_updates - 1] == max_lr
-            # no steep cliffs of > 50% of LR
-            assert (output[warmup_updates] - max_lr) / max_lr < 0.5
             # LR is always linear
-            for step in range(warmup_updates - 1):
+            for step in range(warmup_updates - 2):
                 self.assertAlmostEqual(
-                    output[step + 1] - output[step], max_lr / warmup_updates, places=3
+                    output[step + 1] - output[step], 1 / warmup_updates
                 )
+        if end_zero:
+            self.assertAlmostEquals(output[-1], 0)
+        else:
+            self.assertNotAlmostEqual(output[-1], 0)
         return output
 
     def _run_resume(self, max_lr=1.0, warmup_updates=0, total_steps=200, **args):
         args['warmup_updates'] = warmup_updates
         if 'max_train_steps' not in args:
-            args['max_train_steps'] = total_steps - warmup_updates
+            args['max_train_steps'] = total_steps
         p = torch.nn.Parameter(torch.randn(4, 4))
         optimizer = torch.optim.SGD([p], lr=max_lr)
         scheduler = lr_scheduler.ParlAILRScheduler.lr_scheduler_factory(
@@ -54,7 +60,7 @@ class TestLRSchedulers(unittest.TestCase):
             p = torch.nn.Parameter(torch.randn(4, 4))
             optimizer2 = torch.optim.SGD([p], lr=max_lr)
             sd = {
-                'number_training_updates': step + 1,
+                'number_training_updates': step,
                 'lr_scheduler': scheduler.get_state_dict(),
                 'lr_scheduler_type': args['lr_scheduler'],
                 'warmup_scheduler': scheduler.get_warmup_state_dict(),
@@ -78,44 +84,50 @@ class TestLRSchedulers(unittest.TestCase):
         assert scheduler.get_last_lr() == scheduler2.get_last_lr()
 
     def test_cosine(self):
-        self._run_pass(lr_scheduler='cosine', warmup_updates=0)
-        self._run_pass(lr_scheduler='cosine', warmup_updates=50)
+        self._run_pass(lr_scheduler='cosine', warmup_updates=0, end_zero=True)
+        self._run_pass(lr_scheduler='cosine', warmup_updates=50, end_zero=True)
         with self.assertRaises(lr_scheduler.StopTrainException):
             self._run_pass(lr_scheduler='cosine', max_train_steps=100, total_steps=1000)
 
     def test_linear(self):
-        self._run_pass(lr_scheduler='linear', warmup_updates=0)
-        self._run_pass(lr_scheduler='linear', warmup_updates=50)
+        self._run_pass(lr_scheduler='linear', warmup_updates=0, end_zero=True)
+        self._run_pass(lr_scheduler='linear', warmup_updates=50, end_zero=True)
         with self.assertRaises(lr_scheduler.StopTrainException):
             self._run_pass(lr_scheduler='linear', max_train_steps=100, total_steps=1000)
 
     def test_invsqrt(self):
-        self._run_pass(lr_scheduler='invsqrt', warmup_updates=0)
-        self._run_pass(lr_scheduler='invsqrt', warmup_updates=50)
+        self._run_pass(lr_scheduler='invsqrt', warmup_updates=0, end_zero=False)
+        self._run_pass(lr_scheduler='invsqrt', warmup_updates=50, end_zero=False)
 
         # decay very fast
         steps = self._run_pass(
-            lr_scheduler='invsqrt', warmup_updates=50, invsqrt_lr_decay_gamma=1
+            lr_scheduler='invsqrt',
+            warmup_updates=50,
+            invsqrt_lr_decay_gamma=1,
+            end_zero=False,
         )
-        self.assertAlmostEquals(steps[-1], 0.0324443)
+        self.assertAlmostEquals(steps[-1], 0.03242722)
 
         # decay very slowly
         steps = self._run_pass(
-            lr_scheduler='invsqrt', warmup_updates=50, invsqrt_lr_decay_gamma=5000
+            lr_scheduler='invsqrt',
+            warmup_updates=50,
+            invsqrt_lr_decay_gamma=5000,
+            end_zero=False,
         )
         assert all(x > 0.9 for x in steps[50:])
 
     def test_cosine_resume(self):
-        self._run_resume(lr_scheduler='cosine', warmup_updates=0)
-        self._run_resume(lr_scheduler='cosine', warmup_updates=50)
+        self._run_resume(lr_scheduler='cosine', warmup_updates=0, end_zero=True)
+        self._run_resume(lr_scheduler='cosine', warmup_updates=50, end_zero=True)
 
     def test_linear_resume(self):
-        self._run_resume(lr_scheduler='linear', warmup_updates=0)
-        self._run_resume(lr_scheduler='linear', warmup_updates=50)
+        self._run_resume(lr_scheduler='linear', warmup_updates=0, end_zero=True)
+        self._run_resume(lr_scheduler='linear', warmup_updates=50, end_zero=True)
 
     def test_invsqrt_resume(self):
-        self._run_resume(lr_scheduler='invsqrt', warmup_updates=0)
-        self._run_resume(lr_scheduler='invsqrt', warmup_updates=50)
+        self._run_resume(lr_scheduler='invsqrt', warmup_updates=0, end_zero=True)
+        self._run_resume(lr_scheduler='invsqrt', warmup_updates=50, end_zero=True)
 
     def _run_end2end(
         self, lr_scheduler, max_lr=1.0, warmup_updates=0, total_steps=100, **args
