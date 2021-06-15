@@ -628,7 +628,7 @@ class DictionaryAgent(Agent):
         SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
         with PathManager.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
-                split = line.strip().split('\t')
+                split = line.rstrip("\n\r").split('\t')
                 token = unescape(split[0])
                 if lower_special and token in SPECIAL_TOKENS:
                     token = token.lower()

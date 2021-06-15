@@ -1,0 +1,76 @@
+acts:
+- - episode_done: true
+    hypothesis: 'Product and geography are what make cream skimming work. '
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    labels:
+    - neutral
+    premise: Conceptually cream skimming has two basic dimensions - product and geography.
+    text: 'Conceptually cream skimming has two basic dimensions - product and geography.
+
+      Product and geography are what make cream skimming work. '
+- - episode_done: true
+    hypothesis: You lose the things to the following level if the people recall.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    labels:
+    - entailment
+    premise: you know during the season and i guess at at your level uh you lose them
+      to the next level if if they decide to recall the the parent team the Braves
+      decide to call to recall a guy from triple A then a double A guy goes up to
+      replace him and a single A guy goes up to replace him
+    text: 'you know during the season and i guess at at your level uh you lose them
+      to the next level if if they decide to recall the the parent team the Braves
+      decide to call to recall a guy from triple A then a double A guy goes up to
+      replace him and a single A guy goes up to replace him
+
+      You lose the things to the following level if the people recall.'
+- - episode_done: true
+    hypothesis: A member of my team will execute your orders with immense precision.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    labels:
+    - entailment
+    premise: One of our number will carry out your instructions minutely.
+    text: 'One of our number will carry out your instructions minutely.
+
+      A member of my team will execute your orders with immense precision.'
+- - episode_done: true
+    hypothesis: This information belongs to them.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    labels:
+    - entailment
+    premise: How do you know? All this is their information again.
+    text: 'How do you know? All this is their information again.
+
+      This information belongs to them.'
+- - episode_done: true
+    hypothesis: The tennis shoes have a range of prices.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    labels:
+    - neutral
+    premise: yeah i tell you what though if you go price some of those tennis shoes
+      i can see why now you know they're getting up in the hundred dollar range
+    text: 'yeah i tell you what though if you go price some of those tennis shoes
+      i can see why now you know they''re getting up in the hundred dollar range
+
+      The tennis shoes have a range of prices.'
+num_episodes: 392702
+num_examples: 392702

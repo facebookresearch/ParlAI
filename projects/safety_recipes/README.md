@@ -19,10 +19,16 @@ We release the Bot-Adversarial Dialogue task at `parlai/tasks/bot_adversarial_di
 parlai display_data -t bot_adversarial_dialogue --bad-include-persona True
 ```
 
-To view the data used for the fixed test set, run:
+To view the data used for the adversarial fixed test set, run:
 
 ```
 parlai display_data -t bot_adversarial_dialogue:HumanSafetyEvaluation --bad-include-persona True
+```
+
+To view the data used for the non-adversarial fixed test set, run:
+
+```
+parlai display_data -t bot_adversarial_dialogue:HumanNonadvSafetyEvaluation
 ```
 
 <p align="center"><img width="60%" src="BAD_safety_diagram.png" /></p>

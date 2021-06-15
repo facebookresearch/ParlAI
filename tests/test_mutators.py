@@ -226,3 +226,27 @@ class TestSpecificMutators(unittest.TestCase):
         assert set(ex2['text'].split()) == set(EXAMPLE2['text'].split())
         assert set(ex3['text'].split()) == set(EXAMPLE3['text'].split())
         assert set(ex4['text'].split()) == set(EXAMPLE4['text'].split())
+
+
+class TestMutatorStickiness(unittest.TestCase):
+    """
+    Test that mutations DO NOT stick with episode.
+    """
+
+    def test_not_sticky(self):
+        pp = ParlaiParser(True, False)
+        opt = pp.parse_kwargs(
+            task='integration_tests:multiturn',
+            mutators='flatten',
+            datatype='train:ordered',
+        )
+        teacher = create_task_agent_from_taskname(opt)[0]
+        first_epoch = []
+        second_epoch = []
+        for _ in range(teacher.num_examples()):
+            first_epoch.append(teacher.act())
+        teacher.reset()
+        for _ in range(teacher.num_examples()):
+            second_epoch.append(teacher.act())
+
+        assert all(f == s for f, s in zip(first_epoch, second_epoch))

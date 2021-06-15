@@ -9,9 +9,13 @@ Basic tests that ensure train_model.py behaves in predictable ways.
 """
 import os
 import unittest
+import json
 import parlai.utils.testing as testing_utils
+from parlai.core.metrics import AverageMetric
 from parlai.core.worlds import create_task
 from parlai.core.params import ParlaiParser
+from parlai.core.agents import register_agent, Agent
+from parlai.utils.data import DatatypeHelper
 
 
 class TestTrainModel(unittest.TestCase):
@@ -163,5 +167,84 @@ class TestTrainModel(unittest.TestCase):
         self._test_opt_step_opts(2)
 
 
-if __name__ == '__main__':
-    unittest.main()
+@register_agent("fake_report")
+class FakeReportAgent(Agent):
+    def __init__(self, opt, shared=None):
+        self.count = 0
+        super().__init__(opt, shared)
+
+    def report(self):
+        if self.count == 0:
+            # initial score
+            return {'loss': AverageMetric(3)}
+        elif self.count == 1:
+            # don't save the second validation
+            return {'loss': AverageMetric(4)}
+        else:
+            # do save the third validation
+            return {'loss': AverageMetric(2)}
+
+    def receive_metrics(self, report):
+        self.count += 1
+
+    def act(self):
+        return {}
+
+    def save(self, fname):
+        self.opt.save(fname + ".opt")
+        with open(fname, "w") as f:
+            f.write("Lol")
+
+    def load(self, fname):
+        pass
+
+
+class TestValidationImpatience(unittest.TestCase):
+    """
+    Tests to check we handle impatience correctly upon preemption.
+    """
+
+    def test_impatience(self, **kwargs):
+        from parlai.scripts.train_model import TrainModel, TrainLoop
+
+        # shallow copy to prevent overwrites
+        kwargs = kwargs.copy()
+        with testing_utils.tempdir() as tmpdir:
+            kwargs['model'] = 'fake_report'
+            kwargs['task'] = 'integration_tests'
+            kwargs['validation_metric'] = 'loss'
+            kwargs['model_file'] = os.path.join(tmpdir, 'model')
+            kwargs['dict_file'] = 'zoo:unittest/transformer_generator2/model.dict'
+            kwargs['log_every_n_steps'] = 1
+            kwargs['validation_every_n_steps'] = 10
+            kwargs['max_train_steps'] = 100
+            kwargs['save_after_valid'] = True
+            opt = TrainModel.setup_args().parse_kwargs(**kwargs)
+
+            logs_first = []
+            main_loop = TrainLoop(opt)
+
+            for i, train_step_log in enumerate(main_loop.train_steps()):
+                if i % 10 == 1:
+                    # simulate preemption
+                    # load from preempted and check variables are the same
+                    preempt_loop = TrainLoop(opt)
+                    # assert main_loop.impatience == preempt_loop.impatience
+                    # assert main_loop.last_valid_epoch == preempt_loop.last_valid_epoch
+                    # assert main_loop.best_valid == preempt_loop.best_valid
+                    print(i, preempt_loop.impatience, preempt_loop.best_valid)
+                    if i == 1:
+                        assert preempt_loop.impatience == 0
+                        assert preempt_loop.best_valid is None
+                    elif i == 11:
+                        assert preempt_loop.impatience == 0
+                        assert preempt_loop.best_valid == 3
+                    elif i == 21:
+                        assert preempt_loop.impatience == 1
+                        assert preempt_loop.best_valid == 3
+                    elif i == 31:
+                        assert preempt_loop.impatience == 0
+                        assert preempt_loop.best_valid == 2
+                    else:
+                        assert preempt_loop.impatience == (i - 31) // 10
+                        assert preempt_loop.best_valid == 2

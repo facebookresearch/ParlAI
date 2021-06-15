@@ -8,27 +8,27 @@ desired to increase the pool of tasks, models, and baselines.
 ## Pull Requests
 We actively welcome your pull requests.
 
-1. Fork the repo and then clone the forked repository. (See this [github guide](https://guides.github.com/activities/forking/) on forking for more info).  
+1. Fork the repo and then clone the forked repository. (See this [github guide](https://guides.github.com/activities/forking/) on forking for more info).
    **If you have already cloned the repo directly and committed changes, follow the steps in the [section below](#moving-changes-youve-committed-to-a-fork)**
 2. Create your branch from `master`. Set up your environment
-   and run `pre-commit install` once. 
+   and run `pre-commit install` once.
 3. Make your changes
 4. If you've added code that should be tested, [add tests](http://parl.ai/docs/tutorial_tests.html).
 5. If you've changed APIs, update the documentation.
 6. Autoformat and lint your code (`bash autoformat.sh`)
-7. Ensure the test suite passes. Run `python -m pytest -m unit`.
+7. (Optional) Ensure the test suite passes. Run `python -m pytest -m unit`.
 8. If you've added a new dataset, you should also run
    `python -m pytest -m data`. Copy-paste the output into a comment in your PR.
 9. If you haven't already, complete the Contributor License Agreement ("CLA").
-10. Link [CircleCI](https://circleci.com/vcs-authorize/) to your github account 
-   if you haven't done so previously (and make sure the CircleCI tests run 
+10. Link [CircleCI](https://circleci.com/vcs-authorize/) to your github account
+   if you haven't done so previously (and make sure the CircleCI tests run
    successfully on the PR after you push your changes).
 11. Push your changes!
 12. Once the PR is accepted and CI is passing, we will merge the PR for you.
 
 ### Moving changes you've committed to a fork
 1. Fork the repo
-2. In your local repo, rename your origin remote to upstream 
+2. In your local repo, rename your origin remote to upstream
    ```
    git remote rename origin upstream
    ```
@@ -40,7 +40,7 @@ We actively welcome your pull requests.
    ```
    git fetch origin
    ```
-5. Make your local branch track the remote branch (of the forked repo) 
+5. Make your local branch track the remote branch (of the forked repo)
    ```
    git branch --set-upstream-to origin/master master
    ```

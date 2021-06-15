@@ -1,0 +1,92 @@
+acts:
+- - episode_done: true
+    hypothesis: the language was peeled down
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: It was a complex language. Not written down but handed down. One might
+      say it was peeled down.
+    text: 'It was a complex language. Not written down but handed down. One might
+      say it was peeled down.
+
+      the language was peeled down'
+- - episode_done: true
+    hypothesis: no women are allowed to take part in this ritual
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: It is part of their religion, a religion I do not scoff at as it holds
+      many elements which match our own even though it lacks the truth of ours. At
+      one of their great festivals they have the ritual of driving out the devils
+      from their bodies. First the drummers come on - I may say that no women are
+      allowed to take part in this ritual and the ladies here will perhaps agree with
+      me that they are fortunate in that omission.
+    text: 'It is part of their religion, a religion I do not scoff at as it holds
+      many elements which match our own even though it lacks the truth of ours. At
+      one of their great festivals they have the ritual of driving out the devils
+      from their bodies. First the drummers come on - I may say that no women are
+      allowed to take part in this ritual and the ladies here will perhaps agree with
+      me that they are fortunate in that omission.
+
+      no women are allowed to take part in this ritual'
+- - episode_done: true
+    hypothesis: Gustave was shepherded into creative retreat at Croisset by epilepsy
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: The Paris to Rouen railway was being extended to Le Havre, and the line
+      cut straight through Dr Flaubert's land. Part of it was to be compulsorily purchased.
+      You could say that Gustave was shepherded into creative retreat at Croisset
+      by epilepsy.
+    text: 'The Paris to Rouen railway was being extended to Le Havre, and the line
+      cut straight through Dr Flaubert''s land. Part of it was to be compulsorily
+      purchased. You could say that Gustave was shepherded into creative retreat at
+      Croisset by epilepsy.
+
+      Gustave was shepherded into creative retreat at Croisset by epilepsy'
+- - episode_done: true
+    hypothesis: Gustave was driven to creative retreat in Croisset by the railway
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: Part of it was to be compulsorily purchased. You could say that Gustave
+      was shepherded into creative retreat at Croisset by epilepsy. You could also
+      say he was driven there by the railway.
+    text: 'Part of it was to be compulsorily purchased. You could say that Gustave
+      was shepherded into creative retreat at Croisset by epilepsy. You could also
+      say he was driven there by the railway.
+
+      Gustave was driven to creative retreat in Croisset by the railway'
+- - episode_done: true
+    hypothesis: buying places is a hobby
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: Some of them, like for instance the farm in Connecticut, are quite small.
+      If I like a place I buy it. I guess you could say it's a hobby.
+    text: 'Some of them, like for instance the farm in Connecticut, are quite small.
+      If I like a place I buy it. I guess you could say it''s a hobby.
+
+      buying places is a hobby'
+num_episodes: 250
+num_examples: 250

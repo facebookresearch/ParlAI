@@ -123,6 +123,3 @@ LOSING DIALOGUE: model1
 QUESTION: Who would you prefer to talk to for a long conversation?
 TURKER'S CHOICE: model2
 REASON: Makes more sense
-
-
-

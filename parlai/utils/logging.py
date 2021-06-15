@@ -133,7 +133,7 @@ class ParlaiLogger(logging.Logger):
 # -----------------------------------
 # Forming the logger                #
 # -----------------------------------
-logger = ParlaiLogger(name=__name__)
+logger = ParlaiLogger(name="parlai")
 
 
 def set_log_level(level):

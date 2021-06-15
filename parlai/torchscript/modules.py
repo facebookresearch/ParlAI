@@ -70,6 +70,7 @@ class TorchScriptGreedySearch(nn.Module):
             bpe_encoder=orig_bpe.encoder,
             bpe_byte_encoder=orig_bpe.byte_encoder,
             fused_key_bpe_ranks=fused_key_bpe_ranks,
+            special_tokens=agent._get_special_tokens(),
         )
 
         # History tracking and start/end tokens
@@ -451,6 +452,7 @@ class ScriptableGpt2BpeHelper(object):
         encoder: Dict[str, str],
         byte_encoder: Dict[int, str],
         fused_key_bpe_ranks: Dict[str, float],
+        special_tokens: List[str],
     ):
 
         self.add_prefix_space = add_prefix_space
@@ -467,6 +469,11 @@ class ScriptableGpt2BpeHelper(object):
 
         self.bpe_ranks = fused_key_bpe_ranks
 
+        # special tokens
+        self._special_tokens: Dict[str, int] = {}
+        for st in special_tokens:
+            self._special_tokens[st] = 1
+
     def encode(self, text: str) -> List[str]:
         """
         Tokenize text.
@@ -481,7 +488,41 @@ class ScriptableGpt2BpeHelper(object):
         """
         if self.add_prefix_space:
             text = f' {text}'
-        return self.helper_encode(text)
+
+        # constants for readability
+        FINAL = 1
+        SPLITABLE = 0
+        pieces: List[Tuple[str, int]] = [(text, SPLITABLE)]
+
+        for special_token in self._special_tokens.keys():
+            i = 0
+            while i < len(pieces):
+                subtext, status = pieces[i]
+                if status == FINAL:
+                    i += 1
+                    continue
+                split = subtext.split(special_token)
+                if len(split) > 1:
+                    # special token detected, replace the chunk with small subchunks
+                    # split by the special token
+                    pieces.pop(i)
+                    for j, piece in enumerate(split):
+                        if j > 0:
+                            # add the special token as a delimiter
+                            pieces.insert(i + j, (special_token, FINAL))
+                        pieces.insert(i + j + int(j > 0), (piece, SPLITABLE))
+                else:
+                    i += 1
+
+        output: List[str] = []
+        for piece, state in pieces:
+            if state is FINAL:
+                output.append(piece)
+            else:
+                output += self.helper_encode(piece)
+        text = ''.join(output)
+
+        return output
 
     def get_pairs(self, word: List[str]) -> List[Tuple[str, str]]:
         """
@@ -586,7 +627,20 @@ class ScriptableGpt2BpeHelper(object):
         :return text:
             decoded text
         """
-        text = self.helper_decode(tokens)
+        output: List[str] = []
+        accum: List[str] = []
+        for token in tokens:
+            if token in self._special_tokens:
+                if len(accum) > 0:
+                    output.append(self.helper_decode(accum))
+                    accum.clear()
+                output.append(token)
+            else:
+                accum.append(token)
+        if len(accum) > 0:
+            output.append(self.helper_decode(accum))
+
+        text = ''.join(output)
         if self.add_prefix_space:
             assert text.startswith(' ')
             text = text.lstrip(' ')
@@ -687,6 +741,7 @@ class ScriptableDictionaryAgent:
         bpe_encoder: Dict[str, str],
         bpe_byte_encoder: Dict[int, str],
         fused_key_bpe_ranks: Dict[str, float],
+        special_tokens: List[str],
     ):
 
         self.null_token = null_token
@@ -707,6 +762,7 @@ class ScriptableDictionaryAgent:
             encoder=bpe_encoder,
             byte_encoder=bpe_byte_encoder,
             fused_key_bpe_ranks=fused_key_bpe_ranks,
+            special_tokens=special_tokens,
         )
 
     def _word_lookup(self, key: str) -> int:

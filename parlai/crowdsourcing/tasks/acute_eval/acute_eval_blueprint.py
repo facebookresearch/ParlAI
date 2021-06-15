@@ -64,6 +64,12 @@ be able to compare to. These pairings should be provided as a .jsonl with \
     block_on_onboarding_fail: bool = field(
         default=True, metadata={"help": "whether to block on onboarding failure"}
     )
+    randomize_conversations: bool = field(
+        default=True,
+        metadata={
+            'help': "Randomize conversations used for match-ups or take conversations in order"
+        },
+    )
     num_matchup_pairs: int = field(
         default=2, metadata={"help": "Number of pairs per model matchup, default 2"}
     )

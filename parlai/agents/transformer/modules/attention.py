@@ -14,6 +14,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from parlai.core.opt import Opt
 from parlai.utils.torch import neginf
 
 
@@ -92,8 +93,20 @@ class MultiHeadAttention(nn.Module):
     See Vaswani (2017) for an extensive description.
     """
 
-    def __init__(self, n_heads: int, dim: int, dropout: float = 0):
+    def __init__(
+        self, opt: Opt, n_heads: int = None, dim: int = None, dropout: float = 0
+    ):
         super(MultiHeadAttention, self).__init__()
+
+        def _default(val, default):
+            """
+            shorthand for explicit None check for optional arguments.
+            """
+            return val if val is not None else default
+
+        n_heads = _default(n_heads, opt['n_heads'])
+        dim = _default(dim, opt['embedding_size'])
+
         self.n_heads = n_heads
         self.dim = dim
 
@@ -120,6 +133,7 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
         Forward pass.

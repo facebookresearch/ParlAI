@@ -15,6 +15,7 @@ import torch
 
 from parlai.core.opt import Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.core.torch_agent import Batch
 from parlai.utils.misc import recursive_getattr
 from parlai.utils.logging import logging
 
@@ -174,21 +175,32 @@ class PolyencoderAgent(TorchRankerAgent):
     def encode_candidates(self, padded_cands):
         """
         Encode candidates.
+
+        Called when encoding fixed candidates.
         """
         padded_cands = padded_cands.unsqueeze(1)
         _, _, cand_rep = self.model(cand_tokens=padded_cands)
         return cand_rep
 
-    def score_candidates(self, batch, cand_vecs, cand_encs=None):
+    def get_ctxt_rep(self, batch: Batch) -> Tuple[torch.Tensor, torch.BoolTensor]:
         """
-        Score candidates.
+        Encode context representation.
+        """
+        ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
+        return ctxt_rep, ctxt_rep_mask
 
-        The Poly-encoder encodes the candidate and context independently. Then, the
-        model applies additional attention before ultimately scoring a candidate.
+    def get_cand_rep(
+        self,
+        batch: Batch,
+        cand_vecs: torch.LongTensor,
+        cand_encs: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
+        """
+        Encode candidates.
+
+        Called when scoring candidates.
         """
         bsz = self._get_batch_size(batch)
-        ctxt_rep, ctxt_rep_mask, _ = self.model(**self._model_context_input(batch))
-
         if cand_encs is not None:
             if bsz == 1:
                 cand_rep = cand_encs
@@ -198,13 +210,37 @@ class PolyencoderAgent(TorchRankerAgent):
         elif len(cand_vecs.shape) == 3:
             _, _, cand_rep = self.model(cand_tokens=cand_vecs)
         # bsz x seq len (if batch cands) or num_cands x seq len (if fixed cands)
-        elif len(cand_vecs.shape) == 2:
+        else:
+            assert len(cand_vecs.shape) == 2
             _, _, cand_rep = self.model(cand_tokens=cand_vecs.unsqueeze(1))
             num_cands = cand_rep.size(0)  # will be bsz if using batch cands
             cand_rep = cand_rep.expand(num_cands, bsz, -1).transpose(0, 1).contiguous()
-        scores = self.model(
+
+        return cand_rep
+
+    def get_scores(
+        self,
+        ctxt_rep: torch.Tensor,
+        ctxt_rep_mask: torch.BoolTensor,
+        cand_rep: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Score context with candidates.
+        """
+        return self.model(
             ctxt_rep=ctxt_rep, ctxt_rep_mask=ctxt_rep_mask, cand_rep=cand_rep
         )
+
+    def score_candidates(self, batch, cand_vecs, cand_encs=None):
+        """
+        Score candidates.
+
+        The Poly-encoder encodes the candidate and context independently. Then, the
+        model applies additional attention before ultimately scoring a candidate.
+        """
+        ctxt_rep, ctxt_rep_mask = self.get_ctxt_rep(batch)
+        cand_rep = self.get_cand_rep(batch, cand_vecs, cand_encs)
+        scores = self.get_scores(ctxt_rep, ctxt_rep_mask, cand_rep)
         return scores
 
     def _get_batch_size(self, batch) -> int:
@@ -310,7 +346,7 @@ class PolyEncoderModule(torch.nn.Module):
             # The attention for the codes.
             if self.codes_attention_type == 'multihead':
                 self.code_attention = MultiHeadAttention(
-                    self.codes_attention_num_heads, embed_dim, opt['dropout']
+                    opt, self.codes_attention_num_heads, embed_dim, opt['dropout']
                 )
             elif self.codes_attention_type == 'sqrt':
                 self.code_attention = PolyBasicAttention(
@@ -324,7 +360,7 @@ class PolyEncoderModule(torch.nn.Module):
         # The final attention (the one that takes the candidate as key)
         if self.attention_type == 'multihead':
             self.attention = MultiHeadAttention(
-                self.attention_num_heads, opt['embedding_size'], opt['dropout']
+                opt, self.attention_num_heads, opt['embedding_size'], opt['dropout']
             )
         else:
             self.attention = PolyBasicAttention(

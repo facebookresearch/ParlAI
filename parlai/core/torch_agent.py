@@ -1687,7 +1687,7 @@ class TorchAgent(ABC, Agent):
                 )
             if any('label_truncated_length' in ex for ex in exs):
                 label_truncated_lengths = torch.LongTensor(
-                    [ex.get('label_truncated_length') for ex in exs]
+                    [ex.get('label_truncated_length', 0) for ex in exs]
                 )
             field = 'labels' if labels_avail else 'eval_labels'
 
@@ -1774,7 +1774,7 @@ class TorchAgent(ABC, Agent):
             from model. May be None (default) if model chooses not to answer.
             This method will check for ``text`` and ``text_candidates`` fields.
         """
-        if output is None:
+        if output is None or valid_inds is None:
             return batch_reply
         for k, v in output.items():
             if v is None:
@@ -1786,12 +1786,16 @@ class TorchAgent(ABC, Agent):
 
     def get_temp_history(self, observation) -> Optional[str]:
         """
-        Return a string to temporarily insert into history.
+        Return a string to temporarily insert into history for a single turn.
+
+        *NOTE*: This does NOT attempt to provide any sort of delimiter or spacing
+        between the original history and the temporary history. If you require
+        such delimiter or spacing, you should include it in the temp history.
 
         Intentionally overrideable so more complex models can insert temporary history
         strings, i.e. strings that are removed from the history after a single turn.
         """
-        return None
+        return observation.get('temp_history')
 
     def observe(self, observation):
         """

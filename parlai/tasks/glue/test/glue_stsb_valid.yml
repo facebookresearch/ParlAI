@@ -1,0 +1,58 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - '5.0'
+    id: huggingface
+    label_candidates:
+    - '5.0'
+    sentence1: A man with a hard hat is dancing.
+    sentence2: A man wearing a hard hat is dancing.
+    text: 'A man with a hard hat is dancing.
+
+      A man wearing a hard hat is dancing.'
+- - episode_done: true
+    eval_labels:
+    - '4.75'
+    id: huggingface
+    label_candidates:
+    - '4.75'
+    sentence1: A young child is riding a horse.
+    sentence2: A child is riding a horse.
+    text: 'A young child is riding a horse.
+
+      A child is riding a horse.'
+- - episode_done: true
+    eval_labels:
+    - '5.0'
+    id: huggingface
+    label_candidates:
+    - '5.0'
+    sentence1: A man is feeding a mouse to a snake.
+    sentence2: The man is feeding a mouse to the snake.
+    text: 'A man is feeding a mouse to a snake.
+
+      The man is feeding a mouse to the snake.'
+- - episode_done: true
+    eval_labels:
+    - '2.4000000953674316'
+    id: huggingface
+    label_candidates:
+    - '2.4000000953674316'
+    sentence1: A woman is playing the guitar.
+    sentence2: A man is playing guitar.
+    text: 'A woman is playing the guitar.
+
+      A man is playing guitar.'
+- - episode_done: true
+    eval_labels:
+    - '2.75'
+    id: huggingface
+    label_candidates:
+    - '2.75'
+    sentence1: A woman is playing the flute.
+    sentence2: A man is playing a flute.
+    text: 'A woman is playing the flute.
+
+      A man is playing a flute.'
+num_episodes: 1500
+num_examples: 1500

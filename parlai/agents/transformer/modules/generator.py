@@ -16,7 +16,8 @@ https://arxiv.org/abs/1810.04805), and a few different variations seen in the
 literature (BERT and XLM; https://arxiv.org/abs/1901.07291).
 """
 
-from typing import Dict
+from __future__ import annotations
+from typing import Dict, Type
 
 import torch
 import torch.cuda
@@ -27,12 +28,14 @@ from parlai.agents.transformer.modules import (
     TransformerDecoder,
     TransformerEncoder,
 )
+from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.core.torch_agent import DictionaryAgent
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import neginf
 
 
+@swappable(encoder=TransformerEncoder, decoder=TransformerDecoder)
 class TransformerGeneratorModel(TorchGeneratorModel):
     """
     Implements a full generator model, with one encoder and one decoder.
@@ -40,33 +43,57 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 
     @classmethod
     def build_encoder(
-        cls, opt, dictionary, embedding=None, padding_idx=None, reduction_type='mean'
-    ):
-        return TransformerEncoder(
+        cls,
+        opt,
+        dictionary,
+        embedding=None,
+        padding_idx=None,
+        reduction_type='mean',
+        encoder_class: Type[TransformerEncoder] = TransformerEncoder,
+        **kwargs,
+    ) -> TransformerEncoder:
+        return encoder_class(
             opt=opt,
             embedding=embedding,
             vocabulary_size=len(dictionary),
             padding_idx=padding_idx,
             reduction_type=reduction_type,
+            **kwargs,
         )
 
     @classmethod
-    def build_decoder(cls, opt, embedding=None):
-        return TransformerDecoder(opt=opt, embedding=embedding)
+    def build_decoder(
+        cls,
+        opt,
+        embedding=None,
+        decoder_class: Type[TransformerDecoder] = TransformerDecoder,
+        **kwargs,
+    ) -> TransformerDecoder:
+        return decoder_class(opt=opt, embedding=embedding, **kwargs)
 
-    def __init__(self, opt: Opt, dictionary: DictionaryAgent):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, **kwargs):
         self.pad_idx = dictionary[dictionary.null_token]
         self.start_idx = dictionary[dictionary.start_token]
         self.end_idx = dictionary[dictionary.end_token]
-        super().__init__(self.pad_idx, self.start_idx, self.end_idx)
+        super().__init__(self.pad_idx, self.start_idx, self.end_idx, **kwargs)
+        self.opt = opt
         self.embeddings = create_embeddings(
             dictionary, opt['embedding_size'], self.pad_idx
         )
 
         self.encoder = self.build_encoder(
-            opt, dictionary, self.embeddings, self.pad_idx, reduction_type=None
+            opt,
+            dictionary,
+            self.embeddings,
+            self.pad_idx,
+            reduction_type=None,
+            encoder_class=self.swappables.encoder,  # type: ignore
         )
-        self.decoder = self.build_decoder(opt, self.embeddings)
+        self.decoder = self.build_decoder(
+            opt,
+            embedding=self.embeddings,
+            decoder_class=self.swappables.decoder,  # type: ignore
+        )
 
     def reorder_encoder_states(self, encoder_states, indices):
         """

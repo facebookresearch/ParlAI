@@ -35,6 +35,24 @@ def setup_script_registry():
     """
     for module in pkgutil.iter_modules(parlai.scripts.__path__, 'parlai.scripts.'):
         importlib.import_module(module.name)
+    try:
+        import parlai_fb.scripts
+
+        for module in pkgutil.iter_modules(
+            parlai_fb.scripts.__path__, 'parlai_fb.scripts.'
+        ):
+            importlib.import_module(module.name)
+    except ImportError:
+        pass
+    try:
+        import parlai_internal.scripts
+
+        for module in pkgutil.iter_modules(
+            parlai_internal.scripts.__path__, 'parlai_internal.scripts.'
+        ):
+            importlib.import_module(module.name)
+    except ImportError:
+        pass
 
 
 class ParlaiScript(object):
@@ -84,6 +102,7 @@ class ParlaiScript(object):
 
     @classmethod
     def _run_from_parser_and_opt(cls, opt: Opt, parser: ParlaiParser):
+        logging.set_log_level(opt.get('loglevel', 'info').upper())
         script = cls(opt)
         script.parser = parser
         return script.run()

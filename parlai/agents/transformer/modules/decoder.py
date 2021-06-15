@@ -7,7 +7,8 @@
 Transformer decoder implementations.
 """
 
-from typing import Dict, Tuple, Optional
+from __future__ import annotations
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -20,11 +21,178 @@ from parlai.agents.transformer.modules import (
     MultiHeadAttention,
     TransformerFFN,
 )
+from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 
 
+@swappable(
+    self_attention=MultiHeadAttention,
+    encoder_attention=MultiHeadAttention,
+    feedforward=TransformerFFN,
+)
+class TransformerDecoderLayer(nn.Module):
+    """
+    Implements a single Transformer decoder layer.
+
+    Decoder layers are similar to encoder layers but:
+
+    1. Self-attention is limited in a causal (auto-regressive) manner.
+    2. Attend over all of the encoder states.
+    """
+
+    def __init__(
+        self,
+        opt: Opt,
+        n_heads: int = None,
+        embedding_size: int = None,
+        ffn_size: int = None,
+        attention_dropout: float = 0.0,
+        relu_dropout: float = 0.0,
+        dropout: float = 0.0,
+        activation: str = 'relu',
+        variant: str = 'aiayn',
+        **kwargs,
+    ):
+        super().__init__(**kwargs)
+
+        def _default(val, default):
+            """
+            shorthand for explicit None check for optional arguments.
+            """
+            return val if val is not None else default
+
+        n_heads = _default(n_heads, opt['n_heads'])
+        embedding_size = _default(embedding_size, opt['embedding_size'])
+        ffn_size = _default(ffn_size, opt['ffn_size'])
+
+        self.opt = opt
+        self.dim = embedding_size
+        self.ffn_dim = ffn_size
+        self.variant = variant
+        self.activation = activation
+        self.dropout = nn.Dropout(p=dropout)
+
+        self.self_attention = self.swappables.self_attention(
+            opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
+        )  # type: ignore
+        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+
+        self.encoder_attention = self.swappables.encoder_attention(
+            opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
+        )  # type: ignore
+        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+
+        self.ffn = self.swappables.feedforward(
+            opt=self.opt,
+            dim=embedding_size,
+            dim_hidden=ffn_size,
+            relu_dropout=relu_dropout,
+            activation=activation,
+        )  # type: ignore
+        self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        encoder_output: torch.Tensor,
+        encoder_mask: torch.Tensor,
+        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        **kwargs,
+    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+        """
+        Forward pass.
+
+        The incremental state is a dict with values for self- and encoder-attention
+        states.
+        """
+
+        if incr_state is None:
+            incr_state = {}
+
+        decoder_mask = self._create_selfattn_mask(x)
+        # first self attn
+        residual = x
+        if self.variant == 'prelayernorm':
+            x = self.norm1(x)
+
+        # don't peak into the future!
+        x, final_self_attn_incr_state = self.self_attention(
+            query=x,
+            mask=decoder_mask,
+            incr_state=incr_state.get('self_attn'),
+            static_kv=False,
+            **kwargs,
+        )[:2]
+        x = self.dropout(x)  # --dropout
+        x = x + residual
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            x = self.norm1(x)
+
+        residual = x
+        # encoder_attn_layer_norm norm 2
+        if self.variant == 'prelayernorm':
+            x = self.norm2(x)
+        x, final_encoder_attn_incr_state = self.encoder_attention(
+            query=x,
+            key=encoder_output,
+            value=encoder_output,
+            mask=encoder_mask,
+            incr_state=incr_state.get('encoder_attn'),
+            static_kv=True,
+            **kwargs,
+        )[:2]
+        x = self.dropout(x)  # --dropout
+        x = residual + x
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            x = self.norm2(x)
+
+        # finally the ffn
+        residual = x
+        if self.variant == 'prelayernorm':
+            x = self.norm3(x)
+        x = self.ffn(x, **kwargs)
+        x = self.dropout(x)  # --dropout
+        x = residual + x
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            x = self.norm3(x)
+
+        new_incr_state = {
+            'self_attn': final_self_attn_incr_state,
+            'encoder_attn': final_encoder_attn_incr_state,
+        }
+        return x, new_incr_state
+
+    def _create_selfattn_mask(self, x):
+        # figure out how many timestamps we need
+        bsz = x.size(0)
+        time = x.size(1)
+        # make sure that we don't look into the future
+        mask = torch.tril(x.new(time, time).fill_(1))
+        # broadcast across batch
+        mask = mask.unsqueeze(0).expand(bsz, -1, -1)
+        return mask
+
+    def reorder_incremental_state(
+        self, incremental_state: Dict[str, dict], inds: torch.Tensor
+    ) -> Dict[str, dict]:
+        """
+        Reorder all incremental-state tensors for this layer.
+        """
+        attn_types = {
+            'self_attn': self.self_attention,
+            'encoder_attn': self.encoder_attention,
+        }
+        return {
+            attn_type: attn.reorder_incremental_state(
+                incremental_state[attn_type], inds
+            )
+            for attn_type, attn in attn_types.items()
+        }
+
+
+@swappable(layer=TransformerDecoderLayer)
 class TransformerDecoder(nn.Module):
     """
     Transformer Decoder module.
@@ -43,8 +211,10 @@ class TransformerDecoder(nn.Module):
         opt: Opt,
         embedding: Optional[nn.Embedding] = None,
         n_positions: Optional[int] = None,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(**kwargs)
+        self.opt = opt
 
         def _default(val, default):
             return val if val is not None else default
@@ -62,8 +232,7 @@ class TransformerDecoder(nn.Module):
         self.variant = opt.get('variant', 'aiayn')
 
         self.embeddings_scale = opt.get('embeddings_scale', True)
-        dropout_frac = opt.get('dropout', 0.0)
-        self.dropout = nn.Dropout(p=dropout_frac)  # --dropout
+        self.dropout = nn.Dropout(p=opt.get('dropout', 0.0))  # --dropout
 
         self.n_positions = _default(n_positions, get_n_positions_from_options(opt))
         self.out_dim = self.embedding_size
@@ -103,26 +272,29 @@ class TransformerDecoder(nn.Module):
             )
 
         # build the model
-        self.layers = nn.ModuleList()
+        self.layers = self.build_layers()
+
+    def build_layers(self) -> nn.ModuleList:
+        layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            self.layers.append(
-                TransformerDecoderLayer(
-                    self.n_heads,
-                    self.embedding_size,
-                    self.ffn_size,
-                    attention_dropout=opt.get('attention_dropout', 0.0),
-                    relu_dropout=opt.get('relu_dropout', 0.0),
-                    dropout=dropout_frac,
+            layers.append(
+                self.swappables.layer(
+                    self.opt,
+                    attention_dropout=self.opt.get('attention_dropout', 0.0),
+                    relu_dropout=self.opt.get('relu_dropout', 0.0),
+                    dropout=self.opt.get('dropout', 0.0),
                     activation=self.activation,
                     variant=self.variant,
-                )
+                )  # type: ignore
             )
+        return layers
 
     def forward_embedding(
         self,
         input: torch.LongTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
+        **kwargs,
     ):
         """
         Embed tokens prior to feeding into transformer.
@@ -161,6 +333,7 @@ class TransformerDecoder(nn.Module):
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
         incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass of decoder layers.
@@ -190,6 +363,7 @@ class TransformerDecoder(nn.Module):
                     encoder_output=encoder_output,
                     encoder_mask=encoder_mask,
                     incr_state=incr_state.get(idx),
+                    **kwargs,
                 )
 
         return tensor, new_incr_state
@@ -199,6 +373,7 @@ class TransformerDecoder(nn.Module):
         input: torch.Tensor,
         encoder_state,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
         """
         Forward pass.
@@ -226,12 +401,12 @@ class TransformerDecoder(nn.Module):
         else:
             incr_state = {}
 
-        tensor = self.forward_embedding(input, positions)
+        tensor = self.forward_embedding(input, positions, **kwargs)
 
         tensor = self.dropout(tensor)  # --dropout
 
         tensor, new_incr_state = self.forward_layers(
-            tensor, encoder_output, encoder_mask, incr_state
+            tensor, encoder_output, encoder_mask, incr_state, **kwargs
         )
 
         if self.variant == 'prelayernorm':
@@ -273,142 +448,3 @@ class TransformerDecoder(nn.Module):
         }
 
         return tensor_out, new_incr_state
-
-
-class TransformerDecoderLayer(nn.Module):
-    """
-    Implements a single Transformer decoder layer.
-
-    Decoder layers are similar to encoder layers but:
-
-    1. Self-attention is limited in a casaul (auto-regressive) manner.
-    2. Attend over all of the encoder states.
-    """
-
-    def __init__(
-        self,
-        n_heads: int,
-        embedding_size: int,
-        ffn_size: int,
-        attention_dropout: float = 0.0,
-        relu_dropout: float = 0.0,
-        dropout: float = 0.0,
-        activation: str = 'relu',
-        variant: str = 'aiayn',
-    ):
-        super().__init__()
-        self.dim = embedding_size
-        self.ffn_dim = ffn_size
-        self.variant = variant
-        self.activation = activation
-        self.dropout = nn.Dropout(p=dropout)
-
-        self.self_attention = MultiHeadAttention(
-            n_heads, embedding_size, dropout=attention_dropout
-        )
-        self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-
-        self.encoder_attention = MultiHeadAttention(
-            n_heads, embedding_size, dropout=attention_dropout
-        )
-        self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-
-        self.ffn = TransformerFFN(
-            embedding_size, ffn_size, relu_dropout=relu_dropout, activation=activation
-        )
-        self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
-
-    def forward(
-        self,
-        x: torch.Tensor,
-        encoder_output: torch.Tensor,
-        encoder_mask: torch.Tensor,
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
-        """
-        Forward pass.
-
-        The incremental state is a dict with values for self- and encoder-attention
-        states.
-        """
-
-        if incr_state is None:
-            incr_state = {}
-
-        decoder_mask = self._create_selfattn_mask(x)
-        # first self attn
-        residual = x
-        if self.variant == 'prelayernorm':
-            x = self.norm1(x)
-
-        # don't peak into the future!
-        x, final_self_attn_incr_state = self.self_attention(
-            query=x,
-            mask=decoder_mask,
-            incr_state=incr_state.get('self_attn'),
-            static_kv=False,
-        )[:2]
-        x = self.dropout(x)  # --dropout
-        x = x + residual
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = self.norm1(x)
-
-        residual = x
-        # encoder_attn_layer_norm norm 2
-        if self.variant == 'prelayernorm':
-            x = self.norm2(x)
-        x, final_encoder_attn_incr_state = self.encoder_attention(
-            query=x,
-            key=encoder_output,
-            value=encoder_output,
-            mask=encoder_mask,
-            incr_state=incr_state.get('encoder_attn'),
-            static_kv=True,
-        )[:2]
-        x = self.dropout(x)  # --dropout
-        x = residual + x
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = self.norm2(x)
-
-        # finally the ffn
-        residual = x
-        if self.variant == 'prelayernorm':
-            x = self.norm3(x)
-        x = self.ffn(x)
-        x = self.dropout(x)  # --dropout
-        x = residual + x
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = self.norm3(x)
-
-        new_incr_state = {
-            'self_attn': final_self_attn_incr_state,
-            'encoder_attn': final_encoder_attn_incr_state,
-        }
-        return x, new_incr_state
-
-    def _create_selfattn_mask(self, x):
-        # figure out how many timestamps we need
-        bsz = x.size(0)
-        time = x.size(1)
-        # make sure that we don't look into the future
-        mask = torch.tril(x.new(time, time).fill_(1))
-        # broadcast across batch
-        mask = mask.unsqueeze(0).expand(bsz, -1, -1)
-        return mask
-
-    def reorder_incremental_state(
-        self, incremental_state: Dict[str, dict], inds: torch.Tensor
-    ) -> Dict[str, dict]:
-        """
-        Reorder all incremental-state tensors for this layer.
-        """
-        attn_types = {
-            'self_attn': self.self_attention,
-            'encoder_attn': self.encoder_attention,
-        }
-        return {
-            attn_type: attn.reorder_incremental_state(
-                incremental_state[attn_type], inds
-            )
-            for attn_type, attn in attn_types.items()
-        }

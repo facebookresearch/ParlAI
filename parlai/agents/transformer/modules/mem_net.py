@@ -23,6 +23,22 @@ class TransformerMemNetModel(nn.Module):
     """
 
     @classmethod
+    def build_context_encoder(
+        cls, opt, dictionary, embedding=None, padding_idx=None, reduction_type='mean'
+    ):
+        return cls.build_encoder(
+            opt, dictionary, embedding, padding_idx, reduction_type
+        )
+
+    @classmethod
+    def build_candidate_encoder(
+        cls, opt, dictionary, embedding=None, padding_idx=None, reduction_type='mean'
+    ):
+        return cls.build_encoder(
+            opt, dictionary, embedding, padding_idx, reduction_type
+        )
+
+    @classmethod
     def build_encoder(
         cls, opt, dictionary, embedding=None, padding_idx=None, reduction_type='mean'
     ):
@@ -57,7 +73,7 @@ class TransformerMemNetModel(nn.Module):
 
         self.reduction_type = opt.get('reduction_type', 'mean')
 
-        self.context_encoder = self.build_encoder(
+        self.context_encoder = self.build_context_encoder(
             opt,
             dictionary,
             self.embeddings,
@@ -74,7 +90,7 @@ class TransformerMemNetModel(nn.Module):
                 cand_embeddings = self.cand_embeddings
             else:
                 cand_embeddings = self.embeddings
-            self.cand_encoder = self.build_encoder(
+            self.cand_encoder = self.build_candidate_encoder(
                 opt,
                 dictionary,
                 cand_embeddings,

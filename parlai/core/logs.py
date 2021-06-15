@@ -92,13 +92,17 @@ class TensorboardLogger(object):
                 logging.error(f'k {k} v {v} is not a number')
                 continue
             display = get_metric_display_data(metric=k)
-            self.writer.add_scalar(
-                f'{k}/{setting}',
-                v,
-                global_step=step,
-                display_name=f"{display.title}",
-                summary_description=display.description,
-            )
+            try:
+                self.writer.add_scalar(
+                    f'{k}/{setting}',
+                    v,
+                    global_step=step,
+                    display_name=f"{display.title}",
+                    summary_description=display.description,
+                )
+            except TypeError:
+                # internal tensorboard doesn't support custom display titles etc
+                self.writer.add_scalar(f'{k}/{setting}', v, global_step=step)
 
     def flush(self):
         self.writer.flush()

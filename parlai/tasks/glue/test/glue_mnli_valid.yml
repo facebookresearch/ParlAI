@@ -1,0 +1,79 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - neutral
+    hypothesis: 'Everyone really likes the newest benefits '
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: The new rights are nice enough
+    text: 'The new rights are nice enough
+
+      Everyone really likes the newest benefits '
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: The Government Executive articles housed on the website are not able
+      to be searched.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: This site includes a list of all award winners and a searchable database
+      of Government Executive articles.
+    text: 'This site includes a list of all award winners and a searchable database
+      of Government Executive articles.
+
+      The Government Executive articles housed on the website are not able to be searched.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    hypothesis: I like him for the most part, but would still enjoy seeing someone
+      beat him.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: uh i don't know i i have mixed emotions about him uh sometimes i like
+      him but at the same times i love to see somebody beat him
+    text: 'uh i don''t know i i have mixed emotions about him uh sometimes i like
+      him but at the same times i love to see somebody beat him
+
+      I like him for the most part, but would still enjoy seeing someone beat him.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: 'My favorite restaurants are always at least a hundred miles away
+      from my house. '
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: yeah i i think my favorite restaurant is always been the one closest  you
+      know the closest as long as it's it meets the minimum criteria you know of good
+      food
+    text: 'yeah i i think my favorite restaurant is always been the one closest  you
+      know the closest as long as it''s it meets the minimum criteria you know of
+      good food
+
+      My favorite restaurants are always at least a hundred miles away from my house. '
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: I know exactly.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: i don't know um do you do a lot of camping
+    text: 'i don''t know um do you do a lot of camping
+
+      I know exactly.'
+num_episodes: 9815
+num_examples: 9815

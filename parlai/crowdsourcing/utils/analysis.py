@@ -14,6 +14,8 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
+import parlai.utils.logging as logging
+
 # Defining the class only if Mephisto is installed, since it relies on Mephisto
 try:
     from mephisto.abstractions.databases.local_database import LocalMephistoDB
@@ -185,5 +187,11 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         data_browser = self.get_mephisto_data_browser()
         task_data = []
         for unit in task_units:
-            task_data.append(data_browser.get_data_from_unit(unit))
+            try:
+                unit_data = data_browser.get_data_from_unit(unit)
+                task_data.append(unit_data)
+            except (IndexError, AssertionError):
+                logging.warning(
+                    f"Skipping unit {unit.db_id}. No message found for this unit."
+                )
         return task_data

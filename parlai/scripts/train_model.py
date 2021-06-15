@@ -477,6 +477,7 @@ class TrainLoop:
                     'train_reports': self.train_reports,
                     'valid_reports': self.valid_reports,
                     'best_valid': self.best_valid,
+                    'impatience': self.impatience,
                 },
                 f,
                 indent=4,
@@ -515,15 +516,6 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             valid_report['total_exs'] = self._total_exs
             self.wb_logger.log_metrics('valid', self.parleys, valid_report)
-
-        # saving
-        if (
-            opt.get('model_file')
-            and opt.get('save_after_valid')
-            and is_primary_worker()
-        ):
-            logging.info(f"saving model checkpoint: {opt['model_file']}.checkpoint")
-            self.save_model('.checkpoint')
 
         # send valid metrics to agent if the agent wants them
         if hasattr(self.agent, 'receive_metrics'):
@@ -572,6 +564,15 @@ class TrainLoop:
                 )
             )
         self.validate_time.reset()
+
+        # saving
+        if (
+            opt.get('model_file')
+            and opt.get('save_after_valid')
+            and is_primary_worker()
+        ):
+            logging.info(f"saving model checkpoint: {opt['model_file']}.checkpoint")
+            self.save_model('.checkpoint')
 
         # check if we are out of patience
         if (

@@ -11,6 +11,10 @@ or observation dict unintentionally.
 """
 
 from __future__ import annotations
+from typing import Any, Dict
+
+
+UNSAFE_FIELDS = {'metrics'}
 
 
 class Message(dict):
@@ -47,3 +51,14 @@ class Message(dict):
         Determine if a message is a padding example or not.
         """
         return bool(self.get('batch_padding'))
+
+    def json_safe_payload(self) -> Dict[str, Any]:
+        """
+        Prepare a Message for delivery to a client via json.
+
+        Useful for chat-services, external libraries, and mephisto delivery.
+
+        Works by stripping known unsafe fields from the message, and converting
+        the object to a dict.
+        """
+        return {k: v for k, v in self.items() if k not in UNSAFE_FIELDS}

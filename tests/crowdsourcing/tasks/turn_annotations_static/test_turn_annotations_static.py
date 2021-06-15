@@ -142,7 +142,7 @@ try:
                 '+mephisto.blueprint.conversation_count=null',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',
-                '+mephisto.task.assignment_duration_in_seconds=1800',
+                'mephisto.task.assignment_duration_in_seconds=1800',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults

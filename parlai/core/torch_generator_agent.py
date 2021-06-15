@@ -119,8 +119,9 @@ class TorchGeneratorModel(nn.Module, ABC):
         unknown_idx=3,
         input_dropout=0,
         longest_label=1,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(**kwargs)
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
         self.START_IDX = start_idx
@@ -994,6 +995,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         Intentionally overridable for more complex model histories.
         """
+        if self.beam_context_block_ngram <= 0:
+            # We aren't context blocking, return empty tensor
+            return torch.LongTensor()
+
         ctxt = batch.text_vec[batch_idx]
         if self.beam_block_full_context:
             ctxt = batch.full_text_vec[batch_idx]
