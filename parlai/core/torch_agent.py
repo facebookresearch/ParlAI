@@ -1710,6 +1710,11 @@ class TorchAgent(ABC, Agent):
             cands = [ex.get('label_candidates', None) for ex in exs]
             cand_vecs = [ex.get('label_candidates_vecs', None) for ex in exs]
 
+        # subgroups
+        subgroups = None
+        if 'subgroups' in exs[0]:
+            subgroups = [ex.get('subgroups', []) for ex in exs]
+
         # IMAGE
         imgs = None
         if any('image' in ex for ex in exs):
@@ -1733,6 +1738,7 @@ class TorchAgent(ABC, Agent):
             labels=labels,
             valid_indices=valid_inds,
             candidates=cands,
+            subgroups=subgroups,
             candidate_vecs=cand_vecs,
             image=imgs,
             rewards=rewards,

@@ -244,6 +244,13 @@ class TorchClassifierAgent(TorchAgent):
             help='the name of the classes.',
         )
         parser.add_argument(
+            '--subgroups',
+            type=str,
+            nargs='*',
+            default=[],
+            help='the name of the subgroups',
+        )
+        parser.add_argument(
             '--class-weights',
             type=float,
             nargs='*',
