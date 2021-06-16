@@ -199,12 +199,7 @@ class WeightedF1Metric(Metric):
         values = list(self._values.values())
         if len(values) == 0:
             return weighted_f1
-        total_examples = (
-            values[0]._true_positives
-            + values[0]._true_negatives
-            + values[0]._false_positives
-            + values[0]._false_negatives
-        )
+        total_examples = sum([each._true_positives + each._false_negatives for each in values])
         for each in values:
             actual_positive = each._true_positives + each._false_negatives
             weighted_f1 += each.value() * (actual_positive / total_examples)
