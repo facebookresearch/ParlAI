@@ -449,7 +449,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
 
     def _process_conversations_needed(self, args: "DictConfig") -> Dict[str, int]:
         """
-        Set the number of conversations needed
+        Set the number of conversations needed.
         """
 
         conversations_needed_string = args.blueprint.conversations_needed_string
