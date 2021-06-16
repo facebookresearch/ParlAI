@@ -1007,7 +1007,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _get_batch_context(self, batch):
         """
-        TODO: write
+        Version of TGA._get_context() that operates on full batches for speed.
         """
         if self.beam_context_block_ngram <= 0:
             # We aren't context blocking, return empty tensor of the correct size
@@ -1302,12 +1302,14 @@ class TreeSearch(object):
         self: TSType, batch_context_list: List[List[int]], batch_idx: int
     ) -> TSType:
         """
+        Version of .set_context() that operates on a single element of a batch.
+
         Set the internal context representation and return self.
 
-        :param context:
-            a LongTensor representing the input context; used for context
-            ngram blocking, if supplied
-        # TODO: update docstring
+        :param batch_context_list:
+            a list of lists, each one containing the context for one member of the batch
+        :param batch_idx:
+            index of the batch
         """
         self.context = batch_context_list[batch_idx]
         return self
