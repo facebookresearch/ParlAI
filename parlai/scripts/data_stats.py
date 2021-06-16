@@ -115,7 +115,7 @@ def verify(opt):
                 if opt.get('new_line_new_utt'):
                     txts = act.get('text').split('\n')
                 else:
-                    txts = [act.get('text')]
+                    txts = [act.get('text', '')]
             else:
                 txts = act.get('labels', act.get('eval_labels', ['']))
 
