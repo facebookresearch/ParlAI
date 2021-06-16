@@ -12,8 +12,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from parlai.core.worlds import validate
 from parlai.core.agents import create_agent_from_shared
+from parlai.core.message import Message
+from parlai.core.worlds import validate
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
@@ -224,10 +225,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
-                acts[idx] = Compatibility.maybe_fix_act(acts[idx])
-                if 'metrics' in acts[idx]:
-                    del acts[idx]['metrics']
-                    # Metrics can't be saved to JSON and are not needed here
+                acts[idx] = Message(
+                    Compatibility.maybe_fix_act(acts[idx])
+                ).json_safe_payload()
                 print(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )

@@ -75,10 +75,9 @@ Be sure to talk about this image a little bit before discussing other things!
 
         # Have the bot respond
         bot_first_act_raw = self.bot.act()
-        bot_first_act_raw = Compatibility.maybe_fix_act(bot_first_act_raw)
-        if 'metrics' in bot_first_act_raw:
-            del bot_first_act_raw['metrics']
-            # Metrics can't be saved to JSON and are not needed here
+        bot_first_act_raw = Message(
+            Compatibility.maybe_fix_act(bot_first_act_raw)
+        ).json_safe_payload()
         self.agent.observe(validate(bot_first_act_raw))
         bot_first_act = {
             'episode_done': False,
