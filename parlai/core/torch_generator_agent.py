@@ -1011,7 +1011,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         if self.beam_context_block_ngram <= 0:
             # We aren't context blocking, return empty tensor of the correct size
-            return torch.LongTensor([[]] * batch.batchsize)
+            return torch.zeros(batch.batchsize, 0, dtype=torch.long)
 
         ctxt = batch.text_vec
         if self.beam_block_full_context:
