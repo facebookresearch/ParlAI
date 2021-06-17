@@ -578,59 +578,36 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             self.skip_generation = self.opt.get('skip_generation', False)
 
-    def _dummy_batch(self, batchsize, maxlen):
+    def _cache_dummy_batch(self, batch: Batch):
         """
-        Create a dummy batch.
-
-        This is used to preinitialize the cuda buffer, or otherwise force a
-        null backward pass after an OOM.
-
-        If your model uses additional inputs beyond text_vec and label_vec,
-        you will need to override it to add additional fields.
+        Cache a batch to be used as a dummy during _fake_forward_pass.
         """
-        text_vec = (
-            torch.arange(1, maxlen + 1)  # need it as long as specified
-            .clamp(max=3)  # cap at 3 for testing with tiny dictionaries
-            .unsqueeze(0)
-            .expand(batchsize, maxlen)
-            .cuda()
-        )
-        # label vec has two tokens to make it interesting, but we we can't use the
-        # start token, it's reserved.
-        label_vec = (
-            torch.LongTensor([self.END_IDX, self.NULL_IDX])
-            .unsqueeze(0)
-            .expand(batchsize, 2)
-            .cuda()
-        )
-        return Batch(
-            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize
-        )
+        if not hasattr(self, '_dummy_batch'):
+            self._dummy_batch = batch
 
-    def _init_cuda_buffer(self, batchsize, maxlen, force=False):
+    def _fake_forward_backward_pass(self):
         """
-        Pre-initialize CUDA buffer by doing fake forward pass.
+        Force a worker to syncronize with others in case of distributed mode.
 
-        This is also used in distributed mode to force a worker to sync with others.
+        Necessary during recovery of OOMs to prevent hangs during the all-reduce of
+        gradients.
         """
-        if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
-            try:
-                self._control_local_metrics(disabled=True)
-                loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
-                self._control_local_metrics(enabled=True)
-                self._temporarily_disable_local_metrics = False
-                self.backward(loss)
-                self.buffer_initialized = True
-            except RuntimeError as e:
-                if 'out of memory' in str(e):
-                    m = (
-                        'CUDA OOM: Lower batch size (-bs) from {} or lower '
-                        ' max sequence length (-tr) from {}'
-                        ''.format(batchsize, maxlen)
-                    )
-                    raise RuntimeError(m)
-                else:
-                    raise e
+        try:
+            self._control_local_metrics(disabled=True)
+            loss = 0 * self.compute_loss(self._dummy_batch)
+            self._control_local_metrics(enabled=True)
+            self.backward(loss)
+            self.buffer_initialized = True
+        except RuntimeError as e:
+            if 'out of memory' in str(e):
+                m = (
+                    'CUDA OOM: Lower batch size (-bs) from {} or lower '
+                    ' max sequence length (-tr) from {}'
+                    ''.format(self.opt['batchsize'], self.opt['truncate'])
+                )
+                raise RuntimeError(m)
+            else:
+                raise e
 
     def reset_metrics(self):
         """
@@ -741,10 +718,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Train on a single batch of examples.
         """
-        # helps with memory usage
-        # note we want to use the opt's batchsize instead of the observed batch size
-        # in case dynamic batching is in use
-        self._init_cuda_buffer(self.opt['batchsize'], self.label_truncate or 256)
+        # cache a dummy batch in case we OOM and need to catch up
+        self._cache_dummy_batch(batch)
+
         self.model.train()
         self.zero_grad()
 
@@ -774,7 +750,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
             # gradients are synced on backward, now this model is going to be
             # out of sync! catch up with the other workers
-            self._init_cuda_buffer(8, 8, True)
+            self._fake_forward_pass()
 
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses

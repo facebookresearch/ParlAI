@@ -172,12 +172,3 @@ class HredAgent(TorchGeneratorAgent):
             truncated_vec = self._check_truncate(obs["text_vec"], truncate, True)
             obs.force_set("text_vec", torch.LongTensor(truncated_vec))
         return obs
-
-    def _dummy_batch(self, batchsize, maxlen):
-        """
-        Overridden to add dummy context vec and hist lens.
-        """
-        batch = super()._dummy_batch(batchsize, maxlen)
-        batch["context_vec"] = batch["text_vec"]
-        batch["hist_lens"] = torch.ones(batchsize, dtype=torch.long)
-        return batch

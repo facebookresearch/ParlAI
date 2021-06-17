@@ -66,11 +66,6 @@ class RewardUnlikelihoodAgentTrait(object):
         grp.add_argument('--alpha', default=1.0, type=float)
         return parser
 
-    def _dummy_batch(self, batchsize, maxlen):
-        batch = super()._dummy_batch(batchsize, maxlen)
-        batch['rewards'] = torch.ones(batchsize, dtype=torch.long).cuda()
-        return batch
-
     def compute_loss(self, batch, return_output=False):
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
