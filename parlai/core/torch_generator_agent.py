@@ -1436,8 +1436,9 @@ class TreeSearch(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
+        tok_id_list = tok_ids.tolist()
         self.partial_hyps = [
-            self.partial_hyps[hyp_ids[i]] + [tok_ids[i].item()]
+            self.partial_hyps[hyp_ids[i]] + [tok_id_list[i]]
             for i in range(self.beam_size)
         ]
 
