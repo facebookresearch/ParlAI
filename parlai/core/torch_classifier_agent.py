@@ -20,6 +20,7 @@ from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
+from sklearn.metrics import roc_auc_score
 
 import torch
 import torch.nn.functional as F
@@ -38,6 +39,8 @@ class ConfusionMatrixMetric(Metric):
         '_true_negatives',
         '_false_positives',
         '_false_negatives',
+        '_true_positive_rate',
+        '_false_positive_rate',
     )
 
     @property
@@ -58,12 +61,18 @@ class ConfusionMatrixMetric(Metric):
         self._true_negatives = self.as_number(true_negatives)
         self._false_positives = self.as_number(false_positives)
         self._false_negatives = self.as_number(false_negatives)
-        self._true_positive_rate = self._true_positives / (
-            self._true_positives + self._false_negatives
-        )
-        self._false_positive_rate = self._false_positives / (
-            self._true_negatives + self._false_positives
-        )
+
+        self._true_positive_rate = 0
+        if self._true_positives + self._false_negatives > 0:
+            self._true_positive_rate = self._true_positives / (
+                self._true_positives + self._false_negatives
+            )
+
+        self._false_positive_rate = 0
+        if self._true_negatives + self._false_positives > 0:
+            self._false_positive_rate = self._false_positives / (
+                self._true_negatives + self._false_positives
+            )
 
     def __add__(
         self, other: Optional['ConfusionMatrixMetric']
@@ -174,6 +183,49 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
             return numer / denom
 
 
+class AUCMetrics(Metric):
+    """
+    Class that calculates the area under the curve from a list of
+    [(true positive rates, false positive rates)]
+    """
+
+    __slots__ = ('_truth', '_max_probs')
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return False
+
+    def __init__(self, true_labels: List[int], max_probabilities: List[float]):
+        # print('truth (in):', true_labels)
+        # print('max_probabilities (in):', max_probabilities)
+        if len(true_labels) == len(max_probabilities):
+            self._truth = true_labels
+            self._max_probs = max_probabilities
+        else:
+            raise RuntimeError(
+                f"AUC metrics' labels and probabilities list length don't match: labels: {true_labels}, probs: {max_probabilities}"
+            )
+
+    def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
+        if other is None:
+            return self
+        assert isinstance(other, AUCMetrics)
+        all_truth = self._truth + other._truth
+        all_max_probs = self._max_probs + other._max_probs
+        return AUCMetrics(all_truth, all_max_probs)
+
+    def __len__(self):
+        return len(self._truth)
+
+    def value(self) -> float:
+        if len(self._truth) > 0 and len(self._truth) == len(self._truth):
+            return roc_auc_score(self._truth, self._max_probs)
+        return 0
+
+
 class WeightedF1Metric(Metric):
     """
     Class that represents the weighted f1 from ClassificationF1Metric.
@@ -273,6 +325,14 @@ class TorchClassifierAgent(TorchAgent):
             'ref class; only applies to binary '
             'classification',
         )
+        parser.add_argument(
+            '--area-under-curve',
+            '-auc',
+            type='bool',
+            default=False,
+            help='whether to also calculate the area under the roc curve; '
+            'only for binary classification',
+        )
         # interactive mode
         parser.add_argument(
             '--print-scores',
@@ -349,6 +409,16 @@ class TorchClassifierAgent(TorchAgent):
             self.threshold = opt['threshold']
         else:
             self.threshold = None
+
+        # set up calculating auc, only used in binary classification
+        if len(self.class_list) == 2:
+            self.calc_auc = opt['area_under_curve']
+        else:
+            self.calc_auc = -1
+
+        # # set up an empty auc
+        # if self.calc_auc:
+        #     self.auc = AUCMetrics([], [])
 
         # set up model and optimizers
         states = {}
@@ -493,6 +563,22 @@ class TorchClassifierAgent(TorchAgent):
 
         return Output(preds)
 
+    def _update_auc(self, batch, tensor_probs):
+        true_labels = batch.labels
+        max_probs, _ = torch.max(tensor_probs.cpu(), 1)
+        max_probs = max_probs.tolist()
+        # print('batch:', batch)
+        # print('truth:', true_labels)
+        # print('max_probs:', max_probs)
+        # self.auc += AUCMetrics(true_labels, max_probs)
+        self.record_local_metric(
+            'AUC',
+            [
+                AUCMetrics([truth], [prob])
+                for truth, prob in zip(true_labels, max_probs)
+            ],
+        )
+
     def eval_step(self, batch):
         """
         Evaluate a single batch of examples.
@@ -503,6 +589,10 @@ class TorchClassifierAgent(TorchAgent):
         self.model.eval()
         scores = self.score(batch)
         probs = F.softmax(scores, dim=1)
+
+        if self.calc_auc:
+            self._update_auc(batch, probs)
+
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
         else:
