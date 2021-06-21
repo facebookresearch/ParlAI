@@ -58,6 +58,12 @@ class ConfusionMatrixMetric(Metric):
         self._true_negatives = self.as_number(true_negatives)
         self._false_positives = self.as_number(false_positives)
         self._false_negatives = self.as_number(false_negatives)
+        self._true_positive_rate = self._true_positives / (
+            self._true_positives + self._false_negatives
+        )
+        self._false_positive_rate = self._false_positives / (
+            self._true_negatives + self._false_positives
+        )
 
     def __add__(
         self, other: Optional['ConfusionMatrixMetric']
