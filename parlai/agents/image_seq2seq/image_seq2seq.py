@@ -102,23 +102,6 @@ class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
             )
         return obs
 
-    def _dummy_batch(self, batchsize: int, maxlen: int) -> Batch:
-        """
-        Override to include image feats.
-        """
-        b = super()._dummy_batch(batchsize, maxlen)
-        image = torch.ones(batchsize, self.image_features_dim).cuda()
-        if self.n_image_channels > 1:
-            image = image.unsqueeze(1).repeat(1, self.n_image_channels, 1)
-        if self.fp16:
-            image = image.half()
-        return Batch(
-            text_vec=b.text_vec,
-            label_vec=b.label_vec,
-            image=image,
-            personalities=torch.ones(batchsize, self.opt['embedding_size']).cuda(),
-        )
-
     def batchify_image_features(self, batch: Batch) -> Batch:
         """
         Format and return the batched image features.

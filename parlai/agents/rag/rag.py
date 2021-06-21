@@ -328,19 +328,6 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         return self._model_input(batch)
 
     ##### 2. Standard TGA Function Overrides #####
-    def _dummy_batch(self, batchsize: int, maxlen: int) -> Batch:
-        """
-        Add query/input turn vecs.
-        """
-        batch = self._generation_agent._dummy_batch(self, batchsize, maxlen)
-        batch.query_vec = batch.text_vec.clone()
-        batch.input_turn_cnt_vec = (
-            None
-            if self.rag_model_type != 'turn'
-            else torch.ones(batch.query_vec.size(0)).to(batch.query_vec)
-        )
-        return batch
-
     def build_model(self) -> RagModel:
         """
         Build and return RagModel.
@@ -407,11 +394,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         Determine if we need to override the DPR Model weights.
 
-        Under certain circumstances, one may wish to specify a different
-        `--dpr-model-file` for a pre-trained, RAG model. Thus, we additionally
-        check to make sure that the loaded DPR model weights are not overwritten
-        by the state loading.
-
+        Under certain circumstances, one may wish to specify a different `--dpr-model-
+        file` for a pre-trained, RAG model. Thus, we additionally check to make sure
+        that the loaded DPR model weights are not overwritten by the state loading.
         """
         override_dpr = False
         overrides = opt.get('override', {})
