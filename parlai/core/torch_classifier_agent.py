@@ -198,15 +198,13 @@ class AUCMetrics(Metric):
         """
         return False
 
-    def __init__(self, true_labels: List[int], max_probabilities: List[float]):
-        # print('truth (in):', true_labels)
-        # print('max_probabilities (in):', max_probabilities)
-        if len(true_labels) == len(max_probabilities):
+    def __init__(self, true_labels: List[int], true_probs: List[float]):
+        if len(true_labels) == len(true_probs):
             self._truth = true_labels
-            self._max_probs = max_probabilities
+            self._true_probs = true_probs
         else:
             raise RuntimeError(
-                f"AUC metrics' labels and probabilities list length don't match: labels: {true_labels}, probs: {max_probabilities}"
+                f"AUC metrics' labels and probabilities list length don't match: labels: {true_labels}, probs: {true_probs}"
             )
 
     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
@@ -214,15 +212,15 @@ class AUCMetrics(Metric):
             return self
         assert isinstance(other, AUCMetrics)
         all_truth = self._truth + other._truth
-        all_max_probs = self._max_probs + other._max_probs
-        return AUCMetrics(all_truth, all_max_probs)
+        all_true_probs = self._true_probs + other._true_probs
+        return AUCMetrics(all_truth, all_true_probs)
 
     def __len__(self):
         return len(self._truth)
 
     def value(self) -> float:
         if len(self._truth) > 0 and len(self._truth) == len(self._truth):
-            return roc_auc_score(self._truth, self._max_probs)
+            return roc_auc_score(self._truth, self._true_probs)
         return 0
 
 
@@ -416,10 +414,6 @@ class TorchClassifierAgent(TorchAgent):
         else:
             self.calc_auc = -1
 
-        # # set up an empty auc
-        # if self.calc_auc:
-        #     self.auc = AUCMetrics([], [])
-
         # set up model and optimizers
         states = {}
         if shared:
@@ -563,22 +557,6 @@ class TorchClassifierAgent(TorchAgent):
 
         return Output(preds)
 
-    def _update_auc(self, batch, tensor_probs):
-        true_labels = batch.labels
-        max_probs, _ = torch.max(tensor_probs.cpu(), 1)
-        max_probs = max_probs.tolist()
-        # print('batch:', batch)
-        # print('truth:', true_labels)
-        # print('max_probs:', max_probs)
-        # self.auc += AUCMetrics(true_labels, max_probs)
-        self.record_local_metric(
-            'AUC',
-            [
-                AUCMetrics([truth], [prob])
-                for truth, prob in zip(true_labels, max_probs)
-            ],
-        )
-
     def eval_step(self, batch):
         """
         Evaluate a single batch of examples.
@@ -591,7 +569,19 @@ class TorchClassifierAgent(TorchAgent):
         probs = F.softmax(scores, dim=1)
 
         if self.calc_auc:
-            self._update_auc(batch, probs)
+            true_labels = [self.class_dict[label] for label in batch.labels]
+            probs_list = probs.tolist()
+            true_probs = [
+                prob_row[label_id]
+                for label_id, prob_row in zip(true_labels, probs_list)
+            ]
+            self.record_local_metric(
+                'AUC',
+                [
+                    AUCMetrics([truth], [prob])
+                    for truth, prob in zip(true_labels, true_probs)
+                ],
+            )
 
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
