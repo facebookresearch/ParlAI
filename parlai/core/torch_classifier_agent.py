@@ -185,8 +185,8 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
 
 class AUCMetrics(Metric):
     """
-    Class that calculates the area under the curve from a list of
-    [(true positive rates, false positive rates)]
+    Class that calculates the area under the curve from a list of [(true positive rates,
+    false positive rates)]
     """
 
     __slots__ = ('_truth', '_max_probs')
