@@ -9,13 +9,16 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
+from operator import pos
+
+from numpy.core.fromnumeric import sort
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
-from typing import List, Optional, Tuple, Dict
+from typing import List, Optional, Tuple, Dict, Union
 from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
@@ -26,6 +29,9 @@ import torch
 import torch.nn.functional as F
 
 import numpy as np
+import heapq
+from itertools import groupby
+import math
 
 
 class ConfusionMatrixMetric(Metric):
@@ -187,7 +193,7 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
 
 class AUCMetrics(Metric):
     """
-    Class that calculates the area under the roc curve from list of lables and its true
+    Class that calculates the area under the roc curve from list of labels and its true
     probabilities
     """
 
@@ -202,67 +208,105 @@ class AUCMetrics(Metric):
 
     def __init__(
         self,
-        true_labels: List[int],
-        true_probs: List[float],
-        class_name=None,
-        pos_cnt=-1,
+        values: Dict[float, Tuple[int, int]],
+        pos_cnt: int,
+        neg_cnt: int,
+        sorted_keys: List[float],
+        class_name: Union[int, str],
     ):
-        assert len(true_labels) == len(true_probs)
-
-        all_fpr, all_tpr, all_thresholds = roc_curve(
-            true_labels, true_probs, pos_label=class_name
-        )
-        all_thresholds = reversed(all_thresholds)
-        self._values = {
-            threshold: (fpr, tpr)
-            for fpr, tpr, threshold in zip(all_fpr, all_tpr, all_thresholds)
-        }
-        self._pos_cnt = (
-            sum([class_name == label for label in true_labels])
-            if pos_cnt < 0
-            else pos_cnt
-        )
-        self._neg_cnt = len(true_labels) - self._pos_cnt
-        self._sorted_keys = np.array(all_thresholds)
+        self._values = values
+        self._pos_cnt = pos_cnt
+        self._neg_cnt = neg_cnt
+        self._sorted_keys = sorted_keys
         self._class_name = class_name
 
-    def _find_nearest_left(self, missing_threshold):
+    @classmethod
+    def raw_data_to_auc(
+        cls,
+        true_labels: List[int],
+        class_probs: List[float],
+        class_name,
+        max_dec_places: float = 6,
+    ):
+        # print('inside:', true_labels, class_probs, class_name)
+        assert len(true_labels) == len(class_probs)
+        if len(class_probs) == 0:
+            return cls({}, 0, 0, [], class_name)
+        pos_cnt = sum([class_name == label for label in true_labels])
+        neg_cnt = len(true_labels) - pos_cnt
+        # first calculate thresholds
+        all_thresholds = set()
+        CONST = 10 ** max_dec_places
+        for prob in class_probs:
+            int_prob = prob * CONST
+            prob_down = math.floor(int_prob) / CONST
+            prob_up = math.ceil(int_prob) / CONST
+            all_thresholds.add(prob_down)
+            all_thresholds.add(prob_up)
+
+        # print('all thresholds:', all_thresholds)
+        sorted_thresholds = sorted(all_thresholds)
+        # print('sorted thresholds:', sorted_thresholds)
+        # now calculate the false positives and true positives
+        values = {thres: [0, 0] for thres in all_thresholds}
+
+        for label, prob in zip(true_labels, class_probs):
+            # would only add to true positives
+            if label == class_name:
+                effected_ind = 1
+            # would only add to false positives
+            else:
+                effected_ind = 0
+
+            ind = np.searchsorted(sorted_thresholds, prob, side='right')
+            for thres in sorted_thresholds[ind:]:
+                values[thres][effected_ind] += 1
+        return cls(values, pos_cnt, neg_cnt, sorted_thresholds, class_name)
+
+    def _get_fp_tp(self, threshold):
         """
-        Since sklearn's algorithm disincludes suboptimal by default, we can pick either the closest left (or right)
-        as a substitute.
+        get the false positive count and true positive count for the given thresholds
         """
-        return self._values[
-            self._sorted_keys.searchsorted(missing_threshold, side='left')
-        ]
+        if self._values.get(threshold) is not None:
+            return self._values.get(threshold)
+
+        tmp_key = np.searchsorted(self._sorted_keys, threshold, side='right')
+        if tmp_key >= len(self._sorted_keys):
+            tmp_key = len(self._sorted_keys) - 1
+        return self._values[self._sorted_keys[tmp_key]]
 
     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
         if other is None:
             return self
         assert isinstance(other, AUCMetrics)
-        all_thresholds = set(self._values.keys() + other._matrices.keys())
-        all_vals = {}
+        assert other._class_name == self._class_name
+
         all_neg = self._neg_cnt + other._neg_cnt
         all_pos = self._pos_cnt + other._pos_cnt
+
+        # merging the thresholds
+        all_thresholds = set(self._sorted_keys + other._sorted_keys)
+        all_thresholds = sorted(all_thresholds)
+        # print('merged thresholds:', all_thresholds)
+
+        all_vals = {}
         for threshold in all_thresholds:
-            self_vals = self._values.get(threshold)
-            if self_vals is None:
-                self_vals = self._find_nearest_left(threshold)
-            other_vals = other._matrices.get(threshold)
-            if other_vals is None:
-                other_vals = other._find_nearest_left(threshold)
-            fpr = (
-                self_vals[0] * self._neg_cnt + other_vals[0] * other._neg_cnt
-            ) / all_neg
-            tpr = (
-                self_vals[1] * self._pos_cnt + other_vals[1] * other._pos_cnt
-            ) / all_pos
-            all_vals[threshold] = (fpr, tpr)
-        # TODO: finish....
-        return AUCMetrics(all_vals)
+            self_false_p, self_true_p = self._get_fp_tp(threshold)
+            other_false_p, other_true_p = other._get_fp_tp(threshold)
+
+            fp = self_false_p + other_false_p
+            tp = self_true_p + other_true_p
+            all_vals[threshold] = (fp, tp)
+
+        # print(other._values)
+        # print(self._values)
+        # print('everything:', all_vals)
+        return AUCMetrics(all_vals, all_pos, all_neg, all_thresholds, self._class_name)
 
     def value(self) -> float:
-        fpr = [matrix._false_positive_rates for matrix in self._values.items()]
-        tpr = [matrix._true_positive_rates for matrix in self._values.items()]
+        fp, tp = list(zip(*(self._values.values())))
+        fpr = np.array(fp) / self._neg_cnt
+        tpr = np.array(tp) / self._pos_cnt
         return auc(fpr, tpr)
 
 
@@ -616,16 +660,16 @@ class TorchClassifierAgent(TorchAgent):
 
     def _update_auc(self, batch, probs):
         probs_list = probs.tolist()
-        true_probs = [
-            prob_row[self.class_dict[label]]
-            for label, prob_row in zip(batch.labels, probs_list)
+
+        class_probs = [prob_row[-1] for prob_row in probs_list]
+        class_name = self.class_list[-1]
+        # class_name matters for AUC curve plotting but not the area under cure?
+        # could be useful for later
+        auc_metrics_per_exs = [
+            AUCMetrics.raw_data_to_auc([truth], [prob], class_name)
+            for truth, prob in zip(batch.labels, class_probs)
         ]
-        for class_name in self.class_dict:
-            auc_metrics_per_exs = [
-                AUCMetrics([truth], [prob], class_name)
-                for truth, prob in zip(batch.labels, true_probs)
-            ]
-            self.record_local_metric(f'AUC_{class_name}', auc_metrics_per_exs)
+        self.record_local_metric(f'AUC', auc_metrics_per_exs)
 
         # true_probs = [
         #         prob_row[label_id]
