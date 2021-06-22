@@ -1052,7 +1052,9 @@ class TorchAgent(ABC, Agent):
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
             if self.fp16_impl == 'safe':
-                self.optimizer = SafeFP16Optimizer(self.optimizer)
+                self.optimizer = SafeFP16Optimizer(
+                    self.optimizer, self._should_sync_overflows()
+                )
             else:
                 # Using memory efficient optimizer
                 opt_name = opt['optimizer']
@@ -1064,7 +1066,9 @@ class TorchAgent(ABC, Agent):
                         'with Memory Efficient FP16. Please select from among this '
                         f'list:\n{compatible_list}'
                     )
-                self.optimizer = MemoryEfficientFP16Optimizer(self.optimizer)
+                self.optimizer = MemoryEfficientFP16Optimizer(
+                    self.optimizer, self._should_sync_overflows()
+                )
 
         if is_finetune:
             logging.warning('Detected a fine-tune run. Resetting the optimizer.')
@@ -1112,6 +1116,9 @@ class TorchAgent(ABC, Agent):
                     'WARNING: not loading optim state since model params changed.'
                 )
                 return True
+
+    def _should_sync_overflows(self):
+        return self.fp16 and self.opt['ddp_backend'] in ('zero2', 'zero3')
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -2345,6 +2352,9 @@ class TorchAgent(ABC, Agent):
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
 
         if self.fp16:
+            logging.info(
+                f"fp16_loss_scale = {self.optimizer.loss_scale} [{self._number_training_updates}]"
+            )
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
             )

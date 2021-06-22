@@ -88,7 +88,7 @@ def has_overflow(grad_norm):
 
 
 class SafeFP16Optimizer(torch.optim.Optimizer):
-    def __init__(self, optimizer):
+    def __init__(self, optimizer, sync_overflows=False):
         self.fp16_params = self._get_parameters(optimizer)
         self.fp32_params = self._build_fp32_params(self.fp16_params, flatten=False)
         self.optimizer = optimizer
@@ -103,6 +103,16 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
 
         self.scaler = DynamicLossScaler(2.0 ** 15)
         self.min_loss_scale = 2 ** -5
+        self._sync_overflows = sync_overflows
+
+    def _maybe_sync(self, value: bool) -> bool:
+        if self._sync_overflows:
+            import torch.distributed as dist
+
+            value_tensor = torch.BoolTensor([value]).cuda()
+            dist.all_reduce(value_tensor)
+            value = value_tensor.item()
+        return value
 
     @classmethod
     def _get_parameters(cls, optimizer):
@@ -214,7 +224,7 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
 
         # detect overflow and adjust loss scale
         if self.scaler is not None:
-            overflow = has_overflow(grad_norm)
+            overflow = self._maybe_sync(has_overflow(grad_norm))
             prev_scale = self.scaler.loss_scale
             self.scaler.update_scale(overflow)
             if overflow:
@@ -448,7 +458,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         self._unscale_grads()
         grad_norm = clip_grad_norm(self.params, gradient_clip)
         # detect overflow and adjust loss scale
-        overflow = has_overflow(grad_norm)
+        overflow = self._maybe_sync(has_overflow(grad_norm))
         self.scaler.update_scale(overflow)
         if overflow:
             if self.scaler.loss_scale <= self.min_loss_scale:

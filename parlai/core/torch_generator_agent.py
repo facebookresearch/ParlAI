@@ -506,7 +506,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             )
 
             if self.fp16:
-                self.model = self.model.half()
+                if not self._delay_halving:
+                    self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -514,6 +515,28 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 states = self.load(init_model)
             else:
                 states = {}
+
+        if (
+            shared is None
+            and is_distributed()
+            and opt['ddp_backend'] in ('zero2', 'zero3')
+        ):
+            from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
+
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
+            mixed_precision = opt['fp16']
+            reshard_after_forward = opt['ddp_backend'] == 'zero3'
+            # hack: fsdp expects things in fp32 if we're using mixed precision.
+            # lol! convert it back!
+            if self.fp16 and mixed_precision:
+                self.model = self.model.float()
+            self.model = FSDP(
+                self.model,
+                reshard_after_forward=reshard_after_forward,
+                mixed_precision=self.fp16 and opt['fp16_impl'] != 'mem_efficient',
+                compute_dtype=torch.float16 if self.fp16 else torch.float32,
+                state_dict_device=torch.device('cpu'),
+            )
 
         if shared is not None:
             if 'optimizer' in shared:
@@ -530,13 +553,28 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 logging.warning("Optimizer was reset. Also resetting LR scheduler.")
             self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
-        if shared is None and is_distributed():
+        if shared is None and is_distributed() and opt['ddp_backend'] == 'ddp':
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
         self.reset()
+
+    def _delay_halving(self):
+        """
+        Check whether we should keep the model in fp32 before other setup.
+
+        When using Zero2 or Zero3 backends with mixed precision, we need to
+        avoid converting the model to fp16, as the FSDP module does this for
+        us.
+        """
+
+        return (
+            self.fp16
+            and self.opt['ddp_backend'] in ('zero2', 'zero3')
+            and self.opt['fp16_impl'] == 'safe'
+        )
 
     def build_criterion(self):
         """
