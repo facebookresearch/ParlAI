@@ -175,7 +175,7 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
 class AUCMetrics(Metric):
     """
     Class that calculates the area under the roc curve from list of labels and its true
-    probabilities
+    probabilities; expecting values to be (false positives, true positives)
     """
 
     __slots__ = ('_sorted_keys', '_values', '_pos_cnt', '_neg_cnt', '_class_name')
@@ -207,16 +207,22 @@ class AUCMetrics(Metric):
         true_labels: List[int],
         class_probs: List[float],
         class_name,
-        max_dec_places: float = 6,
+        max_dec_places: float = 3,
     ):
         assert len(true_labels) == len(class_probs)
+        # return empty class if no probabilities given
         if len(class_probs) == 0:
             return cls({}, 0, 0, [], class_name)
+
+        # count the total number for positives and negatives
         pos_cnt = sum([class_name == label for label in true_labels])
         neg_cnt = len(true_labels) - pos_cnt
-        # first calculate thresholds
-        all_thresholds = set()
+
+        # first calculate thresholds, and include the default
+        # upper and lower bounds
+        all_thresholds = set([0, 1])
         CONST = 10 ** max_dec_places
+        # add the upper and lower bound of the values
         for prob in class_probs:
             int_prob = prob * CONST
             prob_down = math.floor(int_prob) / CONST
@@ -225,6 +231,7 @@ class AUCMetrics(Metric):
             all_thresholds.add(prob_up)
 
         sorted_thresholds = sorted(all_thresholds)
+
         # now calculate the false positives and true positives
         values = {thres: [0, 0] for thres in all_thresholds}
 
@@ -239,6 +246,7 @@ class AUCMetrics(Metric):
             ind = np.searchsorted(sorted_thresholds, prob, side='right')
             for thres in sorted_thresholds[ind:]:
                 values[thres][effected_ind] += 1
+
         return cls(values, pos_cnt, neg_cnt, sorted_thresholds, class_name)
 
     def _get_fp_tp(self, threshold):
@@ -275,13 +283,18 @@ class AUCMetrics(Metric):
             tp = self_true_p + other_true_p
             all_vals[threshold] = (fp, tp)
 
+        if len(all_thresholds) == 2:
+            print('self_vals', self._values)
+            print('other_vals:', other._values)
+            print('all_vals', all_vals)
+
         return AUCMetrics(all_vals, all_pos, all_neg, all_thresholds, self._class_name)
 
     def value(self) -> float:
         fp, tp = list(zip(*(self._values.values())))
         fpr = np.array(fp) / self._neg_cnt
         tpr = np.array(tp) / self._pos_cnt
-        return auc(tpr, fpr)
+        return auc(fpr, tpr)
 
 
 class WeightedF1Metric(Metric):
@@ -593,10 +606,9 @@ class TorchClassifierAgent(TorchAgent):
         return preds
 
     def _update_auc(self, batch, probs):
-        probs_list = probs.tolist()
-
-        class_probs = [prob_row[-1] for prob_row in probs_list]
-        class_name = self.class_list[-1]
+        probs_arr = probs.detach().cpu().numpy()
+        class_probs = probs_arr[:, 0]
+        class_name = self.class_list[0]
         # class_name matters for AUC curve plotting but not the area under cure?
         # could be useful for later
         auc_metrics_per_exs = [
@@ -604,28 +616,6 @@ class TorchClassifierAgent(TorchAgent):
             for truth, prob in zip(batch.labels, class_probs)
         ]
         self.record_local_metric(f'AUC', auc_metrics_per_exs)
-
-        # true_probs = [
-        #         prob_row[label_id]
-        #         for prob_row in zip(batch.labels, probs_list)
-        # ]
-        # for class_name, class_id in self.class_dict.items():
-        # the version storing probs and labels
-        # self.record_local_metric(
-        #     'AUC',
-        #     [
-        #         AUCMetrics([truth], [prob])
-        #         for truth, prob in zip(true_labels, true_probs)
-        #     ],
-        # )
-
-        # the version storing the confusion matrices for fixed intervals
-        # TODO: make this an arg
-        # threshold_intervals = 1000
-        # self.record_local_metric(
-        #     'AUC_fixed',
-        #     [AUCMetrics_fixed([truth], [prob], threshold_intervals) for truth, prob in zip(true_labels, true_probs)]
-        # )
 
     def train_step(self, batch):
         """
