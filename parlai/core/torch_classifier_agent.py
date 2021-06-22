@@ -244,7 +244,7 @@ class AUCMetrics(Metric):
                 effected_ind = 0
 
             ind = np.searchsorted(sorted_thresholds, prob, side='right')
-            for thres in sorted_thresholds[ind:]:
+            for thres in sorted_thresholds[:ind]:
                 values[thres][effected_ind] += 1
 
         return cls(values, pos_cnt, neg_cnt, sorted_thresholds, class_name)
