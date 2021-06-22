@@ -9,9 +9,6 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
-from operator import pos
-
-from numpy.core.fromnumeric import sort
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
@@ -23,14 +20,12 @@ from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
-from sklearn.metrics import roc_curve, auc
+from sklearn.metrics import auc
 
 import torch
 import torch.nn.functional as F
 
 import numpy as np
-import heapq
-from itertools import groupby
 import math
 
 
@@ -47,8 +42,6 @@ class ConfusionMatrixMetric(Metric):
         '_true_negatives',
         '_false_positives',
         '_false_negatives',
-        '_true_positive_rates',
-        '_false_positive_rates',
     )
 
     @property
@@ -69,18 +62,6 @@ class ConfusionMatrixMetric(Metric):
         self._true_negatives = self.as_number(true_negatives)
         self._false_positives = self.as_number(false_positives)
         self._false_negatives = self.as_number(false_negatives)
-
-        self._true_positive_rates = 0
-        if self._true_positives + self._false_negatives > 0:
-            self._true_positive_rates = self._true_positives / (
-                self._true_positives + self._false_negatives
-            )
-
-        self._false_positive_rates = 0
-        if self._true_negatives + self._false_positives > 0:
-            self._false_positive_rates = self._false_positives / (
-                self._true_negatives + self._false_positives
-            )
 
     def __add__(
         self, other: Optional['ConfusionMatrixMetric']
@@ -228,7 +209,6 @@ class AUCMetrics(Metric):
         class_name,
         max_dec_places: float = 6,
     ):
-        # print('inside:', true_labels, class_probs, class_name)
         assert len(true_labels) == len(class_probs)
         if len(class_probs) == 0:
             return cls({}, 0, 0, [], class_name)
@@ -244,9 +224,7 @@ class AUCMetrics(Metric):
             all_thresholds.add(prob_down)
             all_thresholds.add(prob_up)
 
-        # print('all thresholds:', all_thresholds)
         sorted_thresholds = sorted(all_thresholds)
-        # print('sorted thresholds:', sorted_thresholds)
         # now calculate the false positives and true positives
         values = {thres: [0, 0] for thres in all_thresholds}
 
@@ -287,7 +265,6 @@ class AUCMetrics(Metric):
         # merging the thresholds
         all_thresholds = set(self._sorted_keys + other._sorted_keys)
         all_thresholds = sorted(all_thresholds)
-        # print('merged thresholds:', all_thresholds)
 
         all_vals = {}
         for threshold in all_thresholds:
@@ -298,9 +275,6 @@ class AUCMetrics(Metric):
             tp = self_true_p + other_true_p
             all_vals[threshold] = (fp, tp)
 
-        # print(other._values)
-        # print(self._values)
-        # print('everything:', all_vals)
         return AUCMetrics(all_vals, all_pos, all_neg, all_thresholds, self._class_name)
 
     def value(self) -> float:
@@ -308,46 +282,6 @@ class AUCMetrics(Metric):
         fpr = np.array(fp) / self._neg_cnt
         tpr = np.array(tp) / self._pos_cnt
         return auc(fpr, tpr)
-
-
-# class AUCMetrics(Metric):
-#     """
-#     Class that calculates the area under the curve from a list of true labels and their probabilites
-#     """
-
-#     __slots__ = ('_truth', '_max_probs')
-
-#     @property
-#     def macro_average(self) -> bool:
-#         """
-#         Indicates whether this metric should be macro-averaged when globally reported.
-#         """
-#         return False
-
-#     def __init__(self, true_labels: List[int], true_probs: List[float]):
-#         if len(true_labels) == len(true_probs):
-#             self._truth = true_labels
-#             self._true_probs = true_probs
-#         else:
-#             raise RuntimeError(
-#                 f"AUC metrics' labels and probabilities list length don't match: labels: {true_labels}, probs: {true_probs}"
-#             )
-
-#     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
-#         if other is None:
-#             return self
-#         assert isinstance(other, AUCMetrics)
-#         all_truth = self._truth + other._truth
-#         all_true_probs = self._true_probs + other._true_probs
-#         return AUCMetrics(all_truth, all_true_probs)
-
-#     def __len__(self):
-#         return len(self._truth)
-
-#     def value(self) -> float:
-#         if len(self._truth) > 0 and len(self._truth) == len(self._truth):
-#             return roc_auc_score(self._truth, self._true_probs)
-#         return 0
 
 
 class WeightedF1Metric(Metric):
