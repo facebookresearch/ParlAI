@@ -14,30 +14,9 @@ import parlai.tasks.integration_tests.agents as inttests
 BATCHSIZE = 4
 
 
-@testing_utils.skipUnlessGPU
-class TestDistributed(unittest.TestCase):
-    _base_config = dict(
-        task='integration_tests:overfit',
-        model='transformer/generator',
-        optimizer='adam',
-        validation_metric='ppl',
-        skip_generation=True,
-        learningrate=1e-2,
-        batchsize=BATCHSIZE,
-        validation_every_n_epochs=5,
-        num_epochs=150,
-        n_layers=1,
-        n_heads=1,
-        ffn_size=32,
-        embedding_size=8,
-        verbose=True,
-    )
-
-    def setUp(self):
-        print(f'[Setting up test {self._testMethodName}]')
-
+class _AbstractTest(unittest.TestCase):
     def _distributed_train_model(self, **overrides):
-        opt = {**self._base_config, **overrides}
+        opt = {**self.base_config, **overrides}
         with testing_utils.tempdir() as tmpdir:
             if 'model_file' not in opt:
                 opt['model_file'] = os.path.join(tmpdir, 'model')
@@ -54,6 +33,26 @@ class TestDistributed(unittest.TestCase):
             valid, test = mp_train.launch_and_train(popt, 31338)
 
         return (valid, test)
+
+
+@testing_utils.skipUnlessGPU
+class TestDistributed(_AbstractTest):
+    base_config = dict(
+        task='integration_tests:overfit',
+        model='transformer/generator',
+        optimizer='adam',
+        validation_metric='ppl',
+        skip_generation=True,
+        learningrate=1e-2,
+        batchsize=BATCHSIZE,
+        validation_every_n_epochs=5,
+        num_epochs=150,
+        n_layers=1,
+        n_heads=1,
+        ffn_size=32,
+        embedding_size=8,
+        verbose=True,
+    )
 
     def test_generator_distributed(self):
         valid, test = self._distributed_train_model()
@@ -159,17 +158,32 @@ class TestDistributed(unittest.TestCase):
         assert valid['exs'].value() == inttests.NUM_TEST
         assert test['exs'].value() == inttests.NUM_TEST
 
+
+# class TestZero2(TestDistributed):
+#     pass
+
+
+class TestNoModelParallel(_AbstractTest):
+    base_config = dict(
+        task='integration_tests:overfit',
+        optimizer='sgd',
+        validation_metric='loss',
+        learningrate=1e-2,
+        batchsize=BATCHSIZE,
+        validation_every_n_epochs=1,
+        num_epochs=1,
+        n_layers=1,
+        n_heads=1,
+        ffn_size=32,
+        embedding_size=8,
+        verbose=True,
+    )
+
     def test_no_model_parallel(self):
         """
-        Checks that we throw an error when combining mp_train with.
-
-        --model-parallel true.
+        Checks that we throw an error when combining mp_train with --model-parallel.
         """
-        for m in [
-            'transformer/generator',
-            'transformer/ranker',
-            'transformer/classifier',
-        ]:
+        for m in ['transformer/generator', 'transformer/ranker']:
             try:
                 _ = self._distributed_train_model(model=m, model_parallel=True)
             except RuntimeError:
