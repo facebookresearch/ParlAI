@@ -99,7 +99,7 @@ class MultiProcessTrain(ParlaiScript):
 
     def run(self):
         if self.opt['port'] is None:
-            port = random.randint(32000, 48000)
+            port = distributed_utils.find_free_port()
         else:
             port = self.opt['port']
         return launch_and_train(self.opt, port)
