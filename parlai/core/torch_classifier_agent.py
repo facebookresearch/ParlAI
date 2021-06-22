@@ -9,6 +9,7 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
+from numpy.lib.function_base import append
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
@@ -20,13 +21,13 @@ from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
-from sklearn.metrics import auc
-
 import torch
 import torch.nn.functional as F
 
 import numpy as np
 import math
+
+from sklearn.metrics import auc
 
 
 class ConfusionMatrixMetric(Metric):
@@ -195,7 +196,7 @@ class AUCMetrics(Metric):
         sorted_keys: List[float],
         class_name: Union[int, str],
     ):
-        self._values = values
+        self.key_vals = values
         self._pos_cnt = pos_cnt
         self._neg_cnt = neg_cnt
         self._sorted_keys = sorted_keys
@@ -258,13 +259,13 @@ class AUCMetrics(Metric):
         """
         get the false positive count and true positive count for the given thresholds
         """
-        if self._values.get(threshold) is not None:
-            return self._values.get(threshold)
+        if self.key_vals.get(threshold) is not None:
+            return self.key_vals.get(threshold)
 
         tmp_key = np.searchsorted(self._sorted_keys, threshold, side='right')
         if tmp_key >= len(self._sorted_keys):
             tmp_key = len(self._sorted_keys) - 1
-        return self._values[self._sorted_keys[tmp_key]]
+        return self.key_vals[self._sorted_keys[tmp_key]]
 
     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
         if other is None:
@@ -289,17 +290,23 @@ class AUCMetrics(Metric):
             all_vals[threshold] = [fp, tp]
 
         if len(all_thresholds) == 2:
-            print('self_vals', self._values)
-            print('other_vals:', other._values)
+            print('self_vals', self.key_vals)
+            print('other_vals:', other.key_vals)
             print('all_vals', all_vals)
 
         return AUCMetrics(all_vals, all_pos, all_neg, all_thresholds, self._class_name)
 
     def value(self) -> float:
-        fp, tp = list(zip(*(self._values.values())))
-        fpr = np.array(fp) / self._neg_cnt
-        tpr = np.array(tp) / self._pos_cnt
-        return auc(fpr, tpr)
+        # the thresholds create a natural progression
+        # not sure why but auc(tpr, fpr) or 1 - auc(fpr, tpr)
+        # gives the correct auc when compared against other things....
+        fpr = []
+        tpr = []
+        for key in self._sorted_keys:
+            fp, tp = self.key_vals[key]
+            fpr.append(fp / self._neg_cnt)
+            tpr.append(tp / self._pos_cnt)
+        return 1 - auc(fpr, tpr)
 
 
 class WeightedF1Metric(Metric):

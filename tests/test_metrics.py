@@ -363,12 +363,21 @@ class TestAggregators(unittest.TestCase):
         task3_result = AUCMetrics.raw_data_to_auc(
             task3_gold_labels, task3_probabilities, 'class_notok', max_dec_places=2
         )
-        self.assertEqual(task1_result._values, task1_exp_val)
-        self.assertEqual(task2_result._values, task2_exp_val)
-        self.assertEqual(task3_result._values, task3_exp_val)
+        self.assertEqual(task1_result.key_vals, task1_exp_val)
+        self.assertEqual(task2_result.key_vals, task2_exp_val)
+        self.assertEqual(task3_result.key_vals, task3_exp_val)
 
         task3_result = task1_result + task2_result
-        self.assertEqual(task3_result._values, task3_exp_val)
+        self.assertEqual(task3_result.key_vals, task3_exp_val)
+
+        # now actually testing the area under curve
+        from sklearn.metrics import roc_auc_score
+
+        self.assertAlmostEqual(
+            roc_auc_score(task1_gold_labels, task1_probabilities), task1_result.value()
+        )
+        # self.assertAlmostEqual(roc_auc_score(task2_gold_labels, task2_probabilities), task2_result.value())
+        # self.assertAlmostEqual(roc_auc_score(task3_gold_labels, task3_probabilities), task3_result.value())
 
     def test_classifier_metrics(self):
         # We assume a batch of 16 samples, binary classification case, from 2 tasks.
