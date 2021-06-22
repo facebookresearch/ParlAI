@@ -346,3 +346,15 @@ def slurm_distributed_context(opt):
     except FileNotFoundError:
         # Slurm is not installed
         raise RuntimeError('SLURM does not appear to be installed.')
+
+
+def find_free_port() -> int:
+    """
+    Find a free port we can bind to locally.
+
+    Credit: https://stackoverflow.com/questions/1365265/on-localhost-how-do-i-pick-a-free-port-number
+    """
+    with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]

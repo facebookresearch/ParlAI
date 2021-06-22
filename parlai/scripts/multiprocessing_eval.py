@@ -88,7 +88,7 @@ class MultiProcessEval(ParlaiScript):
         return setup_args()
 
     def run(self):
-        port = random.randint(32000, 48000)
+        port = distributed_utils.find_free_port()
         return launch_and_eval(self.opt, port)
 
 
