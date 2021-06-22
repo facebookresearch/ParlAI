@@ -281,7 +281,7 @@ class AUCMetrics(Metric):
         fp, tp = list(zip(*(self._values.values())))
         fpr = np.array(fp) / self._neg_cnt
         tpr = np.array(tp) / self._pos_cnt
-        return auc(fpr, tpr)
+        return auc(tpr, fpr)
 
 
 class WeightedF1Metric(Metric):
