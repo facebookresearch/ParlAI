@@ -1983,13 +1983,7 @@ class TorchAgent(ABC, Agent):
                 # did we wrap in a DistributedDataParallel
                 states['model'] = self.model.module.state_dict()
             else:
-                logging.info("About to store state dict")
-                import traceback
-
-                logging.critical("".join(traceback.format_stack()))
                 states['model'] = self.model.state_dict()
-
-                logging.info("Out of here")
 
         if hasattr(self, 'optimizer'):
             # save optimizer params

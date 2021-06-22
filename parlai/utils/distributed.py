@@ -296,6 +296,12 @@ def distributed_context(
             dist.destroy_process_group()
 
 
+def get_dist_group():
+    from torch.distributed.distributed_c10d import _get_default_group
+
+    return _get_default_group()
+
+
 @contextlib.contextmanager
 def slurm_distributed_context(opt):
     """

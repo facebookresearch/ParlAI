@@ -30,7 +30,7 @@ class _AbstractTest(unittest.TestCase):
             parser = build_dict.setup_args()
             build_dict.build_dict(popt)
 
-            valid, test = mp_train.launch_and_train(popt, 31338)
+            valid, test = mp_train.launch_and_train(popt)
 
         return (valid, test)
 

@@ -28,7 +28,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.opt import Opt
-from parlai.utils.distributed import is_distributed, sync_parameters
+from parlai.utils.distributed import is_distributed, sync_parameters, get_dist_group
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
@@ -541,6 +541,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 compute_dtype=compute_dtype,
                 state_dict_device=torch.device('cpu'),
                 flatten_parameters=True,
+                process_group=get_dist_group(),
             )
 
         if shared is not None:
