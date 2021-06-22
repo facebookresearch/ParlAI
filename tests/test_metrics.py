@@ -376,8 +376,12 @@ class TestAggregators(unittest.TestCase):
         self.assertAlmostEqual(
             roc_auc_score(task1_gold_labels, task1_probabilities), task1_result.value()
         )
-        # self.assertAlmostEqual(roc_auc_score(task2_gold_labels, task2_probabilities), task2_result.value())
-        # self.assertAlmostEqual(roc_auc_score(task3_gold_labels, task3_probabilities), task3_result.value())
+        self.assertAlmostEqual(
+            roc_auc_score(task2_gold_labels, task2_probabilities), task2_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task3_gold_labels, task3_probabilities), task3_result.value()
+        )
 
     def test_classifier_metrics(self):
         # We assume a batch of 16 samples, binary classification case, from 2 tasks.
