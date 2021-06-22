@@ -159,10 +159,17 @@ class TestDistributed(_AbstractTest):
         assert test['exs'].value() == inttests.NUM_TEST
 
 
+@testing_utils.skipUnlessGPU
 class TestZero2(TestDistributed):
     base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero2'}
 
 
+@testing_utils.skipUnlessGPU
+class TestZero3(TestDistributed):
+    base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero3'}
+
+
+@testing_utils.skipUnlessGPU
 class TestNoModelParallel(_AbstractTest):
     base_config = dict(
         task='integration_tests:overfit',
