@@ -219,8 +219,10 @@ class AUCMetrics(Metric):
         neg_cnt = len(true_labels) - pos_cnt
 
         # first calculate thresholds, and include the default
-        # upper and lower bounds
-        all_thresholds = set([0, 1])
+        # upper bounds; don't need to include lower because
+        # we are doing greater and equal
+        # NOTE: assumes the probabilites are between 0 and 1
+        all_thresholds = set([1.5])
         CONST = 10 ** max_dec_places
         # add the upper and lower bound of the values
         for prob in class_probs:
@@ -243,7 +245,10 @@ class AUCMetrics(Metric):
             else:
                 effected_ind = 0
 
-            ind = np.searchsorted(sorted_thresholds, prob, side='right')
+            ind = np.searchsorted(sorted_thresholds, prob, side='left')
+            if ind < len(sorted_thresholds) and sorted_thresholds[ind] == prob:
+                ind += 1
+            # print('current prob', prob, '| found index:', ind)
             for thres in sorted_thresholds[:ind]:
                 values[thres][effected_ind] += 1
 

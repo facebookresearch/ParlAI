@@ -23,7 +23,11 @@ from parlai.core.metrics import (
     IntraDistinctMetric,
     FairseqBleuMetric,
 )
-from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
+from parlai.core.torch_classifier_agent import (
+    ConfusionMatrixMetric,
+    WeightedF1Metric,
+    AUCMetrics,
+)
 import parlai.utils.testing as testing_utils
 
 
@@ -313,6 +317,51 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/sum'] == 4
         assert agg['b/fixed'] == 4
         assert 'b/global_avg' not in agg
+
+    def test_auc_metrics(self):
+        # task 1; borrowing example from scikit learn
+        task1_probabilities = [0.1, 0.4, 0.35, 0.8]
+        task1_gold_labels = ['class_ok', 'class_ok', 'class_notok', 'class_notok']
+        task1_exp_val = {
+            # thres: (False positives, True positives)
+            0.1: [2, 2],
+            0.35: [1, 2],
+            0.4: [1, 1],
+            0.8: [0, 1],
+            1.5: [0, 0],
+        }
+
+        # task 2; checking with an odd number
+        task2_probabilities = [0.05, 0.2, 0.6]
+        task2_gold_labels = ['class_ok', 'class_ok', 'class_notok']
+
+        task2_exp_val = {0.05: [2, 1], 0.2: [1, 1], 0.6: [0, 1], 1.5: [0, 0]}
+
+        # task 3: combining task 1 and task 2
+        task3_probabilities = task1_probabilities + task2_probabilities
+        task3_gold_labels = task1_gold_labels + task2_gold_labels
+
+        task3_exp_val = {
+            # threshold: FP, TP
+            0.05: [4, 3],
+            0.1: [3, 3],
+            0.2: [2, 3],
+            0.35: [1, 3],
+            0.4: [1, 2],
+            0.6: [0, 2],
+            0.8: [0, 1],
+            1.5: [0, 0],
+        }
+
+        task1_result = AUCMetrics.raw_data_to_auc(
+            task1_gold_labels, task1_probabilities, 'class_notok', max_dec_places=2
+        )
+        task2_result = AUCMetrics.raw_data_to_auc(
+            task2_gold_labels, task2_probabilities, 'class_notok', max_dec_places=2
+        )
+
+        assert task1_result._values == task1_exp_val
+        assert task2_result._values == task2_exp_val
 
     def test_classifier_metrics(self):
         # We assume a batch of 16 samples, binary classification case, from 2 tasks.
