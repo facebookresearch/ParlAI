@@ -1118,7 +1118,7 @@ class TorchAgent(ABC, Agent):
                 return True
 
     def _should_sync_overflows(self):
-        return self.fp16 and self.opt['ddp_backend'] in ('zero2', 'zero3')
+        return self.fp16 and self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -1976,10 +1976,9 @@ class TorchAgent(ABC, Agent):
         """
         states = {}
         if hasattr(self, 'model'):  # save model params
-            if hasattr(self.model, 'module') and self.opt['ddp_backend'] not in (
-                'zero2',
-                'zero3',
-            ):
+            if hasattr(self.model, 'module') and self.opt.get(
+                'ddp_backend', 'ddp'
+            ) not in ('zero2', 'zero3'):
                 # did we wrap in a DistributedDataParallel
                 states['model'] = self.model.module.state_dict()
             else:
@@ -2009,7 +2008,7 @@ class TorchAgent(ABC, Agent):
         For models or optimizers that shard parameters, this ensures we sync.
         """
         logging.info("Saving non primary")
-        if self.opt['ddp_backend'] in ('zero2', 'zero3'):
+        if self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3'):
             # make sure we call the state dict
             self.state_dict()
 
