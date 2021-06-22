@@ -20,10 +20,12 @@ from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_curve, auc
 
 import torch
 import torch.nn.functional as F
+
+import numpy as np
 
 
 class ConfusionMatrixMetric(Metric):
@@ -39,8 +41,8 @@ class ConfusionMatrixMetric(Metric):
         '_true_negatives',
         '_false_positives',
         '_false_negatives',
-        '_true_positive_rate',
-        '_false_positive_rate',
+        '_true_positive_rates',
+        '_false_positive_rates',
     )
 
     @property
@@ -62,15 +64,15 @@ class ConfusionMatrixMetric(Metric):
         self._false_positives = self.as_number(false_positives)
         self._false_negatives = self.as_number(false_negatives)
 
-        self._true_positive_rate = 0
+        self._true_positive_rates = 0
         if self._true_positives + self._false_negatives > 0:
-            self._true_positive_rate = self._true_positives / (
+            self._true_positive_rates = self._true_positives / (
                 self._true_positives + self._false_negatives
             )
 
-        self._false_positive_rate = 0
+        self._false_positive_rates = 0
         if self._true_negatives + self._false_positives > 0:
-            self._false_positive_rate = self._false_positives / (
+            self._false_positive_rates = self._false_positives / (
                 self._true_negatives + self._false_positives
             )
 
@@ -185,11 +187,11 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
 
 class AUCMetrics(Metric):
     """
-    Class that calculates the area under the curve from a list of [(true positive rates,
-    false positive rates)]
+    Class that calculates the area under the roc curve from list of lables and its true
+    probabilities
     """
 
-    __slots__ = ('_truth', '_max_probs')
+    __slots__ = ('_sorted_keys', '_values', '_pos_cnt', '_neg_cnt', '_class_name')
 
     @property
     def macro_average(self) -> bool:
@@ -198,30 +200,110 @@ class AUCMetrics(Metric):
         """
         return False
 
-    def __init__(self, true_labels: List[int], true_probs: List[float]):
-        if len(true_labels) == len(true_probs):
-            self._truth = true_labels
-            self._true_probs = true_probs
-        else:
-            raise RuntimeError(
-                f"AUC metrics' labels and probabilities list length don't match: labels: {true_labels}, probs: {true_probs}"
-            )
+    def __init__(
+        self,
+        true_labels: List[int],
+        true_probs: List[float],
+        class_name=None,
+        pos_cnt=-1,
+    ):
+        assert len(true_labels) == len(true_probs)
+
+        all_fpr, all_tpr, all_thresholds = roc_curve(
+            true_labels, true_probs, pos_label=class_name
+        )
+        all_thresholds = reversed(all_thresholds)
+        self._values = {
+            threshold: (fpr, tpr)
+            for fpr, tpr, threshold in zip(all_fpr, all_tpr, all_thresholds)
+        }
+        self._pos_cnt = (
+            sum([class_name == label for label in true_labels])
+            if pos_cnt < 0
+            else pos_cnt
+        )
+        self._neg_cnt = len(true_labels) - self._pos_cnt
+        self._sorted_keys = np.array(all_thresholds)
+        self._class_name = class_name
+
+    def _find_nearest_left(self, missing_threshold):
+        """
+        Since sklearn's algorithm disincludes suboptimal by default, we can pick either the closest left (or right)
+        as a substitute.
+        """
+        return self._values[
+            self._sorted_keys.searchsorted(missing_threshold, side='left')
+        ]
 
     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
         if other is None:
             return self
         assert isinstance(other, AUCMetrics)
-        all_truth = self._truth + other._truth
-        all_true_probs = self._true_probs + other._true_probs
-        return AUCMetrics(all_truth, all_true_probs)
-
-    def __len__(self):
-        return len(self._truth)
+        all_thresholds = set(self._values.keys() + other._matrices.keys())
+        all_vals = {}
+        all_neg = self._neg_cnt + other._neg_cnt
+        all_pos = self._pos_cnt + other._pos_cnt
+        for threshold in all_thresholds:
+            self_vals = self._values.get(threshold)
+            if self_vals is None:
+                self_vals = self._find_nearest_left(threshold)
+            other_vals = other._matrices.get(threshold)
+            if other_vals is None:
+                other_vals = other._find_nearest_left(threshold)
+            fpr = (
+                self_vals[0] * self._neg_cnt + other_vals[0] * other._neg_cnt
+            ) / all_neg
+            tpr = (
+                self_vals[1] * self._pos_cnt + other_vals[1] * other._pos_cnt
+            ) / all_pos
+            all_vals[threshold] = (fpr, tpr)
+        # TODO: finish....
+        return AUCMetrics(all_vals)
 
     def value(self) -> float:
-        if len(self._truth) > 0 and len(self._truth) == len(self._truth):
-            return roc_auc_score(self._truth, self._true_probs)
-        return 0
+        fpr = [matrix._false_positive_rates for matrix in self._values.items()]
+        tpr = [matrix._true_positive_rates for matrix in self._values.items()]
+        return auc(fpr, tpr)
+
+
+# class AUCMetrics(Metric):
+#     """
+#     Class that calculates the area under the curve from a list of true labels and their probabilites
+#     """
+
+#     __slots__ = ('_truth', '_max_probs')
+
+#     @property
+#     def macro_average(self) -> bool:
+#         """
+#         Indicates whether this metric should be macro-averaged when globally reported.
+#         """
+#         return False
+
+#     def __init__(self, true_labels: List[int], true_probs: List[float]):
+#         if len(true_labels) == len(true_probs):
+#             self._truth = true_labels
+#             self._true_probs = true_probs
+#         else:
+#             raise RuntimeError(
+#                 f"AUC metrics' labels and probabilities list length don't match: labels: {true_labels}, probs: {true_probs}"
+#             )
+
+#     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
+#         if other is None:
+#             return self
+#         assert isinstance(other, AUCMetrics)
+#         all_truth = self._truth + other._truth
+#         all_true_probs = self._true_probs + other._true_probs
+#         return AUCMetrics(all_truth, all_true_probs)
+
+#     def __len__(self):
+#         return len(self._truth)
+
+#     def value(self) -> float:
+#         if len(self._truth) > 0 and len(self._truth) == len(self._truth):
+#             return roc_auc_score(self._truth, self._true_probs)
+#         return 0
 
 
 class WeightedF1Metric(Metric):
@@ -532,6 +614,41 @@ class TorchClassifierAgent(TorchAgent):
             )
         return preds
 
+    def _update_auc(self, batch, probs):
+        probs_list = probs.tolist()
+        true_probs = [
+            prob_row[self.class_dict[label]]
+            for label, prob_row in zip(batch.labels, probs_list)
+        ]
+        for class_name in self.class_dict:
+            auc_metrics_per_exs = [
+                AUCMetrics([truth], [prob], class_name)
+                for truth, prob in zip(batch.labels, true_probs)
+            ]
+            self.record_local_metric(f'AUC_{class_name}', auc_metrics_per_exs)
+
+        # true_probs = [
+        #         prob_row[label_id]
+        #         for prob_row in zip(batch.labels, probs_list)
+        # ]
+        # for class_name, class_id in self.class_dict.items():
+        # the version storing probs and labels
+        # self.record_local_metric(
+        #     'AUC',
+        #     [
+        #         AUCMetrics([truth], [prob])
+        #         for truth, prob in zip(true_labels, true_probs)
+        #     ],
+        # )
+
+        # the version storing the confusion matrices for fixed intervals
+        # TODO: make this an arg
+        # threshold_intervals = 1000
+        # self.record_local_metric(
+        #     'AUC_fixed',
+        #     [AUCMetrics_fixed([truth], [prob], threshold_intervals) for truth, prob in zip(true_labels, true_probs)]
+        # )
+
     def train_step(self, batch):
         """
         Train on a single batch of examples.
@@ -569,19 +686,7 @@ class TorchClassifierAgent(TorchAgent):
         probs = F.softmax(scores, dim=1)
 
         if self.calc_auc:
-            true_labels = [self.class_dict[label] for label in batch.labels]
-            probs_list = probs.tolist()
-            true_probs = [
-                prob_row[label_id]
-                for label_id, prob_row in zip(true_labels, probs_list)
-            ]
-            self.record_local_metric(
-                'AUC',
-                [
-                    AUCMetrics([truth], [prob])
-                    for truth, prob in zip(true_labels, true_probs)
-                ],
-            )
+            self._update_auc(batch, probs)
 
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
