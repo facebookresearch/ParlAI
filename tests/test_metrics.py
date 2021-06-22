@@ -360,8 +360,15 @@ class TestAggregators(unittest.TestCase):
             task2_gold_labels, task2_probabilities, 'class_notok', max_dec_places=2
         )
 
-        assert task1_result._values == task1_exp_val
-        assert task2_result._values == task2_exp_val
+        task3_result = AUCMetrics.raw_data_to_auc(
+            task3_gold_labels, task3_probabilities, 'class_notok', max_dec_places=2
+        )
+        self.assertEqual(task1_result._values, task1_exp_val)
+        self.assertEqual(task2_result._values, task2_exp_val)
+        self.assertEqual(task3_result._values, task3_exp_val)
+
+        task3_result = task1_result + task2_result
+        self.assertEqual(task3_result._values, task3_exp_val)
 
     def test_classifier_metrics(self):
         # We assume a batch of 16 samples, binary classification case, from 2 tasks.

@@ -286,7 +286,7 @@ class AUCMetrics(Metric):
 
             fp = self_false_p + other_false_p
             tp = self_true_p + other_true_p
-            all_vals[threshold] = (fp, tp)
+            all_vals[threshold] = [fp, tp]
 
         if len(all_thresholds) == 2:
             print('self_vals', self._values)
