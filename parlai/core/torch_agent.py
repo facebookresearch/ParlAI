@@ -1976,11 +1976,20 @@ class TorchAgent(ABC, Agent):
         """
         states = {}
         if hasattr(self, 'model'):  # save model params
-            if hasattr(self.model, 'module'):
+            if hasattr(self.model, 'module') and self.opt['ddp_backend'] not in (
+                'zero2',
+                'zero3',
+            ):
                 # did we wrap in a DistributedDataParallel
                 states['model'] = self.model.module.state_dict()
             else:
+                logging.info("About to store state dict")
+                import traceback
+
+                logging.critical("".join(traceback.format_stack()))
                 states['model'] = self.model.state_dict()
+
+                logging.info("Out of here")
 
         if hasattr(self, 'optimizer'):
             # save optimizer params
@@ -1998,6 +2007,17 @@ class TorchAgent(ABC, Agent):
             states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
+
+    def save_nonprimary(self, path=None):
+        """
+        Save model parameters, when you are working on the non-primary worker.
+
+        For models or optimizers that shard parameters, this ensures we sync.
+        """
+        logging.info("Saving non primary")
+        if self.opt['ddp_backend'] in ('zero2', 'zero3'):
+            # make sure we call the state dict
+            self.state_dict()
 
     def save(self, path=None):
         """
@@ -2352,9 +2372,6 @@ class TorchAgent(ABC, Agent):
             self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
 
         if self.fp16:
-            logging.info(
-                f"fp16_loss_scale = {self.optimizer.loss_scale} [{self._number_training_updates}]"
-            )
             self.global_metrics.add(
                 'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
             )

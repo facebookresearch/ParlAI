@@ -159,8 +159,8 @@ class TestDistributed(_AbstractTest):
         assert test['exs'].value() == inttests.NUM_TEST
 
 
-# class TestZero2(TestDistributed):
-#     pass
+class TestZero2(TestDistributed):
+    base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero2'}
 
 
 class TestNoModelParallel(_AbstractTest):

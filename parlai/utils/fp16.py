@@ -104,11 +104,9 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
         self.scaler = DynamicLossScaler(2.0 ** 15)
         self.min_loss_scale = 2 ** -5
         self._sync_overflows = sync_overflows
-        logging.debug(f"Sync overflows = {sync_overflows}")
 
     def _maybe_sync(self, value: bool) -> bool:
         if self._sync_overflows:
-            logging.debug(f"Syncing value {value}")
             import torch.distributed as dist
 
             value_tensor = torch.BoolTensor([value]).cuda()

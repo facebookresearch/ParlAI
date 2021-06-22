@@ -531,8 +531,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             compute_dtype = torch.float16 if self.fp16 else torch.float32
             mixed_precision = self.fp16 and opt['fp16_impl'] == 'safe'
             logging.debug(
-                f"Wrapping in FSDP (reshard_after_forward = {reshard_after_forward}, "
-                f"compute_dtype = {compute_dtype} mixed_precision = {mixed_precision}"
+                f"Wrapping in FSDP(reshard_after_forward = {reshard_after_forward}, "
+                f"compute_dtype = {compute_dtype} mixed_precision = {mixed_precision})"
             )
             self.model = FSDP(
                 self.model,
@@ -540,6 +540,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 mixed_precision=mixed_precision,
                 compute_dtype=compute_dtype,
                 state_dict_device=torch.device('cpu'),
+                flatten_parameters=True,
             )
 
         if shared is not None:
