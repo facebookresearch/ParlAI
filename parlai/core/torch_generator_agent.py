@@ -519,7 +519,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if (
             shared is None
             and is_distributed()
-            and opt['ddp_backend'] in ('zero2', 'zero3')
+            and opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
         ):
             from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
 
@@ -559,7 +559,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 logging.warning("Optimizer was reset. Also resetting LR scheduler.")
             self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
-        if shared is None and is_distributed() and opt['ddp_backend'] == 'ddp':
+        if (
+            shared is None
+            and is_distributed()
+            and opt.get('ddp_backend', 'ddp') == 'ddp'
+        ):
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             logging.debug("Wrapping in simple DDP")
             self.model = torch.nn.parallel.DistributedDataParallel(
@@ -579,7 +583,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         return (
             self.fp16
-            and self.opt['ddp_backend'] in ('zero2', 'zero3')
+            and self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
             and self.opt['fp16_impl'] == 'safe'
         )
 
