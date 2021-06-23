@@ -16,11 +16,8 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import DialogTeacher
 from parlai.tasks.cmu_dog.build import build
-from parlai.tasks.wizard_of_wikipedia.agents import (
-    RareWordF1Calculator,
-    TOKEN_KNOWLEDGE,
-    TOKEN_END_KNOWLEDGE,
-)
+from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
+from parlai.tasks.wizard_of_wikipedia.rare_f1 import RareF1Computer
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
 from parlai.utils.logging import logger
@@ -129,7 +126,7 @@ def _article_section_to_text(
     return fact_delimiter.join(texts)
 
 
-def _build_rare_word_f1(opt: Opt) -> RareWordF1Calculator:
+def _build_rare_word_f1(opt: Opt) -> RareF1Computer:
     datapath = _datapath(opt)
 
     def _collect_convo_text(convo_data):
@@ -148,7 +145,7 @@ def _build_rare_word_f1(opt: Opt) -> RareWordF1Calculator:
             data = json.load(f)
         convos += _collect_convo_text(data)
 
-    return RareWordF1Calculator(' '.join(convos), top_p=0.5)
+    return RareF1Computer(' '.join(convos), top_p=0.5)
 
 
 class CMUDocumentGroundedConversationsTeacher(DialogTeacher):

@@ -14,6 +14,7 @@ from collections import defaultdict
 from typing import List, Optional, Dict, Tuple
 from tqdm import tqdm
 
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.teachers import (
     ParlAIDialogTeacher,
@@ -26,6 +27,7 @@ from parlai.tasks.convai2.agents import (
 )
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
+from parlai.tasks.wizard_of_wikipedia.rare_f1 import RareF1Computer
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 from .build import build
@@ -87,6 +89,30 @@ class BlendedSkillTalkTeacher(ParlAIDialogTeacher):
         opt = copy.deepcopy(opt)
         opt['parlaidialogteacher_datafile'] = _processed_data_path(opt)
         super().__init__(opt, shared)
+        if shared:
+            self.rare_f1 = shared.get('rare_f1')
+        else:
+            self.rare_f1 = RareF1Computer.from_reference_parlai_format(
+                _processed_data_path(
+                    opt=Opt(datatype='train', datapath=opt['datapath'])
+                )
+            )
+
+    def share(self):
+        shared = super().share()
+        shared['rare_f1'] = self.rare_f1
+        return shared
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ):
+        if 'text' in model_response and labels:
+            self.metrics.add(
+                'rare_f1', self.rare_f1.compute(model_response['text'], labels)
+            )
 
 
 class InteractiveTeacher(BlendedSkillTalkTeacher):

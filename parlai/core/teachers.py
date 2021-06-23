@@ -187,7 +187,7 @@ class Teacher(Agent):
         self.epochDone = False
 
     # return state/action dict based upon passed state
-    def act(self):
+    def act(self) -> Message:
         """
         Act upon the previous observation.
         """
@@ -195,14 +195,14 @@ class Teacher(Agent):
             t = Message({'text': 'Hello agent!'})
         return t
 
-    def epoch_done(self):
+    def epoch_done(self) -> bool:
         """
         Return whether the epoch is done.
         """
         return self.epochDone
 
     # Default unknown length
-    def num_examples(self):
+    def num_examples(self) -> Optional[int]:
         """
         Return the number of examples (e.g. individual utterances) in the dataset.
 
@@ -210,7 +210,7 @@ class Teacher(Agent):
         """
         return None
 
-    def num_episodes(self):
+    def num_episodes(self) -> Optional[int]:
         """
         Return the number of episodes (e.g. conversations) in the dataset.
 
@@ -251,7 +251,7 @@ class Teacher(Agent):
         Iterate through the examples of the teacher.
         """
         clone = self.clone()
-        while True:
+        while not clone.epoch_done():
             message = clone.act()
             if not isinstance(message, Message):
                 # backwards compatibility with older agents
@@ -489,11 +489,11 @@ class FixedDialogTeacher(Teacher):
             and self._episode_done
             and self.episode_idx + self.opt.get("batchsize", 1) >= self.num_episodes()
         ):
-            epoch_done = True
+            self.epochDone = True
         else:
-            epoch_done = False
+            self.epochDone = False
 
-        return ex, epoch_done
+        return ex, self.epochDone
 
     def num_episodes(self) -> int:
         """
@@ -565,7 +565,7 @@ class FixedDialogTeacher(Teacher):
         """
         pass
 
-    def act(self):
+    def act(self) -> Message:
         """
         Send new dialog message.
         """
@@ -913,7 +913,7 @@ class DialogData(object):
         self._num_examples_cache = sum(len(episode) for episode in self.data)
         return self._num_examples_cache
 
-    def get(self, episode_idx, entry_idx=0):
+    def get(self, episode_idx, entry_idx=0) -> Tuple[Message, bool]:
         """
         Get the specified episode and the specified entry in that episode.
 
@@ -940,7 +940,7 @@ class DialogData(object):
         table['episode_done'] = episode_done
         return table, end_of_data
 
-    def build_table(self, entry):
+    def build_table(self, entry) -> Message:
         """
         Packs an entry into an action-observation dictionary.
 
@@ -1013,6 +1013,14 @@ class DialogData(object):
             table = Message(table)
 
         return table
+
+    def __iter__(self):
+        """
+        Iterate through one pass of the data.
+        """
+        for episode in self.data:
+            for example in episode:
+                yield self.build_table(example)
 
 
 class StreamDialogData(DialogData):

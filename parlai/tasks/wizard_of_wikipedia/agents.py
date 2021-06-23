@@ -16,7 +16,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 from __future__ import annotations
-from typing import Iterable, Optional, Tuple
+from typing import Optional, Tuple
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser
@@ -26,6 +26,7 @@ from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from parlai.utils.io import PathManager
 from parlai.utils.misc import warn_once
 from .build import build
+from .rare_f1 import RareF1Computer
 
 import json
 import os
@@ -102,71 +103,13 @@ def _path(opt, split='random_split'):
     return os.path.join(dp, df)
 
 
-class RareWordF1Calculator:
-    """
-    Helper class for computing F1 with an emphasis on infrequent words.
-    """
-
-    def __init__(self, corpus: str, top_p: float = 0.5):
-        try:
-            import nltk
-        except ImportError:
-            raise ImportError('Please install nltk (e.g. pip install nltk).')
-        words = normalize_answer(corpus).split()
-        self._freq_dist = nltk.FreqDist(words)
-        self._cutoff_count = RareWordF1Calculator._find_cutoff_count(
-            self._freq_dist, top_p
-        )
-
-    @property
-    def freq_dist(self):
-        return self._freq_dist
-
-    @staticmethod
-    def _find_cutoff_count(freq_dist, top_p: float) -> int:
-        """
-        Finds the word occurance for which the cumulative occurances are `top_p` of the
-        overall word count.
-        """
-        assert top_p < 1
-        target = sum(freq_dist.values()) * top_p
-        cumul = 0
-        for _, v in freq_dist.most_common():
-            cumul += v
-            if cumul > target:
-                return v
-        raise RuntimeError(f"Invalid top {top_p*100}% of the corpus distribution")
-
-    @staticmethod
-    def _filter(freq_dist, cutoff: int, text: str) -> str:
-        """
-        For words that are found in the reference distribution, filters those with an
-        occurrence count less than the cutoff.
-        """
-        words = normalize_answer(text).split()
-        return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
-
-    def compute(self, guess: str, answers: Iterable[str]) -> F1Metric:
-        if guess is None or answers is None:
-            return F1Metric(0, 0)
-        guess = RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, guess)
-        answers = [
-            RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
-            for a in answers
-        ]
-        if not any(len(a) for a in answers):
-            # no rare words in labels, set denominator to zero
-            return F1Metric(0, 0)
-        return F1Metric.compute(guess, answers)
-
-
-def _build_rare_word_f1(datapath: str) -> RareWordF1Calculator:
+def _build_rare_word_f1(datapath: str) -> RareF1Computer:
     all_text = ''
     data_path = os.path.join(datapath, 'wizard_of_wikipedia', 'data.json')
     with PathManager.open(data_path) as f:
         data = json.load(f)
         all_text += ' '.join(m['text'] for d in data for m in d['dialog']) + ' '
-    return RareWordF1Calculator(all_text, top_p=0.5)
+    return RareF1Computer(all_text, top_p=0.5)
 
 
 class WizardOfWikipediaTeacher(FixedDialogTeacher):
