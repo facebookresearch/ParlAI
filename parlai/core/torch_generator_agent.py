@@ -526,8 +526,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             mixed_precision = opt['fp16']
             reshard_after_forward = opt['ddp_backend'] == 'zero3'
-            # hack: fsdp expects things in fp32 if we're using mixed precision.
-            # lol! convert it back!
             compute_dtype = torch.float16 if self.fp16 else torch.float32
             mixed_precision = self.fp16 and opt['fp16_impl'] == 'safe'
             logging.debug(
