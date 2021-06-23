@@ -25,6 +25,7 @@ import torch.nn.functional as F
 
 import numpy as np
 import math
+from collections import Counter
 
 from sklearn.metrics import auc
 
@@ -178,7 +179,14 @@ class AUCMetrics(Metric):
     probabilities; expecting values to be (false positives, true positives)
     """
 
-    __slots__ = ('_sorted_keys', '_values', '_pos_cnt', '_neg_cnt', '_class_name')
+    __slots__ = (
+        '_pos_dict',
+        '_tot_pos',
+        '_neg_dict',
+        '_tot_neg',
+        '_class_name',
+        '_max_bucket_dec_places',
+    )
 
     @property
     def macro_average(self) -> bool:
@@ -187,139 +195,107 @@ class AUCMetrics(Metric):
         """
         return False
 
-    def __init__(
-        self,
-        values: Dict[float, Tuple[int, int]],
-        pos_cnt: int,
-        neg_cnt: int,
-        sorted_keys: List[float],
-        class_name: Union[int, str],
-    ):
-        self.key_vals = values
-        self._pos_cnt = pos_cnt
-        self._neg_cnt = neg_cnt
-        self._sorted_keys = sorted_keys
-        self._class_name = class_name
-
     @classmethod
     def raw_data_to_auc(
         cls,
         true_labels: List[int],
-        class_probs: List[float],
+        pos_probs: List[float],
         class_name,
-        max_dec_places: float = 3,
+        max_bucket_dec_places: float = 3,
     ):
-        assert len(true_labels) == len(class_probs)
+        auc_object = cls(class_name, max_bucket_dec_places=max_bucket_dec_places)
+        auc_object.update_raw(
+            true_labels=true_labels, pos_probs=pos_probs, class_name=class_name
+        )
+        return auc_object
+
+    def __init__(
+        self,
+        class_name: Union[int, str],
+        pos_dict: Dict[float, int] = None,
+        neg_dict: Dict[float, int] = None,
+        tot_pos: int = -1,
+        tot_neg: int = -1,
+        max_bucket_dec_places: float = 3,
+    ):
+        self._pos_dict = pos_dict if pos_dict else Counter()
+        self._neg_dict = neg_dict if neg_dict else Counter()
+        self._tot_pos = tot_pos if tot_pos >= 0 else sum(self._pos_dict.values())
+        self._tot_neg = tot_neg if tot_neg >= 0 else sum(self._neg_dict.values())
+        self._class_name = class_name
+        self._max_bucket_dec_places = max_bucket_dec_places
+
+    def update_raw(self, true_labels: List[int], pos_probs: List[float], class_name):
+        assert self._class_name == class_name
+        assert len(true_labels) == len(pos_probs)
         # return empty class if no probabilities given
-        if len(class_probs) == 0:
-            return cls({}, 0, 0, [], class_name)
+        if len(pos_probs) == 0:
+            return
 
-        # count the total number for positives and negatives
-        pos_cnt = sum([class_name == label for label in true_labels])
-        neg_cnt = len(true_labels) - pos_cnt
-
-        # first calculate thresholds, and include the default
-        # upper bounds; don't need to include lower because
-        # we are doing greater and equal
-        # NOTE: assumes the probabilites are between 0 and 1
-        all_thresholds = set([1.5])
-        CONST = 10 ** max_dec_places
+        TO_INT_FACTOR = 10 ** self._max_bucket_dec_places
         # add the upper and lower bound of the values
-        for prob in class_probs:
-            int_prob = prob * CONST
-            prob_down = math.floor(int_prob) / CONST
-            prob_up = math.ceil(int_prob) / CONST
-            all_thresholds.add(prob_down)
-            all_thresholds.add(prob_up)
-
-        sorted_thresholds = sorted(all_thresholds)
-
-        # now calculate the false positives and true positives
-        values = {thres: [0, 0] for thres in all_thresholds}
-
-        for label, prob in zip(true_labels, class_probs):
-            # would only add to true positives
+        for label, prob in zip(true_labels, pos_probs):
+            # calculate the upper and lower bound of the values
+            prob_down = math.floor(prob * TO_INT_FACTOR) / TO_INT_FACTOR
             if label == class_name:
-                effected_ind = 1
-            # would only add to false positives
+                self._tot_pos += 1
+                interested_dict = self._pos_dict
             else:
-                effected_ind = 0
-
-            ind = np.searchsorted(sorted_thresholds, prob, side='left')
-            if ind < len(sorted_thresholds) and sorted_thresholds[ind] == prob:
-                ind += 1
-            # print('current prob', prob, '| found index:', ind)
-            for thres in sorted_thresholds[:ind]:
-                values[thres][effected_ind] += 1
-
-        return cls(values, pos_cnt, neg_cnt, sorted_thresholds, class_name)
-
-    def _get_fp_tp(self, threshold):
-        """
-        get the false positive count and true positive count for the given thresholds
-        """
-        if self.key_vals.get(threshold) is not None:
-            return self.key_vals.get(threshold)
-
-        tmp_key = np.searchsorted(self._sorted_keys, threshold, side='right')
-        if tmp_key >= len(self._sorted_keys):
-            tmp_key = len(self._sorted_keys) - 1
-        return self.key_vals[self._sorted_keys[tmp_key]]
-
-    def _merge_sorted_no_dupes(self, arr1, arr2):
-        i1, i2 = (0, 0)
-        l1, l2 = (len(arr1), len(arr2))
-        arr_together = []
-        while i1 < l1 and i2 < l2:
-            if arr1[i1] > arr2[i2]:
-                curr_min = arr2[i2]
+                self._tot_neg += 1
+                interested_dict = self._neg_dict
+            if interested_dict.get(prob_down):
+                interested_dict[prob_down] += 1
             else:
-                curr_min = arr1[i1]
-
-            if curr_min == arr1[i1]:
-                i1 += 1
-            if curr_min == arr2[i2]:
-                i2 += 1
-
-            arr_together.append(curr_min)
-        return arr_together + arr1[i1:] + arr2[i2:]
+                interested_dict[prob_down] = 1
 
     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
         if other is None:
             return self
         assert isinstance(other, AUCMetrics)
         assert other._class_name == self._class_name
+        all_pos_dict = self._pos_dict + other._pos_dict
+        all_neg_dict = self._neg_dict + other._neg_dict
+        all_tot_pos = self._tot_pos + other._tot_pos
+        all_tot_neg = self._tot_neg + other._tot_neg
 
-        all_neg = self._neg_cnt + other._neg_cnt
-        all_pos = self._pos_cnt + other._pos_cnt
-
-        # merging the thresholds
-        all_thresholds = self._merge_sorted_no_dupes(
-            self._sorted_keys, other._sorted_keys
+        return AUCMetrics(
+            self._class_name,
+            pos_dict=all_pos_dict,
+            neg_dict=all_neg_dict,
+            tot_neg=all_tot_neg,
+            tot_pos=all_tot_pos,
         )
 
-        all_vals = {}
-        for threshold in all_thresholds:
-            self_false_p, self_true_p = self._get_fp_tp(threshold)
-            other_false_p, other_true_p = other._get_fp_tp(threshold)
+    def _calc_fp_tp(self) -> List[Tuple[int]]:
+        all_thresholds = sorted(
+            set(list(self._pos_dict.keys()) + list(self._neg_dict.keys()))
+        )
+        # sorted in ascending order, so adding a upper bound
+        all_thresholds.append(all_thresholds[-1] + 1)
+        L = len(all_thresholds)
+        # false positives, true positives
+        fp_tp = [(0, 0)]
 
-            fp = self_false_p + other_false_p
-            tp = self_true_p + other_true_p
-            all_vals[threshold] = [fp, tp]
-
-        return AUCMetrics(all_vals, all_pos, all_neg, all_thresholds, self._class_name)
+        # the biggest one is always (0,0), so skip that one
+        for i in range(L - 2, -1, -1):
+            fp, tp = fp_tp[-1]
+            thres = all_thresholds[i]
+            # false positives
+            fp += self._neg_dict.get(thres, 0)
+            # true positives
+            tp += self._pos_dict.get(thres, 0)
+            fp_tp.append((fp, tp))
+        return fp_tp
 
     def value(self) -> float:
-        # the thresholds create a natural progression
-        # not sure why but auc(tpr, fpr) or 1 - auc(fpr, tpr)
-        # gives the correct auc when compared against other things....
-        fpr = []
-        tpr = []
-        for key in self._sorted_keys:
-            fp, tp = self.key_vals[key]
-            fpr.append(fp / self._neg_cnt)
-            tpr.append(tp / self._pos_cnt)
-        return 1 - auc(fpr, tpr)
+        fp_tp = self._calc_fp_tp()
+        fp_tp.sort(key=lambda x: x[0])
+        fps, tps = list(zip(*fp_tp))
+
+        fpr = [fp / self._tot_neg for fp in fps]
+        tpr = [tp / self._tot_pos for tp in tps]
+
+        return auc(tpr, fpr)
 
 
 class WeightedF1Metric(Metric):
