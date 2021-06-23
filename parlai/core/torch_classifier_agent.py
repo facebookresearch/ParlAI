@@ -9,7 +9,6 @@ Torch Classifier Agents classify text into a fixed set of labels.
 """
 
 
-from numpy.lib.function_base import append
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.torch import PipelineHelper, total_parameters, trainable_parameters
@@ -267,6 +266,24 @@ class AUCMetrics(Metric):
             tmp_key = len(self._sorted_keys) - 1
         return self.key_vals[self._sorted_keys[tmp_key]]
 
+    def _merge_sorted_no_dupes(self, arr1, arr2):
+        i1, i2 = (0, 0)
+        l1, l2 = (len(arr1), len(arr2))
+        arr_together = []
+        while i1 < l1 and i2 < l2:
+            if arr1[i1] > arr2[i2]:
+                curr_min = arr2[i2]
+            else:
+                curr_min = arr1[i1]
+
+            if curr_min == arr1[i1]:
+                i1 += 1
+            if curr_min == arr2[i2]:
+                i2 += 1
+
+            arr_together.append(curr_min)
+        return arr_together + arr1[i1:] + arr2[i2:]
+
     def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
         if other is None:
             return self
@@ -277,8 +294,9 @@ class AUCMetrics(Metric):
         all_pos = self._pos_cnt + other._pos_cnt
 
         # merging the thresholds
-        all_thresholds = set(self._sorted_keys + other._sorted_keys)
-        all_thresholds = sorted(all_thresholds)
+        all_thresholds = self._merge_sorted_no_dupes(
+            self._sorted_keys, other._sorted_keys
+        )
 
         all_vals = {}
         for threshold in all_thresholds:
@@ -288,11 +306,6 @@ class AUCMetrics(Metric):
             fp = self_false_p + other_false_p
             tp = self_true_p + other_true_p
             all_vals[threshold] = [fp, tp]
-
-        if len(all_thresholds) == 2:
-            print('self_vals', self.key_vals)
-            print('other_vals:', other.key_vals)
-            print('all_vals', all_vals)
 
         return AUCMetrics(all_vals, all_pos, all_neg, all_thresholds, self._class_name)
 
@@ -499,6 +512,9 @@ class TorchClassifierAgent(TorchAgent):
         else:
             self.calc_auc = -1
 
+        if self.calc_auc:
+            self.auc = AUCMetrics.raw_data_to_auc([], [], class_name=self.class_list[0])
+
         # set up model and optimizers
         states = {}
         if shared:
@@ -621,13 +637,9 @@ class TorchClassifierAgent(TorchAgent):
         probs_arr = probs.detach().cpu().numpy()
         class_probs = probs_arr[:, 0]
         class_name = self.class_list[0]
-        # class_name matters for AUC curve plotting but not the area under cure?
+        # class_name matters for AUC curve plotting but not the area under curve
         # could be useful for later
-        auc_metrics_per_exs = [
-            AUCMetrics.raw_data_to_auc([truth], [prob], class_name)
-            for truth, prob in zip(batch.labels, class_probs)
-        ]
-        self.record_local_metric(f'AUC', auc_metrics_per_exs)
+        self.auc += AUCMetrics.raw_data_to_auc(batch.labels, class_probs, class_name)
 
     def train_step(self, batch):
         """
@@ -664,9 +676,6 @@ class TorchClassifierAgent(TorchAgent):
         self.model.eval()
         scores = self.score(batch)
         probs = F.softmax(scores, dim=1)
-
-        if self.calc_auc:
-            self._update_auc(batch, probs)
 
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)

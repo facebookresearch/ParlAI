@@ -353,6 +353,7 @@ class TestAggregators(unittest.TestCase):
             1.5: [0, 0],
         }
 
+        # run and check the TPs and FPs
         task1_result = AUCMetrics.raw_data_to_auc(
             task1_gold_labels, task1_probabilities, 'class_notok', max_dec_places=2
         )
@@ -360,14 +361,17 @@ class TestAggregators(unittest.TestCase):
             task2_gold_labels, task2_probabilities, 'class_notok', max_dec_places=2
         )
 
+        self.assertEqual(task1_result.key_vals, task1_exp_val)
+        self.assertEqual(task2_result.key_vals, task2_exp_val)
+
+        # check that merging als produces the same results
+        task3_result = task1_result + task2_result
+        self.assertEqual(task3_result.key_vals, task3_exp_val)
+
+        # then check from raw data again
         task3_result = AUCMetrics.raw_data_to_auc(
             task3_gold_labels, task3_probabilities, 'class_notok', max_dec_places=2
         )
-        self.assertEqual(task1_result.key_vals, task1_exp_val)
-        self.assertEqual(task2_result.key_vals, task2_exp_val)
-        self.assertEqual(task3_result.key_vals, task3_exp_val)
-
-        task3_result = task1_result + task2_result
         self.assertEqual(task3_result.key_vals, task3_exp_val)
 
         # now actually testing the area under curve
