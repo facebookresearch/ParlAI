@@ -63,19 +63,24 @@ def clip_grad_norm(params, max_norm, sync: bool = False):
         params = [params]
     # make sure any generators are expanded
     params = list(params)
-    if len(params) == 1:
-        p = params[0].grad
-        grad_norm = torch.norm(p)
-        if grad_norm > max_norm > 0:
-            clip_coef = max_norm / (grad_norm + 1e-6)
-            p.mul_(clip_coef)
-        return grad_norm
-    elif max_norm > 0:
+    # if syncing we need to manually perform the clipping so that we aggregrate
+    # properly
+    if max_norm > 0 and not sync:
         return torch.nn.utils.clip_grad_norm_(params, max_norm)
     else:
-        return torch.sqrt(
-            sum(p.grad.data.norm() ** 2 for p in params if p.grad is not None)
-        )
+        normsq = sum(p.grad.data.norm() ** 2 for p in params if p.grad is not None)
+        if sync:
+            # also need to get the norms from all the other sharded works in FSDP
+            import torch.distributed as dist
+
+            dist.all_reduce(normsq)
+        grad_norm = normsq.sqrt()
+        if max_norm > 0:
+            clip_coef = max_norm / (grad_norm + 1e-6)
+            for p in params:
+                p.grad.detach().mul_(clip_coef)
+
+        return grad_norm
 
 
 def has_overflow(grad_norm):
@@ -104,15 +109,6 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
         self.scaler = DynamicLossScaler(2.0 ** 15)
         self.min_loss_scale = 2 ** -5
         self._sync_overflows = sync_overflows
-
-    def _maybe_sync(self, value: bool) -> bool:
-        if self._sync_overflows:
-            import torch.distributed as dist
-
-            value_tensor = torch.BoolTensor([value]).cuda()
-            dist.all_reduce(value_tensor)
-            value = value_tensor.item()
-        return value
 
     @classmethod
     def _get_parameters(cls, optimizer):
@@ -412,15 +408,6 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
 
         self._sync_overflows = sync_overflows
-
-    def _maybe_sync(self, value: bool) -> bool:
-        if self._sync_overflows:
-            import torch.distributed as dist
-
-            value_tensor = torch.BoolTensor([value]).cuda()
-            dist.all_reduce(value_tensor)
-            value = value_tensor.item()
-        return value
 
     @staticmethod
     def compatible_optimizers():
