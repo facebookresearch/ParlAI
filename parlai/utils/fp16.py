@@ -55,7 +55,7 @@ class FP16SafeCrossEntropy(torch.nn.Module):
         )
 
 
-def clip_grad_norm(params, max_norm):
+def clip_grad_norm(params, max_norm, sync: bool = False):
     """
     Clips grad norm.
     """
@@ -220,11 +220,13 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
         Clips gradient norm and updates dynamic loss scaler.
         """
         self._sync_fp16_grads_to_fp32()
-        grad_norm = clip_grad_norm(self.fp32_params, max_norm)
+        grad_norm = clip_grad_norm(
+            self.fp32_params, max_norm, sync=self._sync_overflows
+        )
 
         # detect overflow and adjust loss scale
         if self.scaler is not None:
-            overflow = self._maybe_sync(has_overflow(grad_norm))
+            overflow = has_overflow(grad_norm)
             prev_scale = self.scaler.loss_scale
             self.scaler.update_scale(overflow)
             if overflow:
@@ -400,6 +402,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     def __init__(
         self,
         init_optimizer: torch.optim.Optimizer,  # type: ignore
+        sync_overflows: bool = False,
         loss_initial_scale: float = 2.0 ** 17,
         min_loss_scale: float = 1e-4,
     ):
@@ -407,6 +410,17 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         # TODO: set some of these args with opt
         self.min_loss_scale = min_loss_scale
         self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
+
+        self._sync_overflows = sync_overflows
+
+    def _maybe_sync(self, value: bool) -> bool:
+        if self._sync_overflows:
+            import torch.distributed as dist
+
+            value_tensor = torch.BoolTensor([value]).cuda()
+            dist.all_reduce(value_tensor)
+            value = value_tensor.item()
+        return value
 
     @staticmethod
     def compatible_optimizers():
@@ -456,9 +470,11 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         Returns -1 if the most recently computed gradients overflowed.
         """
         self._unscale_grads()
-        grad_norm = clip_grad_norm(self.params, gradient_clip)
+        grad_norm = clip_grad_norm(
+            self.params, gradient_clip, sync=self._sync_overflows
+        )
         # detect overflow and adjust loss scale
-        overflow = self._maybe_sync(has_overflow(grad_norm))
+        overflow = has_overflow(grad_norm)
         self.scaler.update_scale(overflow)
         if overflow:
             if self.scaler.loss_scale <= self.min_loss_scale:
