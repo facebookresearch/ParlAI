@@ -534,10 +534,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             reshard_after_forward = opt['ddp_backend'] == 'zero3'
             compute_dtype = torch.float16 if self.fp16 else torch.float32
             mixed_precision = self.fp16 and opt['fp16_impl'] == 'safe'
-            logging.debug(
-                f"Wrapping in FSDP(reshard_after_forward = {reshard_after_forward}, "
-                f"compute_dtype = {compute_dtype} mixed_precision = {mixed_precision})"
-            )
             fsdp_args = dict(
                 reshard_after_forward=reshard_after_forward,
                 mixed_precision=mixed_precision,
@@ -546,17 +542,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 flatten_parameters=True,
                 process_group=get_dist_group(),
             )
+            logging.debug(f"Wrapping in FSDP: {fsdp_args}")
 
             with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
                 # TODO: we can save a bit more memory if we ever manually
                 # wrap things.
-                policy = functools.partial(
-                    default_auto_wrap_policy,
-                    min_num_params=1e7,
-                    exclude_wrap_modules={nn.Embedding, nn.ModuleList},
-                )
-                self.model.encoder = auto_wrap(self.model.encoder, policy)
-                self.model.decoder = auto_wrap(self.model.decoder, policy)
+                for i, layer in enumerate(self.model.encoder.layers):
+                    self.model.encoder.layers[i] = FSDP(layer, **fsdp_args)
+                for i, layer in enumerate(self.model.decoder.layers):
+                    self.model.decoder.layers[i] = FSDP(layer, **fsdp_args)
+
                 self.model = FSDP(self.model, **fsdp_args)
 
         if shared is not None:
