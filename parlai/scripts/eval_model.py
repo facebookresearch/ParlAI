@@ -16,6 +16,7 @@ parlai eval_model --task convai2 --model-file "/path/to/model_file"
 ```
 """
 
+from re import I
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
@@ -29,6 +30,7 @@ from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.io import PathManager
+from parlai.core.torch_classifier_agent import AUCMetrics
 import parlai.utils.logging as logging
 
 import json
@@ -68,6 +70,14 @@ def setup_args(parser=None):
         type=str,
         default='conversations',
         choices=['conversations', 'parlai'],
+    )
+    parser.add_argument(
+        '--area-under-curve',
+        '-auc',
+        type='bool',
+        default=False,
+        help='whether to also calculate the area under the roc curve; '
+        'only for binary classification',
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
@@ -118,6 +128,18 @@ def _save_eval_stats(opt, report):
         f.write("\n")  # for jq
 
 
+# def update_auc(auc, batch_output):
+#     probs_arr = probs.detach().cpu().numpy()
+#     class_probs = probs_arr[:, 0]
+#     class_name = self.class_list[0]
+#     # class_name matters for AUC curve plotting but not the area under curve
+#     # could be useful for later
+#     self.auc.update_raw(batch.labels, class_probs, class_name)
+#             if self.calc_auc:
+#             self._update_auc(batch, probs)
+#     return auc
+
+
 def _eval_single_world(opt, agent, task):
     logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
@@ -140,6 +162,8 @@ def _eval_single_world(opt, agent, task):
 
     if is_distributed():
         logging.warning('Progress bar is approximate in distributed mode.')
+
+    print('AUC BEFORE:', agent.auc)
 
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
@@ -168,8 +192,13 @@ def _eval_single_world(opt, agent, task):
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
-    world.reset()
 
+    print('AUC AFTER:', agent.auc)
+
+    if opt.get('area_under_curve', False):
+        report['AUC'] = agent.auc
+        agent.reset_auc()
+    world.reset()
     return report
 
 

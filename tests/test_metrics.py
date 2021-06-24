@@ -428,20 +428,24 @@ class TestAggregators(unittest.TestCase):
             '_': (0, 0),
         }
 
-        # run and check the TPs and FPs
+        # run and check the TPs and FPs for singles
         task1_result = AUCMetrics.raw_data_to_auc(
             task1_gold_labels, task1_probabilities, 'class_notok'
         )
         task2_result = AUCMetrics.raw_data_to_auc(
             task2_gold_labels, task2_probabilities, 'class_notok'
         )
-
+        task3_result = AUCMetrics.raw_data_to_auc(
+            task3_gold_labels, task3_probabilities, 'class_notok'
+        )
         task4_result = AUCMetrics.raw_data_to_auc(
             task4_gold_labels, task4_probabilities, 'class_notok'
         )
-
         task5_result = AUCMetrics.raw_data_to_auc(
             task5_gold_labels, task5_probabilities, 'class_notok'
+        )
+        task6_result = AUCMetrics.raw_data_to_auc(
+            task6_gold_labels, task6_probabilities, 'class_notok'
         )
 
         # check the buckets first
@@ -449,16 +453,22 @@ class TestAggregators(unittest.TestCase):
         self.assertEqual(task1_result._neg_dict, task1_neg_buckets)
         self.assertEqual(task2_result._pos_dict, task2_pos_buckets)
         self.assertEqual(task2_result._neg_dict, task2_neg_buckets)
+        self.assertEqual(task3_result._pos_dict, task3_pos_buckets)
+        self.assertEqual(task3_result._neg_dict, task3_neg_buckets)
         self.assertEqual(task4_result._pos_dict, task4_pos_buckets)
         self.assertEqual(task4_result._neg_dict, task4_neg_buckets)
         self.assertEqual(task5_result._pos_dict, task5_pos_buckets)
         self.assertEqual(task5_result._neg_dict, task5_neg_buckets)
+        self.assertEqual(task6_result._pos_dict, task6_pos_buckets)
+        self.assertEqual(task6_result._neg_dict, task6_neg_buckets)
 
         # then check fp, tp
         self.assertEqual(set(task1_result._calc_fp_tp()), set(task1_exp_fp_tp.values()))
         self.assertEqual(set(task2_result._calc_fp_tp()), set(task2_exp_fp_tp.values()))
+        self.assertEqual(set(task3_result._calc_fp_tp()), set(task3_exp_fp_tp.values()))
         self.assertEqual(set(task4_result._calc_fp_tp()), set(task4_exp_fp_tp.values()))
         self.assertEqual(set(task5_result._calc_fp_tp()), set(task5_exp_fp_tp.values()))
+        self.assertEqual(set(task6_result._calc_fp_tp()), set(task6_exp_fp_tp.values()))
 
         # check that merging also produces the same results
         task3_result = task1_result + task2_result
@@ -469,17 +479,6 @@ class TestAggregators(unittest.TestCase):
         task6_result = task4_result + task5_result
         self.assertEqual(task6_result._pos_dict, task6_pos_buckets)
         self.assertEqual(task6_result._neg_dict, task6_neg_buckets)
-        self.assertEqual(set(task6_result._calc_fp_tp()), set(task6_exp_fp_tp.values()))
-
-        # then check from raw data again
-        task3_result = AUCMetrics.raw_data_to_auc(
-            task3_gold_labels, task3_probabilities, 'class_notok'
-        )
-        self.assertEqual(set(task3_result._calc_fp_tp()), set(task3_exp_fp_tp.values()))
-
-        task6_result = AUCMetrics.raw_data_to_auc(
-            task6_gold_labels, task6_probabilities, 'class_notok'
-        )
         self.assertEqual(set(task6_result._calc_fp_tp()), set(task6_exp_fp_tp.values()))
 
         # now actually testing the area under curve
@@ -502,6 +501,26 @@ class TestAggregators(unittest.TestCase):
         )
         self.assertAlmostEqual(
             roc_auc_score(task6_gold_labels, task6_probabilities), task6_result.value()
+        )
+
+        # last task: adding everything together; uses task 3 & 6
+        # gonna just check roc scores
+        task_all_gold_labels = task3_gold_labels + task6_gold_labels
+        task_all_probabilities = task3_probabilities + task6_probabilities
+
+        task_all_result = task3_result + task6_result
+
+        self.assertAlmostEqual(
+            roc_auc_score(task_all_gold_labels, task_all_probabilities),
+            task_all_result.value(),
+        )
+
+        task_all_result2 = AUCMetrics.raw_data_to_auc(
+            task_all_gold_labels, task_all_probabilities, 'class_notok'
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task_all_gold_labels, task_all_probabilities),
+            task_all_result2.value(),
         )
 
     def test_classifier_metrics(self):

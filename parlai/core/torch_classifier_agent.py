@@ -214,23 +214,16 @@ class AUCMetrics(Metric):
         class_name: Union[int, str],
         pos_dict: Dict[float, int] = None,
         neg_dict: Dict[float, int] = None,
-        tot_pos: int = -1,
-        tot_neg: int = -1,
         max_bucket_dec_places: float = 3,
     ):
         self._pos_dict = pos_dict if pos_dict else Counter()
         self._neg_dict = neg_dict if neg_dict else Counter()
-        self._tot_pos = tot_pos if tot_pos >= 0 else sum(self._pos_dict.values())
-        self._tot_neg = tot_neg if tot_neg >= 0 else sum(self._neg_dict.values())
         self._class_name = class_name
         self._max_bucket_dec_places = max_bucket_dec_places
 
     def update_raw(self, true_labels: List[int], pos_probs: List[float], class_name):
         assert self._class_name == class_name
         assert len(true_labels) == len(pos_probs)
-        # return empty class if no probabilities given
-        if len(pos_probs) == 0:
-            return
 
         TO_INT_FACTOR = 10 ** self._max_bucket_dec_places
         # add the upper and lower bound of the values
@@ -238,10 +231,8 @@ class AUCMetrics(Metric):
             # calculate the upper and lower bound of the values
             prob_down = math.floor(prob * TO_INT_FACTOR) / TO_INT_FACTOR
             if label == class_name:
-                self._tot_pos += 1
                 interested_dict = self._pos_dict
             else:
-                self._tot_neg += 1
                 interested_dict = self._neg_dict
             if interested_dict.get(prob_down):
                 interested_dict[prob_down] += 1
@@ -255,22 +246,17 @@ class AUCMetrics(Metric):
         assert other._class_name == self._class_name
         all_pos_dict = self._pos_dict + other._pos_dict
         all_neg_dict = self._neg_dict + other._neg_dict
-        all_tot_pos = self._tot_pos + other._tot_pos
-        all_tot_neg = self._tot_neg + other._tot_neg
 
         return AUCMetrics(
-            self._class_name,
-            pos_dict=all_pos_dict,
-            neg_dict=all_neg_dict,
-            tot_neg=all_tot_neg,
-            tot_pos=all_tot_pos,
+            self._class_name, pos_dict=all_pos_dict, neg_dict=all_neg_dict
         )
 
     def _calc_fp_tp(self) -> List[Tuple[int]]:
         all_thresholds = sorted(
             set(list(self._pos_dict.keys()) + list(self._neg_dict.keys()))
         )
-        # sorted in ascending order, so adding a upper bound
+        # sorted in ascending order,
+        # so adding a upper bound so that its tp, fp is (0, 0)
         all_thresholds.append(all_thresholds[-1] + 1)
         L = len(all_thresholds)
         # false positives, true positives
@@ -288,14 +274,18 @@ class AUCMetrics(Metric):
         return fp_tp
 
     def value(self) -> float:
+        _tot_pos = sum(self._pos_dict.values())
+        _tot_neg = sum(self._neg_dict.values())
+        if _tot_pos == 0 and _tot_neg == 0:
+            return 0
         fp_tp = self._calc_fp_tp()
         fp_tp.sort(key=lambda x: x[0])
         fps, tps = list(zip(*fp_tp))
 
-        fpr = [fp / self._tot_neg for fp in fps]
-        tpr = [tp / self._tot_pos for tp in tps]
+        fpr = [fp / _tot_neg for fp in fps]
+        tpr = [tp / _tot_pos for tp in tps]
 
-        return auc(tpr, fpr)
+        return auc(fpr, tpr)
 
 
 class WeightedF1Metric(Metric):
@@ -397,14 +387,6 @@ class TorchClassifierAgent(TorchAgent):
             'ref class; only applies to binary '
             'classification',
         )
-        parser.add_argument(
-            '--area-under-curve',
-            '-auc',
-            type='bool',
-            default=False,
-            help='whether to also calculate the area under the roc curve; '
-            'only for binary classification',
-        )
         # interactive mode
         parser.add_argument(
             '--print-scores',
@@ -484,9 +466,9 @@ class TorchClassifierAgent(TorchAgent):
 
         # set up calculating auc, only used in binary classification
         if len(self.class_list) == 2:
-            self.calc_auc = opt['area_under_curve']
+            self.calc_auc = opt.get('area_under_curve', False)
         else:
-            self.calc_auc = -1
+            self.calc_auc = False
 
         if self.calc_auc:
             self.auc = AUCMetrics.raw_data_to_auc([], [], class_name=self.class_list[0])
@@ -615,7 +597,7 @@ class TorchClassifierAgent(TorchAgent):
         class_name = self.class_list[0]
         # class_name matters for AUC curve plotting but not the area under curve
         # could be useful for later
-        self.auc += AUCMetrics.raw_data_to_auc(batch.labels, class_probs, class_name)
+        self.auc.update_raw(batch.labels, class_probs, class_name)
 
     def train_step(self, batch):
         """
@@ -653,6 +635,9 @@ class TorchClassifierAgent(TorchAgent):
         scores = self.score(batch)
         probs = F.softmax(scores, dim=1)
 
+        if self.calc_auc:
+            self._update_auc(batch, probs)
+
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
         else:
@@ -687,3 +672,6 @@ class TorchClassifierAgent(TorchAgent):
             class.
         """
         raise NotImplementedError('Abstract class: user must implement score()')
+
+    def reset_auc(self):
+        self.auc = AUCMetrics(class_name=self.class_list[0])
