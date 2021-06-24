@@ -18,16 +18,13 @@ from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict, Union
 from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
-import parlai.utils.logging as logging
-
-import torch
-import torch.nn.functional as F
-
-import numpy as np
-import math
-from collections import Counter
-
 from sklearn.metrics import auc
+
+import parlai.utils.logging as logging
+import torch.nn.functional as F
+from collections import Counter
+import torch
+import math
 
 
 class ConfusionMatrixMetric(Metric):
@@ -479,12 +476,6 @@ class TorchClassifierAgent(TorchAgent):
         if self.calc_auc:
             self.auc_class_ind = 0
             self.auc = AUCMetrics(class_name=self.class_list[self.auc_class_ind])
-            # self.auc_class_name = opt.get('area_under_curve_class_name')
-            # try:
-            #     self.auc_class_ind = self.class_list.index(self.auc_class_name)
-            # except ValueError:
-            #     self.auc_class_ind = 0
-            #     self.auc_class_name = self.class_list[self.auc_class_ind]
 
         # set up model and optimizers
         states = {}
