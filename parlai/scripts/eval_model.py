@@ -179,8 +179,8 @@ def _eval_single_world(opt, agent, task):
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
 
-    if world.agents[CLASSIFIER_AGENT].calc_auc:
-        classifier_agent = world.agents[CLASSIFIER_AGENT]
+    classifier_agent = world.agents[CLASSIFIER_AGENT]
+    if hasattr(classifier_agent, 'calc_auc') and classifier_agent.calc_auc:
         report['AUC'] = classifier_agent.auc
         classifier_agent.reset_auc()
         # for safety measures
