@@ -21,6 +21,7 @@ from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
+import functools
 from operator import attrgetter
 
 import torch
@@ -522,6 +523,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             and opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
         ):
             from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
+            from fairscale.nn.wrap.auto_wrap import (
+                enable_wrap,
+                auto_wrap,
+                default_auto_wrap_policy,
+            )
 
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             mixed_precision = opt['fp16']
@@ -532,8 +538,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Wrapping in FSDP(reshard_after_forward = {reshard_after_forward}, "
                 f"compute_dtype = {compute_dtype} mixed_precision = {mixed_precision})"
             )
-            self.model = FSDP(
-                self.model,
+            fsdp_args = dict(
                 reshard_after_forward=reshard_after_forward,
                 mixed_precision=mixed_precision,
                 compute_dtype=compute_dtype,
@@ -541,6 +546,18 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 flatten_parameters=True,
                 process_group=get_dist_group(),
             )
+
+            with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
+                # TODO: we can save a bit more memory if we ever manually
+                # wrap things.
+                policy = functools.partial(
+                    default_auto_wrap_policy,
+                    min_num_params=1e7,
+                    exclude_wrap_modules={nn.Embedding, nn.ModuleList},
+                )
+                self.model.encoder = auto_wrap(self.model.encoder, policy)
+                self.model.decoder = auto_wrap(self.model.decoder, policy)
+                self.model = FSDP(self.model, **fsdp_args)
 
         if shared is not None:
             if 'optimizer' in shared:
