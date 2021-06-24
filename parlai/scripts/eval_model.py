@@ -16,7 +16,6 @@ parlai eval_model --task convai2 --model-file "/path/to/model_file"
 ```
 """
 
-from re import I
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
 from parlai.core.logs import TensorboardLogger
@@ -30,7 +29,6 @@ from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.io import PathManager
-from parlai.core.torch_classifier_agent import AUCMetrics
 import parlai.utils.logging as logging
 
 import json
@@ -43,6 +41,8 @@ from parlai.utils.distributed import (
     is_distributed,
     get_rank,
 )
+
+CLASSIFIER_AGENT = 1
 
 
 def setup_args(parser=None):
@@ -128,18 +128,6 @@ def _save_eval_stats(opt, report):
         f.write("\n")  # for jq
 
 
-# def update_auc(auc, batch_output):
-#     probs_arr = probs.detach().cpu().numpy()
-#     class_probs = probs_arr[:, 0]
-#     class_name = self.class_list[0]
-#     # class_name matters for AUC curve plotting but not the area under curve
-#     # could be useful for later
-#     self.auc.update_raw(batch.labels, class_probs, class_name)
-#             if self.calc_auc:
-#             self._update_auc(batch, probs)
-#     return auc
-
-
 def _eval_single_world(opt, agent, task):
     logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
@@ -163,7 +151,7 @@ def _eval_single_world(opt, agent, task):
     if is_distributed():
         logging.warning('Progress bar is approximate in distributed mode.')
 
-    print('AUC BEFORE:', agent.auc)
+    print('AUC BEFORE:', world.agents[CLASSIFIER_AGENT].auc)
 
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
@@ -193,10 +181,23 @@ def _eval_single_world(opt, agent, task):
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
 
-    print('AUC AFTER:', agent.auc)
+    print('AUC AFTER:', world.agents[CLASSIFIER_AGENT].auc)
 
-    if opt.get('area_under_curve', False):
-        report['AUC'] = agent.auc
+    if world.agents[CLASSIFIER_AGENT].calc_auc:
+        # the second one should be the classifier agent for auc
+        from sklearn.metrics import roc_auc_score
+        from parlai.core.metrics import AverageMetric
+
+        classifier_agent = world.agents[CLASSIFIER_AGENT]
+        auc = classifier_agent.auc
+        all_labels = ['not_okay'] * sum(auc._pos_dict.values()) + ['okay'] * sum(
+            auc._neg_dict.values()
+        )
+        all_probs = list(auc._pos_dict.elements()) + list(auc._neg_dict.elements())
+        report['AUC_sklearn_auc'] = AverageMetric(roc_auc_score(all_labels, all_probs))
+        report['AUC'] = classifier_agent.auc
+        classifier_agent.reset_auc()
+        # for safety measures
         agent.reset_auc()
     world.reset()
     return report

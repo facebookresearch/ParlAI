@@ -201,7 +201,7 @@ class AUCMetrics(Metric):
         true_labels: List[int],
         pos_probs: List[float],
         class_name,
-        max_bucket_dec_places: float = 3,
+        max_bucket_dec_places: float = 5,
     ):
         auc_object = cls(class_name, max_bucket_dec_places=max_bucket_dec_places)
         auc_object.update_raw(
@@ -230,7 +230,7 @@ class AUCMetrics(Metric):
         for label, prob in zip(true_labels, pos_probs):
             # calculate the upper and lower bound of the values
             prob_down = math.floor(prob * TO_INT_FACTOR) / TO_INT_FACTOR
-            if label == class_name:
+            if label == self._class_name:
                 interested_dict = self._pos_dict
             else:
                 interested_dict = self._neg_dict
@@ -281,11 +281,17 @@ class AUCMetrics(Metric):
         fp_tp = self._calc_fp_tp()
         fp_tp.sort(key=lambda x: x[0])
         fps, tps = list(zip(*fp_tp))
+        if _tot_neg == 0:
+            fpr = [0] * len(fps)
+        else:
+            fpr = [fp / _tot_neg for fp in fps]
 
-        fpr = [fp / _tot_neg for fp in fps]
-        tpr = [tp / _tot_pos for tp in tps]
+        if _tot_pos == 0:
+            tpr = [0] * len(tps)
+        else:
+            tpr = [tp / _tot_pos for tp in tps]
 
-        return auc(fpr, tpr)
+        return auc(tpr, fpr)
 
 
 class WeightedF1Metric(Metric):
@@ -471,7 +477,14 @@ class TorchClassifierAgent(TorchAgent):
             self.calc_auc = False
 
         if self.calc_auc:
-            self.auc = AUCMetrics.raw_data_to_auc([], [], class_name=self.class_list[0])
+            self.auc_class_ind = 0
+            self.auc = AUCMetrics(class_name=self.class_list[self.auc_class_ind])
+            # self.auc_class_name = opt.get('area_under_curve_class_name')
+            # try:
+            #     self.auc_class_ind = self.class_list.index(self.auc_class_name)
+            # except ValueError:
+            #     self.auc_class_ind = 0
+            #     self.auc_class_name = self.class_list[self.auc_class_ind]
 
         # set up model and optimizers
         states = {}
@@ -591,13 +604,12 @@ class TorchClassifierAgent(TorchAgent):
             )
         return preds
 
-    def _update_auc(self, batch, probs):
+    def _update_aucs(self, batch, probs):
         probs_arr = probs.detach().cpu().numpy()
-        class_probs = probs_arr[:, 0]
-        class_name = self.class_list[0]
-        # class_name matters for AUC curve plotting but not the area under curve
-        # could be useful for later
-        self.auc.update_raw(batch.labels, class_probs, class_name)
+        class_probs = probs_arr[:, self.auc_class_ind]
+        self.auc.update_raw(
+            batch.labels, class_probs, self.class_list[self.auc_class_ind]
+        )
 
     def train_step(self, batch):
         """
@@ -636,7 +648,7 @@ class TorchClassifierAgent(TorchAgent):
         probs = F.softmax(scores, dim=1)
 
         if self.calc_auc:
-            self._update_auc(batch, probs)
+            self._update_aucs(batch, probs)
 
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
@@ -674,4 +686,5 @@ class TorchClassifierAgent(TorchAgent):
         raise NotImplementedError('Abstract class: user must implement score()')
 
     def reset_auc(self):
-        self.auc = AUCMetrics(class_name=self.class_list[0])
+        if self.calc_auc:
+            self.auc = AUCMetrics(class_name=self.class_list[self.auc_class_ind])

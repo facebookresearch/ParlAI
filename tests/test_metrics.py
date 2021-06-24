@@ -319,6 +319,8 @@ class TestAggregators(unittest.TestCase):
         assert 'b/global_avg' not in agg
 
     def test_auc_metrics(self):
+        class_name = 'class_notok'
+        decimal_place = 3
         # task 1; borrowing example from scikit learn
         task1_probabilities = [0.1, 0.4, 0.35, 0.8]
         task1_gold_labels = ['class_ok', 'class_ok', 'class_notok', 'class_notok']
@@ -430,22 +432,40 @@ class TestAggregators(unittest.TestCase):
 
         # run and check the TPs and FPs for singles
         task1_result = AUCMetrics.raw_data_to_auc(
-            task1_gold_labels, task1_probabilities, 'class_notok'
+            task1_gold_labels,
+            task1_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
         )
         task2_result = AUCMetrics.raw_data_to_auc(
-            task2_gold_labels, task2_probabilities, 'class_notok'
+            task2_gold_labels,
+            task2_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
         )
         task3_result = AUCMetrics.raw_data_to_auc(
-            task3_gold_labels, task3_probabilities, 'class_notok'
+            task3_gold_labels,
+            task3_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
         )
         task4_result = AUCMetrics.raw_data_to_auc(
-            task4_gold_labels, task4_probabilities, 'class_notok'
+            task4_gold_labels,
+            task4_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
         )
         task5_result = AUCMetrics.raw_data_to_auc(
-            task5_gold_labels, task5_probabilities, 'class_notok'
+            task5_gold_labels,
+            task5_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
         )
         task6_result = AUCMetrics.raw_data_to_auc(
-            task6_gold_labels, task6_probabilities, 'class_notok'
+            task6_gold_labels,
+            task6_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
         )
 
         # check the buckets first
@@ -516,7 +536,7 @@ class TestAggregators(unittest.TestCase):
         )
 
         task_all_result2 = AUCMetrics.raw_data_to_auc(
-            task_all_gold_labels, task_all_probabilities, 'class_notok'
+            task_all_gold_labels, task_all_probabilities, class_name
         )
         self.assertAlmostEqual(
             roc_auc_score(task_all_gold_labels, task_all_probabilities),
