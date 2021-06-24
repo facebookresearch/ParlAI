@@ -151,8 +151,6 @@ def _eval_single_world(opt, agent, task):
     if is_distributed():
         logging.warning('Progress bar is approximate in distributed mode.')
 
-    print('AUC BEFORE:', world.agents[CLASSIFIER_AGENT].auc)
-
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
         world.parley()
@@ -181,20 +179,8 @@ def _eval_single_world(opt, agent, task):
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
 
-    print('AUC AFTER:', world.agents[CLASSIFIER_AGENT].auc)
-
     if world.agents[CLASSIFIER_AGENT].calc_auc:
-        # the second one should be the classifier agent for auc
-        from sklearn.metrics import roc_auc_score
-        from parlai.core.metrics import AverageMetric
-
         classifier_agent = world.agents[CLASSIFIER_AGENT]
-        auc = classifier_agent.auc
-        all_labels = ['not_okay'] * sum(auc._pos_dict.values()) + ['okay'] * sum(
-            auc._neg_dict.values()
-        )
-        all_probs = list(auc._pos_dict.elements()) + list(auc._neg_dict.elements())
-        report['AUC_sklearn_auc'] = AverageMetric(roc_auc_score(all_labels, all_probs))
         report['AUC'] = classifier_agent.auc
         classifier_agent.reset_auc()
         # for safety measures
