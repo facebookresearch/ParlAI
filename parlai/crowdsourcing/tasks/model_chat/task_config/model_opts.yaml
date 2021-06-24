@@ -1,2 +1,6 @@
-blender_90M: >
-    --model-file zoo:blender/blender_90M/model
+#blender_90M: >
+    #--model-file zoo:blender/blender_90M/model
+blender_3B: >
+    --model-file zoo:blender/blender_3B/model
+#blender_400Mdistill: >
+    #--model-file zoo:blender/blender_400Mdistill/model
