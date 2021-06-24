@@ -580,7 +580,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _cache_dummy_batch(self, batch: Batch):
         """
-        Cache a batch to be used as a dummy during _fake_forward_pass.
+        Cache a batch to be used as a dummy during _fake_forward_backward_pass.
         """
         if not hasattr(self, '_dummy_batch'):
             self._dummy_batch = batch
@@ -750,7 +750,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
             # gradients are synced on backward, now this model is going to be
             # out of sync! catch up with the other workers
-            self._fake_forward_pass()
+            self._fake_forward_backward_pass()
 
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
