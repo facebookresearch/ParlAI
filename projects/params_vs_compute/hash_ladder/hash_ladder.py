@@ -13,14 +13,10 @@ from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
 )
 
-from parlai.agents.transformer.modules import LAYER_NORM_EPS
-
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 import torch.nn.functional as F
-
-from torch.nn import LayerNorm
 
 ###########################################
 #         Hash Ladder Transformer         #
@@ -188,8 +184,6 @@ class HashLayerFFN(nn.Module):
             linears2.append(nn.Linear(dim_hidden, dim))
             nn.init.xavier_uniform_(linears2[i].weight)
 
-        embedding_size = self.opt['embedding_size']
-
         self.linears1 = nn.ModuleList(linears1)
         self.linears2 = nn.ModuleList(linears2)
 
@@ -225,7 +219,6 @@ class HashLayerFFN(nn.Module):
         for i in range(self.hashsize):
             vecs = x[index_list[i][0], index_list[i][1], :]
             if vecs.shape[0] > 0:
-                residual = vecs
                 x1 = self.linears1[i](vecs)
                 x1 = self.nonlinear(x1)
                 x1 = self.relu_dropout(x1)  # --relu-dropout
