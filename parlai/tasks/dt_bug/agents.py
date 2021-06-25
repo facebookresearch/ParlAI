@@ -17,4 +17,10 @@ class MyTeacher(DialogTeacher):
         for episode in self.mock_data:
             for ex in episode:
                 done = ex == episode[-1]
-                yield Message({"text": f"text_{ex}", "labels": [f"label {ex}"]}), done
+                yield Message(
+                    {
+                        "text": f"text_{ex}",
+                        "labels": [f"label {ex}"],
+                        "episode_done": done,
+                    }
+                ), done
