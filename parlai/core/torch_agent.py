@@ -1117,9 +1117,6 @@ class TorchAgent(ABC, Agent):
                 )
                 return True
 
-    def _should_sync_overflows(self):
-        return self.fp16 and self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
-
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
         Create the learning rate scheduler, and assign it to self.scheduler. This

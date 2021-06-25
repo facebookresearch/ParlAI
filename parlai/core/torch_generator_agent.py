@@ -517,42 +517,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else:
                 states = {}
 
-        if (
-            shared is None
-            and is_distributed()
-            and opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
-        ):
-            from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
-            from fairscale.nn.wrap.auto_wrap import (
-                enable_wrap,
-                auto_wrap,
-                default_auto_wrap_policy,
-            )
-
-            device_ids = None if self.model_parallel else [self.opt['gpu']]
-            mixed_precision = opt['fp16']
-            reshard_after_forward = opt['ddp_backend'] == 'zero3'
-            compute_dtype = torch.float16 if self.fp16 else torch.float32
-            mixed_precision = self.fp16 and opt['fp16_impl'] == 'safe'
-            fsdp_args = dict(
-                reshard_after_forward=reshard_after_forward,
-                mixed_precision=mixed_precision,
-                compute_dtype=compute_dtype,
-                state_dict_device=torch.device('cpu'),
-                flatten_parameters=True,
-                process_group=get_dist_group(),
-            )
-            logging.debug(f"Wrapping in FSDP: {fsdp_args}")
-
-            with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
-                # TODO: we can save a bit more memory if we ever manually
-                # wrap things.
-                for i, layer in enumerate(self.model.encoder.layers):
-                    self.model.encoder.layers[i] = FSDP(layer, **fsdp_args)
-                for i, layer in enumerate(self.model.decoder.layers):
-                    self.model.decoder.layers[i] = FSDP(layer, **fsdp_args)
-
-                self.model = FSDP(self.model, **fsdp_args)
+        if shared is None and fsdp_utils.should_use_fsdp(opt):
+            with fsdp_utils.enable_fsdp_wrap(opt):
+                pass
 
         if shared is not None:
             if 'optimizer' in shared:
@@ -575,27 +542,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             and opt.get('ddp_backend', 'ddp') == 'ddp'
         ):
             device_ids = None if self.model_parallel else [self.opt['gpu']]
-            logging.debug("Wrapping in simple DDP")
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
         self.reset()
-
-    def _delay_halving(self):
-        """
-        Check whether we should keep the model in fp32 before other setup.
-
-        When using Zero2 or Zero3 backends with mixed precision, we need to
-        avoid converting the model to fp16, as the FSDP module does this for
-        us.
-        """
-
-        return (
-            self.fp16
-            and self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
-            and self.opt['fp16_impl'] == 'safe'
-        )
 
     def build_criterion(self):
         """
