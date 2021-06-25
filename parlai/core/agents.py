@@ -295,7 +295,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
             and init_model_opt[k] != curr_opt.get(k)
         ):
             if isinstance(v, list):
-                if init_model_opt[k] != list(curr_opt[k]):
+                if init_model_opt[k] != list(curr_opt.get(k, [])):
                     different_opts[k] = ','.join([str(x) for x in v])
             else:
                 different_opts[k] = v
