@@ -179,7 +179,7 @@ def _eval_single_world(opt, agent, task):
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
 
-    if len(world.agents) > 1:
+    if isinstance(world.agents, list) and len(world.agents) > 1:
         classifier_agent = world.agents[CLASSIFIER_AGENT]
         if hasattr(classifier_agent, 'calc_auc') and classifier_agent.calc_auc:
             report['AUC'] = classifier_agent.auc
