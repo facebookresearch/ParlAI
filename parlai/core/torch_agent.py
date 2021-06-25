@@ -36,6 +36,7 @@ from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
+from parlai.utils.fsdp import should_sync_gradnorm, is_fsdp
 from parlai.utils.fp16 import (
     SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
@@ -1053,7 +1054,7 @@ class TorchAgent(ABC, Agent):
         if self.fp16:
             if self.fp16_impl == 'safe':
                 self.optimizer = SafeFP16Optimizer(
-                    self.optimizer, self._should_sync_overflows()
+                    self.optimizer, should_sync_gradnorm(opt)
                 )
             else:
                 # Using memory efficient optimizer
@@ -1067,7 +1068,7 @@ class TorchAgent(ABC, Agent):
                         f'list:\n{compatible_list}'
                     )
                 self.optimizer = MemoryEfficientFP16Optimizer(
-                    self.optimizer, self._should_sync_overflows()
+                    self.optimizer, should_sync_gradnorm(opt)
                 )
 
         if is_finetune:
@@ -1973,12 +1974,11 @@ class TorchAgent(ABC, Agent):
         """
         states = {}
         if hasattr(self, 'model'):  # save model params
-            if hasattr(self.model, 'module') and self.opt.get(
-                'ddp_backend', 'ddp'
-            ) not in ('zero2', 'zero3'):
-                # did we wrap in a DistributedDataParallel
+            if hasattr(self.model, 'module') and not is_fsdp(self.model):
+                # did we wrap in a DistributedDataParallel or DataParallel
                 states['model'] = self.model.module.state_dict()
             else:
+                # regular model or FSDP
                 states['model'] = self.model.state_dict()
 
         if hasattr(self, 'optimizer'):

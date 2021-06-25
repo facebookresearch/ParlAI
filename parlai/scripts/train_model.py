@@ -453,12 +453,14 @@ class TrainLoop:
         if not is_primary_worker():
             # never do IO as a non-primary worker
             if hasattr(self.agent, 'save_nonprimary'):
+                logging.debug("Saving on non-primary")
                 self.agent.save_nonprimary(fn)
             return
 
         while True:
             # don't ever let a ctrl-c interrupt saving
             try:
+                logging.debug("Saving on primary")
                 self.agent.save(fn)
                 self._save_train_stats(suffix)
                 break
@@ -591,10 +593,12 @@ class TrainLoop:
         max_cnt = max_exs if max_exs > 0 else float('inf')
         while not valid_world.epoch_done() and cnt < max_cnt:
             valid_world.parley()
+            logging.info(f"Ran cnt {cnt}")
             if cnt == 0 and opt['display_examples']:
                 print(valid_world.display() + '\n~~')
                 print(valid_world.report())
             cnt = valid_world.report().get('exs') or 0
+        logging.info(f"rank {is_primary_worker()} epoch_done")
 
         valid_report = valid_world.report()
         if opt.get('validation_share_agent', False):
@@ -633,7 +637,9 @@ class TrainLoop:
             named_reports, micro_average=self.opt.get('aggregate_micro', False)
         )
         # get the results from all workers
+        logging.debug("Syncing metrics")
         report = self._sync_metrics(report)
+        logging.debug("Done syncing metrics")
 
         metrics = f'{datatype}:\n{nice_report(report)}\n'
         logging.info(f'eval completed in {timer.time():.2f}s')

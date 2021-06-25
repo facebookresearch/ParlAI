@@ -21,7 +21,6 @@ from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
-import functools
 from operator import attrgetter
 
 import torch
@@ -29,13 +28,14 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.opt import Opt
-from parlai.utils.distributed import is_distributed, sync_parameters, get_dist_group
+from parlai.utils.distributed import is_distributed, sync_parameters
 from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
+import parlai.utils.fsdp as fsdp_utils
 from parlai.utils.torch import (
     neginf,
     total_parameters,
@@ -480,8 +480,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
-            # ensure all distributed copies will always be in sync
-            self.model = self.build_model()
+            with fsdp_utils.maybe_fsdp_wrap(opt):
+                self.model = fsdp_utils.fsdp_wrap(self.build_model())
+                logging.debug(f"Model arch:\n{self.model}")
+                if self.fp16 and not fsdp_utils.should_use_fsdp(opt):
+                    self.model = self.model.half()
 
             # load the block_list for beam search
             self.beam_block_list = self._load_beam_block_list()
@@ -499,16 +502,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     self.model.cuda()
                 self.criterion.cuda()
 
-            sync_parameters(self.model)
+            if not fsdp_utils.is_fsdp(self.model):
+                sync_parameters(self.model)
+
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
             logging.info(
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
-
-            if self.fp16:
-                if not self._delay_halving():
-                    self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -516,10 +517,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 states = self.load(init_model)
             else:
                 states = {}
-
-        if shared is None and fsdp_utils.should_use_fsdp(opt):
-            with fsdp_utils.enable_fsdp_wrap(opt):
-                pass
 
         if shared is not None:
             if 'optimizer' in shared:
