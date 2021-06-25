@@ -297,9 +297,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     'agent_idx': idx,
                     # Get rid of annotations HTML if it's the bot response
                     'text': acts[idx]['text'].split('<br>')[0],
-                    'id': acts[idx]['id']
-                    if 'id' in acts[idx]
-                    else 'NULL_ID',  # Person1 or Polyencoder
+                    'id': acts[idx].get(
+                        'id', 'NULL_ID'
+                    ),  # In case model doesn't set id
                 }
                 self.dialog.append(utterance_data)
                 if idx == 0:
