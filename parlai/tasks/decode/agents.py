@@ -32,7 +32,7 @@ def _path(opt, test_type):
         raise RuntimeError('Not valid datatype.')
 
     data_directory = os.path.join(
-        opt['datapath'], DECODE, DECODE_PREFIX + DECODE_VERSION
+        opt['datapath'], DECODE, DECODE_PREFIX + DECODE_VERSION[:4]
     )
 
     data_path = os.path.join(data_directory, suffix + '.jsonl')
