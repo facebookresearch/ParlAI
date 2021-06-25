@@ -79,10 +79,8 @@ class HashLadderAgent(TransformerGeneratorAgent):
         dummy_loss = 0 * (
             sum(x.weight[0, 0] for x in ffn.linears1)
             + sum(x.weight[0, 0] for x in ffn.linears2)
-            + sum(x.weight[0] for x in ffn.norms)
             + sum(x.bias[0] for x in ffn.linears1)
             + sum(x.bias[0] for x in ffn.linears2)
-            + sum(x.bias[0] for x in ffn.norms)
         )
         return dummy_loss
 
@@ -182,7 +180,6 @@ class HashLayerFFN(nn.Module):
 
         linears1 = []
         linears2 = []
-        norms = []
 
         for i in range(0, self.hashsize):
             linears1.append(nn.Linear(dim, dim_hidden))
@@ -192,11 +189,9 @@ class HashLayerFFN(nn.Module):
             nn.init.xavier_uniform_(linears2[i].weight)
 
         embedding_size = self.opt['embedding_size']
-        norms.append(LayerNorm(embedding_size, eps=LAYER_NORM_EPS))
 
         self.linears1 = nn.ModuleList(linears1)
         self.linears2 = nn.ModuleList(linears2)
-        self.norms = nn.ModuleList(norms)
 
     def hash(self, xi):
         # Insert your choice of hash function here.
