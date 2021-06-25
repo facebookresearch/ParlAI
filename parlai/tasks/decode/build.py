@@ -10,7 +10,7 @@ from parlai.core.build_data import DownloadableFile
 
 DECODE = 'decode'
 DECODE_PREFIX = 'decode_'
-DECODE_VERSION = 'v0.1'
+DECODE_VERSION = 'v0.1.1'
 
 
 RESOURCES = [
