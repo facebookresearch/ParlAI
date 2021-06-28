@@ -6,7 +6,9 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
-- **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token_
+- **More Parameters or More Compute?** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/params_vs_compute) _Answer: Both! Two new methods that explore this question: Hash Layers for more parameters, and Staircase Attention for more power per parameter._
+
+- **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token._
 
 - **Unlikelihood Training for Consistent Dialogue** [[project]](https://parl.ai/projects/dialogue_unlikelihood/).
   _Methods to reduce copies & repeats, correct vocab usage, and avoiding contradiction via unlikelihood training._
@@ -81,6 +83,7 @@ _Task & models for chitchat with a given persona._
 
 - **Wizard of Wikipedia** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
   _Knowledge-grounded open domain chitchat task & models._
+  
 - **Retrieval Augmentation Reduces Hallucination in Conversation** [[project]](http://parl.ai/projects/hallucination/) [[paper]](https://arxiv.org/abs/2104.07567). _Exploratory architectures that add retrieval mechanisms to dialogue models, reducing hallucination while maintaining conversational ability._
 
 ## Visually Grounded
