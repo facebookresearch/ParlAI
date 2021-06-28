@@ -176,6 +176,31 @@ class TestZero3(TestDistributed):
     base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero3'}
 
 
+class TestZero3NotImplemented(_AbstractTest):
+    base_config = dict(
+        task='integration_tests:overfit',
+        optimizer='sgd',
+        validation_metric='loss',
+        ddp_backend='zero3',
+        batchsize=BATCHSIZE,
+        model='transformer/generator',
+        validation_every_n_epochs=1,
+        num_epochs=1,
+        n_layers=1,
+        n_heads=1,
+        ffn_size=32,
+        embedding_size=8,
+        verbose=True,
+    )
+
+    def test_not_implemented(self):
+        """
+        Checks that using --ddp-backend zero3 throws an error
+        """
+        with self.assertRaises(NotImplementedError):
+            self._distributed_train_model()
+
+
 @testing_utils.skipUnlessGPU
 class TestNoModelParallel(_AbstractTest):
     base_config = dict(
