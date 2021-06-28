@@ -55,9 +55,25 @@ class FP16SafeCrossEntropy(torch.nn.Module):
         )
 
 
-def clip_grad_norm(params, max_norm, sync: bool = False):
+def clip_grad_norm(params, max_norm: float = 0, sync: bool = False):
     """
-    Clips grad norm.
+    Clips grad norms.
+
+    During combination with FSDP, will also ensure that grad norms are aggregated
+    across all workers, since each worker only stores their shard of the
+    gradients.
+
+    :param params:
+        Parameters whose gradients we wish to clip
+    :param max_norm:
+        Maximum norm we wish the gradients to have. If non-positive, then
+        we will not perform clipping.
+    :param sync:
+        Boolean indicating whether we should aggregate across the distributed
+        group. Used only in combination with FSDP.
+
+    :returns:
+        The gradient norm across all parameters, before clipping.
     """
     if isinstance(params, torch.Tensor):
         params = [params]
@@ -93,7 +109,7 @@ def has_overflow(grad_norm):
 
 
 class SafeFP16Optimizer(torch.optim.Optimizer):
-    def __init__(self, optimizer, sync_overflows=False):
+    def __init__(self, optimizer, aggregate_gnorms=False):
         self.fp16_params = self._get_parameters(optimizer)
         self.fp32_params = self._build_fp32_params(self.fp16_params, flatten=False)
         self.optimizer = optimizer
@@ -108,7 +124,7 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
 
         self.scaler = DynamicLossScaler(2.0 ** 15)
         self.min_loss_scale = 2 ** -5
-        self._sync_overflows = sync_overflows
+        self._aggregate_gnorms = aggregate_gnorms
 
     @classmethod
     def _get_parameters(cls, optimizer):
@@ -217,7 +233,7 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
         """
         self._sync_fp16_grads_to_fp32()
         grad_norm = clip_grad_norm(
-            self.fp32_params, max_norm, sync=self._sync_overflows
+            self.fp32_params, max_norm, sync=self._aggregate_gnorms
         )
 
         # detect overflow and adjust loss scale
@@ -398,7 +414,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     def __init__(
         self,
         init_optimizer: torch.optim.Optimizer,  # type: ignore
-        sync_overflows: bool = False,
+        aggregate_gnorms: bool = False,
         loss_initial_scale: float = 2.0 ** 17,
         min_loss_scale: float = 1e-4,
     ):
@@ -407,7 +423,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         self.min_loss_scale = min_loss_scale
         self.scaler = DynamicLossScaler(init_scale=loss_initial_scale)
 
-        self._sync_overflows = sync_overflows
+        self._aggregate_gnorms = aggregate_gnorms
 
     @staticmethod
     def compatible_optimizers():
@@ -458,7 +474,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         """
         self._unscale_grads()
         grad_norm = clip_grad_norm(
-            self.params, gradient_clip, sync=self._sync_overflows
+            self.params, gradient_clip, sync=self._aggregate_gnorms
         )
         # detect overflow and adjust loss scale
         overflow = has_overflow(grad_norm)

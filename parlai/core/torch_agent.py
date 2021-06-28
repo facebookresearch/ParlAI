@@ -2004,7 +2004,6 @@ class TorchAgent(ABC, Agent):
 
         For models or optimizers that shard parameters, this ensures we sync.
         """
-        logging.info("Saving non primary")
         if self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3'):
             # make sure we call the state dict
             self.state_dict()

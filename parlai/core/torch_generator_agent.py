@@ -482,7 +482,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.criterion = self.build_criterion()
             with fsdp_utils.maybe_fsdp_wrap(opt):
                 self.model = fsdp_utils.fsdp_wrap(self.build_model())
-                logging.debug(f"Model arch:\n{self.model}")
                 if self.fp16 and not fsdp_utils.should_use_fsdp(opt):
                     self.model = self.model.half()
 
