@@ -177,7 +177,7 @@ class AUCMetrics(Metric):
     Does so by keeping track of positives' and negatives' probability score counts in Counters or dictionaries.
     Note the introduction of `max_bucket_dec_places`;
     this integer number determines the number of digits to save for the probability 
-    scores. A higher `max_bucket_dec_places` will a more accurate estimate of AUC metric, but may also use more 
+    scores. A higher `max_bucket_dec_places` will a more accurate estimate of the exact AUC metric, but may also use more 
     space.
     """
 
@@ -272,7 +272,7 @@ class AUCMetrics(Metric):
         if _tot_pos == 0 and _tot_neg == 0:
             return 0
         fp_tp = self._calc_fp_tp()
-        fp_tp.sort(key=lambda x: x[0])
+        fp_tp.sort()
         fps, tps = list(zip(*fp_tp))
         if _tot_neg == 0:
             fpr = [0] * len(fps)
