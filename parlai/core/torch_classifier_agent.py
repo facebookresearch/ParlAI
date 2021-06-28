@@ -172,18 +172,14 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
 
 class AUCMetrics(Metric):
     """
-    Class that calculates the area under the roc curve from list of labels and its true
-    probabilities; expecting values to be (false positives, true positives)
-    """
+    Computes Area Under ROC Curve (AUC) metrics.
 
-    __slots__ = (
-        '_pos_dict',
-        '_tot_pos',
-        '_neg_dict',
-        '_tot_neg',
-        '_class_name',
-        '_max_bucket_dec_places',
-    )
+    Does so by keeping track of positives' and negatives' probability score counts in Counters or dictionaries.
+    Note the introduction of `max_bucket_dec_places`;
+    this integer number determines the number of digits to save for the probability 
+    scores. A higher `max_bucket_dec_places` will a more accurate estimate of AUC metric, but may also use more 
+    space.
+    """
 
     @property
     def macro_average(self) -> bool:
