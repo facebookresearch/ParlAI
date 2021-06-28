@@ -174,11 +174,11 @@ class AUCMetrics(Metric):
     """
     Computes Area Under ROC Curve (AUC) metrics.
 
-    Does so by keeping track of positives' and negatives' probability score counts in Counters or dictionaries.
-    Note the introduction of `max_bucket_dec_places`;
-    this integer number determines the number of digits to save for the probability 
-    scores. A higher `max_bucket_dec_places` will a more accurate estimate of the exact AUC metric, but may also use more 
-    space.
+    Does so by keeping track of positives' and negatives' probability score counts in
+    Counters or dictionaries. Note the introduction of `max_bucket_dec_places`; this
+    integer number determines the number of digits to save for the probability scores. A
+    higher `max_bucket_dec_places` will a more accurate estimate of the exact AUC
+    metric, but may also use more space.
     """
 
     @property
