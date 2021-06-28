@@ -24,7 +24,6 @@ parlai multiprocessing_train -m transformer/generator --batchsize 16 --task conv
 """
 
 import torch
-import random
 import os
 import signal
 import traceback

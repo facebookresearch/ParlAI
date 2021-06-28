@@ -79,9 +79,8 @@ def delay_halving(self):
     """
     Check whether we should keep the model in fp32 before other setup.
 
-    When using Zero2 or Zero3 backends with mixed precision, we need to
-    avoid converting the model to fp16, as the FSDP module does this for
-    us.
+    When using Zero2 or Zero3 backends with mixed precision, we need to avoid converting
+    the model to fp16, as the FSDP module does this for us.
     """
 
     return (
@@ -95,9 +94,9 @@ def should_sync_gradnorm(opt):
     """
     Indicates whether fp16 optimizer wrappers should cumulate over workers.
 
-    FP16 overflow detection and gradient clipping both require accumulating
-    gradients across all workers when using FSDP, as workers only store a
-    fraction of the gradients.
+    FP16 overflow detection and gradient clipping both require accumulating gradients
+    across all workers when using FSDP, as workers only store a fraction of the
+    gradients.
     """
     return (
         FSDP_AVAILABLE

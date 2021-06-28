@@ -23,7 +23,6 @@ parlai multiprocessing_eval --model-file "zoo:tutorial_transformer_generator/mod
 """
 
 import torch
-import random
 import os
 import signal
 import parlai.utils.distributed as distributed_utils
