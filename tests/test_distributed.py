@@ -168,7 +168,7 @@ class TestZero2(TestDistributed):
     base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero2'}
 
 
-@testing_utils.skip
+@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestZero3(TestDistributed):
     # Not supported at this time. See:
