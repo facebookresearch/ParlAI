@@ -5,20 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Test agent which counts its number of unique items.
-"""
-
-from __future__ import annotations
-from typing import Tuple
-from collections import Counter
-
-#!/usr/bin/env python3
-
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
-
-"""
 Test agent which overrides the `get_prefix_tokens` function for Transformer
 Generator Agent in order to test its functionality.
 
