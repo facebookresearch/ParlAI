@@ -3,10 +3,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-APIs for retrieving a list of "Contents" using an "Search Query"
+APIs for retrieving a list of "Contents" using an "Search Query".
 
-The term "Search Query" here refers to any abstract form of input string.
-The definition of "Contents" is also loose and depends on the API.
+The term "Search Query" here refers to any abstract form of input string. The definition
+of "Contents" is also loose and depends on the API.
 """
 
 from abc import ABC, abstractmethod
@@ -30,7 +30,7 @@ class RetrieverAgent(ABC):
         self, queries: List[str], num_ret: int = DEFAULT_NUM_TO_RETRIEVE
     ) -> List[Dict[str, Any]]:
         """
-        Implementats the underlying retrieval mechanism
+        Implementats the underlying retrieval mechanism.
         """
 
     def create_content_dict(self, content: list, **kwargs) -> Dict:
