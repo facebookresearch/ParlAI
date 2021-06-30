@@ -266,11 +266,9 @@ class AUCMetrics(Metric):
             fp_tp.append((fp, tp))
         return fp_tp
 
-    def value(self) -> float:
+    def _calc_fpr_tpr(self) -> Tuple[List[int]]:
         _tot_pos = sum(self._pos_dict.values())
         _tot_neg = sum(self._neg_dict.values())
-        if _tot_pos == 0 and _tot_neg == 0:
-            return 0
         fp_tp = self._calc_fp_tp()
         fp_tp.sort()
         fps, tps = list(zip(*fp_tp))
@@ -284,7 +282,15 @@ class AUCMetrics(Metric):
         else:
             tpr = [tp / _tot_pos for tp in tps]
 
-        return auc(tpr, fpr)
+        return (fpr, tpr, _tot_pos, _tot_neg)
+
+    def value(self) -> float:
+        fpr, tpr, _tot_pos, _tot_neg = self._calc_fpr_tpr()
+
+        if _tot_pos == 0 and _tot_neg == 0:
+            return 0
+
+        return auc(fpr, tpr)
 
 
 class WeightedF1Metric(Metric):
@@ -463,15 +469,25 @@ class TorchClassifierAgent(TorchAgent):
         else:
             self.threshold = None
 
-        # set up calculating auc, only used in binary classification
-        if len(self.class_list) == 2:
-            self.calc_auc = opt.get('area_under_curve', False)
-        else:
-            self.calc_auc = False
+        # set up calculating auc
+        self.calc_auc = opt.get('area_under_curve', -1) > 0
 
         if self.calc_auc:
-            self.auc_class_ind = 0
-            self.auc = AUCMetrics(class_name=self.class_list[self.auc_class_ind])
+            self.auc_bucket_decimal_size = opt.get('area_under_curve')
+            if opt.get('area_under_curve_class') is None:
+                # self.auc_class_ind
+                interested_classes = self.class_list
+            else:
+                interested_classes = opt.get('area_under_curve_class')
+            try:
+                self.auc_class_indices = [
+                    self.class_dict[class_name] for class_name in interested_classes
+                ]
+            except Exception:
+                raise RuntimeError(
+                    f'The inputted classes for auc were probably invalid.\n Current class names: {self.class_list} \n Names of AUC classes passed in: {interested_classes}'
+                )
+            self.reset_auc()
 
         # set up model and optimizers
         states = {}
@@ -593,10 +609,9 @@ class TorchClassifierAgent(TorchAgent):
 
     def _update_aucs(self, batch, probs):
         probs_arr = probs.detach().cpu().numpy()
-        class_probs = probs_arr[:, self.auc_class_ind]
-        self.auc.update_raw(
-            batch.labels, class_probs, self.class_list[self.auc_class_ind]
-        )
+        for index, curr_auc in zip(self.auc_class_indices, self.aucs):
+            class_probs = probs_arr[:, index]
+            curr_auc.update_raw(batch.labels, class_probs, self.class_list[index])
 
     def train_step(self, batch):
         """
@@ -674,4 +689,10 @@ class TorchClassifierAgent(TorchAgent):
 
     def reset_auc(self):
         if self.calc_auc:
-            self.auc = AUCMetrics(class_name=self.class_list[self.auc_class_ind])
+            self.aucs = [
+                AUCMetrics(
+                    class_name=self.class_list[index],
+                    max_bucket_dec_places=self.auc_bucket_decimal_size,
+                )
+                for index in self.auc_class_indices
+            ]

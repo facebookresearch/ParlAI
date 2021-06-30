@@ -74,10 +74,17 @@ def setup_args(parser=None):
     parser.add_argument(
         '--area-under-curve',
         '-auc',
-        type='bool',
-        default=False,
-        help='whether to also calculate the area under the roc curve; '
-        'only for binary classification',
+        type=int,
+        default=-1,
+        help='a positive number indicates to calculate the area under the roc curve and it also determines how many decimal digits of the predictions to keep (higher numbers->more accurate); ',
+    )
+    parser.add_argument(
+        '--area-under-curve-class',
+        '-auclass',
+        type=str,
+        default=None,
+        nargs='*',
+        help='the name(s) of the class to calculate the auc for',
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
@@ -182,7 +189,10 @@ def _eval_single_world(opt, agent, task):
     if isinstance(world.agents, list) and len(world.agents) > 1:
         classifier_agent = world.agents[CLASSIFIER_AGENT]
         if hasattr(classifier_agent, 'calc_auc') and classifier_agent.calc_auc:
-            report['AUC'] = classifier_agent.auc
+            for class_indices, curr_auc in zip(
+                classifier_agent.auc_class_indices, classifier_agent.aucs
+            ):
+                report[f'AUC_{classifier_agent.class_list[class_indices]}'] = curr_auc
             classifier_agent.reset_auc()
             # for safety measures
             agent.reset_auc()
