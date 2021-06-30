@@ -320,6 +320,7 @@ class TestAggregators(unittest.TestCase):
 
     def test_auc_metrics(self):
         class_name = 'class_notok'
+        class_to_int = {'class_notok': 1, 'class_ok': 0}
         decimal_place = 3
         # task 1; borrowing example from scikit learn
         task1_probabilities = [0.1, 0.4, 0.35, 0.8]
@@ -504,34 +505,54 @@ class TestAggregators(unittest.TestCase):
         # now actually testing the area under curve
         from sklearn.metrics import roc_auc_score
 
+        task1_labels_int = [
+            class_to_int[gold_label] for gold_label in task1_gold_labels
+        ]
+        task2_labels_int = [
+            class_to_int[gold_label] for gold_label in task2_gold_labels
+        ]
+        task3_labels_int = [
+            class_to_int[gold_label] for gold_label in task3_gold_labels
+        ]
+        task4_labels_int = [
+            class_to_int[gold_label] for gold_label in task4_gold_labels
+        ]
+        task5_labels_int = [
+            class_to_int[gold_label] for gold_label in task5_gold_labels
+        ]
+        task6_labels_int = [
+            class_to_int[gold_label] for gold_label in task6_gold_labels
+        ]
+
         self.assertAlmostEqual(
-            roc_auc_score(task1_gold_labels, task1_probabilities), task1_result.value()
+            roc_auc_score(task1_labels_int, task1_probabilities), task1_result.value()
         )
         self.assertAlmostEqual(
-            roc_auc_score(task2_gold_labels, task2_probabilities), task2_result.value()
+            roc_auc_score(task2_labels_int, task2_probabilities), task2_result.value()
         )
         self.assertAlmostEqual(
-            roc_auc_score(task3_gold_labels, task3_probabilities), task3_result.value()
+            roc_auc_score(task3_labels_int, task3_probabilities), task3_result.value()
         )
         self.assertAlmostEqual(
-            roc_auc_score(task4_gold_labels, task4_probabilities), task4_result.value()
+            roc_auc_score(task4_labels_int, task4_probabilities), task4_result.value()
         )
         self.assertAlmostEqual(
-            roc_auc_score(task5_gold_labels, task5_probabilities), task5_result.value()
+            roc_auc_score(task5_labels_int, task5_probabilities), task5_result.value()
         )
         self.assertAlmostEqual(
-            roc_auc_score(task6_gold_labels, task6_probabilities), task6_result.value()
+            roc_auc_score(task6_labels_int, task6_probabilities), task6_result.value()
         )
 
         # last task: adding everything together; uses task 3 & 6
         # gonna just check roc scores
         task_all_gold_labels = task3_gold_labels + task6_gold_labels
+        task_all_labels_int = task3_labels_int + task6_labels_int
         task_all_probabilities = task3_probabilities + task6_probabilities
 
         task_all_result = task3_result + task6_result
 
         self.assertAlmostEqual(
-            roc_auc_score(task_all_gold_labels, task_all_probabilities),
+            roc_auc_score(task_all_labels_int, task_all_probabilities),
             task_all_result.value(),
         )
 
@@ -539,8 +560,83 @@ class TestAggregators(unittest.TestCase):
             task_all_gold_labels, task_all_probabilities, class_name
         )
         self.assertAlmostEqual(
-            roc_auc_score(task_all_gold_labels, task_all_probabilities),
+            roc_auc_score(task_all_labels_int, task_all_probabilities),
             task_all_result2.value(),
+        )
+
+        ### now reusing the tests for the other class, just checking rocs
+        ## for binary classes, they should be the same?
+        class_name = 'class_ok'
+        task1_probabilities = [1 - curr_prob for curr_prob in task1_probabilities]
+        task2_probabilities = [1 - curr_prob for curr_prob in task2_probabilities]
+        task3_probabilities = [1 - curr_prob for curr_prob in task3_probabilities]
+        task4_probabilities = [1 - curr_prob for curr_prob in task4_probabilities]
+        task5_probabilities = [1 - curr_prob for curr_prob in task5_probabilities]
+        task6_probabilities = [1 - curr_prob for curr_prob in task6_probabilities]
+
+        task1_labels_int = [1 - curr for curr in task1_labels_int]
+        task2_labels_int = [1 - curr for curr in task2_labels_int]
+        task3_labels_int = [1 - curr for curr in task3_labels_int]
+        task4_labels_int = [1 - curr for curr in task4_labels_int]
+        task5_labels_int = [1 - curr for curr in task5_labels_int]
+        task6_labels_int = [1 - curr for curr in task6_labels_int]
+
+        # get the results
+        task1_result = AUCMetrics.raw_data_to_auc(
+            task1_gold_labels,
+            task1_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task2_result = AUCMetrics.raw_data_to_auc(
+            task2_gold_labels,
+            task2_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task3_result = AUCMetrics.raw_data_to_auc(
+            task3_gold_labels,
+            task3_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task4_result = AUCMetrics.raw_data_to_auc(
+            task4_gold_labels,
+            task4_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task5_result = AUCMetrics.raw_data_to_auc(
+            task5_gold_labels,
+            task5_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task6_result = AUCMetrics.raw_data_to_auc(
+            task6_gold_labels,
+            task6_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+
+        # check against roc_auc_score
+        self.assertAlmostEqual(
+            roc_auc_score(task1_labels_int, task1_probabilities), task1_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task2_labels_int, task2_probabilities), task2_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task3_labels_int, task3_probabilities), task3_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task4_labels_int, task4_probabilities), task4_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task5_labels_int, task5_probabilities), task5_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task6_labels_int, task6_probabilities), task6_result.value()
         )
 
     def test_classifier_metrics(self):
