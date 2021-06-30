@@ -22,6 +22,10 @@ from parlai.core.metrics import Metric
 from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
+from parlai_internal.tasks.personal_knowledge.context_generator import (
+    MscContextGenerator,
+)
+import copy
 
 
 class Compatibility(object):
@@ -410,18 +414,137 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
                 )
 
 
+COMMON_CONFIG = {
+    'task': 'internal:personal_knowledge',
+    'num_examples': -1,
+    'label_speaker_id': 'their',
+    'session_id': 4,
+    'datatype': 'valid',
+}
+
+MODEL_OPT = {
+    'BST90M': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
+    'BST2.7B': {
+        'previous_persona_type': 'init_self',
+        'include_time_gap': False,
+        'subsampling_rate': 1,
+    },
+    'MSC2.7B_128': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
+    'MSC2.7B_1024': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
+    'KNOWLEDGE_BOT': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
+    'RAG_RAWHISTORY_NDOC10': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+        'history_person_tokens': '__his__p1__,__his__p2__',
+    },
+    'RAG_RAWHISTORY_SESSION_LEVEL': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+        'history_person_tokens': '__his__,__his__',
+    },
+    'FiD_RAWHISTORY': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+        'history_person_tokens': '__his__,__his__',
+    },
+    'FiDRAG_RAWHISTORY': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+        'history_person_tokens': '__his__,__his__',
+    },
+    'RAG_SUMMSC': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+        'is_session_level': True,
+        'predicted_summary_subsample_rate': '5',
+        'predicted_summary_beam_min_length': 10,
+    },
+    'FiD_SUMMSC': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+        'is_session_level': True,
+        'predicted_summary_subsample_rate': '5',
+        'predicted_summary_beam_min_length': 10,
+    },
+    'FiDRAG_SUMMSC': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+        'is_session_level': True,
+        'predicted_summary_subsample_rate': '5',
+        'predicted_summary_beam_min_length': 10,
+    },
+}
+UI_OPT = {
+    'BST90M': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'BST2.7B': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'MSC2.7B_128': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'MSC2.7B_1024': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'KNOWLEDGE_BOT': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'RAG_RAWHISTORY_NDOC10': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+    },
+    'FiD_RAWHISTORY': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'FiDRAG_RAWHISTORY': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'FiD_SUMMSC': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+        'is_session_level': True,
+        'predicted_summary_subsample_rate': '5',
+        'predicted_summary_beam_min_length': 10,
+    },
+    'FiDRAG_SUMMSC': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+        'is_session_level': True,
+        'predicted_summary_subsample_rate': '5',
+        'predicted_summary_beam_min_length': 10,
+    },
+}
+
+
 def get_context_generator(
-    override_opt: Optional[Dict[str, Any]] = None
-) -> ContextGenerator:
+    override_opt_path: str, statistics_condition
+) -> MscContextGenerator:
     """
     Return an object to return BlendedSkillTalk-style context info (personas, etc.).
     """
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    if override_opt is not None:
-        argparser.set_params(**override_opt)
-    opt = argparser.parse_args([])
-    context_generator = ContextGenerator(opt, datatype='test', seed=0)
+
+    with open(override_opt_path) as f:
+        override_opt = json.load(f)
+    bot_model_name = override_opt['bot_model_name']
+
+    bot_msc_opt = copy.deepcopy(COMMON_CONFIG)
+    bot_msc_opt.update(MODEL_OPT[bot_model_name])
+    ui_msc_opt = copy.deepcopy(COMMON_CONFIG)
+    ui_msc_opt.update(UI_OPT[bot_model_name])
+
+    context_generator = MscContextGenerator(
+        bot_msc_opt=bot_msc_opt,
+        ui_msc_opt=ui_msc_opt,
+        override_opt=override_opt,
+        statistics_condition=statistics_condition,
+    )
     # We pull from the test set so that the model can't regurgitate
     # memorized conversations
     return context_generator

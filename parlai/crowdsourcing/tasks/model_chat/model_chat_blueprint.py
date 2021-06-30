@@ -150,6 +150,13 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
             "in order to override the parlai parser defaults."
         },
     )
+    override_opt_path: str = field(
+        default="",
+        metadata={
+            "help": "Additional args to pass to initialize the context generator "
+            "in order to override the parlai parser defaults."
+        },
+    )
 
 
 class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
@@ -414,16 +421,18 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
         shared_state.run_statistics = run_statistics
 
+        # Lock for editing run statistics between threads
+        statistics_condition = Condition()
+
         context_generator: Optional[ContextGenerator] = None
         if (
             args.blueprint.include_persona
             or args.blueprint.conversation_start_mode == 'bst'
         ):
-            context_generator = get_context_generator(args.blueprint.override_opt)
+            context_generator = get_context_generator(
+                args.blueprint.override_opt_path, statistics_condition
+            )
         shared_state.context_generator = context_generator
-
-        # Lock for editing run statistics between threads
-        statistics_condition = Condition()
 
         # Move shared state into the world and onboarding opts, such that these
         # can be used by the worlds
@@ -433,7 +442,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'statistics_condition': statistics_condition,
                 'max_onboard_time': args.blueprint.max_onboard_time,
                 'onboard_task_data': self.onboard_task_data,
-                'onboarding_qualification': args.blueprint.onboarding_qualification,
+                # 'onboarding_qualification': args.blueprint.onboarding_qualification,
             }
         )
         shared_state.world_opt.update(
@@ -467,7 +476,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         active_model_opts = {
             model: opt
             for model, opt in all_model_opts.items()
-            if self.conversations_needed[model] > 0
+            if self.conversations_needed.get(model, 0) > 0
         }
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=active_model_opts)
 

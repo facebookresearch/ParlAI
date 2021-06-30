@@ -33,6 +33,19 @@ if TYPE_CHECKING:
         MephistoAgentWrapper,
     )
 
+import parlai.utils.logging as logging
+
+try:
+    from mephisto.data_model.worker import Worker
+    from mephisto.abstractions.providers.mturk.utils.script_utils import (
+        direct_soft_block_mturk_workers,
+        direct_allow_mturk_workers,
+    )
+except ImportError:
+    Worker = None
+    direct_soft_block_mturk_workers = None
+    direct_allow_mturk_workers = None
+
 
 class ModelChatOnboardWorld(CrowdOnboardWorld):
     """
@@ -46,9 +59,16 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
     """
 
     def __init__(self, opt, agent: "MephistoAgentWrapper"):
+        db = self.agent.mephisto_agent.db
+        worker_id = self.agent.mephisto_agent.worker_id
+        worker_name = Worker(db, worker_id).worker_name
+        logging.warning(
+            f"_______Onboarding World START!! worker_name = {worker_name}___"
+        )
         super().__init__(opt, agent)
 
         self.skip_onboarding = opt['skip_onboarding']
+        self.skip_onboarding = True
 
         self.min_correct = ONBOARD_CONFIG['min_correct']
         self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
@@ -208,7 +228,7 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.dialog[turn_idx]['problem_data'] = p
 
     def parley(self):
-        print(
+        logging.info(
             f'{self.__class__.__name__}:{self.tag}: is at turn {self.task_turn_idx}, with {self.num_turns} pairs of turns needed...'
         )
 
@@ -225,10 +245,12 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
+                if agent == self.bot:
+                    Compatibility.backward_compatible_force_set(acts[idx], 'id', 'THEY')
                 acts[idx] = Message(
                     Compatibility.maybe_fix_act(acts[idx])
                 ).json_safe_payload()
-                print(
+                logging.info(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
 
@@ -269,7 +291,7 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 with open(chat_data_path, 'w+') as f_json:
                     data_str = json.dumps(final_chat_data)
                     f_json.write(data_str)
-                print(
+                logging.warning(
                     f'{self.__class__.__name__}:{self.tag}: Data saved at '
                     f'{chat_data_path} for model: {self.bot.worker_id}.'
                 )
@@ -317,7 +339,7 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     if other_agent != agent:
                         other_agent.observe(validate(acts[idx]))
 
-                print(
+                logging.info(
                     f'[agent {idx}] self.task_turn_idx: {self.task_turn_idx}, self.dialog is: {self.dialog}'
                 )
                 self.task_turn_idx += 1
@@ -340,7 +362,7 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
 
         if self.chat_done:
             self.opt['run_statistics'][self.bot.worker_id] += 1
-            print(
+            logging.warning(
                 'Runs completed per model: '
                 + ', '.join(
                     f'{model}: {count:d}'
@@ -397,9 +419,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         Return the list of human messages and the list of acceptability types to check.
         """
         human_messages = [
-            message['text'] for message in self.dialog if message['agent_idx'] == 0
+            message['text'] for message in self.dialog if message['id'] == 'YOU'
         ]
-        violation_types = ['min_words', 'all_caps', 'exact_match', 'safety']
+        violation_types = ['min_words', 'all_caps', 'exact_match']
         return human_messages, violation_types
 
 
@@ -411,18 +433,37 @@ class ModelChatWorld(BaseModelChatWorld):
     of this task, like personas and BST-style seed utterances.
     """
 
-    def __init__(self, opt, agent, bot, context_info: Optional[dict] = None):
+    def __init__(self, opt, agent, bot, model_name, context_info):
         super().__init__(opt, agent=agent, bot=bot)
 
-        if context_info is not None:
-            self.context_info = context_info
-            self.personas = [
-                self.context_info['persona_1_strings'],
-                self.context_info['persona_2_strings'],
-            ]
-        else:
-            self.context_info = {}
-            self.personas = None
+        self.context_info = context_info
+        self.bot_persona_strings = self.context_info['your_persona_strings']
+        self.human_persona_strings = self.context_info['their_persona_strings']
+        self.context_for_bot_prompt = self.context_info['context_for_bot_prompt']
+        logging.warning(f'__CONTEXT bot_persona_strings__ {self.bot_persona_strings}')
+        logging.warning(
+            f'__CONTEXT human_persona_strings__{self.human_persona_strings}'
+        )
+        self.time_num = self.context_info['time_num']
+        self.time_unit = self.context_info['time_unit']
+        self.task_data = {
+            'personas': [
+                " ".join(self.bot_persona_strings),
+                " ".join(self.human_persona_strings),
+            ],
+            'agent_name': 'Speaker 1',
+            'time_num': self.time_num,
+            'time_unit': self.time_unit,
+        }
+        self.bot.agent_id = "THEY"
+        self.model_name = model_name
+        try:
+            db = self.agent.mephisto_agent.db
+            worker_id = self.agent.mephisto_agent.worker_id
+            worker_name = Worker(db, worker_id).worker_name
+            logging.warning(f"____REAL World START!! worker_name = {worker_name}___")
+        except:
+            logging.warning(f"unable to extract worker name")
 
     def _run_initial_turn(self) -> None:
         """
@@ -436,77 +477,43 @@ class ModelChatWorld(BaseModelChatWorld):
 
         control_msg = {"episode_done": False}
 
-        if self.opt['include_persona']:
-            # The Bot agent
-            # We add the personas and 1/3 of the time WoW topic as the
-            # first utterance in the history.
-            # Previously for BST task, we also had a big first utterance
-            # that gave instructions. Removing that for this task.
-            persona_strings = [s.strip() for s in self.personas[1]]
-            persona_utterance = self._get_persona_utterance(
-                persona_strings=persona_strings,
-                context_dataset=self.context_info['context_dataset'],
-                additional_context=self.context_info['additional_context'],
-                is_bot=True,
-            )
-            message = control_msg.copy()
-            message['text'] = persona_utterance
-            # The bot seeing its persona does not count as a "turn"
-            self.bot.observe(validate(message), increment_turn=False)
-
         if self.opt['conversation_start_mode'] == 'bst':
-            print('[Displaying first utterances as per BST task.]')
-            # Display the previous two utterances
+            time.sleep(2)
+            coordinator_first_msg = {
+                'episode_done': False,
+                'id': 'Coordinator',
+                'text': 'Please chitchat with another worker for 6 turns as if you were catching up since last time you two spoke.',
+                'fake_start': True,
+                'agent_idx': 2,
+                'task_data': self.task_data,
+            }
+            self.agent.observe(validate(coordinator_first_msg))
+            time.sleep(2)
             human_first_msg = {
                 'episode_done': False,
                 'id': self.agent.id,
-                'text': self.context_info['person1_seed_utterance'],
+                'text': self.context_for_bot_prompt,
                 'fake_start': True,
                 'agent_idx': 0,
-            }
-            for k, v in control_msg.items():
-                human_first_msg[k] = v
-            bot_first_msg = {
-                'episode_done': False,
-                'id': self.bot.id,
-                'text': self.context_info['person2_seed_utterance'],
-                'fake_start': True,
-                'agent_idx': 1,
-            }
-            print(f'human_first_msg: {human_first_msg}, bot_first_msg: {bot_first_msg}')
-
-            self.dialog.append(human_first_msg)
-            self.dialog.append(bot_first_msg)
-
-            for observer in [self.agent, self.bot]:
-                observer.observe(validate(human_first_msg))
-                observer.observe(validate(bot_first_msg))
-
-        elif self.opt['conversation_start_mode'] == 'hi':
-            print('[Displaying "Hi!" only as per Meena task.]')
-            human_first_msg = {
-                'episode_done': False,
-                'id': self.agent.id,
-                'text': 'Hi!',
-                'fake_start': True,
-                'agent_idx': 0,
+                'task_data': self.task_data,
             }
             for k, v in control_msg.items():
                 human_first_msg[k] = v
 
-            self.dialog.append(human_first_msg)
-            self.agent.observe(validate(human_first_msg))
+            # self.dialog.append(human_first_msg)
+            # self.agent.observe(validate(human_first_msg))
+            print(human_first_msg)
             self.bot.observe(validate(human_first_msg))
 
             first_bot_act = self.bot.act()
             first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
-
+            first_bot_act['id'] = 'THEY'
             self.agent.observe(validate(first_bot_act))
 
             bot_utterance_data = {
                 'agent_idx': 1,
                 'text': first_bot_act['text'],
-                'id': first_bot_act['id'],
+                'id': 'THEY',
             }
             self.dialog.append(bot_utterance_data)
 
@@ -516,65 +523,17 @@ class ModelChatWorld(BaseModelChatWorld):
                 f"not recognized!"
             )
 
-    def _get_persona_utterance(
-        self,
-        persona_strings: Optional[List[str]] = None,
-        context_dataset: Optional[str] = None,
-        additional_context: Optional[str] = None,
-        is_bot: bool = False,
-    ):
-        if is_bot:
-            # Pass back the original context
-            persona_pieces = [f"your persona: {str_}" for str_ in persona_strings]
-            if context_dataset == 'wizard_of_wikipedia':
-                additional_context_pieces = [additional_context]
-            else:
-                additional_context_pieces = []
-            full_context = '\n'.join(persona_pieces + additional_context_pieces)
-            print(f'FULL CONTEXT: {full_context}')
-            return full_context
-        else:
-            if context_dataset == 'convai2':
-                last_sentence = 'Pretend that the conversation has already begun.'
-            elif context_dataset == 'empathetic_dialogues':
-                last_sentence = (
-                    f'Pretend that the conversation has already begun, and that you '
-                    f'had been talking about the following situation: '
-                    f'<b>"{additional_context}"</b>'
-                )
-            elif context_dataset == 'wizard_of_wikipedia':
-                last_sentence = (
-                    f'Pretend that the conversation has already begun, and that you '
-                    f'had been talking about <b>{additional_context}</b>.'
-                )
-            else:
-                raise ValueError('Context dataset unrecognized!')
-            joined_personas = '\n'.join(persona_strings)
-            return (
-                f'\nSuccessfully matched with another user! Now let\'s get to know '
-                f'each other through the chat. You need to finish at least '
-                f'<b>{self.num_turns} chat turns</b>, and after that you can click the '
-                f'"Done" button to end the chat.\n\n'
-                f'<b>Your character description is:\n<span style="color:blue">{joined_personas}</span></b> '
-                '\n\n<b>Remember that you can get to know each '
-                'other as your characters, talk about any topic, or talk about a '
-                'situation that might have happened to your character.</b>'
-                '\n<b>Do not trivially copy the '
-                'character descriptions into the message.</b><br><br>'
-                f'{last_sentence}'
-            )
-
     def get_final_chat_data(self) -> Dict[str, Any]:
         """
         Add non-image-chat-specific fields to the final chat data.
         """
         data = super().get_final_chat_data()
         context_data = {
-            'personas': self.personas,
-            'context_dataset': self.context_info.get('context_dataset'),
-            'person1_seed_utterance': self.context_info.get('person1_seed_utterance'),
-            'person2_seed_utterance': self.context_info.get('person2_seed_utterance'),
-            'additional_context': self.context_info.get('additional_context'),
+            'model_name': self.model_name,
+            'context_info': self.context_info,
+            'bot_persona_strings': self.bot_persona_strings,
+            'human_persona_strings': self.human_persona_strings,
+            'initial_task_data': self.task_data,
         }
         data.update(context_data)
         return data
@@ -590,7 +549,7 @@ class ModelChatWorld(BaseModelChatWorld):
         human_messages, violation_types = super()._prepare_acceptability_checking()
         if self.opt['conversation_start_mode'] == 'bst':
             violation_types.append('penalize_greetings')
-            human_messages = human_messages[1:]
+            # human_messages = human_messages[1:]
         return human_messages, violation_types
 
 
@@ -636,19 +595,13 @@ def get_bot_worker(opt: Dict[str, Any], model_name: str) -> TurkLikeAgent:
     return bot_worker
 
 
-def make_world(opt, agents):
+def make_world(opt, agents, initialization_data):
 
     # Extract important components from opt
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
 
-    agents[0].agent_id = "Worker"
-
-    # Get context: personas, previous utterances, etc.
-    if context_generator is not None:
-        context_info = context_generator.get_context()
-    else:
-        context_info = None
+    agents[0].agent_id = "YOU"
 
     # Decide on a bot to use
     run_statistics = opt['run_statistics']
@@ -660,10 +613,25 @@ def make_world(opt, agents):
         model_name = remaining_counts_needed[0][0]
         print(f'Remaining conversation counts needed: {remaining_counts_needed}')
         print(f'Choosing the "{model_name}" model for the bot.')
+
+    # Get context: personas, previous utterances, etc.
+    if context_generator is not None:
+        context_info = context_generator.get_context(model_name)
+    else:
+        context_info = None
+
+    if context_info is None:
+        logging.warning("SHOULD END THE TASK")
+        return None
+
     bot_worker = get_bot_worker(opt=opt, model_name=model_name)
 
     return ModelChatWorld(
-        opt, agent=agents[0], bot=bot_worker, context_info=context_info
+        opt,
+        agent=agents[0],
+        bot=bot_worker,
+        model_name=model_name,
+        context_info=context_info,
     )
 
 

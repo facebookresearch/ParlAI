@@ -1,2 +1,109 @@
-blender_90M: >
+BST90M: >
     --model-file zoo:blender/blender_90M/model
+BST2.7B: >
+    --model-file zoo:blender/blender_3B/model
+MSC2.7B_128: >
+    --model-file /checkpoint/jase/projects/personal_knowledge/sweeps/tab4_bst_dialhist/fca.job_0/model
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+MSC2.7B_1024: >
+    --model-file /checkpoint/jase/projects/personal_knowledge/sweeps/tab4b_bst1024_dialhist/1d7.job_0/model
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+RAG_RAWHISTORY_NDOC10: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/h1024_rag_4nodes_vme1/074.job_0/model
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+RAG_SUMMSC: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/c_session_level_525p1024_rag_yourpersonafirstFalse_4nodes_vme1/615.job_1/model
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+FiD_SUMMSC: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/fidrag1024_session_level_yourpersonafirstFalse_3nodes_vme1/4b5.job_3/model
+    --model parlai_internal.projects.personal_knowledge.models.memory_agent:MemoryLongFidAgent
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+FiDRAG_SUMMSC: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/fidrag1024_session_level_yourpersonafirstFalse_3nodes_vme1/8dc.job_1/model
+    --model parlai_internal.projects.personal_knowledge.models.memory_agent:MemoryLongFidAgent
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+RAG_RAWHISTORY_SESSION_LEVEL: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/sh1024_rag_session_level/e3e.job_0/model
+    --model parlai_internal.projects.personal_knowledge.models.memory_agent:MemoryLongRagAgent
+    --memory-delimiter _________ 
+    --previous-session-delimiter _________ 
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+FiD_RAWHISTORY: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/hfidrag512_rawhistory/d5f.job_1/model
+    --model parlai_internal.projects.personal_knowledge.models.memory_agent:MemoryLongFidAgent
+    --memory-delimiter _________ 
+    --previous-session-delimiter _________ 
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+FiDRAG_RAWHISTORY: >
+    --model-file /checkpoint/jingxu23/projects/wiz2/inverse_persona/sweeps/ragbb/hfidrag512_rawhistory/ebe.job_0/model
+    --model parlai_internal.projects.personal_knowledge.models.memory_agent:MemoryLongFidAgent
+    --memory-delimiter _________ 
+    --previous-session-delimiter _________ 
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+KNOWLEDGE_BOT: >
+    --model-file /checkpoint/kshuster/projects/knowledge_bot/kbot_blender_sweep7_Wed_Jun_23/969/model
+    --model parlai_internal.projects.knowledgebot.agents.knowledgebot_fid:KnowledgeBotFidAgent
+    --persona-summarizer-model-file /checkpoint/kshuster/projects/knowledge_bot/persona_summarizer_sweep1_Tue_Jun_22/6b7/model
+    --search-server http://devfair0169:5000/bing_search
+    --loglevel debug
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False

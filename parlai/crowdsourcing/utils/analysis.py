@@ -120,18 +120,19 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
 
         # Handle inputs
         if 'results_folders' in opt:
-            self.results_folders = opt['results_folders'].split(',')
+            # self.results_folders = opt['results_folders'].split(',')
+            pass
         else:
             self.results_folders = None
         self.problem_buckets = opt['problem_buckets'].split(',')
 
         # Validate problem buckets
-        if 'none_all_good' not in self.problem_buckets:
-            # The code relies on a catchall "none" category if the user selects no other
-            # annotation bucket
-            raise ValueError(
-                'There must be a "none_all_good" category in self.problem_buckets!'
-            )
+        # if 'none_all_good' not in self.problem_buckets:
+        #     # The code relies on a catchall "none" category if the user selects no other
+        #     # annotation bucket
+        #     raise ValueError(
+        #         'There must be a "none_all_good" category in self.problem_buckets!'
+        #     )
 
 
 class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):

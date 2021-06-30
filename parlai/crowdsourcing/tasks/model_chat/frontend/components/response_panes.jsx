@@ -150,7 +150,7 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes}) {
             inputRef.current = ref;
           }}
           value={textValue}
-          placeholder="Please enter here..."
+          placeholder="Please annotate the last message from THEY before texting..."
           onKeyPress={(e) => handleKeyPress(e)}
           onChange={(e) => setTextValue(e.target.value)}
           disabled={!active || sending}

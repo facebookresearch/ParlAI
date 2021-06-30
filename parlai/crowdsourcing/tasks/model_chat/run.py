@@ -33,7 +33,7 @@ class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
     monitoring_log_rate: int = field(
-        default=30,
+        default=300,
         metadata={
             'help': 'Frequency in seconds of logging the monitoring of the crowdsourcing task'
         },

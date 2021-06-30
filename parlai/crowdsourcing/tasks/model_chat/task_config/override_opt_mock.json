@@ -1,0 +1,9 @@
+{
+    "bot_model_name": "BST90M",
+    "context_done_statistics": {
+        "BST90M": [],
+        "BST2.7B": [],
+        "MSC2.7B_128": [],
+        "MSC2.7B_1024": []
+    }
+}
