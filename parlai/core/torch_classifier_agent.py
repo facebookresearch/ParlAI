@@ -192,7 +192,7 @@ class AUCMetrics(Metric):
     @classmethod
     def raw_data_to_auc(
         cls,
-        true_labels: List[int],
+        true_labels: List[Union[int, str]],
         pos_probs: List[float],
         class_name,
         max_bucket_dec_places: int = 3,
@@ -215,7 +215,9 @@ class AUCMetrics(Metric):
         self._class_name = class_name
         self._max_bucket_dec_places = max_bucket_dec_places
 
-    def update_raw(self, true_labels: List[int], pos_probs: List[float], class_name):
+    def update_raw(
+        self, true_labels: List[Union[int, str]], pos_probs: List[float], class_name
+    ):
         assert self._class_name == class_name
         assert len(true_labels) == len(pos_probs)
 
