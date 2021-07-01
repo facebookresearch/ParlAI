@@ -21,7 +21,7 @@ CONTENT = 'content'
 DEFAULT_NUM_TO_RETRIEVE = 5
 
 
-class RetrieverAgent(ABC):
+class RetrieverAPI(ABC):
     """
     Provides the common interfaces for retrievers.
 
@@ -45,7 +45,7 @@ class RetrieverAgent(ABC):
         return resp_content
 
 
-class SearchEngineRetrieverMock(RetrieverAgent):
+class SearchEngineRetrieverMock(RetrieverAPI):
     """
     For unit tests and debugging (does not need a running server).
     """
@@ -67,7 +67,7 @@ class SearchEngineRetrieverMock(RetrieverAgent):
         return all_docs
 
 
-class SearchEngineRetriever(RetrieverAgent):
+class SearchEngineRetriever(RetrieverAPI):
     """
     Queries a server (eg, search engine) for a set of documents.
 

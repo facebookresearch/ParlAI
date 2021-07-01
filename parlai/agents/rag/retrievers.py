@@ -22,6 +22,7 @@ except ImportError:
     from transformers import BertTokenizer
 from typing import Tuple, List, Dict, Union, Optional, Any
 from typing_extensions import final
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
 from parlai.core.agents import create_agent
@@ -45,6 +46,7 @@ from parlai.agents.rag.args import (
     TRANSFORMER_RANKER_BASE_OPT,
     WOW_COMPRESSED_INDEX_PATH,
 )
+from parlai.agents.rag.retrieve_api import RetrieverAPI, SearchEngineRetriever
 
 
 def load_passage_reader(
@@ -351,13 +353,16 @@ class RagRetriever(torch.nn.Module, ABC):
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
         super().__init__()
-        if not (opt.get('retriever_debug_index') in [None, 'none']):
+        self.retriever_type = RetrieverType(opt['rag_retriever_type'])
+        if not (
+            (self.retriever_type == RetrieverType.SEARCH_ENGINE)
+            or (opt.get('retriever_debug_index') in [None, 'none'])
+        ):
             if opt.get('retriever_debug_index') == 'exact':
                 opt['path_to_index'] = WOW_INDEX_PATH
             else:
                 opt['path_to_index'] = WOW_COMPRESSED_INDEX_PATH
             opt['path_to_dpr_passages'] = WOW_PASSAGES_PATH
-        self.retriever_type = RetrieverType(opt['rag_retriever_type'])
         self.opt = opt
         self.print_docs = opt.get('print_docs', False)
         self.max_doc_len = opt['max_doc_token_length']
@@ -993,6 +998,101 @@ class RagTfidfRetrieverAgent(TfidfRetrieverAgent):
         return text
 
 
+BLANK_SEARCH_DOC = {"url": None, "content": "", "title": ""}
+
+
+class SearchQueryRetriever(RagRetriever):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared):
+        super().__init__(opt, dictionary, shared=shared)
+        self.n_docs = opt['n_docs']
+        self.len_chunk = opt['splitted_chunk_length']
+        self.search_query_generator_context_block_len = opt[
+            'search_query_gen_context_block_len'
+        ]
+        n_doc_chunks = opt.get('n_ranked_doc_chunks', 1)
+        chunk_ranker_type = opt.get('doc_chunks_ranker', 'head')
+        if chunk_ranker_type == 'tfidf':
+            self.chunk_reranker = TfidfChunkRanker(n_doc_chunks)
+        else:
+            self.chunk_reranker = HeadChunkRanker(n_doc_chunks)
+
+        if not shared:
+            self.search_client = self._initiate_retriever_api(opt)
+            self.query_generator = self._init_search_query_generator(opt)
+        else:
+            self.search_client = shared['search_client']
+            self.query_generator = shared['query_generator']
+        self.dict = dictionary
+        self.query_encoder = self._get_query_encoder(opt)
+
+    def share(self) -> TShared:
+        shared = super().share()
+        shared['search_client'] = self.search_client
+        shared['query_generator'] = self.query_generator
+        return shared
+
+    @abstractmethod
+    def _initiate_retriever_api(self, opt) -> RetrieverAPI:
+        """
+        Instantiates a search module
+        """
+
+    def _get_query_encoder(self, opt):
+        return DprQueryEncoder(
+            opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
+        )
+
+    def pick_chunk(self, query, doc_text):
+        if not doc_text:
+            # When there is no search query for the context
+            return [("", 0)]
+        tokens = self.dict.txt2vec(doc_text)
+        doc_chunks = [
+            self.dict.vec2txt(tokens[i : i + self.len_chunk])
+            for i in range(0, len(tokens), self.len_chunk)
+        ]
+        return self.chunk_reranker.get_top_chunks(query, doc_chunks)
+
+
+class SearchEngineRetriever(SearchQueryRetriever):
+    def _initiate_retriever_api(self, opt) -> SearchEngineRetriever:
+        logging.info('Creating the search engine retriever.')
+        return SearchEngineRetriever(opt)
+
+
+class DocumentChunkRanker:
+    def __init__(self, n_retrieved_chunks):
+        self.n_ret_chunks = n_retrieved_chunks
+
+    @abstractmethod
+    def get_top_chunks(self, query, doc_chunks):
+        """
+        Ranks documents (chunk) based on their relevance to `query`
+        """
+
+
+class HeadChunkRanker(DocumentChunkRanker):
+    def get_top_chunks(self, query, doc_chunks):
+        """
+        Return chunks in doc-present order.
+        """
+        return [(c,) for c in doc_chunks[: self.n_ret_chunks]]
+
+
+class TfidfChunkRanker(DocumentChunkRanker):
+    def __init__(self, n_retrieved_chunks):
+        super().__init__(n_retrieved_chunks)
+        self._vectorizer = TfidfVectorizer()
+
+    def get_top_chunks(self, query, doc_chunks):
+        vectorized_corpus = self._vectorizer.fit_transform(doc_chunks + [query])
+        docs_vec = vectorized_corpus[:-1, :]
+        q_vec = vectorized_corpus[-1, :]
+        scores = np.hstack((q_vec * docs_vec.transpose()).toarray())
+        top_chunk_ids = np.argsort(-scores)[: self.n_ret_chunks]
+        return [(doc_chunks[i], scores[i]) for i in top_chunk_ids]
+
+
 def retriever_factory(
     opt: Opt, dictionary: DictionaryAgent, shared=None
 ) -> Optional[RagRetriever]:
@@ -1021,3 +1121,5 @@ def retriever_factory(
         return DPRThenPolyRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.POLY_FAISS:
         return PolyFaissRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.SEARCH_ENGINE:
+        return SearchEngineRetriever(opt, dictionary, shared=shared)

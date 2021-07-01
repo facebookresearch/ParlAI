@@ -86,6 +86,7 @@ class RetrieverType(Enum):
     TFIDF = 'tfidf'
     DPR_THEN_POLY = 'dpr_then_poly'
     POLY_FAISS = 'poly_faiss'
+    SEARCH_ENGINE = 'search_engine'
 
 
 def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
