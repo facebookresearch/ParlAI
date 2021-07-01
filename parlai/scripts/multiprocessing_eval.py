@@ -23,7 +23,6 @@ parlai multiprocessing_eval --model-file "zoo:tutorial_transformer_generator/mod
 """
 
 import torch
-import random
 import os
 import signal
 import parlai.utils.distributed as distributed_utils
@@ -88,7 +87,7 @@ class MultiProcessEval(ParlaiScript):
         return setup_args()
 
     def run(self):
-        port = random.randint(32000, 48000)
+        port = distributed_utils.find_free_port()
         return launch_and_eval(self.opt, port)
 
 

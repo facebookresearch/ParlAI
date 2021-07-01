@@ -25,6 +25,7 @@ from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
+from parlai.utils.fsdp import fsdp_wrap
 
 
 @swappable(
@@ -277,16 +278,15 @@ class TransformerDecoder(nn.Module):
     def build_layers(self) -> nn.ModuleList:
         layers = nn.ModuleList()
         for _ in range(self.n_layers):
-            layers.append(
-                self.swappables.layer(
-                    self.opt,
-                    attention_dropout=self.opt.get('attention_dropout', 0.0),
-                    relu_dropout=self.opt.get('relu_dropout', 0.0),
-                    dropout=self.opt.get('dropout', 0.0),
-                    activation=self.activation,
-                    variant=self.variant,
-                )  # type: ignore
+            layer = self.swappables.layer(
+                self.opt,
+                attention_dropout=self.opt.get('attention_dropout', 0.0),
+                relu_dropout=self.opt.get('relu_dropout', 0.0),
+                dropout=self.opt.get('dropout', 0.0),
+                activation=self.activation,
+                variant=self.variant,
             )
+            layers.append(fsdp_wrap(layer))  # type: ignore
         return layers
 
     def forward_embedding(

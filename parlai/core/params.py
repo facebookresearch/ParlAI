@@ -772,6 +772,16 @@ class ParlaiParser(argparse.ArgumentParser):
         grp.add_argument(
             '--distributed-world-size', type=int, help='Number of workers.'
         )
+        grp.add_argument(
+            '--ddp-backend',
+            # TODO: add in zero3. https://github.com/facebookresearch/ParlAI/issues/3753
+            choices=['ddp', 'zero2'],
+            default='ddp',
+            help=(
+                'Distributed backend. Zero2 can be faster but is more experimental. '
+                'DDP is the most tested.'
+            ),
+        )
         return grp
 
     def add_model_args(self):
