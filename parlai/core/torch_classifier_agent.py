@@ -16,13 +16,14 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict, Union
+from typing import Counter as Count
 from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 from sklearn.metrics import auc
 
 import parlai.utils.logging as logging
 import torch.nn.functional as F
-from collections import Counter
+from collections import Counter as Counter
 import torch
 import math
 
@@ -205,8 +206,8 @@ class AUCMetrics(Metric):
     def __init__(
         self,
         class_name: Union[int, str],
-        pos_dict: Dict[float, int] = None,
-        neg_dict: Dict[float, int] = None,
+        pos_dict: Count[float] = None,
+        neg_dict: Count[float] = None,
         max_bucket_dec_places: int = 3,
     ):
         self._pos_dict = pos_dict if pos_dict else Counter()
@@ -270,7 +271,6 @@ class AUCMetrics(Metric):
         _tot_pos = sum(self._pos_dict.values())
         _tot_neg = sum(self._neg_dict.values())
         fp_tp = self._calc_fp_tp()
-        fp_tp.sort()
         fps, tps = list(zip(*fp_tp))
         if _tot_neg == 0:
             fpr = [0] * len(fps)
@@ -290,6 +290,10 @@ class AUCMetrics(Metric):
         if _tot_pos == 0 and _tot_neg == 0:
             return 0
 
+        # auc needs x-axis to be sorted
+        fpr_tpr = list(zip(fpr, tpr))
+        fpr_tpr.sort()
+        fpr, tpr = list(zip(*fpr_tpr))
         return auc(fpr, tpr)
 
 
