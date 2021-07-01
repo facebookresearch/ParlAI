@@ -23,7 +23,7 @@ from sklearn.metrics import auc
 
 import parlai.utils.logging as logging
 import torch.nn.functional as F
-from collections import Counter as Counter
+from collections import Counter
 import torch
 import math
 
