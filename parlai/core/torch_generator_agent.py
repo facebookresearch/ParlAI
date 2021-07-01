@@ -482,7 +482,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             self.criterion = self.build_criterion()
             with fsdp_utils.maybe_fsdp_wrap(opt):
                 self.model = fsdp_utils.fsdp_wrap(self.build_model())
-                if self.fp16 and not fsdp_utils.should_use_fsdp(opt):
+                if self.fp16 and not fsdp_utils.delay_halving(opt):
                     self.model = self.model.half()
 
             # load the block_list for beam search

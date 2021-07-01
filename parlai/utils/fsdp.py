@@ -81,13 +81,12 @@ def delay_halving(self):
 
     When using Zero2 or Zero3 backends with mixed precision, we need to avoid converting
     the model to fp16, as the FSDP module does this for us.
+
+    If we are using just plain DDP or MemoryEfficient optimizers, then we want
+    to call half() early.
     """
 
-    return (
-        self.fp16
-        and self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3')
-        and self.opt['fp16_impl'] == 'safe'
-    )
+    return self.fp16 and should_use_fsdp(opt) and self.opt['fp16_impl'] == 'safe'
 
 
 def should_sync_gradnorm(opt):
