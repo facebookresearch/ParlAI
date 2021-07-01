@@ -300,9 +300,9 @@ def get_dist_group():
     """
     Find the default pytorch distributed group.
 
-    Used within FSDP to mark which workers are participating. Important to
-    manually call this because FSDP will cache old groups, but our test
-    suite will instantiate new groups per test.
+    Used within FSDP to mark which workers are participating. Important to manually call
+    this because FSDP will cache old groups, but our test suite will instantiate new
+    groups per test.
     """
     from torch.distributed.distributed_c10d import _get_default_group
 

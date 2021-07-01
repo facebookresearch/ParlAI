@@ -196,7 +196,7 @@ class TestZero3NotImplemented(_AbstractTest):
 
     def test_not_implemented(self):
         """
-        Checks that using --ddp-backend zero3 throws an error
+        Checks that using --ddp-backend zero3 throws an error.
         """
         with self.assertRaises(NotImplementedError):
             self._distributed_train_model()
