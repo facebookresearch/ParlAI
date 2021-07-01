@@ -194,7 +194,7 @@ class AUCMetrics(Metric):
         true_labels: List[int],
         pos_probs: List[float],
         class_name,
-        max_bucket_dec_places: float = 5,
+        max_bucket_dec_places: int = 3,
     ):
         auc_object = cls(class_name, max_bucket_dec_places=max_bucket_dec_places)
         auc_object.update_raw(
@@ -207,7 +207,7 @@ class AUCMetrics(Metric):
         class_name: Union[int, str],
         pos_dict: Dict[float, int] = None,
         neg_dict: Dict[float, int] = None,
-        max_bucket_dec_places: float = 3,
+        max_bucket_dec_places: int = 3,
     ):
         self._pos_dict = pos_dict if pos_dict else Counter()
         self._neg_dict = neg_dict if neg_dict else Counter()
