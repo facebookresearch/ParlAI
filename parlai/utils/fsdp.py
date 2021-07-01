@@ -75,7 +75,7 @@ def maybe_fsdp_wrap(opt):
         yield
 
 
-def delay_halving(self):
+def delay_halving(opt):
     """
     Check whether we should keep the model in fp32 before other setup.
 
@@ -86,7 +86,7 @@ def delay_halving(self):
     to call half() early.
     """
 
-    return self.fp16 and should_use_fsdp(opt) and self.opt['fp16_impl'] == 'safe'
+    return opt['fp16'] and should_use_fsdp(opt) and opt['fp16_impl'] == 'safe'
 
 
 def should_sync_gradnorm(opt):
