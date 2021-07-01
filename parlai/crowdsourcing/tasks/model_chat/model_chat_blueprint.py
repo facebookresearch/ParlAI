@@ -301,7 +301,7 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
         default='hi',
         metadata={
             "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
-            "choices": ['hi', 'bst'],
+            "choices": ['hi', 'bst', 'wizint'],
         },
     )
     include_persona: bool = field(

@@ -77,9 +77,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
         # Setting up problem buckets
         self.regular_buckets = [
-            bucket
-            for bucket in self.problem_buckets
-            if bucket not in ['other', 'none_all_good']
+            bucket for bucket in self.problem_buckets if bucket not in ['other', 'none']
         ]
         # Remove the buckets that are special cases
 
@@ -178,14 +176,14 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     continue
 
                 if not all(
-                    bucket in data['dialog'][1]['problem_data']
+                    bucket in data['dialog'][0]['problem_data']
                     for bucket in self.problem_buckets
                 ):
                     raise ValueError('Bucket(s) are missing from the problem data!')
                 s = read_folder.split('/')[-2]
-                experimental_design = s[s.find('_') + 1 :]
-
-                model_nickname = experimental_design + '/' + data['workers'][1]
+                # experimental_design = s[s.find('_') + 1 :]
+                model_nickname = s
+                # model_nickname = experimental_design + '/' + data['workers'][1]
                 if model_nickname not in problem_counts:
                     problem_counts[model_nickname] = {}
                 if model_nickname in complete_convos_per_model:
@@ -211,7 +209,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 # agents 0 and 1, with 0 speaking first
                 assert all(
                     [
-                        utterance_data['agent_idx'] == utterance_idx % 2
+                        # utterance_data['agent_idx'] == utterance_idx % 2
+                        utterance_data['agent_idx'] == (utterance_idx + 1) % 2
                         for utterance_idx, utterance_data in enumerate(data['dialog'])
                     ]
                 )
@@ -266,9 +265,9 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         'turn_idx': -1,
                         'agent_idx': 1,
                         'text': 'your persona: '
-                        + data['personas'][1][0]
-                        + '\nyour persona: '
-                        + data['personas'][1][1]
+                        + data['personas'][0]
+                        + '\n their persona: '
+                        + data['personas'][1]
                         + additional_context,
                         **{bucket: '' for bucket in self.problem_buckets},
                     },
@@ -305,16 +304,16 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             )
                             continue
                         else:
-                            for bucket in self.regular_buckets + ['none_all_good']:
+                            for bucket in self.regular_buckets + ['none']:
                                 d[bucket] = utt['problem_data'][bucket]
                             d['final_rating'] = (
                                 utt['final_rating'] if 'final_rating' in utt else None
                             )
-                        for k in self.regular_buckets + ['none_all_good']:
+                        for k in self.regular_buckets + ['none']:
                             if k not in problem_counts[model_nickname]:
                                 problem_counts[model_nickname][k] = 0
                             problem_counts[model_nickname][k] += d[k]
-                            if k != 'none_all_good' and d[k]:
+                            if k != 'none' and d[k]:
                                 dialog_has_problems = True
 
                         if 'total' not in problem_counts[model_nickname]:
@@ -354,7 +353,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     df = df.append(d, ignore_index=True)
 
                 # Count the number of problems the worker got
-                is_problem = ~df['none_all_good'].replace('', True)
+                is_problem = ~df['none'].replace('', True)
 
                 # Only want to count bot utterances but human ones, while included,
                 # won't be False
@@ -372,9 +371,10 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     problem_counts[model_nickname]['count_convos'] = 0
                 problem_counts[model_nickname]['count_convos'] += 1
 
+                if 'convo_clean' not in problem_counts[model_nickname]:
+                    problem_counts[model_nickname]['convo_clean'] = 0
+
                 if not dialog_has_problems:
-                    if 'convo_clean' not in problem_counts[model_nickname]:
-                        problem_counts[model_nickname]['convo_clean'] = 0
                     problem_counts[model_nickname]['convo_clean'] += 1
 
                 # Adding the full conversation to the list of conversations
@@ -448,12 +448,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         html_text = (
             '<html><body><table><tr><td>model</td>'
             + ''.join(f'<td>{bucket}</td>' for bucket in self.regular_buckets)
-            + '<td>none_all_good</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr>'
+            + '<td>none</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr>'
         )
         for model_nickname, model_problems_dict in problem_counts.items():
             html_text += f'<tr><td>{model_nickname}</td>'
             keys = self.regular_buckets + [
-                'none_all_good',
+                'none',
                 'human_word_count',
                 'human_question_count',
             ]

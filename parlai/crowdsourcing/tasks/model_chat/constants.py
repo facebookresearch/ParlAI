@@ -11,4 +11,4 @@ WAITING_MSG = 'Please wait while we match you with another worker...'
 ONBOARD_FAIL = '[ONBOARD_FAIL]'
 ONBOARD_SUCCESS = '[ONBOARD_SUCCESS]'
 
-ONBOARD_CONFIG = {'min_correct': 4, 'max_incorrect': 3}
+ONBOARD_CONFIG = {'min_correct': 1, 'max_incorrect': 2}

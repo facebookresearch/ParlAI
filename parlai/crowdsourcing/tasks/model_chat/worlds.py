@@ -33,6 +33,8 @@ if TYPE_CHECKING:
         MephistoAgentWrapper,
     )
 
+THEM = 'Partner'
+
 
 class ModelChatOnboardWorld(CrowdOnboardWorld):
     """
@@ -228,6 +230,8 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 acts[idx] = Message(
                     Compatibility.maybe_fix_act(acts[idx])
                 ).json_safe_payload()
+                if acts[idx]['id'] == 'TransformerGenerator':
+                    acts[idx]['id'] = THEM
                 print(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
@@ -442,15 +446,21 @@ class ModelChatWorld(BaseModelChatWorld):
             # first utterance in the history.
             # Previously for BST task, we also had a big first utterance
             # that gave instructions. Removing that for this task.
-            persona_strings = [s.strip() for s in self.personas[1]]
-            persona_utterance = self._get_persona_utterance(
-                persona_strings=persona_strings,
-                context_dataset=self.context_info['context_dataset'],
-                additional_context=self.context_info['additional_context'],
-                is_bot=True,
-            )
-            message = control_msg.copy()
-            message['text'] = persona_utterance
+            if self.context_info['context_dataset'] != 'wiz_int':
+                persona_strings = [s.strip() for s in self.personas[1]]
+                persona_utterance = self._get_persona_utterance(
+                    persona_strings=persona_strings,
+                    context_dataset=self.context_info['context_dataset'],
+                    additional_context=self.context_info['additional_context'],
+                    is_bot=True,
+                )
+                message = control_msg.copy()
+                message['text'] = persona_utterance
+                # The bot seeing its persona does not count as a "turn"
+            else:
+                message = control_msg.copy()
+                message['text'] = self.context_info['persona_1_strings']
+                print(f'Bot first observe: {message}')
             # The bot seeing its persona does not count as a "turn"
             self.bot.observe(validate(message), increment_turn=False)
 
@@ -500,6 +510,7 @@ class ModelChatWorld(BaseModelChatWorld):
 
             first_bot_act = self.bot.act()
             first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act['id'] = THEM
 
             self.agent.observe(validate(first_bot_act))
 
@@ -509,7 +520,31 @@ class ModelChatWorld(BaseModelChatWorld):
                 'id': first_bot_act['id'],
             }
             self.dialog.append(bot_utterance_data)
+        elif self.opt['conversation_start_mode'] == 'wiz_int':
+            print('Using LIGHT')
+            human_first_msg = {
+                'episode_done': False,
+                'id': self.agent.id,
+                'text': self.context_info['persona_2_strings'],
+                'fake_start': True,
+                'agent_idx': 0,
+            }
+            time.sleep(1)
+            self.agent.observe(validate(human_first_msg))
+            time.sleep(1)
+            print(f'Sent over {human_first_msg} to human')
+            first_bot_act = self.bot.act()
+            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act['id'] = THEM
 
+            self.agent.observe(validate(first_bot_act))
+
+            bot_utterance_data = {
+                'agent_idx': 1,
+                'text': first_bot_act['text'],
+                'id': first_bot_act['id'],
+            }
+            self.dialog.append(bot_utterance_data)
         else:
             raise ValueError(
                 f"Conversation start mode {self.opt['conversation_start_mode']} "

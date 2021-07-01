@@ -422,6 +422,14 @@ def get_context_generator(
         argparser.set_params(**override_opt)
     opt = argparser.parse_args([])
     context_generator = ContextGenerator(opt, datatype='test', seed=0)
+    if override_opt.get('context_generator') == 'wiz_int':
+        from parlai_internal.tasks.wizard_of_internet.agents import (
+            ContextGenerator as WIContextGenerator,
+        )
+
+        context_generator = WIContextGenerator(opt)
+    else:
+        context_generator = ContextGenerator(opt, datatype='test', seed=0)
     # We pull from the test set so that the model can't regurgitate
     # memorized conversations
     return context_generator
