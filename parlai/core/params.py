@@ -774,12 +774,12 @@ class ParlaiParser(argparse.ArgumentParser):
         )
         grp.add_argument(
             '--ddp-backend',
-            choices=['ddp', 'zero2', 'zero3'],
+            # TODO: add in zero3. https://github.com/facebookresearch/ParlAI/issues/3753
+            choices=['ddp', 'zero2'],
             default='ddp',
             help=(
                 'Distributed backend. Zero2 can be faster but is more experimental. '
-                'Zero3 uses radically less memory, but is slower. DDP is the most '
-                'tested.'
+                'DDP is the most tested.'
             ),
         )
         return grp

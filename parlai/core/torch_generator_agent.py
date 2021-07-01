@@ -535,7 +535,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if (
             shared is None
             and is_distributed()
-            and opt.get('ddp_backend', 'ddp') == 'ddp'
+            and opt.get('ddp_backend', fsdp_utils.DEFAULT_DDP_BACKEND) == 'ddp'
         ):
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(

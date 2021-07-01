@@ -92,7 +92,7 @@ def delay_halving(self):
 
 def should_sync_gradnorm(opt):
     """
-    Indicates whether fp16 optimizer wrappers should cumulate over workers.
+    Indicates whether fp16 optimizer wrappers should accumulate over workers.
 
     FP16 overflow detection and gradient clipping both require accumulating gradients
     across all workers when using FSDP, as workers only store a fraction of the

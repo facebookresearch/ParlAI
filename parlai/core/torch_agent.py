@@ -36,7 +36,7 @@ from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
-from parlai.utils.fsdp import should_sync_gradnorm, is_fsdp
+from parlai.utils.fsdp import should_sync_gradnorm, is_fsdp, DEFAULT_DDP_BACKEND
 from parlai.utils.fp16 import (
     SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
@@ -2004,7 +2004,7 @@ class TorchAgent(ABC, Agent):
 
         For models or optimizers that shard parameters, this ensures we sync.
         """
-        if self.opt.get('ddp_backend', 'ddp') in ('zero2', 'zero3'):
+        if self.opt.get('ddp_backend', DEFAULT_DDP_BACKEND) in ('zero2', 'zero3'):
             # make sure we call the state dict
             self.state_dict()
 
