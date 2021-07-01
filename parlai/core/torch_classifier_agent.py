@@ -267,7 +267,7 @@ class AUCMetrics(Metric):
             fp_tp.append((fp, tp))
         return fp_tp
 
-    def _calc_fpr_tpr(self) -> Tuple[List[int]]:
+    def _calc_fpr_tpr(self) -> Tuple[Union[List[int], int]]:
         _tot_pos = sum(self._pos_dict.values())
         _tot_neg = sum(self._neg_dict.values())
         fp_tp = self._calc_fp_tp()
@@ -282,16 +282,15 @@ class AUCMetrics(Metric):
         else:
             tpr = [tp / _tot_pos for tp in tps]
 
-        return (fpr, tpr, _tot_pos, _tot_neg)
+        return (list(zip(fpr, tpr)), _tot_pos, _tot_neg)
 
     def value(self) -> float:
-        fpr, tpr, _tot_pos, _tot_neg = self._calc_fpr_tpr()
+        fpr_tpr, _tot_pos, _tot_neg = self._calc_fpr_tpr()
 
         if _tot_pos == 0 and _tot_neg == 0:
             return 0
 
         # auc needs x-axis to be sorted
-        fpr_tpr = list(zip(fpr, tpr))
         fpr_tpr.sort()
         fpr, tpr = list(zip(*fpr_tpr))
         return auc(fpr, tpr)
