@@ -22,6 +22,12 @@ DEFAULT_NUM_TO_RETRIEVE = 5
 
 
 class RetrieverAgent(ABC):
+    """
+    Provides the common interfaces for retrievers.
+
+    Every retriever in this modules must implement the `retriev` method.
+    """
+
     def __init__(self, opt: Opt):
         pass
 
@@ -40,6 +46,10 @@ class RetrieverAgent(ABC):
 
 
 class SearchEngineRetrieverMock(RetrieverAgent):
+    """
+    For unit tests and debugging (does not need a running server).
+    """
+
     def retriev(
         self, queries: List[str], num_ret: int = DEFAULT_NUM_TO_RETRIEVE
     ) -> List[Dict[str, Any]]:
@@ -58,6 +68,13 @@ class SearchEngineRetrieverMock(RetrieverAgent):
 
 
 class SearchEngineRetriever(RetrieverAgent):
+    """
+    Queries a server (eg, search engine) for a set of documents.
+
+    This module relies on a running HTTP server. For each retrieval it sends the query to
+    this server and receieves a JSON; it parses the JSON to create the the response.
+    """
+
     def __init__(self, opt: Opt):
         self.server_address = self._validate_server(opt.get('search_server'))
 
@@ -82,7 +99,27 @@ class SearchEngineRetriever(RetrieverAgent):
         logging.warning(f'No portocol provided, using "{PROTOCOL}"')
         return f'{PROTOCOL}{address}'
 
+    def _retrieve_single(self, search_query: str, num_ret: int):
+        retrieved_docs = []
+        search_server_resp = self._query_search_server(search_query, num_ret)
+        if not search_server_resp:
+            logging.warning(
+                f'Server search did not produce any results for "{search_query}" query.'
+                ' returning an empty set of results for this query.'
+            )
+            return retrieved_docs
+
+        for rd in search_server_resp:
+            url = rd.get('url', '')
+            title = rd.get('title', '')
+            sentences = [s.strip() for s in rd[CONTENT].split('\n') if s and s.strip()]
+            retrieved_docs.append(
+                self.create_content_dict(url=url, title=title, content=sentences)
+            )
+        return retrieved_docs
+
     def retriev(
         self, queries: List[str], num_ret: int = DEFAULT_NUM_TO_RETRIEVE
     ) -> List[Dict[str, Any]]:
-        pass
+        # TODO: update the server (and then this) for batch responses.
+        return [self._retrieve_single(q, num_ret) for q in queries]
