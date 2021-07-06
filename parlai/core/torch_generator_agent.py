@@ -871,7 +871,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            beam_preds_scores, beams = self._generate(batch, self.beam_size, maxlen)
+            prefix_tokens = self.get_prefix_tokens(batch)
+            beam_preds_scores, beams = self._generate(
+                batch, self.beam_size, maxlen, prefix_tokens=prefix_tokens
+            )
             preds, scores = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
 
@@ -1045,6 +1048,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         decoder_input = torch.cat([prev_input, selection], dim=-1)
         return decoder_input
 
+    def get_prefix_tokens(self, batch: Batch) -> Optional[torch.LongTensor]:
+        """
+        Set prefix tokens to seed decoding at generation time.
+
+        By default, we do not utilize prefix tokens, but this is
+        left overridable by child classes.
+
+        Returned tensor should be of dimension bsz x len(prefix)
+        """
+        return None
+
     def _generate(
         self,
         batch: Batch,
@@ -1122,15 +1136,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
-                prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
-                prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
-                prefix_mask = prefix_toks.ne(self.NULL_IDX)
+                prefix_toks = prefix_tokens[:, _ts]
+                prefix_mask = torch.ones_like(score, dtype=torch.bool)
+                prefix_mask[
+                    :, :, prefix_toks
+                ] = False  # everything except prefix toks should be neginf
                 score[prefix_mask] = neginf(score.dtype)
-                score[prefix_mask] = score[prefix_mask].scatter_(
-                    -1,
-                    prefix_toks[prefix_mask].unsqueeze(-1),
-                    prefix_score[prefix_mask],
-                )
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
