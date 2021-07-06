@@ -206,9 +206,9 @@ class AUCMetrics(Metric):
     def __init__(
         self,
         class_name: Union[int, str],
-        pos_dict: Optional[Count[float]],
-        neg_dict: Optional[Count[float]],
         max_bucket_dec_places: int = 3,
+        pos_dict: Optional[Count[float]] = None,
+        neg_dict: Optional[Count[float]] = None,
     ):
         # `_pos_dict` keeps track of the probabilities of the positive class
         self._pos_dict = pos_dict if pos_dict else Counter()
