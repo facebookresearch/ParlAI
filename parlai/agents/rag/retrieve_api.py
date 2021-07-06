@@ -29,10 +29,10 @@ class RetrieverAPI(ABC):
     """
 
     def __init__(self, opt: Opt):
-        pass
+        self.skip_query_token = opt['skip_retrieval_token']
 
     @abstractmethod
-    def retriev(
+    def retrieve(
         self, queries: List[str], num_ret: int = DEFAULT_NUM_TO_RETRIEVE
     ) -> List[Dict[str, Any]]:
         """
@@ -50,7 +50,7 @@ class SearchEngineRetrieverMock(RetrieverAPI):
     For unit tests and debugging (does not need a running server).
     """
 
-    def retriev(
+    def retrieve(
         self, queries: List[str], num_ret: int = DEFAULT_NUM_TO_RETRIEVE
     ) -> List[Dict[str, Any]]:
         all_docs = []
@@ -76,6 +76,7 @@ class SearchEngineRetriever(RetrieverAPI):
     """
 
     def __init__(self, opt: Opt):
+        super().__init__(opt=opt)
         self.server_address = self._validate_server(opt.get('search_server'))
 
     def _query_search_server(self, query_term, n):
@@ -100,6 +101,9 @@ class SearchEngineRetriever(RetrieverAPI):
         return f'{PROTOCOL}{address}'
 
     def _retrieve_single(self, search_query: str, num_ret: int):
+        if search_query == self.skip_query_token:
+            return None
+
         retrieved_docs = []
         search_server_resp = self._query_search_server(search_query, num_ret)
         if not search_server_resp:
@@ -118,7 +122,7 @@ class SearchEngineRetriever(RetrieverAPI):
             )
         return retrieved_docs
 
-    def retriev(
+    def retrieve(
         self, queries: List[str], num_ret: int = DEFAULT_NUM_TO_RETRIEVE
     ) -> List[Dict[str, Any]]:
         # TODO: update the server (and then this) for batch responses.
