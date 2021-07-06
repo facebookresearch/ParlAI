@@ -17,7 +17,7 @@ from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.torch_agent import Batch
 
 
-PREFIX_TEXT = '4 3 2 1 '
+PREFIX_TEXT = '4 3 2 1'
 
 
 class TransformerGeneratorPrefixAgent(TransformerGeneratorAgent):

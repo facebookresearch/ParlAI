@@ -167,7 +167,9 @@ class TestGeneration(unittest.TestCase):
         beam_texts = [x[0] for x in act['beam_texts']]
         for beam in beam_texts:
             # check that all beams start with the prefix text
-            assert beam.startswith(PREFIX_TEXT)
+            assert beam.startswith(
+                PREFIX_TEXT
+            ), f"[{beam}] does not start with [{PREFIX_TEXT}]"
 
 
 if __name__ == '__main__':
