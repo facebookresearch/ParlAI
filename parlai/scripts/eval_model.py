@@ -42,6 +42,7 @@ from parlai.utils.distributed import (
     get_rank,
 )
 
+# the index to access classifier agent's output in the world
 CLASSIFIER_AGENT = 1
 
 
