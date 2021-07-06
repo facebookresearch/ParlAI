@@ -180,6 +180,9 @@ class AUCMetrics(Metric):
     integer number determines the number of digits to save for the probability scores. A
     higher `max_bucket_dec_places` will a more accurate estimate of the exact AUC
     metric, but may also use more space.
+
+    NOTE: currently only used for classifiers in the `eval_model` script; to use,
+    add the argument `-auc <max_bucket_dec_places>` when running `eval_model` script
     """
 
     @property
