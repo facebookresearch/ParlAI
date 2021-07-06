@@ -72,11 +72,11 @@ def setup_args(parser=None):
         choices=['conversations', 'parlai'],
     )
     parser.add_argument(
-        '--area-under-curve',
+        '--area-under-curve-digits',
         '-auc',
         type=int,
         default=-1,
-        help='a positive number indicates to calculate the area under the roc curve and it also determines how many decimal digits of the predictions to keep (higher numbers->more accurate); ',
+        help='a positive number indicates to calculate the area under the roc curve and it also determines how many decimal digits of the predictions to keep (higher numbers->more accurate); also used to determine whether or not to calculate the AUC metric',
     )
     parser.add_argument(
         '--area-under-curve-class',

@@ -206,11 +206,13 @@ class AUCMetrics(Metric):
     def __init__(
         self,
         class_name: Union[int, str],
-        pos_dict: Count[float] = None,
-        neg_dict: Count[float] = None,
+        pos_dict: Optional[Count[float]],
+        neg_dict: Optional[Count[float]],
         max_bucket_dec_places: int = 3,
     ):
+        # `_pos_dict` keeps track of the probabilities of the positive class
         self._pos_dict = pos_dict if pos_dict else Counter()
+        # `_neg_dict` keeps track of the probabilities of the positive class
         self._neg_dict = neg_dict if neg_dict else Counter()
         self._class_name = class_name
         self._max_bucket_dec_places = max_bucket_dec_places
@@ -218,6 +220,11 @@ class AUCMetrics(Metric):
     def update_raw(
         self, true_labels: List[Union[int, str]], pos_probs: List[float], class_name
     ):
+        """
+        given the true/golden labels and the probabilities of the positive class,
+        we will update our bucket dictionaries of positive and negatives (based on the class_name);
+        `max_bucket_dec_places` is also used here to round the probabilities and possibly
+        """
         assert self._class_name == class_name
         assert len(true_labels) == len(pos_probs)
 
@@ -248,6 +255,10 @@ class AUCMetrics(Metric):
         )
 
     def _calc_fp_tp(self) -> List[Tuple[int]]:
+        """
+        Calculates the False Positives and True positives;
+        returned as a list of pairs: `[(fp, tp)]`
+        """
         all_thresholds = sorted(
             set(list(self._pos_dict.keys()) + list(self._neg_dict.keys()))
         )
@@ -270,6 +281,14 @@ class AUCMetrics(Metric):
         return fp_tp
 
     def _calc_fpr_tpr(self) -> Tuple[Union[List[int], int]]:
+        """
+        Calculates the false positive rates and true positive rates
+        Also returns the total number of positives and negatives;
+        returned as a list of pairs and two integers:
+        `([(fpr, tpr)], positives, negatives)`;
+        note that if the total negatives/positives is 0, then
+        will return 0 for either fpr/tpr instead of raising an error
+        """
         _tot_pos = sum(self._pos_dict.values())
         _tot_neg = sum(self._neg_dict.values())
         fp_tp = self._calc_fp_tp()
@@ -475,10 +494,10 @@ class TorchClassifierAgent(TorchAgent):
             self.threshold = None
 
         # set up calculating auc
-        self.calc_auc = opt.get('area_under_curve', -1) > 0
+        self.calc_auc = opt.get('area_under_curve_digits', -1) > 0
 
         if self.calc_auc:
-            self.auc_bucket_decimal_size = opt.get('area_under_curve')
+            self.auc_bucket_decimal_size = opt.get('area_under_curve_digits')
             if opt.get('area_under_curve_class') is None:
                 # self.auc_class_ind
                 interested_classes = self.class_list
