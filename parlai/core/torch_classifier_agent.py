@@ -221,9 +221,10 @@ class AUCMetrics(Metric):
         self, true_labels: List[Union[int, str]], pos_probs: List[float], class_name
     ):
         """
-        given the true/golden labels and the probabilities of the positive class,
-        we will update our bucket dictionaries of positive and negatives (based on the class_name);
-        `max_bucket_dec_places` is also used here to round the probabilities and possibly
+        given the true/golden labels and the probabilities of the positive class, we
+        will update our bucket dictionaries of positive and negatives (based on the
+        class_name); `max_bucket_dec_places` is also used here to round the
+        probabilities and possibly.
         """
         assert self._class_name == class_name
         assert len(true_labels) == len(pos_probs)
@@ -256,8 +257,9 @@ class AUCMetrics(Metric):
 
     def _calc_fp_tp(self) -> List[Tuple[int]]:
         """
-        Calculates the False Positives and True positives;
-        returned as a list of pairs: `[(fp, tp)]`
+        Calculates the False Positives and True positives; returned as a list of pairs:
+
+        `[(fp, tp)]`
         """
         all_thresholds = sorted(
             set(list(self._pos_dict.keys()) + list(self._neg_dict.keys()))
@@ -282,12 +284,13 @@ class AUCMetrics(Metric):
 
     def _calc_fpr_tpr(self) -> Tuple[Union[List[int], int]]:
         """
-        Calculates the false positive rates and true positive rates
-        Also returns the total number of positives and negatives;
-        returned as a list of pairs and two integers:
-        `([(fpr, tpr)], positives, negatives)`;
-        note that if the total negatives/positives is 0, then
-        will return 0 for either fpr/tpr instead of raising an error
+        Calculates the false positive rates and true positive rates Also returns the
+        total number of positives and negatives; returned as a list of pairs and two
+        integers:
+
+        `([(fpr, tpr)], positives, negatives)`; note that if the total
+        negatives/positives is 0, then will return 0 for either fpr/tpr instead of
+        raising an error
         """
         _tot_pos = sum(self._pos_dict.values())
         _tot_neg = sum(self._neg_dict.values())
