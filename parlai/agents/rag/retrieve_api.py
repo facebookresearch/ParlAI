@@ -55,14 +55,17 @@ class SearchEngineRetrieverMock(RetrieverAPI):
     ) -> List[Dict[str, Any]]:
         all_docs = []
         for query in queries:
-            docs = []
-            for idx in range(num_ret):
-                doc = self.create_content_dict(
-                    f'content {idx} for query "{query}"',
-                    url=f'url_{idx}',
-                    title=f'title_{idx}',
-                )
-                docs.append(doc)
+            if query == self.skip_query_token:
+                docs = None
+            else:
+                docs = []
+                for idx in range(num_ret):
+                    doc = self.create_content_dict(
+                        f'content {idx} for query "{query}"',
+                        url=f'url_{idx}',
+                        title=f'title_{idx}',
+                    )
+                    docs.append(doc)
             all_docs.append(docs)
         return all_docs
 
