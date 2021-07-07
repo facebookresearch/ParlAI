@@ -1085,7 +1085,10 @@ class SearchQueryRetriever(RagRetriever):
 
     def rank_score(self, rank_id: int):
         """
-        Scores a document chunk based on its rank after spliting.
+        Scores the chunks of the retrieved document based on their rank.
+
+        Note that this is the score for the retrieved document and applies to all
+        its chunks.
         """
         return 1 / (1 + rank_id)
 
