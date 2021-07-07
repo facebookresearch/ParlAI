@@ -118,13 +118,27 @@ def _save_eval_stats(opt, report):
         f.write("\n")  # for jq
 
 
+def get_task_world_logs(task, world_logs, is_multitask=False):
+    if not is_multitask:
+        return world_logs
+    else:
+        base_outfile, extension = os.path.splitext(world_logs)
+        return f'{base_outfile}_{task}{extension}'
+
+
 def _eval_single_world(opt, agent, task):
     logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
-    world_logger = WorldLogger(opt) if opt['world_logs'] else None
-
     task_opt = opt.copy()  # copy opt since we're editing the task
     task_opt['task'] = task
+    # add task suffix in case of multi-tasking
+    if opt['world_logs']:
+        task_opt['world_logs'] = get_task_world_logs(
+            task, task_opt['world_logs'], is_multitask=True
+        )
+
+    world_logger = WorldLogger(task_opt) if task_opt['world_logs'] else None
+
     world = create_task(task_opt, agent)  # create worlds for tasks
 
     # set up logging
@@ -159,12 +173,12 @@ def _eval_single_world(opt, agent, task):
     if world_logger is not None:
         # dump world acts to file
         world_logger.reset()  # add final acts to logs
-        base_outfile, extension = os.path.splitext(opt['world_logs'])
         if is_distributed():
             rank = get_rank()
-            outfile = base_outfile + f'_{task}_{rank}' + extension
+            base_outfile, extension = os.path.splitext(task_opt['world_logs'])
+            outfile = base_outfile + f'_{rank}' + extension
         else:
-            outfile = base_outfile + f'_{task}' + extension
+            outfile = task_opt['world_logs']
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
