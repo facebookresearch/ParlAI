@@ -147,8 +147,9 @@ def prepare_integration_tests(opt: Opt):
             )
         # mark the last episode as done
         episode[-1][1]['episode_done'] = True
-        turn_range = [int(x) for x in inp_act["human_eval_turn_range"].split("|")]
-        episode = episode[turn_range[0] : turn_range[1] + 1]
+        if "human_eval_turn_range" in inp_act:
+            turn_range = [int(x) for x in inp_act["human_eval_turn_range"].split("|")]
+            episode = episode[turn_range[0] : turn_range[1] + 1]
 
         chat_logs.append(episode)
 
