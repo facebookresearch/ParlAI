@@ -4,7 +4,7 @@ mephisto:
     annotations_config_path: ${task_dir}/task_config/engaging/annotations_config.json
     # onboarding_qualification: skip_onboarding
     block_qualification: bq-hhchat0428
-    chat_data_folder: ${task_dir}/model_chat/engaging/KNOWLEDGE_BOT/
+    chat_data_folder: ${task_dir}/model_chat/engaging/KNOWLEDGE_BOT_MEM/
     model_opt_path: ${task_dir}/task_config/model_opts.yaml
     num_turns: 6
     task_model_parallel: true
@@ -12,10 +12,10 @@ mephisto:
     include_persona: true
     conversation_start_mode: 'bst'
     annotation_question: What piece of previous chat history does this comment from THEY correctly RECALL or pay attention to? (Check all that apply)
-    conversations_needed_string: "KNOWLEDGE_BOT:2" # to change with override_opt, chat_data_folder
+    conversations_needed_string: "KNOWLEDGE_BOT_MEM:1" # to change with override_opt, chat_data_folder
     task_description_file: ${task_dir}/task_config/task_description.html
     final_rating_question: How interesting overall do you find talking to your partner (THEY)? (1=very boring, 5=very interesting)
-    override_opt_path: ${task_dir}/task_config/engaging/override_opt_knowledgebot.json
+    override_opt_path: ${task_dir}/task_config/engaging/override_opt_knowledgebotmem.json
     max_resp_time: 360
   task:
     allowed_concurrent: 1
@@ -29,8 +29,8 @@ mephisto:
 
       Lorem ipsum.
       <br><br>
-    task_name: ekbot # TOCHANGE with new models
-    task_reward: 3
+    task_name: ekbotmem # TOCHANGE with new models
+    task_reward: 5
     task_tags: "chat,conversation,dialog,partner"
     task_title: "Chat with a Fellow on An Engaging Topic"
 mturk:

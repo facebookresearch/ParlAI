@@ -8,7 +8,7 @@ import time
 import os
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
@@ -462,7 +462,7 @@ class ModelChatWorld(BaseModelChatWorld):
             worker_id = self.agent.mephisto_agent.worker_id
             worker_name = Worker(db, worker_id).worker_name
             logging.warning(f"____REAL World START!! worker_name = {worker_name}___")
-        except:
+        except e as Exception:
             logging.warning(f"unable to extract worker name")
 
     def _run_initial_turn(self) -> None:

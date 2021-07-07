@@ -107,3 +107,27 @@ KNOWLEDGE_BOT: >
     --beam-block-full-context False
     --beam-size 10
     --skip-generation False
+KNOWLEDGE_BOT_MEM: >
+    --model-file /checkpoint/kshuster/projects/knowledge_bot/kbot_blender_sweep7_Wed_Jun_23/969/model
+    --model parlai_internal.projects.knowledgebot.agents.knowledgebot_fid:KnowledgeBotFidAgent
+    --persona-summarizer-model-file /checkpoint/kshuster/projects/knowledge_bot/persona_summarizer_sweep1_Tue_Jun_22/6b7/model
+    --loglevel debug
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+KNOWLEDGE_SLUDGE_MEM: >
+    --model-file /checkpoint/kshuster/projects/knowledge_bot/kbot_memfix_sweep21_Thu_Jul__1/0c7/model
+    --model parlai_internal.projects.knowledgebot.agents.knowledgebot_fid:KnowledgeBotFidAgent
+    --persona-summarizer-model-file /checkpoint/kshuster/projects/knowledge_bot/persona_summarizer_sweep1_Tue_Jun_22/6b7/model
+    --loglevel debug
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False

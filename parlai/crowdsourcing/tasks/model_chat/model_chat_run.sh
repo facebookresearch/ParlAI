@@ -47,3 +47,16 @@ python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.p
 python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py mephisto.provider.requester_name=noahturkproject1019 mephisto/architect=heroku mephisto.log_level=debug mephisto.architect.use_hobby=true  mephisto.database._database_type=singleton conf=engaging_example_knowledgebot
 
 python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py conf=engaging_example_knowledgebot
+
+
+# knowledgebot mem only
+
+python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py mephisto.provider.requester_name=noahturkproject1019 mephisto/architect=heroku mephisto.log_level=debug mephisto.architect.use_hobby=true  mephisto.database._database_type=singleton conf=engaging_example_knowledgebotmem
+
+python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py  conf=engaging_example_knowledgebotmem
+
+
+# sludge knowledge bot mem only
+python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py mephisto.provider.requester_name=noahturkproject1019 mephisto/architect=heroku mephisto.log_level=debug mephisto.architect.use_hobby=true  mephisto.database._database_type=singleton conf=engaging_example_knowledgesludgemem
+
+python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py  conf=engaging_example_knowledgesludgemem

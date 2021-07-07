@@ -15,6 +15,7 @@ import pandas as pd
 
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
+from parlai.crowdsourcing.tasks.model_chat.analysis.render_html import render_live_mturk
 
 TASK_DIR = '/private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat'
 
@@ -126,12 +127,13 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
     def compile_results(self) -> pd.DataFrame:
         """
-        
-        python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analysis/render.py \
-            --problem-buckets they,you,new,none,engaging \
-            --is-engaging True \
-            --model-nickname KNOWLEDGE_BOT
-            FiD_SUMMSC
+        python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analy
+        sis/render.py \
+
+        --problem-buckets they,you,new,none,engaging \
+        --is-engaging True \
+        --model-nickname KNOWLEDGE_BOT_MEM
+        FiD_SUMMSC
         """
 
         read_folders = []
@@ -183,31 +185,57 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     data = json.load(f)
                 context_data = [
                     {
-                        'text': "your persona: (speaker1 the bot)"
-                        + " ".join(data['context_info']['your_persona_strings'])
+                        'text': "bot's persona: (speaker2)"
+                        + " ".join(data['bot_persona_strings'])
                         + "\n"
-                        + "partner's persona: (speaker2)"
+                        + "human's persona: (speaker1)"
+                        + " ".join(data['human_persona_strings'])
+                        + "\n"
+                        # + "_____bot observe_____: &#10" + data['context_info']['observation_for_bot']['text']
+                        # + "&#10"
+                        # + "&#10"
+                        + "[initial_data_id]: "
+                        + data['context_info']['observation_for_bot'][
+                            'initial_data_id'
+                        ],
+                        'id': 'context',
+                        'episode_done': False,
+                    },
+                    {
+                        'text': "bot persona: (Blue)"
+                        + " ".join(data['context_info']['your_persona_strings'])
+                        + "&#10"
+                        + "human persona: (Grey)"
                         + " ".join(data['context_info']['their_persona_strings']),
                         'id': 'context',
                         'episode_done': False,
                     },
                     {
-                        'text': "your persona: (speaker1 the bot)"
-                        + " ".join(data['context_info']['your_persona_strings'])
-                        + "\n"
-                        + "partner's persona: (speaker2)"
-                        + " ".join(data['context_info']['their_persona_strings']),
-                        'id': 'context',
+                        'text': "[context from previous 4 sessions]",
+                        'id': data['dialog'][0]['id'],
                         'episode_done': False,
                     },
                 ]
-                data['dialog'] = context_data + data['dialog']
+                clean_dialog = [
+                    {
+                        'text': turn['text'],
+                        'id': turn['id'],
+                        'episode_done': turn.get('episode_done', False),
+                    }
+                    for turn in data['dialog']
+                ]
+                data['dialog'] = context_data + clean_dialog
                 all_data.append(data)
         with open(render_json_file, 'w') as fw:
             for data in all_data:
                 fw.write(json.dumps(data) + '\n')
-        bashCommand = f'python /private/home/jingxu23/ParlAI/parlai_internal/projects/chats_render_utils/render_html.py --logs-path {render_json_file} --html-path {render_html_file}'
-        print("Run this command:   ", bashCommand)
+        bashCommand = f'python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analysis/render_html.py --logs-path {render_json_file} --html-path {render_html_file}'
+        import subprocess
+
+        p = subprocess.Popen(bashCommand, stdout=subprocess.PIPE, shell=True)
+        out, err = p.communicate()
+        result = out.decode()
+        print(result)
 
 
 if __name__ == '__main__':

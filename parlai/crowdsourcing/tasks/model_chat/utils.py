@@ -19,9 +19,7 @@ from PIL import Image
 
 from parlai.core.message import Message
 from parlai.core.metrics import Metric
-from parlai.core.params import ParlaiParser
 from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
-from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 from parlai_internal.tasks.personal_knowledge.context_generator import (
     MscContextGenerator,
 )
@@ -448,6 +446,16 @@ MODEL_OPT = {
         'num_previous_sessions_msg': 10,
         'include_time_gap': False,
     },
+    'KNOWLEDGE_BOT_MEM': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
+    'KNOWLEDGE_SLUDGE_MEM': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
     'RAG_RAWHISTORY_NDOC10': {
         'previous_persona_type': 'none',
         'num_previous_sessions_msg': 10,
@@ -500,6 +508,11 @@ UI_OPT = {
     'MSC2.7B_128': {'previous_persona_type': 'both', 'include_time_gap': False},
     'MSC2.7B_1024': {'previous_persona_type': 'both', 'include_time_gap': False},
     'KNOWLEDGE_BOT': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'KNOWLEDGE_BOT_MEM': {'previous_persona_type': 'both', 'include_time_gap': False},
+    'KNOWLEDGE_SLUDGE_MEM': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+    },
     'RAG_RAWHISTORY_NDOC10': {
         'previous_persona_type': 'both',
         'include_time_gap': False,

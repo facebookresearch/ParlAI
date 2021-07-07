@@ -36,6 +36,8 @@ OVERRIDE_OPT_FILENAMES = {
     'FiDRAG_SUMMSC': 'override_opt_fidragsummsc.json',
     'RAG_RAWHISTORY_NDOC10': 'override_opt_ragrawhistoryndoc10.json',
     'KNOWLEDGE_BOT': 'override_opt_knowledgebot.json',
+    'KNOWLEDGE_BOT_MEM': 'override_opt_knowledgebotmem.json',
+    'KNOWLEDGE_SLUDGE_MEM': 'override_opt_knowledgesludgemem.json',
 }
 
 
@@ -142,14 +144,16 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
     def compile_results(self) -> pd.DataFrame:
         """
-        python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analysis/compile_results.py \
+        python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analy
+        sis/compile_results.py \
+
             --problem-buckets they,you,new,none,contradiction \
             --model-nickname MSC2.7B_1024
-        
+
         python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analysis/compile_results.py \
             --problem-buckets they,you,new,none,engaging \
             --is-engaging True \
-            --model-nickname KNOWLEDGE_BOT
+            --model-nickname BST2.7B
             FiD_SUMMSC
         """
 
@@ -189,6 +193,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
         conversation_idx = 0
         conversation_dfs = []
+        final_rating_stats = {}
         for read_folder in read_folders:
             read_folder_name = os.path.split(read_folder)[-1]
             for file_name in sorted(os.listdir(read_folder)):
@@ -406,9 +411,14 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             problem_counts[model_nickname]['count_ratings'] += 1
                             if 'ratings' not in problem_counts[model_nickname]:
                                 problem_counts[model_nickname]['ratings'] = []
+                            if 'pairwise_ratings' not in problem_counts[model_nickname]:
+                                problem_counts[model_nickname]['pairwise_ratings'] = {}
                             problem_counts[model_nickname]['ratings'].append(
                                 int(d['final_rating'])
                             )
+                            problem_counts[model_nickname]['pairwise_ratings'][
+                                info_dict['initial_data_id']
+                            ] = int(d['final_rating'])
 
                         if 'bot_word_count' not in problem_counts[model_nickname]:
                             problem_counts[model_nickname]['bot_word_count'] = 0
@@ -474,7 +484,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         for model_nickname, model_problems_dict in problem_counts.items():
             print(f'---{model_nickname}---')
             for p, v in model_problems_dict.items():
-                if p == 'count_ratings':
+                if p == 'count_ratings' or p == 'pairwise_ratings':
                     continue
                 if p == 'ratings':
                     print(
@@ -527,6 +537,11 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         with open(override_opt_path, 'w') as fw:
             json.dump(override_opt, fw)
         print(f'Wrote override opt to: {override_opt_path}')
+
+        rating_path = os.path.join(self.output_folder, f'pairwise_ratings.json')
+        with open(rating_path, 'w') as fw:
+            json.dump(problem_counts[model_nickname]['pairwise_ratings'], fw)
+        print(f'Wrote pairwise ratings to: {rating_path}')
 
         # Save full results
         all_conversations_df = pd.DataFrame()
