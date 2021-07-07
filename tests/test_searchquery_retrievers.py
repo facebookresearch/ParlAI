@@ -16,7 +16,6 @@ from parlai.agents.rag.retrieve_api import (
     SearchEngineRetrieverMock,
     SearchEngineRetriever,
 )
-import numpy as np
 import torch
 import unittest
 
@@ -84,11 +83,15 @@ class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
 
 
 class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
+    def __init__(self, opt, dictionary, shared):
+        super().__init__(opt, dictionary, shared)
+        self.queries = []
+
     def init_search_query_generator(self, opt):
         pass
 
     def generate_search_query(self, query):
-        return ['mock search query']
+        return self.queries
 
 
 class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
@@ -106,8 +109,28 @@ class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
         self.rertriever = MockSearchQueryFAISSIndexRetriever(opt, dictionary, None)
 
     def test_retrieval(self):
+        self.rertriever.queries = ['mock query']
+
         retrieved = self.rertriever.retrieve_and_score(
-            torch.LongTensor(np.array([[1, 2, 3]]))
+            torch.LongTensor([[101, 456, 654, 102]])
+        )
+        self.assertIsNotNone(retrieved)
+        self.assertIsInstance(retrieved, tuple)
+        self.assertEqual(len(retrieved), 2)
+
+        retrieved_docs = retrieved[0]
+        self.assertIsInstance(retrieved_docs, list)
+        self.assertEqual(len(retrieved_docs), 1)
+
+        second_retrieved_doc = retrieved_docs[0][1]
+        self.assertIsInstance(second_retrieved_doc, Document)
+        self.assertNotEqual(second_retrieved_doc.get_text(), '')
+
+    def test_retrieval_no_query(self):
+        self.rertriever.queries = [NO_SEARCH_QUERY]
+
+        retrieved = self.rertriever.retrieve_and_score(
+            torch.LongTensor([[101, 456, 654, 102]])
         )
         self.assertIsNotNone(retrieved)
         self.assertIsInstance(retrieved, tuple)
@@ -120,3 +143,4 @@ class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
         second_retrieved_doc = retrieved_docs[0][1]
         self.assertIsInstance(second_retrieved_doc, Document)
         self.assertIsInstance(second_retrieved_doc.get_text(), str)
+        self.assertEqual(second_retrieved_doc.get_text(), '')

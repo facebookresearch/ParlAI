@@ -1217,13 +1217,16 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
         on them. Then uses those search quries (instead of the the query text itself) to retrive
         from the FAISS index.
         """
+        # return DPRRetriever.retrieve_and_score(self, query)
+
         search_queries = self.generate_search_query(query)
         tokenized_search_queries, _ = padded_tensor(
             [self._tokenizer.encode(sq) for sq in search_queries]
         )
-        top_docs, top_doc_scores = super().retrieve_and_score(
-            tokenized_search_queries.to(query.device)
-        )
+        # tokenized_search_queries = tokenized_search_queries
+        print(query)
+        assert query.is_contiguous()
+        top_docs, top_doc_scores = DPRRetriever.retrieve_and_score(self, query)
         for query_id in range(len(top_docs)):
             if search_queries[query_id] == NO_SEARCH_QUERY:
                 top_docs[query_id] = [BLANK_RETRIEVER_DOC for _ in range(self.n_docs)]
