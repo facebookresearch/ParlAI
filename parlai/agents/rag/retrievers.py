@@ -581,6 +581,13 @@ class DPRRetriever(RagRetriever):
         Initialize DPR Retriever.
         """
         super().__init__(opt, dictionary, shared=shared)
+        self.load_index(opt, shared)
+        self.n_docs = opt['n_docs']
+        self.query_encoder = DprQueryEncoder(
+            opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
+        )
+
+    def load_index(self, opt, shared):
         if not shared:
             self.indexer = indexer_factory(opt)
             index_path = modelzoo_path(opt['datapath'], opt['path_to_index'])
@@ -595,10 +602,6 @@ class DPRRetriever(RagRetriever):
         elif shared:
             self.indexer = shared['indexer']
             self.passages = shared['passages']
-        self.n_docs = opt['n_docs']
-        self.query_encoder = DprQueryEncoder(
-            opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
-        )
 
     def share(self) -> TShared:
         """
@@ -1000,13 +1003,13 @@ class RagTfidfRetrieverAgent(TfidfRetrieverAgent):
         return text
 
 
+BLANK_RETRIEVER_DOC = Document('', '', '')
 BLANK_SEARCH_DOC = {'url': None, 'content': '', 'title': ''}
 NO_SEARCH_QUERY = 'no_passages_used'
 
 
 class SearchQueryRetriever(RagRetriever):
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared):
-        opt = copy.deepcopy(opt)
         super().__init__(opt, dictionary, shared=shared)
         opt['skip_retrieval_token'] = NO_SEARCH_QUERY
         self.n_docs = opt['n_docs']
@@ -1019,21 +1022,18 @@ class SearchQueryRetriever(RagRetriever):
             self.chunk_reranker = HeadChunkRanker(n_doc_chunks)
 
         if not shared:
-            self.search_client = self._initiate_retriever_api(opt)
-            self.query_generator = self._init_search_query_generator(opt)
+            self.query_generator = self.init_search_query_generator(opt)
         else:
-            self.search_client = shared['search_client']
             self.query_generator = shared['query_generator']
         self.dict = dictionary
-        self.query_encoder = self._get_query_encoder(opt)
+        self.init_query_encoder(opt)
 
     def share(self) -> TShared:
         shared = super().share()
-        shared['search_client'] = self.search_client
         shared['query_generator'] = self.query_generator
         return shared
 
-    def _init_search_query_generator(self, opt) -> TorchGeneratorAgent:
+    def init_search_query_generator(self, opt) -> TorchGeneratorAgent:
         model_file = opt['search_query_generator_model_file']
         assert model_file and os.path.exists(model_file)
         logging.info('Loading search generator model')
@@ -1066,16 +1066,55 @@ class SearchQueryRetriever(RagRetriever):
         logging.debug(f'Generated search queries {search_quries}')
         return search_quries
 
-    @abstractmethod
-    def _initiate_retriever_api(self, opt) -> RetrieverAPI:
-        """
-        Instantiates a search module
-        """
-
-    def _get_query_encoder(self, opt):
-        return DprQueryEncoder(
+    def init_query_encoder(self, opt):
+        if hasattr(self, 'query_encoder'):
+            # It is already instantiated
+            return
+        self.query_encoder = DprQueryEncoder(
             opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
         )
+
+    def pick_chunk(self, query, doc_text):
+        """
+        Splits the document and returns the selected chunks.
+
+        The number of returned chunks is controlled by `n_ranked_doc_chunks` in opt.
+        The chunk selection is determined by `doc_chunks_ranker` in the opt.
+        """
+        if not doc_text:
+            # When there is no search query for the context
+            return [("", 0)]
+        tokens = self.dict.txt2vec(doc_text)
+        doc_chunks = [
+            self.dict.vec2txt(tokens[i : i + self.len_chunk])
+            for i in range(0, len(tokens), self.len_chunk)
+        ]
+        return self.chunk_reranker.get_top_chunks(query, doc_chunks)
+
+
+class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
+    """
+    A retriever that uses a search engine server for rertrieving documents.
+
+    It instantiates a `SearchEngineRetriever` object that in turns send search queries
+    to an external server for retrieving documents.
+    """
+
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared):
+        super().__init__(opt, dictionary, shared)
+        if not shared:
+            self.search_client = self.initiate_retriever_api(opt)
+        else:
+            self.search_client = shared['search_client']
+
+    def share(self) -> TShared:
+        shared = super().share()
+        shared['search_client'] = self.search_client
+        return shared
+
+    def initiate_retriever_api(self, opt) -> SearchEngineRetriever:
+        logging.info('Creating the search engine retriever.')
+        return SearchEngineRetriever(opt)
 
     def _empty_docs(self, num: int):
         """
@@ -1156,35 +1195,39 @@ class SearchQueryRetriever(RagRetriever):
         self.top_docs = top_docs
         return top_docs, torch.Tensor(top_doc_scores).to(query.device)
 
-    def pick_chunk(self, query, doc_text):
+
+class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared):
+        SearchQueryRetriever.__init__(self, opt, dictionary, shared=shared)
+        self.load_index(opt, shared)
+
+    def share(self) -> TShared:
+        shared = SearchQueryRetriever.share(self)
+        shared.update(DPRRetriever.share(self))
+        return shared
+
+    def retrieve_and_score(
+        self, query: torch.LongTensor
+    ) -> Tuple[List[List[Document]], torch.Tensor]:
         """
-        Splits the document and returns the selected chunks.
+        Retrieves from the FAISS index using a search query.
 
-        The number of returned chunks is controlled by `n_ranked_doc_chunks` in opt.
-        The chunk selection is determined by `doc_chunks_ranker` in the opt.
+        This methods relies on the `retrieve_and_score` method in `RagRetriever` ancestor class.
+        It recieve the query (conversation context) and generatess the search term queries based
+        on them. Then uses those search quries (instead of the the query text itself) to retrive
+        from the FAISS index.
         """
-        if not doc_text:
-            # When there is no search query for the context
-            return [("", 0)]
-        tokens = self.dict.txt2vec(doc_text)
-        doc_chunks = [
-            self.dict.vec2txt(tokens[i : i + self.len_chunk])
-            for i in range(0, len(tokens), self.len_chunk)
-        ]
-        return self.chunk_reranker.get_top_chunks(query, doc_chunks)
-
-
-class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
-    """
-    A retriever that uses a search engine server for rertrieving documents.
-
-    It instantiates a `SearchEngineRetriever` object that in turns send search queries
-    to an external server for retrieving documents.
-    """
-
-    def _initiate_retriever_api(self, opt) -> SearchEngineRetriever:
-        logging.info('Creating the search engine retriever.')
-        return SearchEngineRetriever(opt)
+        search_queries = self.generate_search_query(query)
+        tokenized_search_queries, _ = padded_tensor(
+            [self._tokenizer.encode(sq) for sq in search_queries]
+        )
+        top_docs, top_doc_scores = super().retrieve_and_score(
+            tokenized_search_queries.to(query.device)
+        )
+        for query_id in range(len(top_docs)):
+            if search_queries[query_id] == NO_SEARCH_QUERY:
+                top_docs[query_id] = [BLANK_RETRIEVER_DOC for _ in range(self.n_docs)]
+        return top_docs, top_doc_scores
 
 
 class DocumentChunkRanker:
@@ -1262,3 +1305,5 @@ def retriever_factory(
         return PolyFaissRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.SEARCH_ENGINE:
         return SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.SEARCH_TERM_FAISS:
+        return SearchQueryFAISSIndexRetriever(opt, dictionary, shared=shared)

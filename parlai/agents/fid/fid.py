@@ -206,16 +206,11 @@ class FidAgent(RagAgent):
 RETRIEVER_DOC_LEN_TOKENS = 256
 
 
-class SearchEngineFiDAgent(FidAgent):
-    def __init__(self, opt: Opt, shared: TShared = None):
-        opt = deepcopy(opt)
-        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE
-        super().__init__(opt, shared=shared)
-
+class SearchQueryFiDAgent(FidAgent):
     @classmethod
     def add_cmdline_args(cls, parser, partial_opt=None):
         super().add_cmdline_args(parser, partial_opt=partial_opt)
-        group = parser.add_argument_group('Search Engine FiD Params')
+        group = parser.add_argument_group('Search Query FiD Params')
 
         # Search Query generator
         group.add_argument(
@@ -248,9 +243,6 @@ class SearchEngineFiDAgent(FidAgent):
             help='Truncates the input to the search query generator model',
         )
 
-        # Seach engine API address and details
-        group.add_argument('--search-server', type=str, help='A search server addrees.')
-
         # Creating chunks and spliting the documents
         group.add_argument(
             '--splitted-chunk-length',
@@ -273,6 +265,27 @@ class SearchEngineFiDAgent(FidAgent):
         )
 
         return parser
+
+
+class SearchQuerySearchEngineFiDAgent(SearchQueryFiDAgent):
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE
+        super().__init__(opt, shared=shared)
+
+    @classmethod
+    def add_cmdline_args(cls, parser, partial_opt=None):
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group('Search Engine FiD Params')
+        group.add_argument('--search-server', type=str, help='A search server addrees.')
+        return parser
+
+
+class SearchQueryFAISSIndexFiDAgent(SearchQueryFiDAgent):
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_TERM_FAISS
+        super().__init__(opt, shared=shared)
 
 
 def concat_enc_outs(
