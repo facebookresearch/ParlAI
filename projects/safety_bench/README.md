@@ -1,11 +1,11 @@
-# Dialogue Safety Tests
+# Safety Bench: Checks for Anticipating Safety Issues with E2E Conversational AI Models
 
 A suite of dialogue safety unit tests and integration tests, in correspondence with the paper <TODO: PAPER LINK>
 
 ## Paper Information
 TODO: fill me in
 
-**Abstract:** TODO: write me
+**Abstract:** TODO: fill me in
 
 
 ## Setting up the API
