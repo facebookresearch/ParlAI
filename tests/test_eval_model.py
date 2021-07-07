@@ -228,9 +228,9 @@ class TestEvalModel(unittest.TestCase):
                 json_lines = f.readlines()
             assert len(json_lines) == 100
 
-    def test_save_multiple_reports(self):
+    def test_save_multiple_logs(self):
         """
-        Test that we can save report from eval model.
+        Test that we can save multiple world_logs from eval model on multiple tasks.
         """
         with testing_utils.tempdir() as tmpdir:
             log_report = os.path.join(tmpdir, 'world_logs.jsonl')

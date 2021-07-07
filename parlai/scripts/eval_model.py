@@ -134,7 +134,7 @@ def _eval_single_world(opt, agent, task):
     # add task suffix in case of multi-tasking
     if opt['world_logs']:
         task_opt['world_logs'] = get_task_world_logs(
-            task, task_opt['world_logs'], is_multitask=True
+            task, task_opt['world_logs'], is_multitask=len(opt['task'].split(',')) > 1
         )
 
     world_logger = WorldLogger(task_opt) if task_opt['world_logs'] else None
