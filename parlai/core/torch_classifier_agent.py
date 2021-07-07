@@ -16,14 +16,13 @@ from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
 from typing import List, Optional, Tuple, Dict, Union
-from typing import Counter as Count
+from typing import Counter
 from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
 from sklearn.metrics import auc
 
 import parlai.utils.logging as logging
 import torch.nn.functional as F
-from collections import Counter
 import torch
 import math
 
@@ -182,7 +181,7 @@ class AUCMetrics(Metric):
     metric, but may also use more space.
 
     NOTE: currently only used for classifiers in the `eval_model` script; to use,
-    add the argument `-auc <max_bucket_dec_places>` when running `eval_model` script
+    add the argument `-auc <max_bucket_dec_places>` when calling `eval_model` script
     """
 
     @property
@@ -210,12 +209,12 @@ class AUCMetrics(Metric):
         self,
         class_name: Union[int, str],
         max_bucket_dec_places: int = 3,
-        pos_dict: Optional[Count[float]] = None,
-        neg_dict: Optional[Count[float]] = None,
+        pos_dict: Optional[Counter[float]] = None,
+        neg_dict: Optional[Counter[float]] = None,
     ):
         # `_pos_dict` keeps track of the probabilities of the positive class
         self._pos_dict = pos_dict if pos_dict else Counter()
-        # `_neg_dict` keeps track of the probabilities of the positive class
+        # `_neg_dict` keeps track of the probabilities of the negative class
         self._neg_dict = neg_dict if neg_dict else Counter()
         self._class_name = class_name
         self._max_bucket_dec_places = max_bucket_dec_places
