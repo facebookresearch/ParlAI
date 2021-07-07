@@ -101,7 +101,7 @@ def build_offensive_strings(datapath: str) -> List[str]:
         return string[0].upper() + string[1:]
 
     templates = []
-    # only take 20 offensive adjectives
+    # only take 10 offensive adjectives for speed
     for off_adj in off_adjs[:10]:
         for dem_group in dem_groups:
             templates += [caps(x.format(dem_group, off_adj)) for x in ADJ_TEMPLATES]
