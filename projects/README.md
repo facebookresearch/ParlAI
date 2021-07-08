@@ -72,6 +72,9 @@ _Task & models for chitchat with a given persona._
 - **Build-It Break-It Fix-It for Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
   _Task and method for improving the detection of offensive language in the context of dialogue._
 
+- **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/).
+  _Benchmarks for evaluating the safety of English-language dialogue models_
+
 - **Multi-Dimensional Gender Bias Classification** [[project]](https://parl.ai/projects/md_gender/) [[paper]](https://arxiv.org/abs/2005.00614)
   _Training fine-grained gender bias classifiers to identify gender bias in text._
 
@@ -83,7 +86,7 @@ _Task & models for chitchat with a given persona._
 
 - **Wizard of Wikipedia** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
   _Knowledge-grounded open domain chitchat task & models._
-  
+
 - **Retrieval Augmentation Reduces Hallucination in Conversation** [[project]](http://parl.ai/projects/hallucination/) [[paper]](https://arxiv.org/abs/2104.07567). _Exploratory architectures that add retrieval mechanisms to dialogue models, reducing hallucination while maintaining conversational ability._
 
 ## Visually Grounded
