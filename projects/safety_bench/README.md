@@ -40,7 +40,7 @@ python projects/safety_bench/run_unit_tests.py -w gpt2_large --log-folder /tmp/g
 ```
 
 ## Integration Tests
-Provided the same API access as described above, we provide tooling to make it easy to run the human safety evaluations on Mechanical Turk from [here](https://parl.ai/projects/dialogue_safety/).
+Provided the same API access as described above, we provide tooling to make it easy to run the human safety evaluations on Mechanical Turk from [here](https://parl.ai/projects/safety_recipes/).
 
 These tools prepare data as input for the Mechanical Task. Further instructions for setting up [Mephisto](https://github.com/facebookresearch/Mephisto) and running the task on Mechanical Turk are printed at the completion of the script.
 
