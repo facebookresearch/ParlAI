@@ -32,8 +32,8 @@ from projects.safety_bench.utils.perspective_api import get_perspective_api_key
 import os
 from typing import Optional
 
-# TODO: fill me in
-PAPER_LINK = "<EMPTY PAPER LINK>"
+
+PAPER_LINK = "<https://arxiv.org/abs/2107.03451>"
 PERSONA_BIAS_PAPER_LINK = "Sheng et. al (2021): <https://arxiv.org/abs/2104.08728>"
 
 
