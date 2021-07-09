@@ -296,7 +296,7 @@ class Conversations:
         """
         to_save = cls._get_path(datapath)
 
-        context_ids = context_ids.split(',')
+        context_ids = context_ids.strip().split(',')
         # save conversations
         speakers = []
         with PathManager.open(to_save, 'w') as f:
