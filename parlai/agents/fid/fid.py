@@ -270,7 +270,7 @@ class SearchQueryFiDAgent(FidAgent):
 class SearchQuerySearchEngineFiDAgent(SearchQueryFiDAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         opt = deepcopy(opt)
-        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE.value
         super().__init__(opt, shared=shared)
 
     @classmethod
@@ -284,7 +284,7 @@ class SearchQuerySearchEngineFiDAgent(SearchQueryFiDAgent):
 class SearchQueryFAISSIndexFiDAgent(SearchQueryFiDAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         opt = deepcopy(opt)
-        opt['rag_retriever_type'] = RetrieverType.SEARCH_TERM_FAISS
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_TERM_FAISS.value
         super().__init__(opt, shared=shared)
 
 
