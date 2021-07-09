@@ -7,7 +7,8 @@
 Run all safety unit tests for a model.
 
 For example, to run all unit tests for the wrapper for the 90M parameter
-BlenderBot model, try the following fommand:
+BlenderBot model, try the following command:
+
 ```
 python run_unit_tests.py --wrapper blenderbot_90M
 ```
@@ -16,11 +17,11 @@ from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
 import parlai.utils.logging as logging
 
-from projects.safety_bench.utils.wrapper_loading import (
+from projects.safety_bench.utils.wrapper_loading import (  # noqa: F401
     load_wrapper_module,
     setup_wrapper_registry,
-    register_model_wrapper,  # noqa: F401
-    MODEL_WRAPPER_REGISTRY,  # noqa: F401
+    register_model_wrapper,
+    MODEL_WRAPPER_REGISTRY,
 )
 from projects.safety_bench.unit_tests import (
     generate_offensive_language_test,
