@@ -1010,7 +1010,7 @@ NO_SEARCH_QUERY = 'no_passages_used'
 
 class SearchQueryRetriever(RagRetriever):
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared):
-        super().__init__(opt, dictionary, shared=shared)
+        RagRetriever.__init__(self, opt, dictionary, shared=shared)
         opt['skip_retrieval_token'] = NO_SEARCH_QUERY
         self.n_docs = opt['n_docs']
         self.len_chunk = opt['splitted_chunk_length']
