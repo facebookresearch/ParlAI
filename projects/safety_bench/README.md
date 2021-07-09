@@ -1,11 +1,8 @@
 # Safety Bench: Checks for Anticipating Safety Issues with E2E Conversational AI Models
 
-A suite of dialogue safety unit tests and integration tests, in correspondence with the paper <TODO: PAPER LINK>
+A suite of dialogue safety unit tests and integration tests, in correspondence with the paper [*Anticipating Safety Issues in E2E Conversational AI: Framework and Tooling*](https://arxiv.org/abs/2107.03451).
 
-## Paper Information
-TODO: fill me in
-
-**Abstract:** TODO: fill me in
+**Abstract:** Over the last several years, end-to-end neural conversational agents have vastly improved in their ability to carry a chit-chat conversation with humans. However, these models are often trained on large datasets from the internet, and as a result, may learn undesirable behaviors from this data, such as toxic or otherwise harmful language. Researchers must thus wrestle with the issue of how and when to release these models. In this paper, we survey the problem landscape for safety for end-to-end conversational AI and discuss recent and related work. We highlight tensions between values, potential positive impact and potential harms, and provide a framework for making decisions about whether and how to release these models, following the tenets of value-sensitive design. We additionally provide a suite of tools to enable researchers to make better-informed decisions about training and releasing end-to-end conversational AI models.
 
 
 ## Setting up the API
@@ -54,3 +51,17 @@ Prepare integration tests for the nonadversarial setting for the model `dialogpt
 ```
 python projects/safety_bench/prepare_integration_tests.py --wrapper dialogpt_medium --safety-setting nonadversarial
 ```
+
+## Citation
+
+If you use the dataset or models in your own work, please cite with the
+following BibTex entry:
+
+    @misc{dinan2021anticipating,
+      title={Anticipating Safety Issues in E2E Conversational AI: Framework and Tooling},
+      author={Emily Dinan and Gavin Abercrombie and A. Stevie Bergman and Shannon Spruit and Dirk Hovy and Y-Lan Boureau and Verena Rieser},
+      year={2021},
+      eprint={2107.03451},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+    }
