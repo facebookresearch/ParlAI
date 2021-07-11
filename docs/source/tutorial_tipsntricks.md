@@ -79,6 +79,18 @@ parlai display_data --task light_dialog:light_label_type=speech,light_dialog:lig
 That is, by adding a colon ":" followed by the flag name, an equals
 sign, and the value. You can add multiple flags, all separated by ":".
 
+Agent Convenience Functions
+----------
+Tip: Having implemented `batch_act()` and `act()`, you can make use of the agent convenience functions `batch_respond()` and `respond()` which provide the agent's response to messages by internally calling `batch_act()` and `act()` respectively. The function signatures are as follows:
+
+```python
+def respond(self, text_or_message: Union[str, Message], **other_message_fields) -> str:
+    pass
+
+def batch_respond(self, messages: List[Message]) -> List[str]:
+    pass
+```
+
 Self-Chats
 ----------
 
@@ -94,7 +106,7 @@ This will generate 10 self-chats between 2 poly-encoder models with persona cont
 Flags to generate and store the self-chat:
 
 - `--num-self-chats` specify the number of self-chats to generate (1 by default).
-- `--selfchat-max-turns` specify the number of self-chat turns (6 by default), including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia(WoW) topics) in addition to the model utterances. 
+- `--selfchat-max-turns` specify the number of self-chat turns (6 by default), including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia(WoW) topics) in addition to the model utterances.
 - `--selfchat-task` specify whether to create a self-chat version of the task. If True (by default), it allows for loading contexts and openers that seed the self-chat.
 - `--outfile` specify file to save self-chat logs.
 - `--save-format` specify the format to save self-chat logs in. Use `conversations` for jsonl format, or `parlai` for text format (`conversations` by default).
@@ -149,7 +161,7 @@ This handy script can prettify the display of json file of chats
 
 ```bash
 # Display conversation in HTML format.
-python parlai/scripts/convo_render.py -i projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html 
+python parlai/scripts/convo_render.py -i projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html
 ```
 
 Some additional flags that can be used for convo-render:
