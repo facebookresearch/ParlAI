@@ -156,6 +156,15 @@ class Agent(object):
         """
         pass
 
+    def self_observe(self, self_message: Message) -> None:
+        """
+        Observe one's own utterance.
+
+        :param self_message:
+            The message corresponding to the output from batch_act.
+        """
+        pass
+
     def respond(
         self, text_or_message: Union[str, Message], **other_message_fields
     ) -> str:
