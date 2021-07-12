@@ -24,7 +24,6 @@ parlai multiprocessing_train -m transformer/generator --batchsize 16 --task conv
 """
 
 import torch
-import random
 import os
 import signal
 import traceback
@@ -55,10 +54,12 @@ def multiprocess_train(
             raise
 
 
-def launch_and_train(opt, port):
+def launch_and_train(opt, port=None):
     """
     Perform a fork() to many processes.
     """
+    if port is None:
+        port = distributed_utils.find_free_port()
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.start_processes(
         multiprocess_train,
@@ -99,7 +100,7 @@ class MultiProcessTrain(ParlaiScript):
 
     def run(self):
         if self.opt['port'] is None:
-            port = random.randint(32000, 48000)
+            port = None
         else:
             port = self.opt['port']
         return launch_and_train(self.opt, port)

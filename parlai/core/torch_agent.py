@@ -36,6 +36,7 @@ from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
+from parlai.utils.fsdp import should_sync_gradnorm, is_fsdp, DEFAULT_DDP_BACKEND
 from parlai.utils.fp16 import (
     SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
@@ -1052,7 +1053,9 @@ class TorchAgent(ABC, Agent):
         self.optimizer = optim_class(params, **kwargs)
         if self.fp16:
             if self.fp16_impl == 'safe':
-                self.optimizer = SafeFP16Optimizer(self.optimizer)
+                self.optimizer = SafeFP16Optimizer(
+                    self.optimizer, should_sync_gradnorm(opt)
+                )
             else:
                 # Using memory efficient optimizer
                 opt_name = opt['optimizer']
@@ -1064,7 +1067,9 @@ class TorchAgent(ABC, Agent):
                         'with Memory Efficient FP16. Please select from among this '
                         f'list:\n{compatible_list}'
                     )
-                self.optimizer = MemoryEfficientFP16Optimizer(self.optimizer)
+                self.optimizer = MemoryEfficientFP16Optimizer(
+                    self.optimizer, should_sync_gradnorm(opt)
+                )
 
         if is_finetune:
             logging.warning('Detected a fine-tune run. Resetting the optimizer.')
@@ -1969,10 +1974,11 @@ class TorchAgent(ABC, Agent):
         """
         states = {}
         if hasattr(self, 'model'):  # save model params
-            if hasattr(self.model, 'module'):
-                # did we wrap in a DistributedDataParallel
+            if hasattr(self.model, 'module') and not is_fsdp(self.model):
+                # did we wrap in a DistributedDataParallel or DataParallel
                 states['model'] = self.model.module.state_dict()
             else:
+                # regular model or FSDP
                 states['model'] = self.model.state_dict()
 
         if hasattr(self, 'optimizer'):
@@ -1991,6 +1997,16 @@ class TorchAgent(ABC, Agent):
             states['warmup_scheduler'] = self.scheduler.get_warmup_state_dict()
 
         return states
+
+    def save_nonprimary(self, path=None):
+        """
+        Save model parameters, when you are working on the non-primary worker.
+
+        For models or optimizers that shard parameters, this ensures we sync.
+        """
+        if self.opt.get('ddp_backend', DEFAULT_DDP_BACKEND) in ('zero2', 'zero3'):
+            # make sure we call the state dict
+            self.state_dict()
 
     def save(self, path=None):
         """

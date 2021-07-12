@@ -35,6 +35,7 @@ from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
+import parlai.utils.fsdp as fsdp_utils
 from parlai.utils.torch import (
     neginf,
     total_parameters,
@@ -479,8 +480,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
-            # ensure all distributed copies will always be in sync
-            self.model = self.build_model()
+            with fsdp_utils.maybe_fsdp_wrap(opt):
+                self.model = fsdp_utils.fsdp_wrap(self.build_model())
+                if self.fp16 and not fsdp_utils.delay_halving(opt):
+                    self.model = self.model.half()
 
             # load the block_list for beam search
             self.beam_block_list = self._load_beam_block_list()
@@ -498,15 +501,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     self.model.cuda()
                 self.criterion.cuda()
 
-            sync_parameters(self.model)
+            if not fsdp_utils.is_fsdp(self.model):
+                sync_parameters(self.model)
+
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
             logging.info(
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
-
-            if self.fp16:
-                self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -530,7 +532,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 logging.warning("Optimizer was reset. Also resetting LR scheduler.")
             self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
-        if shared is None and is_distributed():
+        if (
+            shared is None
+            and is_distributed()
+            and opt.get('ddp_backend', fsdp_utils.DEFAULT_DDP_BACKEND) == 'ddp'
+        ):
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
@@ -580,7 +586,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _cache_dummy_batch(self, batch: Batch):
         """
-        Cache a batch to be used as a dummy during _fake_forward_pass.
+        Cache a batch to be used as a dummy during _fake_forward_backward_pass.
         """
         if not hasattr(self, '_dummy_batch'):
             self._dummy_batch = batch
@@ -750,7 +756,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
             # gradients are synced on backward, now this model is going to be
             # out of sync! catch up with the other workers
-            self._fake_forward_pass()
+            self._fake_forward_backward_pass()
 
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
@@ -865,7 +871,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            beam_preds_scores, beams = self._generate(batch, self.beam_size, maxlen)
+            prefix_tokens = self.get_prefix_tokens(batch)
+            beam_preds_scores, beams = self._generate(
+                batch, self.beam_size, maxlen, prefix_tokens=prefix_tokens
+            )
             preds, scores = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
 
@@ -1039,6 +1048,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         decoder_input = torch.cat([prev_input, selection], dim=-1)
         return decoder_input
 
+    def get_prefix_tokens(self, batch: Batch) -> Optional[torch.LongTensor]:
+        """
+        Set prefix tokens to seed decoding at generation time.
+
+        By default, we do not utilize prefix tokens, but this is
+        left overridable by child classes.
+
+        Returned tensor should be of dimension bsz x len(prefix)
+        """
+        return None
+
     def _generate(
         self,
         batch: Batch,
@@ -1116,15 +1136,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
-                prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
-                prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
-                prefix_mask = prefix_toks.ne(self.NULL_IDX)
+                prefix_toks = prefix_tokens[:, _ts]
+                prefix_mask = torch.ones_like(score, dtype=torch.bool)
+                prefix_mask[
+                    :, :, prefix_toks
+                ] = False  # everything except prefix toks should be neginf
                 score[prefix_mask] = neginf(score.dtype)
-                score[prefix_mask] = score[prefix_mask].scatter_(
-                    -1,
-                    prefix_toks[prefix_mask].unsqueeze(-1),
-                    prefix_score[prefix_mask],
-                )
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])

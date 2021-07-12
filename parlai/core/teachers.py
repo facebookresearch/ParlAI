@@ -2292,19 +2292,13 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
         self.buffersize = self.get_buffersize()
 
         self.set_datasettings(opt)
-        self.datatype = opt['datatype']
+        # chunk teacher makes shuffling decisions based on training, but
+        # train:stream turns off shuffling in other teachers.
+        self.datatype = DatatypeHelper.strip_stream(opt['datatype'])
 
         self.dws = int(self.opt.get('distributed_world_size', 1))
         self.rank = int(self.opt.get('rank', 0))
         self.bg_index = self.opt.get('background_index', None)
-        if (
-            shared is None
-            and self.is_train
-            and self.opt.get('distributed_world_size') is not None
-        ):
-            self.fold_chunks = [
-                c for c in self.fold_chunks if c % self.dws == self.rank
-            ]
 
         # If we're in training mode with --num-workers > 0, we will run the
         # chunk teacher in single threaded mode (self.threading is False). In

@@ -13,14 +13,10 @@ from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
 )
 
-from parlai.agents.transformer.modules import LAYER_NORM_EPS
-
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 import torch.nn.functional as F
-
-from torch.nn import LayerNorm
 
 ###########################################
 #         Hash Ladder Transformer         #
@@ -67,6 +63,39 @@ class HashLadderAgent(TransformerGeneratorAgent):
     def build_model(self, states=None):
         wrapped_class = TransformerGeneratorModel.with_components(decoder=Decoder)
         return wrapped_class(self.opt, self.dict)
+
+    def dummy_loss(self):
+        """
+        Hack from Guillaume to fix adaptive weights with distributed code.
+        """
+        if hasattr(self.model, 'module'):
+            ffn = self.model.module.decoder.layers[self.opt['hash_layer']].ffn
+        else:
+            ffn = self.model.decoder.layers[self.opt['hash_layer']].ffn
+        dummy_loss = 0 * (
+            sum(x.weight[0, 0] for x in ffn.linears1)
+            + sum(x.weight[0, 0] for x in ffn.linears2)
+            + sum(x.bias[0] for x in ffn.linears1)
+            + sum(x.bias[0] for x in ffn.linears2)
+        )
+        return dummy_loss
+
+    def compute_loss(self, batch, return_output=False):
+        """
+        Compute and return the loss for the given batch.
+        """
+        if return_output:
+            loss, model_output = super().compute_loss(batch, return_output)
+        else:
+            loss = super().compute_loss(batch, return_output)
+
+        if self.opt['hash_layer'] != -1:
+            loss = loss + self.dummy_loss()
+
+        if return_output:
+            return (loss, model_output)
+        else:
+            return loss
 
 
 class Decoder(TransformerDecoder):
@@ -147,7 +176,6 @@ class HashLayerFFN(nn.Module):
 
         linears1 = []
         linears2 = []
-        norms = []
 
         for i in range(0, self.hashsize):
             linears1.append(nn.Linear(dim, dim_hidden))
@@ -156,15 +184,8 @@ class HashLayerFFN(nn.Module):
             linears2.append(nn.Linear(dim_hidden, dim))
             nn.init.xavier_uniform_(linears2[i].weight)
 
-        embedding_size = self.opt['embedding_size']
-        norms.append(LayerNorm(embedding_size, eps=LAYER_NORM_EPS))
-
         self.linears1 = nn.ModuleList(linears1)
         self.linears2 = nn.ModuleList(linears2)
-        self.norms = nn.ModuleList(norms)
-
-        self.alter_tok = -1
-        self.alter_bin = -1
 
     def hash(self, xi):
         # Insert your choice of hash function here.
@@ -198,13 +219,10 @@ class HashLayerFFN(nn.Module):
         for i in range(self.hashsize):
             vecs = x[index_list[i][0], index_list[i][1], :]
             if vecs.shape[0] > 0:
-                residual = vecs
                 x1 = self.linears1[i](vecs)
                 x1 = self.nonlinear(x1)
                 x1 = self.relu_dropout(x1)  # --relu-dropout
                 x1 = self.linears2[i](x1)
-                x1 = residual + x1
-                x1 = self.norms[0](x1)
                 final_output[index_list[i][0], index_list[i][1], :] = x1
 
         return final_output

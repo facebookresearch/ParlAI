@@ -23,6 +23,7 @@ from parlai.utils.io import PathManager
 from parlai.utils.misc import str_to_msg
 from parlai.tasks.dialogue_safety.agents import OK_CLASS, NOT_OK_CLASS
 from parlai.core.message import Message
+from parlai.utils.misc import warn_once
 
 # Constants
 SAFETY_DICT = {'safe': OK_CLASS, 'unsafe': NOT_OK_CLASS}
@@ -169,8 +170,8 @@ def _human_safety_eval_datapath(opt: Opt) -> str:
     """
     build_human_safety_eval_dataset(opt)
     # Build the data if it doesn't exist.
-    logging.info(
-        f'The data for human safety evaluation is test set only '
+    warn_once(
+        f'WARNING: The data for human safety evaluation is test set only '
         f'regardless of your chosen datatype, which is {opt["datatype"]} '
     )
     data_path = os.path.join(

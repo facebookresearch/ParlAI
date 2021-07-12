@@ -31,6 +31,26 @@ class DatatypeHelper:
         return datatype.split(':')[0]
 
     @classmethod
+    def strip_stream(cls, datatype: str) -> str:
+        """
+        Remove :stream from the datatype.
+
+        Used by ChunkTeacher where behavior does not change based on streaming.
+
+        :param datatype:
+            parlai datatype
+
+        :return:
+            a non-streaming version of the datatype.
+
+        >>> DatatypeHelper.fold("train:stream")
+        "train"
+        >>> DatatypeHelper.fold("train")
+        "train"
+        """
+        return datatype.replace(":stream", "")
+
+    @classmethod
     def should_cycle(cls, datatype: str) -> bool:
         """
         Return whether we should cycle data based on the datatype.

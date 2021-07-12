@@ -167,7 +167,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.3.3 -b stable
+              cd Mephisto; git checkout v0.3.4 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -291,6 +291,7 @@ commands:
           name: check for bad links
           working_directory: ~/ParlAI/
           command: |
+            sudo apt-get update
             sudo apt-get install linkchecker
             python -m http.server --directory website/build >/dev/null &
             linkchecker http://localhost:8000/
