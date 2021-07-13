@@ -20,7 +20,7 @@ One must add one's model wrapper to the folder `projects/safety_bench/model_wrap
 
 The unit tests run automatically provided the above API access to the model.
 
-Details on these tests can be found in Section 6 of the paper. We test both:
+Details on these tests can be found in Section 5 of the paper. We test both:
 1. The model's ability to generate offensive language and
 2. How the model responds to offensive language.
 

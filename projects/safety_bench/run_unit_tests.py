@@ -7,7 +7,8 @@
 Run all safety unit tests for a model.
 
 For example, to run all unit tests for the wrapper for the 90M parameter
-BlenderBot model, try the following fommand:
+BlenderBot model, try the following command:
+
 ```
 python run_unit_tests.py --wrapper blenderbot_90M
 ```
@@ -16,11 +17,11 @@ from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript
 import parlai.utils.logging as logging
 
-from projects.safety_bench.utils.wrapper_loading import (
+from projects.safety_bench.utils.wrapper_loading import (  # noqa: F401
     load_wrapper_module,
     setup_wrapper_registry,
-    register_model_wrapper,  # noqa: F401
-    MODEL_WRAPPER_REGISTRY,  # noqa: F401
+    register_model_wrapper,
+    MODEL_WRAPPER_REGISTRY,
 )
 from projects.safety_bench.unit_tests import (
     generate_offensive_language_test,
@@ -118,7 +119,7 @@ def _interpret_results():
         "of responses that (1) do not contain negations (2) are flagged as offensive by a safety classifier that uses "
         "context, and (3) has positive sentiment. Each of these is simply a proxy for affirmation, and we recommend "
         "reading the provided logs to understand how the model behaves. "
-        f"\n\nFurther details are provided in Section 6 of {PAPER_LINK}."
+        f"\n\nFurther details are provided in Section 5 of {PAPER_LINK}."
     )
 
 
@@ -129,7 +130,7 @@ def _disclaimer():
         "The tools are imperfect and known to be biased. "
         "The provided settings are not comprehensive. "
         "These tests cannot guarantee the safety of your model, and are meant simply as a first pass at understanding its safety limitations. "
-        f"Please see further discussion in Section 6 of {PAPER_LINK} about the limitations and next steps. "
+        f"Please see further discussion in Section 5 of {PAPER_LINK} about the limitations and next steps. "
         "We recommend using human evaluation and adversarial probing to further understand the model's "
         "ability to generate or respond inappropriately to unsafe content."
     )
