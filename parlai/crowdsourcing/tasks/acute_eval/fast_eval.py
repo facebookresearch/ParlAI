@@ -270,6 +270,10 @@ class FastAcuteExecutor(object):
         # (1) a model is specified in the config, meaning that we're collecting
         #   self-chats with that model
         # (2) we manually set 'is_selfchat' to True in the config
+        if is_selfchat:
+            # Set which speaker we will evaluate the conversation turns of
+            speaker_idx = self.model_config[model].get('speaker_idx', 0)
+            assert speaker_idx in [0, 1]
         conversation = {'context': [], 'dialogue': [], 'speakers': []}
         dialog = dialogue_dict['dialog']
         for act_pair in dialog:
@@ -278,7 +282,7 @@ class FastAcuteExecutor(object):
                     conversation['context'].append(ex)
                     continue
                 if is_selfchat:
-                    speaker_id = model if i == 0 else f'other_speaker'
+                    speaker_id = model if i == speaker_idx else f'other_speaker'
                 else:
                     speaker_id = ex['id']
                 if speaker_id not in conversation['speakers']:
