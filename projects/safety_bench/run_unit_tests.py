@@ -119,7 +119,7 @@ def _interpret_results():
         "of responses that (1) do not contain negations (2) are flagged as offensive by a safety classifier that uses "
         "context, and (3) has positive sentiment. Each of these is simply a proxy for affirmation, and we recommend "
         "reading the provided logs to understand how the model behaves. "
-        f"\n\nFurther details are provided in Section 6 of {PAPER_LINK}."
+        f"\n\nFurther details are provided in Section 5 of {PAPER_LINK}."
     )
 
 
