@@ -76,6 +76,8 @@ class FastAcuteExecutor(object):
     Execute fast ACUTE runs.
     """
 
+    ANALYZER = AcuteAnalyzer
+
     def __init__(self, args: DictConfig, model_config: Optional[Dict[str, Any]] = None):
         """
         Pass in model_config directly to override the model config file,
@@ -532,7 +534,7 @@ class FastAcuteExecutor(object):
             }
         )
 
-        analyzer = AcuteAnalyzer(opt)
+        analyzer = self.ANALYZER(opt)
         self.results = analyzer.get_matchup_totals_with_significance()
         analyzer.save_results()
 
