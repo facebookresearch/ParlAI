@@ -381,8 +381,11 @@ def load_world_module(
         # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
         # (i.e. specifying your own path directly)
         module_name_parts = task_path_list[0].split('.')
-        assert module_name_parts[-1] == 'agents'
-        module_name = '.'.join(module_name_parts[:-1]) + '.worlds'
+        if module_name_parts[-1] == 'agents':
+            # The world will be located in ".worlds", so correct the path
+            module_name = '.'.join(module_name_parts[:-1]) + '.worlds'
+        else:
+            module_name = task_path_list[0]
     else:
         task = task_path_list[0].lower()
         module_name = "%s.tasks.%s.worlds" % (repo, task)
