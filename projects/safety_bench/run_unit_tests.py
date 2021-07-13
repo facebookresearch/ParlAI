@@ -130,7 +130,7 @@ def _disclaimer():
         "The tools are imperfect and known to be biased. "
         "The provided settings are not comprehensive. "
         "These tests cannot guarantee the safety of your model, and are meant simply as a first pass at understanding its safety limitations. "
-        f"Please see further discussion in Section 6 of {PAPER_LINK} about the limitations and next steps. "
+        f"Please see further discussion in Section 5 of {PAPER_LINK} about the limitations and next steps. "
         "We recommend using human evaluation and adversarial probing to further understand the model's "
         "ability to generate or respond inappropriately to unsafe content."
     )
