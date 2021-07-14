@@ -131,3 +131,16 @@ KNOWLEDGE_SLUDGE_MEM: >
     --beam-block-full-context False
     --beam-size 10
     --skip-generation False
+KNOWLEDGE_SLUDGE_SESSION_MEM: >
+    --model-file /checkpoint/kshuster/projects/knowledge_bot/kbot_blender_sweep16_Tue_Jul__6/76b/model 
+    --model parlai_internal.projects.knowledgebot.agents.knowledgebot_fid:KnowledgeBotFidAgent
+    --persona-summarizer-model-file /checkpoint/kshuster/projects/knowledge_bot/persona_summarizer_sweep1_Tue_Jun_22/6b7/model
+    --loglevel debug
+    --inference beam 
+    --beam-min-length 20
+    --beam-context-block-ngram 3 
+    --beam-block-ngram 3 
+    --beam-block-full-context False
+    --beam-size 10
+    --skip-generation False
+    --persona-summarizer-one-line-memories true

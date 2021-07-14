@@ -38,6 +38,7 @@ OVERRIDE_OPT_FILENAMES = {
     'KNOWLEDGE_BOT': 'override_opt_knowledgebot.json',
     'KNOWLEDGE_BOT_MEM': 'override_opt_knowledgebotmem.json',
     'KNOWLEDGE_SLUDGE_MEM': 'override_opt_knowledgesludgemem.json',
+    'KNOWLEDGE_SLUDGE_SESSION_MEM': 'override_opt_knowledgesludgesessionmem.json',
 }
 
 
@@ -153,7 +154,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analysis/compile_results.py \
             --problem-buckets they,you,new,none,engaging \
             --is-engaging True \
-            --model-nickname BST2.7B
+            --model-nickname KNOWLEDGE_SLUDGE_SESSION_MEM
             FiD_SUMMSC
         """
 

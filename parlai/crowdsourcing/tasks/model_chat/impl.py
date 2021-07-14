@@ -86,7 +86,7 @@ def run_task(cfg: DictConfig, task_directory: str):
         'block_qualification', f'{task_name}_block'
     )
     # Default to a task-specific name to avoid soft-block collisions
-    soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
+    # soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
     existing_qualifications = [
         make_qualification_dict(ALLOWLIST_QUAL_NAME, QUAL_EXISTS, None)

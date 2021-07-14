@@ -60,3 +60,7 @@ python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.p
 python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py mephisto.provider.requester_name=noahturkproject1019 mephisto/architect=heroku mephisto.log_level=debug mephisto.architect.use_hobby=true  mephisto.database._database_type=singleton conf=engaging_example_knowledgesludgemem
 
 python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py  conf=engaging_example_knowledgesludgemem
+
+# sludge knowledge bot mem only session level
+
+python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/run.py mephisto.provider.requester_name=noahturkproject1019 mephisto/architect=heroku mephisto.log_level=debug mephisto.architect.use_hobby=true  mephisto.database._database_type=singleton conf=engaging_example_knowledgesludgesessionmem

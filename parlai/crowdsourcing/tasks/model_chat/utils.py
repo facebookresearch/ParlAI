@@ -456,6 +456,11 @@ MODEL_OPT = {
         'num_previous_sessions_msg': 10,
         'include_time_gap': False,
     },
+    'KNOWLEDGE_SLUDGE_SESSION_MEM': {
+        'previous_persona_type': 'none',
+        'num_previous_sessions_msg': 10,
+        'include_time_gap': False,
+    },
     'RAG_RAWHISTORY_NDOC10': {
         'previous_persona_type': 'none',
         'num_previous_sessions_msg': 10,
@@ -510,6 +515,10 @@ UI_OPT = {
     'KNOWLEDGE_BOT': {'previous_persona_type': 'both', 'include_time_gap': False},
     'KNOWLEDGE_BOT_MEM': {'previous_persona_type': 'both', 'include_time_gap': False},
     'KNOWLEDGE_SLUDGE_MEM': {
+        'previous_persona_type': 'both',
+        'include_time_gap': False,
+    },
+    'KNOWLEDGE_SLUDGE_SESSION_MEM': {
         'previous_persona_type': 'both',
         'include_time_gap': False,
     },
