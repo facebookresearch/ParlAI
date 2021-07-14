@@ -41,10 +41,12 @@ This module also provides a utility method:
 """
 
 import copy
+from typing import List, Union
 
 from parlai.core.build_data import modelzoo_path
 from parlai.core.loader import load_agent_module
 from parlai.core.loader import register_agent  # noqa: F401
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 import parlai.utils.logging as logging
@@ -153,6 +155,70 @@ class Agent(object):
         Perform any final cleanup if needed.
         """
         pass
+
+    def respond(
+        self, text_or_message: Union[str, Message], **other_message_fields
+    ) -> str:
+        """
+        An agent convenience function which calls the act() and provides a string
+        response to a text or message field.
+
+        :param Union[str, Message] text_or_message:
+            A string for the 'text' field or a message which MUST
+            comprise of the 'text' field apart from other fields.
+        :param kwargs other_message_fields:
+            Provide fields for the message in the form of keyowrd arguments.
+        :return:
+            Agent's response to the message.
+        :rtype:
+            str
+        """
+        if isinstance(text_or_message, str):
+            observation = Message(text=text_or_message, **other_message_fields)
+        else:
+            observation = Message(**text_or_message, **other_message_fields)
+            if 'text' not in observation:
+                raise RuntimeError('The agent needs a \'text\' field in the message.')
+
+        if 'episode_done' not in observation:
+            observation['episode_done'] = True
+        agent = self.clone()
+        agent.observe(observation)
+        response = agent.act()
+        return response['text']
+
+    def batch_respond(self, messages: List[Message]) -> List[str]:
+        """
+        An agent convenience function which calls the batch_act() and provides a batch
+        response to a list of messages.
+
+        :param List[Message] messages:
+            A list of messages each of which MUST comprise of the 'text' field
+            apart from other fields.
+        :return:
+            Agent's batch response to the messages.
+        :rtype:
+            List[str]
+        """
+        observations = []
+        agents = []
+        for i, message in enumerate(messages):
+            if 'text' not in message:
+                raise RuntimeError(
+                    'The agent needs a \'text\' field in the {}th message.'.format(i)
+                )
+            if 'episode_done' not in message:
+                message['episode_done'] = True
+            agent = self.clone()
+            agents.append(agent)
+            observations.append(agent.observe(message))
+        agent_acts = self.batch_act(observations)
+        response = []
+        for agent, resp in zip(agents, agent_acts):
+            if hasattr(agent, "self_observe"):
+                agent.self_observe(resp)
+            response.append(resp['text'])
+        return response
 
     @classmethod
     def upgrade_opt(cls, opt_from_disk: Opt):

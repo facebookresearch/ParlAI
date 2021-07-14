@@ -896,6 +896,92 @@ class TestTorchAgent(unittest.TestCase):
         for i in range(len(obs_elabs_vecs)):
             self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
 
+    def test_respond(self):
+        """
+        Tests respond() in the base Agent class, where the agent provides
+        a string response to a single message.
+        """
+        agent = get_agent()
+        message = Message(
+            {
+                'text': "It's only a flesh wound.",
+                'labels': ['Yield!'],
+                'episode_done': True,
+            }
+        )
+        response = agent.respond(message)
+        self.assertEqual(response, 'Training 0!')
+        message = Message(
+            {
+                'text': "It's only a flesh wound.",
+                'eval_labels': ['Yield!'],
+                'episode_done': True,
+            }
+        )
+        response = agent.respond(message)
+        self.assertIn('Evaluating 0', response)
+
+    def test_batch_respond(self):
+        """
+        Tests batch_respond() in the base Agent class, where the agent provides
+        a batch response to a batch of messages.
+        """
+        agent = get_agent()
+
+        obs_labs = [
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
+        ]
+        response = agent.batch_respond(obs_labs)
+        for i, resp in enumerate(response):
+            self.assertEqual(resp, 'Training {}!'.format(i))
+
+        obs_elabs = [
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'eval_labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'eval_labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'eval_labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
+        ]
+        response = agent.batch_respond(obs_elabs)
+        for i, resp in enumerate(response):
+            self.assertIn('Evaluating {}'.format(i), resp)
+
     def test_interactive_mode(self):
         """
         Test if conversation history is destroyed in MTurk mode.
