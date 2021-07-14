@@ -58,3 +58,66 @@ class TestRepeatQueryAgent(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             agent.respond(Message())
         self.assertEqual(str(context.exception), error_message)
+
+    def test_batch_respond(self):
+        """
+        Tests batch_respond() of Repeat Query agent.
+        """
+        agent = create_agent(dict(model='repeat_query'))
+        messages = [
+            Message({'text': 'hello!', 'episode_done': False}),
+            Message({'text': 'hi!', 'episode_done': False}),
+            Message({'text': 'what\'s up?', 'episode_done': False}),
+            Message({'text': '', 'episode_done': False}),
+            Message({'text': 'I feel infinite.', 'episode_done': False}),
+        ]
+        expected_response = [
+            'hello!',
+            'hi!',
+            'what\'s up?',
+            'Nothing to repeat yet.',
+            'I feel infinite.',
+        ]
+        batch_response = agent.batch_respond(messages)
+        self.assertEqual(batch_response, expected_response)
+
+    def test_batch_act(self):
+        """
+        Tests batch_act() of Repeat Query agent.
+        """
+        agent = create_agent(dict(model='repeat_query'))
+        observations = []
+        batch_reply = agent.batch_act(observations)
+        self.assertEqual(len(batch_reply), 0)
+        observations = [
+            Message({'text': 'hello!', 'episode_done': False}),
+            Message({'text': '', 'episode_done': False}),
+            Message({'episode_done': False}),
+            Message(),
+            None,
+        ]
+        original_obs = "Hey there!"
+        agent.observe(original_obs)
+        self.assertEqual(agent.observation, original_obs)
+        batch_reply = agent.batch_act(observations)
+        # Make sure original observation doesn't change.
+        self.assertEqual(agent.observation, original_obs)
+        self.assertEqual(len(batch_reply[0]), 3)
+        self.assertEqual(batch_reply[0]['text'], 'hello!')
+        self.assertEqual(batch_reply[0]['episode_done'], False)
+        self.assertEqual(batch_reply[0]['id'], 'RepeatQueryAgent')
+        self.assertEqual(len(batch_reply[1]), 3)
+        self.assertEqual(batch_reply[1]['text'], 'Nothing to repeat yet.')
+        self.assertEqual(batch_reply[1]['episode_done'], False)
+        self.assertEqual(batch_reply[1]['id'], 'RepeatQueryAgent')
+        self.assertEqual(len(batch_reply[2]), 3)
+        self.assertEqual(batch_reply[2]['text'], "I don't know")
+        self.assertEqual(batch_reply[2]['episode_done'], False)
+        self.assertEqual(batch_reply[2]['id'], 'RepeatQueryAgent')
+        self.assertEqual(len(batch_reply[3]), 3)
+        self.assertEqual(batch_reply[3]['text'], "I don't know")
+        self.assertEqual(batch_reply[3]['episode_done'], False)
+        self.assertEqual(batch_reply[3]['id'], 'RepeatQueryAgent')
+        self.assertEqual(len(batch_reply[4]), 2)
+        self.assertEqual(batch_reply[4]['text'], 'Nothing to repeat yet.')
+        self.assertEqual(batch_reply[4]['episode_done'], False)
