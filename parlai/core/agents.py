@@ -156,15 +156,6 @@ class Agent(object):
         """
         pass
 
-    def self_observe(self, self_message: Message) -> None:
-        """
-        Observe one's own utterance.
-
-        :param self_message:
-            The message corresponding to the output from batch_act.
-        """
-        pass
-
     def respond(
         self, text_or_message: Union[str, Message], **other_message_fields
     ) -> str:
@@ -224,7 +215,8 @@ class Agent(object):
         agent_acts = self.batch_act(observations)
         response = []
         for agent, resp in zip(agents, agent_acts):
-            agent.self_observe(resp)
+            if hasattr(agent, "self_observe"):
+                agent.self_observe(resp)
             response.append(resp['text'])
         return response
 
