@@ -1879,18 +1879,29 @@ model_list = [
         "agent": "bart",
         "task": "wizard_of_internet",
         "project": "https://parl.ai/projects/sea/",
-        "description": (
-            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
-            "and a BART-Large backbone seq2seq generator."
-        ),
-        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_do/model"),
+        "description": ("BART-Large 400m model trained on Wizard of Internet."),
+        "example": ("parlai interactive -mf zoo:sea/bart_base/model"),
         "result": (
-            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
-            "[RAG]: Hey! I love Elvis Presley. He is one of my favorite musicians. I love his voice."
+            "Enter Your Message: Do you know about the world cup 2022?\n"
+            "[Bart]: I heard that the fifa games are coming back."
         ),
         "example2": (
-            "parlai eval_model -mf zoo:hallucination/bart_rag_turn_do/model -t wizard_of_wikipedia --num-examples 100"
+            "parlai eval_model -mf zoo:sea/bart_base/model -t wizard_of_internet --num-examples 100"
         ),
         "result2": ("TODO"),
+    },
+    {
+        "title": "Serarch Query Generator Wizard of Internet",
+        "id": "sea",
+        "path": "zoo:sea/bart_sq_gen/model",
+        "agent": "bart",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/sea/",
+        "description": ("BART-Large 400m model for generating search queries."),
+        "example": ("parlai interactive -mf zoo:sea/bart_sq_gen/model"),
+        "result": (
+            "Enter Your Message: I am looking for a good vacation spot in NY.\n"
+            "[Bart]: vacation spots in ny."
+        ),
     },
 ]
