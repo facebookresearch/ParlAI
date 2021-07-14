@@ -1014,6 +1014,7 @@ class SearchQueryRetriever(RagRetriever):
         opt['skip_retrieval_token'] = NO_SEARCH_QUERY
         self.n_docs = opt['n_docs']
         self.len_chunk = opt['splitted_chunk_length']
+        self.doc_chunk_split_mode = opt['doc_chunk_split_mode']
         n_doc_chunks = opt['n_ranked_doc_chunks']
         chunk_ranker_type = opt['doc_chunks_ranker']
         if chunk_ranker_type == 'tfidf':
@@ -1074,6 +1075,18 @@ class SearchQueryRetriever(RagRetriever):
             opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
         )
 
+    def text2tokens(self, txt: str):
+        if self.doc_chunk_split_mode == 'word':
+            return txt.split(' ')
+        else:
+            return self.dict.txt2vec(txt)
+
+    def tokens2text(self, tokens: List[int]):
+        if self.doc_chunk_split_mode == 'word':
+            return tokens.join(' ')
+        else:
+            return self.dict.vec2txt(tokens)
+
     def pick_chunk(self, query, doc_text):
         """
         Splits the document and returns the selected chunks.
@@ -1084,9 +1097,9 @@ class SearchQueryRetriever(RagRetriever):
         if not doc_text:
             # When there is no search query for the context
             return [("", 0)]
-        tokens = self.dict.txt2vec(doc_text)
+        tokens = self.text2tokens(doc_text)
         doc_chunks = [
-            self.dict.vec2txt(tokens[i : i + self.len_chunk])
+            self.tokens2text(tokens[i : i + self.len_chunk])
             for i in range(0, len(tokens), self.len_chunk)
         ]
         return self.chunk_reranker.get_top_chunks(query, doc_chunks)
@@ -1156,7 +1169,7 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
         search_queries = self.generate_search_query(query)
 
         # step 2
-        search_results_batach = self.search_client.retrieve(search_queries)
+        search_results_batach = self.search_client.retrieve(search_queries, self.n_docs)
 
         # step 3
         top_docs = []

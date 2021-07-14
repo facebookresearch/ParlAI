@@ -251,6 +251,13 @@ class SearchQueryFiDAgent(FidAgent):
             help='The number of tokens in each document split',
         )
         group.add_argument(
+            '--doc-chunk-split-mode',
+            type=str,
+            choices=['word', 'token'],
+            default='word',
+            help='split the docs by white space (word) or dict tokens.',
+        )
+        group.add_argument(
             '--n-ranked-doc-chunks',
             type=int,
             default=1,
