@@ -1872,4 +1872,25 @@ model_list = [
         ),
         "result": ("TODO"),
     },
+    {
+        "title": "Bart Base Wizard of Internet",
+        "id": "sea",
+        "path": "zoo:sea/bart_base/model",
+        "agent": "bart",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/sea/",
+        "description": (
+            "RAG-Turn Doc-Then-Turn model trained with a DPR Retriever "
+            "and a BART-Large backbone seq2seq generator."
+        ),
+        "example": ("parlai interactive -mf zoo:hallucination/bart_rag_turn_do/model"),
+        "result": (
+            "Enter Your Message: Hey! What's your favorite Elvis song?\n"
+            "[RAG]: Hey! I love Elvis Presley. He is one of my favorite musicians. I love his voice."
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:hallucination/bart_rag_turn_do/model -t wizard_of_wikipedia --num-examples 100"
+        ),
+        "result2": ("TODO"),
+    },
 ]
