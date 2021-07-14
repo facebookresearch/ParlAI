@@ -16,6 +16,8 @@ __pycache__/
 # C extensions
 *.so
 
+parlai/mturk
+
 # Distribution / packaging
 .Python
 .vector_cache/
