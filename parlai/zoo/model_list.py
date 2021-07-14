@@ -1904,4 +1904,27 @@ model_list = [
             "[Bart]: vacation spots in ny."
         ),
     },
+    {
+        "title": "WizInt FiD Search Query Search Engine",
+        "id": "sea",
+        "path": "zoo:sea/bart_fid_sqse/model",
+        "agent": "bart",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/sea/",
+        "description": (
+            "FiD model with BART-Large 400m generation model. "
+            "The model first uses a search query generator model to create a search query. "
+            "It forwards that search query to a search engine API to retrive documents. "
+            "It uses FiD to generate a response, using the latter documents."
+        ),
+        "example": (
+            "parlai interactive -mf zoo:sea/bart_fid_sqse/model \ \n"
+            "--search-query-generator-model-file zoo:sea/bart_fid_sqse/model \ \n"
+            "--search-server <your search server API address>"
+        ),
+        "result": (
+            "Enter Your Message: Have you seen the new James bond movie?\n"
+            "[SearchEngineFiD]: I have not seen the new James Bond movie."
+        ),
+    },
 ]
