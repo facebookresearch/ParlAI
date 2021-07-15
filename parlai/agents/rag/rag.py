@@ -509,7 +509,10 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             return observation with query vec.
         """
         query_str = observation[self._query_key]
-        observation['query_vec'] = self.model.tokenize_query(query_str)
+        if hasattr(self.model, 'module'):
+            observation['query_vec'] = self.model.module.tokenize_query(query_str)
+        else:
+            observation['query_vec'] = self.model.tokenize_query(query_str)
         return observation
 
     def _set_input_turn_cnt_vec(self, observation: Message) -> Message:
