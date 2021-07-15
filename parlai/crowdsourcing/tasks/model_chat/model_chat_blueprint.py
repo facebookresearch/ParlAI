@@ -254,7 +254,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             }
         )
 
-    def format_left_pane_text(self):
+    def format_left_pane_text(self, args: "DictConfig"):
         """
         Modifies self.left_pane_text for code injection
         """
