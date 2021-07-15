@@ -1083,7 +1083,7 @@ class SearchQueryRetriever(RagRetriever):
 
     def tokens2text(self, tokens: List[int]):
         if self.doc_chunk_split_mode == 'word':
-            return tokens.join(' ')
+            return ' '.join(tokens)
         else:
             return self.dict.vec2txt(tokens)
 
