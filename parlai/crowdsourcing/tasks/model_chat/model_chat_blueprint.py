@@ -219,7 +219,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         left_pane_path = os.path.expanduser(args.blueprint.left_pane_text_path)
         with open(left_pane_path, "r") as left_pane_file:
             self.left_pane_text = left_pane_file.read()
-        self.format_left_pane_text()
+        self.format_left_pane_text(args)
         self.annotations_config: Optional[str] = None
         if args.blueprint.get("annotations_config_path", "") != "":
             annotations_config_path = os.path.expanduser(
@@ -254,9 +254,9 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             }
         )
 
-    def format_left_pane_text(self):
+    def format_left_pane_text(self, args: "DictConfig"):
         """
-        Modifies self.left_pane_text for code injection
+        Modifies self.left_pane_text for code injection.
         """
         pass
 
