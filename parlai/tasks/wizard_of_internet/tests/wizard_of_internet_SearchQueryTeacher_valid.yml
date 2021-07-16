@@ -1,0 +1,49 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - bank audit
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: "I work as a freelance accountant.\nI enjoy reading books.   \nSame here!\
+      \ What kind of books do you read?\nAll fiction!   With COVID this past summer,\
+      \ I read 16 books in 3 months.  You?\nI am a big Harry Potter nerd! What do\
+      \ you do for work?\nAudit banks.  You?"
+- - episode_done: true
+    eval_labels:
+    - Superbowl 2021
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: "I work as a freelance accountant.\nI enjoy reading books.   \nSame here!\
+      \ What kind of books do you read?\nAll fiction!   With COVID this past summer,\
+      \ I read 16 books in 3 months.  You?\nI am a big Harry Potter nerd! What do\
+      \ you do for work?\nAudit banks.  You?\nI do taxes actually!\nGood for you!\
+      \    Are you watching the Superbowl this year?"
+- - episode_done: true
+    eval_labels:
+    - Tom Brady records
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: "I work as a freelance accountant.\nI enjoy reading books.   \nSame here!\
+      \ What kind of books do you read?\nAll fiction!   With COVID this past summer,\
+      \ I read 16 books in 3 months.  You?\nI am a big Harry Potter nerd! What do\
+      \ you do for work?\nAudit banks.  You?\nI do taxes actually!\nGood for you!\
+      \    Are you watching the Superbowl this year?\nI will! It is on the 7th right\
+      \ ?\nIt is.   Are you a Brady fan or foe?"
+- - episode_done: true
+    eval_labels:
+    - the United States of America
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: false
+    text: 'I live in the usa.
+
+      I love to play golf.'
+- - episode_done: true
+    eval_labels:
+    - USA upheval
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: false
+    text: 'I live in the usa.
+
+      I love to play golf.'
+num_episodes: 516
+num_examples: 2881

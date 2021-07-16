@@ -1515,7 +1515,11 @@ class TorchAgent(ABC, Agent):
             # pick one label if there are multiple
             lbls = obs[label_type]
             label = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-            vec_label, vec_label_length, vec_label_truncated = self._vectorize_text_with_truncate_stats(
+            (
+                vec_label,
+                vec_label_length,
+                vec_label_truncated,
+            ) = self._vectorize_text_with_truncate_stats(
                 label, add_start, add_end, truncate, False
             )
             obs.force_set('label_original_length', vec_label_length)

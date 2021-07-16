@@ -8,6 +8,7 @@ Leveraging Passage Retrieval with Generative Models for Open Domain Question Ans
 
 See https://arxiv.org/abs/2007.01282
 """
+from copy import deepcopy
 import torch
 from typing import Tuple, Union, Optional, List, Dict, Any
 
@@ -15,9 +16,11 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.agents.transformer.transformer import TransformerGeneratorModel
 
+from parlai.agents.rag.args import RetrieverType
 from parlai.agents.rag.modules import RagModel, Document, T5RagModel
 from parlai.agents.rag.rag import RagAgent
 from parlai.agents.rag.model_types import RagToken, get_forced_decoder_inputs
+from parlai.utils.typing import TShared
 
 
 class Fid(RagToken):
@@ -198,6 +201,98 @@ class FidAgent(RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+
+RETRIEVER_DOC_LEN_TOKENS = 256
+
+
+class SearchQueryFiDAgent(FidAgent):
+    @classmethod
+    def add_cmdline_args(cls, parser, partial_opt=None):
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group('Search Query FiD Params')
+
+        # Search Query generator
+        group.add_argument(
+            '--search-query-generator-model-file',
+            type=str,
+            help='Path to a query generator model.',
+        )
+        group.add_argument(
+            '--search-query-generator-inference',
+            type=str,
+            default='greedy',
+            help='Generation algorithm for the search query generator model',
+        )
+        group.add_argument(
+            '--search-query-generator-beam-min-length',
+            type=int,
+            default=1,
+            help='The beam_min_length opt for the search query generator model',
+        )
+        group.add_argument(
+            '--search-query-generator-beam-size',
+            type=int,
+            default=1,
+            help='The beam_size opt for the search query generator model',
+        )
+        group.add_argument(
+            '--search-query-generator-text-truncate',
+            type=int,
+            default=512,
+            help='Truncates the input to the search query generator model',
+        )
+
+        # Creating chunks and spliting the documents
+        group.add_argument(
+            '--splitted-chunk-length',
+            type=int,
+            default=RETRIEVER_DOC_LEN_TOKENS,
+            help='The number of tokens in each document split',
+        )
+        group.add_argument(
+            '--doc-chunk-split-mode',
+            type=str,
+            choices=['word', 'token'],
+            default='word',
+            help='split the docs by white space (word) or dict tokens.',
+        )
+        group.add_argument(
+            '--n-ranked-doc-chunks',
+            type=int,
+            default=1,
+            help='Number of document chunks to keep if documents is too long and has to be splitted.',
+        )
+        group.add_argument(
+            '--doc-chunks-ranker',
+            type=str,
+            choices=['tfidf', 'head'],
+            default='head',
+            help='How to rank doc chunks.',
+        )
+
+        return parser
+
+
+class SearchQuerySearchEngineFiDAgent(SearchQueryFiDAgent):
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE.value
+        super().__init__(opt, shared=shared)
+
+    @classmethod
+    def add_cmdline_args(cls, parser, partial_opt=None):
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group('Search Engine FiD Params')
+        group.add_argument('--search-server', type=str, help='A search server addrees.')
+        return parser
+
+
+class SearchQueryFAISSIndexFiDAgent(SearchQueryFiDAgent):
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_TERM_FAISS.value
+        super().__init__(opt, shared=shared)
 
 
 def concat_enc_outs(
