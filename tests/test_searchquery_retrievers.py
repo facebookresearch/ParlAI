@@ -19,6 +19,13 @@ from parlai.agents.rag.retrieve_api import (
 import torch
 import unittest
 
+try:
+    import faiss  # noqa: f401
+
+    FAISS_INSTALLED = True
+except ImportError:
+    FAISS_INSTALLED = False
+
 
 ################################################################
 # Search Engine FiD Agent
@@ -94,6 +101,7 @@ class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
         return self.queries
 
 
+@unittest.skipUnless(FAISS_INSTALLED, "FAISS was not installed.")
 class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)
