@@ -9,6 +9,12 @@
 - [Read more about it here](https://ai.facebook.com/blog/blender-bot-2-an-open-source-chatbot-that-builds-long-term-memory-and-searches-the-internet).
 
 
+## Papers
+
+This work is based on the following papers.
+
+1. [Internet-Augmented Dialogue Generation](https://parl.ai/projects/sea). Mojtaba Komeili, Kurt Shuster, Jason Weston. 
+2. [Beyond Goldfish Memory: Long-Term Open-Domain Conversation](https://parl.ai/projects/msc). Jing Xu, Arthur Szlam, Jason Weston. 
 
 
 ## Example Conversations
@@ -87,13 +93,6 @@ Finally, to train for safety we use the [BAD dataset](https://parl.ai/projects/s
 
 See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
-
-## Papers
-
-This work is based on the following papers.
-
-1. [Internet-Augmented Dialogue Generation](https://parl.ai/projects/sea). Mojtaba Komeili, Kurt Shuster, Jason Weston. 
-2. [Beyond Goldfish Memory: Long-Term Open-Domain Conversation](https://parl.ai/projects/msc). Jing Xu, Arthur Szlam, Jason Weston. 
 
 ## Contributors
 Moya Chen, Douwe Kiela, Mojtaba Komeili, Spencer Poff, Stephen Roller, Kurt Shuster, Arthur Szlam, Jason Weston, Jing Xu.
