@@ -10,7 +10,7 @@ We show how existing models trained on existing datasets perform poorly in this 
 
 ## Paper
 
-[Link](msc.pdf)
+[Link](https://github.com/facebookresearch/ParlAI/blob/master/projects/msc/msc.pdf)
 
 ## Example Conversation Session
 (Human-human conversation from the dataset)
