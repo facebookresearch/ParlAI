@@ -15,7 +15,7 @@ or FAISS-based retrieval (Lewis et al., 2020).
 
 ## Paper
 
-[Link](Internet_Augmented_Dialogue.pdf)
+[Link](https://github.com/facebookresearch/ParlAI/blob/master/projects/sea/Internet_Augmented_Dialogue.pdf)
 
 ## Example Conversations
 
