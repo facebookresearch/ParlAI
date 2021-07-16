@@ -20,7 +20,7 @@ import torch
 import unittest
 
 try:
-    import faiss  # noqa: f401
+    import faiss  # noqa: F401
 
     FAISS_INSTALLED = True
 except ImportError:
