@@ -25,7 +25,7 @@ import parlai.utils.testing as testing_utils
 
 OPTION_CASES = [
     {'task': 'convai2:selfRevised', 'agent': 'repeat_label'},
-    {'task': 'parlai.tasks.convai2.agents:selfRevised', 'agent': 'repeat_label'},
+    {'task': 'parlai.tasks.convai2.agents:selfRevisedTeacher', 'agent': 'repeat_label'},
 ]
 
 
