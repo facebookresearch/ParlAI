@@ -1419,9 +1419,9 @@ task_list = [
         },
     },
     {
-        "id": "Wizard_of_internet",
+        "id": "Wizard_of_Internet",
         "display_name": "Wizard_of_Internet",
-        "task": "Wizard_of_internet",
+        "task": "wizard_of_internet",
         "tags": ["ChitChat"],
         "description": (
             "A dataset with conversations directly grounded with knowledge "

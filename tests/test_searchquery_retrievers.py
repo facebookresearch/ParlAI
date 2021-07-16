@@ -74,7 +74,7 @@ class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
         self.assertIsInstance(second_retrieved_doc, Document)
         self.assertIsInstance(second_retrieved_doc.get_text(), str)
         self.assertEqual(
-            second_retrieved_doc.get_text(), 'content 1 for query " mock search query "'
+            second_retrieved_doc.get_text(), 'content 1 for query "mock search query"'
         )
 
         # WithOUT Search query
