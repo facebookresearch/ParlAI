@@ -72,6 +72,13 @@ def get_perspective_api_key(opt) -> Optional[str]:
 
     if api_key is None:
         logging.warning("No Perspective API key is available.")
+    else:
+        assert PERSPECTIVE_CLIENT_AVAILABLE, (
+            "You must install the perspective API client. "
+            "Please run:\n`pip install google-api-python-client`"
+            "\nor follow the instructions here:\n"
+            "<https://github.com/googleapis/google-api-python-client>"
+        )
 
     opt["perspective_api_key"] = api_key
 

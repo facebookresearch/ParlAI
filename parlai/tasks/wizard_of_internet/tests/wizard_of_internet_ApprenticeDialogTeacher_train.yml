@@ -1,0 +1,43 @@
+acts:
+- - episode_done: false
+    id: WizInternetApprenticeTeacher
+    labels:
+    - I just watched chopped for 3 hours straight. The baskets were hard in some of
+      them.
+    text: 'My favorite tv show is Chopped.
+
+      They play along with the show'
+- - episode_done: false
+    id: WizInternetApprenticeTeacher
+    labels:
+    - 'Yes it is. Chefs have a basket with 4 mystery ingredients. They compete to
+      make the best meal from the ingredients. '
+    text: ' Baskets? I don''t know anything about this show. Is it something about
+      cooking?'
+- - episode_done: false
+    id: WizInternetApprenticeTeacher
+    labels:
+    - 'Yes, I agree. Some of the ingredients I''ve never heard of. I try to watch
+      as many as I can, but not all. I only imagine what I would make. I have never
+      tried by myself. '
+    text: It sounds like quite a challenge! Do you watch every episode? Have you tried
+      to make the dishes yourself?
+- - episode_done: false
+    id: WizInternetApprenticeTeacher
+    labels:
+    - 'Yes, i forgot to mention there is also only a 20 or thirty minute time limit,
+      depending on the round. The cuisine is from around the world. Fine dining to
+      street style. '
+    text: 'I think it would be a big challenge to do what Chefs on the program do.
+      Is there a type of cuisine that they normally feature? Or it it cuisine from
+      around the world? '
+- - episode_done: false
+    id: WizInternetApprenticeTeacher
+    labels:
+    - Yes, it really is. I enjoy that there is no story line, so anyone can start
+      watching and not feel like they missed an important part of the plot. Yes, it
+      is a foodie favorite. I am a foodie, yes. But I'm also picky.
+    text: That sounds interesting! I bet the show is pretty popular with foodies!
+      Do you consider yourself a foodie?
+num_episodes: 8614
+num_examples: 41476

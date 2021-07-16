@@ -1,0 +1,188 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - My father is a drunk.
+    id: msc_personasummary_1
+    init_personas:
+    - - I am the only child of my parents.
+      - My father was in the navy.
+      - I went to school in france and spain.
+      - I have two dogs named bounty and snickers.
+      - I like eating burgers and fries.
+    - - My name is mark.
+      - I'm an alcoholic.
+      - My dad was an alcoholic too.
+      - Now I'm a mechanic.
+      - I've got a baby on the way.
+    initial_data_id: test_756
+    session_id: 1
+    speaker_idx: 2
+    text: 'My parent just called. They love looking our for me.
+
+      Cool! I am about to be a prent. I hope I''m like that to my kid.
+
+      My navy father loves his son so much.
+
+      My father''s not interested. He''s a drunk, lol. Me too, I''m afraid.'
+    utt_idx: 3
+- - episode_done: true
+    eval_labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    id: msc_personasummary_2
+    init_personas:
+    - - I have blonde hair and blue eyes.
+      - My parents are both from the north.
+      - I lived in alaska for 3 years.
+      - I want to retire on a beach.
+      - I have a small smart car.
+    - - I have two kids.
+      - I love horror movies.
+      - I paint pretty well.
+      - I have a government job.
+      - I like to take naps.
+    initial_data_id: test_390
+    session_id: 2
+    speaker_idx: 2
+    text: 'What are your kids favorite hobbies or activity to do for fun?
+
+      my kids like to read and to ride bikes! my son also loves cars. what kind of
+      car do you drive?
+
+      reading and biking? that''s awesome! I just got myself a new tesla, it''s red
+      and shiny and fast
+
+      that''s so awesome. I love teslas. they''re so good for the environment! did
+      you just get the tesla this year?'
+    utt_idx: 3
+- - episode_done: true
+    eval_labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    id: msc_personasummary_3
+    init_personas:
+    - - I like people.
+      - I try to be helpful.
+      - I like art.
+      - I want to be a painter.
+      - I love fast cars.
+    - - I have five tattoos in total.
+      - I like visiting places with graffiti.
+      - My mom owned a little coffee shop.
+      - My favorite tv show is friends.
+      - I do not own a car yet.
+    initial_data_id: test_88
+    session_id: 3
+    speaker_idx: 2
+    text: 'I got some good news about my mom today! The tests all came back negative
+      and she''s been feeling well.
+
+      that''s great! what were they testing for again?
+
+      Well they were testing for a bunch of different things. We''ve had a really
+      difficult time narrowing it down.
+
+      well i''m glad she''s okay.  I know how much she means to you.
+
+      Thank you. Yes, I don''t know what I would do without her. How is your mother
+      doing?
+
+      she''s doing well.  The coffee shop has been getting good business lately so
+      she''s very happy haha.  She had been stressed about money before.
+
+      It''s so good to hear that things are going better for her. Do you work at her
+      coffee shop or a different one?
+
+      i work at hers.  I actually own it now.
+
+      Oh, I see. What''s it like working with your mother? I think that I would get
+      into too many arguments if I was working with mine, as much as I love her.
+
+      It can be stressful sometimes but now that I''ve shown that I can run the place
+      properly, she''s pretty hands off and just lets me do my thing.  We get along
+      pretty well at work now.
+
+      Well it''s good that it''s working out for you both! It''s good that she''s
+      staying active. It''s been difficult to find things for my mother to do while
+      she''s been sick.
+
+      I''m sure she''ll be back at it soon.'
+    utt_idx: 11
+- - episode_done: true
+    eval_labels:
+    - I have to limit buying potato chips because I have poor impulse control.
+    id: msc_personasummary_4
+    init_personas:
+    - - I love going on cruises.
+      - I learned how to swim when I was five years old.
+      - I liked debate club the most in school.
+      - I do computer programming for a living.
+      - I just got a new job yesterday.
+    - - I am a vegan.
+      - I love animals.
+      - I used to be a veterinarian, but I quit to travel abroad.
+      - I sing for a living.
+      - I like to blog.
+    initial_data_id: test_693
+    session_id: 4
+    speaker_idx: 2
+    text: "I think I'm going to try a new recipe for salmon for dinner tonight.  I\
+      \ need to stay in shape so when I finally do get to go a cruise I'll be looking\
+      \ good!\nWhat are you making for dinner?\nWell I am going to make salmon on\
+      \ the grill, with lemon and dill! I am going to make a kale salad to go along\
+      \ with it. I am not sure how it will taste but it is healthy!\nI bet the salmon\
+      \ will be great for you since you love fish. I've had good kale and bad kale,\
+      \ so it's a coin flip! You going to be able to keep this up?\nHonestly, I am\
+      \ not sure. I love food so much. Do you have any tips for maintaining? You must\
+      \ have a very healthy diet being a vegan.\nYou really need to find the foods\
+      \ that you enjoy. It might take a little time. No one will stay healthy eating\
+      \ food they hate.\nI think I get bored of the food easily when I am dieting.\
+      \ I need to switch it up. Do you have any exciting recipes?\nI make some really\
+      \ good kale chips. They are healthy, crunchy, and tasty. Those sound any good>\n\
+      hmm, tell me more! How do you make them? Do you add any type of seasoning to\
+      \ them? \nWhatever seasoning you want. I like curry, jerk, and lemon-pepper.\
+      \ Just toss with a little oil and bake in the oven\nOK, I will definitely try\
+      \ it! Potato chips are my downfall, so this sounds like a much healthier alternative.\
+      \ \nI don't even buy chips. If they are here, I eat them all. So I just don't\
+      \ even let them in the home."
+    utt_idx: 11
+- - episode_done: true
+    eval_labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    id: msc_personasummary_1
+    init_personas:
+    - - I am a vegan.
+      - I love to volunteer at my local community garden.
+      - Have two dogs and cat.
+      - I am a student at a community college.
+      - I am hoping to be a nurse one day.
+    - - I am athletic.
+      - My favorite drink is coffee.
+      - I live in the big city.
+      - I am an artist.
+      - I have a dog.
+    initial_data_id: test_213
+    session_id: 1
+    speaker_idx: 1
+    text: 'Hi. How are you today?
+
+      Tired. Just came back from my run. How about you?
+
+      Finer than a frog hair split four ways. Have a good run?
+
+      Hah! Haven''t heard that one yet. Almost spit out my drink..
+
+      Backwoods virginia slang for you.
+
+      I guess so. Anyways, my dog chased a frisbee halfway across the park..
+
+      I know how it is. I have two dogs and one cat. It gets interesting.
+
+      That sounds hectic. What are their names?.
+
+      Skippy and jetta for the dogs and the cat is foster. What''s your dog''s name.
+
+      The big goofball in question is named java. After what he has to be drinking..
+
+      Hey the pup has taste.'
+    utt_idx: 10
+num_episodes: 139194
+num_examples: 139194

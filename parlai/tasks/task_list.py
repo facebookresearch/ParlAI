@@ -1418,4 +1418,27 @@ task_list = [
             "website": "https://www.microsoft.com/en-us/research/project/metalwoz/",
         },
     },
+    {
+        "id": "Wizard_of_internet",
+        "display_name": "Wizard_of_Internet",
+        "task": "Wizard_of_internet",
+        "tags": ["ChitChat"],
+        "description": (
+            "A dataset with conversations directly grounded with knowledge "
+            "retrieved from internet. One of the participants has access to internet search. "
+            "The other side has an assigned persona that provides the topic of the conversation. "
+            "Contains 93.7k utterances from 9.6k conversations, split into train, "
+            "test, and valid sets."
+        ),
+    },
+    {
+        "id": "msc",
+        "display_name": "MultiSessionChat",
+        "task": "msc",
+        "tags": ["ChitChat"],
+        "description": (
+            "A multi-session human-human chit-chat dataset consist of session 2-5 follow up from PersonaChat "
+            "It contains 5k full converesations from session 2 to session 5 (session 1 being PersonaChat) "
+        ),
+    },
 ]
