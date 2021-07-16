@@ -6,16 +6,16 @@
 
 - During conversation, the model can search the internet by generating its own search queries, reading the results, and taking them into account when formulating a response.
 
-- [Read more about it here](link).
+- [Read more about it here](https://ai.facebook.com/blog/blender-bot-2-an-open-source-chatbot-that-builds-long-term-memory-and-searches-the-internet).
 
 
 
 
 ## Example Conversations
 
-<p align="center"><img width="110%" src="wandavision2.png" /></p>
+<p align="center"><img width="110%" src="wandavision_final.jpeg" /></p>
 <br>
-<p align="center"><img width="60%" src="big_convo.png" /></p>
+<p align="center"><img width="90%" src="big_convo_final.jpg" /></p>
 
 ## Model 
 
@@ -76,7 +76,8 @@ Nevertheless, as ever much work remains to be done in the area of safety. While 
 
 ### Model Zoo
 
-Zoo files here.
+- BlenderBot 2.0 400m: `--model-file zoo:blenderbot2/blenderbot2_400M/model`
+- BlenderBot 2.0 2.7B: `--model-file zoo:blenderbot2/blenderbot2_3B/model`
 
 ## Datasets
 
