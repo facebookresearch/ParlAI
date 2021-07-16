@@ -32,7 +32,7 @@ BB2      | 2.7B        | BST+MSC+WizInt w/LT-Mem<sup>1</sup>  | 24.3 | 54.8 | 3.
 
 Configuration | Size        |  Correct Uses of Previous Sessions (%) | Per-Turn Engagingness (%)   | Per-Chat Engagingness (out of 5)
 ------------| -------| ------ | ------ | ------
-BST (aka BlenderBot 1)      |2.7B        |  17.2 | 53.0 | 3.14
+| BST (aka BlenderBot 1)      |2.7B        |  17.2 | 53.0 | 3.14
 | BST+MSC+WizInt w/LT-Mem<sup>1</sup> |400M     |    26.2 | 54.3 | 3.4
 | BST+MSC+WizInt w/LT-Mem<sup>*1</sup>  |2.7B     |    24.3 | 54.8 | 3.38 
 | BST+MSC w/LT-Mem<sup>1</sup>       |2.7B      |   **26.7** |  **62.1** | **3.65**
