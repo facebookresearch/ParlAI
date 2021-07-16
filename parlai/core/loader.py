@@ -388,7 +388,7 @@ def load_world_module(
             module_name = task_path_list[0]
     else:
         task = task_path_list[0].lower()
-        module_name = "%s.tasks.%s.worlds" % (repo, task)
+        module_name = f"{repo}.tasks.{task}.worlds"
 
     try:
         my_module = importlib.import_module(module_name)
