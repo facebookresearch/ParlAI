@@ -19,6 +19,13 @@ from parlai.agents.rag.retrieve_api import (
 import torch
 import unittest
 
+try:
+    import faiss  # noqa: F401
+
+    FAISS_INSTALLED = True
+except ImportError:
+    FAISS_INSTALLED = False
+
 
 ################################################################
 # Search Engine FiD Agent
@@ -67,7 +74,7 @@ class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
         self.assertIsInstance(second_retrieved_doc, Document)
         self.assertIsInstance(second_retrieved_doc.get_text(), str)
         self.assertEqual(
-            second_retrieved_doc.get_text(), 'content 1 for query " mock search query "'
+            second_retrieved_doc.get_text(), 'content 1 for query "mock search query"'
         )
 
         # WithOUT Search query
@@ -94,6 +101,7 @@ class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
         return self.queries
 
 
+@unittest.skipUnless(FAISS_INSTALLED, "FAISS was not installed.")
 class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)

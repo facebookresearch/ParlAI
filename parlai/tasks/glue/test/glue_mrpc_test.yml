@@ -55,7 +55,7 @@ acts:
       of measles in the United States in 2002 .'
 - - episode_done: true
     eval_labels:
-    - equivalent
+    - not_equivalent
     id: huggingface
     label_candidates:
     - not_equivalent
@@ -75,7 +75,7 @@ acts:
       Monday night .'
 - - episode_done: true
     eval_labels:
-    - equivalent
+    - not_equivalent
     id: huggingface
     label_candidates:
     - not_equivalent
