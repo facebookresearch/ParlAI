@@ -463,14 +463,10 @@ class BaseSQKnowledgeTeacher(WizardOfInternetBaseTeacher):
     def get_message_history(self, dialog_data: Dict, curr_idx: int) -> List[str]:
         message_hist = []
         for act in dialog_data[CONST.ACTION_ALL]:
-            if (
-                act[CONST.SPEAKER_ID]
-                in (
-                    CONST.WIZARD,
-                    CONST.APPRENTICE,
-                )
-                and not act.get(CONST.IS_SEARCH_QUERY, False)
-            ):
+            if act[CONST.SPEAKER_ID] in (
+                CONST.WIZARD,
+                CONST.APPRENTICE,
+            ) and not act.get(CONST.IS_SEARCH_QUERY, False):
                 if act[CONST.TOTAL_CONVERSATION_INDEX] > curr_idx:
                     break
                 message_hist.append(act[CONST.MESSAGE_TEXT])
