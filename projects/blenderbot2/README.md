@@ -13,9 +13,9 @@
 
 ## Example Conversations
 
-<p align="center"><img width="110%" src="wandavision_final.jpeg" /></p>
+<p align="center"><img width="110%" src="wandavision2.png" /></p>
 <br>
-<p align="center"><img width="90%" src="big_convo_final.jpg" /></p>
+<p align="center"><img width="90%" src="big_convo.png" /></p>
 
 ## Model 
 
