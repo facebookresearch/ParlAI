@@ -11,6 +11,7 @@ import csv
 import gzip
 import numpy as np
 import os
+from parlai.core.message import Message
 import torch
 import torch.cuda
 import torch.nn
@@ -22,13 +23,15 @@ except ImportError:
     from transformers import BertTokenizer
 from typing import Tuple, List, Dict, Union, Optional, Any
 from typing_extensions import final
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from parlai.agents.tfidf_retriever.tfidf_retriever import TfidfRetrieverAgent
-from parlai.core.agents import create_agent
+from parlai.core.agents import create_agent, create_agent_from_model_file
 from parlai.core.build_data import modelzoo_path
 from parlai.core.dict import DictionaryAgent
 from parlai.core.loader import register_agent
 from parlai.core.opt import Opt
+from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 import parlai.utils.logging as logging
 from parlai.utils.torch import padded_tensor
@@ -45,6 +48,7 @@ from parlai.agents.rag.args import (
     TRANSFORMER_RANKER_BASE_OPT,
     WOW_COMPRESSED_INDEX_PATH,
 )
+from parlai.agents.rag.retrieve_api import SearchEngineRetriever
 
 
 def load_passage_reader(
@@ -351,13 +355,16 @@ class RagRetriever(torch.nn.Module, ABC):
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
         super().__init__()
-        if not (opt.get('retriever_debug_index') in [None, 'none']):
+        self.retriever_type = RetrieverType(opt['rag_retriever_type'])
+        if not (
+            (self.retriever_type == RetrieverType.SEARCH_ENGINE)
+            or (opt.get('retriever_debug_index') in [None, 'none'])
+        ):
             if opt.get('retriever_debug_index') == 'exact':
                 opt['path_to_index'] = WOW_INDEX_PATH
             else:
                 opt['path_to_index'] = WOW_COMPRESSED_INDEX_PATH
             opt['path_to_dpr_passages'] = WOW_PASSAGES_PATH
-        self.retriever_type = RetrieverType(opt['rag_retriever_type'])
         self.opt = opt
         self.print_docs = opt.get('print_docs', False)
         self.max_doc_len = opt['max_doc_token_length']
@@ -574,6 +581,13 @@ class DPRRetriever(RagRetriever):
         Initialize DPR Retriever.
         """
         super().__init__(opt, dictionary, shared=shared)
+        self.load_index(opt, shared)
+        self.n_docs = opt['n_docs']
+        self.query_encoder = DprQueryEncoder(
+            opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
+        )
+
+    def load_index(self, opt, shared):
         if not shared:
             self.indexer = indexer_factory(opt)
             index_path = modelzoo_path(opt['datapath'], opt['path_to_index'])
@@ -588,10 +602,6 @@ class DPRRetriever(RagRetriever):
         elif shared:
             self.indexer = shared['indexer']
             self.passages = shared['passages']
-        self.n_docs = opt['n_docs']
-        self.query_encoder = DprQueryEncoder(
-            opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
-        )
 
     def share(self) -> TShared:
         """
@@ -993,6 +1003,289 @@ class RagTfidfRetrieverAgent(TfidfRetrieverAgent):
         return text
 
 
+BLANK_SEARCH_DOC = {'url': None, 'content': '', 'title': ''}
+NO_SEARCH_QUERY = 'no_passages_used'
+
+
+class SearchQueryRetriever(RagRetriever):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared):
+        RagRetriever.__init__(self, opt, dictionary, shared=shared)
+        opt['skip_retrieval_token'] = NO_SEARCH_QUERY
+        self.n_docs = opt['n_docs']
+        self.len_chunk = opt['splitted_chunk_length']
+        self.doc_chunk_split_mode = opt['doc_chunk_split_mode']
+        n_doc_chunks = opt['n_ranked_doc_chunks']
+        chunk_ranker_type = opt['doc_chunks_ranker']
+        if chunk_ranker_type == 'tfidf':
+            self.chunk_reranker = TfidfChunkRanker(n_doc_chunks)
+        else:
+            self.chunk_reranker = HeadChunkRanker(n_doc_chunks)
+
+        if not shared:
+            self.query_generator = self.init_search_query_generator(opt)
+        else:
+            self.query_generator = shared['query_generator']
+        self.dict = dictionary
+        self.init_query_encoder(opt)
+
+    def share(self) -> TShared:
+        shared = super().share()
+        shared['query_generator'] = self.query_generator
+        return shared
+
+    def init_search_query_generator(self, opt) -> TorchGeneratorAgent:
+        model_file = opt['search_query_generator_model_file']
+        logging.info('Loading search generator model')
+        logging.disable()
+        search_query_gen_agent = create_agent_from_model_file(
+            model_file,
+            opt_overrides={
+                'skip_generation': False,
+                'inference': opt['search_query_generator_inference'],
+                'beam_min_length': opt['search_query_generator_beam_min_length'],
+                'beam_size': opt['search_query_generator_beam_size'],
+                'text_truncate': opt['search_query_generator_text_truncate'],
+            },
+        )
+        logging.enable()
+        logging.info('Search query generator model loading completed!')
+        return search_query_gen_agent
+
+    def generate_search_query(self, query: torch.LongTensor) -> List[str]:
+        """
+        Generates a list of queries for the encoded query (context) tensor.
+        """
+        texts = [self._tokenizer.decode(q) for q in query]
+        obs_list = []
+        for t in texts:
+            msg = Message({'text': t, 'episode_done': True})
+            obs_list.append(self.query_generator.observe(msg))
+            self.query_generator.reset()  # Erase the history
+        search_quries = [r['text'] for r in self.query_generator.batch_act(obs_list)]
+        logging.debug(f'Generated search queries {search_quries}')
+        return search_quries
+
+    def init_query_encoder(self, opt):
+        if hasattr(self, 'query_encoder'):
+            # It is already instantiated
+            return
+        self.query_encoder = DprQueryEncoder(
+            opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
+        )
+
+    def text2tokens(self, txt: str):
+        if self.doc_chunk_split_mode == 'word':
+            return txt.split(' ')
+        else:
+            return self.dict.txt2vec(txt)
+
+    def tokens2text(self, tokens: List[int]):
+        if self.doc_chunk_split_mode == 'word':
+            return ' '.join(tokens)
+        else:
+            return self.dict.vec2txt(tokens)
+
+    def pick_chunk(self, query, doc_text):
+        """
+        Splits the document and returns the selected chunks.
+
+        The number of returned chunks is controlled by `n_ranked_doc_chunks` in opt. The
+        chunk selection is determined by `doc_chunks_ranker` in the opt.
+        """
+        if not doc_text:
+            # When there is no search query for the context
+            return [("", 0)]
+        tokens = self.text2tokens(doc_text)
+        doc_chunks = [
+            self.tokens2text(tokens[i : i + self.len_chunk])
+            for i in range(0, len(tokens), self.len_chunk)
+        ]
+        return self.chunk_reranker.get_top_chunks(query, doc_chunks)
+
+
+class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
+    """
+    A retriever that uses a search engine server for rertrieving documents.
+
+    It instantiates a `SearchEngineRetriever` object that in turns send search queries
+    to an external server for retrieving documents.
+    """
+
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared):
+        super().__init__(opt, dictionary, shared)
+        if not shared:
+            self.search_client = self.initiate_retriever_api(opt)
+        else:
+            self.search_client = shared['search_client']
+
+    def share(self) -> TShared:
+        shared = super().share()
+        shared['search_client'] = self.search_client
+        return shared
+
+    def initiate_retriever_api(self, opt) -> SearchEngineRetriever:
+        logging.info('Creating the search engine retriever.')
+        return SearchEngineRetriever(opt)
+
+    def _empty_docs(self, num: int):
+        """
+        Generates the requsted number of empty documents.
+        """
+        return [BLANK_SEARCH_DOC for _ in range(num)]
+
+    def rank_score(self, rank_id: int):
+        """
+        Scores the chunks of the retrieved document based on their rank.
+
+        Note that this is the score for the retrieved document and applies to all its
+        chunks.
+        """
+        return 1 / (1 + rank_id)
+
+    def _display_urls(self, search_results):
+        """
+        Generates a string that lists retrieved URLs (document IDs).
+        """
+        return '\n'.join([d['url'] for d in search_results if d['url']])
+
+    def retrieve_and_score(
+        self, query: torch.LongTensor
+    ) -> Tuple[List[List[Document]], torch.Tensor]:
+        """
+        Retrieves relevant documents for the query (the conversation context).
+
+        This method conducts three main steps that are flagged in the main code as well.
+        step 1: generate search queries for the conversation context batch.     This
+        step uses the query generator model (self.query_generator). step 2: use the
+        search client to retrieve documents.     This step uses retrieval API agent
+        (self.search_client) step 3: generate the list of Document objects from the
+        retrieved content.     Here if the documents too long, the code splits them and
+        chooses a chunk     based on the selected `doc_chunks_ranker` in the opt.
+        """
+        # step 1
+        search_queries = self.generate_search_query(query)
+
+        # step 2
+        search_results_batach = self.search_client.retrieve(search_queries, self.n_docs)
+
+        # step 3
+        top_docs = []
+        top_doc_scores = []
+        for sq, search_results in zip(search_queries, search_results_batach):
+            if not search_results:
+                search_results = self._empty_docs(self.n_docs)
+            elif len(search_results) < self.n_docs:
+                remain_docs = self.n_docs - len(search_results)
+                search_results.extend(self._empty_docs(remain_docs))
+            docs_i = []
+            scors_i = []
+            # Change this debug later
+            logging.debug(f'URLS:\n{self._display_urls(search_results)}')
+            for i, doc in enumerate(search_results):
+                url = doc['url']
+                title = doc['title']
+                dcontent = doc['content']
+                assert type(dcontent) in (
+                    str,
+                    list,
+                ), f'Unrecognized retrieved doc: {dcontent}'
+                full_text = (
+                    dcontent if isinstance(dcontent, str) else '\n'.join(doc['content'])
+                )
+                doc_chunks = [dc[0] for dc in self.pick_chunk(sq, full_text)]
+                for splt_id, splt_content in enumerate(doc_chunks):
+                    docs_i.append(
+                        Document(
+                            docid=url, text=splt_content, title=f'{title}_{splt_id}'
+                        )
+                    )
+                    scors_i.append(self.rank_score(i))
+            top_docs.append(docs_i)
+            top_doc_scores.append(scors_i)
+        self.top_docs = top_docs
+        return top_docs, torch.Tensor(top_doc_scores).to(query.device)
+
+
+class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared):
+        SearchQueryRetriever.__init__(self, opt, dictionary, shared=shared)
+        self.load_index(opt, shared)
+
+    def share(self) -> TShared:
+        shared = SearchQueryRetriever.share(self)
+        shared.update(DPRRetriever.share(self))
+        return shared
+
+    def retrieve_and_score(
+        self, query: torch.LongTensor
+    ) -> Tuple[List[List[Document]], torch.Tensor]:
+        """
+        Retrieves from the FAISS index using a search query.
+
+        This methods relies on the `retrieve_and_score` method in `RagRetriever`
+        ancestor class. It recieve the query (conversation context) and generatess the
+        search term queries based on them. Then uses those search quries (instead of the
+        the query text itself) to retrive from the FAISS index.
+        """
+
+        search_queries = self.generate_search_query(query)
+        tokenized_search_queries, _ = padded_tensor(
+            [self._tokenizer.encode(sq) for sq in search_queries]
+        )
+        top_docs, top_doc_scores = DPRRetriever.retrieve_and_score(
+            self, tokenized_search_queries.to(query.device)
+        )
+        for query_id in range(len(top_docs)):
+            if search_queries[query_id] == NO_SEARCH_QUERY:
+                top_docs[query_id] = [BLANK_DOC for _ in range(self.n_docs)]
+        return top_docs, top_doc_scores
+
+
+class DocumentChunkRanker:
+    """
+    Base class for controling splitting long documents and selecting relevant chunks.
+    """
+
+    def __init__(self, n_retrieved_chunks):
+        self.n_ret_chunks = n_retrieved_chunks
+
+    @abstractmethod
+    def get_top_chunks(self, query, doc_chunks):
+        """
+        Ranks documents (chunk) based on their relevance to `query`
+        """
+
+
+class HeadChunkRanker(DocumentChunkRanker):
+    """
+    Returns the head chunks only.
+    """
+
+    def get_top_chunks(self, query, doc_chunks):
+        """
+        Return chunks in doc-present order.
+        """
+        return [(c,) for c in doc_chunks[: self.n_ret_chunks]]
+
+
+class TfidfChunkRanker(DocumentChunkRanker):
+    """
+    Uses TF-IDF to compare chunks to the original search query.
+    """
+
+    def __init__(self, n_retrieved_chunks):
+        super().__init__(n_retrieved_chunks)
+        self._vectorizer = TfidfVectorizer()
+
+    def get_top_chunks(self, query, doc_chunks):
+        vectorized_corpus = self._vectorizer.fit_transform(doc_chunks + [query])
+        docs_vec = vectorized_corpus[:-1, :]
+        q_vec = vectorized_corpus[-1, :]
+        scores = np.hstack((q_vec * docs_vec.transpose()).toarray())
+        top_chunk_ids = np.argsort(-scores)[: self.n_ret_chunks]
+        return [(doc_chunks[i], scores[i]) for i in top_chunk_ids]
+
+
 def retriever_factory(
     opt: Opt, dictionary: DictionaryAgent, shared=None
 ) -> Optional[RagRetriever]:
@@ -1021,3 +1314,7 @@ def retriever_factory(
         return DPRThenPolyRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.POLY_FAISS:
         return PolyFaissRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.SEARCH_ENGINE:
+        return SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.SEARCH_TERM_FAISS:
+        return SearchQueryFAISSIndexRetriever(opt, dictionary, shared=shared)

@@ -1,0 +1,48 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - I have. I liked Toy Story. There was a marathon.
+    id: WizInternetApprenticeTeacher
+    text: 'I live in New York, New York.
+
+      I like going to the moives.
+
+      I love to get the overpriced snacks.
+
+      Have you seen any good movies lately?'
+- - episode_done: false
+    eval_labels:
+    - It is neat to see how they progressed in the series with the quality.
+    id: WizInternetApprenticeTeacher
+    text: All four movies in the Toy Story series are great. Tom Hanks, Tim Allen,
+      and Don Rickles are all truly great actors and the creativity of the Pixar Animation
+      Studios team is really top notch.
+- - episode_done: false
+    eval_labels:
+    - I once heard someone erased progress on it like a saved file but someone had
+      it on their laptop or something.
+    id: WizInternetApprenticeTeacher
+    text: You're right. The quality of all of Pixar's movies have increased over the
+      years. This is due, in no small part, to the fact that they have long term teams
+      that work together on multiple projects. Further, Pixar, as a company, cares
+      more about creating high quality movies than they do making the most money possible.
+      This is their company's culture and the reason for their continuing success.
+- - episode_done: false
+    eval_labels:
+    - Yes! and I remember now that is how that story goes.
+    id: WizInternetApprenticeTeacher
+    text: 4That is a crazy story. Someone totally deleted Toy Story 2 while it was
+      in development (the result of a badly written program that just started deleting
+      files on their server). But, the project was saved because a woman, who was
+      on maternit6y leave, had saved the movie onto her laptop.  I am sure thy have
+      fixed their back up systems after this.
+- - episode_done: true
+    eval_labels:
+    - No but I bet it will be good.
+    id: WizInternetApprenticeTeacher
+    text: Pixar has produced 20 movies since its founding and all of the big names
+      have worked with them. Julia Louis-Dreyfus, Tom Holland, Jon Batiste, Phylicia
+      Rashad, Questlove, Tina Fey.  Have you seen their newest movie Onward with Chris
+      Pratt?
+num_episodes: 503
+num_examples: 2466

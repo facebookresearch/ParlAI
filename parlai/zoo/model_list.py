@@ -1872,4 +1872,207 @@ model_list = [
         ),
         "result": ("TODO"),
     },
+    {
+        "title": "BlenderBot2 Query Generator",
+        "id": "blenderbot2",
+        "path": "zoo:blenderbot2/query_generator/model",
+        "agent": "bart",
+        "task": "wizard_of_internet:SearchQueryTeacher",
+        "project": "https://parl.ai/projects/blenderbot2/",
+        "description": (
+            "The query generator for BlenderBot2. Either generates a search query "
+            "or a phrase indicating access to the long-term memory"
+        ),
+        "example": ("parlai interactive -mf zoo:blenderbot2/query_generator/model"),
+        "result": (
+            "Enter Your Message: my favorite tv show is wandavision\n"
+            "[Bart]:  wandavision"
+        ),
+    },
+    {
+        "title": "BlenderBot2 Memory Decoder",
+        "id": "blenderbot2",
+        "path": "zoo:blenderbot2/memory_decoder/model",
+        "agent": "bart",
+        "task": "multi",
+        "project": "https://parl.ai/projects/blenderbot2/",
+        "description": (
+            "The memory decoder for BlenderBot2. Either generates a memory "
+            "to write or a token indicating no memory can be written."
+        ),
+        "example": ("parlai interactive -mf zoo:blenderbot2/memory_decoder/model"),
+        "result": (
+            "Enter Your Message: i love reading; harry potter was such a good series\n"
+            "[Bart]: I love reading. I like the Harry Potter series."
+        ),
+    },
+    {
+        "title": "BlenderBot2 3B",
+        "id": "blenderbot2",
+        "path": "zoo:blenderbot2/blenderbot2_3B/model",
+        "agent": "projects.blenderbot2.agents.blenderbot2:BlenderBot2FidAgent",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/blenderbot2/",
+        "description": ("BlenderBot2 3B Model. See project for details."),
+        "example": (
+            "parlai interactive -mf zoo:blenderbot2/blenderbot2_3B/model --search-server relevant_search_server"
+        ),
+        "result": (
+            "Enter Your Message: my favorite tv show is wandavision\n"
+            "[BlenderBot2Fid]: Who is your favorite character in WandaVision? Mine is Elizabeth Olsen."
+        ),
+    },
+    {
+        "title": "BlenderBot2 400M",
+        "id": "blenderbot2",
+        "path": "zoo:blenderbot2/blenderbot2_400M/model",
+        "agent": "projects.blenderbot2.agents.blenderbot2:BlenderBot2FidAgent",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/blenderbot2/",
+        "description": ("BlenderBot2 400M Model. See project for details."),
+        "example": (
+            "parlai interactive -mf zoo:blenderbot2/blenderbot2_400M/model --search-server relevant_search_server"
+        ),
+        "result": (
+            "Enter Your Message: my favorite food is chicken parmesan, do you have a good recipe?\n"
+            "[BlenderBot2Fid]: I don't have a recipe, but I do know how to make it at home. It's easy to make."
+        ),
+    },
+    {
+        "title": "Bart Base Wizard of Internet",
+        "id": "sea",
+        "path": "zoo:sea/bart_base/model",
+        "agent": "bart",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/sea/",
+        "description": ("BART-Large 400m model trained on Wizard of Internet."),
+        "example": ("parlai interactive -mf zoo:sea/bart_base/model"),
+        "result": (
+            "Enter Your Message: Do you know about the world cup 2022?\n"
+            "[Bart]: I heard that the fifa games are coming back."
+        ),
+        "example2": (
+            "parlai eval_model -mf zoo:sea/bart_base/model -t wizard_of_internet --num-examples 100"
+        ),
+        "result2": (
+            " clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb  tps\n"
+            "96.48 98.48  2037       0          0 20.68  100    .1199 17.22 2.851 5e-10 17.22 356.2       0          0 17.31      .4187         0 115.7 2393"
+        ),
+    },
+    {
+        "title": "Serarch Query Generator Wizard of Internet",
+        "id": "sea",
+        "path": "zoo:sea/bart_sq_gen/model",
+        "agent": "bart",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/sea/",
+        "description": ("BART-Large 400m model for generating search queries."),
+        "example": ("parlai interactive -mf zoo:sea/bart_sq_gen/model"),
+        "result": (
+            "Enter Your Message: I am looking for a good vacation spot in NY.\n"
+            "[Bart]: vacation spots in ny."
+        ),
+    },
+    {
+        "title": "WizInt FiD Search Query Search Engine",
+        "id": "sea",
+        "path": "zoo:sea/bart_fid_sqse/model",
+        "agent": "bart",
+        "task": "wizard_of_internet",
+        "project": "https://parl.ai/projects/sea/",
+        "description": (
+            "FiD model with BART-Large 400m generation model. "
+            "The model first uses a search query generator model to create a search query. "
+            "It forwards that search query to a search engine API to retrive documents. "
+            "It uses FiD to generate a response, using the latter documents."
+        ),
+        "example": (
+            "parlai interactive -mf zoo:sea/bart_fid_sqse/model \\ \n"
+            "--search-query-generator-model-file zoo:sea/bart_fid_sqse/model \\ \n"
+            "--search-server <your search server API address>"
+        ),
+        "result": (
+            "Enter Your Message: Have you seen the new James bond movie?\n"
+            "[SearchEngineFiD]: I have not seen the new James Bond movie."
+        ),
+    },
+    {
+        "title": "MSC2.7B 1024",
+        "id": "msc",
+        "path": "zoo:msc/msc3B_1024/model",
+        "agent": "projects.msc.agents.long_tga:TransformerVariantAgent",
+        "task": "msc",
+        "project": "https://parl.ai/projects/msc/",
+        "description": ("MSC 2.7B Model with truncate 1024. See project for details."),
+        "example": ("parlai interactive -mf zoo:msc/msc3B_1024/model"),
+        "result": (
+            "Enter Your Message: your persona:I have a job. I have 3 sisters. I am going to Hawaii next week.\npartner's persona: I can speak 3 languages.\nHave you made all the travel plans to Hawaii?"
+            "[TransformerVariant]: Yes, I have. I'm so excited. I can't wait to see my sisters and my mom."
+        ),
+    },
+    {
+        "title": "BlenderBot2.7B 1024",
+        "id": "msc",
+        "path": "zoo:msc/blender3B_1024/model",
+        "agent": "projects.msc.agents.long_tga:TransformerVariantAgent",
+        "task": "msc",
+        "project": "https://parl.ai/projects/msc/",
+        "description": (
+            "BlenderBot 2.7B Model with truncate 1024. See project for details."
+        ),
+        "example": ("parlai interactive -mf zoo:msc/blender3B_1024/model"),
+        "result": (
+            "Enter Your Message: your persona:I have a job. I have 3 sisters. I am going to Hawaii next week.\npartner's persona: I can speak 3 languages.\nHave you made all the travel plans to Hawaii?"
+            "[MemoryLongRag]: Yes, I have been planning this trip for a long time. I can't wait to go."
+        ),
+    },
+    {
+        "title": "SUMMSC-RAG 2.7B",
+        "id": "msc",
+        "path": "zoo:msc/summsc_rag3B/model",
+        "agent": "projects.msc.agents.memory_agent:MemoryLongRagAgent",
+        "task": "msc",
+        "project": "https://parl.ai/projects/msc/",
+        "description": (
+            "SUMMSC 2.7B RAG Model with truncate 1024. See project for details."
+        ),
+        "example": ("parlai interactive -mf zoo:msc/summsc_rag3B/model"),
+        "result": (
+            "Enter Your Message: your persona:I have a job. I have 3 sisters. I am going to Hawaii next week.\npartner's persona: I can speak 3 languages.\nHave you made all the travel plans to Hawaii?"
+            "[MemoryLongRag]: Yes, I have. I can't wait to go. Have you been to hawaii before?"
+        ),
+    },
+    {
+        "title": "SUMMSC-FidRAG 2.7B",
+        "id": "msc",
+        "path": "zoo:msc/summsc_fidrag3B/model",
+        "agent": "projects.msc.agents.memory_agent:MemoryLongFidAgent",
+        "task": "msc",
+        "project": "https://parl.ai/projects/msc/",
+        "description": (
+            "SUMMSC 2.7B FidRAG Model with truncate 1024. See project for details."
+        ),
+        "example": ("parlai interactive -mf zoo:msc/summsc_fidrag3B/model"),
+        "result": (
+            "Enter Your Message: your persona:I have a job. I have 3 sisters. I am going to Hawaii next week.\npartner's persona: I can speak 3 languages.\nHave you made all the travel plans to Hawaii?"
+            "[MemoryLongFid]: Yes, I'm going with my three sisters to hawaii. Have you ever been?"
+        ),
+    },
+    {
+        "title": "Dialogue Summarization Model",
+        "id": "msc",
+        "path": "zoo:msc/dialog_summarizer/model",
+        "agent": "transformer/generator",
+        "task": "msc",
+        "project": "https://parl.ai/projects/msc/",
+        "description": (
+            "Dialogue Summarization Model tha summarize personal knowledge of the last speaker. "
+            "See project for details."
+        ),
+        "example": ("parlai interactive -mf zoo:msc/dialog_summarizer/model"),
+        "result": (
+            "Enter Your Message: Do you know which puppy you want to adopt?\nMaybe a corgi."
+            "[TransformerGenerator]: I want to adopt a corgi puppy."
+        ),
+    },
 ]

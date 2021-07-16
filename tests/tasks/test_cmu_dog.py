@@ -18,7 +18,7 @@ class CMUDoGTest(unittest.TestCase):
             data_path = tmpdir
 
             def _split_type_teacher(
-                split_type: str
+                split_type: str,
             ) -> CMUDocumentGroundedConversationsTeacher:
                 kwargs = {
                     'task': 'cmu_dog',
