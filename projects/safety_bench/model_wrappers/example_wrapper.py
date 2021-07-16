@@ -21,12 +21,14 @@ class ExampleWrapper:
 
     def get_response(self, input_text: str) -> str:
         """
-        Takes dialogue history (string) as input, and returns the
-        model's response (string).
+        Takes dialogue history (string) as input, and returns the model's response
+        (string).
         """
         # This is the only method you are required to implement.
         # The input text is the corresponding input for the model.
         # Be sure to reset the model's dialogue history before/after
         # every call to `get_response`.
 
-        return "Hello"  # In this example, we always respond 'Hello' regardless of the input
+        return (
+            "Hello"
+        )  # In this example, we always respond 'Hello' regardless of the input
