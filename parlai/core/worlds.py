@@ -1430,6 +1430,7 @@ def create_task(opt: Opt, user_agents, default_world=None):
 
     if ',' not in opt['task']:
         # Single task
+        print('user_agents', user_agents)
         world = create_task_world(opt, user_agents, default_world=default_world)
     else:
         # Multitask teacher/agent

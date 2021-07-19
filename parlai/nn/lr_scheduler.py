@@ -61,10 +61,12 @@ class ParlAILRScheduler(object):
         if self.warmup_updates > 0 and (
             updates_so_far < self.warmup_updates or self.hard_reset
         ):
+            print('self.hard_reset', self.hard_reset)
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
             )
             if states.get('warmup_scheduler'):
+                print(states.get('warmup_scheduler'))
                 self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
         else:
             self.warmup_scheduler = None
