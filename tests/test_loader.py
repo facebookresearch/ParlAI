@@ -10,7 +10,10 @@ import pytest
 
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 import parlai.tasks.convai2.agents as c2agents
-from parlai.tasks.convai2.worlds import InteractiveWorld as c2interactive
+from parlai.tasks.convai2.worlds import (
+    InteractiveWorld as c2interactive,
+    SelfChatWorld as c2selfchat,
+)
 from parlai.core.loader import (
     load_agent_module,
     load_task_module,
@@ -20,7 +23,10 @@ from parlai.core.loader import (
 from parlai.core.worlds import DialogPartnerWorld
 import parlai.utils.testing as testing_utils
 
-OPTIONS = {'task': 'convai2:selfRevised', 'agent': 'repeat_label'}
+OPTION_CASES = [
+    {'task': 'convai2:selfRevised', 'agent': 'repeat_label'},
+    {'task': 'parlai.tasks.convai2.agents:selfRevisedTeacher', 'agent': 'repeat_label'},
+]
 
 
 class TestLoader(unittest.TestCase):
@@ -29,28 +35,40 @@ class TestLoader(unittest.TestCase):
     """
 
     def test_load_agent(self):
-        agent_module = load_agent_module(OPTIONS['agent'])
-        self.assertEqual(agent_module, RepeatLabelAgent)
+        for options in OPTION_CASES:
+            agent_module = load_agent_module(options['agent'])
+            self.assertEqual(agent_module, RepeatLabelAgent)
 
     def test_load_teacher(self):
-        teacher_module = load_teacher_module(OPTIONS['task'])
-        self.assertEqual(teacher_module, c2agents.SelfRevisedTeacher)
+        for options in OPTION_CASES:
+            teacher_module = load_teacher_module(options['task'])
+            self.assertEqual(teacher_module, c2agents.SelfRevisedTeacher)
 
     def test_load_task(self):
-        task_module = load_task_module(OPTIONS['task'])
-        self.assertEqual(task_module, c2agents)
+        for options in OPTION_CASES:
+            task_module = load_task_module(options['task'])
+            self.assertEqual(task_module, c2agents)
 
     def test_load_interactive_world(self):
-        world_module = load_world_module(
-            OPTIONS['task'].split(':')[0], interactive_task=True
-        )
-        self.assertEqual(world_module, c2interactive)
+        for options in OPTION_CASES:
+            world_module = load_world_module(
+                options['task'].split(':')[0], interactive_task=True
+            )
+            self.assertEqual(world_module, c2interactive)
+
+    def test_load_self_chat_world(self):
+        for options in OPTION_CASES:
+            world_module = load_world_module(
+                options['task'].split(':')[0], selfchat_task=True
+            )
+            self.assertEqual(world_module, c2selfchat)
 
     def test_load_dialog_partner_world(self):
-        world_module = load_world_module(
-            OPTIONS['task'].split(':')[0], interactive_task=False, num_agents=2
-        )
-        self.assertEqual(world_module, DialogPartnerWorld)
+        for options in OPTION_CASES:
+            world_module = load_world_module(
+                options['task'].split(':')[0], interactive_task=False, num_agents=2
+            )
+            self.assertEqual(world_module, DialogPartnerWorld)
 
 
 class TestZoo(unittest.TestCase):
