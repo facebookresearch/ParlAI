@@ -20,6 +20,8 @@ from .build import build
 
 DEFAULT_TRAIN_EXPERIENCER_ONLY = False
 DEFAULT_REMOVE_POLITICAL_CONVOS = False
+PERSPECTIVES = ('experiencer', 'responder', 'both')
+DEFAULT_PERSPECTIVE = 'train:both,test:experiencer,valid:experiencer'
 
 
 class EmpatheticDialoguesTeacher(FixedDialogTeacher):
@@ -33,14 +35,35 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             'empatheticdialogues',
             base_datatype + '.csv',
         )
-        self.experiencer_side_only = (
+        # ignore the perspective argument if this train_experiencer_only arg is True
+        experiencer_side_only = (
             opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
             and base_datatype == 'train'
-        ) or base_datatype != 'train'
+        )
+        if experiencer_side_only:
+            self.perspective = 'experiencer'
+        else:
+            try:
+                perspective_arg = opt.get('perspective', DEFAULT_PERSPECTIVE)
+                if perspective_arg in PERSPECTIVES:
+                    self.perspective = perspective_arg
+                else:
+                    perspective_arg = dict(
+                        map(
+                            lambda s: map(str.strip, s.split(':')),
+                            perspective_arg.split(','),
+                        )
+                    )
+                    self.perspective = perspective_arg[base_datatype]
+                    if self.perspective not in PERSPECTIVES:
+                        raise Exception
+            except Exception:
+                print(
+                    f'Error: Invalid perspective argument string. --help for more info.'
+                )
         if not shared:
             print(
-                f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
-                f'{self.experiencer_side_only}, datatype: {self.datatype}'
+                f'[EmpatheticDialoguesTeacher] Perspectives: {self.perspective}, for datatype: {base_datatype}'
             )
         self.remove_political_convos = opt.get(
             'remove_political_convos', DEFAULT_REMOVE_POLITICAL_CONVOS
@@ -70,6 +93,16 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             # (responder) utterance would be the text and the Speaker (experiencer)
             # utterance would be the label
             help='In the train set, only use Speaker (experiencer) utterances as text and Listener (responder) utterances as labels.',
+        )
+        # NOTE: the perspective argument is overriden by the train_experiencer_only arg
+        agent.add_argument(
+            '--perspective',
+            type=str,
+            default=DEFAULT_PERSPECTIVE,
+            # i.e. if 'responder', do not include the other side of the conversation where the Speaker
+            # (experiencer) utterance would be the text and the Listener (responder)
+            # utterance would be the label
+            help='Specify what perspective ("experiencer" or "responder" or "both") is included. For more detail, specify the set as well like so: "train:experiencer,test:both,valid:both". NOTE: this is overriden by the train_experiencer_only arg.',
         )
         agent.add_argument(
             '--remove-political-convos',
@@ -211,9 +244,9 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             return []
         else:
             selected_dialogues = []
-            if len(experiencer_text_dialogue) > 0:
+            if len(experiencer_text_dialogue) > 0 and self.perspective != 'responder':
                 selected_dialogues.append(experiencer_text_dialogue)
-            if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
+            if len(responder_text_dialogue) > 0 and self.perspective != 'experiencer':
                 selected_dialogues.append(responder_text_dialogue)
             return selected_dialogues
 
@@ -271,8 +304,35 @@ class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
     def get(self, episode_idx, entry_idx=0):
         ex = self.data[episode_idx]
         episode_done = True
-
         return Message({'labels': [ex[2]], 'text': ex[3], 'episode_done': episode_done})
+
+
+class ExperiencerEmpatheticDialoguesTeacher(EmpatheticDialoguesTeacher):
+    """
+    Class for generating the experiencer utterances based on a prompt/emotions.
+    """
+
+    def __init__(self, opt, shared=None):
+        opt['perspective'] = 'responder'
+        super().__init__(opt, shared)
+
+    def num_episodes(self):
+        return len(self.data)
+
+    def num_examples(self):
+        return len(self.data)
+
+    def get(self, episode_idx, entry_idx=0):
+        ep = self.data[episode_idx]
+        ep_i = ep[entry_idx]
+        episode_done = entry_idx >= (len(ep) - 1)
+        text = ep_i[0]
+        if entry_idx == 0:
+            text = ep_i[3] + '\n' + text
+        action = Message(
+            {'text': text, 'labels': [ep_i[1]], 'episode_done': episode_done}
+        )
+        return action
 
 
 class DefaultTeacher(EmpatheticDialoguesTeacher):
