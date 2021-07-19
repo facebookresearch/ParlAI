@@ -39,6 +39,12 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Open-domain Dialogue
 
+- **BlenderBot 2.0** [[project]](http://parl.ai/projects/blenderbot2).
+  _Version 2 of our BlenderBot model with Internet search and long-term memory._
+
+- **Long-Term Open-Domain Conversation** [[project]](http://parl.ai/projects/msc) [[paper]](https://arxiv.org/abs/2107.07567).
+  _Multi-session conversation task and memory-based models for long-form chat._
+
 - **Addressing Contradictions in Dialogue Modeling** [[project]](https://parl.ai/projects/contradiction).
   _A new task for contradiction detection and its use for non-contradicting generation._
 
@@ -66,14 +72,14 @@ _Task & models for chitchat with a given persona._
 
 ## Well-Behaved
 
+- **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
+  _Benchmarks for evaluating the safety of English-language dialogue models_
+
 - **Recipes for Safety in Open-Domain Chatbots** [[project]](https://parl.ai/projects/safety_recipes/) [[paper]](https://arxiv.org/abs/2010.07079).
   _Methods for improving the safety of open-domain chatbots._
 
 - **Build-It Break-It Fix-It for Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
   _Task and method for improving the detection of offensive language in the context of dialogue._
-
-- **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
-  _Benchmarks for evaluating the safety of English-language dialogue models_
 
 - **Multi-Dimensional Gender Bias Classification** [[project]](https://parl.ai/projects/md_gender/) [[paper]](https://arxiv.org/abs/2005.00614)
   _Training fine-grained gender bias classifiers to identify gender bias in text._
@@ -84,10 +90,14 @@ _Task & models for chitchat with a given persona._
 
 ## Knowledge Grounded
 
+- **Internet-Augmented Dialogue Generation** [[project]](http://parl.ai/projects/sea) [[paper]](https://arxiv.org/abs/2107.07566).
+  _Utilizing a search-engine for open domain chitchat task & models._
+
+- **Retrieval Augmentation Reduces Hallucination in Conversation** [[project]](http://parl.ai/projects/hallucination/) [[paper]](https://arxiv.org/abs/2104.07567). _Exploratory architectures that add retrieval mechanisms to dialogue models, reducing hallucination while maintaining conversational ability._
+
 - **Wizard of Wikipedia** [[project]](http://parl.ai/projects/wizard_of_wikipedia/) [[paper]](https://openreview.net/forum?id=r1l73iRqKm).
   _Knowledge-grounded open domain chitchat task & models._
 
-- **Retrieval Augmentation Reduces Hallucination in Conversation** [[project]](http://parl.ai/projects/hallucination/) [[paper]](https://arxiv.org/abs/2104.07567). _Exploratory architectures that add retrieval mechanisms to dialogue models, reducing hallucination while maintaining conversational ability._
 
 ## Visually Grounded
 
