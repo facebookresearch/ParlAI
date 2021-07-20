@@ -65,7 +65,6 @@ if TRANSFORMER_INSTALLED:
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2Rag(unittest.TestCase):
     """
     Test retrieval methods for BB2 with RAG.
@@ -92,7 +91,6 @@ class TestBB2Rag(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2Fid(unittest.TestCase):
     """
     Test retrieval methods for BB2 with FiD.
@@ -120,7 +118,6 @@ class TestBB2Fid(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestLongTermMemory(unittest.TestCase):
     """
     Test LongTermMemory functionality.
@@ -134,7 +131,6 @@ class TestLongTermMemory(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2RagTurn(unittest.TestCase):
     """
     Test RAG Turn functionality.
@@ -152,7 +148,6 @@ class TestBB2RagTurn(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2Search(unittest.TestCase):
     """
     Test Search functionality.
@@ -172,7 +167,6 @@ class TestBB2Search(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2RagSequence(unittest.TestCase):
     """
     Test RAG Sequence functionality.
@@ -192,7 +186,6 @@ class TestBB2RagSequence(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2QGenParams(unittest.TestCase):
     """
     Test RAG Turn functionality.
@@ -214,7 +207,6 @@ class TestBB2QGenParams(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2AdditionalTruncation(unittest.TestCase):
     """
     Test RAG Turn functionality.
@@ -236,7 +228,6 @@ class TestBB2AdditionalTruncation(unittest.TestCase):
 
 @testing_utils.skipUnlessGPU
 @unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
-@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2GoldDocs(unittest.TestCase):
     """
     Test RAG Turn functionality.
