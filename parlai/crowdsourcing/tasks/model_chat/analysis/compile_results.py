@@ -182,10 +182,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     for bucket in self.problem_buckets
                 ):
                     raise ValueError('Bucket(s) are missing from the problem data!')
-                s = read_folder.split('/')[-2]
-                experimental_design = s[s.find('_') + 1 :]
 
-                model_nickname = experimental_design + '/' + data['workers'][1]
+                model_nickname = data['task_description']['model_nickname']
                 if model_nickname not in problem_counts:
                     problem_counts[model_nickname] = {}
                 if model_nickname in complete_convos_per_model:
@@ -249,13 +247,17 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     ]
                     + self.problem_buckets,
                 )
+                text_parts = []
+                if data['personas'] is not None and len(data['personas']) > 0:
+                    text_parts += [
+                        'your persona: ' + data['personas'][1][0],
+                        'your persona: ' + data['personas'][1][1],
+                    ]
                 if (
                     data['additional_context'] is not None
                     and len(data['additional_context']) > 0
                 ):
-                    additional_context = '\n' + data['additional_context']
-                else:
-                    additional_context = ''
+                    text_parts.append(data['additional_context'])
                 df = df.append(
                     {
                         'folder': info_dict['read_folder_name'],
@@ -265,11 +267,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         'conversation_idx': conversation_idx,
                         'turn_idx': -1,
                         'agent_idx': 1,
-                        'text': 'your persona: '
-                        + data['personas'][1][0]
-                        + '\nyour persona: '
-                        + data['personas'][1][1]
-                        + additional_context,
+                        'text': '\n'.join(text_parts),
                         **{bucket: '' for bucket in self.problem_buckets},
                     },
                     ignore_index=True,
