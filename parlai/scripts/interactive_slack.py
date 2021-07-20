@@ -9,8 +9,7 @@ Talk with a model using a Slack channel.
 # Examples
 
 ```shell
-parlai interactive_slack --model-file "zoo:tutorial_transformer_generator/model"
-```
+parlai interactive_slack --token xoxb-... --task blended_skill_talk:all -mf zoo:blenderbot2/blenderbot2_400M/model --search-server http://localhost:5000```
 """
 from os import getenv
 from pprint import pformat
@@ -24,8 +23,7 @@ import parlai.utils.logging as logging
 try:
     from slack import RTMClient
 except ImportError:
-    raise ImportError(
-        'The slackclient package must be installed to run this script')
+    raise ImportError('The slackclient package must be installed to run this script')
 
 SHARED = {}
 SLACK_BOT_TOKEN = getenv('SLACK_BOT_TOKEN')
@@ -37,8 +35,12 @@ def setup_slack_args(shared):
     """
     parser = setup_args()
     parser.description = 'Interactive chat with a model in a Slack channel'
-    parser.add_argument('--token', default=SLACK_BOT_TOKEN, metavar='SLACK_BOT_TOKEN',
-                        help='A legacy Slack bot token to use for RTM messaging')
+    parser.add_argument(
+        '--token',
+        default=SLACK_BOT_TOKEN,
+        metavar='SLACK_BOT_TOKEN',
+        help='A legacy Slack bot token to use for RTM messaging',
+    )
     return parser
 
 
@@ -50,25 +52,16 @@ async def rtm_handler(rtm_client, web_client, data, **kwargs):
         return
     logging.info(f'Got new message {pformat(data)}')
     channel = data['channel']
-    web_client.reactions_add(
-        channel=channel,
-        name='eyes',
-        timestamp=data['ts']
-    )
+    web_client.reactions_add(channel=channel, name='eyes', timestamp=data['ts'])
     reply = {'episode_done': False, 'text': data['text']}
     SHARED['agent'].observe(reply)
     logging.info('Agent observed')
     await rtm_client.typing(channel=channel)
     model_response = SHARED['agent'].act()
     logging.info('Agent acted')
-    web_client.chat_postMessage(
-        channel=channel, text=model_response['text'])
+    web_client.chat_postMessage(channel=channel, text=model_response['text'])
     logging.info(f'Sent response: {model_response["text"]}')
-    web_client.reactions_remove(
-        channel=channel,
-        name='eyes',
-        timestamp=data['ts']
-    )
+    web_client.reactions_remove(channel=channel, name='eyes', timestamp=data['ts'])
 
 
 def interactive_slack(opt):
@@ -76,7 +69,8 @@ def interactive_slack(opt):
 
     if not opt.get('token'):
         raise RuntimeError(
-            'A Slack bot token must be specified. Must be a legacy bot app token for RTM messaging')
+            'A Slack bot token must be specified. Must be a legacy bot app token for RTM messaging'
+        )
     opt['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
     agent = create_agent(opt, requireModelExists=True)
     agent.opt.log()
