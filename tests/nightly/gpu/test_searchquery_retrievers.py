@@ -16,6 +16,7 @@ from parlai.agents.rag.retrieve_api import (
     SearchEngineRetrieverMock,
     SearchEngineRetriever,
 )
+import parlai.utils.testing as testing_utils
 import torch
 import unittest
 
@@ -43,6 +44,7 @@ class MockSearchQuerySearchEngineRetriever(SearchQuerySearchEngineRetriever):
         return SearchEngineRetrieverMock(opt)
 
 
+@testing_utils.skipUnlessGPU
 class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)
@@ -89,6 +91,7 @@ class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
 ################################################################
 
 
+@testing_utils.skipUnlessGPU
 class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
     def __init__(self, opt, dictionary, shared):
         super().__init__(opt, dictionary, shared)
@@ -101,6 +104,7 @@ class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
         return self.queries
 
 
+@testing_utils.skipUnlessGPU
 @unittest.skipUnless(FAISS_INSTALLED, "FAISS was not installed.")
 class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
     def setUp(self) -> None:

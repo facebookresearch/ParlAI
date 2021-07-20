@@ -8,11 +8,17 @@ import torch.cuda
 import unittest
 
 import parlai.utils.testing as testing_utils
-from projects.blenderbot2.agents.blenderbot2 import (
-    ZOO_MEMORY_DECODER,
-    ZOO_QUERY_GENERATOR,
-)
 from projects.blenderbot2.agents.sub_modules import KnowledgeAccessMethod
+
+try:
+    # blenderbot2 imports `transformer` and crashes the CPU tests.
+    # These CPU tests will be skipped anyway with the decorators on each test.
+    from projects.blenderbot2.agents.blenderbot2 import (
+        ZOO_MEMORY_DECODER,
+        ZOO_QUERY_GENERATOR,
+    )
+except ImportError:
+    pass
 
 LOCAL = True
 
