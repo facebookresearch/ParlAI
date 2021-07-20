@@ -182,7 +182,7 @@ def render_row(
                 elif has_shown_botname:
                     speakername = BOT
                 has_shown_botname = True
-
+        speakername = 'Human' if i % 2 == 0 else 'BlenderBot'
         align = 'right' if is_bot else 'left'
         color = "white" if is_bot else "black"
         bgcolor = '#2391f7' if is_bot else '#e1e1e7'
