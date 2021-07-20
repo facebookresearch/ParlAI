@@ -197,7 +197,6 @@ class MyHandler(BaseHTTPRequestHandler):
             )
             int_metrics = {key: int(value) for key, value in model_response['metrics'].items()}
             model_response.force_set('metrics', int_metrics)
-            logging.info(f'MODEL: {pformat(model_response)}')
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
