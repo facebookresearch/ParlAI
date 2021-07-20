@@ -277,36 +277,6 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
         return shared
 
 
-class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
-    """
-    Class for detecting the emotion based on the situation.
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['train_experiencer_only'] = True
-        # So that we only have one episode per train conversation
-        super().__init__(opt, shared)
-        if not shared:
-            self._get_situations()
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return len(self.data)
-
-    def _get_situations(self):
-        new_data = []
-        for ep in self.data:
-            new_data.append(ep[0])
-        self.data = new_data
-
-    def get(self, episode_idx, entry_idx=0):
-        ex = self.data[episode_idx]
-        episode_done = True
-        return Message({'labels': [ex[2]], 'text': ex[3], 'episode_done': episode_done})
-
-
 class ExperiencerEmpatheticDialoguesTeacher(EmpatheticDialoguesTeacher):
     """
     Class for generating the experiencer utterances based on a prompt/emotions.
@@ -315,6 +285,23 @@ class ExperiencerEmpatheticDialoguesTeacher(EmpatheticDialoguesTeacher):
     def __init__(self, opt, shared=None):
         opt['perspective'] = 'responder'
         super().__init__(opt, shared)
+        self.include_emotion = opt['include_emotion']
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group(
+            'ExperiencerEmpatheticDialogues teacher arguments'
+        )
+        agent.add_argument(
+            '--include-emotion',
+            type='bool',
+            default=False,
+            # i.e add the emotion to the text
+            help='Add the emotion assigned to the text.',
+        )
 
     def num_episodes(self):
         return len(self.data)
@@ -329,6 +316,8 @@ class ExperiencerEmpatheticDialoguesTeacher(EmpatheticDialoguesTeacher):
         text = ep_i[0]
         if entry_idx == 0:
             text = ep_i[3] + '\n' + text
+            if self.include_emotion:
+                text = text + '\nEmotion: ' + ep_i[2]
         action = Message(
             {'text': text, 'labels': [ep_i[1]], 'episode_done': episode_done}
         )
