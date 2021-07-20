@@ -640,6 +640,13 @@ class DPRRetriever(RagRetriever):
             vectors = vectors[:, :, :-1]
         # recompute exact FAISS scores
         scores = torch.bmm(query.unsqueeze(1), vectors.transpose(1, 2)).squeeze(1)
+        if torch.isnan(scores).sum().item():
+            logging.error(
+                '\n[ Document scores are NaN; please look into the built index. ]\n'
+                '[ If using a compressed index, try building an exact index: ]\n'
+                '[ $ python index_dense_embeddings --indexer-type exact... ]'
+            )
+            scores.fill_(1)
         ids = torch.tensor([[int(s) for s in ss] for ss in ids])
 
         return ids, scores
