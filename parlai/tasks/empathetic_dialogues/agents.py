@@ -315,9 +315,9 @@ class ExperiencerEmpatheticDialoguesTeacher(EmpatheticDialoguesTeacher):
         episode_done = entry_idx >= (len(ep) - 1)
         text = ep_i[0]
         if entry_idx == 0:
-            text = ep_i[3] + '\n' + text
             if self.include_emotion:
-                text = text + '\nEmotion: ' + ep_i[2]
+                text = 'Emotion: ' + ep_i[2] + '\n' + text
+            text = ep_i[3] + '\n' + text
         action = Message(
             {'text': text, 'labels': [ep_i[1]], 'episode_done': episode_done}
         )
