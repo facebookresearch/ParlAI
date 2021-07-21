@@ -298,25 +298,28 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         **{bucket: '' for bucket in self.problem_buckets},
                     }
                     if utt['agent_idx'] == 1:
-                        if 'problem_data' not in utt:
-                            for bucket in self.problem_buckets:
-                                d[bucket] = 'MALFORMED'
-                            print(
-                                f'Warning got MALFORMED utterance problem data inside complete convo: {utt}. Skipping.'
-                            )
-                            continue
-                        else:
-                            for bucket in self.regular_buckets + ['none_all_good']:
-                                d[bucket] = utt['problem_data'][bucket]
-                            d['final_rating'] = (
-                                utt['final_rating'] if 'final_rating' in utt else None
-                            )
-                        for k in self.regular_buckets + ['none_all_good']:
-                            if k not in stat_counts[model_nickname]:
-                                stat_counts[model_nickname][k] = 0
-                            stat_counts[model_nickname][k] += d[k]
-                            if k != 'none_all_good' and d[k]:
-                                dialog_has_problems = True
+
+                        d['final_rating'] = utt.get('final_rating')
+
+                        if self.use_problem_buckets:
+
+                            if 'problem_data' not in utt:
+                                for bucket in self.problem_buckets:
+                                    d[bucket] = 'MALFORMED'
+                                print(
+                                    f'Warning got MALFORMED utterance problem data inside complete convo: {utt}. Skipping.'
+                                )
+                                continue
+                            else:
+                                for bucket in self.regular_buckets + ['none_all_good']:
+                                    d[bucket] = utt['problem_data'][bucket]
+
+                            for k in self.regular_buckets + ['none_all_good']:
+                                if k not in stat_counts[model_nickname]:
+                                    stat_counts[model_nickname][k] = 0
+                                stat_counts[model_nickname][k] += d[k]
+                                if k != 'none_all_good' and d[k]:
+                                    dialog_has_problems = True
 
                         if 'total' not in stat_counts[model_nickname]:
                             stat_counts[model_nickname]['total'] = 0
@@ -351,19 +354,19 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         ].count('?')
                     df = df.append(d, ignore_index=True)
 
-                # Count the number of problems the worker got
-                is_problem = ~df['none_all_good'].replace('', True)
-
-                # Only want to count bot utterances but human ones, while included,
-                # won't be False
-                count = is_problem.sum()
                 if info_dict['worker'] not in worker_stats:
-                    worker_stats[info_dict['worker']] = {
-                        'conversations': 0,
-                        'problems_found': 0,
-                    }
+                    worker_stats[info_dict['worker']] = {'conversations': 0}
+                    if self.use_problem_buckets:
+                        worker_stats[info_dict['worker']]['problems_found'] = 0
                 worker_stats[info_dict['worker']]['conversations'] += 1
-                worker_stats[info_dict['worker']]['problems_found'] += count
+
+                if self.use_problem_buckets:
+                    # Count the number of problems the worker got
+                    is_problem = ~df['none_all_good'].replace('', True)
+                    # Only want to count bot utterances but human ones, while included,
+                    # won't be False
+                    count = is_problem.sum()
+                    worker_stats[info_dict['worker']]['problems_found'] += count
 
                 # Logic for calculating percent of conversations that are clean
                 if 'count_convos' not in stat_counts[model_nickname]:
