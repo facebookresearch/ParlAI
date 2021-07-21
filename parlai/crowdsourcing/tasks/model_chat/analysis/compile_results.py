@@ -123,7 +123,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         num_complete_convos = 0
         complete_convos_per_model = {}
         bad_conversations = []
-        problem_counts = {}
+        stat_counts = {}
         worker_stats = {}
         worker_conversation_counts = {}
         total_utterances = 0
@@ -186,8 +186,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         raise ValueError('Bucket(s) are missing from the problem data!')
 
                 model_nickname = data['task_description']['model_nickname']
-                if model_nickname not in problem_counts:
-                    problem_counts[model_nickname] = {}
+                if model_nickname not in stat_counts:
+                    stat_counts[model_nickname] = {}
                 if model_nickname in complete_convos_per_model:
                     complete_convos_per_model[model_nickname] += 1
                 else:
@@ -312,44 +312,41 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                                 utt['final_rating'] if 'final_rating' in utt else None
                             )
                         for k in self.regular_buckets + ['none_all_good']:
-                            if k not in problem_counts[model_nickname]:
-                                problem_counts[model_nickname][k] = 0
-                            problem_counts[model_nickname][k] += d[k]
+                            if k not in stat_counts[model_nickname]:
+                                stat_counts[model_nickname][k] = 0
+                            stat_counts[model_nickname][k] += d[k]
                             if k != 'none_all_good' and d[k]:
                                 dialog_has_problems = True
 
-                        if 'total' not in problem_counts[model_nickname]:
-                            problem_counts[model_nickname]['total'] = 0
+                        if 'total' not in stat_counts[model_nickname]:
+                            stat_counts[model_nickname]['total'] = 0
                         if d['agent_idx'] == 1:
-                            problem_counts[model_nickname]['total'] += 1
+                            stat_counts[model_nickname]['total'] += 1
                         if d['final_rating'] is not None:
                             # Only one the last utterance (agent idx == 1)
-                            if 'count_ratings' not in problem_counts[model_nickname]:
-                                problem_counts[model_nickname]['count_ratings'] = 0
-                            problem_counts[model_nickname]['count_ratings'] += 1
-                            if 'ratings' not in problem_counts[model_nickname]:
-                                problem_counts[model_nickname]['ratings'] = []
-                            problem_counts[model_nickname]['ratings'].append(
+                            if 'count_ratings' not in stat_counts[model_nickname]:
+                                stat_counts[model_nickname]['count_ratings'] = 0
+                            stat_counts[model_nickname]['count_ratings'] += 1
+                            if 'ratings' not in stat_counts[model_nickname]:
+                                stat_counts[model_nickname]['ratings'] = []
+                            stat_counts[model_nickname]['ratings'].append(
                                 int(d['final_rating'])
                             )
                     else:
                         # Counting some aspects of the human's utterances
-                        if (
-                            'human_utterance_count'
-                            not in problem_counts[model_nickname]
-                        ):
-                            problem_counts[model_nickname]['human_utterance_count'] = 0
-                        problem_counts[model_nickname]['human_utterance_count'] += 1
+                        if 'human_utterance_count' not in stat_counts[model_nickname]:
+                            stat_counts[model_nickname]['human_utterance_count'] = 0
+                        stat_counts[model_nickname]['human_utterance_count'] += 1
 
-                        if 'human_word_count' not in problem_counts[model_nickname]:
-                            problem_counts[model_nickname]['human_word_count'] = 0
-                        problem_counts[model_nickname]['human_word_count'] += len(
+                        if 'human_word_count' not in stat_counts[model_nickname]:
+                            stat_counts[model_nickname]['human_word_count'] = 0
+                        stat_counts[model_nickname]['human_word_count'] += len(
                             d['text'].strip().split(' ')
                         )
 
-                        if 'human_question_count' not in problem_counts[model_nickname]:
-                            problem_counts[model_nickname]['human_question_count'] = 0
-                        problem_counts[model_nickname]['human_question_count'] += d[
+                        if 'human_question_count' not in stat_counts[model_nickname]:
+                            stat_counts[model_nickname]['human_question_count'] = 0
+                        stat_counts[model_nickname]['human_question_count'] += d[
                             'text'
                         ].count('?')
                     df = df.append(d, ignore_index=True)
@@ -369,14 +366,14 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 worker_stats[info_dict['worker']]['problems_found'] += count
 
                 # Logic for calculating percent of conversations that are clean
-                if 'count_convos' not in problem_counts[model_nickname]:
-                    problem_counts[model_nickname]['count_convos'] = 0
-                problem_counts[model_nickname]['count_convos'] += 1
+                if 'count_convos' not in stat_counts[model_nickname]:
+                    stat_counts[model_nickname]['count_convos'] = 0
+                stat_counts[model_nickname]['count_convos'] += 1
 
                 if not dialog_has_problems:
-                    if 'convo_clean' not in problem_counts[model_nickname]:
-                        problem_counts[model_nickname]['convo_clean'] = 0
-                    problem_counts[model_nickname]['convo_clean'] += 1
+                    if 'convo_clean' not in stat_counts[model_nickname]:
+                        stat_counts[model_nickname]['convo_clean'] = 0
+                    stat_counts[model_nickname]['convo_clean'] += 1
 
                 # Adding the full conversation to the list of conversations
                 conversation_dfs.append(df)
@@ -390,28 +387,28 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         num_approved_convos = num_complete_convos - len(bad_conversations)
         print(f'{num_approved_convos:d} approved conversations.')
         print(f'({num_incomplete_convos:d} incomplete conversations collected.)')
-        for model_nickname, model_problems_dict in problem_counts.items():
+        for model_nickname, model_stats_dict in stat_counts.items():
             print(f'---{model_nickname}---')
-            for p, v in model_problems_dict.items():
+            for p, v in model_stats_dict.items():
                 if p == 'count_ratings':
                     continue
                 if p == 'ratings':
                     print(
-                        f'Average Engaging-ness Rating: {np.average(model_problems_dict["ratings"])} ({model_problems_dict["count_ratings"]} ratings)'
+                        f'Average Engaging-ness Rating: {np.average(model_stats_dict["ratings"])} ({model_stats_dict["count_ratings"]} ratings)'
                     )
                     continue
                 if p == 'human_word_count' or p == 'human_question_count':
                     print(
-                        f'{p}: {v} ({v/model_problems_dict["human_utterance_count"]:.3})'
+                        f'{p}: {v} ({v/model_stats_dict["human_utterance_count"]:.3})'
                     )
                 elif p == 'human_utterance_count':
                     print(f'{p}: {v}')
                 elif p == 'count_convos':
                     print(f'{p}: {v}')
                 elif p == 'convo_clean':
-                    print(f'{p}: {v} ({v/model_problems_dict["count_convos"]:.2%})')
+                    print(f'{p}: {v} ({v/model_stats_dict["count_convos"]:.2%})')
                 else:
-                    print(f'{p}: {v} ({v/model_problems_dict["total"]:.2%})')
+                    print(f'{p}: {v} ({v/model_stats_dict["total"]:.2%})')
 
         print('Printing worker IDs not already in block list to add...')
         for b in bad_conversations:
@@ -451,7 +448,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
             + ''.join(f'<td>{bucket}</td>' for bucket in self.regular_buckets)
             + '<td>none_all_good</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr>'
         )
-        for model_nickname, model_problems_dict in problem_counts.items():
+        for model_nickname, model_stats_dict in stat_counts.items():
             html_text += f'<tr><td>{model_nickname}</td>'
             keys = self.regular_buckets + [
                 'none_all_good',
@@ -460,12 +457,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
             ]
             for k in keys:
                 if k == 'human_word_count' or k == 'human_question_count':
-                    html_text += f'<td>{model_problems_dict[k]} ({model_problems_dict[k]/model_problems_dict["human_utterance_count"]:.3} average)</td>'
+                    html_text += f'<td>{model_stats_dict[k]} ({model_stats_dict[k]/model_stats_dict["human_utterance_count"]:.3} average)</td>'
                 else:
-                    html_text += f'<td>{model_problems_dict[k]} ({model_problems_dict[k]/model_problems_dict["total"]:.1%})</td>'
-            html_text += f'<td>{model_problems_dict["convo_clean"]/model_problems_dict["count_convos"]:.1%} ({model_problems_dict["count_convos"]} convos)</td>'
+                    html_text += f'<td>{model_stats_dict[k]} ({model_stats_dict[k]/model_stats_dict["total"]:.1%})</td>'
+            html_text += f'<td>{model_stats_dict["convo_clean"]/model_stats_dict["count_convos"]:.1%} ({model_stats_dict["count_convos"]} convos)</td>'
 
-            html_text += f'<td>{np.average(model_problems_dict["ratings"]):.2f} ({model_problems_dict["count_ratings"]} ratings)</td>'
+            html_text += f'<td>{np.average(model_stats_dict["ratings"]):.2f} ({model_stats_dict["count_ratings"]} ratings)</td>'
 
             html_text += '</tr>'
 
