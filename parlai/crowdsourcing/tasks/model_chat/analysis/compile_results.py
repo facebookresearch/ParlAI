@@ -421,15 +421,10 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         print('Done printing bad workers.')
 
         print('Worker stats:')
-        worker_df = pd.DataFrame(
-            [],
-            columns=[
-                'worker_id',
-                'conversations',
-                'problems_found',
-                'avg_problems_per_convo',
-            ],
-        )
+        worker_columns = ['worker_id', 'conversations']
+        if self.use_problem_buckets:
+            worker_columns += ['problems_found', 'avg_problems_per_convo']
+        worker_df = pd.DataFrame([], columns=worker_columns)
 
         for worker_id, data in worker_stats.items():
             print(worker_id)
