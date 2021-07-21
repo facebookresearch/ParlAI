@@ -64,6 +64,7 @@ try:
         def tearDown(self) -> None:
             self._teardown()
 
+        @testing_utils.retry(ntries=3)
         def test_base_task(self):
 
             with testing_utils.tempdir() as tmpdir:
