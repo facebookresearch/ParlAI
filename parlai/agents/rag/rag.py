@@ -412,7 +412,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             init_weight = (
                 model.seq2seq_encoder.position_embeddings.weight  # type: ignore
             )
-            if init_weight.size(0) <= opt['n_positions'] + opt['n_extra_positions']:
+            if state_dict[key].size(0) < opt['n_positions'] + opt['n_extra_positions']:
                 # Make sure we're not adding more positions to a model trained
                 # with extra positions
                 state_dict[key] = torch.cat(
