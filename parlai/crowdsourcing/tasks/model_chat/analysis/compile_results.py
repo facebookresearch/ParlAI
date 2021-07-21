@@ -355,7 +355,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             'text'
                         ].count('?')
 
-                    # {{{TODO: additional stats here}}}
+                    d = self._add_additional_per_turn_stats(d)
 
                     df = df.append(d, ignore_index=True)
 
@@ -457,6 +457,15 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         print(f'\nWorker conversation counts: {worker_conversation_counts}')
 
         return all_conversations_df
+
+    def _add_additional_per_turn_stats(self, d: dict, utt: dict) -> dict:
+        """
+        Add in additional statistics on the level of each conversation turn.
+
+        Useful for subclasses.
+        """
+        _ = utt  # utt is ignored in this passthrough method
+        return d
 
 
 if __name__ == '__main__':
