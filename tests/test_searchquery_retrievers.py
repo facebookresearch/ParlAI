@@ -57,13 +57,33 @@ if TRANSFORMER_INSTALLED:
 # Search Engine FiD Agent
 ################################################################
 
+common_opt = [
+    '--init-model',
+    'zoo:unittest/transformer_generator2/model',
+    '--dict-file',
+    'zoo:unittest/transformer_generator2/model.dict',
+    '--n-layers',
+    '2',
+    '--n-heads',
+    '2',
+    '--embedding-size',
+    '32',
+    '--ffn-size',
+    '128',
+    '--dict-tokenizer',
+    're',
+    '--generation-model',
+    'transformer/generator',
+]
+
 
 @testing_utils.skipUnlessGPU
 class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)
         opt = parser.parse_args(
-            [
+            common_opt
+            + [
                 '--model',
                 'parlai.agents.fid.fid:SearchQuerySearchEngineFiDAgent',
                 '--retriever-debug-index',
@@ -110,7 +130,8 @@ class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)
         opt = parser.parse_args(
-            [
+            common_opt
+            + [
                 '--model',
                 'parlai.agents.fid.fid:SearchQueryFAISSIndexFiDAgent',
                 '--retriever-debug-index',
