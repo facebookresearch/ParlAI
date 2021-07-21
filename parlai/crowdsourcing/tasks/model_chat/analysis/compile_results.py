@@ -373,7 +373,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     stat_counts[model_nickname]['count_convos'] = 0
                 stat_counts[model_nickname]['count_convos'] += 1
 
-                if not dialog_has_problems:
+                if self.use_problem_buckets and not dialog_has_problems:
                     if 'convo_clean' not in stat_counts[model_nickname]:
                         stat_counts[model_nickname]['convo_clean'] = 0
                     stat_counts[model_nickname]['convo_clean'] += 1
@@ -408,7 +408,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     print(f'{p}: {v}')
                 elif p == 'count_convos':
                     print(f'{p}: {v}')
-                elif p == 'convo_clean':
+                elif self.use_problem_buckets and p == 'convo_clean':
                     print(f'{p}: {v} ({v/model_stats_dict["count_convos"]:.2%})')
                 else:
                     print(f'{p}: {v} ({v/model_stats_dict["total"]:.2%})')
@@ -433,44 +433,22 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
         for worker_id, data in worker_stats.items():
             print(worker_id)
-            avg_problems_per_convo = data['problems_found'] / data['conversations']
-            stat = {
-                'worker_id': worker_id,
-                'conversations': data['conversations'],
-                'problems_found': data['problems_found'],
-                'avg_problems_per_convo': avg_problems_per_convo,
-            }
+
+            stat = {'worker_id': worker_id, 'conversations': data['conversations']}
+            if self.use_problem_buckets:
+                avg_problems_per_convo = data['problems_found'] / data['conversations']
+                stat.update(
+                    {
+                        'problems_found': data['problems_found'],
+                        'avg_problems_per_convo': avg_problems_per_convo,
+                    }
+                )
             worker_df = worker_df.append(stat, ignore_index=True)
-        worker_df = worker_df.sort_values('avg_problems_per_convo', ascending=0)
+        if self.use_problem_buckets:
+            worker_df = worker_df.sort_values('avg_problems_per_convo', ascending=0)
         worker_df.to_csv(worker_results_file, index=False)
         print(worker_df)
         print(f'Wrote worker statistical results to: {worker_results_file}')
-
-        html_text = (
-            '<html><body><table><tr><td>model</td>'
-            + ''.join(f'<td>{bucket}</td>' for bucket in self.regular_buckets)
-            + '<td>none_all_good</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr>'
-        )
-        for model_nickname, model_stats_dict in stat_counts.items():
-            html_text += f'<tr><td>{model_nickname}</td>'
-            keys = self.regular_buckets + [
-                'none_all_good',
-                'human_word_count',
-                'human_question_count',
-            ]
-            for k in keys:
-                if k == 'human_word_count' or k == 'human_question_count':
-                    html_text += f'<td>{model_stats_dict[k]} ({model_stats_dict[k]/model_stats_dict["human_utterance_count"]:.3} average)</td>'
-                else:
-                    html_text += f'<td>{model_stats_dict[k]} ({model_stats_dict[k]/model_stats_dict["total"]:.1%})</td>'
-            html_text += f'<td>{model_stats_dict["convo_clean"]/model_stats_dict["count_convos"]:.1%} ({model_stats_dict["count_convos"]} convos)</td>'
-
-            html_text += f'<td>{np.average(model_stats_dict["ratings"]):.2f} ({model_stats_dict["count_ratings"]} ratings)</td>'
-
-            html_text += '</tr>'
-
-        html_text += '</table>'
-        print(html_text)
 
         # Save full results
         all_conversations_df = pd.DataFrame()

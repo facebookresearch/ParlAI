@@ -28,7 +28,6 @@ WORKER_3
 0  WORKER_1             1              2                     2.0
 1  WORKER_2             1              1                     1.0
 2  WORKER_3             1              0                     0.0
-<html><body><table><tr><td>model</td><td>bucket_0</td><td>bucket_1</td><td>bucket_2</td><td>bucket_3</td><td>bucket_4</td><td>none_all_good</td><td>human_word_count</td><td>human_question_count</td><td>convo_clean</td><td>final_rating</td></tr><tr><td>samples/model_name</td><td>1 (4.8%)</td><td>1 (4.8%)</td><td>0 (0.0%)</td><td>0 (0.0%)</td><td>1 (4.8%)</td><td>18 (85.7%)</td><td>93 (4.43 average)</td><td>0 (0.0 average)</td><td>33.3% (3 convos)</td><td>2.33 (3 ratings)</td></tr></table>
 
 
 Worker conversation counts: {'WORKER_1': 1, 'WORKER_2': 1, 'WORKER_3': 1}
