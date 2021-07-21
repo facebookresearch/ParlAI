@@ -4,27 +4,53 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
-from parlai.agents.rag.dpr import BertTokenizerDictionaryAgent
-from parlai.agents.rag.retrievers import (
-    SearchQuerySearchEngineRetriever,
-    SearchQueryFAISSIndexRetriever,
-    Document,
-    NO_SEARCH_QUERY,
-)
-from parlai.agents.rag.retrieve_api import (
-    SearchEngineRetrieverMock,
-    SearchEngineRetriever,
-)
 import torch
 import unittest
+import parlai.utils.testing as testing_utils
+from parlai.core.params import ParlaiParser
+
 
 try:
-    import faiss  # noqa: F401
+    # rag and dpr modules imports `transformer` and crashes the CPU tests.
+    from parlai.agents.rag.dpr import BertTokenizerDictionaryAgent
+    from parlai.agents.rag.retrievers import (
+        SearchQuerySearchEngineRetriever,
+        SearchQueryFAISSIndexRetriever,
+        Document,
+        NO_SEARCH_QUERY,
+    )
+    from parlai.agents.rag.retrieve_api import (
+        SearchEngineRetrieverMock,
+        SearchEngineRetriever,
+    )
 
-    FAISS_INSTALLED = True
+    TRANSFORMER_INSTALLED = True
 except ImportError:
-    FAISS_INSTALLED = False
+    TRANSFORMER_INSTALLED = False
+
+
+if TRANSFORMER_INSTALLED:
+
+    class MockSearchQuerySearchEngineRetriever(SearchQuerySearchEngineRetriever):
+        def init_search_query_generator(self, opt):
+            pass
+
+        def generate_search_query(self, query):
+            return ['mock search query', NO_SEARCH_QUERY]
+
+        def initiate_retriever_api(self, opt) -> SearchEngineRetriever:
+            return SearchEngineRetrieverMock(opt)
+
+    class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
+        def __init__(self, opt, dictionary, shared):
+            super().__init__(opt, dictionary, shared)
+            self.queries = []
+
+        def init_search_query_generator(self, opt):
+            pass
+
+        def generate_search_query(self, query):
+            return self.queries
 
 
 ################################################################
@@ -32,17 +58,7 @@ except ImportError:
 ################################################################
 
 
-class MockSearchQuerySearchEngineRetriever(SearchQuerySearchEngineRetriever):
-    def init_search_query_generator(self, opt):
-        pass
-
-    def generate_search_query(self, query):
-        return ['mock search query', NO_SEARCH_QUERY]
-
-    def initiate_retriever_api(self, opt) -> SearchEngineRetriever:
-        return SearchEngineRetrieverMock(opt)
-
-
+@testing_utils.skipUnlessGPU
 class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)
@@ -89,19 +105,7 @@ class TestSearchQuerySearchEngineRetriever(unittest.TestCase):
 ################################################################
 
 
-class MockSearchQueryFAISSIndexRetriever(SearchQueryFAISSIndexRetriever):
-    def __init__(self, opt, dictionary, shared):
-        super().__init__(opt, dictionary, shared)
-        self.queries = []
-
-    def init_search_query_generator(self, opt):
-        pass
-
-    def generate_search_query(self, query):
-        return self.queries
-
-
-@unittest.skipUnless(FAISS_INSTALLED, "FAISS was not installed.")
+@testing_utils.skipUnlessGPU
 class TestSearchQueryFAISSIndexRetriever(unittest.TestCase):
     def setUp(self) -> None:
         parser = ParlaiParser(True, True)
