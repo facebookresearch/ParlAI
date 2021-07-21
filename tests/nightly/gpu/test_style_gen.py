@@ -29,7 +29,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
                     optimizer='adamax',
                     truncate=8,
                     learningrate=7e-3,
-                    batchsize=32,
+                    batchsize=16,
                     num_epochs=5,
                     n_layers=1,
                     n_heads=1,
@@ -50,7 +50,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
         """
         _, test = testing_utils.eval_model(
             opt={
-                'batchsize': 4,
+                'batchsize': 2,
                 'fp16': False,
                 'num_examples': 16,
                 'model_file': 'zoo:style_gen/prev_curr_classifier/model',
@@ -74,7 +74,7 @@ class TestStyleGen(unittest.TestCase):
         for model_name, style_frac, desired_ppl in test_cases:
             _, test = testing_utils.eval_model(
                 opt={
-                    'batchsize': 4,
+                    'batchsize': 2,
                     'fp16': False,
                     'num_examples': 16,
                     'model_file': f'zoo:style_gen/{model_name}/model',
