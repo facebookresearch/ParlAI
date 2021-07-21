@@ -355,7 +355,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             'text'
                         ].count('?')
 
-                    d = self._add_additional_per_turn_stats(d)
+                    d = self._add_additional_per_turn_stats(d=d, utt=utt)
 
                     df = df.append(d, ignore_index=True)
 
