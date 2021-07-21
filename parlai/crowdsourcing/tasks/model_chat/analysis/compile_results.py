@@ -286,6 +286,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 if self.use_problem_buckets:
                     dialog_has_problems = False
                 for utterance_idx, utt in enumerate(data['dialog']):
+
                     d = {
                         'folder': info_dict['read_folder_name'],
                         'worker_id': info_dict['worker'],
@@ -297,12 +298,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         'text': utt['text'],
                         **{bucket: '' for bucket in self.problem_buckets},
                     }
+
                     if utt['agent_idx'] == 1:
 
                         d['final_rating'] = utt.get('final_rating')
 
                         if self.use_problem_buckets:
-
                             if 'problem_data' not in utt:
                                 for bucket in self.problem_buckets:
                                     d[bucket] = 'MALFORMED'
@@ -313,7 +314,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             else:
                                 for bucket in self.regular_buckets + ['none_all_good']:
                                     d[bucket] = utt['problem_data'][bucket]
-
                             for k in self.regular_buckets + ['none_all_good']:
                                 if k not in stat_counts[model_nickname]:
                                     stat_counts[model_nickname][k] = 0
@@ -335,7 +335,9 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             stat_counts[model_nickname]['ratings'].append(
                                 int(d['final_rating'])
                             )
+
                     else:
+
                         # Counting some aspects of the human's utterances
                         if 'human_utterance_count' not in stat_counts[model_nickname]:
                             stat_counts[model_nickname]['human_utterance_count'] = 0
@@ -352,6 +354,9 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         stat_counts[model_nickname]['human_question_count'] += d[
                             'text'
                         ].count('?')
+
+                    # {{{TODO: additional stats here}}}
+
                     df = df.append(d, ignore_index=True)
 
                 if info_dict['worker'] not in worker_stats:
