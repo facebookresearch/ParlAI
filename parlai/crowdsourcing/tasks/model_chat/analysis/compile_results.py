@@ -76,12 +76,13 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         self.worker_block_list = opt['worker_block_list'].split(',')
 
         # Setting up problem buckets
-        self.regular_buckets = [
-            bucket
-            for bucket in self.problem_buckets
-            if bucket not in ['other', 'none_all_good']
-        ]
-        # Remove the buckets that are special cases
+        if self.use_problem_buckets:
+            self.regular_buckets = [
+                bucket
+                for bucket in self.problem_buckets
+                if bucket not in ['other', 'none_all_good']
+            ]
+            # Remove the buckets that are special cases
 
         self.acceptability_checker = AcceptabilityChecker()
 
@@ -177,11 +178,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     )
                     continue
 
-                if not all(
-                    bucket in data['dialog'][1]['problem_data']
-                    for bucket in self.problem_buckets
-                ):
-                    raise ValueError('Bucket(s) are missing from the problem data!')
+                if self.use_problem_buckets:
+                    if not all(
+                        bucket in data['dialog'][1]['problem_data']
+                        for bucket in self.problem_buckets
+                    ):
+                        raise ValueError('Bucket(s) are missing from the problem data!')
 
                 model_nickname = data['task_description']['model_nickname']
                 if model_nickname not in problem_counts:
@@ -281,7 +283,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                         f'Got long dialogue of {len(data["dialog"])} utterances, hit id: {info_dict["hit_id"]}, model_nickname: {model_nickname}.'
                     )
 
-                dialog_has_problems = False
+                if self.use_problem_buckets:
+                    dialog_has_problems = False
                 for utterance_idx, utt in enumerate(data['dialog']):
                     d = {
                         'folder': info_dict['read_folder_name'],

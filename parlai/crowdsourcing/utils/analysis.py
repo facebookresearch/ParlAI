@@ -128,6 +128,7 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
             self.problem_buckets = opt['problem_buckets'].split(',')
         else:
             self.use_problem_buckets = False
+            self.problem_buckets = []
 
         # Validate problem buckets
         if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
