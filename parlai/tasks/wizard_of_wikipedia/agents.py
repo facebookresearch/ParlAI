@@ -771,8 +771,14 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
         self.opt = copy.deepcopy(opt)
         self.opt['label_type'] = 'response'
         super().__init__(self.opt, shared=shared)
-        self.id = 'WikiTitleGenerationTeacher'
+        self.id = 'WikiPageTitleTeacher'
         self._conv_history_len = self.opt['conversation_history_length']
+        if not (self._conv_history_len > 0 or self._conv_history_len == -1):
+            logging.warning(
+                f'"{self._conv_history_len}" is an invalid value for --conversation-history-length flag.'
+                ' Changing it to default of -1 (include the entire message history).'
+            )
+            self._conv_history_len = -1
         self._skip_no_title = self.opt['skip_no_title']
         if not shared:
             self._preprocess_data()
@@ -786,13 +792,13 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
         agent.add_argument(
             '--conversation-history-length',
             type=int,
-            default=0,
+            default=-1,
             help='Number of previous utterances to keep in context, 0 (default) includes all',
         )
         agent.add_argument(
             '--skip-no-title',
             type='bool',
-            default=False,
+            default=True,
             help=(
                 'Whether to skip the example if no passage was selected. If `false` '
                 f'uses `{TOKEN_NOCHOSEN}` instead of title if no knowledge source was selected.'
@@ -807,7 +813,7 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
 
     def _generate_messages(self, hist, action):
         include_hist = (
-            hist[-self._conv_history_len :] if self._conv_history_len else hist
+            hist[-self._conv_history_len :] if self._conv_history_len > 0 else hist
         )
         context = '\n'.join(include_hist)
         return Message(
