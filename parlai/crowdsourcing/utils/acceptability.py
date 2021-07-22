@@ -23,9 +23,9 @@ class AcceptabilityChecker:
         'safety',
     ]
 
-    def __init__(self):
+    def __init__(self, min_words=DEFAULT_MIN_WORDS_THRESHOLD):
         self.offensive_lang_detector = OffensiveStringMatcher()
-        self.min_words_violation_threshold = DEFAULT_MIN_WORDS_THRESHOLD
+        self.min_words_violation_threshold = min_words
 
     def check_messages(
         self,
