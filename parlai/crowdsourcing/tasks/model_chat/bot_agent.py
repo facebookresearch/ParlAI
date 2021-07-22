@@ -108,10 +108,10 @@ class TurkLikeAgent:
             )
 
         # Convert opt strings to Opt objects
-        parser = ParlaiParser(True, True)
-        parser.set_params(**model_overrides)
         processed_opts = {}
         for name, opt_string in model_opts.items():
+            parser = ParlaiParser(True, True)
+            parser.set_params(**model_overrides)
             processed_opts[name] = parser.parse_args(opt_string.split())
 
         # Load and share all model agents

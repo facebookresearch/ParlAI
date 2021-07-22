@@ -182,6 +182,9 @@ class Generator(ParlaiScript):
         )
         shard_id, num_shards = self.opt['shard_id'], self.opt['num_shards']
         shard_size = int(len(rows) / num_shards)
+        if shard_id < len(rows) % num_shards:
+            # don't forget the remainder!
+            shard_size += 1
         start_idx = shard_id * shard_size
         end_idx = start_idx + shard_size
         logging.info(
