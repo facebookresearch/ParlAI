@@ -19,6 +19,7 @@ import torch.cuda
 from typing import Any, Dict, List, Optional, Tuple, Union, Type
 
 from parlai.agents.bart.bart import BartAgent
+import parlai.agents.hugging_face.hugging_face  # noqa: F401
 from parlai.agents.hugging_face.t5 import T5Agent
 from parlai.agents.transformer.polyencoder import PolyencoderAgent
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
