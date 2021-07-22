@@ -1,9 +1,9 @@
 Date folders: 2020_12_29
-Got 3 complete conversations for model: samples/model_name
-3 complete conversations collected.
-0 bad conversations.
-3 approved conversations.
-(0 incomplete conversations collected.)
+Got 3 complete conversation(s) for model: samples/model_name
+3 complete conversation(s) collected.
+0 bad conversation(s).
+3 approved conversation(s).
+(0 incomplete conversation(s) collected.)
 ---samples/model_name---
 human_utterance_count: 21
 human_word_count: 93 (4.43)

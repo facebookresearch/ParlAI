@@ -160,7 +160,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     and conversations_so_far >= self.max_convos_per_worker
                 ):
                     print(
-                        f'Had {conversations_so_far} conversations already from this worker {worker_id}. Skipping {assignment_id}.'
+                        f'Had {conversations_so_far} conversation(s) already from this worker {worker_id}. Skipping {assignment_id}.'
                     )
                     continue
 
@@ -388,13 +388,13 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 conversation_idx += 1
 
         for m, conversation_count in complete_convos_per_model.items():
-            print(f'Got {conversation_count} complete conversations for model: {m}')
+            print(f'Got {conversation_count} complete conversation(s) for model: {m}')
 
-        print(f'{num_complete_convos:d} complete conversations collected.')
-        print(f'{len(bad_conversations):d} bad conversations.')
+        print(f'{num_complete_convos:d} complete conversation(s) collected.')
+        print(f'{len(bad_conversations):d} bad conversation(s).')
         num_approved_convos = num_complete_convos - len(bad_conversations)
-        print(f'{num_approved_convos:d} approved conversations.')
-        print(f'({num_incomplete_convos:d} incomplete conversations collected.)')
+        print(f'{num_approved_convos:d} approved conversation(s).')
+        print(f'({num_incomplete_convos:d} incomplete conversation(s) collected.)')
         for model_nickname, model_stats_dict in stat_counts.items():
             print(f'---{model_nickname}---')
             for p, v in model_stats_dict.items():
