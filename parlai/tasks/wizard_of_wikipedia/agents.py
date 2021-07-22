@@ -759,6 +759,14 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
 
 
 class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
+    """
+    Generates the title of Wikipedia page used as source of knowledge.
+
+    The context provided by this teacher (`text`) is the conversation history, with chosen topic removed.
+    The label is the title of the Wikipedia page of the passage that wizard selected for crafting
+    the next utterance; in other words, the source of knowledge for this utterance.
+    """
+
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
         self.opt['label_type'] = 'response'
