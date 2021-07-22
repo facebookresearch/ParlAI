@@ -773,6 +773,7 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
         super().__init__(self.opt, shared=shared)
         self.id = 'WikiTitleGenerationTeacher'
         self._conv_history_len = self.opt['conversation_history_length']
+        self._skip_no_title = self.opt['skip_no_title']
         if not shared:
             self._preprocess_data()
         else:
@@ -787,6 +788,15 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
             type=int,
             default=0,
             help='Number of previous utterances to keep in context, 0 (default) includes all',
+        )
+        agent.add_argument(
+            '--skip-no-title',
+            type='bool',
+            default=False,
+            help=(
+                'Whether to skip the example if no passage was selected. If `false` '
+                f'uses `{TOKEN_NOCHOSEN}` instead of title if no knowledge source was selected.'
+            ),
         )
         return parser
 
@@ -809,6 +819,9 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
             }
         )
 
+    def _should_include(self, act):
+        return not (self._skip_no_title and act['labels'][0] == TOKEN_NOCHOSEN)
+
     def _preprocess_data(self):
         data = []
         for episode_idx in range(super().num_episodes()):
@@ -822,7 +835,9 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
                     text_parts = text_parts[1:]
                 if text_parts:
                     dialog_history.append(text_parts[0])
-                    data.append(self._generate_messages(dialog_history, a))
+                    title_act = self._generate_messages(dialog_history, a)
+                    if self._should_include(title_act):
+                        data.append(title_act)
                 if a['episode_done']:
                     break
                 ex_idx += 1
