@@ -28,8 +28,7 @@ try:
         Test the analysis code for the model chat task.
         """
 
-        # CASES = ['basic', 'with_personas_and_buckets']  # TODO enable
-        CASES = ['with_personas_and_buckets']
+        CASES = ['basic', 'with_personas_and_buckets']
 
         @pytest.fixture(scope="module")
         def setup_teardown(self):

@@ -1,0 +1,327 @@
+{
+    "personas": [
+        [
+            "i have two dogs.",
+            "i like to work on vintage cars."
+        ],
+        [
+            "i also like a glass of wine in the evenings.",
+            "i drive a mini van."
+        ]
+    ],
+    "context_dataset": "convai2",
+    "person1_seed_utterance": "you have a ford ? i have two mustangs !",
+    "person2_seed_utterance": "we go to worship christian concerts",
+    "additional_context": null,
+    "dialog": [
+        {
+            "episode_done": false,
+            "id": "Person1",
+            "text": "Hi!",
+            "fake_start": true,
+            "agent_idx": 0
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 0",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": false,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": true,
+                "none_all_good": false
+            }
+        },
+        {
+            "agent_idx": 0,
+            "text": "Utterance placeholder line 0 1",
+            "id": "Person1"
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 1",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": false,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": false,
+                "none_all_good": true
+            }
+        },
+        {
+            "agent_idx": 0,
+            "text": "Utterance placeholder line 0 2",
+            "id": "Person1"
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 2",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": false,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": false,
+                "none_all_good": true
+            }
+        },
+        {
+            "agent_idx": 0,
+            "text": "Utterance placeholder line 0 3",
+            "id": "Person1"
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 3",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": false,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": false,
+                "none_all_good": true
+            }
+        },
+        {
+            "agent_idx": 0,
+            "text": "Utterance placeholder line 0 4",
+            "id": "Person1"
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 4",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": true,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": false,
+                "none_all_good": false
+            }
+        },
+        {
+            "agent_idx": 0,
+            "text": "Utterance placeholder line 0 5",
+            "id": "Person1"
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 5",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": false,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": false,
+                "none_all_good": true
+            }
+        },
+        {
+            "agent_idx": 0,
+            "text": "Utterance placeholder line 0 6",
+            "id": "Person1"
+        },
+        {
+            "agent_idx": 1,
+            "text": "Utterance placeholder line 1 6",
+            "id": "TransformerGenerator",
+            "problem_data": {
+                "bucket_0": false,
+                "bucket_1": false,
+                "bucket_2": false,
+                "bucket_3": false,
+                "bucket_4": false,
+                "none_all_good": true
+            },
+            "final_rating": "1"
+        }
+    ],
+    "workers": [
+        "WORKER_1"
+    ],
+    "bad_workers": [],
+    "acceptability_violations": [
+        null
+    ],
+    "hit_ids": [
+        "HIT_ID_1"
+    ],
+    "assignment_ids": [
+        "ASSIGNMENT_ID_1"
+    ],
+    "task_description": {
+        "annotations_config": "[\n    {\n        \"value\": \"bucket_0\",\n        \"name\": \"Bucket 0\",\n        \"description\": \"this response implies something...0\"\n    },\n    {\n        \"value\": \"bucket_1\",\n        \"name\": \"Bucket 1\",\n        \"description\": \"this response implies something...1\"\n    },\n    {\n        \"value\": \"bucket_2\",\n        \"name\": \"Bucket 2\",\n        \"description\": \"this response implies something...2\"\n    },\n    {\n        \"value\": \"bucket_3\",\n        \"name\": \"Bucket 3\",\n        \"description\": \"this response implies something...3\"\n    },\n    {\n        \"value\": \"bucket_4\",\n        \"name\": \"Bucket 4\",\n        \"description\": \"this response implies something...4\"\n    },\n    {\n        \"value\": \"none_all_good\",\n        \"name\": \"None, all good\",\n        \"description\": \"This response implies that there are no problems with the data\"\n    }\n]\n",
+        "model_nickname": "blender_90M",
+        "model_file": "/private/home/user/GitHub/facebookresearch/ParlAI/data/models/blender/blender_90M/model",
+        "model_opt": {
+            "init_opt": null,
+            "show_advanced_args": false,
+            "task": "internal:blended_skill_talk,wizard_of_wikipedia,convai2,empathetic_dialogues",
+            "datatype": "train",
+            "image_mode": "raw",
+            "numthreads": 1,
+            "hide_labels": false,
+            "multitask_weights": [
+                1.0,
+                3.0,
+                3.0,
+                3.0
+            ],
+            "batchsize": 16,
+            "model": "transformer/generator",
+            "model_file": "/private/home/user/GitHub/facebookresearch/ParlAI/data/models/blender/blender_90M/model",
+            "init_model": "/checkpoint/parlai/zoo/new_reddit/newreddit_trained20190909_usedfordodeca/model",
+            "dict_class": "parlai.core.dict:DictionaryAgent",
+            "evaltask": null,
+            "eval_batchsize": null,
+            "display_examples": false,
+            "num_epochs": -1,
+            "max_train_time": -1,
+            "validation_every_n_secs": -1,
+            "save_every_n_secs": 60.0,
+            "save_after_valid": true,
+            "validation_every_n_epochs": 0.25,
+            "validation_max_exs": 20000,
+            "short_final_eval": false,
+            "validation_patience": 15,
+            "validation_metric": "ppl",
+            "validation_metric_mode": "min",
+            "validation_cutoff": 1.0,
+            "validation_share_agent": false,
+            "aggregate_micro": false,
+            "metrics": "default",
+            "tensorboard_log": false,
+            "dict_maxexs": -1,
+            "dict_include_valid": false,
+            "dict_include_test": false,
+            "log_every_n_secs": 2,
+            "image_size": 256,
+            "image_cropsize": 224,
+            "label_type": "response",
+            "include_knowledge": true,
+            "include_checked_sentence": true,
+            "include_knowledge_separator": false,
+            "num_topics": 5,
+            "train_experiencer_only": false,
+            "embedding_size": 512,
+            "n_layers": 8,
+            "ffn_size": 2048,
+            "dropout": 0.1,
+            "attention_dropout": 0.0,
+            "relu_dropout": 0.0,
+            "n_heads": 16,
+            "learn_positional_embeddings": true,
+            "embeddings_scale": true,
+            "n_positions": 512,
+            "n_segments": 0,
+            "variant": "xlm",
+            "activation": "gelu",
+            "output_scaling": 1.0,
+            "share_word_embeddings": true,
+            "beam_size": 10,
+            "beam_min_length": 20,
+            "beam_context_block_ngram": 3,
+            "beam_block_ngram": 3,
+            "beam_length_penalty": 0.65,
+            "skip_generation": false,
+            "inference": "beam",
+            "topk": 10,
+            "topp": 0.9,
+            "compute_tokenized_bleu": false,
+            "embedding_type": "random",
+            "embedding_projection": "random",
+            "fp16": true,
+            "fp16_impl": "safe",
+            "force_fp16_tokens": true,
+            "optimizer": "adamax",
+            "learningrate": 7.5e-06,
+            "gradient_clip": 0.1,
+            "adam_eps": 1e-08,
+            "adafactor_eps": [
+                1e-30,
+                0.001
+            ],
+            "momentum": 0,
+            "nesterov": true,
+            "nus": [
+                0.7
+            ],
+            "betas": [
+                0.9,
+                0.999
+            ],
+            "weight_decay": null,
+            "rank_candidates": false,
+            "truncate": -1,
+            "text_truncate": 512,
+            "label_truncate": 128,
+            "history_size": -1,
+            "person_tokens": false,
+            "split_lines": false,
+            "use_reply": "label",
+            "add_p1_after_newln": false,
+            "delimiter": "\n",
+            "gpu": -1,
+            "no_cuda": false,
+            "dict_file": "/private/home/user/GitHub/facebookresearch/ParlAI/data/models/blender/blender_90M/model.dict",
+            "dict_initpath": null,
+            "dict_language": "english",
+            "dict_max_ngram_size": -1,
+            "dict_minfreq": 0,
+            "dict_maxtokens": -1,
+            "dict_nulltoken": "__null__",
+            "dict_starttoken": "__start__",
+            "dict_endtoken": "__end__",
+            "dict_unktoken": "__unk__",
+            "dict_tokenizer": "bpe",
+            "dict_lower": true,
+            "bpe_debug": false,
+            "dict_textfields": "text,labels",
+            "lr_scheduler": "reduceonplateau",
+            "lr_scheduler_patience": 3,
+            "lr_scheduler_decay": 0.5,
+            "max_lr_steps": -1,
+            "invsqrt_lr_decay_gamma": -1,
+            "warmup_updates": -1,
+            "warmup_rate": 0.0001,
+            "update_freq": 1,
+            "parlai_home": "/private/home/user/ParlAI",
+            "starttime": "Feb10_07-25",
+            "model_parallel": true,
+            "beam_block_full_context": false,
+            "allow_missing_init_opts": false,
+            "download_path": null,
+            "loglevel": "info",
+            "dynamic_batching": null,
+            "verbose": false,
+            "is_debug": false,
+            "datapath": "/private/home/user/GitHub/facebookresearch/ParlAI/data",
+            "n_encoder_layers": -1,
+            "n_decoder_layers": -1,
+            "beam_delay": 30,
+            "beam_block_list_filename": null,
+            "temperature": 1.0,
+            "interactive_mode": false,
+            "history_reversed": false,
+            "history_add_global_end_token": null,
+            "special_tok_lst": null,
+            "bpe_vocab": null,
+            "bpe_merge": null,
+            "bpe_add_prefix_space": null,
+            "bpe_dropout": null,
+            "override": {
+                "model_parallel": true,
+                "model_file": "/private/home/user/GitHub/facebookresearch/ParlAI/data/models/blender/blender_90M/model"
+            },
+            "dict_loaded": true
+        }
+    }
+}

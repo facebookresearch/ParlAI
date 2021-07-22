@@ -46,8 +46,7 @@ try:
                     'test_turn_annotations_static_analysis',
                 )
                 expected_stdout_path = os.path.join(
-                    analysis_outputs_folder,
-                    'with_personas_and_buckets__test_stdout.txt',
+                    analysis_outputs_folder, 'test_stdout.txt'
                 )
                 temp_gold_annotations_path = os.path.join(
                     tmpdir, 'gold_annotations.json'
