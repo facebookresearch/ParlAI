@@ -39,5 +39,9 @@ class TestGeneratorTeacher(AutoTeacherTest):
     task = "wizard_of_wikipedia:generator"
 
 
+class TestWikiPageTitleTeacher(AutoTeacherTest):
+    task = "wizard_of_wikipedia:wiki_page_title"
+
+
 class TestDocreaderTeacher(AutoTeacherTest):
     task = "wizard_of_wikipedia:docreader"

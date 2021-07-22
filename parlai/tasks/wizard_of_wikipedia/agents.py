@@ -758,7 +758,7 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
         return a
 
 
-class WikiTitlePageTeacher(WizardDialogKnowledgeTeacher):
+class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
         self.opt['label_type'] = 'response'
