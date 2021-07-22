@@ -50,7 +50,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
         """
         _, test = testing_utils.eval_model(
             opt={
-                'batchsize': 2,
+                'batchsize': 4,
                 'fp16': True,
                 'num_examples': 16,
                 'model_file': 'zoo:style_gen/prev_curr_classifier/model',
@@ -73,7 +73,7 @@ class TestStyleGen(unittest.TestCase):
         for model_name, style_frac, desired_ppl in test_cases:
             _, test = testing_utils.eval_model(
                 opt={
-                    'batchsize': 2,
+                    'batchsize': 4,
                     'fp16': True,
                     'num_examples': 16,
                     'model_file': f'zoo:style_gen/{model_name}/model',
