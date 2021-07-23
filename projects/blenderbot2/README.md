@@ -84,6 +84,7 @@ Nevertheless, as ever much work remains to be done in the area of safety. While 
 
 - BlenderBot 2.0 400m: `--model-file zoo:blenderbot2/blenderbot2_400M/model`
 - BlenderBot 2.0 2.7B: `--model-file zoo:blenderbot2/blenderbot2_3B/model`
+- [BlenderBot 2 Model Card](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md)
 
 ## Datasets
 
@@ -92,11 +93,6 @@ We also use two new datasets [Multi-Session Chat](https://parl.ai/projects/msc) 
 Finally, to train for safety we use the [BAD dataset](https://parl.ai/projects/safety_recipes).
 
 See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
-
-
-## Model Card
-[BlenderBot 2 Model Card](../../parlai/zoo/blenderbot2/model_card.md)
-
 
 
 ## Contributors
