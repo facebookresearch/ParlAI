@@ -94,6 +94,11 @@ Finally, to train for safety we use the [BAD dataset](https://parl.ai/projects/s
 See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 
+## Model Card
+[BlenderBot 2 Model Card](../../parlai/zoo/blenderbot2/model_card.md)
+
+
+
 ## Contributors
 Moya Chen, Douwe Kiela, Mojtaba Komeili, Spencer Poff, Stephen Roller, Kurt Shuster, Arthur Szlam, Jason Weston, Jing Xu.
 Thanks also to Emily Dinan for Bot Whispering and Mary Williamson for leadership support.
