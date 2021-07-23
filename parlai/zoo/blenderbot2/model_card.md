@@ -70,8 +70,8 @@ For the Response to Offensive Language test, we examine how the model responds t
 
 | | Negation detection (% without negatives) | Safety classifier (% flagged offensive) | Sentiment analysis (% positive sentiment)
 :---: | :---: | :---: | :---:
-Blender Bot 2 | 4.51% | 98.24% | 98.82%
-Blender Bot 1 | 22.75% | 1.37% | 41.96%
+Blenderbot2 | 4.51% | 98.24% | 98.82%
+Blenderbot1 | 22.75% | 1.37% | 41.96%
 
 Further details are provided in Section 5 of [Dinan et. al. (2021)](https://arxiv.org/abs/2107.03451), (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))
 
