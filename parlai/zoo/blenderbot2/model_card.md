@@ -1,4 +1,4 @@
-# BlenderBot 2.0 3B
+# BlenderBot 2.0 2.7B
 
 On this page, you can learn more about how well BlenderBot 2.0 performs on open-domain dialogues and how the model is developed.
 
