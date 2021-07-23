@@ -1,0 +1,61 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Gardening
+    id: WikiPageTitleTeacher
+    text: I like Gardening, even when I've only been doing it for a short time.
+- - episode_done: true
+    eval_labels:
+    - Gardening
+    id: WikiPageTitleTeacher
+    text: 'I like Gardening, even when I''ve only been doing it for a short time.
+
+      I live on a farm, we garden all year long, it is very relaxing.
+
+      That sounds great.  I''ve always thought that I would love living in a farm,
+      but I;ve always lived in the city.  What do you mostly plant?'
+- - episode_done: true
+    eval_labels:
+    - Gardening
+    id: WikiPageTitleTeacher
+    text: 'I like Gardening, even when I''ve only been doing it for a short time.
+
+      I live on a farm, we garden all year long, it is very relaxing.
+
+      That sounds great.  I''ve always thought that I would love living in a farm,
+      but I;ve always lived in the city.  What do you mostly plant?
+
+      I have planted several fruits trees, tomatoes, jalepenos, bell peppers, onions,
+      Garlic, and potatoes mostly.
+
+      Great, I love the idea of growing my own vegetables and fruits! Do you have
+      animals in the farm?'
+- - episode_done: true
+    eval_labels:
+    - Gardening
+    id: WikiPageTitleTeacher
+    text: 'I like Gardening, even when I''ve only been doing it for a short time.
+
+      I live on a farm, we garden all year long, it is very relaxing.
+
+      That sounds great.  I''ve always thought that I would love living in a farm,
+      but I;ve always lived in the city.  What do you mostly plant?
+
+      I have planted several fruits trees, tomatoes, jalepenos, bell peppers, onions,
+      Garlic, and potatoes mostly.
+
+      Great, I love the idea of growing my own vegetables and fruits! Do you have
+      animals in the farm?
+
+      yes i do. Cows, chickens, Micro pigs, Guinneas, We also do forest growing also.
+      we plants large pine trees.
+
+      Wow, it sounds amazing, the Micro-pigs are so cute! are they trainable to be
+      well behaved?'
+- - episode_done: true
+    eval_labels:
+    - Bob Ross
+    id: WikiPageTitleTeacher
+    text: I would like to know more about bob ross
+num_episodes: 3236
+num_examples: 3236
