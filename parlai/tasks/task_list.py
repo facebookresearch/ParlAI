@@ -91,7 +91,7 @@ task_list = [
         "task": "bot_adversarial_dialogue",
         "tags": [],
         "description": (
-            "Datasets described in the paper Recipes for Safety in Open-domain Chatbots."
+            "Datasets described in the paper Recipes for Safety in Open-domain Chatbots. "
             "Datasets consist of classification tasks in which the goal is to "
             "determine if the utterance is offensive or not given a dialogue context. "
         ),
@@ -309,7 +309,7 @@ task_list = [
         "task": "hotpotqa",
         "tags": ["QA"],
         "description": (
-            "HotpotQA is a dataset for multi-hop question answering."
+            "HotpotQA is a dataset for multi-hop question answering. "
             "The overall setting is that given some context paragraphs"
             "(e.g., a few paragraphs, or the entire Web) and a question,"
             "a QA system answers the question by extracting a span of text"
@@ -332,7 +332,7 @@ task_list = [
         "task": "light_dialog",
         "tags": ["Grounded", "Dodeca"],
         "description": (
-            "LIGHT is a text adventure game with actions and dialogue collected."
+            "LIGHT is a text adventure game with actions and dialogue collected. "
             "The source data is collected between crowdworkers playing the game."
         ),
         "links": {
@@ -346,7 +346,7 @@ task_list = [
         "task": "light_dialog_wild",
         "tags": ["Grounded", "LIGHT"],
         "description": (
-            " LIGHT is a text adventure game with actions and dialogue."
+            " LIGHT is a text adventure game with actions and dialogue. "
             "The WILD dataset here features 41,131+ training episodes of dialogue "
             "collected from deploying a game as described in "
         ),
@@ -870,7 +870,7 @@ task_list = [
             "A chit-chat dataset by GoogleAI providing high quality goal-oriented conversations"
             "The dataset hopes to provoke interest in written vs spoken language"
             "Both the datasets consists of two-person dialogs:"
-            "Spoken: Created using Wizard of Oz methodology."
+            "Spoken: Created using Wizard of Oz methodology. "
             "Written: Created by crowdsourced workers who were asked to write the "
             "full conversation themselves playing roles of both the user and assistant."
         ),
@@ -1132,7 +1132,7 @@ task_list = [
         "tags": ["ChitChat", "Dodeca"],
         "description": (
             "A dataset of 25k conversations grounded in emotional situations "
-            "to facilitate training and evaluating dialogue systems."
+            "to facilitate training and evaluating dialogue systems. "
             "Dataset has been released under the CC BY-NC license."
         ),
         "links": {"arXiv": "https://arxiv.org/abs/1811.00207"},

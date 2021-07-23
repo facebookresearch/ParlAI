@@ -231,26 +231,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20210426-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20210426-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20210426-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20210426-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -267,12 +267,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20210426-bw-{{ checksum "requirements.txt" }}
+          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu17
       - save_cache:
-          key: deps-20210426-bw-{{ checksum "requirements.txt" }}
+          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
