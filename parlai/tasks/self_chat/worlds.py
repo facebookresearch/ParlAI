@@ -15,7 +15,7 @@ from parlai.core.message import Message
 
 
 def load_openers(opt) -> Optional[List[str]]:
-    if opt['task'].startswith('internal:'):
+    if opt['task'].startswith('internal:') or opt['task'].startswith('fb:'):
         base_task = opt['task']
     else:
         base_task = opt['task'].split(':')[0]
