@@ -10,9 +10,6 @@ from typing import Iterable, List
 from parlai.utils.safety import OffensiveStringMatcher
 
 
-DEFAULT_MIN_WORDS_THRESHOLD = 3
-
-
 class AcceptabilityChecker:
 
     ALL_VIOLATION_TYPES = [
@@ -22,10 +19,13 @@ class AcceptabilityChecker:
         'exact_match',
         'safety',
     ]
+    DEFAULT_MIN_WORDS_THRESHOLD = 3
 
-    def __init__(self, min_words=DEFAULT_MIN_WORDS_THRESHOLD):
+    def __init__(self, min_words: int = None):
         self.offensive_lang_detector = OffensiveStringMatcher()
-        self.min_words_violation_threshold = min_words
+        self.min_words_violation_threshold = (
+            min_words or self.DEFAULT_MIN_WORDS_THRESHOLD
+        )
 
     def check_messages(
         self,
