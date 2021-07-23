@@ -2,12 +2,12 @@ acts:
 - - episode_done: true
     eval_labels:
     - Gardening
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: I like Gardening, even when I've only been doing it for a short time.
 - - episode_done: true
     eval_labels:
     - Gardening
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: 'I like Gardening, even when I''ve only been doing it for a short time.
 
       I live on a farm, we garden all year long, it is very relaxing.
@@ -17,7 +17,7 @@ acts:
 - - episode_done: true
     eval_labels:
     - Gardening
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: 'I like Gardening, even when I''ve only been doing it for a short time.
 
       I live on a farm, we garden all year long, it is very relaxing.
@@ -33,7 +33,7 @@ acts:
 - - episode_done: true
     eval_labels:
     - Gardening
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: 'I like Gardening, even when I''ve only been doing it for a short time.
 
       I live on a farm, we garden all year long, it is very relaxing.
@@ -55,7 +55,7 @@ acts:
 - - episode_done: true
     eval_labels:
     - Bob Ross
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: I would like to know more about bob ross
-num_episodes: 3434
-num_examples: 3434
+num_episodes: 3236
+num_examples: 3236

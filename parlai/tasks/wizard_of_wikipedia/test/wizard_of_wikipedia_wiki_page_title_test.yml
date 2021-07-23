@@ -2,14 +2,14 @@ acts:
 - - episode_done: true
     eval_labels:
     - Royal Blue (train)
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: 'Blue is my favorite primary color.
 
       Blue is always nice. I like royal blue.'
 - - episode_done: true
     eval_labels:
     - Blue Skies (1946 film)
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: 'Blue is my favorite primary color.
 
       Blue is always nice. I like royal blue.
@@ -20,12 +20,12 @@ acts:
 - - episode_done: true
     eval_labels:
     - Cinematography
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: Hi buddy, What you think about cinematography
 - - episode_done: true
     eval_labels:
     - Cinematography
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: "Hi buddy, What you think about cinematography\nCinematography,is a type\
       \ of motion picture , captured electronically by means of an image \nYes buddy,\
       \  Images captured with an electronic image-sensor, produces an electrical charge.The\
@@ -33,7 +33,7 @@ acts:
 - - episode_done: true
     eval_labels:
     - Photography
-    id: WikiTitleGenerationTeacher
+    id: WikiPageTitleTeacher
     text: "Hi buddy, What you think about cinematography\nCinematography,is a type\
       \ of motion picture , captured electronically by means of an image \nYes buddy,\
       \  Images captured with an electronic image-sensor, produces an electrical charge.The\
@@ -42,5 +42,5 @@ acts:
       \ real images on the light-sensitive surface .\n Muybridge sequence of a horse\
       \ galloping In the 1830s, moving images were produced on revolving drums and\
       \ disks"
-num_episodes: 3374
-num_examples: 3374
+num_episodes: 3181
+num_examples: 3181
