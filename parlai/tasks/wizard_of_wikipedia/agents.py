@@ -24,6 +24,7 @@ from parlai.core.opt import Opt
 import copy
 from parlai.core.teachers import FixedDialogTeacher, MultiTaskTeacher
 from parlai.utils.io import PathManager
+from parlai.utils import logging
 from parlai.utils.misc import warn_once
 from .build import build
 
@@ -755,6 +756,113 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
                 'text'
             ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
         return a
+
+
+class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
+    """
+    Generates the title of Wikipedia page used as source of knowledge.
+
+    The context provided by this teacher (`text`) is the conversation history, with chosen topic removed.
+    The label is the title of the Wikipedia page of the passage that wizard selected for crafting
+    the next utterance; in other words, the source of knowledge for this utterance.
+    """
+
+    def __init__(self, opt, shared=None):
+        self.opt = copy.deepcopy(opt)
+        self.opt['label_type'] = 'response'
+        super().__init__(self.opt, shared=shared)
+        self.id = 'WikiPageTitleTeacher'
+        self._conv_history_len = self.opt['conversation_history_length']
+        if not (self._conv_history_len > 0 or self._conv_history_len == -1):
+            logging.warning(
+                f'"{self._conv_history_len}" is an invalid value for --conversation-history-length flag.'
+                ' Changing it to default of -1 (include the entire message history).'
+            )
+            self._conv_history_len = -1
+        self._skip_no_title = self.opt['skip_no_title']
+        if not shared:
+            self._preprocess_data()
+        else:
+            self.titles_data = shared['titles_data']
+
+    @classmethod
+    def add_cmdline_args(cls, parser, partial_opt=None):
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('Wikipedia Page Title Arguments')
+        agent.add_argument(
+            '--conversation-history-length',
+            type=int,
+            default=-1,
+            help='Number of previous utterances to keep in context, 0 (default) includes all',
+        )
+        agent.add_argument(
+            '--skip-no-title',
+            type='bool',
+            default=True,
+            help=(
+                'Whether to skip the example if no passage was selected. If `false` '
+                f'uses `{TOKEN_NOCHOSEN}` instead of title if no knowledge source was selected.'
+            ),
+        )
+        return parser
+
+    def share(self):
+        shared = super().share()
+        shared['titles_data'] = self.titles_data
+        return shared
+
+    def _generate_messages(self, hist, action):
+        include_hist = (
+            hist[-self._conv_history_len :] if self._conv_history_len > 0 else hist
+        )
+        context = '\n'.join(include_hist)
+        return Message(
+            {
+                'id': "Wikipedia Title Teacher",
+                'text': context,
+                'labels': [action["title"]],
+                'episode_done': True,
+            }
+        )
+
+    def _should_include(self, act):
+        return not (self._skip_no_title and act['labels'][0] == TOKEN_NOCHOSEN)
+
+    def _preprocess_data(self):
+        data = []
+        for episode_idx in range(super().num_episodes()):
+            dialog_history = []
+            ex_idx = 0
+            while True:
+                a = super().get(episode_idx, ex_idx)
+                text_parts = a['text'].split('\n')
+                if ex_idx == 0:
+                    # throwing away chosen_topic
+                    text_parts = text_parts[1:]
+                if text_parts:
+                    dialog_history.append(text_parts[0])
+                    title_act = self._generate_messages(dialog_history, a)
+                    if self._should_include(title_act):
+                        data.append(title_act)
+                if a['episode_done']:
+                    break
+                ex_idx += 1
+                dialog_history.append(a['labels'][0])
+
+        logging.info(
+            f'{len(data)} title generation examples generated '
+            f'from {super().num_examples()} original examples'
+        )
+        self.titles_data = data
+
+    def num_episodes(self):
+        return len(self.titles_data)
+
+    def num_examples(self):
+        return self.num_episodes()
+
+    def get(self, episode_idx, entry_idx=0):
+        return self.titles_data[episode_idx]
 
 
 ####################################################
