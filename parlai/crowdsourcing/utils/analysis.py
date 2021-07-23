@@ -123,7 +123,7 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
             self.results_folders = opt['results_folders'].split(',')
         else:
             self.results_folders = None
-        if opt['problem_buckets'] != '':
+        if opt['problem_buckets'].lower() not in ['', 'none']:
             self.use_problem_buckets = True
             self.problem_buckets = opt['problem_buckets'].split(',')
         else:

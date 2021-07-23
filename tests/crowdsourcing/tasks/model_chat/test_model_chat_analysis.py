@@ -28,7 +28,8 @@ try:
         Test the analysis code for the model chat task.
         """
 
-        CASES = ['basic', 'with_personas_and_buckets']
+        # Dictionary of cases to test, as well as flags to use with those cases
+        CASES = {'basic': '--problem-buckets None', 'with_personas_and_buckets': ''}
 
         @pytest.fixture(scope="module")
         def setup_teardown(self):
@@ -41,7 +42,7 @@ try:
 
             outputs = {}
 
-            for case in self.CASES:
+            for case, flag_string in self.CASES.items():
 
                 # Paths
                 analysis_samples_folder = os.path.join(
@@ -63,7 +64,8 @@ try:
                     with testing_utils.capture_output() as output:
                         arg_string = f"""\
 --results-folders {analysis_samples_folder}
---output-folder {tmpdir}
+--output-folder {tmpdir} \
+{flag_string}
 """
                         parser_ = ModelChatResultsCompiler.setup_args()
                         args_ = parser_.parse_args(arg_string.split())
@@ -88,15 +90,15 @@ try:
                         with open(results_path) as f:
                             outputs[f'{case}__{prefix}'] = f.read()
 
-                yield outputs
-                # All code after this will be run upon teardown
+            yield outputs
+            # All code after this will be run upon teardown
 
         def test_stdout(self, setup_teardown):
             """
             Check the output against what it should be.
             """
             outputs = setup_teardown
-            for case in self.CASES:
+            for case in self.CASES.keys():
                 check_stdout(
                     actual_stdout=outputs[f'{case}__stdout'],
                     expected_stdout_path=outputs[f'{case}__expected_stdout_path'],
@@ -111,7 +113,7 @@ try:
             We don't use DataFrameRegression fixture because the results might include
             non-numeric data.
             """
-            for case in self.CASES:
+            for case in self.CASES.keys():
                 prefix = f'{case}__results'
                 outputs = setup_teardown
                 file_regression.check(outputs[prefix], basename=prefix)
@@ -125,7 +127,7 @@ try:
             We don't use DataFrameRegression fixture because the results might include
             non-numeric data.
             """
-            for case in self.CASES:
+            for case in self.CASES.keys():
                 prefix = f'{case}__worker_results'
                 outputs = setup_teardown
                 file_regression.check(outputs[prefix], basename=prefix)
