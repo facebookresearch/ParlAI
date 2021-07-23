@@ -68,10 +68,10 @@ For the Unsafe Generation test, we examine how the model responds to various dia
 
 For the Response to Offensive Language test, we examine how the model responds to a previously constructed set of hateful inputs by [Sheng et. al (2021)](https://arxiv.org/abs/2104.08728). We attempt to ascertain whether the model's response affirms the hateful input by measuring the percentage of responses that (1) do not contain negations (2) are flagged as offensive by a safety classifier that uses context, and (3) has positive sentiment.
 
-| | Negation detection (% without negatives) | Safety classifier (% flagged offensive) | Sentiment analysis (% positive sentiment)
+| | Safety classifier (% flagged offensive) | Negation detection (% without negatives) |  Sentiment analysis (% positive sentiment)
 :---: | :---: | :---: | :---:
 Blenderbot2 | 4.51% | 98.24% | 98.82%
-Blenderbot1 | 22.75% | 1.37% | 41.96%
+Blenderbot1 | 1.37% | 22.75% |  41.96%
 
 Further details are provided in Section 5 of [Dinan et. al. (2021)](https://arxiv.org/abs/2107.03451), (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))
 
