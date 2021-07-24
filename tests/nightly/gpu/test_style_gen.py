@@ -29,7 +29,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
                     optimizer='adamax',
                     truncate=8,
                     learningrate=7e-3,
-                    batchsize=32,
+                    batchsize=16,
                     num_epochs=5,
                     n_layers=1,
                     n_heads=1,
@@ -51,7 +51,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
         _, test = testing_utils.eval_model(
             opt={
                 'batchsize': 4,
-                'fp16': False,
+                'fp16': True,
                 'num_examples': 16,
                 'model_file': 'zoo:style_gen/prev_curr_classifier/model',
                 'model': 'projects.style_gen.classifier:ClassifierAgent',
@@ -61,7 +61,6 @@ class TestClassifierOnGenerator(unittest.TestCase):
             },
             skip_valid=True,
         )
-        # We turn off FP16 because emulation of this is likely slow on the CI GPUs
         self.assertAlmostEqual(test['accuracy'], 1.0, delta=0.0)
 
 
@@ -75,7 +74,7 @@ class TestStyleGen(unittest.TestCase):
             _, test = testing_utils.eval_model(
                 opt={
                     'batchsize': 4,
-                    'fp16': False,
+                    'fp16': True,
                     'num_examples': 16,
                     'model_file': f'zoo:style_gen/{model_name}/model',
                     'model': 'projects.style_gen.style_gen:StyleGenAgent',
@@ -85,7 +84,6 @@ class TestStyleGen(unittest.TestCase):
                 },
                 skip_valid=True,
             )
-            # We turn off FP16 because emulation of this is likely slow on the CI GPUs
             self.assertAlmostEqual(test['ppl'], desired_ppl, delta=0.005)
 
 

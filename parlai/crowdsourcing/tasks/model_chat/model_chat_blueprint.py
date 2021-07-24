@@ -474,7 +474,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         active_model_opts = {
             model: opt
             for model, opt in all_model_opts.items()
-            if self.conversations_needed[model] > 0
+            if self.conversations_needed.get(model, 0) > 0
         }
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=active_model_opts)
 

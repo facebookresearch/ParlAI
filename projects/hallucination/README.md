@@ -29,19 +29,19 @@ Despite showing increasingly human-like conversational abilities, state-of-the-a
 
 You can access the [WoW](https://openreview.net/forum?id=r1l73iRqKm) dataset in ParlAI via the following:
 
-    parlai dd -t wizard_of_wikipedia
+    parlai dd --task wizard_of_wikipedia
 
 ### CMU Document Grounded Conversations (CMU_DoG)
 
 You can access the [CMU_DoG](https://arxiv.org/abs/1809.07358) dataset in ParlAI via the following:
 
-    parlai dd -t cmu_dog
+    parlai dd --task cmu_dog
 
 To use the modified splits as described in the [paper](https://arxiv.org/abs/2104.07567), set the following flags for the seen/unseen splits, respectively:
 
-    parlai dd -t cmu_dog --cmu-dog-split-type seen
+    parlai dd --task cmu_dog --cmu-dog-split-type seen
 
-    parlai dd -t cmu_dog --cmu-dog-split-type unseen --datatype test
+    parlai dd --task cmu_dog --cmu-dog-split-type unseen --datatype test
 
 ## Pre-Trained Models
 
@@ -79,56 +79,60 @@ The following commands demonstrate how to train some of the models above; we int
 
 #### Train a BART-Large RAG-Token model with DPR Retrieval on WoW
 
-    parlai train_model -m rag -t wizard_of_wikipedia \
+    parlai train_model --model rag --task wizard_of_wikipedia \
     --rag-model-type token --rag-retriever-type dpr --dpr-model-file zoo:hallucination/multiset_dpr/hf_bert_base.cp \
-    --generation-model bart -o arch/bart_large \
+    --generation-model bart --init-opt arch/bart_large \
     --batchsize 16 --fp16 True --gradient-clip 0.1 --label-truncate 128 \
     --log-every-n-secs 30 --lr-scheduler reduceonplateau --lr-scheduler-patience 1 \
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
-    -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
+    --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
+    --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
 
 #### Train a T5-Large RAG-Turn Doc-Then-Turn model with DPR Retrieval on WoW
 
-    parlai train_model -m rag -t wizard_of_wikipedia \
+    parlai train_model --model rag --task wizard_of_wikipedia \
     --rag-model-type turn --rag-turn-marginalize doc_then_turn --rag-retriever-type dpr \
     --generation-model t5 --t5-model-arch t5-large \
     --batchsize 8 --fp16 True --gradient-clip 0.1 --label-truncate 128 \
     --log-every-n-secs 30 --lr-scheduler reduceonplateau --lr-scheduler-patience 1 \
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
-    -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
+    --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
+    --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
 
 #### Train a BlenderBot-2.7B RAG Sequence Model with DPR-Poly Retrieval on WoW
 
 For the BlenderBot model, we add extra positions to the encoder, so that we can retain additional information from the retrieved documents.
 
-    parlai train_model -m rag -t wizard_of_wikipedia \
+    parlai train_model --model rag --task wizard_of_wikipedia \
     --rag-model-type turn --rag-turn-marginalize doc_then_turn --rag-retriever-type dpr \
-    --generation-model transformer/generator -o arch/blenderbot_3B \
+    --generation-model transformer/generator --init-opt arch/blenderbot_3B \
     --n-extra-positions 128 \
     --init-model zoo:blender/blender_3B/model --dict-file zoo:blender/blender_3B/model.dict \
     --batchsize 8 --fp16 True --gradient-clip 0.1 \
     --log-every-n-secs 30 --lr-scheduler reduceonplateau --lr-scheduler-patience 1 \
     --model-parallel True --optimizer adam \
-    -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
+    --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
+    --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
 
 #### Train a BART-Large FiD Model, with a DPR Retriever initialized from a DPR Model trained with RAG.
 
 This is the **BART FiD RAG** model specified above.
 
-    parlai train_model -m fid -t wizard_of_wikipedia \
+    parlai train_model --model fid --task wizard_of_wikipedia \
     --rag-retriever-type dpr --query-model bert_from_parlai_rag \
     --dpr-model-file zoo:hallucination/bart_rag_token/model \
-    --generation-model bart -o arch/bart_large \
+    --generation-model bart --init-opt arch/bart_large \
     --batchsize 16 --fp16 True --gradient-clip 0.1 --label-truncate 128 \
     --log-every-n-secs 30 --lr-scheduler reduceonplateau --lr-scheduler-patience 1 \
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
-    -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
+    --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
+    --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
 
 #### Train a T5-Base FiD Model, using a smaller index for debug purposes.
 
 We provide a smaller FAISS index comprising ~3k documents, which encompasses all topics appearing in the Wizard of Wikipedia dataset.
 
-    parlai train_model -m fid -t wizard_of_wikipedia \
+    parlai train_model --model fid --task wizard_of_wikipedia \
     --rag-retriever-type dpr --query-model bert_from_parlai_rag \
     --dpr-model-file zoo:hallucination/bart_rag_token/model \
     --retriever-small-index exact \
@@ -136,4 +140,5 @@ We provide a smaller FAISS index comprising ~3k documents, which encompasses all
     --batchsize 16 --fp16 True --gradient-clip 0.1 --label-truncate 128 \
     --log-every-n-secs 30 --lr-scheduler reduceonplateau --lr-scheduler-patience 1 \
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
-    -lr 1e-05 -vmm min -veps 0.25 -vme 1000 -vmt ppl -vp 5 \
+    --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
+    --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
