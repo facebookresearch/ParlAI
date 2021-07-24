@@ -15,7 +15,11 @@ from parlai.core.message import Message
 
 
 def load_openers(opt) -> Optional[List[str]]:
-    base_task = opt['task'].split(':')[0]
+    if opt['task'].startswith('internal:') or opt['task'].startswith('fb:'):
+        base_task = opt['task']
+    else:
+        base_task = opt['task'].split(':')[0]
+
     if base_task == 'self_chat':
         # TODO(#2284): Load default openers from s3
         return None

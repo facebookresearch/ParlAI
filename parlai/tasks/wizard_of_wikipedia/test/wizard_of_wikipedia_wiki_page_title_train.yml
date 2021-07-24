@@ -1,0 +1,48 @@
+acts:
+- - episode_done: true
+    id: WikiPageTitleTeacher
+    labels:
+    - Science fiction film
+    text: 'I think science fiction is an amazing genre for anything. Future science,
+      technology, time travel, FTL travel, they''re all such interesting concepts.
+
+      I''m a huge fan of science fiction myself! '
+- - episode_done: true
+    id: WikiPageTitleTeacher
+    labels:
+    - Time travel in fiction
+    text: "I think science fiction is an amazing genre for anything. Future science,\
+      \ technology, time travel, FTL travel, they're all such interesting concepts.\n\
+      I'm a huge fan of science fiction myself! \nAwesome! I really love how sci-fi\
+      \ storytellers focus on political/social/philosophical issues that would still\
+      \ be around even in the future. Makes them relatable.\nI agree. One of my favorite\
+      \ forms of science fiction is anything related to time travel! I find it fascinating."
+- - episode_done: true
+    id: WikiPageTitleTeacher
+    labels:
+    - Science fiction
+    text: "I think science fiction is an amazing genre for anything. Future science,\
+      \ technology, time travel, FTL travel, they're all such interesting concepts.\n\
+      I'm a huge fan of science fiction myself! \nAwesome! I really love how sci-fi\
+      \ storytellers focus on political/social/philosophical issues that would still\
+      \ be around even in the future. Makes them relatable.\nI agree. One of my favorite\
+      \ forms of science fiction is anything related to time travel! I find it fascinating.\n\
+      It's not quite sci-fi, but my favorite version of time travel is in Harry Potter\
+      \ and the Prisoner of Azkaban. Breaks zero logical rules.\nAnd that's difficult\
+      \ to do when dealing with time travel. I actually haven't seen the latest Harry\
+      \ Potter movies. Guess it's time to check them out!"
+- - episode_done: true
+    id: WikiPageTitleTeacher
+    labels:
+    - Internet access
+    text: 'Can you imagine the world without internet access? '
+- - episode_done: true
+    id: WikiPageTitleTeacher
+    labels:
+    - Internet access
+    text: "Can you imagine the world without internet access? \nNo I could not! I\
+      \ couldn't imagine living when internet access was rare and very few people\
+      \ had it!\nOh me either! It seems like such a long time ago. I wonder when Internet\
+      \ was first created?"
+num_episodes: 60797
+num_examples: 60797
