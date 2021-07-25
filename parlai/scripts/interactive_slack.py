@@ -46,6 +46,16 @@ def setup_slack_args(shared):
 
 @RTMClient.run_on(event='message')
 async def rtm_handler(rtm_client, web_client, data, **kwargs):
+    """
+    Handles new chat messages from Slack.
+    Does the following to let the user know immediately that the agent is working since it takes a while
+        Adds the :eyes: reaction to let the user
+        Sets the status of the bot to typing 
+    Runs the agent on the given text
+    Returns the model_response text to the channel where the message came from.
+    Removes the :eyes: reaction
+    Only works on user messages, not messages from other bots
+    """
     global SHARED
     if 'bot_profile' in data:
         # Dont respond to bot messages (eg the one this app generates)
