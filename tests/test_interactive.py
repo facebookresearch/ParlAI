@@ -124,6 +124,37 @@ class TestInteractiveWeb(unittest.TestCase):
         iweb.shutdown()
 
 
+class TestInteractiveSlack(unittest.TestCase):
+    @mock.patch('slack.RTMClient')
+    def setUp(self, mocked_rtm_client):
+        from slack import RTMClient
+        from tests.slack_mock_web_api_server import setup_mock_web_api_server
+        setup_mock_web_api_server(self)
+        self.rtm = RTMClient(
+            token='xoxp-...',
+            base_url='http://localhost:8888',
+            auto_reconnect_enabled=False,
+        )
+
+    @mock.patch('slack.RTMClient')
+    def test_slack(self, mocked_rtm_client):
+        import parlai.scripts.interactive_slack as slack
+
+        slack.InteractiveSlack.setup_args()
+        mocked_rtm_client.base_url = 'http://localhost:8888'
+        mained = slack.InteractiveSlack.main(model='repeat_query', token='xoxb-...')
+        mocked_rtm_client.assert_called_with(token='xoxb-...')
+        parser = slack.setup_slack_args({})
+        self.assertSetEqual(set(slack.SHARED.keys()), {'opt', 'agent', 'world', 'client'})
+        calls = slack.SHARED['client'].call_args_list
+        self.assertEqual(calls, [])
+        slack.rtm_handler(mocked_rtm_client)
+
+    def tearDown(self):
+        from tests.slack_mock_web_api_server import cleanup_mock_web_api_server
+        cleanup_mock_web_api_server(self)
+
+
 class TestProfileInteractive(unittest.TestCase):
     def test_profile_interactive(self):
         from parlai.scripts.profile_interactive import ProfileInteractive
