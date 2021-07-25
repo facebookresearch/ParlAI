@@ -253,7 +253,8 @@ class TorchScriptGreedySearch(nn.Module):
         return self.postprocess_output_generations(label=label)
 
     def postprocess_output_generations(self, label: str) -> str:
-        """Method to process the model output
+        """
+        Post-process the model output.
         Returns the model output by default, override to add custom logic
         """
         return label
