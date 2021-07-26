@@ -16,12 +16,16 @@ try:
     from fairscale.nn.wrap.auto_wrap import wrap
     from fairscale.nn.wrap.auto_wrap import enable_wrap as fairscale_enable_wrap
     from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
+    from fairscale.nn import checkpoint_wrapper
 
     FSDP_AVAILABLE = True
 except ImportError:
     FSDP_AVAILABLE = False
 
     def wrap(module, **kwargs):
+        return module
+
+    def checkpoint_wrapper(module):
         return module
 
 
@@ -104,8 +108,13 @@ def should_sync_gradnorm(opt):
     )
 
 
-def fsdp_wrap(module):
+def fsdp_wrap(module, force_wrap: bool = False):
     """
     Helper function for wrapping the outermost root module.
+
+    :param force_wrap:
+        Indicates we should make a forceful wrap. Useful to combine with
+        checkpointing.
     """
-    return wrap(module)
+    kwargs = {'min_num_params': 0} if force_wrap else {}
+    return wrap(module, **kwargs)

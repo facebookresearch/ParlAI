@@ -25,7 +25,7 @@ from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
-from parlai.utils.fsdp import fsdp_wrap
+from parlai.utils.fsdp import fsdp_wrap, checkpoint_wrapper
 
 
 @swappable(self_attention=MultiHeadAttention, feedforward=TransformerFFN)
@@ -236,7 +236,10 @@ class TransformerEncoder(nn.Module):
                 variant=self.variant,
                 activation=self.activation,
             )
-            layers.append(fsdp_wrap(layer))
+            checkpoint = bool(self.opt.get('checkpoint_activations'))
+            if checkpoint:
+                layer = checkpoint_wrapper(layer)
+            layers.append(fsdp_wrap(layer, force_wrap=checkpoint))
         return layers
 
     def forward_embedding(
