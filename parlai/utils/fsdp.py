@@ -104,13 +104,8 @@ def should_sync_gradnorm(opt):
     )
 
 
-def fsdp_wrap(module, force_wrap: bool = False):
+def fsdp_wrap(module):
     """
     Helper function for wrapping the outermost root module.
-
-    :param force_wrap:
-        Indicates we should make a forceful wrap. Useful to combine with
-        checkpointing.
     """
-    kwargs = {'min_num_params': 0} if force_wrap else {}
-    return wrap(module, **kwargs)
+    return wrap(module)

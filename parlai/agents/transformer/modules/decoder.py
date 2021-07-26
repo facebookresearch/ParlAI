@@ -287,8 +287,7 @@ class TransformerDecoder(nn.Module):
                 activation=self.activation,
                 variant=self.variant,
             )
-            checkpoint = bool(self.opt.get('checkpoint_activations'))
-            if checkpoint:
+            if self.opt.get('checkpoint_activations'):
                 layer = checkpoint_wrapper(layer)
             layers.append(fsdp_wrap(layer))  # type: ignore
         return layers

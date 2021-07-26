@@ -237,10 +237,9 @@ class TransformerEncoder(nn.Module):
                 variant=self.variant,
                 activation=self.activation,
             )
-            checkpoint = bool(self.opt.get('checkpoint_activations'))
-            if checkpoint:
+            if self.opt.get('checkpoint_activations'):
                 layer = checkpoint_wrapper(layer)
-            layers.append(fsdp_wrap(layer, force_wrap=checkpoint))
+            layers.append(fsdp_wrap(layer))
         return layers
 
     def forward_embedding(
