@@ -16,16 +16,12 @@ try:
     from fairscale.nn.wrap.auto_wrap import wrap
     from fairscale.nn.wrap.auto_wrap import enable_wrap as fairscale_enable_wrap
     from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
-    from fairscale.nn import checkpoint_wrapper
 
     FSDP_AVAILABLE = True
 except ImportError:
     FSDP_AVAILABLE = False
 
     def wrap(module, **kwargs):
-        return module
-
-    def checkpoint_wrapper(module):
         return module
 
 

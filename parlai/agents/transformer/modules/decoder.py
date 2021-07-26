@@ -25,7 +25,8 @@ from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
-from parlai.utils.fsdp import fsdp_wrap, checkpoint_wrapper
+from parlai.utils.fsdp import fsdp_wrap
+from parlai.nn.checkpoint import checkpoint_wrapper
 
 
 @swappable(
