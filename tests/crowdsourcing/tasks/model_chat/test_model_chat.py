@@ -35,6 +35,7 @@ AGENT_TASK_DATA = [
                 "bucket_2": True,
                 "bucket_3": False,
                 "bucket_4": True,
+                "none_all_good": False,
             }
         },
     )
@@ -50,6 +51,7 @@ FORM_TASK_DATA = (
             "bucket_2": True,
             "bucket_3": False,
             "bucket_4": True,
+            "none_all_good": False,
         },
     },
 )
@@ -82,6 +84,7 @@ try:
         def tearDown(self) -> None:
             self._teardown()
 
+        @testing_utils.retry(ntries=3)
         def test_base_task(self):
 
             with testing_utils.tempdir() as tmpdir:
@@ -106,7 +109,7 @@ fixed_response: >
                     f.write(model_opt_contents)
 
                 # Set up the config and database
-                num_blender_convos = 10
+                num_convos = 10
                 args = ModelChatBlueprintArgs()
                 overrides = [
                     f'+mephisto.blueprint.{key}={val}'
@@ -121,12 +124,12 @@ fixed_response: >
                     ]
                 ] + [
                     'mephisto.blueprint.annotations_config_path=${task_dir}/task_config/annotations_config.json',
-                    f'mephisto.blueprint.conversations_needed_string=\"fixed_response:{num_blender_convos:d}\"',
+                    f'mephisto.blueprint.conversations_needed_string=\"fixed_response:{num_convos:d}\"',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
                     '+mephisto.blueprint.max_concurrent_responses=1',
                     f'mephisto.blueprint.model_opt_path={model_opt_path}',
-                    f'+mephisto.blueprint.num_conversations={num_blender_convos:d}',
+                    f'+mephisto.blueprint.num_conversations={num_convos:d}',
                     '+mephisto.blueprint.onboard_task_data_path=${task_dir}/task_config/onboard_task_data.json',
                     '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
                 ]

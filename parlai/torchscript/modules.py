@@ -8,11 +8,10 @@ from collections import defaultdict
 from typing import List, Dict, Optional, Tuple
 
 import torch.jit
-from torch import nn as nn
-
 from parlai.core.dict import DictionaryAgent
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.bpe import Gpt2BpeHelper
+from torch import nn as nn
 
 
 class TorchScriptGreedySearch(nn.Module):
@@ -34,13 +33,13 @@ class TorchScriptGreedySearch(nn.Module):
         "dict_lower": False,
         "dict_textfields": "text,labels",
         "dict_loaded": True,
-        'bpe_debug': False,
+        "bpe_debug": False,
     }
 
     def __init__(self, agent: TorchAgent):
         super().__init__()
 
-        self.is_bart = agent.opt['model'] == 'bart'
+        self.is_bart = agent.opt["model"] == "bart"
 
         # Dictionary/tokenization setup
         for key, val in self.CAIRAOKE_DICT_PARAMS.items():
@@ -51,10 +50,10 @@ class TorchScriptGreedySearch(nn.Module):
         orig_bpe: Gpt2BpeHelper = orig_dict.bpe
         assert all(len(key) == 2 for key in orig_bpe.bpe_ranks.keys())
         assert not any(
-            i for key in orig_bpe.bpe_ranks.keys() for i in key if '\n' in i
+            i for key in orig_bpe.bpe_ranks.keys() for i in key if "\n" in i
         ), "We need to temporarily merge the bpe_ranks dict's keys with a newline character in order to use it as a TorchScript arg, but at least one of the dict's keys contains a newline character already!"
         fused_key_bpe_ranks = {
-            '\n'.join(key): float(val) for key, val in orig_bpe.bpe_ranks.items()
+            "\n".join(key): float(val) for key, val in orig_bpe.bpe_ranks.items()
         }
         # Cast the values as floats to be able to compare to float('inf') when doing BPE
         # splitting
@@ -66,7 +65,7 @@ class TorchScriptGreedySearch(nn.Module):
             freq=orig_dict.freq,
             tok2ind=orig_dict.tok2ind,
             ind2tok=orig_dict.ind2tok,
-            bpe_add_prefix_space=agent.opt['bpe_add_prefix_space'],
+            bpe_add_prefix_space=agent.opt["bpe_add_prefix_space"],
             bpe_encoder=orig_bpe.encoder,
             bpe_byte_encoder=orig_bpe.byte_encoder,
             fused_key_bpe_ranks=fused_key_bpe_ranks,
@@ -75,12 +74,12 @@ class TorchScriptGreedySearch(nn.Module):
 
         # History tracking and start/end tokens
         self.delimiter_tok = agent.history.delimiter_tok
-        self.history_size = agent.opt['history_size']
-        if agent.opt.get('history_add_global_end_token', None) is not None:
+        self.history_size = agent.opt["history_size"]
+        if agent.opt.get("history_add_global_end_token", None) is not None:
             self.global_end_token = agent.dict[agent.dict.end_token]
         else:
             self.global_end_token = None
-        self.text_truncate = agent.opt.get('text_truncate') or agent.opt['truncate']
+        self.text_truncate = agent.opt.get("text_truncate") or agent.opt["truncate"]
         self.text_truncate = self.text_truncate if self.text_truncate >= 0 else None
 
         self.start_idx = agent.model.START_IDX
@@ -126,8 +125,8 @@ class TorchScriptGreedySearch(nn.Module):
         self.partially_traced_model = torch.jit.trace_module(
             wrapped_model,
             {
-                'output': (latent[:, -1:, :]),
-                'reorder_decoder_incremental_state': (
+                "output": (latent[:, -1:, :]),
+                "reorder_decoder_incremental_state": (
                     initial_incr_state,
                     torch.tensor([0], dtype=torch.long, device=sample_tokens.device),
                 ),
@@ -172,7 +171,8 @@ class TorchScriptGreedySearch(nn.Module):
 
         # Vectorize all lines of context
         history_vecs: List[List[int]] = []
-        context_lines = context.split('\n')
+        context_lines = context.split("\n")
+        context_lines = self.preprocess_context(context_lines)
         if self.history_size > 0:
             context_lines = context_lines[-self.history_size :]
         for line in context_lines:
@@ -250,7 +250,17 @@ class TorchScriptGreedySearch(nn.Module):
         generation_tokens: List[int] = generations[0].tolist()
         label = self._v2t(generation_tokens)
 
+        return self.postprocess_output_generations(label=label)
+
+    def postprocess_output_generations(self, label: str) -> str:
+        """
+        Post-process the model output.
+        Returns the model output by default, override to add custom logic
+        """
         return label
+
+    def preprocess_context(self, context_lines: List[str]) -> List[str]:
+        return context_lines
 
 
 class BaseIncrStateFlattener(nn.Module):
@@ -286,7 +296,7 @@ class BaseIncrStateFlattener(nn.Module):
         """
         structured_incr_state = defaultdict(lambda: defaultdict(dict))
         for key, state in flat_incr_state.items():
-            layer_idx_str, attn_type, state_type = key.split('__')
+            layer_idx_str, attn_type, state_type = key.split("__")
             structured_incr_state[int(layer_idx_str)][attn_type][state_type] = state
         return dict({k: dict(v) for k, v in structured_incr_state.items()})
         # Turn the nested defaultdicts back into regular dicts
@@ -304,7 +314,7 @@ class BaseIncrStateFlattener(nn.Module):
         for layer_idx, dict1 in structured_incr_state.items():
             for attn_type, dict2 in dict1.items():
                 for state_type, state in dict2.items():
-                    key = f'{layer_idx:d}__{attn_type}__{state_type}'
+                    key = f"{layer_idx:d}__{attn_type}__{state_type}"
                     flat_incr_state[key] = state
         return flat_incr_state
 
@@ -367,7 +377,7 @@ class ScriptableGpt2BpeHelper(object):
         """
         Split tokens in a manner that replicates parlai.utils.bpe.Gpt2BpeHelper.
         """
-        contraction_endings = ['s', 't', 're', 've', 'm', 'll', 'd']
+        contraction_endings = ["s", "t", "re", "ve", "m", "ll", "d"]
 
         tokens: List[str] = []
         idx = 0
@@ -375,7 +385,7 @@ class ScriptableGpt2BpeHelper(object):
         while idx < len(text):
             num_passes += 1
             if num_passes > 10000:
-                return ['*** Infinite loop in ScriptableGpt2BpeHelper.findall()! ***']
+                return ["*** Infinite loop in ScriptableGpt2BpeHelper.findall()! ***"]
             if text[idx] == "'":
                 # Capture contradiction suffixes
                 captured_suffix = False
@@ -388,10 +398,10 @@ class ScriptableGpt2BpeHelper(object):
                 if captured_suffix:
                     continue
             if not text[idx].isspace() or (
-                text[idx] == ' ' and idx + 1 < len(text) and not text[idx + 1].isspace()
+                text[idx] == " " and idx + 1 < len(text) and not text[idx + 1].isspace()
             ):
                 # Capture runs of one type of character
-                if text[idx] == ' ':
+                if text[idx] == " ":
                     last_matching_idx = idx + 1
                 else:
                     last_matching_idx = idx
@@ -487,7 +497,7 @@ class ScriptableGpt2BpeHelper(object):
             A list of tokens
         """
         if self.add_prefix_space:
-            text = f' {text}'
+            text = f" {text}"
 
         # constants for readability
         FINAL = 1
@@ -520,7 +530,7 @@ class ScriptableGpt2BpeHelper(object):
                 output.append(piece)
             else:
                 output += self.helper_encode(piece)
-        text = ''.join(output)
+        text = "".join(output)
 
         return output
 
@@ -559,14 +569,14 @@ class ScriptableGpt2BpeHelper(object):
             return word
 
         while True:
-            min_rank = self.bpe_ranks.get('\n'.join(pairs[0]), float('inf'))
+            min_rank = self.bpe_ranks.get("\n".join(pairs[0]), float("inf"))
             bigram = pairs[0]
             for pair in pairs[1:]:
-                current_rank = self.bpe_ranks.get('\n'.join(pair), float('inf'))
+                current_rank = self.bpe_ranks.get("\n".join(pair), float("inf"))
                 if current_rank < min_rank:
                     min_rank = current_rank
                     bigram = pair
-            if '\n'.join(bigram) not in self.bpe_ranks:
+            if "\n".join(bigram) not in self.bpe_ranks:
                 break
             first, second = bigram
             new_word: List[str] = []
@@ -640,10 +650,10 @@ class ScriptableGpt2BpeHelper(object):
         if len(accum) > 0:
             output.append(self.helper_decode(accum))
 
-        text = ''.join(output)
+        text = "".join(output)
         if self.add_prefix_space:
-            assert text.startswith(' ')
-            text = text.lstrip(' ')
+            assert text.startswith(" ")
+            text = text.lstrip(" ")
         return text
 
     def helper_decode(self, tokens: List[str]) -> str:
@@ -672,7 +682,7 @@ class ScriptableGpt2BpeHelper(object):
         decoded_chars: List[str] = []
         for char in chars:
             decoded_chars.append(chr(self.byte_decoder[char]))
-        return ''.join(decoded_chars)
+        return "".join(decoded_chars)
 
     def utf8_chars(self, s: str) -> List[str]:
         """

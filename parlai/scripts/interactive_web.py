@@ -195,11 +195,10 @@ class MyHandler(BaseHTTPRequestHandler):
             model_response = self._interactive_running(
                 SHARED.get('opt'), body.decode('utf-8')
             )
-
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            json_str = json.dumps(model_response)
+            json_str = json.dumps(model_response.json_safe_payload())
             self.wfile.write(bytes(json_str, 'utf-8'))
         elif self.path == '/reset':
             self.send_response(200)

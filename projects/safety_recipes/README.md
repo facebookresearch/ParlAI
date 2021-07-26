@@ -34,7 +34,7 @@ parlai display_data -t bot_adversarial_dialogue:HumanNonadvSafetyEvaluation
 <p align="center"><img width="60%" src="BAD_safety_diagram.png" /></p>
 
 
-Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083), used as baselines, can be found [here](parl.ai/projects/dialogue_safety).
+Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083), used as baselines, can be found [here](https://parl.ai/projects/dialogue_safety).
 
 
 We also release the validation set for the sensitive topics detection as described in the paper. The data can be viewed with the following command:
@@ -85,7 +85,7 @@ See [Mephisto](https://github.com/facebookresearch/Mephisto) to install Mephisto
 
 To enable onboarding task, please edit the [onboarding task](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/onboarding.json). 
 
-To create your own chat logs[here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl)
+To create your own chat logs [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl)
 
 1) The following command will generate original chat logs of Blender 90M model responding to Bot Adversarial Task testset for human safety evaluation and write the 180 examples to `/tmp/world_logs.jsonl` in ParlAI format:
 ```
@@ -95,7 +95,7 @@ parlai em -t bot_adversarial_dialogue:HumanSafetyEvaluation --flatten-dialogue T
 ```
 python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path /tmp/world_logs.jsonl --eval-logs-dir projects/safety_recipes/human_safety_evaluation/task_config/
 ```
-Runing the format script above will also automatically generate the `annotation_indices.jsonl` specifying turn indices per conversation to annotate for safety similar to [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl). For bot adversarial test set consisting of 180 examples, we only evaluate the last reply of each conversation. 
+Running the format script above will also automatically generate the `annotation_indices.jsonl` specifying turn indices per conversation to annotate for safety similar to [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl). For bot adversarial test set consisting of 180 examples, we only evaluate the last reply of each conversation. 
 
 
 

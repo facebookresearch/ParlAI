@@ -8,52 +8,59 @@ import torch.cuda
 import unittest
 
 import parlai.utils.testing as testing_utils
-from projects.blenderbot2.agents.blenderbot2 import (
-    ZOO_MEMORY_DECODER,
-    ZOO_QUERY_GENERATOR,
-)
-from projects.blenderbot2.agents.sub_modules import KnowledgeAccessMethod
+
+try:
+    # blenderbot2 imports `transformer` and crashes the CPU tests.
+    # These CPU tests will be skipped anyway with the decorators on each test.
+    from projects.blenderbot2.agents.sub_modules import KnowledgeAccessMethod
+    from projects.blenderbot2.agents.blenderbot2 import (
+        ZOO_MEMORY_DECODER,
+        ZOO_QUERY_GENERATOR,
+    )
+
+    TRANSFORMER_INSTALLED = True
+except ImportError:
+    TRANSFORMER_INSTALLED = False
 
 LOCAL = True
 
-SEARCH_QUERY_MODEL = ZOO_MEMORY_DECODER
-PERSONA_SUMMARY_MODEL = ZOO_QUERY_GENERATOR
-ZOO_BB2 = 'zoo:blenderbot2/blenderbot2_400M/model'
-ZOO_BB2_3B = 'zoo:blenderbot2/blenderbot2_3B/model'
-SEARCH_SERVER = '<SERVER_API>'
-common_opt = {
-    'model': 'projects.blenderbot2.agents.blenderbot2:BlenderBot2RagAgent',
-    # rag args
-    'init_opt': 'arch/bart_large',
-    'generation_model': 'bart',
-    'retriever_debug_index': 'compressed',
-    'label_truncate': 128,
-    'text_truncate': 512,
-    'batchsize': 4,
-    'fp16': True,
-    'model_parallel': True,
-    # train args
-    'task': 'convai2,wizard_of_wikipedia',
-    'num_examples': 8,
-}
+if TRANSFORMER_INSTALLED:
+    SEARCH_QUERY_MODEL = ZOO_MEMORY_DECODER
+    PERSONA_SUMMARY_MODEL = ZOO_QUERY_GENERATOR
+    ZOO_BB2 = 'zoo:blenderbot2/blenderbot2_400M/model'
+    ZOO_BB2_3B = 'zoo:blenderbot2/blenderbot2_3B/model'
+    SEARCH_SERVER = '<SERVER_API>'
+    common_opt = {
+        'model': 'projects.blenderbot2.agents.blenderbot2:BlenderBot2RagAgent',
+        # rag args
+        'init_opt': 'arch/bart_large',
+        'generation_model': 'bart',
+        'retriever_debug_index': 'compressed',
+        'label_truncate': 128,
+        'text_truncate': 512,
+        'batchsize': 4,
+        'fp16': True,
+        'model_parallel': True,
+        # train args
+        'task': 'convai2,wizard_of_wikipedia',
+        'num_examples': 8,
+    }
 
+    def _test_bb2_rag(retrieval_method: KnowledgeAccessMethod, **kwargs):
+        opt = copy.deepcopy(common_opt)
+        opt['knowledge_access_method'] = retrieval_method.value
+        opt.update(dict(kwargs))
+        print(' '.join([f'--{k} {v}' for k, v in opt.items()]))
+        testing_utils.eval_model(opt, skip_test=True)
+        torch.cuda.empty_cache()
 
-def _test_bb2_rag(retrieval_method: KnowledgeAccessMethod, **kwargs):
-    opt = copy.deepcopy(common_opt)
-    opt['knowledge_access_method'] = retrieval_method.value
-    opt.update(dict(kwargs))
-    print(' '.join([f'--{k} {v}' for k, v in opt.items()]))
-    testing_utils.eval_model(opt, skip_test=True)
-    torch.cuda.empty_cache()
-
-
-def _test_bb2_fid(retrieval_method: KnowledgeAccessMethod, **kwargs):
-    opt = copy.deepcopy(common_opt)
-    opt['model'] = 'projects.blenderbot2.agents.blenderbot2:BlenderBot2FidAgent'
-    opt['knowledge_access_method'] = retrieval_method.value
-    opt.update(dict(kwargs))
-    testing_utils.eval_model(opt, skip_test=True)
-    torch.cuda.empty_cache()
+    def _test_bb2_fid(retrieval_method: KnowledgeAccessMethod, **kwargs):
+        opt = copy.deepcopy(common_opt)
+        opt['model'] = 'projects.blenderbot2.agents.blenderbot2:BlenderBot2FidAgent'
+        opt['knowledge_access_method'] = retrieval_method.value
+        opt.update(dict(kwargs))
+        testing_utils.eval_model(opt, skip_test=True)
+        torch.cuda.empty_cache()
 
 
 @testing_utils.skipUnlessGPU
@@ -262,6 +269,7 @@ class TestBB2MemoryDecoder(unittest.TestCase):
         )
 
 
+@unittest.skipUnless(TRANSFORMER_INSTALLED, "Needs transformer, not installed.")
 class TestBB2ZooModel(unittest.TestCase):
     """
     Test Zoo Model.

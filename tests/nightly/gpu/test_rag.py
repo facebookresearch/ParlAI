@@ -53,6 +53,7 @@ test_opt = {
     'n_heads': 2,
     'embedding_size': 32,
     'ffn_size': 128,
+    'n_positions': 1024,
     'dict_tokenizer': 're',
     'generation_model': 'transformer/generator',
 }
@@ -298,6 +299,12 @@ class TestOtherOptions(unittest.TestCase):
         opt = copy.deepcopy(test_opt)
         opt['rag_model_type'] = 'token'
         opt['n_extra_positions'] = 128
+        testing_utils.eval_model(opt, skip_test=True)
+
+    def test_resize_embs(self):
+        opt = copy.deepcopy(test_opt)
+        opt['rag_model_type'] = 'token'
+        opt['special_tok_lst'] = '__hello__,__goodbye__'
         testing_utils.eval_model(opt, skip_test=True)
 
 
