@@ -44,6 +44,7 @@ class AbstractCrowdsourcingTest:
         torch.manual_seed(0)
 
         self.operator = None
+        self.server = None
 
     def _teardown(self):
         """
@@ -54,6 +55,9 @@ class AbstractCrowdsourcingTest:
 
         if self.operator is not None:
             self.operator.force_shutdown()
+
+        if self.server is not None:
+            self.server.shutdown_mock()
 
     def _set_up_config(
         self,
