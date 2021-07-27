@@ -1198,6 +1198,8 @@ class DynamicBatchWorld(World):
         self.acts = [[self._task_acts[i] for i in batch], acts]
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
+            # broadcast to the subworld
+            self.worlds[i].acts = [self._task_acts[i], act]
             # we need to make sure that the teachers saw the result
             self.worlds[i].get_task_agent().observe(act)
             # and that the agent copies saw their own voice
