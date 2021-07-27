@@ -79,7 +79,7 @@ class WorldLogger:
             if not isinstance(act, Message):
                 act = Message(act)
             if act.is_padding():
-                continue
+                break
             if not self.keep_all:
                 msg = {f: act[f] for f in self.keep_fields if f in act}
             else:
