@@ -98,7 +98,7 @@ The default RAG parameters use the `zoo:hallucination/wiki_passages/psgs_w100.ts
 
 ### 1a. [**Recommended**] Obtain/Choose a (Pre-trained) DPR Model
 
-The RAG model works **really well** with DPR models as the backbone retrievers; check out the [DPR repository](https://github.com/facebookresearch/DPR) for some pre-trained DPR models (or, train your own!).
+The RAG model works **really well** with DPR models as the backbone retrievers; check out the [DPR repository](https://github.com/facebookresearch/DPR) for some pre-trained DPR models (or, train your own!). Alternatively, you can specify a RAG or FiD model with DPR weights (perhaps, e.g., one from the ParlAI model zoo, such as `zoo:hallucination/bart_rag_token/model`).
 
 ### 1b. Train your own Dropout Poly-encoder
 
@@ -115,12 +115,12 @@ Check `/path/to/ParlAI/data/models/hallucination/wiki_passages/psgs_w100.tsv` fo
 Then, you can use the [`generate_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/generate_dense_embeddings.py) script to run the following command:
 
 ```bash
-python generate_dense_embeddings.py -mf /path/to/dpr/model --dpr-model True \
+python generate_dense_embeddings.py --model-file /path/to/dpr/model --dpr-model True \
 --passages-file /path/to/passages --outfile /path/to/saved/embeddings \
 --shard-id <shard_id> --num-shards <num_shards> -bs <batchsize>
 ```
 
-The `--dpr-model True` flag signifies that the model file you are providing is a DPR model; if you use a Dropout Poly-encoder, set this to `False`. The script will generate embeddings with the DPR model for shard `<shard_id>` of the data, and save two files:
+If the provided `--model-file` is either a path to a DPR model or a path to a ParlAI RAG/FiD model, specify `--dpr-model True` so that the script can appropriately extract the DPR weights; if you use a Dropout Poly-encoder, set `--dpr-model` to `False`. The script will generate embeddings with the DPR model for shard `<shard_id>` of the data, and save two files:
 
 - `/path/to/saved/embeddings_<shard_id>`: The concatenated tensor of embeddings
 - `/path/to/saved/ids_<shard_id>`: The list of document ids that corresponds to these embeddings.
