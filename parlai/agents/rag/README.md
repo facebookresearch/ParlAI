@@ -155,7 +155,7 @@ python index_dense_embeddings.py --retriever-embedding-size 768  \
 --embeddings-dir /tmp/wiki_passage_embeddings/ --embeddings-name wiki_passages
 ```
 
-Note the default index factory setting is `IVF4096_HNSW128,PQ128`, if you are processing small files, you may encounter errors such as `Error: 'nx >= k' failed`, then you need to set `--compressed-indexer-factory` to other indexes in the [index factory in FAISS](https://github.com/facebookresearch/faiss/wiki/The-index-factory)) such as `HNSW32`.
+Note the default index factory setting is `IVF4096_HNSW128,PQ128`, if you are processing small files, you may encounter errors such as `Error: 'nx >= k' failed`, then you need to set `--compressed-indexer-factory` to other indexes in the [index factory in FAISS](https://github.com/facebookresearch/faiss/wiki/The-index-factory) such as `HNSW32`.
 
 ## Directory Structure / Custom Components
 
