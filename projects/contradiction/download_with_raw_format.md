@@ -1,6 +1,6 @@
 ## Directly Download Raw Data
 
-The dataset (**DECODE**) can be download in [this_link](https://sharenlpfile-01.s3.amazonaws.com/data/decode_v0.1.zip).
+The dataset (**DECODE**) can be download in [this_link](http://parl.ai/downloads/decode/decode_v0.1.zip).
 As described in the paper, **DECODE** includes 6 groups of dialogues: *Train*, *Dev*, *Test*, *Human-Bot*, *A2T*, *RCT*.
 
 | Group Name    | Count         | Description  |
