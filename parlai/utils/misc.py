@@ -645,8 +645,9 @@ def str_to_msg(txt, ignore_fields=''):
 
     def tolist(txt):
         vals = txt.split('|')
-        for v in vals:
+        for i, v in enumerate(vals):
             v = tostr(v)
+            vals[i] = v
         return vals
 
     def convert(key, value):
