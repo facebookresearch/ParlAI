@@ -129,6 +129,7 @@ class TestInteractiveSlack(unittest.TestCase):
     def setUp(self, mocked_rtm_client):
         from slack import RTMClient
         from tests.slack_mock_web_api_server import setup_mock_web_api_server
+
         setup_mock_web_api_server(self)
         self.rtm = RTMClient(
             token='xoxp-...',
@@ -145,13 +146,16 @@ class TestInteractiveSlack(unittest.TestCase):
         mained = slack.InteractiveSlack.main(model='repeat_query', token='xoxb-...')
         mocked_rtm_client.assert_called_with(token='xoxb-...')
         parser = slack.setup_slack_args({})
-        self.assertSetEqual(set(slack.SHARED.keys()), {'opt', 'agent', 'world', 'client'})
+        self.assertSetEqual(
+            set(slack.SHARED.keys()), {'opt', 'agent', 'world', 'client'}
+        )
         calls = slack.SHARED['client'].call_args_list
         self.assertEqual(calls, [])
         slack.rtm_handler(mocked_rtm_client)
 
     def tearDown(self):
         from tests.slack_mock_web_api_server import cleanup_mock_web_api_server
+
         cleanup_mock_web_api_server(self)
 
 
