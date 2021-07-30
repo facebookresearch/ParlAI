@@ -646,7 +646,7 @@ class DPRRetriever(RagRetriever):
                 '[ If using a compressed index, try building an exact index: ]\n'
                 '[ $ python index_dense_embeddings --indexer-type exact... ]'
             )
-            scores.fill_(1)
+            scores[scores!=scores]=1
         ids = torch.tensor([[int(s) for s in ss] for ss in ids])
 
         return ids, scores
