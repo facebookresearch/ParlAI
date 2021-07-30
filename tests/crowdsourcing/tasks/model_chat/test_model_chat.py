@@ -35,6 +35,7 @@ AGENT_TASK_DATA = [
                 "bucket_2": True,
                 "bucket_3": False,
                 "bucket_4": True,
+                "none_all_good": False,
             }
         },
     )
@@ -50,6 +51,7 @@ FORM_TASK_DATA = (
             "bucket_2": True,
             "bucket_3": False,
             "bucket_4": True,
+            "none_all_good": False,
         },
     },
 )

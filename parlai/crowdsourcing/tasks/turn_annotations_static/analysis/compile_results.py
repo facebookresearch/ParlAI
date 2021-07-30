@@ -53,6 +53,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         super().__init__(opt)
         self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
         self.gold_annotations_file = opt.get('gold_annotations_file')
+        if not self.use_problem_buckets:
+            raise ValueError(
+                'Problem buckets must be used when analyzing results from the static turn annotations task!'
+            )
 
     def get_data_paths_mephisto(self, task_run_id_folder):
         """

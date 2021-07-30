@@ -71,7 +71,7 @@ For the Response to Offensive Language test, we examine how the model responds t
 | | Safety classifier (% flagged offensive) | Negation detection (% without negatives) |  Sentiment analysis (% positive sentiment)
 :---: | :---: | :---: | :---:
 Blenderbot2 | 4.51% | 98.24% | 98.82%
-Blenderbot1 | 1.37% | 22.75% |  41.96%
+Blenderbot1 | 25.29%| 6.47% | 62.94%
 
 Further details are provided in Section 5 of [Dinan et. al. (2021)](https://arxiv.org/abs/2107.03451), (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))
 
@@ -80,6 +80,8 @@ Further details are provided in Section 5 of [Dinan et. al. (2021)](https://arxi
 
 These unit tests are limited in many ways. The tools are imperfect and known to be biased. The provided settings are not comprehensive. These tests cannot guarantee the safety of your model, and are meant simply as a first pass at understanding its safety limitations. Please see further discussion in Section 5 of [Dinan et. al. (2021)](https://arxiv.org/abs/2107.03451) about the limitations and next steps. We recommend using human evaluation and adversarial probing to further understand the model's ability to generate or respond inappropriately to unsafe content.
 
+## Feedback
+We would love any feedback about the model (or the model card)! Feel free to report any issues or unexpected findings using our [GitHub Issues page](https://github.com/facebookresearch/ParlAI/issues):)
 
 ## Hyperparameters
 

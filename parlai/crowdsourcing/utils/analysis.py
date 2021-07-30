@@ -109,7 +109,7 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
         parser.add_argument(
             '--problem-buckets',
             type=str,
-            help='Comma-separated list of buckets used for annotation',
+            help='Comma-separated list of buckets used for annotation. Set to an empty string to not analyze problem buckets.',
             default='bucket_0,bucket_1,bucket_2,bucket_3,bucket_4,none_all_good',
         )
         return parser
@@ -123,10 +123,15 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
             self.results_folders = opt['results_folders'].split(',')
         else:
             self.results_folders = None
-        self.problem_buckets = opt['problem_buckets'].split(',')
+        if opt['problem_buckets'].lower() not in ['', 'none']:
+            self.use_problem_buckets = True
+            self.problem_buckets = opt['problem_buckets'].split(',')
+        else:
+            self.use_problem_buckets = False
+            self.problem_buckets = []
 
         # Validate problem buckets
-        if 'none_all_good' not in self.problem_buckets:
+        if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
             # The code relies on a catchall "none" category if the user selects no other
             # annotation bucket
             raise ValueError(
