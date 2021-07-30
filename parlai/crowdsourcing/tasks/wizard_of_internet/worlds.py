@@ -313,82 +313,41 @@ class SharedOnboardWorld(CrowdOnboardWorld):
 
 
 class WizardOnboardingWorld(SharedOnboardWorld):
-    def __init__(self, opt, mturk_agent):
-        self.turn_timeout = opt["wizard_time_out"]
+    """
+    The onboarding world for the wizard agent.
+    """
+
+    def __init__(self, opt: Opt, mturk_agent: Agent):
+        self.turn_timeout = opt['wizard_time_out']
         self._search_client = create_search_agent(opt)
         self.num_searches = 0
         super().__init__(opt, mturk_agent)
 
     def _get_world_name(self):
-        return "wizard-" + super()._get_world_name()
+        return f'wizard-{super()._get_world_name()}'
 
     def introduce_knowledgeable_entity(self):
-        self.send_message(
-            "During this chat you must pretend that you are a knowledgeable "
-            "entity with conversational ability rather than a human being "
-            "(imagine a digital friend on a smartphone)."
-            "So you can talk about the world, but your character is NOT able to "
-            "engage in physical activities such as sport activities or eating."
-        )
+        self.send_message(constants.WIZARD_INTRODUCE_KNOWLEDGE)
 
     def introduce_search(self):
-        self.send_message(
-            message="We will provide a search bar for you "
-            "to look up useful knowledge about topics that interest "
-            "your chat partner during the conversation.\n"
-            "You may try search as many times as you may like "
-            "to find useful information that helps you craft "
-            "engaging and informative messages.\n"
-            "Please conduct a natural conversation and avoid copy/paste."
-        )
+        self.send_message(message=constants.WIZARD_INTRODUCE_SEARCH)
 
     def try_search(self):
         self.send_message(
-            message="See the blinking area (in the left panel) "
-            "for the search bar you will be using during this task. "
-            "During the task, when you use this search bar, "
-            "it will bring up a number of articles from the internet. "
-            "You can click on an article to show "
-            "it's content, that is split into sentences. "
-            "Use information from these sentences "
-            "to have an informed conversation.\n\n"
-            "When you use knowledge from one or more sentences, "
-            "please select them (click the checkbox next to those "
-            "sentences) before sending your message.\n"
-            "If you do not use any knowledge from search results, "
-            "select the checkbox for "
-            "\"Did not use search results for this message.\"\n\n"
-            "Now try out the search functionality to "
-            "craft a message with information on a topic of your choise "
-            "(Yoga, sushi, Star wars, anything you choose). "
-            "Here are the steps :\n"
-            "  1- use the bar to search.\n"
-            "  2- check the search results for finding useful information.\n"
-            "  3- write your message using knowledge you find in the search results.\n"
-            "  4- make sure you select the checkmark for sentences you used.\n"
-            "  5- send the message.",
-            onboarding_step=constants.ONBOARDING_STEPS["TRY_SEARCH"],
+            message=constants.WIZARD_TRY_SEARCH,
+            onboarding_step=constants.ONBOARDING_STEPS['TRY_SEARCH'],
         )
 
     def introduce_persona(self):
         self.send_message(
-            message="You can see your partner's assigned persona "
-            "description in the left pane (see the blinking box). "
-            "The purpose of the task is to have an in-depth conversation "
-            "with your chat partner about THEIR assigned interests.\n"
-            "It is very important to keep in mind that this is a chitchat: "
-            "unless it is necessary, do NOT bring up random facts in the middle of conversation. "
-            "For example, if your chat partner likes a music band "
-            "do not keep talking about band members names or birthdays.\n\n"
-            "Use your search bar on the left and craft a message "
-            "that interests your partner, based on their persona, "
-            "using information you find on internet.\n"
-            "Don't forget to select the sentences from the "
-            "search results that helped you craft that message.",
-            onboarding_step=constants.ONBOARDING_STEPS["PERSONA_WIZARD"],
+            message=constants.WIZARD_INTRODUCE_APPRENTICE_PERSONA,
+            onboarding_step=constants.ONBOARDING_STEPS['PERSONA_WIZARD'],
         )
 
-    def wait_for_response_with_search(self, message=None, delay_time=0):
+    def wait_for_response_with_search(self, message: str = None, delay_time: int = 0):
+        """
+        Send a message to Wizard and waits for a search or response action.
+        """
         if message:
             self.send_message(message=message, delay_time=delay_time)
 
@@ -398,42 +357,33 @@ class WizardOnboardingWorld(SharedOnboardWorld):
             start_time = time.time()
             act = agent.act(timeout=time_out)
             if _is_query(act):
-                self.num_searches += 1
-                search_res = run_search_query(act["text"], self._search_client)
-                n = len(search_res["task_data"][SEARCH_RESULTS_KEY])
-                logging.info(f"{n} search results were retrieved.")
-                agent.observe(search_res)
+                raise NotImplementedError("Search module is not implemented yet.")
             else:
                 self.messages.append(act)
                 return
+            # subtracting the wait time from what was spent during search
             spent_time = time.time() - start_time
             time_out -= spent_time
 
     def parley(self):
         """
         The interactive onboarding for the Wizard.
-
-        See the abstract function in the parent for more information.
         """
-        wait_times = SharedOnboardWorld.TUTORIAL_WAIT_TIMES
+        wait_times = constants.TUTORIAL_WAIT_TIMES
         self.introduce_chat_interface()
         self.wait_for_response(
-            message="Please type a greeting message to continue.",
-            delay_time=wait_times["chat-interface"],
+            message='Please type a greeting message to continue.',
+            delay_time=wait_times['chat-interface'],
         )
         self.introduce_knowledgeable_entity()
         self.wait_for_response(
-            message="Please acknowledge that this is clear "
-            "in your response message "
-            "(for example, type \"I understand.\" in response.)",
-            delay_time=wait_times["chat-interface"],
+            message=constants.ONBOARDING_ACKNOWLEDGE_UNDERSTOOD,
+            delay_time=wait_times['chat-interface'],
         )
         self.introduce_search()
         self.wait_for_response(
-            message="Please acknowledge that this is clear "
-            "in your response message "
-            "(for example, type \"I understand.\" in response.)",
-            delay_time=wait_times["knowledge"],
+            message=constants.ONBOARDING_ACKNOWLEDGE_UNDERSTOOD,
+            delay_time=wait_times['knowledge'],
         )
         self.try_search()
         self.wait_for_response_with_search()
@@ -443,17 +393,20 @@ class WizardOnboardingWorld(SharedOnboardWorld):
         self.episodeDone = True
 
     def reason_to_reject(self):
+        """
+        Check for bad behavior for poor quality of work from wizard agent.
+        """
         # Has used search enough
         if self.num_searches < constants.MIN_NUM_SEARCH_ONBOARDING:
-            return f"did not use search enough (number of use {self.num_searches})."
+            return f'did not use search enough (number of use {self.num_searches}).'
 
         # Has selected enough sentenes
         num_selections = 0
         for msg in self.messages:
-            task_data = msg.get("task_data")
+            task_data = msg.get('task_data')
             if not (task_data and isinstance(task_data, dict)):
                 continue
-            sel_options = task_data.get("selected_text_candaidtes")
+            sel_options = task_data.get('selected_text_candaidtes')
             if not sel_options or len(sel_options) == 1:  # No choices
                 continue
             if not sel_options[0][0]:
@@ -462,12 +415,15 @@ class WizardOnboardingWorld(SharedOnboardWorld):
 
         if num_selections < constants.MIN_NUM_SELECTED_SENTENCES_ONBOARDING:
             return (
-                "did not use or select search results enough times "
-                f"(number of times used: {num_selections})"
+                'did not use or select search results enough times '
+                f'(number of times used: {num_selections})'
             )
         return super().reason_to_reject()
 
-    def prep_save_data(self, agent):
+    def prep_save_data(self, agent: Agent):
+        """
+        Saving session data after the world is closed.
+        """
         rejection_reason = self.reason_to_reject()
         qualified_role = constants.WIZARD if self.episodeDone else constants.NO_ROLE
         return {
@@ -483,85 +439,56 @@ class WizardOnboardingWorld(SharedOnboardWorld):
 
 class ApprenticeOnboardingWorld(SharedOnboardWorld):
     def __init__(self, opt, mturk_agent):
-        self.turn_timeout = opt["apprentice_time_out"]
+        self.turn_timeout = opt['apprentice_time_out']
         super().__init__(opt, mturk_agent)
 
     def _get_world_name(self):
-        return "apprentice-" + super()._get_world_name()
+        return f'apprentice-{super()._get_world_name()}'
 
     def introduce_persona(self):
         self.send_message(
-            message="At the beginning of this task we will ask you to "
-            "choose a persona for yourself. "
-            "We keep your selected persona in the left pane "
-            "(See the example persona inside the blinking box).\n"
-            "During this chat you play the role of someone with that persona. "
-            "The purpose of the task is to have "
-            "an in-depth conversation with your chat partner "
-            "about the interests of someone with your assigned persona.",
-            onboarding_step=constants.ONBOARDING_STEPS["PERSONA_APPRENTICE"],
+            message=constants.APPRENTICE_INTRODUCE_PERSONA,
+            onboarding_step=constants.ONBOARDING_STEPS['PERSONA_APPRENTICE'],
         )
 
     def introduce_partner_entity(self):
-        self.send_message(
-            message="Imagine your chat partner is a non-human entity "
-            "you can chat to, for example a digital friend living inside "
-            "your phone. So you can ask their opinion about the world, "
-            "but they are not able to do physical activities, "
-            "such as playing basketball or eating. Don't forget that "
-            "the conversation should focus on the interests "
-            "of the persona that you play during this task."
-        )
+        self.send_message(message=constants.APPRENTICE_INTRODUCE_WIZARD)
 
     def introduce_partner_knowledge(self):
-        self.send_message(
-            message="Your chat partner has extensive knowledge "
-            "about many things, and access to lots of information.\n"
-            "Your partner will strive to enlighten you "
-            "about your topics of interest, according to your persona. "
-            "Feel free to dive deep discussing these topics."
-        )
+        self.send_message(message=constants.APPRENTICE_INTRODUCE_WIZARD_KNOWLEDGE)
 
     def parley(self):
         """
         The interactive onboarding for the Apprentice.
-
-        See the abstract function in the parent for more information.
         """
         wait_times = SharedOnboardWorld.TUTORIAL_WAIT_TIMES
         self.introduce_chat_interface()
         self.wait_for_response(
-            message="Please type a greeting message to continue.",
-            delay_time=wait_times["chat-interface"],
+            message='Please type a greeting message to continue.',
+            delay_time=wait_times['chat-interface'],
         )
         self.introduce_persona()
         self.wait_for_response(
-            message="Let's assume you are in the main task and you "
-            "have the example persona that we show now "
-            "(blue box on the left). "
-            "Please say something interesting about "
-            "your role's persona to continue. "
-            "Don't forget to assume the role of someone with "
-            "that persona for the rest of this task.",
-            delay_time=wait_times["persona"],
+            message=constants.APPRENTICE_PERSONA_ROLE_INSTRUCTION,
+            delay_time=wait_times['persona'],
         )
         self.introduce_partner_entity()
         self.wait_for_response(
-            message="Imagine you are in the main chat. Go ahead and "
-            "send them a chitchat message, assuming your assigned persona.",
-            delay_time=wait_times["persona"],
+            message=constants.APPRENTICE_CHITCHAT_INSTRUCTION,
+            delay_time=wait_times['persona'],
         )
         self.introduce_partner_knowledge()
         self.wait_for_response(
-            message="Go ahead and try writing a message "
-            "about your example role's persona to your partner. "
-            "You may even ask them questions if you want.",
-            delay_time=wait_times["knowledge"],
+            message=constants.APPRENTICE_PERSONA_MSG_INSTRUCTION,
+            delay_time=wait_times['knowledge'],
         )
         self.go_for_start()
         self.episodeDone = True
 
-    def prep_save_data(self, agent):
+    def prep_save_data(self, agent: Agent):
+        """
+        Saving session data after the world is closed.
+        """
         rejection_reason = self.reason_to_reject()
         qualified_role = constants.APPRENTICE if self.episodeDone else constants.NO_ROLE
         return {
@@ -657,11 +584,7 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             start_time = time.time()
             act = agent.act(timeout=time_out)
             if _is_query(act):
-                self.num_search_queries += 1
-                search_res = run_search_query(act["text"], self._search_client)
-                n = len(search_res["task_data"][SEARCH_RESULTS_KEY])
-                logging.info(f"{n} search results were retrieved.")
-                agent.observe(search_res)
+                raise NotImplementedError("Search module is not implemented yet.")
             else:
                 if _has_selected_sentence_from_search_results(act):
                     self.num_times_search_resutls_selected += 1
@@ -1361,4 +1284,4 @@ def make_world(opt, agents):
 
 
 def get_world_params():
-    return {"agent_count": 2}
+    return {'agent_count': 2}
