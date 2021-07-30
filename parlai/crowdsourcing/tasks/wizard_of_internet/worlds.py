@@ -7,7 +7,7 @@ from copy import deepcopy
 import random
 import time
 from datetime import datetime
-from typing import Any, Dict, Union
+from typing import Any, Dict, List, Union
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.core.agents import Agent
 from parlai.core.message import Message
@@ -506,41 +506,46 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
     """
     The ParlAI world to run conversation, search, and flow.
 
-    Two agents (Wizard, Apprentice) chat. One agent (Wizard) has access to a search bar
-    that they may use for queries pages from common crawl (or any other sources). The
-    Wizard queries are handled by a third agent: and instance of CcSearchAgent.
+    Two agents (wizard, apprentice) chat. One agent (wizard) has access to a search bar
+    that they may use for seraching our knowledge source (common crawl here).
     """
 
-    def __init__(self, opt, agents=None, shared=None):
-        # Add passed in agents directly.
+    def __init__(self, opt: Opt, agents: List[Agent] = None):
+        # Init world state
         self.agents = agents
         self._change_agents_order = False
         self.messages = []
         self.episodeDone = False
         self.turn_idx = 0
-        self.acceptability_checker = self._get_acceptability_checker()
-
-        self.num_passages_to_retrieve = opt.get("num_passages_retrieved")
-        self.send_task_data = opt.get("send_task_data")
-        # The minimum number of turns before agents may end the conversation.
-        self.min_num_turns = opt.get("min_turns")
         self.num_search_queries = 0
         self.num_times_search_resutls_selected = 0
         self.world_tag = self._get_world_name()
-        self.wizard_time_out = opt.get("wizard_time_out")
-        self.apprentice_time_out = opt.get("apprentice_time_out")
-        self._search_client = create_search_agent(opt)
-        self.search_warning_turn = opt["search_warning_turn"]
-        self.search_warning_threshold = opt["search_warning_threshold"]
-        self.select_warning_turn = opt["select_warning_turn"]
-        self.select_warning_threshold = opt["select_warning_threshold"]
-        self.soft_block_qname = opt["soft_block_qname"]
+
+        # Get world parameters from opt
+        self.min_num_turns = opt['min_turns']
+        self.wizard_time_out = opt['wizard_time_out']
+        self.apprentice_time_out = opt['apprentice_time_out']
+        self.search_warning_turn = opt['search_warning_turn']
+        self.search_warning_threshold = opt['search_warning_threshold']
+        self.select_warning_turn = opt['select_warning_turn']
+        self.select_warning_threshold = opt['select_warning_threshold']
+        self.soft_block_qname = opt['soft_block_qname']
+        self.send_task_data = opt['send_task_data']
         self.role_training_qname = opt[constants.ROLE_QUALIFICATION_NAME_KEY]
-        self.personas_list = opt["personas"]
-        self.prev_persona_count = opt["prev_persona_count"]
-        self.max_times_persona_use = opt["max_times_persona_use"]
-        self.locations_list = opt["locations"]
-        self.persona_replacement = opt["pick_persona_with_replacement"]
+
+        # The agent that checks the acceptability of the messages (quality and safety).
+        self.acceptability_checker = self._get_acceptability_checker()
+
+        # Number of pages to request for each wizard search
+        self.num_passages_to_retrieve = opt['num_passages_retrieved']
+        self._search_client = create_search_agent(opt)
+
+        # Information about personas and their availability.
+        self.personas_list = opt['personas']
+        self.prev_persona_count = opt['prev_persona_count']
+        self.max_times_persona_use = opt['max_times_persona_use']
+        self.locations_list = opt['locations']
+        self.persona_replacement = opt['pick_persona_with_replacement']
         self.selected_persona = None
 
         # Get worker names
@@ -549,22 +554,25 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             self.worker_names[a] = get_worker_from_agent(a).worker_name
 
     def _get_acceptability_checker(self):
+        """
+        Instantiate an instance of WizardOfInternetAcceptabilityChecker to monitor the world.
+        """
         acr = WizardOfInternetAcceptabilityChecker()
         acr.min_words_violation_threshold = constants.MIN_AVG_WORD_LENGTH_UTTERANCES
         return acr
 
     def _get_world_name(self):
         dt = datetime.now()
-        return "cc_world_" + dt.strftime("%H-%M-%S")
+        return f'cc_world_{dt.strftime("%H-%M-%S")}'
 
     def get_agent_order_mask(self, agent_index):
         """
-        a mask for simulating rotation / reordering of agents.
+        A mask for simulating rotation/reordering of agents.
 
-        Use this method for accessing agents by a certaint order. Do not use
-        self.agents[i] directly.
+        Use this method for accessing agents by a certaint order.
+        Do not use self.agents[i] directly!
         """
-        assert agent_index in (0, 1), "Invalid index for accessing agents."
+        assert agent_index in (0, 1), 'Invalid index for accessing agents.'
         if self._change_agents_order:
             # 0->1  and   1->0
             agent_index = 1 - agent_index
@@ -572,8 +580,8 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
     def get_wizard_action(self, agent):
         def _has_selected_sentence_from_search_results(action):
-            k_task = "task_data"
-            k_selected = "selected_text_candaidtes"
+            k_task = 'task_data'
+            k_selected = 'selected_text_candaidtes'
             if (k_task in action) and (k_selected in action[k_task]):
                 # Boolean value that user has not selected any option
                 return not action[k_task][k_selected][0][0]
@@ -584,7 +592,7 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             start_time = time.time()
             act = agent.act(timeout=time_out)
             if _is_query(act):
-                raise NotImplementedError("Search module is not implemented yet.")
+                raise NotImplementedError('Search module is not implemented yet.')
             else:
                 if _has_selected_sentence_from_search_results(act):
                     self.num_times_search_resutls_selected += 1
@@ -617,35 +625,35 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         elif agent_id == get_rolename(constants.WIZARD):
             return self.get_wizard_action(agent)
         else:
-            logging.warning(f"Action from unidentified role: {agent_id}")
+            logging.warning(f'Action from unidentified role: {agent_id}')
             return agent.act(timeout=self.apprentice_time_out)
 
     def finish_onboarding(self):
-        onboard_state = constants.ONBOARDING_STEPS["NOT_ONBOARDING"]
+        onboard_state = constants.ONBOARDING_STEPS['NOT_ONBOARDING']
         for agent in self.agents:
             agent.observe(onboarding_mode_toggle_message(onboard_state))
 
     def broadcast_apprentice_persona(self, persona):
         for agent in self.agents:
             persona_msg = {
-                "id": constants.PERSONA_AGENT,
-                "text": "",
-                "episode_done": False,
-                "task_data": {"apprentice_persona": persona},
+                'id': constants.PERSONA_AGENT,
+                'text': '',
+                'episode_done': False,
+                'task_data': {'apprentice_persona': persona},
             }
             agent.observe(persona_msg)
 
     def shuffle_agents(self):
         reorder = random.random() > 0.5
         if reorder:
-            logging.info(f"Switching agents orders in {self.world_tag}")
+            logging.info(f'Switching agents orders in {self.world_tag}')
             self._change_agents_order = True
 
     def next_persona(self):
         persona = self.personas_list
         n = constants.CURATED_PERSONA_CHOICES
         logging.info(
-            f"Randomly choosing {n} personas from {len(persona)} available ones."
+            f'Randomly choosing {n} personas from {len(persona)} available ones.'
         )
         if self.persona_replacement:
             return random.sample(persona, k=n)
@@ -665,16 +673,16 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             assert qual
             role_qual = qual.value
             if role_qual == constants.WIZARD:
-                agent.agent_id = "Wizard"
+                agent.agent_id = 'Wizard'
             elif role_qual == constants.APPRENTICE:
-                agent.agent_id = "Apprentice"
+                agent.agent_id = 'Apprentice'
             else:
-                raise ValueError(f"Unrecognized role qulification {role_qual}.")
+                raise ValueError(f'Unrecognized role qulification {role_qual}.')
             if not starting_role:  # sets it the first time that loop runs
                 starting_role = role_qual
 
-        logging.info("Agent roles assigned.")
-        logging.info(f"Agent with {self.get_agent_order_mask(0).agent_id} role starts.")
+        logging.info('Agent roles assigned.')
+        logging.info(f'Agent with {self.get_agent_order_mask(0).agent_id} role starts.')
         return starting_role
 
     def _get_apprentice(self):
@@ -690,9 +698,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
         def generate_persona_key(persona_desc):
             ret = persona_desc.strip().lower()
-            for sym in (".", ",", ";", "!", "?"):
-                ret = ret.replace(sym, " ")
-            return " ".join([s for s in ret.split(" ") if s])
+            for sym in ('.', ',', ';', '!', '?'):
+                ret = ret.replace(sym, ' ')
+            return ' '.join([s for s in ret.split(' ') if s])
 
         acceptable_response = False
         while not acceptable_response:
@@ -725,16 +733,16 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         if self.prev_persona_count[lower_persona] < self.max_times_persona_use:
             return
 
-        logging.info(f"Trying to remove \"{persona}\" from list of personas.")
+        logging.info(f'Trying to remove "{persona}" from list of personas.')
         if len(persona) < constants.CURATED_PERSONA_CHOICES:
             logging.warning(
-                "Not enough personas may remain after removing, canceling removal."
+                'Not enough personas may remain after removing, canceling removal.'
             )
             return
 
         self.personas_list.remove(persona)
         logging.info(
-            f"New number of available personas is \"{len(self.personas_list)}\"."
+            f'New number of available personas is "{len(self.personas_list)}".'
         )
 
     def _choose_curated_persona(self):
@@ -744,39 +752,39 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
         # Removing PERSONA_NEEDS_LOCATION_TOKEN from what agents will see
         persona_opts_views = [
-            p.replace(constants.PERSONA_NEEDS_LOCATION_TOKEN, "") for p in persona_opts
+            p.replace(constants.PERSONA_NEEDS_LOCATION_TOKEN, '') for p in persona_opts
         ]
         persona_selection_form = [
             {
-                "type": "choices",
-                "question": "Choose one of these personas to start:",
-                "choices": persona_opts_views,
+                'type': 'choices',
+                'question': 'Choose one of these personas to start:',
+                'choices': persona_opts_views,
             },
-            {"type": "text", "question": "Add something imaginative to refine it:"},
+            {'type': 'text', 'question': 'Add something imaginative to refine it:'},
         ]
         _coordinator_send_message(
             apprentice_agent,
             message=constants.APPRENTICE_CHOOSE_PERSONA_REQUEST,
-            task_data={"respond_with_form": persona_selection_form},
+            task_data={'respond_with_form': persona_selection_form},
         )
         agent_response = self.receive_form_response(apprentice_agent)
-        response_data = agent_response["task_data"]
+        response_data = agent_response['task_data']
 
         # TODO: FOR DEBUGGING, remove later
         # Often in prod "task_data" does not contain selections from agents
         # this is a fallback to avoid that, and get more info for debugging it.
         if (
-            "form_responses" in response_data
-            and len(response_data["form_responses"])
-            and "response" in response_data["form_responses"][0]
+            'form_responses' in response_data
+            and len(response_data['form_responses'])
+            and 'response' in response_data['form_responses'][0]
         ):
-            rs = [r["response"] for r in agent_response["task_data"]["form_responses"]]
-            assert len(rs) == 2, "Persona response form length is not 2."
+            rs = [r['response'] for r in agent_response['task_data']['form_responses']]
+            assert len(rs) == 2, 'Persona response form length is not 2.'
             selected_persona, added_persona = rs
-            apprentice_persona = f"{selected_persona}\n{added_persona}"
+            apprentice_persona = f'{selected_persona}\n{added_persona}'
             worker_name = self.worker_names[apprentice_agent]
             logging.info(
-                f"Agent ({worker_name}) selected a persona: {apprentice_persona}"
+                f'Agent ({worker_name}) selected a persona: {apprentice_persona}'
             )
 
             selected_persona_ind = persona_opts_views.index(selected_persona)
@@ -787,10 +795,10 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             ):
                 apprentice_location = self.random_location()
                 logging.info(
-                    f"Persona needs a location. {apprentice_location} selected."
+                    f'Persona needs a location. {apprentice_location} selected.'
                 )
                 apprentice_persona = (
-                    f"I live in {apprentice_location}.\n{apprentice_persona}"
+                    f'I live in {apprentice_location}.\n{apprentice_persona}'
                 )
                 persona_type = constants.CURATED_LOCATION_PERSONA
 
@@ -798,9 +806,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             self._update_curated_personas_use(persona_opts[selected_persona_ind])
         else:
             logging.warning(
-                f"Agent persona selection response was corrupted. Content:\n{response_data}"
+                f'Agent persona selection response was corrupted. Content:\n{response_data}'
             )
-            logging.warning("Choosing an arbitrary persona for this conversation.")
+            logging.warning('Choosing an arbitrary persona for this conversation.')
             persona_type = constants.FORM_FALL_BACK_PERSONA
             apprentice_persona = random.choice(persona_opts_views)
 
@@ -813,51 +821,51 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         )
         topics = []
         for tb in topic_bundles:
-            topics.extend(tb.split(","))
+            topics.extend(tb.split(','))
 
         apprentice_agent = self._get_apprentice()
         persona_selection_form = [
             {
-                "type": "choices",
-                "question": "My character's favorite ",
-                "choices": topics,
+                'type': 'choices',
+                'question': 'My character\'s favorite ',
+                'choices': topics,
             },
-            {"type": "text", "question": "is "},
-            {"type": "text", "question": "Add something imaginative to refine it:"},
+            {'type': 'text', 'question': 'is '},
+            {'type': 'text', 'question': 'Add something imaginative to refine it:'},
         ]
         _coordinator_send_message(
             apprentice_agent,
             message=constants.APPRENTICE_CHOOSE_PERSONA_TEMPLATE_REQUEST,
-            task_data={"respond_with_form": persona_selection_form},
+            task_data={'respond_with_form': persona_selection_form},
         )
         agent_response = self.receive_form_response(
             apprentice_agent, check_persona_overuse=True
         )
-        response_data = agent_response["task_data"]
+        response_data = agent_response['task_data']
         if (
-            "form_responses" in response_data
-            and len(response_data["form_responses"])
-            and "response" in response_data["form_responses"][0]
+            'form_responses' in response_data
+            and len(response_data['form_responses'])
+            and 'response' in response_data['form_responses'][0]
         ):
-            rs = [r["response"] for r in agent_response["task_data"]["form_responses"]]
-            assert len(rs) == 3, "Template persona response form length is not 3."
+            rs = [r['response'] for r in agent_response['task_data']['form_responses']]
+            assert len(rs) == 3, 'Template persona response form length is not 3.'
             topic, topic_item, extra_deatils = rs
             apprentice_persona = persona_from_template_values(
                 topic, topic_item, extra_deatils
             )
             worker_name = self.worker_names[apprentice_agent]
             logging.info(
-                f"Agent ({worker_name}) selected a persona: {apprentice_persona}"
+                f'Agent ({worker_name}) selected a persona: {apprentice_persona}'
             )
         else:
             logging.warning(
-                f"Agent persona selection response was corrupted. Content:\n{response_data}"
+                f'Agent persona selection response was corrupted. Content:\n{response_data}'
             )
-            logging.warning("Choosing an arbitrary persona for this conversation.")
-            rand_persona = random.choice(self.next_persona().split("\n"))
+            logging.warning('Choosing an arbitrary persona for this conversation.')
+            rand_persona = random.choice(self.next_persona().split('\n'))
             persona_type = constants.FORM_FALL_BACK_PERSONA
             apprentice_persona = rand_persona.replace(
-                constants.PERSONA_NEEDS_LOCATION_TOKEN, ""
+                constants.PERSONA_NEEDS_LOCATION_TOKEN, ''
             )
         return apprentice_persona, persona_type
 
@@ -865,18 +873,18 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         """
         Returns Mephisto response from form to text.
         """
-        _coordinator_send_message(agent=agent, task_data={"respond_with_form": False})
+        _coordinator_send_message(agent=agent, task_data={'respond_with_form': False})
 
     def apprentice_choose_persona(self):
-        logging.info("Randomly choosing persona selection type.")
+        logging.info('Randomly choosing persona selection type.')
         choose_from_templates = (
             random.random() < constants.PROBABILITY_CHOOSING_TEMPLATE_PERSONA
         )
         if choose_from_templates:
-            logging.info("Choosing persona persona from template.")
+            logging.info('Choosing persona persona from template.')
             resp = self._choose_templated_topics_persona()
         else:
-            logging.info("Choosing persona persona from curated cases.")
+            logging.info('Choosing persona persona from curated cases.')
             resp = self._choose_curated_persona()
         self._reset_to_text_response(self._get_apprentice())
         return resp
@@ -886,22 +894,22 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         wiz_time = sec_to_min_pretty(self.wizard_time_out)
         app_time = sec_to_min_pretty(self.apprentice_time_out)
         for agent in self.agents:
-            message = f"This conversation continues for at least {min_rounds} rounds.\n"
+            message = f'This conversation continues for at least {min_rounds} rounds.\n'
             t = wiz_time if _is_wiz(agent) else app_time
             message += (
-                f"In your turn, please send your message within {t} minutes. "
-                "Otherwise you may be disqualified. "
+                f'In your turn, please send your message within {t} minutes. '
+                'Otherwise you may be disqualified. '
             )
             if not _is_wiz(agent):
                 message += (
-                    f"Note that you might have to wait up to {wiz_time} "
-                    "mintes to receive a response from the other person."
+                    f'Note that you might have to wait up to {wiz_time} '
+                    'mintes to receive a response from the other person.'
                 )
             agent.observe(
                 {
-                    "id": constants.COORDINATOR_AGENT,
-                    "text": message,
-                    "episode_done": False,
+                    'id': constants.COORDINATOR_AGENT,
+                    'text': message,
+                    'episode_done': False,
                 }
             )
 
@@ -913,9 +921,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             assert role == constants.APPRENTICE
             message_text = constants.APPRENTICE_STARTING_INSTRUCTION
         start_instruction_message = {
-            "id": constants.COORDINATOR_AGENT,
-            "text": message_text,
-            "episode_done": False,
+            'id': constants.COORDINATOR_AGENT,
+            'text': message_text,
+            'episode_done': False,
         }
         self.get_agent_order_mask(0).observe(start_instruction_message)
 
@@ -925,16 +933,16 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
                 continue
             agent.observe(
                 {
-                    "id": constants.COORDINATOR_AGENT,
-                    "text": constants.WIZARD_PERSONA_EMPHASIZE,
-                    "episode_done": False,
+                    'id': constants.COORDINATOR_AGENT,
+                    'text': constants.WIZARD_PERSONA_EMPHASIZE,
+                    'episode_done': False,
                 }
             )
 
     def setup_roles_and_persona(self):
-        logging.info("Setting up roles, orders, persona.")
+        logging.info('Setting up roles, orders, persona.')
         self.finish_onboarding()
-        self.broadcast_apprentice_persona("")  # clear onboarding persona
+        self.broadcast_apprentice_persona('')  # clear onboarding persona
         starting_role = self.assign_roles()
         self.send_wizard_persona_emphasize_message()
         self.selected_persona, _ = self.apprentice_choose_persona()
@@ -951,9 +959,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
         self.turn_idx += 1
         logging.info(
-            f"{self.world_tag} is at turn {self.turn_idx}...\n"
-            f"Wizard has searched {self.num_search_queries} times and "
-            f"selected results {self.num_times_search_resutls_selected} times."
+            f'{self.world_tag} is at turn {self.turn_idx}...\n'
+            f'Wizard has searched {self.num_search_queries} times and '
+            f'selected results {self.num_times_search_resutls_selected} times.'
         )
 
         for idx in range(len(self.agents)):
@@ -962,15 +970,15 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             self.messages.append(deepcopy(act))
             if self.send_task_data:
                 act.force_set(
-                    "task_data",
+                    'task_data',
                     {
-                        "last_acting_agent": agent.agent_id,
-                        "current_dialogue_turn": self.turn_idx,
-                        "utterance_count": self.turn_idx + idx,
+                        'last_acting_agent': agent.agent_id,
+                        'current_dialogue_turn': self.turn_idx,
+                        'utterance_count': self.turn_idx + idx,
                     },
                 )
 
-            if "requested_finish" in act and act["requested_finish"]:
+            if 'requested_finish' in act and act['requested_finish']:
                 self.episodeDone = True
                 self.final_survey_and_finish(idx)
                 break
@@ -985,9 +993,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         _coordinator_send_message(
             agent,
             (
-                "Thanks for your prticipation. We are wrapping up the data to finish this HIT. "
-                "You should see the Submit button shortly. "
-                "PLEASE MAKE SURE YOU SUBMIT BEFORE YOU LEAVE."
+                'Thanks for your prticipation. We are wrapping up the data to finish this HIT. '
+                'You should see the Submit button shortly. '
+                'PLEASE MAKE SURE YOU SUBMIT BEFORE YOU LEAVE.'
             ),
             episode_done=True,
         )
@@ -995,11 +1003,11 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
     def final_survey_and_finish(self, finishing_agent):
         evaluate_partner_form = [
             {
-                "type": "choices",
-                "question": "How was your partner helping this chat to move forward? ",
-                "choices": [
-                    "GOOD: partner was on topic and engaging.",
-                    "BAD: partner responses did not make sense.",
+                'type': 'choices',
+                'question': 'How was your partner helping this chat to move forward? ',
+                'choices': [
+                    'GOOD: partner was on topic and engaging.',
+                    'BAD: partner responses did not make sense.',
                 ],
             }
         ]
@@ -1009,11 +1017,11 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             _coordinator_send_message(
                 agent,
                 message=constants.END_CHAT_EVALUATE_MESSAGE,
-                task_data={"respond_with_form": evaluate_partner_form},
+                task_data={'respond_with_form': evaluate_partner_form},
             )
             response = agent.act(timeout=120)
             other_agent = self.get_agent_order_mask(1 - agent_id)
-            response["other_worker"] = self.worker_names[other_agent]
+            response['other_worker'] = self.worker_names[other_agent]
             self.messages.append(deepcopy(response))
             self._reset_to_text_response(agent)
             self._send_end_message(agent)
@@ -1025,17 +1033,17 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             AgentState.STATUS_EXPIRED,
             AgentState.STATUS_TIMEOUT,
         ):
-            return "agent was disconnected."
+            return 'agent was disconnected.'
 
         # Wizard not using search enough
-        if agent.agent_id == "Wizard" and (
+        if agent.agent_id == 'Wizard' and (
             (self.num_search_queries < self.search_warning_threshold)
             or (self.num_times_search_resutls_selected < self.select_warning_threshold)
         ):
             return (
-                "blocked for not enough search activity "
-                f"({self.num_search_queries} searches; "
-                f"{self.num_times_search_resutls_selected} selected sentecnes)."
+                'blocked for not enough search activity '
+                f'({self.num_search_queries} searches; '
+                f'{self.num_times_search_resutls_selected} selected sentecnes).'
             )
 
         acceptability_checker_results = self.acceptability_checker.check_messages(
@@ -1046,25 +1054,25 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             violation_types=constants.ACCEPTABILITY_VIOLATIONS,
         )
         if acceptability_checker_results:
-            return f"ParlAI acceptability checker found violations: \"{acceptability_checker_results}\""
+            return f'ParlAI acceptability checker found violations: "{acceptability_checker_results}"'
 
     def _soft_block_agent(self, agent):
         worker = get_worker_from_agent(agent)
-        logging.warning(f"Soft blocking {worker.worker_name}")
+        logging.warning(f'Soft blocking {worker.worker_name}')
         worker.grant_qualification(self.soft_block_qname)
 
     def prep_save_data(self, agent_as_list):
         agent = agent_as_list[0]
         agent_id = agent.agent_id
-        if agent_id not in ("Wizard", "Apprentice"):
-            logging.warning(f"Unknown agent {agent_id}")
+        if agent_id not in ('Wizard', 'Apprentice'):
+            logging.warning(f'Unknown agent {agent_id}')
 
-        logging.info(f"Preparing saved data for {agent_id}")
-        ret = {"agent_id": agent.agent_id, "message_history_copy": self.messages}
+        logging.info(f'Preparing saved data for {agent_id}')
+        ret = {'agent_id': agent.agent_id, 'message_history_copy': self.messages}
         disqualify_reason = self._reason_to_disqualify(agent)
         if disqualify_reason:
-            logging.info(f"Disqualified submission detecetd: \"{disqualify_reason}\"")
-            ret["disqualify_reason"] = disqualify_reason
+            logging.info(f'Disqualified submission detecetd: "{disqualify_reason}"')
+            ret['disqualify_reason'] = disqualify_reason
             self._soft_block_agent(agent)
 
         return ret
@@ -1085,44 +1093,44 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             except Exception:
                 agent.shutdown()  # not MTurkAgent
 
-        Parallel(n_jobs=len(self.agents), backend="threading")(
+        Parallel(n_jobs=len(self.agents), backend='threading')(
             delayed(shutdown_agent)(agent) for agent in self.agents
         )
 
 
 def onboarding_mode_toggle_message(onboarding_step):
     return {
-        "id": constants.ONBOARDING_AGENT,
-        "text": "",
-        "episode_done": False,
-        "task_data": {"on_boarding_step": onboarding_step},
+        'id': constants.ONBOARDING_AGENT,
+        'text': '',
+        'episode_done': False,
+        'task_data': {'on_boarding_step': onboarding_step},
     }
 
 
 def _get_cached_roll_tally():
     utime = ROLE_TALLY_CHACHE['last_update']
     if not utime:
-        logging.info("Initiated rolls tally cache.")
+        logging.info('Initiated rolls tally cache.')
         return None
 
     dt = time.time() - utime
-    logging.info(f"The last rolls tally cached {dt:.2f} seconds ago.")
+    logging.info(f'The last rolls tally cached {dt:.2f} seconds ago.')
     if dt > constants.TALLY_CACHE_TIMEOUT:
         logging.info(
-            "Rolls tally cache is outdated "
-            f"(is greater than {constants.TALLY_CACHE_TIMEOUT} s)."
+            'Rolls tally cache is outdated '
+            f'(is greater than {constants.TALLY_CACHE_TIMEOUT} s).'
         )
         return None
 
     logging.info(
-        "Rolls tally is fresh enough to use "
-        f"(is less than {constants.TALLY_CACHE_TIMEOUT} s)."
+        'Rolls tally is fresh enough to use '
+        f'(is less than {constants.TALLY_CACHE_TIMEOUT} s).'
     )
     return ROLE_TALLY_CHACHE['data']
 
 
 def _cach_roll_tally(rolls_tally):
-    logging.info("Setting rolls tally cache.")
+    logging.info('Setting rolls tally cache.')
     ROLE_TALLY_CHACHE['last_update'] = time.time()
     ROLE_TALLY_CHACHE['data'] = rolls_tally
 
@@ -1171,19 +1179,19 @@ def find_needed_role(agent, rqname):
                 unk_qual += 1
         if no_qual or unk_qual:
             logging.warning(
-                f"\tNo qualifications: {no_qual}\tUnknown qualifications: {unk_qual}"
+                f'\tNo qualifications: {no_qual}\tUnknown qualifications: {unk_qual}'
             )
         _cach_roll_tally(role_tally)
 
     logging.info(
-        f"Wizard: {role_tally[constants.WIZARD]}\tApprentices: {role_tally[constants.APPRENTICE]}"
+        f'Wizard: {role_tally[constants.WIZARD]}\tApprentices: {role_tally[constants.APPRENTICE]}'
     )
     if role_tally[constants.WIZARD] > 2 * role_tally[constants.APPRENTICE]:
-        logging.info("Onboarding a new Apprentice.")
+        logging.info('Onboarding a new Apprentice.')
         role_tally[constants.APPRENTICE] += 1
         return constants.APPRENTICE
     else:
-        logging.info("Onboarding a new Wizard.")
+        logging.info('Onboarding a new Wizard.')
         role_tally[constants.WIZARD] += 1
         return constants.WIZARD
 
@@ -1219,8 +1227,8 @@ def make_onboarding_world(opt, agent):
             return ApprenticeOnboardingWorld(opt, agent)
         else:
             logging.warning(
-                f"Unknown qualification status '{qstatus}' during creating onboarding workds"
-                + "Assigning the roles based on waiting and onboarding agents queue size."
+                f'Unknown qualification status "{qstatus}" during creating onboarding workds'
+                + 'Assigning the roles based on waiting and onboarding agents queue size.'
             )
             return assign_role_based_on_ques(agent)
 
@@ -1229,10 +1237,10 @@ def assign_role_training_qualification(
     worker, role_qulification_name, role_qulification_value
 ):
     if not role_qulification_value or role_qulification_value == constants.NO_ROLE:
-        logging.warning("Agent did not qualify for a role.")
+        logging.warning('Agent did not qualify for a role.')
         return False
     role_name = get_rolename(role_qulification_value)
-    logging.info(f"Agent qulified for {role_name} role. Granting worker qualification.")
+    logging.info(f'Agent qulified for {role_name} role. Granting worker qualification.')
     worker.grant_qualification(role_qulification_name, role_qulification_value)
     return True
 
@@ -1242,21 +1250,21 @@ def validate_onboarding(data):
     Check the contents of the data to ensure they are valid.
     """
     try:
-        saved_data = data["outputs"]["messages"][-1]["data"]["WORLD_DATA"]
+        saved_data = data['outputs']['messages'][-1]['data']['WORLD_DATA']
         role = (
-            "Wizard" if saved_data[constants.SAVED_DATA_IS_WIZARD_KEY] else "Apprentice"
+            'Wizard' if saved_data[constants.SAVED_DATA_IS_WIZARD_KEY] else 'Apprentice'
         )
-        logging.info(f"Validating {role} onboarding.")
+        logging.info(f'Validating {role} onboarding.')
     except (IndexError, KeyError) as e:
         logging.warning(
-            "Incomplete data to validate agent onboarding."
-            f"Onboarding saved_data error: {e}"
+            'Incomplete data to validate agent onboarding.'
+            f'Onboarding saved_data error: {e}'
         )
         return False
 
     rejection_reason = saved_data[constants.WORKER_REJECT_REASON]
     if rejection_reason:
-        logging.warning(f"Rejected: {rejection_reason}")
+        logging.warning(f'Rejected: {rejection_reason}')
         return False
 
     # Role qualification
@@ -1265,14 +1273,14 @@ def validate_onboarding(data):
     if not assign_role_training_qualification(worker, qual_name, qual_val):
         return False
 
-    logging.info("Onboarding work accepted.")
+    logging.info('Onboarding work accepted.')
     return True
 
 
 def next_persona(opt):
-    replace = opt.get("pick_persona_with_replacement", True)
-    personas_list = opt["personas"]
-    logging.info(f"Randomly choosing between {len(personas_list)} persona.")
+    replace = opt.get('pick_persona_with_replacement', True)
+    personas_list = opt['personas']
+    logging.info(f'Randomly choosing between {len(personas_list)} persona.')
     if replace:
         return random.choice(personas_list)
     else:
