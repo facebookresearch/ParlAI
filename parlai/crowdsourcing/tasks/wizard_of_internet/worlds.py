@@ -55,6 +55,13 @@ def get_worker_by_name(worker_name: str):
     return workers[0]
 
 
+def _is_wiz(agent: Agent):
+    """
+    Returns true if the `agent` is wizard.
+    """
+    return agent.agent_id == 'Wizard'
+
+
 def _is_query(act: Message):
     """
     Checks if an agent action is a search query (only wizard can do this).
@@ -63,11 +70,16 @@ def _is_query(act: Message):
     return k in act and act[k]
 
 
-def _is_wiz(agent: Agent):
+def _has_selected_sentence_from_search_results(action: Union[Dict, Message]):
     """
-    Returns true if the `agent` is wizard.
+    Whether there is any knowledges selected with this message.
     """
-    return agent.agent_id == 'Wizard'
+    k_task = 'task_data'
+    k_selected = 'selected_text_candaidtes'
+    if (k_task in action) and (k_selected in action[k_task]):
+        # Boolean value that user has not selected any option
+        return not action[k_task][k_selected][0][0]
+    return False
 
 
 def create_search_agent(opt):
@@ -565,7 +577,7 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         dt = datetime.now()
         return f'cc_world_{dt.strftime("%H-%M-%S")}'
 
-    def get_agent_order_mask(self, agent_index):
+    def get_agent_order_mask(self, agent_index: int):
         """
         A mask for simulating rotation/reordering of agents.
 
@@ -578,15 +590,10 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             agent_index = 1 - agent_index
         return self.agents[agent_index]
 
-    def get_wizard_action(self, agent):
-        def _has_selected_sentence_from_search_results(action):
-            k_task = 'task_data'
-            k_selected = 'selected_text_candaidtes'
-            if (k_task in action) and (k_selected in action[k_task]):
-                # Boolean value that user has not selected any option
-                return not action[k_task][k_selected][0][0]
-            return False
-
+    def get_wizard_action(self, agent: Agent):
+        """
+        Handles wizard message or search action.
+        """
         time_out = self.wizard_time_out
         while time_out > 0:
             start_time = time.time()
@@ -600,10 +607,15 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             spent_time = time.time() - start_time
             time_out -= spent_time
 
-    def _send_task_objective_reminders(self, agent):
+    def _send_task_objective_reminders(self, agent: Agent):
+        """
+        Monitors the stats for target activies. If needed, sends goal reminders to agent.
+
+        This is mostly for checking if wizard does enough search and knowledge selection.
+        """
         agent_id = agent.agent_id
-        if agent_id == get_rolename(constants.WIZARD):
-            # Checks if wizard has used search bar enough so far
+        if agent_id == constants.ROLE_NAMES[constants.WIZARD]:
+            # Checks if wizard has used search enough so far
             if (self.turn_idx >= self.search_warning_turn) and (
                 self.num_search_queries < self.search_warning_threshold
             ):
@@ -618,22 +630,28 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
                     agent, message=constants.USE_SEARCH_RESULTS_WARNING_MESSAGE
                 )
 
-    def next_utterance(self, agent):
+    def next_utterance(self, agent: Agent):
+        """
+        Handles receiving the next message from agent.
+        """
         agent_id = agent.agent_id
-        if agent_id == get_rolename(constants.APPRENTICE):
+        if agent_id == constants.ROLE_NAMES[constants.APPRENTICE]:
             return agent.act(timeout=self.apprentice_time_out)
-        elif agent_id == get_rolename(constants.WIZARD):
+        else:  # It is wizard
             return self.get_wizard_action(agent)
-        else:
-            logging.warning(f'Action from unidentified role: {agent_id}')
-            return agent.act(timeout=self.apprentice_time_out)
 
-    def finish_onboarding(self):
+    def end_onboarding_state(self):
+        """
+        Sends a message to front-end app to announce transition from onboarding.
+        """
         onboard_state = constants.ONBOARDING_STEPS['NOT_ONBOARDING']
         for agent in self.agents:
             agent.observe(onboarding_mode_toggle_message(onboard_state))
 
-    def broadcast_apprentice_persona(self, persona):
+    def broadcast_apprentice_persona(self, persona: str):
+        """
+        Sends the selected apprentice persona to the front-end app for display.
+        """
         for agent in self.agents:
             persona_msg = {
                 'id': constants.PERSONA_AGENT,
@@ -644,12 +662,18 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             agent.observe(persona_msg)
 
     def shuffle_agents(self):
+        """
+        Changes the starting order: who goes first.
+        """
         reorder = random.random() > 0.5
         if reorder:
             logging.info(f'Switching agents orders in {self.world_tag}')
             self._change_agents_order = True
 
-    def next_persona(self):
+    def sample_personas(self):
+        """
+        Generates a list of sampled personas, apprentice will choose from this list.
+        """
         persona = self.personas_list
         n = constants.CURATED_PERSONA_CHOICES
         logging.info(
@@ -661,10 +685,22 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             return [persona.pop() for _ in range(n)]
 
     def random_location(self):
+        """
+        Chooses a random location (only for personas that need one)
+        """
         return random.choice(self.locations_list)
 
     def assign_roles(self):
+        """
+        Determines the order and the role of the agents in the world.
+
+        Determines which agent goes first by random assignment.
+        The agent roles are based on their onboarding qualification.
+        """
+        # Roling the dice for the starting order
         self.shuffle_agents()
+
+        # The role and order assignment to the agents.
         starting_role = None
         for agent_index in range(len(self.agents)):
             agent = self.get_agent_order_mask(agent_index)
@@ -691,9 +727,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         else:
             return self.agents[0]
 
-    def receive_form_response(self, agent, check_persona_overuse=False):
+    def receive_form_response(self, agent: Agent, check_persona_overuse: bool = False):
         """
-        Checks the persona form for response that is high quality.
+        Extracts the selected persona from the response form and validates it.
         """
 
         def generate_persona_key(persona_desc):
@@ -702,19 +738,19 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
                 ret = ret.replace(sym, ' ')
             return ' '.join([s for s in ret.split(' ') if s])
 
+        # Repeat asking for persona until having a valid one.
         acceptable_response = False
         while not acceptable_response:
             agent_resp = agent.act(timeout=self.wizard_time_out)
-            pand_word = _form_response_pandemic_word(agent_resp)
-            if pand_word:
-                _send_pandemic_mentioned_alert(agent, pand_word)
-                continue
 
             pers_exp = _form_response_persona_expantion(agent_resp)
+
+            # Too short
             if not pers_exp or len(pers_exp) < constants.PERSONA_EXPANSION_MIN_LEN_CHAR:
                 _send_persona_too_short_warning(agent, pers_exp)
                 continue
 
+            # Persona was selected before
             if check_persona_overuse:
                 persona_key = generate_persona_key(
                     _form_response_main_persona(agent_resp)
@@ -727,7 +763,13 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             acceptable_response = True
         return agent_resp
 
-    def _update_curated_personas_use(self, persona):
+    def _update_curated_personas_use(self, persona: str):
+        """
+        Updates the persona use count.
+
+        Increases the count for the number of times that the selected `persona` was used,
+        and removes it from available list of personas if it was selected too many times.
+        """
         lower_persona = persona.lower()
         self.prev_persona_count[lower_persona] += 1
         if self.prev_persona_count[lower_persona] < self.max_times_persona_use:
@@ -746,8 +788,10 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         )
 
     def _choose_curated_persona(self):
-        persona_opts = self.next_persona()
-        persona_type = constants.CURATED_PERSONA
+        """
+        Asks apprentice to choose a persona from the curated list of personas.
+        """
+        persona_opts = self.sample_personas()
         apprentice_agent = self._get_apprentice()
 
         # Removing PERSONA_NEEDS_LOCATION_TOKEN from what agents will see
@@ -768,57 +812,36 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             task_data={'respond_with_form': persona_selection_form},
         )
         agent_response = self.receive_form_response(apprentice_agent)
-        response_data = agent_response['task_data']
 
-        # TODO: FOR DEBUGGING, remove later
-        # Often in prod "task_data" does not contain selections from agents
-        # this is a fallback to avoid that, and get more info for debugging it.
-        if (
-            'form_responses' in response_data
-            and len(response_data['form_responses'])
-            and 'response' in response_data['form_responses'][0]
-        ):
-            rs = [r['response'] for r in agent_response['task_data']['form_responses']]
-            assert len(rs) == 2, 'Persona response form length is not 2.'
-            selected_persona, added_persona = rs
-            apprentice_persona = f'{selected_persona}\n{added_persona}'
-            worker_name = self.worker_names[apprentice_agent]
-            logging.info(
-                f'Agent ({worker_name}) selected a persona: {apprentice_persona}'
+        rs = [r['response'] for r in agent_response['task_data']['form_responses']]
+        assert len(rs) == 2, 'Persona response form length is not 2.'
+        selected_persona, added_persona = rs
+        apprentice_persona = f'{selected_persona}\n{added_persona}'
+        worker_name = self.worker_names[apprentice_agent]
+        logging.info(f'Agent ({worker_name}) selected a persona: {apprentice_persona}')
+
+        selected_persona_ind = persona_opts_views.index(selected_persona)
+        # Checking if persona needs location
+        if constants.PERSONA_NEEDS_LOCATION_TOKEN in persona_opts[selected_persona_ind]:
+            apprentice_location = self.random_location()
+            logging.info(f'Persona needs a location. {apprentice_location} selected.')
+            apprentice_persona = (
+                f'I live in {apprentice_location}.\n{apprentice_persona}'
             )
 
-            selected_persona_ind = persona_opts_views.index(selected_persona)
-            # Checking if persona needs location
-            if (
-                constants.PERSONA_NEEDS_LOCATION_TOKEN
-                in persona_opts[selected_persona_ind]
-            ):
-                apprentice_location = self.random_location()
-                logging.info(
-                    f'Persona needs a location. {apprentice_location} selected.'
-                )
-                apprentice_persona = (
-                    f'I live in {apprentice_location}.\n{apprentice_persona}'
-                )
-                persona_type = constants.CURATED_LOCATION_PERSONA
+        # Checking if the persona was used too often and needs to be removed.
+        self._update_curated_personas_use(persona_opts[selected_persona_ind])
 
-            # Checking if the persona was overused and may be removed
-            self._update_curated_personas_use(persona_opts[selected_persona_ind])
-        else:
-            logging.warning(
-                f'Agent persona selection response was corrupted. Content:\n{response_data}'
-            )
-            logging.warning('Choosing an arbitrary persona for this conversation.')
-            persona_type = constants.FORM_FALL_BACK_PERSONA
-            apprentice_persona = random.choice(persona_opts_views)
-
-        return apprentice_persona, persona_type
+        return apprentice_persona
 
     def _choose_templated_topics_persona(self):
-        persona_type = constants.TEMPLATE_PERSONA
+        """
+        Asks apprentice to choose a persona using the provided template.
+        """
+
         topic_bundles = random.sample(
             constants.TEMPLATE_PERSONAS_TOPICS, k=constants.TEMPLATE_PERSONAS_CHOICES
-        )
+        )  # Each topic bundle is string of comma-seperated related topics, eg. "book,author"
         topics = []
         for tb in topic_bundles:
             topics.extend(tb.split(','))
@@ -841,33 +864,17 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         agent_response = self.receive_form_response(
             apprentice_agent, check_persona_overuse=True
         )
-        response_data = agent_response['task_data']
-        if (
-            'form_responses' in response_data
-            and len(response_data['form_responses'])
-            and 'response' in response_data['form_responses'][0]
-        ):
-            rs = [r['response'] for r in agent_response['task_data']['form_responses']]
-            assert len(rs) == 3, 'Template persona response form length is not 3.'
-            topic, topic_item, extra_deatils = rs
-            apprentice_persona = persona_from_template_values(
-                topic, topic_item, extra_deatils
-            )
-            worker_name = self.worker_names[apprentice_agent]
-            logging.info(
-                f'Agent ({worker_name}) selected a persona: {apprentice_persona}'
-            )
-        else:
-            logging.warning(
-                f'Agent persona selection response was corrupted. Content:\n{response_data}'
-            )
-            logging.warning('Choosing an arbitrary persona for this conversation.')
-            rand_persona = random.choice(self.next_persona().split('\n'))
-            persona_type = constants.FORM_FALL_BACK_PERSONA
-            apprentice_persona = rand_persona.replace(
-                constants.PERSONA_NEEDS_LOCATION_TOKEN, ''
-            )
-        return apprentice_persona, persona_type
+
+        rs = [r['response'] for r in agent_response['task_data']['form_responses']]
+        assert len(rs) == 3, 'Template persona response form length is not 3.'
+        topic, topic_item, extra_deatils = rs
+        apprentice_persona = persona_from_template_values(
+            topic, topic_item, extra_deatils
+        )
+        worker_name = self.worker_names[apprentice_agent]
+        logging.info(f'Agent ({worker_name}) selected a persona: {apprentice_persona}')
+
+        return apprentice_persona
 
     def _reset_to_text_response(self, agent):
         """
@@ -876,6 +883,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         _coordinator_send_message(agent=agent, task_data={'respond_with_form': False})
 
     def apprentice_choose_persona(self):
+        """
+        Randomly selects a persona selection type (template, curated) and asks agent.
+        """
         logging.info('Randomly choosing persona selection type.')
         choose_from_templates = (
             random.random() < constants.PROBABILITY_CHOOSING_TEMPLATE_PERSONA
@@ -890,6 +900,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         return resp
 
     def send_time_length_info(self):
+        """
+        Sends a message to agents informing them about the length of the task (turns, and timeout).
+        """
         min_rounds = self.min_num_turns
         wiz_time = sec_to_min_pretty(self.wizard_time_out)
         app_time = sec_to_min_pretty(self.apprentice_time_out)
@@ -913,7 +926,10 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
                 }
             )
 
-    def send_starter_instruction(self, role):
+    def send_starter_instruction(self, role: int):
+        """
+        Sends a reminder about the role and goals in the beginning of chat.
+        """
         message_text = None
         if role == constants.WIZARD:
             message_text = constants.WIZARD_STARTING_INSTRUCTION
@@ -928,6 +944,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         self.get_agent_order_mask(0).observe(start_instruction_message)
 
     def send_wizard_persona_emphasize_message(self):
+        """
+        Sends a message to wizard emphasizing on main goal here (apprentice persona).
+        """
         for agent in self.agents:
             if not _is_wiz(agent):
                 continue
@@ -940,19 +959,22 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             )
 
     def setup_roles_and_persona(self):
+        """
+        Prepares the chat environment and states before starting agent interactions.
+        """
         logging.info('Setting up roles, orders, persona.')
-        self.finish_onboarding()
+        self.end_onboarding_state()
         self.broadcast_apprentice_persona('')  # clear onboarding persona
         starting_role = self.assign_roles()
         self.send_wizard_persona_emphasize_message()
-        self.selected_persona, _ = self.apprentice_choose_persona()
+        self.selected_persona = self.apprentice_choose_persona()
         self.broadcast_apprentice_persona(self.selected_persona)
         self.send_time_length_info()
         self.send_starter_instruction(starting_role)
 
     def parley(self):
         """
-        parley process for the agents.
+        parley process for the agents: running the chat world.
         """
         if self.turn_idx == 0:
             self.setup_roles_and_persona()
@@ -979,54 +1001,21 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
                 )
 
             if 'requested_finish' in act and act['requested_finish']:
+                # One of the agents has requested for end of the chat.
                 self.episodeDone = True
-                self.final_survey_and_finish(idx)
                 break
 
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(act))
 
+            # Reminds wizard about searching and selecting knowledge if needed.
             self._send_task_objective_reminders(agent)
 
-    def _send_end_message(self, agent):
-        _coordinator_send_message(
-            agent,
-            (
-                'Thanks for your prticipation. We are wrapping up the data to finish this HIT. '
-                'You should see the Submit button shortly. '
-                'PLEASE MAKE SURE YOU SUBMIT BEFORE YOU LEAVE.'
-            ),
-            episode_done=True,
-        )
-
-    def final_survey_and_finish(self, finishing_agent):
-        evaluate_partner_form = [
-            {
-                'type': 'choices',
-                'question': 'How was your partner helping this chat to move forward? ',
-                'choices': [
-                    'GOOD: partner was on topic and engaging.',
-                    'BAD: partner responses did not make sense.',
-                ],
-            }
-        ]
-
-        for agent_id in (finishing_agent, 1 - finishing_agent):
-            agent = self.get_agent_order_mask(agent_id)
-            _coordinator_send_message(
-                agent,
-                message=constants.END_CHAT_EVALUATE_MESSAGE,
-                task_data={'respond_with_form': evaluate_partner_form},
-            )
-            response = agent.act(timeout=120)
-            other_agent = self.get_agent_order_mask(1 - agent_id)
-            response['other_worker'] = self.worker_names[other_agent]
-            self.messages.append(deepcopy(response))
-            self._reset_to_text_response(agent)
-            self._send_end_message(agent)
-
-    def _reason_to_disqualify(self, agent):
+    def _reason_to_disqualify(self, agent: Agent):
+        """
+        Determining if agents had low quality work or had unsafe behaviour.
+        """
         # Disconncet or timeout
         mephisto_agent = agent.mephisto_agent
         if mephisto_agent.get_status() in (
@@ -1057,18 +1046,22 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             return f'ParlAI acceptability checker found violations: "{acceptability_checker_results}"'
 
     def _soft_block_agent(self, agent):
+        """
+        Softblocking the agent: they can not participate in this task anymore.
+        """
         worker = get_worker_from_agent(agent)
         logging.warning(f'Soft blocking {worker.worker_name}')
         worker.grant_qualification(self.soft_block_qname)
 
     def prep_save_data(self, agent_as_list):
+        """
+        Saving the chat data, after checking its quality and safety.
+        """
         agent = agent_as_list[0]
         agent_id = agent.agent_id
-        if agent_id not in ('Wizard', 'Apprentice'):
-            logging.warning(f'Unknown agent {agent_id}')
 
         logging.info(f'Preparing saved data for {agent_id}')
-        ret = {'agent_id': agent.agent_id, 'message_history_copy': self.messages}
+        ret = {'agent_id': agent_id, 'message_history_copy': self.messages}
         disqualify_reason = self._reason_to_disqualify(agent)
         if disqualify_reason:
             logging.info(f'Disqualified submission detecetd: "{disqualify_reason}"')
@@ -1099,6 +1092,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
 
 def onboarding_mode_toggle_message(onboarding_step):
+    """
+    Formats a message to be sent to front-end to detemine the state of onboarding.
+    """
     return {
         'id': constants.ONBOARDING_AGENT,
         'text': '',
@@ -1108,6 +1104,9 @@ def onboarding_mode_toggle_message(onboarding_step):
 
 
 def _get_cached_roll_tally():
+    """
+    Returns the role tally counts from cache, if the cache is not expired.
+    """
     utime = ROLE_TALLY_CHACHE['last_update']
     if not utime:
         logging.info('Initiated rolls tally cache.')
@@ -1129,15 +1128,18 @@ def _get_cached_roll_tally():
     return ROLE_TALLY_CHACHE['data']
 
 
-def _cach_roll_tally(rolls_tally):
+def _cach_roll_tally(rolls_tally: Dict[int, int]):
+    """
+    Updates the content of the roles tally cache.
+    """
     logging.info('Setting rolls tally cache.')
     ROLE_TALLY_CHACHE['last_update'] = time.time()
     ROLE_TALLY_CHACHE['data'] = rolls_tally
 
 
-def find_needed_role(agent, rqname):
+def find_needed_role(agent, rqname: str):
     """
-    Determines the role that the agent under onboarding needs to go through.
+    Determines the role that the agent starting the onboarding needs to go through.
 
     Checks the number of agents who passed the onboarding and are waiting to be matched,
     and the agents who are currently in the onboarding. Based the number of roles in the
@@ -1186,7 +1188,7 @@ def find_needed_role(agent, rqname):
     logging.info(
         f'Wizard: {role_tally[constants.WIZARD]}\tApprentices: {role_tally[constants.APPRENTICE]}'
     )
-    if role_tally[constants.WIZARD] > 2 * role_tally[constants.APPRENTICE]:
+    if role_tally[constants.WIZARD] > role_tally[constants.APPRENTICE]:
         logging.info('Onboarding a new Apprentice.')
         role_tally[constants.APPRENTICE] += 1
         return constants.APPRENTICE
@@ -1196,7 +1198,7 @@ def find_needed_role(agent, rqname):
         return constants.WIZARD
 
 
-def make_onboarding_world(opt, agent):
+def make_onboarding_world(opt, agent: Agent):
     """
     Assigns agents to apporopraite onboarding worlds to balance the roles.
     """
@@ -1212,7 +1214,10 @@ def make_onboarding_world(opt, agent):
             worker.grant_qualification(role_qual_name, constants.APPRENTICE_IN_TRAINING)
             return ApprenticeOnboardingWorld(opt, agent)
 
-    agent.observe(onboarding_mode_toggle_message(1))
+    # sends a message to UI to set the onboarding step.
+    agent.observe(
+        onboarding_mode_toggle_message(constants.ONBOARDING_STEPS['CHAT_INTERFACE'])
+    )
     worker_qualification = get_worker_from_agent(agent).get_granted_qualification(
         role_qual_name
     )
@@ -1234,20 +1239,23 @@ def make_onboarding_world(opt, agent):
 
 
 def assign_role_training_qualification(
-    worker, role_qulification_name, role_qulification_value
+    worker, role_qulification_name: str, role_qulification_value: int
 ):
+    """
+    Syncs the training qualification of the agent (worker) with the DB.
+    """
     if not role_qulification_value or role_qulification_value == constants.NO_ROLE:
         logging.warning('Agent did not qualify for a role.')
         return False
-    role_name = get_rolename(role_qulification_value)
+    role_name = constants.ROLE_NAMES[role_qulification_value]
     logging.info(f'Agent qulified for {role_name} role. Granting worker qualification.')
     worker.grant_qualification(role_qulification_name, role_qulification_value)
     return True
 
 
-def validate_onboarding(data):
+def validate_onboarding(data: Dict):
     """
-    Check the contents of the data to ensure they are valid.
+    Check the contents of the data to ensure they are valid and safe.
     """
     try:
         saved_data = data['outputs']['messages'][-1]['data']['WORLD_DATA']
@@ -1277,17 +1285,7 @@ def validate_onboarding(data):
     return True
 
 
-def next_persona(opt):
-    replace = opt.get('pick_persona_with_replacement', True)
-    personas_list = opt['personas']
-    logging.info(f'Randomly choosing between {len(personas_list)} persona.')
-    if replace:
-        return random.choice(personas_list)
-    else:
-        return personas_list.pop()
-
-
-def make_world(opt, agents):
+def make_world(opt, agents: Agent):
     return MTurkMultiAgentDialogWorld(opt, agents)
 
 
