@@ -12,10 +12,10 @@ from omegaconf import DictConfig
 from dataclasses import dataclass, field
 from typing import List, Dict, Any
 
-from parlai_internal.crowdsourcing.projects.wizard_internet.wizard_internet_blueprint import (
+from parlai.crowdsourcing.tasks.wizard_of_internet import constants
+from parlai.crowdsourcing.tasks.wizard_of_internet.wizard_internet_blueprint import (
     WIZARD_INTERNET_PARLAICHAT_BLUEPRINT,
 )
-from parlai.crowdsourcing.tasks.wizard_of_internet import constants
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 import parlai.utils.logging as logging
 
