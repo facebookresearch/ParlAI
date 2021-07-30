@@ -17,8 +17,8 @@ from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from parlai.core.worlds import validate
 from joblib import Parallel, delayed
 import parlai.utils.logging as logging
-from parlai_internal.crowdsourcing.projects.wizard_internet import constants
-from parlai_internal.crowdsourcing.projects.wizard_internet.acceptability import (
+from parlai.crowdsourcing.tasks.wizard_of_internet import constants
+from parlai.crowdsourcing.tasks.wizard_of_internet.acceptability import (
     WizardOfInternetAcceptabilityChecker,
 )
 
