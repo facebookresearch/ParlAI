@@ -13,12 +13,69 @@ import json
 import parlai.utils.testing as testing_utils
 from parlai.core.metrics import AverageMetric
 from parlai.core.worlds import create_task
+from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import register_agent, Agent
 from parlai.utils.data import DatatypeHelper
 
 
 class TestTrainModel(unittest.TestCase):
+    def test_final_extra_eval_and_save_json(self):
+        """
+        Test "final_extra_valid_opt_filepath". Happens to test that saving reports as
+        json works too.
+
+        We copy train_model from testing_utils to directly access train loop.
+        """
+        import parlai.scripts.train_model as tms
+
+        def get_tl(tmpdir):
+            final_opt = Opt(
+                {
+                    'task': 'integration_tests',
+                    'datatype': 'valid',
+                    'validation_max_exs': 30,
+                    'short_final_eval': True,
+                    'write_log_as_json': True,
+                }
+            )
+            final_opt.save(os.path.join(tmpdir, "final_opt.opt"))
+
+            opt = Opt(
+                {
+                    'task': 'integration_tests',
+                    'validation_max_exs': 10,
+                    'model': 'repeat_label',
+                    'model_file': os.path.join(tmpdir, 'model'),
+                    'short_final_eval': True,
+                    'num_epochs': 1.0,
+                    'write_log_as_json': True,
+                    'final_extra_valid_opt_filepath': str(
+                        os.path.join(tmpdir, "final_opt.opt")
+                    ),
+                }
+            )
+            parser = tms.setup_args()
+            parser.set_params(**opt)
+            popt = parser.parse_args([])
+            for k, v in opt.items():
+                popt[k] = v
+            return tms.TrainLoop(popt)
+
+        with testing_utils.capture_output(), testing_utils.tempdir() as tmpdir:
+            tl = get_tl(tmpdir)
+            _, _ = tl.train()
+
+            with open(os.path.join(tmpdir, 'model.valid.json')) as f:
+                self.assertEqual(
+                    json.load(f)['exs'], 10, "Validation exs saved incorrectly"
+                )
+
+            with open(os.path.join(tmpdir, 'model_final.valid.json')) as f:
+                self.assertEqual(
+                    json.load(f)['exs'], 30, "Final validation exs saved incorrectly"
+                )
+
     def test_fast_final_eval(self):
         valid, test = testing_utils.train_model(
             {

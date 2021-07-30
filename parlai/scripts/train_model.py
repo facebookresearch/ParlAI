@@ -23,7 +23,7 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
-
+import copy
 import json
 import numpy as np
 import signal
@@ -86,6 +86,18 @@ def setup_args(parser=None) -> ParlaiParser:
         '-et',
         '--evaltask',
         help='task to use for valid/test (defaults to the one used for training)',
+    )
+    train.add_argument(
+        '--final-extra-valid-opt-filepath',
+        type=str,
+        default='',
+        help="A '.opt' file that is used for final eval. Useful for setting skip-generation to false. 'datatype' must be included as part of the opt.",
+    )
+    train.add_argument(
+        '--write-log-as-json',
+        type=bool,
+        default=False,
+        help="Write metrics log as json rather than a pretty print of the report.",
     )
     train.add_argument(
         '--eval-batchsize',
@@ -602,7 +614,9 @@ class TrainLoop:
 
         return valid_report
 
-    def _run_eval(self, valid_worlds, opt, datatype, max_exs=-1, write_log=False):
+    def _run_eval(
+        self, valid_worlds, opt, datatype, max_exs=-1, write_log=False, log_suffix=""
+    ):
         """
         Eval on validation/test data.
 
@@ -642,8 +656,16 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            with PathManager.open(opt['model_file'] + '.' + datatype, 'a') as f:
-                f.write(f'{metrics}\n')
+            if opt["write_log_as_json"]:
+                with PathManager.open(
+                    opt['model_file'] + log_suffix + '.' + datatype + ".json", 'a'
+                ) as f:
+                    json.dump(dict_report(report), f)
+            else:
+                with PathManager.open(
+                    opt['model_file'] + log_suffix + '.' + datatype, 'a'
+                ) as f:
+                    f.write(f'{metrics}\n')
 
         return report
 
@@ -918,6 +940,34 @@ class TrainLoop:
                 test_world.shutdown()
 
         print_announcements(opt)
+
+        if opt['final_extra_valid_opt_filepath'] is not '':
+            final_valid_opt = copy.deepcopy(opt)
+            final_valid_opt_raw = Opt.load_init(opt['final_extra_valid_opt_filepath'])
+            final_datatype = final_valid_opt_raw["datatype"]
+            for k, v in final_valid_opt_raw.items():
+                final_valid_opt[k] = v
+            final_max_exs = (
+                final_valid_opt['validation_max_exs']
+                if final_valid_opt.get('short_final_eval')
+                else -1
+            )
+            final_valid_world = load_eval_worlds(
+                self.agent, final_valid_opt, final_datatype
+            )
+            final_valid_report = self._run_eval(
+                final_valid_world,
+                final_valid_opt,
+                final_datatype,
+                final_max_exs,
+                write_log=True,
+                log_suffix="_final",
+            )
+            if opt['wandb_log'] and is_primary_worker():
+                self.wb_logger.log_final(final_datatype, final_valid_report)
+
+        if opt['wandb_log'] and is_primary_worker():
+            self.wb_logger.finish()
 
         return v_report, t_report
 
