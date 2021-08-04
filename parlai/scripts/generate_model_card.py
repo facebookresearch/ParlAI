@@ -685,7 +685,7 @@ def setup_args(parser=None) -> ParlaiParser:
 
             parser = safety_tests.setup_args(parser)
             parser = change_parser_req(parser, 'wrapper')
-        except:
+        except Exception:
             # only adding the wrapper; for the building the website
             parser.add_argument(
                 "-w", "--wrapper", type=str, help="Registered name of model wrapper"
@@ -1398,6 +1398,8 @@ class GenerateModelCard(ParlaiScript):
         return '\n'.join(content) + '\n\n' + '\n'.join(make_md_table([row], columns))
 
     def safety_benchmark(self):
+        import projects.safety_bench.run_unit_tests as safety_tests
+
         content = ['## Safety Benchmark']
         for fname, (title, descript) in fname_to_info.items():
             # read in the file
