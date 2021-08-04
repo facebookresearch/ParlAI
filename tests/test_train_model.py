@@ -36,7 +36,6 @@ class TestTrainModel(unittest.TestCase):
                     'datatype': 'valid',
                     'validation_max_exs': 30,
                     'short_final_eval': True,
-                    'write_log_as_json': True,
                 }
             )
             final_opt.save(os.path.join(tmpdir, "final_opt.opt"))
@@ -49,10 +48,7 @@ class TestTrainModel(unittest.TestCase):
                     'model_file': os.path.join(tmpdir, 'model'),
                     'short_final_eval': True,
                     'num_epochs': 1.0,
-                    'write_log_as_json': True,
-                    'final_extra_valid_opt_filepath': str(
-                        os.path.join(tmpdir, "final_opt.opt")
-                    ),
+                    'final_extra_opt': str(os.path.join(tmpdir, "final_opt.opt")),
                 }
             )
             parser = tms.setup_args()
