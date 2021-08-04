@@ -2,7 +2,7 @@
 
 **Author**: Wendy Zhang
 
-Here's a sample model card for the [Blenderbot2_3B](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md).
+Here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md).
 
 ## The Process
 There are two steps in generating the model cards.
@@ -54,12 +54,12 @@ parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M
 ```
 - Blenderbot2 400M
 ```
-parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_400M -bs 128  --mode gen:safety --search-server http://devfair0169:5000/bing_search --wrapper blenderbot2_400M
+parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_400M -bs 128  --mode gen --search-server http://devfair0169:5000/bing_search --wrapper blenderbot2_400M
 parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_400M
 ```
 
 
-## Details of Report Generation
+##  Report Generation Details
 ![imageonline-co-whitebackgroundremoved (4)](https://user-images.githubusercontent.com/14303605/128233882-4c77770d-9703-466f-b1a2-7f2395c5c2f6.png) 
 
 In the end, it should generate the following reports under the `--folder-to-save`
@@ -68,11 +68,11 @@ In the end, it should generate the following reports under the `--folder-to-save
 - a `sample.json` file contain a sample input and output from the model
 - for generators, it should generate a folder `safety_bench_res` that contains the safety_bench results ([click here to learn more about the safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench)).
 
-**Successful generations should end with a green message like this:**
+*Successful generations should end with a green message like this:*
 
 <img width="679" alt="Screen Shot 2021-07-26 at 3 58 33 PM" src="https://user-images.githubusercontent.com/14303605/127069754-b99cec8c-6fac-4d32-bbca-f4972f6c5b5e.png">
 
-**Unsucessful generations will look like this, and should tell us which reports are missing and why.**
+*Unsucessful generations will look like this, and should tell us which reports are missing and why.*
 <img width="1790" alt="Screen Shot 2021-07-26 at 11 32 17 AM" src="https://user-images.githubusercontent.com/14303605/127040345-e8ec6afa-60da-484e-8e68-955f592cec8b.png">
 
 
