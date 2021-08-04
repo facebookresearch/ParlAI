@@ -1259,7 +1259,7 @@ class GenerateModelCard(ParlaiScript):
         self._search_make_li and model_details_struct using  to create a list of other
         info.
         """
-        descrip = self._find_by_key('description')
+        descrip = self.model_dict.get('description', '')
         contents = [descrip] if descrip else [create_warning('missing description')]
         li_list = list(map(self._search_make_li, model_details_struct))
         contents += list(filter(None, li_list))
