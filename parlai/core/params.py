@@ -1204,6 +1204,7 @@ class ParlaiParser(argparse.ArgumentParser):
                 kwname_to_action[kwname] = action
 
         # since we can have options that depend on options, repeat until convergence
+        string_args = []
         unparsed_args = set(kwargs.keys())
         while unparsed_args:
             string_args = []
