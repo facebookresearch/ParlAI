@@ -8,7 +8,6 @@ Script to generate the model card automatically.
 """
 from datetime import date, datetime
 
-from numpy.lib.arraysetops import isin
 from parlai.core.metrics import METRICS_DISPLAY_DATA
 from parlai.core.worlds import create_task
 from parlai.core.agents import create_agent
@@ -21,7 +20,6 @@ from parlai.zoo.model_list import model_list
 from projects.safety_bench.utils.wrapper_loading import setup_wrapper_registry
 import parlai.scripts.data_stats as data_stats
 import parlai.scripts.eval_model as eval_model
-import parlai.scripts.display_data as dd
 import projects.safety_bench.run_unit_tests as safety_tests
 
 import matplotlib.pyplot as plt
@@ -652,13 +650,13 @@ def setup_args(parser=None) -> ParlaiParser:
         default='editing',
         help='possible modes: gen (generation), editing, final.\nIn addition, for gen mode, we can also add the following to specify which exact reports to run: data_stats, eval, safety, sample, and quant)\n For instance, --mode gen:data_stats:eval',
     )
-    # gmc.add_argument(
-    #     '--evaltask',
-    #     '-et',
-    #     type=str,
-    #     default=None,
-    #     help='evaluation tasks to use in place of the one specified by model.opt; will only affect `gen` mode',
-    # )
+    gmc.add_argument(
+        '--external-only',
+        '--extOnly',
+        default=True,
+        type='bool',
+        help='whether or not to include the internal, fromfile, or jsonfile tasks if no external version of the task can be found; by default, we will not (so True).',
+    )
     gmc.add_argument(
         '--evaluation-report-file',
         '-eval-rf',
@@ -824,7 +822,7 @@ class GenerateModelCard(ParlaiScript):
         self.train_tasks, tmp = ([], train_tasks.split(','))
 
         for task in tmp:
-            processed = process_task(task)
+            processed = process_task(task, self.opt['external_only'])
             if processed:
                 self.train_tasks.append(processed)
             else:
@@ -868,7 +866,7 @@ class GenerateModelCard(ParlaiScript):
         else:
             self.eval_tasks = []
             for task in eval_tasks:
-                processed = process_task(task)
+                processed = process_task(task, self.opt['external_only'])
                 if processed:
                     self.eval_tasks.append(processed)
                 else:
