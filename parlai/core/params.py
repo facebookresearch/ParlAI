@@ -1246,9 +1246,6 @@ class ParlaiParser(argparse.ArgumentParser):
             new_unparsed_args = set()
             string_args = []
             for kwname, value in kwargs.items():
-                # note we don't have the if kwname not in kwname_to_action here.
-                # it MUST appear, or else we legitimately should be throwing a KeyError
-                # because user has provided an unspecified option
                 if kwname not in kwname_to_action:
                     new_unparsed_args.add(kwname)
                     continue
