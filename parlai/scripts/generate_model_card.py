@@ -7,6 +7,7 @@
 Script to generate the model card automatically.
 """
 from datetime import date, datetime
+
 from parlai.core.metrics import METRICS_DISPLAY_DATA
 from parlai.core.worlds import create_task
 from parlai.core.agents import create_agent
@@ -18,7 +19,7 @@ from parlai.utils.strings import colorize
 from parlai.zoo.model_list import model_list
 import parlai.scripts.data_stats as data_stats
 import parlai.scripts.eval_model as eval_model
-
+import traceback
 import contextlib
 import copy
 import io
@@ -43,6 +44,17 @@ sample_always_args = {
     'use_test_set': False,
     'fixed_response': None,
 }
+
+# for classifiers, keys to add from model.opt
+classifier_keys = {
+    'classes',
+    'classes_from_file',
+    'use_test_set',
+    'balance_data',
+    'single_turn',
+}
+opt_ignore_keys = classifier_keys
+
 
 # model details stucture for _search_make_li
 # key to search, default value, before value, after value, processing function (optional), # of tabs (optional)
@@ -216,22 +228,22 @@ default_hyperparams = {
 }
 
 
-USER_SYM_SECTION = 'user_included^-^:'
+USER_SYM_SECTION = 'user_included:'
 
 # using a list for easier insertion + needs to be ordered.
 section_list = [
-    'model_details',
-    'model_details:_quick_usage',
-    'model_details:_sample_input_and_output',
-    USER_SYM_SECTION + 'intended_use',
-    USER_SYM_SECTION + 'limitations',
-    USER_SYM_SECTION + 'privacy',
-    'datasets_used',
-    'evaluation',
-    'extra_analysis',
-    USER_SYM_SECTION + 'related_paper',
-    'hyperparameters',
-    'feedback',
+    "model_details",
+    "model_details:_quick_usage",
+    "model_details:_sample_input_and_output",
+    USER_SYM_SECTION + "intended_use",
+    USER_SYM_SECTION + "limitations",
+    USER_SYM_SECTION + "privacy",
+    "datasets_used",
+    "evaluation",
+    "extra_analysis",
+    USER_SYM_SECTION + "related_paper",
+    "hyperparameters",
+    "feedback",
 ]
 
 # sections that have unique functions
@@ -279,31 +291,6 @@ M_final = 'final'
 all_models = {model['path']: model for model in model_list}
 # dictionary of all tasks with their task field as the key
 all_tasks = {task['task']: task for task in task_list}
-
-# set containing internal tasks where we can just remove "internal:" and it will be okay
-internal_remove_tasks = {
-    "internal:blended_skill_talk",
-    "internal:light_dialog",
-    "internal:light_dialog",
-    "internal:eli5",
-    "internal:igc",
-    "internal:wizard_of_internet",
-}
-
-# dictionary mapping original task to new location, if they exist
-remap_task = {
-    "internal:safety:wikiToxicComments": "dialogue_safety:wikiToxicComments",
-    "internal:safety:adversarial": "dialogue_safety:adversarial",
-    "internal:personal_knowledge:PersonalTopicFollowup": "msc:PersonaSummary",
-    # TODO: check if this is actually correct
-    "internal:safety:multiturnConvAI2": "dialogue_safety:multiturn",
-    "internal:safety:boring": None,
-    "internal:convai2_review": None,
-    "internal:safety:boringConvAI2Review": None,
-    "internal:comment_battle:ImageDialogGenerationTeacher": None,
-    "internal:safety:adversarialConvAI2Review": None,
-    "internal:new_reddit:small": None,
-}
 
 data_stats_folder = 'data_stats'
 task_site = 'https://parl.ai/docs/tasks.html'
@@ -389,37 +376,6 @@ def format(info):
     if type(info) == dict:
         return json.dumps(info, sort_keys=True, indent=4)
     return str(info)
-
-
-def process_task(task, ignore_task=True):
-    """
-    tries to remap tasks to their external version, and then may ignore the tasks w/o
-    ext.
-
-    version depending on `ignore_task`
-    """
-    # processing tasks so that no arguments are included
-    # unless it's a fromfile or jsonfile one
-    splitted = task.split(':')
-    stop = len(splitted)
-    if 'fromfile:' not in task and 'jsonfile:' not in task:
-        for i in range(len(splitted)):
-            if '=' in splitted[i]:
-                stop = i
-                break
-    actual_task = ':'.join(splitted[:stop])
-
-    # using actual task, figure out if it should be redirected
-    if actual_task in internal_remove_tasks:
-        return task.replace('internal:', '')
-    if actual_task in remap_task:
-        if remap_task.get(actual_task):
-            return remap_task[actual_task] + ':'.join(splitted[stop:])
-        else:
-            return None
-    if 'fromfile:' in task or 'jsonfile:' in task or 'internal:' in task:
-        return None if ignore_task else task
-    return task
 
 
 def possible_and_statement(lis):
@@ -650,12 +606,13 @@ def get_heatmap(stats_dfs, title=None, tfsize=16, heatmapkws_user=None, fout=Non
 #################################
 
 
-def get_new_parser(parser, opt, ignore_keys=()):
+def get_new_parser(parser, opt, ignore_keys=(), always_keys=()):
     """
     rewrites parser with opt.
     """
-    for key in parser:
-        if key not in ignore_keys and key in opt:
+    for key in opt:
+        add_condition = key not in ignore_keys and key in parser
+        if key in always_keys or add_condition:
             parser[key] = opt[key]
     return parser
 
@@ -720,11 +677,11 @@ def setup_args(parser=None) -> ParlaiParser:
         help='possible modes: gen (generation), editing, final.\nIn addition, for gen mode, we can also add the following to specify which exact reports to run: data_stats, eval, safety, sample, and quant)\n For instance, --mode gen:data_stats:eval',
     )
     gmc.add_argument(
-        '--external-only',
-        '--extOnly',
+        '--ignore-unfound-tasks',
+        '--ignore',
         default=True,
         type='bool',
-        help='whether or not to include the internal, fromfile, or jsonfile tasks if no external version of the task can be found; by default, we will not (so True).',
+        help='whether or not to ignore the internal, fromfile, or jsonfile tasks if no external version of the task can be found; by default, we will (so True).',
     )
     gmc.add_argument(
         '--evaluation-report-file',
@@ -807,15 +764,12 @@ class GenerateModelCard(ParlaiScript):
         self.verbose = self.opt['verbose']
         self.mode = self.opt['mode'].split(':')[0]
 
-        if self.mode not in {M_gen, M_edit, M_final}:
-            raise RuntimeError('The mode' + self.mode + 'was unrecognized.')
-
         self.general_setup()
         if self.mode == M_gen:
             self._set_evaltask()
             jobs, args = self._gen_jobs()
             self.save_reports(jobs, args)
-        else:
+        elif self.mode in {M_edit, M_final}:
             # card setting up
             self._set_sections_info()
             self._set_eval()
@@ -836,6 +790,7 @@ class GenerateModelCard(ParlaiScript):
         self._add_user_model_tasks()
         self._set_model_dict()
         self._set_model_opt()
+        self.ignore_task = self.opt['ignore_unfound_tasks']
         self._set_train_tasks()
         # actually deciding model type
         self.model_type = decide_model_type(self.opt, self.model_dict)
@@ -903,6 +858,10 @@ class GenerateModelCard(ParlaiScript):
         # override with the override field
         self.model_opt.update(self.model_opt.get('override', {}))
 
+        # make sure that if there's a classes, then there should be a classes_from_file
+        if 'classes' in self.model_opt and 'classes_from_file' not in self.model_opt:
+            self.model_opt['classes_from_file'] = None
+
         if self.verbose:
             extra_special_print('model.opt')
             self.model_opt.log()
@@ -923,11 +882,11 @@ class GenerateModelCard(ParlaiScript):
         self.train_tasks, tmp = ([], train_tasks.split(','))
 
         for task in tmp:
-            processed = process_task(task, self.opt['external_only'])
+            processed = self.process_task(task)
             if processed:
                 self.train_tasks.append(processed)
             else:
-                msg = f"dropping training task {task} b/c can't find external version"
+                msg = f"dropping training task {task}"
                 extra_special_print(msg, 'yellow')
 
         if self.mode != M_gen:
@@ -937,6 +896,19 @@ class GenerateModelCard(ParlaiScript):
                 fname = get_dstats_fname(self.opt['folder_to_save'], task)
                 if os.path.isfile(fname):
                     self.train_tasks.append(task)
+
+    def process_task(self, task):
+        """
+        tries to remap tasks to their external version, and then may ignore the tasks w/o
+        ext.
+
+        version depending on `ignore_task`
+        """
+        # processing tasks so that no arguments are included
+        # unless it's a fromfile or jsonfile one
+        if 'fromfile:' in task or 'jsonfile:' in task or 'internal:' in task:
+            return None if self.ignore_task else task
+        return task
 
     ##########################################
     # generation setup-related class functions
@@ -957,11 +929,11 @@ class GenerateModelCard(ParlaiScript):
 
         self.eval_tasks = []
         for task in eval_tasks:
-            processed = process_task(task, self.opt['external_only'])
+            processed = self.process_task(task)
             if processed:
                 self.eval_tasks.append(processed)
             else:
-                msg = f"dropping evaluation task {task} b/c can't find external version"
+                msg = f"dropping evaluation task {task}"
                 extra_special_print(msg, 'yellow')
 
     def _gen_jobs(self):
@@ -1002,18 +974,30 @@ class GenerateModelCard(ParlaiScript):
             fname = get_dstats_fname(self.opt['folder_to_save'], task)
             # setting up args for data_stats
             parser = data_stats.setup_args().parse_args([])
-            parser = get_new_parser(parser, self.opt)
+            always_ignore = {
+                'batchsize'
+            }  # if it's changed, it will give sometimes an error
+            if self.model_type == CLASSIFIER:
+                parser = get_new_parser(
+                    parser,
+                    self.model_opt,
+                    always_keys=classifier_keys,
+                    ignore_keys=always_ignore,
+                )
+            ignore_keys = opt_ignore_keys.union(always_ignore)
+            parser = get_new_parser(parser, self.opt, ignore_keys)
             parser['task'] = task
 
             if self.verbose:
+                extra_special_print(f"{task}: passing in the following")
                 Opt(parser).log()
-
             try:
                 # run the script and save the stats
                 task_stats = data_stats.obtain_stats(parser)
                 with open(fname, 'w+') as f:
                     json.dump(task_stats, f, default=lambda x: x.value())
-            except Exception as e:
+            except Exception:
+                e = traceback.format_exc()
                 extra_msg = "[Note that running it in commandline doesn't allow saving]"
                 msg = get_report_msg('data_stats', fname, e, extra_msg)
                 extra_special_print(msg, color='red')
@@ -1024,19 +1008,24 @@ class GenerateModelCard(ParlaiScript):
         fname = os.path.join(self.opt['folder_to_save'], 'eval_results.json')
         # setting up args for evaluation
         parser = eval_model.setup_args().parse_args([])
-        parser = get_new_parser(parser, self.opt)
+        if self.model_type == CLASSIFIER:
+            parser = get_new_parser(parser, self.model_opt, always_keys=classifier_keys)
+        parser = get_new_parser(parser, self.opt, opt_ignore_keys)
+        parser['ignore_labels'] = self.opt.get('ignore_labels')
         parser['task'] = ','.join(self.eval_tasks)
         parser['datatype'] = 'test'
         parser['aggregate_micro'] = True
         parser['report_filename'] = fname
 
         if self.verbose:
+            extra_special_print(f"passing in the following")
             Opt(parser).log()
 
         try:
             # running evaluation
             _ = eval_model.eval_model(parser)
-        except Exception as e:
+        except Exception:
+            e = traceback.format_exc()
             msg = get_report_msg('eval_model', fname, e)
             extra_special_print(msg, color='red')
             return [msg]
@@ -1048,7 +1037,6 @@ class GenerateModelCard(ParlaiScript):
         folder_name = os.path.join(self.opt['folder_to_save'], 'safety_bench_res')
         os.makedirs(folder_name, exist_ok=True)
         # adding this so that we can easily access the wrappers
-        setup_wrapper_registry()
         # setting up args for safety_bench
         wrapper = f"-w {self.opt.get('wrapper', '')}"
         parser = safety_tests.setup_args().parse_args(wrapper.split())
@@ -1056,11 +1044,14 @@ class GenerateModelCard(ParlaiScript):
         parser['log_folder'] = folder_name
 
         if self.verbose:
+            extra_special_print(f"passing in the following")
             Opt(parser).log()
 
         try:
+            setup_wrapper_registry()
             safety_tests.run_safety_unit_tests(parser)
-        except Exception as e:
+        except Exception:
+            e = traceback.format_exc()
             msg = get_report_msg('safety_bench', folder_name, e)
             msg += '\n\nPlease checkout https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench for exact details about implementation of wrapper.'
             extra_special_print(msg, color='red')
@@ -1069,7 +1060,9 @@ class GenerateModelCard(ParlaiScript):
     def save_sample(self):
         # setting up args
         parser = copy.deepcopy(self.model_opt)
-        parser = get_new_parser(parser, self.opt, ignore_keys={'model'})
+        ignore_keys = {'model'}
+        ignore_keys.update(opt_ignore_keys)
+        parser = get_new_parser(parser, self.opt, ignore_keys)
         parser.update(sample_always_args)
         parser['task'] = self.train_tasks[0]
 
@@ -1397,6 +1390,7 @@ class GenerateModelCard(ParlaiScript):
         return '\n'.join(content) + '\n\n' + '\n'.join(make_md_table([row], columns))
 
     def safety_benchmark(self):
+        import projects.safety_bench.run_unit_tests as safety_tests
 
         content = ['## Safety Benchmark']
         for fname, (title, descript) in fname_to_info.items():
@@ -1448,8 +1442,6 @@ class GenerateModelCard(ParlaiScript):
                 content.append(table)
 
         # get the last sentence from `safety_tests._interpret_results` and add the ending
-        import projects.safety_bench.run_unit_tests as safety_tests
-
         ending = ', (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))'
         notes = clean_mgs(safety_tests._interpret_results)
         content.append(notes[-1][:-2] + ending)
@@ -1569,7 +1561,8 @@ class GenerateModelCard(ParlaiScript):
                     args[key].update(self.all_args.get(key, {}))
                 elif self.all_args.get(key):
                     args[key] = self.all_args.get(key)
-        except Exception as e:
+        except Exception:
+            e = traceback.format_exc()
             extra_special_print(e, 'red')
         return args
 
