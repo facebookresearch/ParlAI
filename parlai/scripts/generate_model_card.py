@@ -8,6 +8,8 @@ Script to generate the model card automatically.
 """
 from datetime import date, datetime
 
+from git import exc
+
 from parlai.core.metrics import METRICS_DISPLAY_DATA
 from parlai.core.worlds import create_task
 from parlai.core.agents import create_agent
@@ -678,10 +680,17 @@ def setup_args(parser=None) -> ParlaiParser:
         parser = ParlaiParser(True, True, 'Automatically generate the model card')
         parser = eval_model.setup_args()
         parser = data_stats.setup_args(parser)
-        import projects.safety_bench.run_unit_tests as safety_tests
 
-        parser = safety_tests.setup_args(parser)
-        parser = change_parser_req(parser, 'wrapper')
+        try:
+            import projects.safety_bench.run_unit_tests as safety_tests
+
+            parser = safety_tests.setup_args(parser)
+            parser = change_parser_req(parser, 'wrapper')
+        except:
+            # only adding the wrapper; for the building the website
+            parser.add_argument(
+                "-w", "--wrapper", type=str, help="Registered name of model wrapper"
+            )
     gmc = parser.add_argument_group('Model Card Generation arguments')
     gmc.add_argument(
         '--model-type',
