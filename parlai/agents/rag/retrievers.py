@@ -641,12 +641,11 @@ class DPRRetriever(RagRetriever):
         # recompute exact FAISS scores
         scores = torch.bmm(query.unsqueeze(1), vectors.transpose(1, 2)).squeeze(1)
         if torch.isnan(scores).sum().item():
-            logging.error(
-                '\n[ Document scores are NaN; please look into the built index. ]\n'
-                '[ If using a compressed index, try building an exact index: ]\n'
-                '[ $ python index_dense_embeddings --indexer-type exact... ]'
+            raise AssertionError(
+                '\n[ Document scores are NaN; please make sure the passages file does not have repeated entries.]\n'
+                '[ Also set --num-shards to small values during generating dense embeddings: ]\n'
+                '[ e.g., when --shard-id is 0, --num-shards should be a value < int(len(rows of the passages file)/(num_of_maximum_passages_you_want_to_retrieve-1)).]'
             )
-            scores[scores != scores] = 1
         ids = torch.tensor([[int(s) for s in ss] for ss in ids])
 
         return ids, scores
@@ -1136,7 +1135,7 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
 
     def _empty_docs(self, num: int):
         """
-        Generates the requested number of empty documents.
+        Generates the requsted number of empty documents.
         """
         return [BLANK_SEARCH_DOC for _ in range(num)]
 
@@ -1230,9 +1229,9 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
         Retrieves from the FAISS index using a search query.
 
         This methods relies on the `retrieve_and_score` method in `RagRetriever`
-        ancestor class. It receive the query (conversation context) and generatess the
+        ancestor class. It recieve the query (conversation context) and generatess the
         search term queries based on them. Then uses those search quries (instead of the
-        the query text itself) to retrieve from the FAISS index.
+        the query text itself) to retrive from the FAISS index.
         """
 
         search_queries = self.generate_search_query(query)
@@ -1250,7 +1249,7 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
 
 class DocumentChunkRanker:
     """
-    Base class for controlling splitting long documents and selecting relevant chunks.
+    Base class for controling splitting long documents and selecting relevant chunks.
     """
 
     def __init__(self, n_retrieved_chunks):
