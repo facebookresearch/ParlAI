@@ -17,10 +17,8 @@ from parlai.core.opt import Opt
 from parlai.tasks.task_list import task_list
 from parlai.utils.strings import colorize
 from parlai.zoo.model_list import model_list
-from projects.safety_bench.utils.wrapper_loading import setup_wrapper_registry
 import parlai.scripts.data_stats as data_stats
 import parlai.scripts.eval_model as eval_model
-import projects.safety_bench.run_unit_tests as safety_tests
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -680,6 +678,8 @@ def setup_args(parser=None) -> ParlaiParser:
         parser = ParlaiParser(True, True, 'Automatically generate the model card')
         parser = eval_model.setup_args()
         parser = data_stats.setup_args(parser)
+        import projects.safety_bench.run_unit_tests as safety_tests
+
         parser = safety_tests.setup_args(parser)
         parser = change_parser_req(parser, 'wrapper')
     gmc = parser.add_argument_group('Model Card Generation arguments')
@@ -1035,6 +1035,9 @@ class GenerateModelCard(ParlaiScript):
             return [msg]
 
     def save_safety_bench(self):
+        from projects.safety_bench.utils.wrapper_loading import setup_wrapper_registry
+        import projects.safety_bench.run_unit_tests as safety_tests
+
         folder_name = os.path.join(self.opt['folder_to_save'], 'safety_bench_res')
         os.makedirs(folder_name, exist_ok=True)
         # adding this so that we can easily access the wrappers
@@ -1335,7 +1338,8 @@ class GenerateModelCard(ParlaiScript):
 
     def evaluation(self):
         """
-        should add sth about the eval tasks, validation metric, and create a table with the validation metric
+        should add sth about the eval tasks, validation metric, and create a table with
+        the validation metric.
 
         TODO: let user pass in and add more metrics
         """
@@ -1543,9 +1547,8 @@ class GenerateModelCard(ParlaiScript):
         Finds the arguments from extra_args_path based on the list of keywords, and
         replaces or overrides defaults.
 
-        Possible keywords for key_defaults:
-        label_qargs / model_qargs / eval_qargs / section_qargs / user_sections /
-        extra_tasks / extra_models / datasets_used
+        Possible keywords for key_defaults: label_qargs / model_qargs / eval_qargs /
+        section_qargs / user_sections / extra_tasks / extra_models / datasets_used
         """
         args = copy.deepcopy(key_defaults)
         try:
