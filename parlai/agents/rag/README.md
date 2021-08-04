@@ -133,8 +133,6 @@ python generate_dense_embeddings.py -mf zoo:hallucination/multiset_dpr/hf_bert_b
 --outfile /tmp/wiki_passage_embeddings/wiki_passages --num-shards 50 --shard-id 0 -bs 32
 ```
 
-Note `--num-shards` should be a [small value](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/retrievers.py#L644) if the passages file only has a few entries; otherwise it may raise the `NaN` error when the number of retrieved passages, i.e., `--n-docs,` is a large value.
-
 ### 3. Index the Dense Embeddings
 
 The final step is to build the full FAISS index from these dense embeddings. You can use the [`index_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/index_dense_embeddings.py) script to achieve this. You can choose one of the following options when indexing your embeddings for varying results, depending on the size of your dataset:
