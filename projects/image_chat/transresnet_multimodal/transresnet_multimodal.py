@@ -56,7 +56,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
             default=None,
             help="for use in other tasks where no personality "
             "is given. This will give the model a personality "
-            "(whichever is specifed).",
+            "(whichever is specified).",
         )
         parser.add_argument(
             "--personalities-path",
@@ -349,7 +349,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
         """
         Update Metrics.
 
-        Overriden to include dialogue round
+        Overridden to include dialogue round
 
         :param loss:
             float loss

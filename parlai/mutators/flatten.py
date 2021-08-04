@@ -15,7 +15,7 @@ class FlattenMutator(ManyEpisodeMutator):
     """
     Flattens the entire conversation history.
 
-    Simply concatentates all turns in the conversation with a newline. Frequently useful
+    Simply concatenates all turns in the conversation with a newline. Frequently useful
     when composed with other mutators.
     """
 

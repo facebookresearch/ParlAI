@@ -490,7 +490,7 @@ your chunk data.
 
 In this case, one would inherit from the Teacher class. For this class,
 at least the `act()` method and probably the `observe()` method must be
-overriden. Quite a bit of functinoality will not be built in, such as a
+overridden. Quite a bit of functinoality will not be built in, such as a
 support for hogwild and batching, but metrics will be set up and can be
 used to track stats like the number of correctly answered examples.
 

@@ -23,7 +23,7 @@ from typing import List
 from parlai.utils.io import PathManager
 
 # these keys are automatically removed upon save. This is a rather blunt hammer.
-# It's preferred you indicate this at option definiton time.
+# It's preferred you indicate this at option definition time.
 __AUTOCLEAN_KEYS__: List[str] = [
     "override",
     "batchindex",

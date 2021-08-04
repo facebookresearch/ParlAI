@@ -82,7 +82,7 @@ def count_text(ngram, hash_size, doc_id, text=None):
     # Get ngrams from tokens, with stopword/punctuation filtering.
     ngrams = tokens.ngrams(n=ngram, uncased=True, filter_fn=utils.filter_ngram)
 
-    # Hash ngrams and count occurences
+    # Hash ngrams and count occurrences
     counts = Counter([utils.hash(gram, hash_size) for gram in ngrams])
 
     # Return in sparse matrix data format.
@@ -162,7 +162,7 @@ def get_tfidf_matrix(cnts):
     tfidf = log(tf + 1) * log((N - Nt + 0.5) / (Nt + 0.5))
     * tf = term frequency in document
     * N = number of documents
-    * Nt = number of occurences of term in all documents
+    * Nt = number of occurrences of term in all documents
     """
     Nt = get_doc_freqs(cnts)
     idfs = np.log((cnts.shape[1] - Nt + 0.5) / (Nt + 0.5))
