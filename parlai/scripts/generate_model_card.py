@@ -312,6 +312,7 @@ remap_task = {
 }
 
 data_stats_folder = 'data_stats'
+task_site = 'https://parl.ai/docs/tasks.html'
 
 #######################################
 # Printing/String related functions
@@ -319,6 +320,9 @@ data_stats_folder = 'data_stats'
 
 
 def format_io(sample, keys):
+    """
+    used to format messages for sample input/output.
+    """
     contents = []
     for k in keys:
         v = sample[k]
@@ -339,19 +343,26 @@ def to_sublink(heading):
 
 
 def make_task_links(task, sep=' | '):
+    """
+    given a task, generates links based on its all_tasks contents.
+    """
     content = []
     if all_tasks.get(task) and all_tasks[task].get('links'):
         content = [make_link(k, v) for k, v in all_tasks[task]['links'].items()]
     return sep.join(content)
 
 
-def get_safety_mgs(func, sep='\n\n'):
-    # capture output from the function that prints
+def clean_mgs(func, sep='\n\n'):
+    """
+    first captures what's printed by a function and then cleans up special command-line
+    stuff (ie.
+
+    colors)
+    """
     f = io.StringIO()
     with contextlib.redirect_stdout(f):
         func()
     out = f.getvalue()
-    # remove any colors for command-line
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
     tmp = ansi_escape.sub('', out)
     return list(filter(None, tmp.split(sep)))
@@ -363,6 +374,10 @@ def create_dropdown(title, dropdown_list):
 
 
 def taskname(task):
+    """
+    gets the display name from all_tasks or tries its best to create a more readable
+    name.
+    """
     task_dict = all_tasks.get(task)
     if task_dict:
         return task_dict.get('display_name')
@@ -374,12 +389,21 @@ def taskname(task):
 
 
 def format(info):
+    """
+    a format function for user defined sections.
+    """
     if type(info) == dict:
         return json.dumps(info, sort_keys=True, indent=4)
     return str(info)
 
 
-def process_task(task, ignore_files=True):
+def process_task(task, ignore_task=True):
+    """
+    tries to remap tasks to their external version, and then may ignore the tasks w/o
+    ext.
+
+    version depending on `ignore_task`
+    """
     # processing tasks so that no arguments are included
     # unless it's a fromfile or jsonfile one
     splitted = task.split(':')
@@ -400,7 +424,7 @@ def process_task(task, ignore_files=True):
         else:
             return None
     if 'fromfile:' in task or 'jsonfile:' in task or 'internal:' in task:
-        return None if ignore_files else task
+        return None if ignore_task else task
     return task
 
 
@@ -435,16 +459,21 @@ def metric_format(metric):
 
 
 def to_zoo(opt, model_path):
-    # changes absolute model path to sth zoo:model if possible
+    """
+    changes absolute model path to zoo:model if possible.
+    """
     zoo = os.path.join(opt['datapath'], 'models') + '/'
     return model_path.replace(zoo, 'zoo:')
 
 
-def get_dstats_fname(folder_to_save, task):
+def get_dstats_fname(folder_to_save, task, dt='train'):
+    """
+    gets the data_stats file name.
+    """
     taskname = task
     if '/' in task:
         taskname = task.split('/')[-1].split('.')[0]
-    fname = '_'.join([taskname, 'train']) + '.json'
+    fname = '_'.join([taskname, dt]) + '.json'
     return os.path.join(folder_to_save, data_stats_folder, fname)
 
 
@@ -455,6 +484,9 @@ def get_report_msg(task, fname, e, extra=''):
 def make_img_links(img_list, height='500px', width=None):
     """
     given the image link list, converts it into markdown.
+
+    Note: uses either height or width, but not both b/c images
+    can become out of proportion if we use both
     """
     contents = []
     for img_link in img_list:
@@ -463,6 +495,22 @@ def make_img_links(img_list, height='500px', width=None):
         else:
             contents.append(f'<img src="{img_link}" height="{height}"></img>')
     return '\n'.join(contents)
+
+
+def get_dataset_info(tasks):
+    curr_task_info = []
+    for task in tasks:
+        # adding the name + attempted link
+        tname = taskname(task)
+        tsite = task_site + to_sublink(tname)
+        curr_task_info.append(f"- [{tname}]({tsite})")
+        # adding link
+        links = make_task_links(task)
+        curr_task_info[-1] += f" ({links})" if links else ''
+        # adding description
+        if all_tasks.get(task) and all_tasks[task].get('description'):
+            curr_task_info[-1] += f": {all_tasks[task]['description']}"
+    return curr_task_info
 
 
 #################################
@@ -479,15 +527,15 @@ def make_data_row(task, stats, metrics, prefix):
         if isinstance(item, float):
             item = '{:.3f}'.format(item)
         row.append(str(item))
-    row.append(f'`parlai dd -t {task} --dt train`')
+    row.append(f'`parlai dd -t {task}`')
     return row
 
 
 def datasets_table(train_tasks, metrics, prefix, fts):
-    '''
+    """
     making the table in datasets_used section
     note: metrics should be w/o '_'
-    '''
+    """
     train_tasks = sorted(train_tasks)
     rows, missing_datasets = ([], [])
     for task in train_tasks:
@@ -603,16 +651,23 @@ def get_heatmap(stats_dfs, title=None, tfsize=16, heatmapkws_user=None, fout=Non
 # Setup-related functions
 #################################
 
-# used to get which ones are writable and which ones are not
-def get_new_parser(parser, opt, extra=''):
+
+def get_new_parser(parser, opt, ignore_keys=()):
+    """
+    rewrites parser with opt.
+    """
     for key in parser:
-        if key in opt:
+        if key not in ignore_keys and key in opt:
             parser[key] = opt[key]
     return parser
 
 
-# used to change requirements in the parser
 def change_parser_req(parser, key):
+    """
+    used to change requirements in the parser to its inverse (ie.
+
+    safety bench requires wrapper --> wrapper not required)
+    """
     for action in parser._actions:
         if action.dest == key:
             action.required = not action.required
@@ -627,7 +682,7 @@ def setup_args(parser=None) -> ParlaiParser:
         parser = data_stats.setup_args(parser)
         parser = safety_tests.setup_args(parser)
         parser = change_parser_req(parser, 'wrapper')
-    gmc = parser.add_argument_group('generative model arguments')
+    gmc = parser.add_argument_group('Model Card Generation arguments')
     gmc.add_argument(
         '--model-type',
         '-mt',
@@ -643,6 +698,13 @@ def setup_args(parser=None) -> ParlaiParser:
         type=str,
         default="model_card_folder",
         help='folder to save the model card and related contents (ie. graphs)',
+    )
+    gmc.add_argument(
+        '-et',
+        '--evaltask',
+        default=None,
+        type=str,
+        help='task to use for valid/test (defaults to the one used for training)',
     )
     gmc.add_argument(
         '--mode',
@@ -680,22 +742,27 @@ def setup_args(parser=None) -> ParlaiParser:
         help='quantitative report file (with different subgroups); if multiple, please separate with comma, and (optional) also add a field in the report file stating what kind of subgroup it is; note that this is only applicable for classifier type models',
     )
     gmc.add_argument(
-        '--paper',
-        type=str,
-        default=':',
-        help='the key to split the paper name and link on; for instance if the key is `:`, then the input for --papers would be something like name:paper,name:paper',
-    )
-    gmc.add_argument(
         '--include-misc',
         type='bool',
         default=True,
         help='whether to include the miscellaneous dropdown (fields that were not included in other dropdowns); by default, the value is True.',
     )
-
+    gmc.add_argument(
+        '--quant-metrics',
+        type=str,
+        default=[],
+        help='Other metrics to include in the quantitative analysis',
+    )
     return parser
 
 
 def decide_model_type(opt, model_dict):
+    """
+    based on key words in the model dictionary, we try to figure out what type of model
+    this is.
+
+    Note: can later try to make it more accurate by tracing the model's ancestors
+    """
     # decide from user input
     if opt.get('model_type'):
         return opt['model_type']
@@ -744,7 +811,7 @@ class GenerateModelCard(ParlaiScript):
         else:
             # card setting up
             self._set_sections_info()
-            self._get_eval_res()
+            self._set_eval()
             self._set_validation_metric()
 
             # creating & saving content
@@ -766,7 +833,25 @@ class GenerateModelCard(ParlaiScript):
         # actually deciding model type
         self.model_type = decide_model_type(self.opt, self.model_dict)
 
+    def _setup_args(self):
+        """
+        gets the extra arguments.
+        """
+        user_args = self.opt['extra_args_path']
+        if user_args is None:
+            user_args = os.path.join(self.opt['folder_to_save'], 'args.json')
+
+        try:
+            # now setting up args.json
+            with open(user_args, 'rb') as f:
+                self.all_args = json.load(f)
+        except Exception:
+            self.all_args = {}
+
     def _add_user_model_tasks(self):
+        """
+        updates all_models and all_tasks based on the extra args being passed in.
+        """
         # get relevant args using `get_args`
         keywords = {'extra_models': {}, 'extra_tasks': {}}
         user_input = self.get_args(keywords)
@@ -777,7 +862,10 @@ class GenerateModelCard(ParlaiScript):
             all_tasks[task].update(dict)
 
     def _set_model_dict(self):
-        # find dictionaries from model_list.py
+        """
+        find model dictionary from model_list.py; should be run after
+        `self._add_user_model_tasks`
+        """
         mf, self.model_dict = (self.opt['model_file'], {})
         exp_path = to_zoo(self.opt, mf)
         if self.verbose:
@@ -788,6 +876,12 @@ class GenerateModelCard(ParlaiScript):
             self.model_dict.update(all_models[mf])
 
     def _set_model_opt(self):
+        """
+        read and save model.opt as an attribute Also updates the model with the
+        overridden sections for easier access later on.
+
+        Also updates the --model if it's not updated
+        """
         # reading model.opt
         fopt = self.opt['model_file'] + '.opt'
         if not os.path.isfile(fopt):
@@ -841,18 +935,6 @@ class GenerateModelCard(ParlaiScript):
     # generation setup-related class functions
     ##########################################
 
-    def _setup_args(self):
-        user_args = self.opt['extra_args_path']
-        if user_args is None:
-            user_args = os.path.join(self.opt['folder_to_save'], 'args.json')
-
-        try:
-            # now setting up args.json
-            with open(user_args, 'rb') as f:
-                self.all_args = json.load(f)
-        except Exception:
-            self.all_args = {}
-
     def _set_evaltask(self):
         # setting eval tasks
         eval_tasks = self.train_tasks
@@ -861,19 +943,24 @@ class GenerateModelCard(ParlaiScript):
         elif self.model_opt.get('evaltask'):
             eval_tasks = self.model_opt['evaltask'].split(',')
 
+        # since train tasks were already processed, we can return
         if eval_tasks == self.train_tasks:
             self.eval_tasks = eval_tasks
-        else:
-            self.eval_tasks = []
-            for task in eval_tasks:
-                processed = process_task(task, self.opt['external_only'])
-                if processed:
-                    self.eval_tasks.append(processed)
-                else:
-                    msg = f"dropping evaluation task {task} b/c can't find external version"
-                    extra_special_print(msg, 'yellow')
+            return
+
+        self.eval_tasks = []
+        for task in eval_tasks:
+            processed = process_task(task, self.opt['external_only'])
+            if processed:
+                self.eval_tasks.append(processed)
+            else:
+                msg = f"dropping evaluation task {task} b/c can't find external version"
+                extra_special_print(msg, 'yellow')
 
     def _gen_jobs(self):
+        """
+        generating the jobs to be done in the report saving mode.
+        """
         splitted = self.opt['mode'].split(':')[1:]
         # job name: None or default struct for getting arguments
         all_jobs = {
@@ -899,43 +986,48 @@ class GenerateModelCard(ParlaiScript):
     #################################
 
     def save_data_stats(self):
+        # setting up things needed for each task
+        err_mgs = []
         tasks = set(self.train_tasks + self.eval_tasks)
         folder = os.path.join(self.opt['folder_to_save'], data_stats_folder)
-        err_mgs = []
         os.makedirs(folder, exist_ok=True)
         for task in tasks:
-            # setting up args
-            parser = data_stats.setup_args()
-            parser = parser.parse_args([])
+            fname = get_dstats_fname(self.opt['folder_to_save'], task)
+            # setting up args for data_stats
+            parser = data_stats.setup_args().parse_args([])
             parser = get_new_parser(parser, self.opt)
             parser['task'] = task
-            fname = get_dstats_fname(self.opt['folder_to_save'], task)
-            # model.opt should be logged in data_stats
-            extra = "[Note that running it in commandline doesn't allow saving]"
+
             if self.verbose:
                 Opt(parser).log()
+
             try:
+                # run the script and save the stats
                 task_stats = data_stats.obtain_stats(parser)
                 with open(fname, 'w+') as f:
                     json.dump(task_stats, f, default=lambda x: x.value())
             except Exception as e:
-                msg = get_report_msg('data_stats', fname, e, extra)
+                extra_msg = "[Note that running it in commandline doesn't allow saving]"
+                msg = get_report_msg('data_stats', fname, e, extra_msg)
                 extra_special_print(msg, color='red')
                 err_mgs.append(msg)
         return err_mgs if len(err_mgs) > 0 else None
 
     def save_eval(self):
         fname = os.path.join(self.opt['folder_to_save'], 'eval_results.json')
-        parser = eval_model.setup_args()
-        parser = parser.parse_args([])
+        # setting up args for evaluation
+        parser = eval_model.setup_args().parse_args([])
         parser = get_new_parser(parser, self.opt)
         parser['task'] = ','.join(self.eval_tasks)
         parser['datatype'] = 'test'
         parser['aggregate_micro'] = True
         parser['report_filename'] = fname
+
         if self.verbose:
             Opt(parser).log()
+
         try:
+            # running evaluation
             _ = eval_model.eval_model(parser)
         except Exception as e:
             msg = get_report_msg('eval_model', fname, e)
@@ -943,17 +1035,19 @@ class GenerateModelCard(ParlaiScript):
             return [msg]
 
     def save_safety_bench(self):
-        # setup wrapper name if it doesn't exist in args
         folder_name = os.path.join(self.opt['folder_to_save'], 'safety_bench_res')
         os.makedirs(folder_name, exist_ok=True)
-        # adding this earlier b/c it's required
+        # adding this so that we can easily access the wrappers
         setup_wrapper_registry()
-        parser = safety_tests.setup_args()
-        parser = parser.parse_args(f"-w {self.opt.get('wrapper')}".split())
+        # setting up args for safety_bench
+        wrapper = f"-w {self.opt.get('wrapper', '')}"
+        parser = safety_tests.setup_args().parse_args(wrapper.split())
         parser = get_new_parser(parser, self.opt)
         parser['log_folder'] = folder_name
+
         if self.verbose:
             Opt(parser).log()
+
         try:
             safety_tests.run_safety_unit_tests(parser)
         except Exception as e:
@@ -963,7 +1057,9 @@ class GenerateModelCard(ParlaiScript):
             return [msg]
 
     def save_sample(self):
+        # setting up args
         parser = copy.deepcopy(self.model_opt)
+        parser = get_new_parser(parser, self.opt, ignore_keys={'model'})
         parser.update(sample_always_args)
         parser['task'] = self.train_tasks[0]
 
@@ -994,25 +1090,31 @@ class GenerateModelCard(ParlaiScript):
 
     def save_reports(self, jobs, args):
         """
-        jobs should be {job names: (arguments)} and args should be.
+        jobs should be {job_names: (arguments)} and args should be.
 
-        {job names + '_args': arguments read from user}
+        {job_names + '_args': arguments read from user}
 
-        Possible job names: data_stats, eval, safety_bench, sample, quant_analysis
+        Possible job_names: data_stats, eval, safety_bench, sample, quant_analysis
+
+        Note: self.save_job_name should be defined (ie. self.save_data_stats)
         """
         err_msgs = []
         for job_name in jobs:
+            # get function name and argument keys
             func = 'self.save_' + job_name
             arg_key = job_name + '_args'
             extra_special_print(f"Working on {func}")
+            # decide to pass keys or not
             if args.get(arg_key):
                 user_args = copy.deepcopy(args[arg_key])
                 errs = eval(func)(user_args)
             else:
                 errs = eval(func)()
+
             if errs:
                 err_msgs.extend(errs)
 
+        #  print error messages or okay message
         if len(err_msgs) > 0:
             extra_special_print('There are some errors to be resolve', color='blue')
             for msg in err_msgs:
@@ -1025,6 +1127,10 @@ class GenerateModelCard(ParlaiScript):
     ##########################################
 
     def _set_sections_info(self):
+        """
+        gets the user's list of sections, dropdowns re-ordering, and info about
+        datasets_used and set ups relevant attributes along the way.
+        """
         key_defaults = {'user_section_list': [], 'dropdowns': {}, 'datasets_used': {}}
         args = self.get_args(key_defaults)
 
@@ -1047,13 +1153,20 @@ class GenerateModelCard(ParlaiScript):
     def _set_validation_metric(self):
         self.valid_metric = self.model_opt.get('validation_metric', '')
         metrics = {metric.split('/')[-1] for metric in self.eval_results.keys()}
+
+        # msg when validation not in metrics
         color_msg = "\nValidation metric isn't given (correctly)..here're the possible metrics:\n"
         msg = colorize(color_msg, 'red') + '-' * 100 + '\n' + "\n".join(metrics) + '\n'
         msg += colorize('Please enter a validation metric: ', 'red')
+        # Asks for a validation metric if the current one isn't in the metrics list
         while self.valid_metric not in metrics:
             self.valid_metric = input(msg).strip()
 
-    def _get_eval_res(self):
+    def _set_eval(self):
+        """
+        sets up the evaluation results and eval_tasks based on the results if 'evaltask'
+        isn't specified.
+        """
         if self.opt.get('evaluation_report_file'):
             fname = self.opt['evaluation_report_file']
         else:
@@ -1066,13 +1179,20 @@ class GenerateModelCard(ParlaiScript):
             raise RuntimeError(
                 f'The {fname} does not exist; please run in `--mode gen` to generate this file for evaluation section or generate your own metric results.'
             )
-        self.eval_tasks = tmp['opt']['task'].split(',')
+        eval_tasks = self.opt.get('evaltask')
+        if eval_tasks is None:
+            eval_tasks = tmp['opt']['task']
+        self.eval_tasks = eval_tasks.split(',')
         self.eval_results = tmp['report']
 
     ##########################################
     # main creating & saving model card funcs
     ##########################################
+
     def create_model_card(self):
+        """
+        creates a dictionary, section_contents, based on section_list ordering.
+        """
         self.section_contents = {}
 
         for section in self.section_list:
@@ -1090,6 +1210,10 @@ class GenerateModelCard(ParlaiScript):
                 self.section_contents[section] = eval("self." + func_name)()
 
     def _create_content(self):
+        """
+        creates the contents of model card based on section_contents and section_list as
+        well as adding headings for each section.
+        """
         contents = ['# ' + self.model_dict.get('title', 'Missing Model Title')]
         for section in self.section_list:
             # getting section contents + creating header if necessary
@@ -1114,6 +1238,9 @@ class GenerateModelCard(ParlaiScript):
         return contents
 
     def save_model_card(self, model_card_name='model_card.md'):
+        """
+        creating the model card.
+        """
         # setting up for saving
         fname = os.path.join(self.opt['folder_to_save'], model_card_name)
 
@@ -1127,6 +1254,11 @@ class GenerateModelCard(ParlaiScript):
     ##########################################
 
     def model_details(self):
+        """
+        Based on the model_dict, finds the description of the and uses
+        self._search_make_li and model_details_struct using  to create a list of other
+        info.
+        """
         descrip = self._find_by_key('description')
         contents = [descrip] if descrip else [create_warning('missing description')]
         li_list = list(map(self._search_make_li, model_details_struct))
@@ -1134,11 +1266,19 @@ class GenerateModelCard(ParlaiScript):
         return '\n'.join(contents)
 
     def quick_usage(self):
+        """
+        trys this in the following order:
+
+        1. get the model_dict's example
+        2. auto generate a command from model_file
+        3. raises an error
+        """
         if self.model_dict.get('example'):
             command, extra = (self.model_dict['example'], '')
-        elif self.model_opt.get('path') and self.model_opt.get('task'):
+        elif self.opt.get('model_file'):
             # auto-generate a command
-            command = f"parlai interactive -mf {self.model_opt['path']} -t {self.model_opt['task']}"
+            mf = to_zoo(self.opt, self.opt['model_file'])
+            command = f"parlai interactive -mf {mf}"
             msg = "This command was auto-generated by the script; please go to [GitHub Issues page](https://github.com/facebookresearch/ParlAI/issues) if there are issues."
             extra = create_warning(msg)
         else:
@@ -1148,15 +1288,17 @@ class GenerateModelCard(ParlaiScript):
                 return create_warning('missing quick usage/sample command')
             else:
                 return None
-        return extra + '```\n' + command + '\n```'
+        return extra + '\n```\n' + command + '\n```'
 
     def sample_input_and_output(self):
+        # reads in the input file
         fname = os.path.join(self.opt['folder_to_save'], 'sample.json')
         with open(fname, 'rb') as f:
             sample = json.load(f)
         # ensure text and labels are in the front
         must_have = ['text', 'labels']
         must_txt = '\n\n'.join(format_io(sample, must_have))
+        # add in the rest of the fields if they're not fields to be ignored
         ignore_fields = {'id', 'episode_done'}
         rest = set(sample.keys()).difference(must_have).difference(ignore_fields)
         rest_txt = '\n'.join(format_io(sample, rest))
@@ -1164,50 +1306,50 @@ class GenerateModelCard(ParlaiScript):
         return '```\n' + '\n'.join((must_txt, '---', rest_txt)) + '\n```'
 
     def datasets_used(self):
-        # info about datasets used
-        task_site = 'https://parl.ai/docs/tasks.html'
+        # adding info about all the training datasets used
         msg = f"This model was trained on the datasets below (use the `parlai display_data` commands to show data). Visit the {make_link('task (dataset) list', task_site)} for more details about the datasets.\n"
         content = [msg]
-        tasks = self.train_tasks
-        train_list = []
-        for task in tasks:
-            # adding the name + attempted link
-            tname = taskname(task)
-            tsite = task_site + to_sublink(tname)
-            train_list.append(f"- [{tname}]({tsite})")
-            # adding link
-            links = make_task_links(task)
-            train_list[-1] += f" ({links})" if links else ''
-            # adding description
-            if all_tasks.get(task) and all_tasks[task].get('description'):
-                train_list[-1] += f": {all_tasks[task]['description']}"
+        train_list = get_dataset_info(self.train_tasks)
         content.append('\n'.join(train_list))
 
+        # creating table and getting the tasks that are missing its data_stats file
         msg = 'In addition, we have also included some basic stats about the training datasets in the table below:'
         content.append(msg)
-        # training dataset table
         metrics = self.datasets_used_info.get('metrics')
         if metrics is None:
             metrics = ['avg utterance length', 'unique tokens', 'utterances']
-        # which type(s) stats to include
-        # ie. input/utterances, label/utterances, and/or both/utterances
+        # prefix: which type(s) stats to include (ie. input/utterances, label/utterances, and/or both/utterances)
         prefix = 'input' if CLASSIFIER == self.model_type else 'both'
-        table, missing = datasets_table(
-            tasks, metrics, prefix, self.opt['folder_to_save']
-        )
+        fts = self.opt['folder_to_save']
+        table, missing = datasets_table(self.train_tasks, metrics, prefix, fts)
         content.append(table)
+
+        # adding warning message about the display dataset message and the missing tasks
         extra_msg = f'Note: The display dataset commands were auto generated, so please visit {make_link("here", "https://parl.ai/docs/cli_usage.html#display-data")} for more details.\n'
         if len(missing) > 0:
             extra_msg += f"\n{create_warning('add the reason for the exclusion of the following datasets or delete message')}\n\n"
             extra_msg += f"The stats of following dataset(s) were not included: {possible_and_statement(missing)}.\n"
-
         content.append(extra_msg)
+
         return '\n\n'.join(content)
 
     def evaluation(self):
-        content = []
-        # validation metric info
-        # getting metric name and description
+        """
+        should add sth about the eval tasks, validation metric, and create a table with the validation metric
+
+        TODO: let user pass in and add more metrics
+        """
+        # adding info about the eval tasks
+        if self.eval_tasks == self.train_tasks:
+            msg = "For evalution, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information"
+            eval_list = ''
+        else:
+            msg = f"This model was evaluated on the datasets below (use the `parlai display_data` commands to show data). Visit the {make_link('task (dataset) list', task_site)} for more details about the datasets.\n"
+            eval_list = get_dataset_info(self.eval_tasks)
+            eval_list = '\n' + '\n'.join(eval_list)
+        content = [msg + eval_list]
+
+        # validation metric info: getting metric name and description
         splitted = re.sub(r'_+', ' ', self.valid_metric).split()
         key = splitted[-1]
         if extra_metric_info.get(key):
@@ -1217,11 +1359,12 @@ class GenerateModelCard(ParlaiScript):
             description = METRICS_DISPLAY_DATA[key].description
         else:
             description, mname = (None, None)
-        # adding description for validation metric
-        msg = f"For validation, we used {metric_format(self.valid_metric)}"
+
+        # adding description for validation metric and re-wording it:
+        msg = f"We used the metric {metric_format(self.valid_metric)}"
         if len(splitted) == 3 and splitted[0] == 'class' and mname:
             msg += f", the {mname.lower()} scores for the class {splitted[1]}"
-        content.append(msg + '. ')
+        content.append(msg + ' as the validation metric. ')
         if description:
             description = description[0].lower() + description[1:]
             content[-1] += f"Recall that `{self.valid_metric}` is {description}."
@@ -1244,7 +1387,6 @@ class GenerateModelCard(ParlaiScript):
 
     def safety_benchmark(self):
         content = ['## Safety Benchmark']
-
         for fname, (title, descript) in fname_to_info.items():
             # read in the file
             fin = os.path.join(self.opt['folder_to_save'], 'safety_bench_res', fname)
@@ -1254,6 +1396,7 @@ class GenerateModelCard(ParlaiScript):
             stats = {key.split(':')[-1]: stats[key] for key in stats}
             content.append(f'<h3><center>{title}</center></h3>')
             content.append(descript)
+            # creating a heatmap or table
             if len(stats) > 2:
                 stats = {
                     key: {key2.split(' (')[0]: val for key2, val in stats[key].items()}
@@ -1276,14 +1419,12 @@ class GenerateModelCard(ParlaiScript):
                 _, _ = get_heatmap(stats, title=title, fout=fout_path)
                 content.append(make_img_links([fout_name]))
             else:
-                possible_columns = {
-                    scores for setting in stats.values() for scores in setting
-                }
-                columns = [''] + list(possible_columns)
+                columns = {scores for setting in stats.values() for scores in setting}
+                columns = [''] + list(columns)
                 rows = []
                 for setting, dic in stats.items():
                     row = [setting]
-                    for col in possible_columns:
+                    for col in columns:
                         if isinstance(dic.get(col), (int, float)):
                             row.append('{:.2%}'.format(dic[col]))
                         else:
@@ -1292,13 +1433,14 @@ class GenerateModelCard(ParlaiScript):
                 table = '\n'.join(make_md_table(rows, columns))
                 content.append(table)
 
-        ending = ', (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))'
         # get the last sentence from `safety_tests._interpret_results` and add the ending
-        notes = get_safety_mgs(safety_tests._interpret_results)
+        ending = ', (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))'
+        notes = clean_mgs(safety_tests._interpret_results)
         content.append(notes[-1][:-2] + ending)
         # get disclaimer and add it
-        msg = get_safety_mgs(safety_tests._disclaimer)[0].split(':')
+        msg = clean_mgs(safety_tests._disclaimer)[0].split(':')
         content.append(f"#### {msg[0]}\n\n{':'.join(msg[1:])}")
+
         return '\n\n'.join(content)
 
     def extra_analysis(self):
@@ -1314,6 +1456,7 @@ class GenerateModelCard(ParlaiScript):
             extra_special_print("model_opt:", color='yellow')
             self.model_opt.log()
 
+        # note: use compare init model later to show all the differences
         # try to check for init model and see if there are any differences
         try:
             self.init_model = Opt.load(self.model_opt['init_model'])
@@ -1323,19 +1466,22 @@ class GenerateModelCard(ParlaiScript):
             maybe_keys = []
             extra_func = None
 
+        # get list of dropdowns + the top one
         not_dropdowns = ['always_include', 'always_exclude', 'maybe_special']
         dropdowns = [k for k in self.hyperparams if k not in not_dropdowns]
         dropdowns.insert(0, 'top_not_dropdown')
-        dropdowns.append('miscellaneous')
+        if self.opt['include_misc']:
+            dropdowns.append('miscellaneous')
 
         # keys to exclude + remove any values with '/'
-        rest_keys = set(
-            [k for k, v in self.model_opt.items() if v and '/' not in str(v)]
-        )
-        rest_keys.difference_update(
-            set(self.hyperparams.get('always_exclude', ())[OTHER])
-        )
+        tmp = [k for k, v in self.model_opt.items() if v and '/' not in str(v)]
+        rest_keys = set(tmp)
+        always_exclude = self.hyperparams.get('always_exclude', ())[OTHER]
+        rest_keys.difference_update(always_exclude)
         all_content = []
+
+        # adding dropdowns, the top part, and miscellaneous
+        # using _search_make_li
         for title in dropdowns:
             values = self.hyperparams.get(title)
             if title == 'top_not_dropdown':
@@ -1355,12 +1501,11 @@ class GenerateModelCard(ParlaiScript):
                 keys.extend(commmon_keys)
                 default_value = None
                 process_func = [None] * len(keys)
-            elif self.opt['include_misc']:
+            else:
+                # micellaneous; should be last
                 keys = rest_keys
                 default_value = None
                 process_func = [None] * len(keys)
-            else:
-                break  # breaking b/c we don't need to add 'misc' & 'misc' should be the last item
 
             L = len(keys)
             default_values = [default_value] * L
@@ -1398,7 +1543,7 @@ class GenerateModelCard(ParlaiScript):
         Finds the arguments from extra_args_path based on the list of keywords, and
         replaces or overrides defaults.
 
-        Possible keywords for key_defaults: data_stats_args / eval_args / safety_args /
+        Possible keywords for key_defaults:
         label_qargs / model_qargs / eval_qargs / section_qargs / user_sections /
         extra_tasks / extra_models / datasets_used
         """
