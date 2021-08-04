@@ -284,6 +284,23 @@ class TestTransformerGenerator(TestTransformerBase):
         args.update(args)
         return testing_utils.train_model(args)
 
+    def test_checkpoint(self):
+        """
+        Checks --checkpoint-activations true
+        """
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:overfit',
+                model='transformer/generator',
+                dict_file='zoo:unittest/transformer_generator2/model.dict',
+                batchsize=4,
+                skip_generation=True,
+                validation_metric='ppl',
+                max_train_steps=10,
+                checkpoint_activations=True,
+            )
+        )
+
     def test_greedysearch(self):
         """
         Test greedy search.

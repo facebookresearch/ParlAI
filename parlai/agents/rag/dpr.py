@@ -203,13 +203,19 @@ class DPRModel(TransformerMemNetModel):
         try:
             # determine if loading a RAG model
             loaded_opt = Opt.load(f"{query_path}.opt")
-            if loaded_opt['model'] == 'rag' and loaded_opt['query_model'] in [
+            document_path = loaded_opt.get('dpr_model_file', document_path)
+            if loaded_opt['model'] in ['rag', 'fid'] and loaded_opt['query_model'] in [
                 'bert',
                 'bert_from_parlai_rag',
             ]:
                 query_model = 'bert_from_parlai_rag'
-            # document model is always frozen
-            document_path = loaded_opt.get('dpr_model_file', document_path)
+                if loaded_opt['model'] == 'fid':
+                    # document model is always frozen
+                    # but may be loading a FiD-RAG Model
+                    doc_loaded_opt = Opt.load(
+                        f"{modelzoo_path(opt['datapath'], document_path)}.opt"
+                    )
+                    document_path = doc_loaded_opt.get('dpr_model_file', document_path)
 
         except FileNotFoundError:
             pass

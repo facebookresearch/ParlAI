@@ -141,6 +141,12 @@ def add_common_cmdline_args(parser):
         default=False,
         help='Shard the layers across multiple GPUs.',
     )
+    parser.add_argument(
+        '--checkpoint-activations',
+        type='bool',
+        default=False,
+        help='Recompute activations on backward pass to conserve memory.',
+    )
 
 
 class Transformer(Agent):
