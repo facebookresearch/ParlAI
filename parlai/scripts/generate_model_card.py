@@ -8,8 +8,6 @@ Script to generate the model card automatically.
 """
 from datetime import date, datetime
 
-from git import exc
-
 from parlai.core.metrics import METRICS_DISPLAY_DATA
 from parlai.core.worlds import create_task
 from parlai.core.agents import create_agent
