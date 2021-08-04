@@ -19,6 +19,7 @@ tutorial_crowdsourcing
 tutorial_chat_service
 tutorial_swap_components
 tutorial_tests
+tutorial_model_cards
 ```
 
 ```{toctree}
