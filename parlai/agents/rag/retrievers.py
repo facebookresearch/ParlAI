@@ -1136,7 +1136,7 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
 
     def _empty_docs(self, num: int):
         """
-        Generates the requsted number of empty documents.
+        Generates the requested number of empty documents.
         """
         return [BLANK_SEARCH_DOC for _ in range(num)]
 
@@ -1230,9 +1230,9 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
         Retrieves from the FAISS index using a search query.
 
         This methods relies on the `retrieve_and_score` method in `RagRetriever`
-        ancestor class. It recieve the query (conversation context) and generatess the
+        ancestor class. It receive the query (conversation context) and generatess the
         search term queries based on them. Then uses those search quries (instead of the
-        the query text itself) to retrive from the FAISS index.
+        the query text itself) to retrieve from the FAISS index.
         """
 
         search_queries = self.generate_search_query(query)
@@ -1250,7 +1250,7 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
 
 class DocumentChunkRanker:
     """
-    Base class for controling splitting long documents and selecting relevant chunks.
+    Base class for controlling splitting long documents and selecting relevant chunks.
     """
 
     def __init__(self, n_retrieved_chunks):

@@ -499,13 +499,13 @@ class FixedDialogTeacher(Teacher):
         """
         Get the number of episodes in this dataset.
         """
-        raise RuntimeError('"num_episodes" must be overriden by children.')
+        raise RuntimeError('"num_episodes" must be overridden by children.')
 
     def num_examples(self) -> int:
         """
         Get the total number of examples in this dataset.
         """
-        raise RuntimeError('"num_examples" must be overriden by children.')
+        raise RuntimeError('"num_examples" must be overridden by children.')
 
     def get(self, episode_idx, entry_idx=0):
         """
@@ -521,7 +521,7 @@ class FixedDialogTeacher(Teacher):
             single-entry episodes, so this defaults to zero.
         """
         # TODO: mark as abstract, get rid of runtime error.
-        raise RuntimeError('"Get" method must be overriden by children.')
+        raise RuntimeError('"Get" method must be overridden by children.')
 
     def observe(self, observation):
         """
@@ -680,7 +680,7 @@ class DialogTeacher(FixedDialogTeacher):
         new episodes.
 
         :param str datafile:
-            If the initializer set a 'datafile' field within the initalization,
+            If the initializer set a 'datafile' field within the initialization,
             this will be provided here. Otherwise, datafile will be the fold:
             either "train", "valid", or "test".
 
@@ -713,7 +713,7 @@ class DialogTeacher(FixedDialogTeacher):
         """
         Provide consistent label candidates for all examples.
 
-        Default implementation returns ``None`` always, but this may be overriden to
+        Default implementation returns ``None`` always, but this may be overridden to
         provide candidates in all areas. See ``FbDialogueTeacher``.
         """
         # TODO DEPRECATIONDAY: FbDialogueTeacher is being deprecated, should we
@@ -1271,7 +1271,7 @@ class FbDeprecatedDialogTeacher(DialogTeacher):
 
     def share(self):
         """
-        Share the data and canidates.
+        Share the data and candidates.
         """
         shared = super().share()
         shared['cands'] = self.cands
@@ -1784,7 +1784,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         # avoid calculating image features twice.
         self.image_mode = opt.get('image_mode')
 
-        # Not using default image_mode paramater b/c there is a normalization
+        # Not using default image_mode parameter b/c there is a normalization
         # (or bug) somewhere in build_dict that is setting it to none
         self.include_image = opt.get('image_mode') != 'no_image_model'
 
@@ -1923,7 +1923,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Image features for the dataset images are stored here.
 
-        Can be overriden in subclass to use custom paths. Image features can be manually
+        Can be overridden in subclass to use custom paths. Image features can be manually
         copied into this directory or in the case of ImageLoader eligible models, they
         will be built and stored here if not already there.
         """
@@ -1942,7 +1942,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
 
         Users may wish to compute features for the dataset offline and use in the model,
         in which case, the image model should return False and get_image_features()
-        should be overriden in subclass.
+        should be overridden in subclass.
         """
         return model_name in ImageLoader.get_available_model_names()
 
@@ -1984,7 +1984,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         Load text and image data.
 
         The image features all live in dicts by default in <data_path>/
-        image_features/ but get_image_features_path() above can be overriden by
+        image_features/ but get_image_features_path() above can be overridden by
         subclass to put them elsewhere.
 
         In the (very odd) case that the resnet or resnext dicts (models
@@ -2079,7 +2079,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Get image features for example.
 
-        Can be overrided in subclass for different behavior. For large datasets, it may
+        Can be overridden in subclass for different behavior. For large datasets, it may
         be more appropriate to use the ImageLoader.load() method to load image features
         (as this is essentially streaming the features from disk, so that we do not have
         to load a large image feature dict in memory). #TODO Could be the default option

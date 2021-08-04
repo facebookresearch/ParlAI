@@ -117,7 +117,7 @@ class DialogptAgent(Gpt2Agent):
         """
         Return the dictionary class that this agent expects to use.
 
-        Can be overriden if a more complex dictionary is required.
+        Can be overridden if a more complex dictionary is required.
         """
         return DialoGPTDictionaryAgent
 

@@ -467,7 +467,7 @@ class TorchAgent(ABC, Agent):
         """
         Return the dictionary class that this agent expects to use.
 
-        Can be overriden if a more complex dictionary is required.
+        Can be overridden if a more complex dictionary is required.
         """
         return DictionaryAgent
 
@@ -476,7 +476,7 @@ class TorchAgent(ABC, Agent):
         """
         Return the history class that this agent expects to use.
 
-        Can be overriden if a more complex history is required.
+        Can be overridden if a more complex history is required.
         """
         return History
 
@@ -779,7 +779,7 @@ class TorchAgent(ABC, Agent):
             self.fp16_impl = self.opt.get('fp16_impl', 'safe')
 
         if shared is None:
-            # intitialize any important structures from scratch
+            # intialize any important structures from scratch
             self.dict = self.build_dictionary()
 
             if opt.get('fp16') or opt.get('force_fp16_tokens'):
@@ -1644,7 +1644,7 @@ class TorchAgent(ABC, Agent):
         Returns a namedtuple Batch. See original definition above for in-depth
         explanation of each field.
 
-        If you want to include additonal fields in the batch, you can subclass
+        If you want to include additional fields in the batch, you can subclass
         this function and return your own "Batch" namedtuple: copy the Batch
         namedtuple at the top of this class, and then add whatever additional
         fields that you want to be able to access. You can then call
@@ -1813,7 +1813,7 @@ class TorchAgent(ABC, Agent):
         between the original history and the temporary history. If you require
         such delimiter or spacing, you should include it in the temp history.
 
-        Intentionally overrideable so more complex models can insert temporary history
+        Intentionally overridable so more complex models can insert temporary history
         strings, i.e. strings that are removed from the history after a single turn.
         """
         return observation.get('temp_history')
@@ -2306,7 +2306,7 @@ class TorchAgent(ABC, Agent):
             self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
 
             # we're doing gradient accumulation, so we don't need to sync gradients
-            # amoung GPUs
+            # among GPUs
             if self._number_grad_accum != 0 and is_distributed():
                 # accumulate without syncing
                 with self.model.no_sync():

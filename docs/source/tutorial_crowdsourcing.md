@@ -82,7 +82,7 @@ You may need to create your own `run.py` file with which to launch your script i
 
 You will also likely need to create the following helper files for your task:
 
-- `conf/example.yaml`: the file of Hydra parameter values that are set by your task by default when lauching `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
+- `conf/example.yaml`: the file of Hydra parameter values that are set by your task by default when launching `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
 - `task_config/`: the standard folder in which useful configuration files are stored, such as for specifying UI text, configuring models, providing sample onboarding parameters, etc.
 
 A few things to keep in mind:

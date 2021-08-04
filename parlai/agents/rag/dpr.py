@@ -98,7 +98,7 @@ class DprEncoder(TransformerEncoder):
         )  # type: ignore
         if not os.path.exists(pretrained_path):
             # when initializing from parlai rag models, the pretrained path
-            # may not longer exist. This is fine if we've alread trained
+            # may not longer exist. This is fine if we've already trained
             # the model.
             assert dpr_model == 'bert_from_parlai_rag'
             logging.error(f'Pretrained Path does not exist: {pretrained_path}')

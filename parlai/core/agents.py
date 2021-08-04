@@ -167,7 +167,7 @@ class Agent(object):
             A string for the 'text' field or a message which MUST
             comprise of the 'text' field apart from other fields.
         :param kwargs other_message_fields:
-            Provide fields for the message in the form of keyowrd arguments.
+            Provide fields for the message in the form of keyword arguments.
         :return:
             Agent's response to the message.
         :rtype:

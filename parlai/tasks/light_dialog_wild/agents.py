@@ -392,7 +392,7 @@ class ReversedTeacher(DefaultTeacher):
             '--light-hard-max-length-cap',
             type='bool',
             default=False,
-            help="if specificed, conversation max length is a hard cap - that is, "
+            help="if specified, conversation max length is a hard cap - that is, "
             "any conversations greater than --light-max-conv-length will be "
             "removed completely",
         )
