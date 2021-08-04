@@ -22,9 +22,6 @@ from parlai.zoo.model_list import model_list
 import parlai.scripts.data_stats as data_stats
 import parlai.scripts.eval_model as eval_model
 
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
 import contextlib
 import copy
 import io
@@ -588,6 +585,10 @@ def make_html_table(rows, header):
 
 
 def get_heatmap(stats_dfs, title=None, tfsize=16, heatmapkws_user=None, fout=None):
+    # imports
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+
     # get vmax and vmin and step
     tmp_max = max([df.max().max() for df in stats_dfs])
     tmp_min = min([df.min().min() for df in stats_dfs])
@@ -1425,6 +1426,8 @@ class GenerateModelCard(ParlaiScript):
                     for key2, actual_key2 in flagged.items():
                         flagged_stats[key][actual_key2] = stats[key][key2]
                         del stats[key][key2]
+                import pandas as pd
+
                 stats = [pd.DataFrame(stats), pd.DataFrame(flagged_stats)]
                 fout_name = fname.split('.')[0] + '_safety_heatmap.png'
                 fout_path = os.path.join(self.opt['folder_to_save'], fout_name)
