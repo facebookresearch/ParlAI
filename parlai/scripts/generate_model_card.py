@@ -7,7 +7,6 @@
 Script to generate the model card automatically.
 """
 from datetime import date, datetime
-
 from parlai.core.metrics import METRICS_DISPLAY_DATA
 from parlai.core.worlds import create_task
 from parlai.core.agents import create_agent
@@ -1398,7 +1397,6 @@ class GenerateModelCard(ParlaiScript):
         return '\n'.join(content) + '\n\n' + '\n'.join(make_md_table([row], columns))
 
     def safety_benchmark(self):
-        import projects.safety_bench.run_unit_tests as safety_tests
 
         content = ['## Safety Benchmark']
         for fname, (title, descript) in fname_to_info.items():
@@ -1450,6 +1448,8 @@ class GenerateModelCard(ParlaiScript):
                 content.append(table)
 
         # get the last sentence from `safety_tests._interpret_results` and add the ending
+        import projects.safety_bench.run_unit_tests as safety_tests
+
         ending = ', (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))'
         notes = clean_mgs(safety_tests._interpret_results)
         content.append(notes[-1][:-2] + ending)
