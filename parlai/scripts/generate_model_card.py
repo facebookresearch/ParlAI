@@ -681,7 +681,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '--ignore',
         default=True,
         type='bool',
-        help='whether or not to ignore the internal, fromfile, or jsonfile tasks if no external version of the task can be found; by default, we will (so True).',
+        help='whether or not to ignore the fromfile, jsonfile, etc. tasks if the task can be found; by default, we will (so True).',
     )
     gmc.add_argument(
         '--evaluation-report-file',
