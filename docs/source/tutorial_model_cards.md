@@ -9,7 +9,7 @@ For both steps, we should specify the following arguments:
 - `--model-file / -mf`: the model file
 - `--folder-to-save / -fts`: the location where we're saving reports
 
-### Step 1: Generating reports
+## Step 1: Generating reports
 In general, we can use a command like this for report generation:
 ```
 # template
@@ -28,13 +28,13 @@ In addition, if the model itself needs certain arguments (ie. `--search-server`)
 
 Check out the section about [generating reports](#report-generation-process) explanations of the report generation process and how to generate single reports.
 
-### Step 2: Model Card Generation
+## Step 2: Model Card Generation
 If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command 
    ```
    parlai gmc -mf <model file> -fts <folder to save>
    ```
 
-### Examples 
+## Examples 
 Here are some samples commands (click to see the results): 
    - [Blenderbot 90M]()
       ```
@@ -45,6 +45,11 @@ Here are some samples commands (click to see the results):
       ```
       parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen
       parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
+      ```
+   - [Blenderbot2 400M]()
+      ```
+      parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_440M -bs 128  --mode gen:safety --search-server http://devfair0169:5000/bing_search --wrapper blenderbot2_400M
+      parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_440M
       ```
 
 
@@ -65,7 +70,7 @@ Here are some samples commands (click to see the results):
 
 ![imageonline-co-whitebackgroundremoved (4)](https://user-images.githubusercontent.com/14303605/128233882-4c77770d-9703-466f-b1a2-7f2395c5c2f6.png) 
 
-### Generating single reports
+## Generating single reports
 Sometimes, you might want to generate only certain reports. In this case, instead of using `--mode gen`, we should use `--mode gen:<report>`. Here are the possibilites:
 - `--mode gen:data_stats` to generate the `data_stats/` folder
 - `--mode gen:eval` to generate the `eval_results.json` file (evaluation results)
@@ -86,11 +91,11 @@ Sometimes, you might want to generate only certain reports. In this case, instea
 
 
 
-### Using `extra-args-path`
+## Using `extra-args-path`
 
 We can use `extra-args-path` to pass in longer arguments:
 
-#### Adding Custom Dataset and Model Info
+### Adding Custom Dataset and Model Info
 By default, the code will try to find a sections in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py). However, instead of changing `model_list.py`, we can also pass in a `.json` file to `--extra-args-path` with out new section. Here's us trying to add the intended use section
 
 ```
@@ -120,7 +125,7 @@ Similarly, if we don't want to touch [`task_list.py`](https://github.com/faceboo
 The information passed via this method can partially overwrite what's written in `task_list.py` and `model_list.py`. 
 
 
-#### Add Custom Sections or Changing Section Order (static)
+### Add Custom Sections or Changing Section Order (static)
 
 For static sections, there's two ways to do this. 
 
