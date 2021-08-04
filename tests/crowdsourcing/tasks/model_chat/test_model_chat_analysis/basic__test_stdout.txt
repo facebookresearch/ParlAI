@@ -1,0 +1,25 @@
+Date folders: 2020_12_29
+Got 3 complete conversation(s) for model: blender_90M
+3 complete conversation(s) collected.
+0 bad conversation(s).
+3 approved conversation(s).
+(0 incomplete conversation(s) collected.)
+---blender_90M---
+human_utterance_count: 18
+human_word_count: 78 (4.33)
+human_question_count: 0 (0.0)
+total: 18 (100.00%)
+Average Engaging-ness Rating: 2.3333333333333335 (3 ratings)
+count_convos: 3
+Printing worker IDs not already in block list to add...
+Done printing bad workers.
+Worker stats:
+WORKER_1
+WORKER_2
+WORKER_3
+  worker_id conversations
+0  WORKER_1             1
+1  WORKER_2             1
+2  WORKER_3             1
+
+Worker conversation counts: {'WORKER_1': 1, 'WORKER_2': 1, 'WORKER_3': 1}

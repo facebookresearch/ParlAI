@@ -463,7 +463,7 @@ class ContextGenerator:
 
     def __init__(self, opt, datatype: str = 'train', seed: Optional[int] = None):
         """
-        Initalize the context generator.
+        Initialize the context generator.
 
         opt: only a 'datapath' key is required, to specify the ParlAI data folder
         """

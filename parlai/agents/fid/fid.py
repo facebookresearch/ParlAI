@@ -284,7 +284,7 @@ class SearchQuerySearchEngineFiDAgent(SearchQueryFiDAgent):
     def add_cmdline_args(cls, parser, partial_opt=None):
         super().add_cmdline_args(parser, partial_opt=partial_opt)
         group = parser.add_argument_group('Search Engine FiD Params')
-        group.add_argument('--search-server', type=str, help='A search server addrees.')
+        group.add_argument('--search-server', type=str, help='A search server address.')
         return parser
 
 

@@ -176,7 +176,7 @@ class WizardOfInternetBaseTeacher(DialogTeacher):
             d = {CONST.PERSONA: persona, CONST.TOTAL_CONVERSATION_INDEX: msg_ind}
             action = message[CONST.ACTION]
 
-            # Seperating the actions
+            # Separating the actions
             if action == CONST.ACTION_APPRENTICE_TO_WIZARD:
                 d.update(parse_apprentice_message(message))
             elif action == CONST.ACTION_WIZARD_TO_APPRENTICE:

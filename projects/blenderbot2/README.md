@@ -65,7 +65,7 @@ BART     | 400M        | WizInt search engine FiD (Bing)         | 76.1 | 5.3 | 
 
 ### Safety 
 
-We add extra safety into our models, by a baked-in method: during generation, we train the model such that a generated unsafe reponse has the special token _\_POTENTIALLY_UNSAFE\__ appended to the end of the generation. In that case, several mitigation strategies can be pursued if that case arises, e.g. a safe response. See our [safety recipes paper](https://parl.ai/projects/safety_recipes) for an in depth discussion and analysis.
+We add extra safety into our models, by a baked-in method: during generation, we train the model such that a generated unsafe response has the special token _\_POTENTIALLY_UNSAFE\__ appended to the end of the generation. In that case, several mitigation strategies can be pursued if that case arises, e.g. a safe response. See our [safety recipes paper](https://parl.ai/projects/safety_recipes) for an in depth discussion and analysis.
 
 We also follow the recent paper on [Anticipating Safety Issues in E2E Conversational AI: Framework and Tooling](https://parl.ai/projects/safety_bench) and use 
 their safety evaluation framework to evaluate our models.
@@ -83,7 +83,7 @@ Nevertheless, as ever much work remains to be done in the area of safety. While 
 ### Model Zoo
 
 - BlenderBot 2.0 400m: `--model-file zoo:blenderbot2/blenderbot2_400M/model`
-- BlenderBot 2.0 2.7B: `--model-file zoo:blenderbot2/blenderbot2_3B/model`
+- BlenderBot 2.0 2.7B ([model card](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md)): `--model-file zoo:blenderbot2/blenderbot2_3B/model`
 
 ## Datasets
 

@@ -75,7 +75,7 @@ class SearchEngineRetriever(RetrieverAPI):
     Queries a server (eg, search engine) for a set of documents.
 
     This module relies on a running HTTP server. For each retrieval it sends the query
-    to this server and receieves a JSON; it parses the JSON to create the the response.
+    to this server and receives a JSON; it parses the JSON to create the the response.
     """
 
     def __init__(self, opt: Opt):

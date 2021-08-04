@@ -856,7 +856,7 @@ class BB2SearchQuerySearchEngineRetriever(
     BB2SearchRetrieverMixin, SearchQuerySearchEngineRetriever
 ):
     """
-    Override Search Engine Retriever to accomodate SQ Generator from BB2 Setup.
+    Override Search Engine Retriever to accommodate SQ Generator from BB2 Setup.
     """
 
 
@@ -864,5 +864,5 @@ class BB2SearchQueryFaissIndexRetriever(
     BB2SearchRetrieverMixin, SearchQueryFAISSIndexRetriever
 ):
     """
-    Override Search Engine Retriever to accomodate SQ Generator from BB2 Setup.
+    Override Search Engine Retriever to accommodate SQ Generator from BB2 Setup.
     """

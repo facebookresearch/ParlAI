@@ -26,6 +26,7 @@ from parlai.core.opt import Opt
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 from parlai.utils.fsdp import fsdp_wrap
+from parlai.nn.checkpoint import checkpoint_wrapper
 
 
 @swappable(self_attention=MultiHeadAttention, feedforward=TransformerFFN)
@@ -236,6 +237,8 @@ class TransformerEncoder(nn.Module):
                 variant=self.variant,
                 activation=self.activation,
             )
+            if self.opt.get('checkpoint_activations'):
+                layer = checkpoint_wrapper(layer)
             layers.append(fsdp_wrap(layer))
         return layers
 
