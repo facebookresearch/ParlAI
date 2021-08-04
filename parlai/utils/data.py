@@ -116,7 +116,7 @@ class DatatypeHelper:
 
     @classmethod
     def split_data_by_fold(
-        cls, 
+        cls,
         fold: str,
         data: List,
         train_frac: float,
@@ -134,9 +134,9 @@ class DatatypeHelper:
         else:
             start = train_frac + valid_frac
             end = 1.0
-        
+
         random.Random(seed).shuffle(data)
-        return data[int(start * len(data)): int(end * len(data))]
+        return data[int(start * len(data)) : int(end * len(data))]
 
     @classmethod
     def split_domains_by_fold(
@@ -155,6 +155,10 @@ class DatatypeHelper:
         """
         result = []
         for domain in domains:
-            result.extend(cls.split_data_by_fold(fold, domain, train_frac, valid_frac, test_frac, seed))
+            result.extend(
+                cls.split_data_by_fold(
+                    fold, domain, train_frac, valid_frac, test_frac, seed
+                )
+            )
         random.Random(seed).shuffle(result)
         return result
