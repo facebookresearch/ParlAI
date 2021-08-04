@@ -2,6 +2,8 @@
 
 **Author**: Wendy
 
+Here's a sample model card for the [Blenderbot2 3B](#TODO).
+
 There are two steps in generating the model cards.
 ![imageonline-co-whitebackgroundremoved (3)](https://user-images.githubusercontent.com/14303605/128065136-9403281c-3124-488e-be1d-81b9262b7758.png)
 
@@ -20,7 +22,7 @@ parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_single --mode ge
 
 However, depending on the situiaton, we might need to add these arguments as well:
 - `--wrapper / -w` **only if** the model is a generation model
-   - check the [safety bench]() for more info about the the wrappers and its implementation
+   - check the [safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench) for more info about the the wrappers and its implementation
 - `--model-type / -mt` **only if** the model isn't added to or already in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py)
    - possible choices include `ranker`, `generator`, `classifier`, `retriever`
 
@@ -31,26 +33,29 @@ Check out the section about [generating reports](#report-generation-process) exp
 ## Step 2: Model Card Generation
 If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command 
    ```
+   # template
    parlai gmc -mf <model file> -fts <folder to save>
+   # example
+   parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
    ```
 
 ## Examples 
 Here are some samples commands (click to see the results): 
-   - [Blenderbot 90M]()
-      ```
-      parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M -w blenderbot_90M -bs 128 --mode gen
-      parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M
-      ```
-   - [Dialogue Safety (multi-turn)]()
-      ```
-      parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen
-      parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
-      ```
-   - [Blenderbot2 400M]()
-      ```
-      parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_440M -bs 128  --mode gen:safety --search-server http://devfair0169:5000/bing_search --wrapper blenderbot2_400M
-      parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_440M
-      ```
+- Dialogue Safety (multi-turn)
+```
+parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen
+parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
+```
+- Blenderbot 90M
+```
+parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M -w blenderbot_90M -bs 128 --mode gen
+parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M
+```
+- Blenderbot2 400M
+```
+parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_440M -bs 128  --mode gen:safety --search-server http://devfair0169:5000/bing_search --wrapper blenderbot2_400M
+parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_440M
+```
 
 
 ## Report Generation Process
