@@ -1040,7 +1040,7 @@ class GenerateModelCard(ParlaiScript):
         # setting up args for safety_bench
         wrapper = f"-w {self.opt.get('wrapper', '')}"
         parser = safety_tests.setup_args().parse_args(wrapper.split())
-        parser = get_new_parser(parser, self.opt)
+        parser = get_new_parser(parser, self.opt, ignore_keys={'batchsize'})
         parser['log_folder'] = folder_name
 
         if self.verbose:
