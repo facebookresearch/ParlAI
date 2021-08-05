@@ -16,7 +16,6 @@ from parlai.core.worlds import create_task
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import register_agent, Agent
-from parlai.utils.data import DatatypeHelper
 
 
 class TestTrainModel(unittest.TestCase):
@@ -64,6 +63,7 @@ class TestTrainModel(unittest.TestCase):
 
             with open(os.path.join(tmpdir, 'model.trainstats')) as f:
                 data = json.load(f)
+                print(data)
                 self.assertEqual(
                     data["final_valid_report"]["exs"],
                     10,

@@ -490,9 +490,11 @@ class TrainLoop:
                     'valid_reports': self.valid_reports,
                     'best_valid': self.best_valid,
                     'impatience': self.impatience,
-                    'final_valid_report': self.final_valid_report,
-                    'final_test_report': self.final_test_report,
-                    'final_extra_valid_report': self.final_extra_valid_report,
+                    'final_valid_report': dict_report(self.final_valid_report),
+                    'final_test_report': dict_report(self.final_test_report),
+                    'final_extra_valid_report': dict_report(
+                        self.final_extra_valid_report
+                    ),
                 },
                 f,
                 indent=4,
@@ -948,8 +950,8 @@ class TrainLoop:
         )
 
         if opt['wandb_log'] and is_primary_worker():
-            self.wb_logger.log_final('valid', v_report)
-            self.wb_logger.log_final('test', t_report)
+            self.wb_logger.log_final('valid', self.final_valid_report)
+            self.wb_logger.log_final('test', self.final_test_report)
             self.wb_logger.finish()
 
         if valid_worlds:
@@ -961,11 +963,13 @@ class TrainLoop:
 
         print_announcements(opt)
 
-        if opt['final_extra_opt'] is not '':
+        if opt['final_extra_opt'] != '':
             self.final_extra_valid_report = self._run_final_extra_eval(opt)
 
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.finish()
+
+        self._save_train_stats()
 
         return self.final_valid_report, self.final_test_report
 
