@@ -62,14 +62,18 @@ class TestTrainModel(unittest.TestCase):
             tl = get_tl(tmpdir)
             _, _ = tl.train()
 
-            with open(os.path.join(tmpdir, 'model.valid.json')) as f:
+            with open(os.path.join(tmpdir, 'model.trainstats')) as f:
+                data = json.load(f)
                 self.assertEqual(
-                    json.load(f)['exs'], 10, "Validation exs saved incorrectly"
+                    data["final_valid_report"]["exs"],
+                    10,
+                    "Validation exs saved incorrectly",
                 )
 
-            with open(os.path.join(tmpdir, 'model_final.valid.json')) as f:
                 self.assertEqual(
-                    json.load(f)['exs'], 30, "Final validation exs saved incorrectly"
+                    data["final_extra_valid_report"]["exs"],
+                    30,
+                    "Final validation exs saved incorrectly",
                 )
 
     def test_fast_final_eval(self):
