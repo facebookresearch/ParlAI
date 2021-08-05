@@ -475,7 +475,9 @@ class TrainLoop:
                 pass
 
     def _save_train_stats(self, suffix=None):
-        fn = self.opt['model_file']
+        fn = self.opt.get('model_file', None)
+        if not fn:
+            return
         if suffix:
             fn += suffix
         fn += '.trainstats'
@@ -616,7 +618,15 @@ class TrainLoop:
 
         return valid_report
 
-    def _run_eval(self, valid_worlds, opt, datatype, max_exs=-1, write_log=False):
+    def _run_eval(
+        self,
+        valid_worlds,
+        opt,
+        datatype,
+        max_exs=-1,
+        write_log=False,
+        extra_log_suffix="",
+    ):
         """
         Eval on validation/test data.
 
@@ -656,7 +666,9 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            with PathManager.open(opt['model_file'] + '.' + datatype, 'a') as f:
+            with PathManager.open(
+                opt['model_file'] + extra_log_suffix + '.' + datatype, 'a'
+            ) as f:
                 f.write(f'{metrics}\n')
 
         return report
@@ -681,6 +693,7 @@ class TrainLoop:
             final_datatype,
             final_max_exs,
             write_log=True,
+            extra_log_suffix="_extra",
         )
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_final(final_datatype, final_valid_report)
