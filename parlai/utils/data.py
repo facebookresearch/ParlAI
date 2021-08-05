@@ -124,6 +124,24 @@ class DatatypeHelper:
         test_frac: float,
         seed: int = 42,
     ):
+        """
+        Splits a list of data into train/valid/test folds. The members of these folds
+        are randomized (in a consistent manner) by a seed. This is a convenience
+        function for datasets that do not have a canonical split.
+
+        :param fold:
+           parlai fold/datatype
+        :param data:
+            List of data examples to be split
+        :param train_frac:
+            Fraction of data to be used for the "train" fold. train_frac, valid_frac, and test_frac should sum to 1.
+        :param valid_frac:
+            Fraction of data to be used for the "valid" fold. train_frac, valid_frac, and test_frac should sum to 1.
+        :param test_frac:
+            Fraction of data to be used for the "test" fold. train_frac, valid_frac, and test_frac should sum to 1.
+        :param seed:
+            Seed for shuffling
+        """
         assert train_frac + valid_frac + test_frac == 1
         if "train" in fold:
             start = 0.0
@@ -139,25 +157,42 @@ class DatatypeHelper:
         return data[int(start * len(data)) : int(end * len(data))]
 
     @classmethod
-    def split_domains_by_fold(
+    def split_subset_data_by_fold(
         cls,
         fold: str,
-        domains: List[List],
+        subsets: List[List],
         train_frac: float,
         valid_frac: float,
         test_frac: float,
         seed: int = 42,
     ):
         """
-        Need to be careful about how we setup random to not leak examples between trains
-        if we're in a scenario where a single dataset has different ways of mixing +
-        matching subcomponents.
+        Splits a list of subsets of data, where we want equal samples from each subset,
+        into train/valid/test folds, ensuring that samples from a given subset are not
+        changed to another fold as more subsets are added.
+
+        For example, say a dataset has domains A, B. Let's say we have an experiment where we train and validate a model on domain A, then on domains A + B. If we naively concatinate the subset of data from A + B together, randomize it, and split the result into train, valid, and test folds, there is no guarantee that valid or test examples from A-only will not end up into the train fold of the A + B split from this naive concatination process.
+
+        The members of these folds are randomized (but in a fixed manner) by a seed.
+
+        :param fold:
+           parlai fold/datatype
+        :param subsets:
+            List of subsets of data examples to be split
+        :param train_frac:
+            Fraction of data to be used for the "train" fold. train_frac, valid_frac, and test_frac should sum to 1.
+        :param valid_frac:
+            Fraction of data to be used for the "valid" fold. train_frac, valid_frac, and test_frac should sum to 1.
+        :param test_frac:
+            Fraction of data to be used for the "test" fold. train_frac, valid_frac, and test_frac should sum to 1.
+        :param seed:
+            Seed for shuffling
         """
         result = []
-        for domain in domains:
+        for subset in subsets:
             result.extend(
                 cls.split_data_by_fold(
-                    fold, domain, train_frac, valid_frac, test_frac, seed
+                    fold, subset, train_frac, valid_frac, test_frac, seed
                 )
             )
         random.Random(seed).shuffle(result)
