@@ -126,8 +126,9 @@ class TestDynamicBatching(unittest.TestCase):
 
     def test_world_logging_buffersize(self):
         """
-        Test world logging with dynamic batching when the number of
-        examples exceeds the buffersize.
+        Test world logging with dynamic batching.
+        
+        Checks when the number of examples exceeds the buffersize.
         """
         with testing_utils.tempdir() as tmpdir:
             save_report = os.path.join(tmpdir, 'report')
