@@ -284,7 +284,7 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
                 text={m.text}
                 agentIdx={m.agent_idx}
                 turnIdx={idx}
-                annotationQuestion={annotationQuestion}
+                annotationQuestion={ ('annotation_question' in m) ? m.annotation_question : annotationQuestion}
                 annotationBuckets={ ('annotation_buckets' in m) ? m.annotation_buckets : annotationBuckets}
                 doAnnotateMessage={m.do_annotate}
                 askReason={askReason}
