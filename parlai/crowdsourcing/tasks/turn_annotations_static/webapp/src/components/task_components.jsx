@@ -216,9 +216,18 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
   )
 }
 
-function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, onUserInputUpdate }) {
+function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, speakerLabel, onUserInputUpdate }) {
   var extraElements = '';
   var responseInputElement = '';
+  if (speakerLabel == null) {	
+    speakerLabel = agentIdx % 2 == 0 ? 'YOU' : 'THEM'	
+  }	
+  var speakerElements = (	
+    <div>	
+      <b>{speakerLabel}:</b> {text}	
+    </div>	
+  )	
+
   if (doAnnotateMessage) {
     if (annotationBuckets !== null) { 
       extraElements = (<span key={'extra_' + turnIdx}><br /><br />
@@ -251,7 +260,8 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
   return (
     <div>
       <div className={`alert ${agentIdx == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${agentIdx == 0 ? "right" : "left"}`, display: 'table', minWidth: `${agentIdx == 0 ? "30%" : "80%"}`, marginTop: "auto" }}>
-        <span><b>{turnIdx % 2 == 0 ? 'YOU' : 'THEM'}:</b> {text}
+        <span>
+          {speakerElements}
           <ErrorBoundary>
             {extraElements}
           </ErrorBoundary>
@@ -289,6 +299,7 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
                 doAnnotateMessage={m.do_annotate}
                 askReason={askReason}
                 responseField={responseField}
+                speakerLabel={('speaker_label' in m) ? m.speaker_label : null}
                 onUserInputUpdate={() => handleUserInputUpdate(subtaskData)}
               />
             </div>
