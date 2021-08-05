@@ -135,7 +135,7 @@ class TestDynamicBatching(unittest.TestCase):
                 dict(
                     model_file='zoo:unittest/transformer_generator2/model',
                     task='integration_tests:RepeatTeacher:2000',
-                    world_logs=save_report,
+                    world_logs=save_report + '.jsonl',
                     report_filename=save_report,
                     truncate=1024,
                     dynamic_batching='full',
