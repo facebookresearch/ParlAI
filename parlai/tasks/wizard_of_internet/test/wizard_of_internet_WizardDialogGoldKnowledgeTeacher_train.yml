@@ -1,5 +1,11 @@
 acts:
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Chopped Definition of at Dictionary com
+    - Chopped Episode Guide TV Schedule Food Network Canada
+    - CHOP5 Salad Kitchen Healthy Flavorful Chop Salads
+    - Food Network Full Episodes Watch Now for FREE
+    - Watch Saturday Night Live Highlight Chopped NBC com
+    __retrieved-docs-urls__:
     - https://www.dictionary.com/browse/chopped
     - https://www.foodnetwork.ca/shows/chopped/
     - https://chop5.com/
@@ -359,6 +365,8 @@ acts:
       Tags: snl, saturday night live, snl season 44, snl 44, emma thompson, aidy bryant,
       mikey day, leslie jones, alex moffat, chopped, cooking show, cooking competition,
       cooking, Melissa Villaseñor'
+    __select-docs-titles__:
+    - Chopped Episode Guide TV Schedule Food Network Canada
     __selected-docs__:
     - 'Chopped is a cooking competition show that is all about skill, speed and ingenuity.
       Each week, four chefs compete before a panel of expert judges and turn baskets
@@ -395,7 +403,13 @@ acts:
       \ only one winner remains. __endknowledge__ \n My favorite tv show is Chopped.\n\
       They play along with the show\nI just watched chopped for 3 hours straight.\
       \ The baskets were hard in some of them."
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Chopped Definition of at Dictionary com
+    - CHOP5 Salad Kitchen Healthy Flavorful Chop Salads
+    - Food Network Official Site
+    - Chopped Cooking Channel
+    - Chopped Episode Guide TV Schedule Food Network Canada
+    __retrieved-docs-urls__:
     - https://www.dictionary.com/browse/chopped
     - https://chop5.com/
     - https://watch.foodnetwork.com/
@@ -901,6 +915,8 @@ acts:
 
       Ted, the host of Chopped, was the food and wine specialist on the groundbreaking,
       Emmy-winning series Queer Eye, which had a 100-episode run.'
+    __select-docs-titles__:
+    - Food Network Official Site
     __selected-docs__:
     - 'Aloha, Recruits!
 
@@ -1087,7 +1103,13 @@ acts:
     text: "__knowledge__ New Episodes Mondays 9|8c\nWatch a New Episode Now __endknowledge__\
       \ \n Yes it is. Chefs have a basket with 4 mystery ingredients. They compete\
       \ to make the best meal from the ingredients. "
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Top 20 Favorite Types of Cuisine herinterest com
+    - Types of Cuisine From Around the World With Their Popular
+    - Your Favorite Types of Cuisine Ranker
+    - World cuisine 10 best food cultures CNN Travel
+    - Types of Southern Cuisine Living
+    __retrieved-docs-urls__:
     - https://www.herinterest.com/types-of-cuisine/
     - https://leafyplace.com/types-of-cuisine/
     - https://www.ranker.com/crowdranked-list/favorite-types-of-cuisine
@@ -2081,6 +2103,8 @@ acts:
       Lowcountry Pig Pickin
 
       The Best of Carolina Coastal Cuisine: Myrtle Beach'
+    __select-docs-titles__:
+    - Types of Cuisine From Around the World With Their Popular
     __selected-docs__:
     - 'Types of Cuisine From Around the World With Their Popular Foods
 
@@ -2434,7 +2458,13 @@ acts:
       \ Foods __endknowledge__ \n Yes, I agree. Some of the ingredients I've never\
       \ heard of. I try to watch as many as I can, but not all. I only imagine what\
       \ I would make. I have never tried by myself. "
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Build Your Office Meal Program with Foodee All in one
+    - The Rehoboth Foodie DE Restaurant Reviews
+    - Recipes foodiecrush
+    - Stop calling yourself a foodie The Washington Post
+    - Foodie Wikipedia
+    __retrieved-docs-urls__:
     - https://www.food.ee/
     - https://rehobothfoodie.com/
     - https://www.foodiecrush.com/recipes/
@@ -2915,6 +2945,8 @@ acts:
       Retrieved from  https://en.wikipedia.org/w/index.php?title=Foodie&oldid=937463966
 
       Food and drink appreciation'
+    __select-docs-titles__:
+    - Stop calling yourself a foodie The Washington Post
     __selected-docs__:
     - 'Stop calling yourself a ‘foodie’
 
@@ -3088,10 +3120,12 @@ acts:
       \ i forgot to mention there is also only a 20 or thirty minute time limit, depending\
       \ on the round. The cuisine is from around the world. Fine dining to street\
       \ style. "
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__: []
+    __retrieved-docs-urls__:
     - __no_urls__
     __retrieved-docs__:
     - __noretrieved-docs__
+    __select-docs-titles__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:

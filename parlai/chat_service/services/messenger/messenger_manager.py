@@ -94,7 +94,7 @@ class MessengerManager(ChatServiceManager):
         """
         Mark the agent as removed from the pool.
 
-        Can be overriden to change other metadata linked to agent removal.
+        Can be overridden to change other metadata linked to agent removal.
 
         :param agent_id:
             int agent psid
@@ -116,7 +116,7 @@ class MessengerManager(ChatServiceManager):
 
     def _handle_message_read(self, event):
         # If the message was sent by another user (as in during a conversation)
-        # then we need to propogate the read back to that user.
+        # then we need to propagate the read back to that user.
         self._log_debug('Messages {} marked as read.'.format(event['read']))
         super()._handle_message_read(event)
 
@@ -157,7 +157,7 @@ class MessengerManager(ChatServiceManager):
 
     def _log_missing_agent(self, agent_id, assignment_id):
         """
-        Log the occurence of a missing agent.
+        Log the occurrence of a missing agent.
         """
         log_utils.print_and_log(
             logging.WARN,
@@ -190,7 +190,7 @@ class MessengerManager(ChatServiceManager):
                 logging.INFO,
                 'In order to run the server locally, you will need '
                 'to have a public HTTPS endpoint (SSL signed) running on '
-                'the server you are currently excecuting ParlAI on. Enter '
+                'the server you are currently executing ParlAI on. Enter '
                 'that public URL hostname when prompted and ensure that the '
                 'port being used by ParlAI (usually 3000) has external '
                 'traffic routed to it.',

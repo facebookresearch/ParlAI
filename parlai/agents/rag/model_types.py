@@ -267,7 +267,7 @@ class RagSequence(RagModelInterface):
 
     def get_initial_decoder_input(self, input: torch.LongTensor) -> torch.LongTensor:
         """
-        Don't repeat decoder input for rag seqeunce.
+        Don't repeat decoder input for rag sequence.
         """
         return input
 

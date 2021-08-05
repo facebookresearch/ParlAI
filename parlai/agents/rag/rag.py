@@ -664,7 +664,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
     ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
         """
-        Optionall rerank beams, according to RAG Model type.
+        Optional rerank beams, according to RAG Model type.
 
         :param batch:
             current batch

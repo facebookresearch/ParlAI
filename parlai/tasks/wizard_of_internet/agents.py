@@ -67,6 +67,7 @@ def parse_wizard_message(message_dict, doc_lines_delim):
             CONST.SELECTED_DOCS_TITLES: [],
             CONST.SELECTED_SENTENCES: [],
             CONST.RETRIEVED_DOCS_URLS: [],
+            CONST.RETRIEVED_DOCS_TITLES: [],
         }
         docs = msg_d[CONST.CONTEXT][CONST.CONTENTS]
         selections = msg_d[CONST.CONTEXT][CONST.SELECTED_CONTENTS]
@@ -85,6 +86,7 @@ def parse_wizard_message(message_dict, doc_lines_delim):
                     knowledge[CONST.SELECTED_SENTENCES].append(line)
             full_doc = doc_lines_delim.join(doc_lines)
             knowledge[CONST.RETRIEVED_DOCS].append(full_doc)
+            knowledge[CONST.RETRIEVED_DOCS_TITLES].append(doc['title'])
             knowledge[CONST.RETRIEVED_DOCS_URLS].append(doc['url'])
             if doc_selected:
                 knowledge[CONST.SELECTED_DOCS_TITLES].append(doc['title'])
@@ -176,7 +178,7 @@ class WizardOfInternetBaseTeacher(DialogTeacher):
             d = {CONST.PERSONA: persona, CONST.TOTAL_CONVERSATION_INDEX: msg_ind}
             action = message[CONST.ACTION]
 
-            # Seperating the actions
+            # Separating the actions
             if action == CONST.ACTION_APPRENTICE_TO_WIZARD:
                 d.update(parse_apprentice_message(message))
             elif action == CONST.ACTION_WIZARD_TO_APPRENTICE:
@@ -386,8 +388,10 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
         for item_key in (
             CONST.RETRIEVED_DOCS,
             CONST.RETRIEVED_DOCS_URLS,
+            CONST.RETRIEVED_DOCS_TITLES,
             CONST.SELECTED_DOCS,
             CONST.SELECTED_SENTENCES,
+            CONST.SELECTED_DOCS_TITLES,
             CONST.SEARCH_QUERY,
         ):
             parlai_message[item_key] = action[item_key]

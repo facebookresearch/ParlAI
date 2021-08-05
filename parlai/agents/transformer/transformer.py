@@ -126,20 +126,26 @@ def add_common_cmdline_args(parser):
         '--n-encoder-layers',
         type=int,
         default=-1,
-        help='This will overide the n-layers for asymmetrical transformers',
+        help='This will overidde the n-layers for asymmetrical transformers',
     )
     parser.add_argument(
         '-ndl',
         '--n-decoder-layers',
         type=int,
         default=-1,
-        help='This will overide the n-layers for asymmetrical transformers',
+        help='This will overidde the n-layers for asymmetrical transformers',
     )
     parser.add_argument(
         '--model-parallel',
         type='bool',
         default=False,
         help='Shard the layers across multiple GPUs.',
+    )
+    parser.add_argument(
+        '--checkpoint-activations',
+        type='bool',
+        default=False,
+        help='Recompute activations on backward pass to conserve memory.',
     )
 
 
