@@ -85,6 +85,24 @@ var handleUserInputUpdate = function (subtaskData) {
   }
 }
 
+var getAnnotationBuckets = function (taskData, annotationBuckets) {	
+  // return list of all the bucket ids
+  var buckets = []	
+  if (annotationBuckets !== null && 'config' in annotationBuckets){	
+    buckets = Object.keys(annotationBuckets.config);	
+  }	
+  taskData.forEach(elem => {	
+    if ('annotation_buckets' in elem) {	
+      (Object.keys(elem.annotation_buckets.config)).forEach(bucketKey => {	
+        if (!buckets.includes(bucketKey)) {	
+          buckets.push(bucketKey)	
+        }	
+      })	
+    }	
+  })	
+  return buckets	
+}
+
 var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initialTaskData, annotationBuckets, mephistoSubmit) {
   // initialTaskData is the initial task data for this index
   console.log('In handleSubtaskSubmit for subtask: ' + subtaskIndex);
@@ -103,8 +121,8 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
       'agent_idx': initialTaskData[i].agent_idx,
       'other_metadata': initialTaskData[i].other_metadata
     };
-    if (annotationBuckets !== null) {
-      var buckets = Object.keys(annotationBuckets.config);
+    var buckets = getAnnotationBuckets(initialTaskData, annotationBuckets)
+    if (buckets !== null && buckets.length > 0) {
       for (var j = 0; j < buckets.length; j++) {
         answersForTurn[buckets[j]] = null;
         var checkbox = document.getElementById(buckets[j] + '_' + i);
@@ -267,7 +285,7 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
                 agentIdx={m.agent_idx}
                 turnIdx={idx}
                 annotationQuestion={annotationQuestion}
-                annotationBuckets={annotationBuckets}
+                annotationBuckets={ ('annotation_buckets' in m) ? m.annotation_buckets : annotationBuckets}
                 doAnnotateMessage={m.do_annotate}
                 askReason={askReason}
                 responseField={responseField}
