@@ -23,7 +23,7 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
-
+import copy
 import json
 import numpy as np
 import signal
@@ -86,6 +86,12 @@ def setup_args(parser=None) -> ParlaiParser:
         '-et',
         '--evaltask',
         help='task to use for valid/test (defaults to the one used for training)',
+    )
+    train.add_argument(
+        '--final-extra-opt',
+        type=str,
+        default='',
+        help="A '.opt' file that is used for final eval. Useful for setting skip-generation to false. 'datatype' must be included as part of the opt.",
     )
     train.add_argument(
         '--eval-batchsize',
@@ -391,6 +397,9 @@ class TrainLoop:
         self.valid_optim = 1 if opt['validation_metric_mode'] == 'max' else -1
         self.train_reports = []
         self.valid_reports = []
+        self.final_valid_report = {}
+        self.final_test_report = {}
+        self.final_extra_valid_report = {}
         self.best_valid = None
 
         self.impatience = 0
@@ -466,7 +475,9 @@ class TrainLoop:
                 pass
 
     def _save_train_stats(self, suffix=None):
-        fn = self.opt['model_file']
+        fn = self.opt.get('model_file', None)
+        if not fn:
+            return
         if suffix:
             fn += suffix
         fn += '.trainstats'
@@ -481,6 +492,11 @@ class TrainLoop:
                     'valid_reports': self.valid_reports,
                     'best_valid': self.best_valid,
                     'impatience': self.impatience,
+                    'final_valid_report': dict_report(self.final_valid_report),
+                    'final_test_report': dict_report(self.final_test_report),
+                    'final_extra_valid_report': dict_report(
+                        self.final_extra_valid_report
+                    ),
                 },
                 f,
                 indent=4,
@@ -602,7 +618,15 @@ class TrainLoop:
 
         return valid_report
 
-    def _run_eval(self, valid_worlds, opt, datatype, max_exs=-1, write_log=False):
+    def _run_eval(
+        self,
+        valid_worlds,
+        opt,
+        datatype,
+        max_exs=-1,
+        write_log=False,
+        extra_log_suffix="",
+    ):
         """
         Eval on validation/test data.
 
@@ -642,10 +666,39 @@ class TrainLoop:
         # write to file
         if write_log and opt.get('model_file') and is_primary_worker():
             # Write out metrics
-            with PathManager.open(opt['model_file'] + '.' + datatype, 'a') as f:
+            with PathManager.open(
+                opt['model_file'] + extra_log_suffix + '.' + datatype, 'a'
+            ) as f:
                 f.write(f'{metrics}\n')
 
         return report
+
+    def _run_final_extra_eval(self, opt):
+        final_valid_opt = copy.deepcopy(opt)
+        final_valid_opt_raw = Opt.load_init(opt['final_extra_opt'])
+        final_datatype = final_valid_opt_raw["datatype"]
+        for k, v in final_valid_opt_raw.items():
+            final_valid_opt[k] = v
+        final_max_exs = (
+            final_valid_opt['validation_max_exs']
+            if final_valid_opt.get('short_final_eval')
+            else -1
+        )
+        final_valid_world = load_eval_worlds(
+            self.agent, final_valid_opt, final_datatype
+        )
+        final_valid_report = self._run_eval(
+            final_valid_world,
+            final_valid_opt,
+            final_datatype,
+            final_max_exs,
+            write_log=True,
+            extra_log_suffix="_extra",
+        )
+        if opt['wandb_log'] and is_primary_worker():
+            self.wb_logger.log_final(final_datatype, final_valid_report)
+
+        return final_valid_report
 
     def _sync_metrics(self, metrics):
         """
@@ -901,13 +954,17 @@ class TrainLoop:
         # perform final validation/testing
         valid_worlds = load_eval_worlds(self.agent, opt, 'valid')
         max_exs = opt['validation_max_exs'] if opt.get('short_final_eval') else -1
-        v_report = self._run_eval(valid_worlds, opt, 'valid', max_exs, write_log=True)
+        self.final_valid_report = self._run_eval(
+            valid_worlds, opt, 'valid', max_exs, write_log=True
+        )
         test_worlds = load_eval_worlds(self.agent, opt, 'test')
-        t_report = self._run_eval(test_worlds, opt, 'test', max_exs, write_log=True)
+        self.final_test_report = self._run_eval(
+            test_worlds, opt, 'test', max_exs, write_log=True
+        )
 
         if opt['wandb_log'] and is_primary_worker():
-            self.wb_logger.log_final('valid', v_report)
-            self.wb_logger.log_final('test', t_report)
+            self.wb_logger.log_final('valid', self.final_valid_report)
+            self.wb_logger.log_final('test', self.final_test_report)
             self.wb_logger.finish()
 
         if valid_worlds:
@@ -919,7 +976,15 @@ class TrainLoop:
 
         print_announcements(opt)
 
-        return v_report, t_report
+        if opt['final_extra_opt'] != '':
+            self.final_extra_valid_report = self._run_final_extra_eval(opt)
+
+        if opt['wandb_log'] and is_primary_worker():
+            self.wb_logger.finish()
+
+        self._save_train_stats()
+
+        return self.final_valid_report, self.final_test_report
 
 
 @register_script('train_model', aliases=['tm', 'train'])
