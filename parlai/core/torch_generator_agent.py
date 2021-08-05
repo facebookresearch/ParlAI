@@ -421,7 +421,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
+            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam', 'gumble'},
             default='greedy',
             help='Generation algorithm',
         )
@@ -972,6 +972,19 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
             )
+        elif method == 'gumble':
+            return GumbleSampling(
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+            )
+
         else:
             raise ValueError(f"Can't use inference method {method}")
 
@@ -1699,3 +1712,21 @@ class NucleusSampling(TreeSearch):
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
         return (hyp_ids, tok_ids, best_scores)
+
+
+class GumbleSampling(BeamSearch):
+    """
+    Gumble Sampling, aka Stochastic Beam search (Kool et al., 2019).
+
+    See https://arxiv.org/abs/1903.06059 for details.
+    """
+
+    def select_paths(self, logprobs, prior_scores, current_length):
+        if prior_scores.numel() == 1:
+            logprobs = logprobs[0:1]
+
+        noise = -torch.log(-torch.log(torch.rand_like(logprobs)))
+        gumbled = (prior_scores.unsqueeze(-1) + logprobs + noise).log_softmax(dim=-1)
+        return super().select_paths(
+            gumbled, torch.zeros_like(prior_scores), current_length
+        )
