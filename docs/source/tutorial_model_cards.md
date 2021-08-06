@@ -73,14 +73,16 @@ In the end, it should generate the following reports under the `--folder-to-save
 - a `sample.json` file contain a sample input and output from the model
 - for generators, it should generate a folder `safety_bench_res` that contains the safety_bench results ([click here to learn more about the safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench)).
 
-*Successful generations should end with a green message like this:*
 
+Here are some images of the expected behavior:
+
+- *Successful generations should end with a green message like this:*
 <img width="679" alt="Screen Shot 2021-07-26 at 3 58 33 PM" src="https://user-images.githubusercontent.com/14303605/127069754-b99cec8c-6fac-4d32-bbca-f4972f6c5b5e.png">
 
-*Unsucessful generations will look like this, and should tell us which reports are missing and why.*
+- *Unsucessful generations should tell us which reports are missing and why.*
 <img width="1790" alt="Screen Shot 2021-07-26 at 11 32 17 AM" src="https://user-images.githubusercontent.com/14303605/127040345-e8ec6afa-60da-484e-8e68-955f592cec8b.png">
 
-*When tasks are dropped, it should look like this (w/o the blackout)*
+- *When tasks are dropped, it should look like this (w/o the blackout)*
 <img width="581" alt="Screen Shot 2021-08-06 at 9 10 56 AM" src="https://user-images.githubusercontent.com/14303605/128540191-df949a10-3aba-48e3-a601-a6b97b1dca36.png">
 
 
