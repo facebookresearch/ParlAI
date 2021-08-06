@@ -80,7 +80,7 @@ We used the metric `class notok f1`, the f1 scores for the class notok as the va
 
 
 ## Extra Analysis/Quantitative Analysis
-> :warning: Missing a sction for extra analysis; please add!:warning:
+> :warning: Missing a section for extra analysis; please add!:warning:
 
 ## Related Paper(s)
 
