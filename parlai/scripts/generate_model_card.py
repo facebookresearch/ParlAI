@@ -53,8 +53,7 @@ classifier_keys = {
     'balance_data',
     'single_turn',
 }
-opt_ignore_keys = classifier_keys
-
+opt_ignore_keys = classifier_keys.union({'is_debug'})
 
 # model details stucture for _search_make_li
 # key to search, default value, before value, after value, processing function (optional), # of tabs (optional)
@@ -606,6 +605,13 @@ def get_heatmap(stats_dfs, title=None, tfsize=16, heatmapkws_user=None, fout=Non
 #################################
 
 
+def get_group_keys(group):
+    keys = set()
+    for action in group._actions:
+        keys.add(action.dest)
+    return keys
+
+
 def get_new_parser(parser, opt, ignore_keys=(), always_keys=()):
     """
     rewrites parser with opt.
@@ -614,6 +620,11 @@ def get_new_parser(parser, opt, ignore_keys=(), always_keys=()):
         add_condition = key not in ignore_keys and key in parser
         if key in always_keys or add_condition:
             parser[key] = opt[key]
+    if 'override' in parser:
+        for k, v in parser['override'].items():
+            if key not in ignore_keys:
+                parser[k] = v
+        del parser['override']
     return parser
 
 
@@ -974,19 +985,13 @@ class GenerateModelCard(ParlaiScript):
             fname = get_dstats_fname(self.opt['folder_to_save'], task)
             # setting up args for data_stats
             parser = data_stats.setup_args().parse_args([])
-            always_ignore = {
-                'batchsize'
-            }  # if it's changed, it will give sometimes an error
             if self.model_type == CLASSIFIER:
                 parser = get_new_parser(
-                    parser,
-                    self.model_opt,
-                    always_keys=classifier_keys,
-                    ignore_keys=always_ignore,
+                    parser, self.model_opt, always_keys=classifier_keys
                 )
-            ignore_keys = opt_ignore_keys.union(always_ignore)
-            parser = get_new_parser(parser, self.opt, ignore_keys)
+            parser = get_new_parser(parser, self.opt, opt_ignore_keys)
             parser['task'] = task
+            parser['batchsize'] = 1  # if it's changed, it will give sometimes an error
 
             if self.verbose:
                 extra_special_print(f"{task}: passing in the following")
@@ -1010,7 +1015,10 @@ class GenerateModelCard(ParlaiScript):
         parser = eval_model.setup_args().parse_args([])
         if self.model_type == CLASSIFIER:
             parser = get_new_parser(parser, self.model_opt, always_keys=classifier_keys)
-        parser = get_new_parser(parser, self.opt, opt_ignore_keys)
+        parser = get_new_parser(
+            parser, self.opt['override'], opt_ignore_keys, always_keys={'data_parallel'}
+        )
+        parser['override'] = self.opt['override']
         parser['ignore_labels'] = self.opt.get('ignore_labels')
         parser['task'] = ','.join(self.eval_tasks)
         parser['datatype'] = 'test'
@@ -1365,7 +1373,7 @@ class GenerateModelCard(ParlaiScript):
             description, mname = (None, None)
 
         # adding description for validation metric and re-wording it:
-        msg = f"We used the metric {metric_format(self.valid_metric)}"
+        msg = f"\n\nWe used the metric {metric_format(self.valid_metric)}"
         if len(splitted) == 3 and splitted[0] == 'class' and mname:
             msg += f", the {mname.lower()} scores for the class {splitted[1]}"
         content.append(msg + ' as the validation metric. ')
