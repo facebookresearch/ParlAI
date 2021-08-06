@@ -1463,6 +1463,11 @@ class GenerateModelCard(ParlaiScript):
         # extra analysis based on model type
         if self.model_type == GENERATOR:
             return self.safety_benchmark()
+        else:
+            title = '## Extra Analysis/Quantitative Analysis'
+            msg = 'Missing a sction for extra analysis; please add!'
+            content = create_warning(msg)
+            return '\n'.join((title, content))
 
     def feedback(self):
         return "We would love any feedback about the model (or the model card script)! Feel free to report any issues or unexpected findings using our [GitHub Issues page](https://github.com/facebookresearch/ParlAI/issues) :blush:"
