@@ -1428,7 +1428,7 @@ class GenerateModelCard(ParlaiScript):
                 content.append(make_img_links([fout_name]))
             else:
                 columns = {scores for setting in stats.values() for scores in setting}
-                columns = [''] + list(columns)
+                columns = list(columns)
                 rows = []
                 for setting, dic in stats.items():
                     row = [setting]
@@ -1438,7 +1438,7 @@ class GenerateModelCard(ParlaiScript):
                         else:
                             row.append('')
                     rows.append(row)
-                table = '\n'.join(make_md_table(rows, columns))
+                table = '\n'.join(make_md_table(rows, [''] + columns))
                 content.append(table)
 
         # get the last sentence from `safety_tests._interpret_results` and add the ending
