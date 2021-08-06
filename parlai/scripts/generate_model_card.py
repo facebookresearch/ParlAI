@@ -447,6 +447,10 @@ def make_img_links(img_list, height='500px', width=None):
 
 
 def get_dataset_info(tasks):
+    """
+    dataset info comes from guessing where it would be at the tasks site 
+    and the task_list.py + anything else from the user
+    """
     curr_task_info = []
     for task in tasks:
         # adding the name + attempted link
@@ -1346,10 +1350,9 @@ class GenerateModelCard(ParlaiScript):
 
     def evaluation(self):
         """
-        should add sth about the eval tasks, validation metric, and create a table with
-        the validation metric.
-
-        TODO: let user pass in and add more metrics
+        returns a section with dataset info about the eval tasks if they exist, 
+        information about the validation metric if it exists,
+        and create a table with the validation metric.
         """
         # adding info about the eval tasks
         if self.eval_tasks == self.train_tasks:
@@ -1465,7 +1468,7 @@ class GenerateModelCard(ParlaiScript):
             return self.safety_benchmark()
         else:
             title = '## Extra Analysis/Quantitative Analysis'
-            msg = 'Missing a sction for extra analysis; please add!'
+            msg = 'Missing a section for extra analysis; please add!'
             content = create_warning(msg)
             return '\n'.join((title, content))
 
