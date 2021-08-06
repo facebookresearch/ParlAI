@@ -674,7 +674,17 @@ def setup_args(parser=None) -> ParlaiParser:
         '--mode',
         type=str,
         default='editing',
-        help='possible modes: gen (generation), editing, final.\nIn addition, for gen mode, we can also add the following to specify which exact reports to run: data_stats, eval, safety, sample, and quant)\n For instance, --mode gen:data_stats:eval',
+        choices=[
+            'editing',
+            'gen',
+            'final',
+            'gen:sample',
+            'gen:data_stats',
+            'gen:eval',
+            'gen:safety_bench',
+            'gen:quant',
+        ],
+        help='possible modes: gen (generation), editing, final.\nIn addition, for gen mode, we can also add the following to specify which exact reports to run: data_stats, eval, safety, sample, and quant.\n For instance, --mode gen:data_stats:eval',
     )
     gmc.add_argument(
         '--ignore-unfound-tasks',
@@ -713,9 +723,27 @@ def setup_args(parser=None) -> ParlaiParser:
     )
     gmc.add_argument(
         '--quant-metrics',
+        '-qm',
         type=str,
         default=[],
+        nargs='*',
         help='Other metrics to include in the quantitative analysis',
+    )
+    gmc.add_argument(
+        '--quant-datatype',
+        '-qdt',
+        type=str,
+        choices=['train', 'valid', 'test'],
+        default='',
+        help='datatypes to include in the quantitative analysis; separate by comma',
+    )
+    gmc.add_argument(
+        '--subgroups',
+        '-subg',
+        type=str,
+        default=[],
+        nargs='*',
+        help='Subgroups to include in the quantitative analysis; by default, will include all it can find',
     )
     return parser
 
@@ -768,6 +796,9 @@ class GenerateModelCard(ParlaiScript):
         if self.mode == M_gen:
             self._set_evaltask()
             jobs, args = self._gen_jobs()
+            if self.verbose:
+                extra_special_print('These are the jobs:')
+                print('\n'.join(jobs))
             self.save_reports(jobs, args)
         elif self.mode in {M_edit, M_final}:
             # card setting up
@@ -874,9 +905,6 @@ class GenerateModelCard(ParlaiScript):
         train_tasks = self.opt.get('task')
         if not train_tasks:
             train_tasks = self.model_opt.get('task', '')
-        while not train_tasks or len(train_tasks) == 0:
-            msg = "Please enter training dataset/test (none were passed in or found in model.opt): "
-            train_tasks = input(msg)
 
         # process tasks from any internal to external
         self.train_tasks, tmp = ([], train_tasks.split(','))
@@ -888,6 +916,10 @@ class GenerateModelCard(ParlaiScript):
             else:
                 msg = f"dropping training task {task}"
                 extra_special_print(msg, 'yellow')
+
+        while not self.train_tasks or len(self.train_tasks) == 0:
+            msg = "Please enter training dataset/test (no valid datasets were passed in or found in model.opt): "
+            self.train_tasks = input(msg).split(',')
 
         if self.mode != M_gen:
             # only add the tasks that do have a stats file
@@ -918,7 +950,8 @@ class GenerateModelCard(ParlaiScript):
         # setting eval tasks
         eval_tasks = self.train_tasks
         if self.opt.get('evaltask'):
-            eval_tasks = self.opt['evaltask'].split(',')
+            self.eval_tasks = self.opt['evaltask'].split(',')
+            return
         elif self.model_opt.get('evaltask'):
             eval_tasks = self.model_opt['evaltask'].split(',')
 
@@ -1013,6 +1046,7 @@ class GenerateModelCard(ParlaiScript):
         parser = get_new_parser(parser, self.opt, opt_ignore_keys)
         parser['ignore_labels'] = self.opt.get('ignore_labels')
         parser['task'] = ','.join(self.eval_tasks)
+        print("parser['task']", parser['task'])
         parser['datatype'] = 'test'
         parser['aggregate_micro'] = True
         parser['report_filename'] = fname

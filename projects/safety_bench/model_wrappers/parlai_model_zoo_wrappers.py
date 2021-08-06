@@ -68,3 +68,20 @@ class BlenderBot3BWrapper(ParlAIModelZooWrapper):
     @property
     def zoo_path(self):
         return "zoo:blender/blender_3B/model"
+
+
+@register_model_wrapper("blenderbot2_400M")
+class BlenderBot2_400MWrapper(ParlAIModelZooWrapper):
+    def __init__(self):
+        # Load the model from the model zoo via ParlAI
+        overrides = {
+            "search_server": "http://devfair0169:5000/bing_search",
+            "query_generator_model_file": "zoo:sea/bart_sq_gen/model",
+            "doc_chunk_split_mode": "word",
+        }
+
+        self.model = create_agent_from_model_file(self.zoo_path, overrides)
+
+    @property
+    def zoo_path(self):
+        return "zoo:blenderbot2/blenderbot2_400M/model"
