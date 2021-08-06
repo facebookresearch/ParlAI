@@ -5,7 +5,7 @@
 
 ## What is a model card?
 
-Think of model cards as a condensed nutrition card for models :) It is a way for people who might not have the time to read a paper in detail to get the gist of what a model is doing, the datasets involved, how it is performing, and any concerns that the author might have about the model.
+Think of model cards as a condensed medical card for models :). It is a great way for people who might not have the time to read a paper in detail to get the gist of what a model is doing, the datasets involved, how it is performing, and any concerns that the author might have about the model.
 
 You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/ivylee/model-cards-and-datasheets) to some more model card examples. 
 
@@ -17,6 +17,8 @@ For both steps, we should specify the following arguments:
 - `--model-file / -mf`: the model file
 - `--folder-to-save / -fts`: the location where we're saving reports
 
+and add the command `--mode gen` to signify we're in (report) generation mode.
+
 ### Step 1: Generating reports
 In general, we can use a command like this for report generation:
 ```
@@ -26,7 +28,7 @@ parlai gmc -mf <model file> -fts <folder name> --mode gen
 parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_single --mode gen
 ```
 
-However, depending on the situiaton, we might need to add these arguments as well:
+However, depending on the situation, we might need to add these arguments as well:
 - `--wrapper / -w` **only if** the model is a generation model
    - check the [safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench) for more info
 - `--model-type / -mt` **only if** the model isn't added to or already in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py)
@@ -102,9 +104,9 @@ Sometimes, you might want to generate only certain reports. In this case, instea
 
 
 
-### Using `extra-args-path`
+### Using `--extra-args-path`
 
-We can use `extra-args-path` to pass in longer arguments. By default, `extra-args-path` will be `<folder-to-save>/args.json`. 
+We can use `--extra-args-path` to pass in longer arguments. By default, the `---extra-args-path` will be `<folder-to-save>/args.json`, so if we create a file at that location, we don't need to add `args.json`.
 
 #### Adding Custom Dataset and Model Info
 By default, the code will try to find a sections in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py). However, instead of changing `model_list.py`, we can also pass in a `.json` file to `--extra-args-path` with out new section. Here's us trying to add the intended use section
@@ -136,9 +138,9 @@ Similarly, if we don't want to touch [`task_list.py`](https://github.com/faceboo
 The information passed via this method can partially overwrite what's written in `task_list.py` and `model_list.py`. 
 
 
-#### Add Custom Sections or Changing Section Order (static)
+#### Add Custom Sections or Changing Section Order
 
-For static sections, there's two ways to do this. 
+To add sections, there's two ways to do this. 
 
 1. After we generate the inital model card, we can directly edit the generated markdown file.
 
@@ -159,13 +161,13 @@ For static sections, there's two ways to do this.
             "feedback",
          ]
     ```
-   Note that adding `:_` implies that it's a subsection.
+   Note that adding `:_` implies that it's a subsection and that would advise to use underscore `_` in place of spaces (don't worry; they'll be changed back to spaces for the section title). 
 
    Here's us trying to to reverse the order and remove the model_details section (for kudos):
    ```
    # args.json
    {
-      "user_section_list": [
+      "user_sections": [
          "feedback",
          "hyperparameters",
          "related_paper",
