@@ -164,7 +164,7 @@ To add sections, there's two ways to do this.
             "feedback",
          ]
     ```
-   Note that adding `:_` implies that it's a subsection and that would advise to use underscore `_` in place of spaces (don't worry; they'll be changed back to spaces for the section title). 
+   Note that adding `:_` implies that it's a subsection, and I would advise to use underscore `_` in place of spaces (don't worry; they'll be changed back to spaces for the section title). 
 
    Here's us trying to to reverse the order and remove the model_details section (for kudos):
    ```
