@@ -80,6 +80,9 @@ In the end, it should generate the following reports under the `--folder-to-save
 *Unsucessful generations will look like this, and should tell us which reports are missing and why.*
 <img width="1790" alt="Screen Shot 2021-07-26 at 11 32 17 AM" src="https://user-images.githubusercontent.com/14303605/127040345-e8ec6afa-60da-484e-8e68-955f592cec8b.png">
 
+*When tasks are dropped, it should look like this (w/o the blackout)*
+<img width="581" alt="Screen Shot 2021-08-06 at 9 10 56 AM" src="https://user-images.githubusercontent.com/14303605/128540191-df949a10-3aba-48e3-a601-a6b97b1dca36.png">
+
 
 ### Generating single reports
 Sometimes, you might want to generate only certain reports. In this case, instead of using `--mode gen`, we should use following possibilites:
