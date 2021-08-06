@@ -59,11 +59,6 @@ parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
 parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M -w blenderbot_90M -bs 128 --mode gen
 parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M
 ```
-- Blenderbot2 400M
-```
-parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_400M -bs 128  --mode gen --search-server http://devfair0169:5000/bing_search --wrapper blenderbot2_400M
-parlai gmc -mf zoo:blenderbot2/blenderbot2_400M/model -fts bb2_400M
-```
 
 
 ##  Report Generation Details
