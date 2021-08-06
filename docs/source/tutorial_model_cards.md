@@ -33,10 +33,13 @@ However, depending on the situation, we might need to add these arguments as wel
    - check the [safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench) for more info
 - `--model-type / -mt` **only if** the model isn't added to or already in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py)
    - possible choices include `ranker`, `generator`, `classifier`, `retriever`
+- `--task / -t` and `--evaltask/-et` **only if** the original model.opt used task/datasets not in the form of a teacher or if the task/dataset is no longer accessible
+   - tasks starting with `fromfile` or `jsonfile` will be ignored unless `--ignore-unfound-tasks` is set to False (by default, it's true)
+
 
 In addition, if the model itself needs certain arguments (ie. `--search-server`), we should specify them at this stage too. We can also add `--batchsize` for faster generation.
 
-Check out the section about [generating reports](#details-of-report-generation) for more information on the report generation process and how to generate single reports.
+Check out the section about [generating reports](#details-of-report-generation) for more information on the report generation process and how to generate single reports (very useful for debugging).
 
 ### Step 2: Model Card Generation
 If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command 
@@ -51,7 +54,7 @@ If some kind of model description has already been added to the [model_list.py](
 Here are some samples commands (click to see the results): 
 - Dialogue Safety (multi-turn)
 ```
-parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen
+parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen -t dialogue_safety:wikiToxicComments,dialogue_safety:adversarial:round-only=False:round=1,dialogue_safety:multiturn -et dialogue_safety:wikiToxicComments,dialogue_safety:adversarial:round-only=False:round=1,dialogue_safety:multiturn --data-parallel False
 parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
 ```
 - Blenderbot 90M
