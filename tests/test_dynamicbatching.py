@@ -124,6 +124,32 @@ class TestDynamicBatching(unittest.TestCase):
                         # we log the batch index in the teacher acts only
                         self.assertEquals(dyn_batch_idx, turn['dyn_batch_idx'])
 
+    def test_world_logging_buffersize(self):
+        """
+        Test world logging with dynamic batching.
+        
+        Checks when the number of examples exceeds the buffersize.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            save_report = os.path.join(tmpdir, 'report')
+            testing_utils.eval_model(
+                dict(
+                    model_file='zoo:unittest/transformer_generator2/model',
+                    task='integration_tests:RepeatTeacher:2000',
+                    world_logs=save_report + '.jsonl',
+                    report_filename=save_report,
+                    truncate=1024,
+                    dynamic_batching='full',
+                    batchsize=4,
+                ),
+                valid_datatype='train:evalmode',
+                skip_test=True,
+            )
+            convo_fle = str(save_report) + '.jsonl'
+            convos = Conversations(convo_fle)
+            # we expect there to be 2000 episodes logged in the convos
+            self.assertEquals(len(convos), 2000)
+
     def test_weird_batchsize(self):
         # intentionally a difficult number
         self._test_correct_processed(NUM_TEST, batchsize=7)
