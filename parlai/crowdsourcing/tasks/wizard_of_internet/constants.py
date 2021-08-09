@@ -39,6 +39,29 @@ PERSONA_AGENT = 'PersonaAgent'
 SEARCH_AGENT = 'SearchAgent'
 COORDINATOR_AGENT = 'Coordinator'
 
+# NOTE: do not forget to change ONBOARDING_PERSONA_KEYWORDS below if changing this
+ONBOARDING_PERSONA = 'I do yoga on beach every morning.'
+# The keywords related to the Onboarding Persona
+ONBOARDING_PERSONA_KEYWORDS = (
+    'beach',
+    'exercise',
+    'gym',
+    'healthy',
+    'lake',
+    'meditat',
+    'morning',
+    'ocean',
+    'outdoor',
+    'peace',
+    'pose',
+    'relax',
+    'sea',
+    'sport',
+    'stress',
+    'sunrise',
+    'yoga',
+)
+
 
 # The wait time in seconds to allow the agents read the instructions during the onboarding.
 # After this, we allow them to continue after a small action (for example, type anything).
@@ -54,20 +77,20 @@ MIN_NUM_SELECTED_SENTENCES_ONBOARDING = 2
 
 # A prefix token for curated personas that means this persona requires a location.
 # We assign a random location (from a list of cities in US) to this persona.
-PERSONA_NEEDS_LOCATION_TOKEN = "*"
+PERSONA_NEEDS_LOCATION_TOKEN = '*'
 PROBABILITY_CHOOSING_TEMPLATE_PERSONA = 0.7
 # Number of topics that its items are shown to agent to pick persona
 CURATED_PERSONA_CHOICES = 3
 TEMPLATE_PERSONAS_CHOICES = 2
 # Persona template items bundled based on topic
 TEMPLATE_PERSONAS_TOPICS = [
-    "fashion brand,fashion designer,clothing type",
-    "book,author",
-    "artist,music band,song,singer",
-    "tv show,movie,actor,director",
-    "sports team,athlete",
-    "hobby,game",
-    "item to buy,item recently bought",
+    'fashion brand,fashion designer,clothing type',
+    'book,author',
+    'artist,music band,song,singer',
+    'tv show,movie,actor,director',
+    'sports team,athlete',
+    'hobby,game',
+    'item to buy,item recently bought',
 ]
 PERSONA_EXPANSION_MIN_LEN_CHAR = 20
 
