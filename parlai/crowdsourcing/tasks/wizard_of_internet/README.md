@@ -7,3 +7,4 @@ NOTE: this is still WIP: some of the related modules are not here yet.
 * TODO: make onboarding state numberings consistent between python and react.
 * Functions output type
 * Explain template persona vs curated persona.
+* Mention the files needed as part of the conf/yaml file (remember `data` folder is in `.gitignore`)

@@ -75,12 +75,17 @@ def load_previously_used_personas_counts(fpath: str):
     """
     logging.info('Loading the previous runs persona counts.')
     personas_count = defaultdict(int)
-    with open(fpath, 'r') as fi:
-        for pl in fi:
-            if not pl.strip():
-                continue
-            persona, count = pl.strip().lower().split(';')
-            personas_count[persona.strip()] = int(count)
+    try:
+        with open(fpath, 'r') as fi:
+            for pl in fi:
+                if not pl.strip():
+                    continue
+                persona, count = pl.strip().lower().split(';')
+                personas_count[persona.strip()] = int(count)
+    except FileNotFoundError:
+        logging.info(
+            f'Persona count file not found in {fpath}. Starting new persona use counter.'
+        )
 
     logging.info(f'{len(personas_count)} previously used persona counts loaded.')
     return personas_count
