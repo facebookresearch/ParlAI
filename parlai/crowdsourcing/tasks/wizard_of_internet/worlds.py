@@ -8,19 +8,22 @@ import random
 import time
 from datetime import datetime
 from typing import Any, Dict, List, Union
+from joblib import Parallel, delayed
+
+from parlai.agents.rag.retrieve_api import SearchEngineRetriever
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.core.agents import Agent
 from parlai.core.message import Message
 from parlai.core.opt import Opt
-from mephisto.abstractions.blueprint import AgentState
-from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from parlai.core.worlds import validate
-from joblib import Parallel, delayed
 import parlai.utils.logging as logging
 from parlai.crowdsourcing.tasks.wizard_of_internet import constants
 from parlai.crowdsourcing.tasks.wizard_of_internet.acceptability import (
     WizardOfInternetAcceptabilityChecker,
 )
+
+from mephisto.abstractions.blueprint import AgentState
+from mephisto.abstractions.databases.local_database import LocalMephistoDB
 
 mephisto_db = LocalMephistoDB()
 ROLE_TALLY_CHACHE = {'data': None, 'last_update': None}
@@ -83,11 +86,86 @@ def _has_selected_sentence_from_search_results(action: Union[Dict, Message]):
 
 
 def create_search_agent(opt):
-    raise NotImplementedError('Search module is not implemented yet.')
+    """
+    Creates and instance of SearchEngineRetriever object.
+    """
+    logging.info('Initializing the search engine API.')
+    search_api_opt = deepcopy(opt)
+    search_api_opt['skip_retrieval_token'] = None
+    return SearchEngineRetriever(search_api_opt)
 
 
-def run_search_query(query, search_client):
-    raise NotImplementedError('Search module is not implemented yet.')
+def run_search_query(query: str, search_client: SearchEngineRetriever):
+    """
+    Conducts search through the SearchEngineRetriever client, and sorts the retrieved docs.
+
+    This function runs two searches for each query:
+    1- <query> + " news"
+    2- <query>
+
+    The
+    """
+
+    def _search(q: str, n: int):
+        """
+        Sends the search query to the search API.
+        """
+        return search_client.retrieve([q], n)[0]
+
+    def _dedupl_docs(docs_list):
+        uniq_docs = []
+        seen_urls = set()
+        for d in docs_list:
+            url = d['url']
+            if url in seen_urls:
+                continue
+            uniq_docs.append(d)
+            if len(uniq_docs) == constants.NUM_RETRIEVED_SEARCH_DOCS:
+                return uniq_docs
+            seen_urls.add(url)
+        logging.warning(
+            f'Only retrieved {len(uniq_docs)}, not {constants.NUM_RETRIEVED_SEARCH_DOCS}'
+        )
+        return uniq_docs
+
+    def _wiki_sort_key(doc):
+        """
+        Helper function to put the Wikipedia pages last in ranking retrieved doc results.
+        """
+        url = doc['url']
+        return 1 if url.startswith('https://en.wikipedia') else -1
+
+    if not search_client:
+        logging.error('No search client; can not run search request.')
+        return
+    logging.info(f'Running search for query "{query}"')
+
+    # getting query with news
+    query_had_news = 'news' in query
+    if not query_had_news:
+        search_results = _search(f'{query} news', constants.NUM_RETRIEVED_SEARCH_NEWS)
+    else:
+        search_results = []
+
+    # getting web documents for the main search query
+    search_results.extend(_search(query, constants.NUM_RETRIEVED_SEARCH_DOCS))
+
+    # Remove a doc that was fetched by both news and regular search
+    # and reduce the number of dosc to NUM_RETRIEVED_SEARCH_DOCS
+    if not query_had_news:
+        # We did not have two separate queries if query_had_news was True.
+        search_results = _dedupl_docs(search_results)
+
+    # Sorting retrieved docs based on their URL: Wikipedia pages go last.
+    search_results.sort(key=_wiki_sort_key)
+
+    return Message(
+        {
+            'id': constants.SEARCH_AGENT,
+            'text': '*** SEARCH AGENT RESULTS (CHECK ACCOMPANIED DATA FOR RETRIEVED DOCS) ***',
+            'task_data': {'search_results': search_results},
+        }
+    )
 
 
 def _coordinator_send_message(
@@ -369,7 +447,14 @@ class WizardOnboardingWorld(SharedOnboardWorld):
             start_time = time.time()
             act = agent.act(timeout=time_out)
             if _is_query(act):
-                raise NotImplementedError("Search module is not implemented yet.")
+                self.num_searches += 1
+                search_query = act['text']
+                search_res = run_search_query(search_query, self._search_client)
+                n = len(search_res['task_data']['search_results'])
+                logging.info(
+                    f'Retrieved {n} documents for search query "{search_query}".'
+                )
+                agent.observe(search_res)
             else:
                 self.messages.append(act)
                 return
@@ -473,7 +558,7 @@ class ApprenticeOnboardingWorld(SharedOnboardWorld):
         """
         The interactive onboarding for the Apprentice.
         """
-        wait_times = SharedOnboardWorld.TUTORIAL_WAIT_TIMES
+        wait_times = constants.TUTORIAL_WAIT_TIMES
         self.introduce_chat_interface()
         self.wait_for_response(
             message='Please type a greeting message to continue.',
@@ -599,13 +684,20 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
             start_time = time.time()
             act = agent.act(timeout=time_out)
             if _is_query(act):
-                raise NotImplementedError('Search module is not implemented yet.')
+                self.num_search_queries += 1
+                search_res = run_search_query(act['text'], self._search_client)
+                n = len(search_res['task_data']['search_results'])
+                logging.info(f'{n} search results were retrieved.')
+                agent.observe(search_res)
             else:
-                if _has_selected_sentence_from_search_results(act):
-                    self.num_times_search_resutls_selected += 1
-                return act
+                self.messages.append(act)
+                break
+
+            # subtracting the wait time from what was spent during search
             spent_time = time.time() - start_time
             time_out -= spent_time
+
+        return act
 
     def _send_task_objective_reminders(self, agent: Agent):
         """
@@ -808,7 +900,7 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         ]
         _coordinator_send_message(
             apprentice_agent,
-            message=constants.APPRENTICE_CHOOSE_PERSONA_REQUEST,
+            message=constants.APPRENTICE_CHOOSE_CURATED_PERSONA_REQUEST,
             task_data={'respond_with_form': persona_selection_form},
         )
         agent_response = self.receive_form_response(apprentice_agent)
