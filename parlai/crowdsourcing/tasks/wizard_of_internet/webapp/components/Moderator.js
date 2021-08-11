@@ -6,6 +6,11 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+// Main exported functions in this file (valid_utterance and valid_search_query)
+// are simple checks on the validity of user input (text or search query).
+// There might also be additional checks on the submitted input in ParlAI world.
+
+
 const STOPWORDS = ['', "\'\'", "\'d", "\'ll", "\'m", "\'re", "\'s", "\'ve", '*',
   ',', '--', '.', '?', '\`\`', 'a', 'about', 'above', 'after',
   'again', 'against', 'ain', 'all', 'also', 'am', 'an', 'and',
