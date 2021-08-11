@@ -21,9 +21,8 @@ SAVED_DATA_ROLE_QUALIFICATION_DATA_KEY = 'qualification_dict'
 ROLE_QUALIFICATION_NAME_KEY = 'role_qname'
 
 # OnBoardingSteps
-# Make sure these number are consistent with OnboardingSteps,
+# NOTE: Make sure these number are consistent with OnboardingSteps,
 # as they are defined in the SidePane.jsx frontend file.
-# TODO: combine the definitions into one source of truth.
 ONBOARDING_STEPS = {
     'NOT_ONBOARDING': 0,
     'CHAT_INTERFACE': 1,

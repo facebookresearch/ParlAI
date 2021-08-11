@@ -9,6 +9,7 @@
 import React, { useState } from "react";
 import SearchPanel from "./SearchPanel.jsx";
 
+// NOTE: these need to match ONBOARDING_STEPS dict in constants.py
 export const OnboardingSteps = {
   NOT_ONBOARDING: 0,
   CHAT_INTERFACE: 1,
