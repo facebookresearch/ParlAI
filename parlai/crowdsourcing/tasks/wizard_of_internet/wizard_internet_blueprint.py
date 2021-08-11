@@ -72,6 +72,26 @@ class WizardOfInternetBlueprintArgs(ParlAIChatBlueprintArgs):
         },
     )
 
+    shuffle_persona: bool = field(
+        default=True, metadata={'help': 'Whether to shuffle the persona list'}
+    )
+
+    use_personas_with_replacement: bool = field(
+        default=False,
+        metadata={'help': 'Using true does not discard personas after use.'},
+    )
+
+    banned_words_file: str = field(
+        default=MISSING,
+        metadata={
+            'help': """
+                Path to a text file with a list of banned words to block in the UI.
+                Each row in the file is one word/phrase.
+                User will receieve an alert and are asked to rephrase, if there is an exact match.
+            """
+        },
+    )
+
     max_times_persona_use: int = field(
         default=0,
         metadata={
@@ -90,20 +110,6 @@ class WizardOfInternetBlueprintArgs(ParlAIChatBlueprintArgs):
                 to some of the curated personas (marked for needing persona).
             """
         },
-    )
-
-    shuffle_persona: bool = field(
-        default=True, metadata={'help': 'Whether to shuffle the persona list'}
-    )
-
-    use_personas_with_replacement: bool = field(
-        default=False,
-        metadata={'help': 'Using true does not discard personas after use.'},
-    )
-
-    # TODO: update this for the new search API interface.
-    searcher_module: str = field(
-        default='server', metadata={'help': 'Name of the search module to use.'}
     )
 
     search_server: str = field(
@@ -168,12 +174,7 @@ class WizardOfInternetBlueprint(ParlAIChatBlueprint):
         ParlAIChatBlueprint.assert_task_args(args=args, shared_state=shared_state)
         blueprint = args.get('blueprint')
         # Check search module is valid
-        assert hasattr(blueprint, 'searcher_module'), 'Search module not specified!'
-        search_module = blueprint.get('searcher_module')
-        # TODO update this for the new search API.
-        assert search_module in ('mock', 'server')
-        if search_module == 'server':
-            assert hasattr(blueprint, 'search_server'), 'Provide search API address.'
+        assert hasattr(blueprint, 'search_server'), 'Provide search API address.'
 
         assert hasattr(blueprint, 'use_personas_with_replacement')
         assert hasattr(shared_state, 'world_opt')

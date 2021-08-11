@@ -155,7 +155,6 @@ def get_world_opt(config: DictConfig):
         'prev_persona_count': previous_personas_count,
         'max_times_persona_use': num_max_persona_use,
         'locations': locations,
-        'searcher_module': blueprint_data.searcher_module,
         'pick_persona_with_replacement': blueprint_data.use_personas_with_replacement,
         'search_server': blueprint_data.search_server,
         'num_passages_retrieved': blueprint_data.num_passages_retrieved,
@@ -174,7 +173,6 @@ def get_onboarding_world_opt(config: DictConfig):
         'apprentice_time_out': blueprint_data.apprentice_time_out,
         'send_task_data': False,
         'is_onboarding': True,
-        'searcher_module': blueprint_data.searcher_module,
         'search_server': blueprint_data.search_server,
         'num_passages_retrieved': blueprint_data.num_passages_retrieved,
         'onboarding_qualification': blueprint_data.onboarding_qualification,
@@ -258,6 +256,24 @@ def update_persona_use_counts_file(
     logging.info(f'Saved {saved_count} recent persona counts successfully.')
 
 
+def add_banned_words_frontend_conf(task_state, fpath: str = None):
+    """
+    Adds the list of banned words to the task config to be used later in the frontend.
+
+    It reads the text file specified in fpath to populate a list banned words. Then adds
+    this list to Mephisto `task_config` to make it accessible for the front-end app.
+    The file specified by `fpath` is a plain text file where each line contains a single banned word/phrase.
+    """
+    banned_words = []
+    if not fpath:
+        return
+
+    with open(fpath, 'r') as fin:
+        banned_words = [w.strip().lower() for w in fin if w.strip()]
+
+    task_state.task_config['bannedWords'] = banned_words
+
+
 @hydra.main(config_name='scriptconfig')
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
@@ -279,6 +295,9 @@ def main(cfg: DictConfig) -> None:
         world_opt[constants.ROLE_QUALIFICATION_NAME_KEY],
         onboarding_world_opt['onboarding_qualification'],
     )
+
+    banned_words_fpath = cfg.mephisto.blueprint.banned_words_file
+    add_banned_words_frontend_conf(shared_state, banned_words_fpath)
 
     operator = Operator(db)
     operator.validate_and_run_config(cfg.mephisto, shared_state)

@@ -14,6 +14,7 @@ export default function SearchPanel({ mephistoContext,
     searchResults, selected, handleSelect, setSearchQuery, isWizard }) {
     const { sendMessage } = mephistoContext;
     const { agentState } = mephistoContext;
+    const { taskConfig } = mephistoContext;
 
     function handleQuery(props) {
         const { query } = props;
@@ -25,8 +26,12 @@ export default function SearchPanel({ mephistoContext,
         <NoDocumentSelected
             key="noOptionSelected"
             selected={selected}
-            selectedChange={handleSelect} />
-        <SearchBar onSubmit={handleQuery} />
+            selectedChange={handleSelect} 
+        />
+        <SearchBar
+            onSubmit={handleQuery}
+            taskConfig={taskConfig}
+        />
         <SearchResults
             search_results={searchResults}
             selected={selected}
@@ -79,7 +84,7 @@ function GetSearchResults(query, sendMessage) {
 }
 
 
-function SearchBar({ onSubmit }) {
+function SearchBar({ onSubmit, taskConfig }) {
     const [text, setText] = useState("");
 
     function handleSubmit() {
@@ -88,7 +93,7 @@ function SearchBar({ onSubmit }) {
             return;
         }
 
-        if (valid_search_query(text)) {
+        if (valid_search_query(text, taskConfig)) {
             onSubmit({ query: text });
         }
     }

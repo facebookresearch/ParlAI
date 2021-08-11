@@ -18,6 +18,7 @@ mephisto:
     select_warning_threshold: 1
     personas_file: "${task_dir}/data/sample_personas.txt"
     persona_counts_file: "${task_dir}/data/persona_use_count.txt"
+    banned_words_file: "${task_dir}/data/bad_words.txt"
     max_times_persona_use: 1
     locations_file: "${task_dir}/data/sample_locations.txt"
     use_personas_with_replacement: true
