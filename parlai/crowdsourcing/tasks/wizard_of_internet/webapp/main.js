@@ -138,6 +138,7 @@ function RenderChatMessage({ message, mephistoContext, appContext, setIsMinTurns
 }
 
 function CustomTextResponse({
+  taskConfig,
   onMessageSend,
   active,
   searchQuery,
@@ -191,7 +192,7 @@ function CustomTextResponse({
     if (textValue !== "" &&
       active &&
       !sending &&
-      valid_utterance(textValue, searchResults, selectedSearchResults, isOnboarding)) {
+      valid_utterance(textValue, searchResults, selectedSearchResults, isOnboarding, taskConfig)) {
       setSending(true);
       onMessageSend({
         timestamp: Date.now(),
@@ -302,6 +303,7 @@ function MainApp() {
         )}
         renderTextResponse={({ onMessageSend, inputMode, mephistoContext, appContext }) =>
         (<CustomTextResponse
+          taskConfig={mephistoContext.taskConfig}
           onMessageSend={onMessageSend}
           active={inputMode === INPUT_MODE.READY_FOR_INPUT}
           searchQuery={searchQuery}
