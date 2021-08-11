@@ -4,8 +4,6 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-/* TODO: move this out of the components folder to the webapp fodler. */
-
  #ui-container {
     display: contents;
 }

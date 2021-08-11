@@ -690,7 +690,8 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
                 logging.info(f'{n} search results were retrieved.')
                 agent.observe(search_res)
             else:
-                self.messages.append(act)
+                if _has_selected_sentence_from_search_results(act):
+                    self.num_times_search_resutls_selected += 1
                 break
 
             # subtracting the wait time from what was spent during search
