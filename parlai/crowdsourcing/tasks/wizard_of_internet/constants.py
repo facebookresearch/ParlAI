@@ -97,6 +97,10 @@ PERSONA_EXPANSION_MIN_LEN_CHAR = 20
 NUM_RETRIEVED_SEARCH_NEWS = 2
 NUM_RETRIEVED_SEARCH_DOCS = 5
 
+# The time (in second) for the cached role counts to be considered fresh.
+# Updating this count requires quering the Database, thus is slow.
+TALLY_CACHE_TIMEOUT = 10
+
 # Long messages
 ONBOARDING_WELCOME = (
     'Welcome onboard!\n'
@@ -277,6 +281,17 @@ APPRENTICE_STARTING_INSTRUCTION = (
     '(play that role), and have an engaging conversation. '
     'For example, if your character likes tennis, '
     'you might discuss whether Roger Federer is better than Rafael Nadal.'
+)
+
+USE_SEARCH_WARNING_MESSAGE = (
+    'Please try to use the search bar more often to look up '
+    'useful information about the interests of your chat partner.'
+)
+
+USE_SEARCH_RESULTS_WARNING_MESSAGE = (
+    'Make sure you search for finding relevant information, '
+    'and select the sentences from search results for '
+    'crafting your messages more often.'
 )
 
 # List of reasons for flagging low quality work. These are common reasons
