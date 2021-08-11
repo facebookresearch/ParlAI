@@ -94,6 +94,10 @@ TEMPLATE_PERSONAS_TOPICS = [
 ]
 PERSONA_EXPANSION_MIN_LEN_CHAR = 20
 
+# Controlling the number of retrieved docs
+NUM_RETRIEVED_SEARCH_NEWS = 2
+NUM_RETRIEVED_SEARCH_DOCS = 5
+
 # Long messages
 ONBOARDING_WELCOME = (
     'Welcome onboard!\n'
@@ -180,6 +184,23 @@ WIZARD_INTRODUCE_APPRENTICE_PERSONA = (
     'search results that helped you craft that message.'
 )
 
+WIZARD_PERSONA_EMPHASIZE = (
+    'Don\'t forget the focus of this conversation is the interests of your partner (not you). '
+    'Do NOT talk about yourself or your interests and activities; '
+    'talk about theirs (you will see their interests in the blue box in the left panel). '
+    'Have an engaging and knowledgeable chitchat 😀, but avoid sending random or boring facts about the topic. '
+    'For example, if your partner likes Mount Everest, DO NOT say things such as '
+    '"Did you know Mount Everest is Earth\'s highest mountain." or '
+    '"Its elevation is 8,848.86 meters from the sea level" as this is dull. 😒'
+)
+
+WIZARD_STARTING_INSTRUCTION = (
+    'Please begin the conversation '
+    'by discussing one of your partner’s interests. '
+    'For example, if your partner likes tennis, '
+    'you might discuss whether Roger Federer is better than Rafael Nadal.'
+)
+
 APPRENTICE_INTRODUCE_PERSONA = (
     'At the beginning of this task we will ask you to '
     'choose a persona for yourself. '
@@ -228,4 +249,43 @@ APPRENTICE_PERSONA_MSG_INSTRUCTION = (
     'Go ahead and try writing a message '
     'about your example role\'s persona to your partner. '
     'You may even ask them questions if you want.'
+)
+
+APPRENTICE_CHOOSE_PERSONA_TEMPLATE_REQUEST = (
+    'Please use the form below to define a persona for the character that '
+    'you will be playing during this task: '
+    'use the first two fields in this form to define an interest for '
+    'the persona. Then add a sentence to refine it '
+    'and to make it more interesting or engaging. '
+    'Create an interesting character that you want to play. '
+    'Remember that the main topic of conversation should be around '
+    'this persona. Be creative and imaginative.'
+)
+
+APPRENTICE_CHOOSE_CURATED_PERSONA_REQUEST = (
+    'Please use the form below to define a persona for the role that '
+    'you will be playing during this task: '
+    'choose the first characteristic and then add a sentence to refine it '
+    'and to make it more interesting or engaging. Remember that '
+    'the main topic of conversation should be around this persona. '
+    'Be creative and imaginative.\n'
+    'For example, if you choose "I like swimming", '
+    'you may add "I recently won a national medal in Butterfly Stroke".'
+)
+
+APPRENTICE_STARTING_INSTRUCTION = (
+    'Please assume the character of the person you see in the left panel '
+    '(play that role), and have an engaging conversation. '
+    'For example, if your character likes tennis, '
+    'you might discuss whether Roger Federer is better than Rafael Nadal.'
+)
+
+# List of reasons for flagging low quality work. These are common reasons
+# handled by parlai.crowdsourcing.utils.acceptability.AcceptabilityChecker module
+ACCEPTABILITY_VIOLATIONS = (
+    'all_caps',
+    'exact_match',
+    'safety',
+    'min_words',
+    'penalize_greetings',
 )
