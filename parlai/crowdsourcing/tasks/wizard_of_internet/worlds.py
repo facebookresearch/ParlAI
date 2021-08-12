@@ -97,7 +97,8 @@ def create_search_agent(opt):
 
 def run_search_query(query: str, search_client: SearchEngineRetriever):
     """
-    Conducts search through the SearchEngineRetriever client, and sorts the retrieved docs.
+    Conducts search through the SearchEngineRetriever client, and sorts the retrieved
+    docs.
 
     This function runs two searches for each query:
     1- <query> + " news"
@@ -130,7 +131,8 @@ def run_search_query(query: str, search_client: SearchEngineRetriever):
 
     def _wiki_sort_key(doc):
         """
-        Helper function to put the Wikipedia pages last in ranking retrieved doc results.
+        Helper function to put the Wikipedia pages last in ranking retrieved doc
+        results.
         """
         url = doc['url']
         return 1 if url.startswith('https://en.wikipedia') else -1
@@ -174,8 +176,8 @@ def _coordinator_send_message(
     """
     Sends a message to 'agent' from the coordinator.
 
-    We use this to send a message to only one of the agents. It usually contains specific
-    instructions, alerts, or warnings for certain situations during the task.
+    We use this to send a message to only one of the agents. It usually contains
+    specific instructions, alerts, or warnings for certain situations during the task.
     """
     if not task_data:
         task_data = dict()
@@ -227,7 +229,7 @@ def _form_response_persona_expantion(form_response: Dict[str, Any]):
 
 def _send_persona_too_short_warning(agent: Agent, persona_expantion: str):
     """
-    Sends a warning to agent if persona details it too short. 
+    Sends a warning to agent if persona details it too short.
     """
     _coordinator_send_message(
         agent,
@@ -240,7 +242,8 @@ def _send_persona_overuse_warning(agent: Agent, main_persona: str):
     """
     Ask agent to choose another persona, if the selected one looks repeated.
 
-    For example, we don't want 200 pesonas that reads "My favorite book is Harry Potter".
+    For example, we don't want 200 pesonas that reads "My favorite book is Harry
+    Potter".
     """
     _coordinator_send_message(
         agent,
@@ -271,7 +274,7 @@ class SharedOnboardWorld(CrowdOnboardWorld):
 
     def wait_for_response(self, message: str = None, delay_time: int = 0):
         """
-        Starts waiting for a response from the agent, after `delay_time` many seconds
+        Starts waiting for a response from the agent, after `delay_time` many seconds.
         """
         self._num_rounds += 1
         logging.info(
@@ -309,7 +312,8 @@ class SharedOnboardWorld(CrowdOnboardWorld):
 
     def introduce_chat_interface(self):
         """
-        Showing the welcome onboard message to the agent, the first step during the onboarding.
+        Showing the welcome onboard message to the agent, the first step during the
+        onboarding.
         """
         self.send_message(
             message=constants.ONBOARDING_WELCOME,
@@ -350,7 +354,8 @@ class SharedOnboardWorld(CrowdOnboardWorld):
 
     def grant_agent_training_qualification(self, role_id: int):
         """
-        Granting the onboarding qualification to the agent, based on their assigned role.
+        Granting the onboarding qualification to the agent, based on their assigned
+        role.
         """
         role = constants.ROLE_QUALIFICATION_NAME_KEY[role_id]
         logging.info(f'Granting worker qualification for {role} role.')
@@ -652,7 +657,8 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
     def _get_acceptability_checker(self):
         """
-        Instantiate an instance of WizardOfInternetAcceptabilityChecker to monitor the world.
+        Instantiate an instance of WizardOfInternetAcceptabilityChecker to monitor the
+        world.
         """
         acr = WizardOfInternetAcceptabilityChecker()
         acr.min_words_violation_threshold = constants.MIN_AVG_WORD_LENGTH_UTTERANCES
@@ -666,8 +672,8 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         """
         A mask for simulating rotation/reordering of agents.
 
-        Use this method for accessing agents by a certaint order.
-        Do not use self.agents[i] directly!
+        Use this method for accessing agents by a certaint order. Do not use
+        self.agents[i] directly!
         """
         assert agent_index in (0, 1), 'Invalid index for accessing agents.'
         if self._change_agents_order:
@@ -702,9 +708,11 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
     def _send_task_objective_reminders(self, agent: Agent):
         """
-        Monitors the stats for target activies. If needed, sends goal reminders to agent.
+        Monitors the stats for target activies. If needed, sends goal reminders to
+        agent.
 
-        This is mostly for checking if wizard does enough search and knowledge selection.
+        This is mostly for checking if wizard does enough search and knowledge
+        selection.
         """
         agent_id = agent.agent_id
         if agent_id == constants.ROLE_NAMES[constants.WIZARD]:
@@ -787,8 +795,8 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         """
         Determines the order and the role of the agents in the world.
 
-        Determines which agent goes first by random assignment.
-        The agent roles are based on their onboarding qualification.
+        Determines which agent goes first by random assignment. The agent roles are
+        based on their onboarding qualification.
         """
         # Roling the dice for the starting order
         self.shuffle_agents()
@@ -860,8 +868,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
         """
         Updates the persona use count.
 
-        Increases the count for the number of times that the selected `persona` was used,
-        and removes it from available list of personas if it was selected too many times.
+        Increases the count for the number of times that the selected `persona` was
+        used, and removes it from available list of personas if it was selected too many
+        times.
         """
         lower_persona = persona.lower()
         self.prev_persona_count[lower_persona] += 1
@@ -994,7 +1003,8 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
     def send_time_length_info(self):
         """
-        Sends a message to agents informing them about the length of the task (turns, and timeout).
+        Sends a message to agents informing them about the length of the task (turns,
+        and timeout).
         """
         min_rounds = self.min_num_turns
         wiz_time = sec_to_min_pretty(self.wizard_time_out)
