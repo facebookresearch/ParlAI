@@ -261,8 +261,9 @@ def add_banned_words_frontend_conf(task_state, fpath: str = None):
     Adds the list of banned words to the task config to be used later in the frontend.
 
     It reads the text file specified in fpath to populate a list banned words. Then adds
-    this list to Mephisto `task_config` to make it accessible for the front-end app.
-    The file specified by `fpath` is a plain text file where each line contains a single banned word/phrase.
+    this list to Mephisto `task_config` to make it accessible for the front-end app. The
+    file specified by `fpath` is a plain text file where each line contains a single
+    banned word/phrase.
     """
     banned_words = []
     if fpath and os.path.exists(fpath):
