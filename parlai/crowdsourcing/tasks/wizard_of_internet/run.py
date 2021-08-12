@@ -265,11 +265,9 @@ def add_banned_words_frontend_conf(task_state, fpath: str = None):
     The file specified by `fpath` is a plain text file where each line contains a single banned word/phrase.
     """
     banned_words = []
-    if not fpath:
-        return
-
-    with open(fpath, 'r') as fin:
-        banned_words = [w.strip().lower() for w in fin if w.strip()]
+    if fpath and os.path.exists(fpath):
+        with open(fpath, 'r') as fin:
+            banned_words.extend([w.strip().lower() for w in fin if w.strip()])
 
     task_state.task_config['bannedWords'] = banned_words
 

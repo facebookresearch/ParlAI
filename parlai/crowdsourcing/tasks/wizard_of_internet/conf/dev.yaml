@@ -10,8 +10,8 @@ mephisto:
     task_description_file: ${task_dir}/task_description.html
     num_conversations: 1
     min_turns: 4
-    wizard_time_out: 18000
-    apprentice_time_out: 12000
+    wizard_time_out: 180
+    apprentice_time_out: 120
     search_warning_turn: 2
     search_warning_threshold: 1
     select_warning_turn: 3
