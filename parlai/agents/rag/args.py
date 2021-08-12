@@ -286,6 +286,14 @@ def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
         default=None,
         help='Path to model for initial round of retrieval. ',
     )
+    regret_group.add_argument(
+        '--regret-override-index',
+        type='bool',
+        default=False,
+        help='Overrides the index used with the ReGReT model, if using separate models. '
+        'I.e., the initial round of retrieval uses the same index as specified for the '
+        'second round of retrieval',
+    )
     indexer_group = parser.add_argument_group("RAG Indexer Args")
     indexer_group.add_argument(
         '--indexer-type',
