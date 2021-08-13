@@ -157,7 +157,7 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
 
     def __init__(self, opt: Opt):
         super().__init__(opt)
-        self.task_name = opt["task_name"]
+        self.task_name = opt['task_name']
         self._mephisto_db = None
         self._mephisto_data_browser = None
 
@@ -198,6 +198,6 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
                 task_data.append(unit_data)
             except (IndexError, AssertionError):
                 logging.warning(
-                    f"Skipping unit {unit.db_id}. No message found for this unit."
+                    f'Skipping unit {unit.db_id}. No message found for this unit.'
                 )
         return task_data
