@@ -14,6 +14,7 @@ from typing import Any, Dict, List
 
 import pandas as pd
 
+from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 
 # Defining the class only if Mephisto is installed, since it relies on Mephisto
@@ -47,7 +48,7 @@ class AbstractResultsCompiler(ABC):
         )
         return parser
 
-    def __init__(self, opt: Dict[str, Any]):
+    def __init__(self, opt: Opt):
         self.output_folder = opt.get('output_folder')
         self.results_format = opt['results_format']
 
@@ -114,7 +115,7 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
         )
         return parser
 
-    def __init__(self, opt: Dict[str, Any]):
+    def __init__(self, opt: Opt):
 
         super().__init__(opt)
 
@@ -154,7 +155,7 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         )
         return parser
 
-    def __init__(self, opt: Dict[str, Any]):
+    def __init__(self, opt: Opt):
         super().__init__(opt)
         self.task_name = opt["task_name"]
         self._mephisto_db = None
