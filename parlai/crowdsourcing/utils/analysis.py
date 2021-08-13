@@ -62,6 +62,19 @@ class AbstractResultsCompiler(ABC):
             f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
         )
 
+    def unit_acceptable(self, unit_data: Dict[str, Any]) -> bool:
+        """
+        Helps filtering units that are compiled. Override for use.
+
+        Returning False means that the unit data will be discarded.
+        """
+        if not unit_data:
+            # Add your task-specific qualificaiton logic that justifies
+            # discarding this unit, based on it data content.
+            return False
+
+        return True
+
     @abstractmethod
     def compile_results(self) -> pd.DataFrame:
         """
@@ -186,18 +199,26 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         data_browser = self.get_mephisto_data_browser()
         return data_browser.get_units_for_task_name(task_name)
 
-    def get_units_data(self, task_units: List[Unit]) -> List[dict]:
+    def get_data_from_unit(self, unit: Unit) -> Dict[str, Any]:
+        """
+        Retrieves task data for a single unit.
+        """
+        try:
+            data_browser = self.get_mephisto_data_browser()
+            return data_browser.get_data_from_unit(unit)
+        except (IndexError, AssertionError):
+            logging.warning(
+                f'Skipping unit {unit.db_id}. No message found for this unit.'
+            )
+
+    def get_units_data(self, task_units: List[Unit]) -> List[Dict[str, Any]]:
         """
         Retrieves task data for a list of Mephisto task units.
         """
-        data_browser = self.get_mephisto_data_browser()
         task_data = []
         for unit in task_units:
-            try:
-                unit_data = data_browser.get_data_from_unit(unit)
+            unit_data = self.get_data_from_unit(unit)
+            if unit_data and self.unit_acceptable(unit_data):
                 task_data.append(unit_data)
-            except (IndexError, AssertionError):
-                logging.warning(
-                    f'Skipping unit {unit.db_id}. No message found for this unit.'
-                )
+
         return task_data
