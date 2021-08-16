@@ -14,18 +14,10 @@ from parlai.crowdsourcing.tasks.model_chat.worlds import (
     # ModelChatOnboardWorld,
     BaseModelChatWorld,
     get_bot_worker,
-    get_world_params
-    # make_onboarding_world,
-    # validate_onboarding,
-    ,
+    get_world_params,
 )
 
 import parlai.utils.logging as logging
-
-try:
-    from mephisto.data_model.worker import Worker
-except ImportError:
-    Worker = None
 
 
 class ModelChatWorld(BaseModelChatWorld):
@@ -43,10 +35,6 @@ class ModelChatWorld(BaseModelChatWorld):
         self.bot_persona_strings = self.context_info['your_persona_strings']
         self.human_persona_strings = self.context_info['their_persona_strings']
         self.context_for_bot_prompt = self.context_info['context_for_bot_prompt']
-        logging.warning(f'__CONTEXT bot_persona_strings__ {self.bot_persona_strings}')
-        logging.warning(
-            f'__CONTEXT human_persona_strings__{self.human_persona_strings}'
-        )
         self.time_num = self.context_info['time_num']
         self.time_unit = self.context_info['time_unit']
         self.task_data = {
@@ -60,13 +48,6 @@ class ModelChatWorld(BaseModelChatWorld):
         }
         self.bot.agent_id = "THEY"
         self.model_name = model_name
-        try:
-            db = self.agent.mephisto_agent.db
-            worker_id = self.agent.mephisto_agent.worker_id
-            worker_name = Worker(db, worker_id).worker_name
-            logging.warning(f"____REAL World START!! worker_name = {worker_name}___")
-        except Exception as e:
-            logging.warning(f"unable to extract worker name {e}")
 
     def _run_initial_turn(self) -> None:
         """

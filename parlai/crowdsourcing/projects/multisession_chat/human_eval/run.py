@@ -25,7 +25,7 @@ defaults = [
     {'mephisto/blueprint': BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "example_mock"},
+    {"conf": "example"},
 ]
 
 
