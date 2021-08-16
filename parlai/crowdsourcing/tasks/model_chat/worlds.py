@@ -463,7 +463,7 @@ class ModelChatWorld(BaseModelChatWorld):
             # The bot seeing its persona does not count as a "turn"
             self.bot.observe(validate(message), increment_turn=False)
 
-        if self.opt['conversation_start_mode'] == 'bst':
+        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
             print('[Displaying first utterances as per BST task.]')
             # Display the previous two utterances
             human_first_msg = {
@@ -597,7 +597,7 @@ class ModelChatWorld(BaseModelChatWorld):
         utterances, so it shouldn't get checked.
         """
         human_messages, violation_types = super()._prepare_acceptability_checking()
-        if self.opt['conversation_start_mode'] == 'bst':
+        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
             violation_types.append('penalize_greetings')
             human_messages = human_messages[1:]
         return human_messages, violation_types
