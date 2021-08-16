@@ -140,7 +140,7 @@ class SelfChatWorld(DialogPartnerWorld):
             for a in agents:
                 a.reset()
 
-        if self.turn_cnt == 0:
+        if self._use_seed_utterances():
             self.acts = [None, None]
             # get the beginning of the conversation, which can include contexts
             # and/or any number of starting messages
@@ -186,3 +186,11 @@ class SelfChatWorld(DialogPartnerWorld):
 
         self.update_counters()
         self.turn_cnt += 1
+
+    def _use_seed_utterances(self) -> bool:
+        """
+        Logic to determine whether we should employ seed utterances.
+
+        Defaults to the beginning of the conversation, but can be overridden.
+        """
+        return self.turn_cnt == 0
