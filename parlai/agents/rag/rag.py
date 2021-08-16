@@ -184,8 +184,6 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def build_regret_model(self) -> RagModel:
         """
         Build and return regret RagModel.
-
-        Assume dictionary is the same.
         """
         model_file = modelzoo_path(self.opt['datapath'], self.opt['regret_model_file'])
         if model_file:
