@@ -225,6 +225,15 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
+                if (
+                    agent == self.bot
+                    and hasattr(self.bot, 'agent_id')
+                    and self.bot.agent_id
+                ):
+                    # Set speaker name as self.bot_agent_id otherwise, at frontend bot name such as "TransformerGenerator" would appear
+                    Compatibility.backward_compatible_force_set(
+                        acts[idx], 'id', self.bot.agent_id
+                    )
                 acts[idx] = Message(
                     Compatibility.maybe_fix_act(acts[idx])
                 ).json_safe_payload()

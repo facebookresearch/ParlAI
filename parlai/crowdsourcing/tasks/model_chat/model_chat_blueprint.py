@@ -307,8 +307,8 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
     conversation_start_mode: str = field(
         default='hi',
         metadata={
-            "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
-            "choices": ['hi', 'bst'],
+            "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation '
+            'or specified by specific task name'
         },
     )
     include_persona: bool = field(
@@ -424,9 +424,11 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         context_generator: Optional[ContextGenerator] = None
         if (
             args.blueprint.include_persona
-            or args.blueprint.conversation_start_mode == 'bst'
+            or args.blueprint.conversation_start_mode != 'hi'
         ):
-            context_generator = get_context_generator(args.blueprint.override_opt)
+            context_generator = get_context_generator(
+                args.blueprint.override_opt, args.blueprint.conversation_start_mode
+            )
         shared_state.context_generator = context_generator
 
         # Lock for editing run statistics between threads

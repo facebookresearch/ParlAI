@@ -15,10 +15,9 @@ from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
     SharedModelChatTaskState,
 )
-import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 
 
-def run_task(cfg: DictConfig, task_directory: str):
+def run_task(cfg: DictConfig, task_directory: str, world_module=None):
     """
     Run task, given configuration.
     """
