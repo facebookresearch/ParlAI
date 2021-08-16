@@ -140,7 +140,7 @@ class SelfChatWorld(DialogPartnerWorld):
             for a in agents:
                 a.reset()
 
-        if self._use_seed_utterances():
+        if self.turn_cnt == 0:
             self.acts = [None, None]
             # get the beginning of the conversation, which can include contexts
             # and/or any number of starting messages
@@ -160,7 +160,7 @@ class SelfChatWorld(DialogPartnerWorld):
                 self.agents[i].observe(validate(context))
             # clear contexts so they are only added once per episode
             self.contexts = None
-        elif self.seed_utterances:
+        elif self.seed_utterances and self._use_seed_utterances():
             # pop the next two seed messages (there may be less or more than 2 total)
             utts = self.seed_utterances[:2]
             self.seed_utterances = self.seed_utterances[2:]
@@ -191,6 +191,7 @@ class SelfChatWorld(DialogPartnerWorld):
         """
         Logic to determine whether we should employ seed utterances.
 
-        Defaults to the beginning of the conversation, but can be overridden.
+        Defaults to always using seed utterances if they exist, but this can be
+        overridden.
         """
-        return self.turn_cnt == 0
+        return True
