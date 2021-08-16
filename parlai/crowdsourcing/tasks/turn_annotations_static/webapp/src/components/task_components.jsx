@@ -220,7 +220,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
   var extraElements = '';
   var responseInputElement = '';
   if (speakerLabel == null) {	
-    speakerLabel = agentIdx % 2 == 0 ? 'YOU' : 'THEM'	
+    speakerLabel = turnIdx % 2 == 0 ? 'YOU' : 'THEM'
   }	
   var speakerElements = (	
     <div>	
