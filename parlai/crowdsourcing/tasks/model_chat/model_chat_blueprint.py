@@ -384,7 +384,9 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         args.blueprint.num_conversations = sum(conversations_needed.values())
         super().assert_task_args(args=args, shared_state=shared_state)
 
-        if args.blueprint.get("annotations_config_path", "") != "":
+        if args.blueprint.get(
+            "annotations_config_path", ""
+        ) != "" and args.blueprint.get("onboarding_qualification", None):
             # We are going to do annotations, so check for the presence of an onboarding
             # data file that will be used to onboard users into knowing how to do the
             # annotations properly
@@ -407,7 +409,9 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
 
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
 
-        if args.blueprint.get("annotations_config_path", "") != "":
+        if args.blueprint.get(
+            "annotations_config_path", ""
+        ) != "" and args.blueprint.get("onboarding_qualification", None):
             # We are going to do annotations, so load the onboarding data file that will
             # be used to onboard users into knowing how to do the annotations properly
             onboard_task_data_path = os.path.expanduser(
