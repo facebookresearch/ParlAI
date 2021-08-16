@@ -132,13 +132,7 @@ class SelfChatWorld(DialogPartnerWorld):
 
     def parley(self):
         if self.episode_done():
-            self.turn_cnt = 0
-            self.episode_cnt += 1
-            self.contexts = None
-            self.seed_utterances = None
-            agents = self.get_agents()
-            for a in agents:
-                a.reset()
+            self._end_episode()
 
         if self.turn_cnt == 0:
             self.acts = [None, None]
@@ -186,6 +180,18 @@ class SelfChatWorld(DialogPartnerWorld):
 
         self.update_counters()
         self.turn_cnt += 1
+
+    def _end_episode(self):
+        """
+        Apply logic to end the episode.
+        """
+        self.turn_cnt = 0
+        self.episode_cnt += 1
+        self.contexts = None
+        self.seed_utterances = None
+        agents = self.get_agents()
+        for a in agents:
+            a.reset()
 
     def _use_seed_utterances(self) -> bool:
         """
