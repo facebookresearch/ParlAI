@@ -643,10 +643,12 @@ class DefaultTeacher(MscTeacher):
 
 class ContextGenerator(BaseContextGenerator):
     """
-    Generates contexts shown to bots for generating prompt when collecting human-human followup chat in the personal knowledge human evaluation.
+    Generates contexts shown to bots for generating prompt when collecting human-human
+    followup chat in the personal knowledge human evaluation.
 
     This generator was used to generate the context information shown to bots at the
-    beginning of a conversation, when crowdsourcing the conversations that for per-turn human evaluation.
+    beginning of a conversation, when crowdsourcing the conversations that for per-turn
+    human evaluation.
     """
 
     def __init__(self, override_opt, datatype='valid', seed: Optional[int] = None):

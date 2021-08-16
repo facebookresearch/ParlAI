@@ -425,7 +425,7 @@ def get_context_generator(
         argparser.set_params(**override_opt)
     opt = argparser.parse_args([])
     task_module = load_task_module(conversation_start_mode)
-    context_generator_class = getattr(task_module, 'ContextGenerator')
+    context_generator_class = getattr(task_module, 'ContextGenerator', None)
     context_generator = context_generator_class(opt, datatype='test', seed=0, **kwargs)
     # We pull from the test set so that the model can't regurgitate
     # memorized conversations

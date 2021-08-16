@@ -442,7 +442,9 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'statistics_condition': statistics_condition,
                 'max_onboard_time': args.blueprint.max_onboard_time,
                 'onboard_task_data': self.onboard_task_data,
-                'onboarding_qualification': args.blueprint.onboarding_qualification,
+                "onboarding_qualification": args.blueprint.get(
+                    "onboarding_qualification", None
+                ),
             }
         )
         shared_state.world_opt.update(
