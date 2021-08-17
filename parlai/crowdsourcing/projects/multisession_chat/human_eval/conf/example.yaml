@@ -20,7 +20,7 @@ mephisto:
     final_rating_question: How interesting overall do you find talking to your partner (THEY)? (1=very boring, 5=very interesting)
     max_resp_time: 360
     override_opt:
-      override_opt_path: ${task_dir}/task_config/override_opt_mock.json
+      completed_run_stats: ${task_dir}/task_config/completed_run_stats.json
   task:
     allowed_concurrent: 2
     assignment_duration_in_seconds: 1200

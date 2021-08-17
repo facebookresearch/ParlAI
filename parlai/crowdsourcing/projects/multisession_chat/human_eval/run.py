@@ -30,14 +30,14 @@ defaults = [
 
 
 def check_override_opt(args):
-    with open(args.blueprint.override_opt.override_opt_path) as f:
+    with open(args.blueprint.override_opt.completed_run_stats) as f:
         override_opt = json.load(f)
     if (
         override_opt['bot_model_name']
         != args.blueprint.conversations_needed_string.split(":")[0]
     ):
         raise AssertionError(
-            f"YOU bot model name in {args.blueprint.override_opt.override_opt_path} doesnt match with {args.blueprint.conversations_needed_string}"
+            f"YOU bot model name in {args.blueprint.override_opt.completed_run_stats} doesnt match with {args.blueprint.conversations_needed_string}"
         )
 
 

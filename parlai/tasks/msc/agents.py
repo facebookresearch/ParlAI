@@ -668,7 +668,7 @@ class ContextGenerator(BaseContextGenerator):
         else:
             self.rng = random.Random()
 
-        with open(override_opt['override_opt_path']) as f:
+        with open(override_opt['completed_run_stats']) as f:
             override_opt.update(json.load(f))
 
         bot_model_name = override_opt['bot_model_name']
