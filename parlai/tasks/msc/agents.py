@@ -655,7 +655,7 @@ class ContextGenerator(BaseContextGenerator):
         """
         Initalize the context generator.
 
-        opt: only a 'datapath' key is required, to specify the ParlAI data folder
+        override_opt: only a 'datapath' key is required, to specify the ParlAI data folder
         """
 
         def setup_opt(opt):
@@ -668,7 +668,7 @@ class ContextGenerator(BaseContextGenerator):
         else:
             self.rng = random.Random()
 
-        with open(override_opt['override_opt_path']) as f:
+        with open(override_opt['completed_run_stats']) as f:
             override_opt.update(json.load(f))
 
         bot_model_name = override_opt['bot_model_name']

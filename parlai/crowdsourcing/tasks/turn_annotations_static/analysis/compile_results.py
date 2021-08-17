@@ -52,7 +52,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
         # Validate problem buckets
-        # Validate problem buckets
         if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
             # The code relies on a catchall "none" category if the user selects no other
             # annotation bucket

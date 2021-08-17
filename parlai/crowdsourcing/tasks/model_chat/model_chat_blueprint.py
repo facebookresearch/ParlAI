@@ -307,8 +307,8 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
     conversation_start_mode: str = field(
         default='hi',
         metadata={
-            "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation '
-            'or specified by specific task name'
+            "help": 'Set to "hi" to show "Hi!" at the beginning of the conversation, or '
+            'set to a task name to specify a custom context'
         },
     )
     include_persona: bool = field(
@@ -428,6 +428,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         context_generator: Optional[ContextGenerator] = None
         if (
             args.blueprint.include_persona
+            # 'hi' mode does not use a context generator and instead just displays "Hi!" at the start of the conversation
             or args.blueprint.conversation_start_mode != 'hi'
         ):
             context_generator = get_context_generator(
@@ -447,7 +448,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'max_onboard_time': args.blueprint.max_onboard_time,
                 'onboard_task_data': self.onboard_task_data,
                 "onboarding_qualification": args.blueprint.get(
-                    "onboarding_qualification", None
+                    "onboarding_qualification"
                 ),
             }
         )
