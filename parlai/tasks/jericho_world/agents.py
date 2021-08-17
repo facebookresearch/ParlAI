@@ -64,9 +64,9 @@ class BaseJerichoWorldTeacher(DialogTeacher):
                     yield step, new_episode
 
 
-class StateToKG(BaseJerichoWorldTeacher):
+class StateToKGTeacher(BaseJerichoWorldTeacher):
     """
-    The game state to the knowledge graph teacher.
+    Game state to the knowledge graph.
     """
 
     def setup_data(self, datafile: str):
@@ -79,5 +79,19 @@ class StateToKG(BaseJerichoWorldTeacher):
             yield example, new_episode
 
 
-class DefaultTeacher(StateToKG):
+class StateToActionTeacher(BaseJerichoWorldTeacher):
+    """
+    Game state to action.
+    """
+
+    def setup_data(self, datafile: str):
+        for old_example, new_episode in super().setup_data(datafile):
+            # Just keeping what we need
+            text = old_example['state']['loc_desc'].strip().replace('\n', ' ')
+            label = old_example['action']
+            example = {'text': text, 'labels': [label]}
+            yield example, new_episode
+
+
+class DefaultTeacher(StateToKGTeacher):
     pass
