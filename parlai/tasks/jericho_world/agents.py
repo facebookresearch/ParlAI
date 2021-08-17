@@ -30,10 +30,23 @@ def _path(opt):
             'This data set does not have valid split. Using `test` instead.'
         )
         dtype = 'test'
-    return os.path.join(dpath, f'{dtype}.jsonl')
+    return os.path.join(dpath, f'{dtype}.json')
+
+
+def knowledge_graph_as_label(graph):
+    graph_comps = []
+    for s, r, o in graph:
+        graph_comps.append(f'< {s} , {r} , {o}>')
+    return ' ; '.join(graph_comps)
 
 
 class BaseJerichoWorldTeacher(DialogTeacher):
+    """
+    The base class that loads the games and episodes of the JerichoWorld
+    
+    Note: do not use this class directly.
+    """
+
     def __init__(self, opt: Opt, shared=None):
         opt = deepcopy(opt)
         opt['datafile'] = _path(opt)
@@ -44,4 +57,27 @@ class BaseJerichoWorldTeacher(DialogTeacher):
     def setup_data(self, datafile: str):
         print(datafile)
         with open(datafile) as df:
-            data = json.load(df)
+            games_data = json.load(df)
+            for game in games_data:
+                for step_i, step in enumerate(game):
+                    new_episode = step_i == 0
+                    yield step, new_episode
+
+
+class StateToKG(BaseJerichoWorldTeacher):
+    """
+    The game state to the knowledge graph teacher.
+    """
+
+    def setup_data(self, datafile: str):
+        for old_example, new_episode in super().setup_data(datafile):
+            # Just keeping what we need
+            game_state = old_example['state']
+            text = game_state['loc_desc'].strip().replace('\n', ' ')
+            label = knowledge_graph_as_label(game_state['graph'])
+            example = {'text': text, 'labels': [label]}
+            yield example, new_episode
+
+
+class DefaultTeacher(StateToKG):
+    pass
