@@ -42,8 +42,8 @@ def knowledge_graph_as_label(graph):
 
 class BaseJerichoWorldTeacher(DialogTeacher):
     """
-    The base class that loads the games and episodes of the JerichoWorld
-    
+    The base class that loads the games and episodes of the JerichoWorld.
+
     Note: do not use this class directly.
     """
 
