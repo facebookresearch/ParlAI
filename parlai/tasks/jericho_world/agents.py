@@ -57,8 +57,13 @@ def knowledge_graph_as_str(graph):
         return consts.EMPTY_GRAPH_TOKEN
 
     graph_comps = []
-    for s, r, o in graph:
-        graph_comps.append(f'< {s} , {r} , {o}>')
+    for edge_info in graph:
+        # NOTE: often there are incomplete nodes that we detect and skip.
+        # (Github issue reported here: https://github.com/JerichoWorld/JerichoWorld/issues/3)
+        processed_edge = [s.strip() for s in edge_info if s.strip()]
+        if len(processed_edge) == 3:
+            s, r, o = processed_edge
+            graph_comps.append(f'< {s} , {r} , {o}>')
     return consts.SET_MEMBERS_DELIM.join(graph_comps)
 
 
@@ -178,18 +183,27 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             out = wrap_content(content_str, consts.SURROUNDING_OBJECTS)
         return out
 
-    def setup_data(self, datafile: str):
-        print(datafile)
+    def load_data(self, datafile):
+        logging.info(f'Reading data from {datafile}')
         with open(datafile) as df:
-            games_data = json.load(df)
-            for game in games_data:
-                for step_i, game_step in enumerate(game):
-                    example = self._clean_example(game_step)
-                    example['text'] = self.generate_example_text(example)
-                    example['labels'] = [self.generate_example_label(example)]
+            return json.load(df)
 
-                    new_episode = step_i == 0
-                    yield example, new_episode
+    def skip_example(self, example: Dict) -> bool:
+        """
+        Implements checks that some teachers have on valid examples, based on content.
+        """
+        return False
+
+    def setup_data(self, datafile: str):
+        for game in self.load_data(datafile):
+            for step_i, game_step in enumerate(game):
+                if self.skip_example(game_step):
+                    continue
+                example = self._clean_example(game_step)
+                example['text'] = self.generate_example_text(example)
+                example['labels'] = [self.generate_example_label(example)]
+                new_episode = step_i == 0
+                yield example, new_episode
 
 
 class StateToKGTeacher(BaseJerichoWorldTeacher):
@@ -210,6 +224,33 @@ class StateToKGTeacher(BaseJerichoWorldTeacher):
         return knowledge_graph_as_str(example['state']['graph'])
 
 
+class StaticKGTeacher(StateToKGTeacher):
+    """
+    Generates the knowledge graph from a single state.
+    """
+
+    def skip_example(self, example: Dict) -> bool:
+        graph = knowledge_graph_as_str(example['state']['graph'])
+        return graph == consts.EMPTY_GRAPH_TOKEN
+
+    def setup_data(self, datafile: str):
+        for example, _ in super().setup_data(datafile):
+            yield example, True
+
+
+class ActionKGTeacher(BaseJerichoWorldTeacher):
+    """
+    Generates the knowledge graph mutations after a given action.
+    """
+
+    def skip_example(self, datafile: str):
+        for example, _ in super().setup_data(datafile):
+
+            if example['labels'][0] == consts.EMPTY_GRAPH_TOKEN:
+                continue
+            yield example, True
+
+
 class StateToActionTeacher(BaseJerichoWorldTeacher):
     """
     Game state to action.
@@ -228,5 +269,5 @@ class StateToActionTeacher(BaseJerichoWorldTeacher):
         return example['action']
 
 
-class DefaultTeacher(StateToKGTeacher):
+class DefaultTeacher(StaticKGTeacher):
     pass
