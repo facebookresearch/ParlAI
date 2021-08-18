@@ -261,40 +261,6 @@ class StateToKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return knowledge_graph_as_str(example['state']['graph'])
 
-
-class StaticKGTeacher(StateToKGTeacher):
-    """
-    Generates the knowledge graph from a single state.
-    """
-
-    def skip_example(self, example: Dict) -> bool:
-        return (
-            knowledge_graph_as_str(example['state']['graph'])
-            == consts.EMPTY_GRAPH_TOKEN
-        )
-
-
-class ActionKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
-    """
-    Generates the knowledge graph mutations after a given action.
-    """
-
-    def skip_example(self, example: str):
-        for st in ('state', 'next_state'):
-            if knowledge_graph_as_str(example[st]['graph']) == consts.EMPTY_GRAPH_TOKEN:
-                return True
-        return False
-
-    def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        curr_state = example['state']
-        return self.delim.join(
-            [
-                self.location_context(curr_state),
-                self.surrounding_objects_context(curr_state),
-                wrap_content(example['action'], consts.ACTION),
-            ]
-        )
-
     def custom_evaluation(
         self,
         teacher_action: Message,
@@ -325,6 +291,40 @@ class ActionKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
                 guess=' '.join(predicted_graph_enc),
                 answers=[' '.join(predicted_graph_enc)],
             ),
+        )
+
+
+class StaticKGTeacher(StateToKGTeacher):
+    """
+    Generates the knowledge graph from a single state.
+    """
+
+    def skip_example(self, example: Dict) -> bool:
+        return (
+            knowledge_graph_as_str(example['state']['graph'])
+            == consts.EMPTY_GRAPH_TOKEN
+        )
+
+
+class ActionKGTeacher(StateToKGTeacher):
+    """
+    Generates the knowledge graph mutations after a given action.
+    """
+
+    def skip_example(self, example: str):
+        for st in ('state', 'next_state'):
+            if knowledge_graph_as_str(example[st]['graph']) == consts.EMPTY_GRAPH_TOKEN:
+                return True
+        return False
+
+    def generate_example_text(self, example: Union[Dict, Message]) -> str:
+        curr_state = example['state']
+        return self.delim.join(
+            [
+                self.location_context(curr_state),
+                self.surrounding_objects_context(curr_state),
+                wrap_content(example['action'], consts.ACTION),
+            ]
         )
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
