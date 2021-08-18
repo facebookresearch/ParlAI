@@ -15,7 +15,7 @@ from omegaconf import DictConfig
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import BLUEPRINT_TYPE
 from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
-import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
+import json
 
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -27,6 +27,18 @@ defaults = [
     {"mephisto/provider": "mock"},
     {"conf": "example"},
 ]
+
+
+def check_override_opt(args):
+    with open(args.blueprint.override_opt.completed_run_stats) as f:
+        override_opt = json.load(f)
+    if (
+        override_opt['bot_model_name']
+        != args.blueprint.conversations_needed_string.split(":")[0]
+    ):
+        raise AssertionError(
+            f"YOU bot model name in {args.blueprint.override_opt.completed_run_stats} doesnt match with {args.blueprint.conversations_needed_string}"
+        )
 
 
 @dataclass
@@ -46,7 +58,8 @@ register_script_config(name='scriptconfig', module=ScriptConfig)
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
-    run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=world_module)
+    check_override_opt(cfg.mephisto)
+    run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=None)
 
 
 if __name__ == "__main__":
