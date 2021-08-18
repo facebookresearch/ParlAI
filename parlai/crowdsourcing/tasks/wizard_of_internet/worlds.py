@@ -191,13 +191,13 @@ def _coordinator_send_message(
     )
 
 
-def persona_from_template_values(topic: str, topic_item: str, extra_deatils: str = ''):
+def persona_from_template_values(topic: str, topic_item: str, extra_details: str = ''):
     """
     Generates a sentence stating the persona of the apprentice, given their selection.
     """
     pers = f'My favorite {topic} is {topic_item}.'
-    if extra_deatils:
-        pers += f'\n{extra_deatils}'
+    if extra_details:
+        pers += f'\n{extra_details}'
     return pers
 
 
@@ -213,7 +213,7 @@ def _form_response_get_field(form_response: Dict[str, Any], filed_num: int):
 
 def _form_response_main_persona(form_response: Dict[str, Any]):
     """
-    Extarcts the main selected persona from persona selection form response.
+    Extracts the main selected persona from persona selection form response.
     """
     topic = _form_response_get_field(form_response, 0)
     entity = _form_response_get_field(form_response, 1)
@@ -222,7 +222,7 @@ def _form_response_main_persona(form_response: Dict[str, Any]):
 
 def _form_response_persona_expantion(form_response: Dict[str, Any]):
     """
-    Extarcts the expanded details of persona from persona selection form response.
+    Extracts the expanded details of persona from persona selection form response.
     """
     return _form_response_get_field(form_response, -1)
 
@@ -233,7 +233,7 @@ def _send_persona_too_short_warning(agent: Agent, persona_expantion: str):
     """
     _coordinator_send_message(
         agent,
-        message=f'Your explaination on persona ("{persona_expantion}") was too short. '
+        message=f'Your expansion on persona ("{persona_expantion}") was too short. '
         'Please rewrite to make a more elaborate and refined persona.',
     )
 
@@ -969,9 +969,9 @@ class MTurkMultiAgentDialogWorld(CrowdTaskWorld):
 
         rs = [r['response'] for r in agent_response['task_data']['form_responses']]
         assert len(rs) == 3, 'Template persona response form length is not 3.'
-        topic, topic_item, extra_deatils = rs
+        topic, topic_item, extra_details = rs
         apprentice_persona = persona_from_template_values(
-            topic, topic_item, extra_deatils
+            topic, topic_item, extra_details
         )
         worker_name = self.worker_names[apprentice_agent]
         logging.info(f'Agent ({worker_name}) selected a persona: {apprentice_persona}')
@@ -1231,7 +1231,7 @@ def _get_cached_roll_tally():
     return ROLE_TALLY_CHACHE['data']
 
 
-def _cach_roll_tally(rolls_tally: Dict[int, int]):
+def _cache_roll_tally(rolls_tally: Dict[int, int]):
     """
     Updates the content of the roles tally cache.
     """
@@ -1286,7 +1286,7 @@ def find_needed_role(agent, rqname: str):
             logging.warning(
                 f'\tNo qualifications: {no_qual}\tUnknown qualifications: {unk_qual}'
             )
-        _cach_roll_tally(role_tally)
+        _cache_roll_tally(role_tally)
 
     logging.info(
         f'Wizard: {role_tally[constants.WIZARD]}\tApprentices: {role_tally[constants.APPRENTICE]}'

@@ -111,7 +111,7 @@ def bad_persona(persona, stemmer):
 
 def poor_knowledge_selection(messages, persona, stemmer, knwldg_ovlp_thrshld):
     """
-    Check for poor search and knowledge selectino by wizard.
+    Check for poor search and knowledge selection by wizard.
     """
     # Collecting search and knowledge selections
     search_terms = []
@@ -194,6 +194,7 @@ class WizardOfInternetAcceptabilityChecker(AcceptabilityChecker):
 
     def __init__(self):
         self.knowledge_overlap_threshold = DEFAULT_KNOWLEDGE_OVERLAP_THRESHOLD
+        self.post_stemmer = PorterStemmer()
         super().__init__()
 
     def check_messages(
@@ -213,16 +214,14 @@ class WizardOfInternetAcceptabilityChecker(AcceptabilityChecker):
         if general_chat_violations:
             violations.extend(general_chat_violations.split(','))
 
-        ps = PorterStemmer()
-
         if agent_id == 'Apprentice':
-            persona_violations = bad_persona(persona, ps)
+            persona_violations = bad_persona(persona, self.post_stemmer)
             if persona_violations:
                 violations.extend(persona_violations)
 
         if agent_id == 'Wizard':
             knowledge_violations = poor_knowledge_selection(
-                messages, persona, ps, self.knowledge_overlap_threshold
+                messages, persona, self.post_stemmer, self.knowledge_overlap_threshold
             )
             if knowledge_violations:
                 violations.extend(knowledge_violations)
