@@ -694,16 +694,13 @@ class ContextGenerator(BaseContextGenerator):
         Get context information to be shown at the beginning of one conversation.
 
         Values in return dict:
-        - context_dataset: the dataset (ConvAI2, EmpatheticDialogues, or Wizard of
-            Wikipedia) used to generate the context information.
-        - persona_1_strings, persona_2_strings: 2 persona strings each for the two
-            speakers, chosen randomly from the ConvAI2 dataset. If context_dataset ==
-            "wizard_of_wikipedia", these persona strings will be matched to the WoW
-            topic returned in the "additional_context" field.
-        - person1_seed_utterance, person2_seed_utterance: two lines of a conversation
-            from the dataset specified by "context_dataset". They will be shown to the
-            speakers to "seed" the conversation, and the speakers continue from where
-            the lines left off.
+        - context_dataset: the dataset ('msc') used to generate the context information.
+        - your_persona_strings: persona strings for the "self" side
+        - their_persona_strings: persona strings for the "partner" side
+        - context_for_bot_prompt: text of dialogue context shown to the bot to generate the session opennings
+        - observation_for_bot: observation containing dialogue context shown to the bot to generate the session opennings
+        - time_num: number of hours/days that have transpired since last chat session
+        - time_unit: unit(hours/days) of the time that have transpired since last chat session
         """
 
         # Determine which dataset we will show context for
