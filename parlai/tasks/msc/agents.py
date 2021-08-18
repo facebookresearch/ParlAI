@@ -20,7 +20,18 @@ import random
 import math
 from parlai.utils.logging import logger
 from parlai.core.message import Message
+import parlai.scripts.display_data as dsd
 from parlai.tasks.convai2.agents import NormalizedTeacherTrait, SelfOriginalTeacher
+from parlai.tasks.blended_skill_talk.agents import (
+    ContextGenerator as BaseContextGenerator,
+)
+from parlai.tasks.msc.constants import (
+    INITIAL_DATA_TO_COMPLETE,
+    MODEL_OPT,
+    UI_OPT,
+    COMMON_CONFIG,
+)
+
 
 NOPERSONA = '__NO__PERSONA__BEAM__MIN__LEN__20__'
 DUMMY_TEXT = '__SILENCE__'
@@ -425,6 +436,18 @@ class SessionBaseMscTeacher(DialogTeacher):
                         'personas': f'{partner_persona}\n{your_persona}',
                         'personas_one_line': f"partner's persona: {' '.join(partner_persona_one_line)}\nyour persona: {' '.join(your_persona_one_line)}",
                     }
+                    if i == 0:
+                        action.update(
+                            {
+                                'time_num': dialog_dict['previous_dialogs'][-1][
+                                    'time_num'
+                                ],
+                                'time_unit': dialog_dict['previous_dialogs'][-1][
+                                    'time_unit'
+                                ],
+                            }
+                        )
+
                     episode.append(action)
                     if self.session_openning:
                         break
@@ -616,3 +639,122 @@ class MscTeacher(MultiTaskTeacher):
 
 class DefaultTeacher(MscTeacher):
     pass
+
+
+class ContextGenerator(BaseContextGenerator):
+    """
+    Generates contexts shown to bots for generating prompt when collecting human-human
+    followup chat in the personal knowledge human evaluation.
+
+    This generator was used to generate the context information shown to bots at the
+    beginning of a conversation, when crowdsourcing the conversations that for per-turn
+    human evaluation.
+    """
+
+    def __init__(self, override_opt, datatype='valid', seed: Optional[int] = None):
+        """
+        Initalize the context generator.
+
+        override_opt: only a 'datapath' key is required, to specify the ParlAI data folder
+        """
+
+        def setup_opt(opt):
+            parser = dsd.setup_args()
+            parser.set_params(**opt)
+            return parser.parse_args([])
+
+        if seed is not None:
+            self.rng = random.Random(seed)
+        else:
+            self.rng = random.Random()
+
+        with open(override_opt['completed_run_stats']) as f:
+            override_opt.update(json.load(f))
+
+        bot_model_name = override_opt['bot_model_name']
+        bot_msc_opt = copy.deepcopy(COMMON_CONFIG)
+        bot_msc_opt.update(MODEL_OPT[bot_model_name])
+        ui_msc_opt = copy.deepcopy(COMMON_CONFIG)
+        ui_msc_opt.update(UI_OPT[bot_model_name])
+
+        self.ui_msc_teacher = SessionBaseMscTeacher(setup_opt(ui_msc_opt))
+        self.bot_msc_teacher = SessionBaseMscTeacher(setup_opt(bot_msc_opt))
+        self.bot_sorted_initial_data_indices_to_episode = {}
+        self.ui_sorted_initial_data_indices_to_episode = {}
+        self.initial_data_indices_to_complete = override_opt.get(
+            'initial_data_indices_to_complete', INITIAL_DATA_TO_COMPLETE
+        )
+        self._set_teacher_data_map()
+        self.context_done_statistics = copy.deepcopy(
+            override_opt.get('context_done_statistics', {})
+        )
+
+    def get_context(self, model_name: str = None) -> dict:
+        """
+        Get context information to be shown at the beginning of one conversation.
+
+        Values in return dict:
+        - context_dataset: the dataset ('msc') used to generate the context information.
+        - your_persona_strings: persona strings for the "self" side
+        - their_persona_strings: persona strings for the "partner" side
+        - context_for_bot_prompt: text of dialogue context shown to the bot to generate the session opennings
+        - observation_for_bot: observation containing dialogue context shown to the bot to generate the session opennings
+        - time_num: number of hours/days that have transpired since last chat session
+        - time_unit: unit(hours/days) of the time that have transpired since last chat session
+        """
+
+        # Determine which dataset we will show context for
+        if model_name not in self.context_done_statistics:
+            self.context_done_statistics[model_name] = []
+        initial_data_indices_list = [
+            x
+            for x in self.initial_data_indices_to_complete
+            if x not in self.context_done_statistics[model_name]
+        ]
+        if len(initial_data_indices_list) == 0:
+            return None
+        # Select episode
+        initial_data_index = self.rng.sample(initial_data_indices_list, 1)[0]
+        # Mark context seletected
+        self.context_done_statistics[model_name].append(initial_data_index)
+        # Extract personas
+        return self._extract_personas(initial_data_index)
+
+    def _set_teacher_data_map(self):
+        self.ui_sorted_initial_data_indices_to_episode = {
+            episode[0]['initial_data_id']: episode
+            for episode in self.ui_msc_teacher.data.data
+        }
+        self.bot_sorted_initial_data_indices_to_episode = {
+            episode[0]['initial_data_id']: episode
+            for episode in self.bot_msc_teacher.data.data
+        }
+
+    def _extract_personas(self, initial_data_index: str) -> dict:
+        """
+        For the given ConvAI2 conversation, return strings of both speakers' personas.
+        """
+        ui_first_entry = self.ui_sorted_initial_data_indices_to_episode[
+            initial_data_index
+        ][0]
+        bot_first_entry = self.bot_sorted_initial_data_indices_to_episode[
+            initial_data_index
+        ][0]
+
+        ui_context = ui_first_entry['text'].split('\n')
+        your_persona_strings = []
+        their_persona_strings = []
+        for str_ in ui_context[:-1]:  # The last string is the first utterance
+            if str_.startswith('your persona: '):  # Here, "you" are Person 2
+                your_persona_strings.append(str_[len('your persona: ') :])
+            elif str_.startswith("partner's persona: "):
+                their_persona_strings.append(str_[len("partner's persona: ") :])
+        return {
+            'context_dataset': bot_first_entry['id'],
+            'your_persona_strings': your_persona_strings,
+            'their_persona_strings': their_persona_strings,
+            'context_for_bot_prompt': bot_first_entry['text'],
+            'observation_for_bot': bot_first_entry,
+            'time_num': bot_first_entry['time_num'],
+            'time_unit': bot_first_entry['time_unit'],
+        }
