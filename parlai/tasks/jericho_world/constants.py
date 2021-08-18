@@ -17,4 +17,7 @@ LOCATION_NAME = 'loc-name'
 LOCATION_DESCRIPTION = 'loc-desc'
 SURROUNDING_OBJECTS = 'surr_obj'
 
+# The delimiter characetrs between members of a set (eg objects, graph edges, etc.)
+SET_MEMBERS_DELIM = ' ; '
+
 EMPTY_GRAPH_TOKEN = '__empty-graph__'

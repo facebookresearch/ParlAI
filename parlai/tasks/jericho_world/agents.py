@@ -59,12 +59,12 @@ def knowledge_graph_as_str(graph):
     graph_comps = []
     for s, r, o in graph:
         graph_comps.append(f'< {s} , {r} , {o}>')
-    return ' ; '.join(graph_comps)
+    return consts.SET_MEMBERS_DELIM.join(graph_comps)
 
 
-def extract_state_data(example_state: Dict) -> Dict:
+def extract_state_data(example_state: Dict, delim: str = ' ') -> Dict:
     def concat_vals(d):
-        return [" ".join(p) for p in d.values()]
+        return [delim.join(p) for p in d.values()]
 
     return {
         'location_name': example_state['location']['name'],
@@ -90,7 +90,9 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         self.datatype = get_dtype(opt)
         self.id = 'JerichoWorldtBase'
         self._incld_loc_name = opt['include_location']
+        self.delim = opt['delimiter']
         self._incld_loc_desc = opt['include_location_description']
+        self._incld_surr_objs = opt['include_surrounding_objects']
         self.keep_next_state = True
         super().__init__(opt, shared=shared)
 
@@ -109,6 +111,18 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             type='bool',
             default=True,
             help='Whether to include the text description of the location',
+        )
+        arg_group.add_argument(
+            '--include-surrounding-objects',
+            type='bool',
+            default=True,
+            help='Whether to include the list of surrounding objects',
+        )
+        arg_group.add_argument(
+            '--delimiter',
+            type=str,
+            default='\n',
+            help='Delimiter string to use between features',
         )
 
     def _clean_example(self, game_step: Dict[str, Any]) -> Dict[str, Any]:
@@ -155,6 +169,15 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             )
         return " ".join(loc_context)
 
+    def surrounding_objects_context(self, example_state: Dict) -> str:
+        out = ''
+        if self._incld_surr_objs:
+            content_str = consts.SET_MEMBERS_DELIM.join(
+                example_state['surrounding_objs']
+            )
+            out = wrap_content(content_str, consts.SURROUNDING_OBJECTS)
+        return out
+
     def setup_data(self, datafile: str):
         print(datafile)
         with open(datafile) as df:
@@ -175,7 +198,13 @@ class StateToKGTeacher(BaseJerichoWorldTeacher):
     """
 
     def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        return self.location_context(example['state'])
+        curr_state = example['state']
+        return self.delim.join(
+            [
+                self.location_context(curr_state),
+                self.surrounding_objects_context(curr_state),
+            ]
+        )
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return knowledge_graph_as_str(example['state']['graph'])
@@ -187,7 +216,13 @@ class StateToActionTeacher(BaseJerichoWorldTeacher):
     """
 
     def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        return self.location_context(example['state'])
+        curr_state = example['state']
+        return self.delim.join(
+            [
+                self.location_context(curr_state),
+                self.surrounding_objects_context(curr_state),
+            ]
+        )
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return example['action']
