@@ -7,17 +7,18 @@
 import json
 import os
 import re
-from datetime import datetime
 from typing import Any, Dict
-
 import numpy as np
 import pandas as pd
 
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
+from parlai.crowdsourcing.tasks.model_chat.analysis.compile_results import (
+    ModelChatResultsCompiler as BaseModelChatResultsCompiler,
+)
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 
 
-class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
+class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
     """
     Compile and save results of human+model chats.
 
@@ -29,49 +30,22 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
-            '--start-date',
+            '--model-nickname', type=str, default='', help='name of the model'
+        )
+        parser.add_argument(
+            '--completed-run-stats-path',
             type=str,
             default='',
-            help='The earliest date to analyze results from',
-        )
-        parser.add_argument(
-            '--max-convos-per-worker',
-            type=int,
-            default=100,
-            help='The most conversations to analyze from any one user. Set to -1 for no limit.',
-        )
-        parser.add_argument(
-            '--min-word-count',
-            type=int,
-            default=4,
-            help='The minimum acceptable mean number of words per human utterance',
-        )
-        parser.add_argument(
-            '--hit-block-list',
-            type=str,
-            default='',
-            help='Comma-separated list of all hits to block',
-        )
-        parser.add_argument(
-            '--worker-block-list',
-            type=str,
-            default='',
-            help='Comma-separated list of all workers to block',
+            help='path of the task run stats file',
         )
         return parser
 
     def __init__(self, opt: Dict[str, Any]):
 
-        super().__init__(opt)
-        # Validate problem buckets
-        if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
-            # The code relies on a catchall "none" category if the user selects no other
-            # annotation bucket
-            raise ValueError(
-                'There must be a "none_all_good" category in self.problem_buckets!'
-            )
+        AbstractTurnAnnotationResultsCompiler.__init__(self, opt)
 
         # Input args
+        self.model_nickname = opt['model_nickname']
         assert len(self.results_folders) > 0
         for folder in self.results_folders:
             assert os.path.isdir(folder), f'{folder} is not a valid folder!'
@@ -92,19 +66,18 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
             # Remove the buckets that are special cases
 
         self.acceptability_checker = AcceptabilityChecker()
-
-    def get_results_path_base(self) -> str:
-        now = datetime.now()
-        return os.path.join(
-            self.output_folder, f'results_{now.strftime("%Y%m%d_%H%M%S")}'
-        )
+        self.completed_run_stats_path = opt['completed_run_stats_path']
 
     def compile_results(self) -> pd.DataFrame:
-
+        # TODO modularize the shared components to dedup the code
         read_folders = []
         date_strings = []
+        import ipdb
+
+        ipdb.set_trace()
         for folder in self.results_folders:
             # Load paths
+            # TODO load this data in using DataBrowser
             date_strings = sorted(
                 [
                     obj
@@ -121,26 +94,21 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
             read_folders.extend(folders)
         print(f'Date folders: ' + ', '.join(date_strings))
 
-        now = datetime.now()
-        worker_results_file = os.path.join(
-            self.output_folder, f'worker_results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
-        )
         # Read in each file
         num_incomplete_convos = 0
         num_complete_convos = 0
         complete_convos_per_model = {}
         bad_conversations = []
-        stat_counts = {}
         worker_stats = {}
         worker_conversation_counts = {}
-        total_utterances = 0
 
         conversation_idx = 0
         conversation_dfs = []
+        stat_counts = {}
         for read_folder in read_folders:
             read_folder_name = os.path.split(read_folder)[-1]
             for file_name in sorted(os.listdir(read_folder)):
-                if file_name in self.hit_block_list:
+                if file_name in self.hit_block_list or 'sandbox' in file_name:
                     continue
 
                 if 'incomplete' in file_name:
@@ -156,6 +124,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 # Only include the first max_convos_per_worker conversations from a
                 # worker to avoid biasing
                 worker_id = data['workers'][0]
+                worker_id = worker_id.split('-')[-1]
                 assignment_id = data['assignment_ids'][0]
                 if worker_id in worker_conversation_counts:
                     conversations_so_far = worker_conversation_counts[worker_id]
@@ -185,20 +154,23 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     )
                     continue
 
-                if self.use_problem_buckets:
-                    if not all(
-                        bucket in data['dialog'][1]['problem_data']
-                        for bucket in self.problem_buckets
-                    ):
-                        raise ValueError('Bucket(s) are missing from the problem data!')
+                if not all(
+                    bucket in data['dialog'][0]['problem_data']
+                    for bucket in self.problem_buckets
+                ):
+                    raise ValueError('Bucket(s) are missing from the problem data!')
 
-                model_nickname = data['task_description']['model_nickname']
+                model_nickname = data['model_name']
+                assert self.model_nickname == model_nickname
+                initial_data_id = data['context_info']['observation_for_bot'][
+                    'initial_data_id'
+                ]
                 if model_nickname not in stat_counts:
                     stat_counts[model_nickname] = {}
                 if model_nickname in complete_convos_per_model:
-                    complete_convos_per_model[model_nickname] += 1
+                    complete_convos_per_model[model_nickname].append(initial_data_id)
                 else:
-                    complete_convos_per_model[model_nickname] = 1
+                    complete_convos_per_model[model_nickname] = [initial_data_id]
 
                 # Extract non-message info
                 info_dict = {
@@ -210,15 +182,18 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     'hit_id': data['hit_ids'][0],
                     'assignment_id': assignment_id,
                     'is_incomplete': 'incomplete' in file_name,
-                    'context_dataset': data['context_dataset'],
-                    'additional_context': data['additional_context'],
+                    'context_info': data['context_info'],
+                    'bot_persona_strings': data['bot_persona_strings'],
+                    'human_persona_strings': data['human_persona_strings'],
+                    'initial_task_data': data['initial_task_data'],
+                    'initial_data_id': initial_data_id,
                 }
 
                 # Check that the conversation consists of pairs of comments between
-                # agents 0 and 1, with 0 speaking first
+                # agents 0 and 1, with 1(bot) speaking first
                 assert all(
                     [
-                        utterance_data['agent_idx'] == utterance_idx % 2
+                        utterance_data['agent_idx'] == (utterance_idx + 1) % 2
                         for utterance_idx, utterance_data in enumerate(data['dialog'])
                     ]
                 )
@@ -246,8 +221,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     [],
                     columns=[
                         'folder',
-                        'worker_id',
+                        'file_name' 'worker_id',
                         'hit_id',
+                        'is_incomplete',
+                        'context_info',
+                        'initial_data_id',
+                        'acceptability_violations_0',
                         'model_nickname',
                         'conversation_idx',
                         'turn_idx',
@@ -256,48 +235,43 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     ]
                     + self.problem_buckets,
                 )
-                text_parts = []
-                if data['personas'] is not None and len(data['personas']) > 0:
-                    text_parts += [
-                        'your persona: ' + data['personas'][1][0],
-                        'your persona: ' + data['personas'][1][1],
-                    ]
-                if (
-                    data['additional_context'] is not None
-                    and len(data['additional_context']) > 0
-                ):
-                    text_parts.append(data['additional_context'])
                 df = df.append(
                     {
                         'folder': info_dict['read_folder_name'],
+                        'file_name': info_dict['file_name'],
                         'worker_id': info_dict['worker'],
                         'hit_id': info_dict['hit_id'],
+                        'is_incomplete': info_dict['is_incomplete'],
+                        'context_info': info_dict['context_info'],
+                        'initial_data_id': info_dict['initial_task_data'],
+                        'acceptability_violations_0': info_dict[
+                            'acceptability_violations_0'
+                        ],
                         'model_nickname': model_nickname,
                         'conversation_idx': conversation_idx,
                         'turn_idx': -1,
-                        'agent_idx': 1,
-                        'text': '\n'.join(text_parts),
+                        'agent_idx': 0,
+                        'text': info_dict['context_info']['observation_for_bot'][
+                            'text'
+                        ],
                         **{bucket: '' for bucket in self.problem_buckets},
                     },
                     ignore_index=True,
                 )
 
-                total_utterances += len(
-                    [d for d in data["dialog"] if d["agent_idx"] == 1]
-                )
-                if len(data['dialog']) > 20:
-                    print(
-                        f'Got long dialogue of {len(data["dialog"])} utterances, hit id: {info_dict["hit_id"]}, model_nickname: {model_nickname}.'
-                    )
-
-                if self.use_problem_buckets:
-                    dialog_has_problems = False
                 for utterance_idx, utt in enumerate(data['dialog']):
 
                     d = {
                         'folder': info_dict['read_folder_name'],
+                        'file_name': info_dict['file_name'],
                         'worker_id': info_dict['worker'],
                         'hit_id': info_dict['hit_id'],
+                        'is_incomplete': info_dict['is_incomplete'],
+                        'context_info': info_dict['context_info'],
+                        'initial_data_id': info_dict['initial_task_data'],
+                        'acceptability_violations_0': info_dict[
+                            'acceptability_violations_0'
+                        ],
                         'model_nickname': model_nickname,
                         'conversation_idx': conversation_idx,
                         'turn_idx': utterance_idx,
@@ -307,26 +281,23 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     }
 
                     if utt['agent_idx'] == 1:
-
-                        d['final_rating'] = utt.get('final_rating')
-
-                        if self.use_problem_buckets:
-                            if 'problem_data' not in utt:
-                                for bucket in self.problem_buckets:
-                                    d[bucket] = 'MALFORMED'
-                                print(
-                                    f'Warning got MALFORMED utterance problem data inside complete convo: {utt}. Skipping.'
-                                )
-                                continue
-                            else:
-                                for bucket in self.regular_buckets + ['none_all_good']:
-                                    d[bucket] = utt['problem_data'][bucket]
-                            for k in self.regular_buckets + ['none_all_good']:
-                                if k not in stat_counts[model_nickname]:
-                                    stat_counts[model_nickname][k] = 0
-                                stat_counts[model_nickname][k] += d[k]
-                                if k != 'none_all_good' and d[k]:
-                                    dialog_has_problems = True
+                        if 'problem_data' not in utt:
+                            for bucket in self.problem_buckets:
+                                d[bucket] = 'MALFORMED'
+                            print(
+                                f'Warning got MALFORMED utterance problem data inside complete convo: {utt}. Skipping.'
+                            )
+                            continue
+                        else:
+                            for bucket in self.regular_buckets:
+                                d[bucket] = utt['problem_data'][bucket]
+                            d['final_rating'] = (
+                                utt['final_rating'] if 'final_rating' in utt else None
+                            )
+                        for k in self.regular_buckets:
+                            if k not in stat_counts[model_nickname]:
+                                stat_counts[model_nickname][k] = 0
+                            stat_counts[model_nickname][k] += d[k]
 
                         if 'total' not in stat_counts[model_nickname]:
                             stat_counts[model_nickname]['total'] = 0
@@ -339,10 +310,20 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             stat_counts[model_nickname]['count_ratings'] += 1
                             if 'ratings' not in stat_counts[model_nickname]:
                                 stat_counts[model_nickname]['ratings'] = []
+                            if 'pairwise_ratings' not in stat_counts[model_nickname]:
+                                stat_counts[model_nickname]['pairwise_ratings'] = {}
                             stat_counts[model_nickname]['ratings'].append(
                                 int(d['final_rating'])
                             )
+                            stat_counts[model_nickname]['pairwise_ratings'][
+                                info_dict['initial_data_id']
+                            ] = int(d['final_rating'])
 
+                        if 'bot_word_count' not in stat_counts[model_nickname]:
+                            stat_counts[model_nickname]['bot_word_count'] = 0
+                        stat_counts[model_nickname]['bot_word_count'] += len(
+                            d['text'].strip().split(' ')
+                        )
                     else:
 
                         # Counting some aspects of the human's utterances
@@ -362,40 +343,26 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                             'text'
                         ].count('?')
 
-                    d = self._add_additional_per_turn_stats(d=d, utt=utt)
-
-                    df = df.append(d, ignore_index=True)
-
+                # Only want to count bot utterances but human ones, while included,
+                # won't be False
                 if info_dict['worker'] not in worker_stats:
                     worker_stats[info_dict['worker']] = {'conversations': 0}
-                    if self.use_problem_buckets:
-                        worker_stats[info_dict['worker']]['problems_found'] = 0
                 worker_stats[info_dict['worker']]['conversations'] += 1
-
-                if self.use_problem_buckets:
-                    # Count the number of problems the worker got
-                    is_problem = ~df['none_all_good'].replace('', True)
-                    # Only want to count bot utterances but human ones, while included,
-                    # won't be False
-                    count = is_problem.sum()
-                    worker_stats[info_dict['worker']]['problems_found'] += count
 
                 # Logic for calculating percent of conversations that are clean
                 if 'count_convos' not in stat_counts[model_nickname]:
                     stat_counts[model_nickname]['count_convos'] = 0
                 stat_counts[model_nickname]['count_convos'] += 1
 
-                if self.use_problem_buckets and not dialog_has_problems:
-                    if 'convo_clean' not in stat_counts[model_nickname]:
-                        stat_counts[model_nickname]['convo_clean'] = 0
-                    stat_counts[model_nickname]['convo_clean'] += 1
-
                 # Adding the full conversation to the list of conversations
                 conversation_dfs.append(df)
                 conversation_idx += 1
 
-        for m, conversation_count in complete_convos_per_model.items():
-            print(f'Got {conversation_count} complete conversation(s) for model: {m}')
+        for m, conversations_completed in complete_convos_per_model.items():
+            print(
+                f'Got {len(conversations_completed)} complete conversations for model: {m}'
+            )
+            print(f"{m} completed: {conversations_completed}")
 
         print(f'{num_complete_convos:d} complete conversation(s) collected.')
         print(f'{len(bad_conversations):d} bad conversation(s).')
@@ -405,7 +372,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         for model_nickname, model_stats_dict in stat_counts.items():
             print(f'---{model_nickname}---')
             for p, v in model_stats_dict.items():
-                if p == 'count_ratings':
+                if p == 'count_ratings' or p == 'pairwise_ratings':
                     continue
                 if p == 'ratings':
                     print(
@@ -416,12 +383,12 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     print(
                         f'{p}: {v} ({v/model_stats_dict["human_utterance_count"]:.3})'
                     )
+                elif p == 'bot_word_count':
+                    print(f'{p}: {v} ({v/model_stats_dict["total"]:.3})')
                 elif p == 'human_utterance_count':
                     print(f'{p}: {v}')
                 elif p == 'count_convos':
                     print(f'{p}: {v}')
-                elif self.use_problem_buckets and p == 'convo_clean':
-                    print(f'{p}: {v} ({v/model_stats_dict["count_convos"]:.2%})')
                 else:
                     print(f'{p}: {v} ({v/model_stats_dict["total"]:.2%})')
 
@@ -432,50 +399,49 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 print(f"""'{worker_id}',""")
         print('Done printing bad workers.')
 
-        print('Worker stats:')
-        worker_columns = ['worker_id', 'conversations']
-        if self.use_problem_buckets:
-            worker_columns += ['problems_found', 'avg_problems_per_convo']
-        worker_df = pd.DataFrame([], columns=worker_columns)
+        worker_df = pd.DataFrame([], columns=['worker_id', 'conversations'])
 
         for worker_id, data in worker_stats.items():
-            print(worker_id)
-
             stat = {'worker_id': worker_id, 'conversations': data['conversations']}
-            if self.use_problem_buckets:
-                avg_problems_per_convo = data['problems_found'] / data['conversations']
-                stat.update(
-                    {
-                        'problems_found': data['problems_found'],
-                        'avg_problems_per_convo': avg_problems_per_convo,
-                    }
-                )
             worker_df = worker_df.append(stat, ignore_index=True)
-        if self.use_problem_buckets:
-            worker_df = worker_df.sort_values('avg_problems_per_convo', ascending=0)
-        worker_df.to_csv(worker_results_file, index=False)
-        print(worker_df)
-        print(f'Wrote worker statistical results to: {worker_results_file}')
+
+        with open(self.completed_run_stats_path, 'r') as f:
+            completed_run_stats = json.load(f)
+        assert completed_run_stats['bot_model_name'] == self.model_nickname
+        completed_run_stats['context_done_statistics'][
+            self.model_nickname
+        ] = complete_convos_per_model[self.model_nickname]
+        completed_run_stats['context_done_counts'] = len(
+            complete_convos_per_model[self.model_nickname]
+        )
+        with open(self.completed_run_stats_path, 'w') as fw:
+            json.dump(completed_run_stats, fw)
+        print(f'Wrote override opt to: {self.completed_run_stats_path}')
+
+        rating_path = os.path.join(self.output_folder, f'pairwise_ratings.json')
+        with open(rating_path, 'w') as fw:
+            json.dump(stat_counts[self.model_nickname]['pairwise_ratings'], fw)
+        print(f'Wrote pairwise ratings to: {rating_path}')
 
         # Save full results
         all_conversations_df = pd.DataFrame()
         for df in conversation_dfs:
             all_conversations_df = all_conversations_df.append(df)
-        print(f'\nWorker conversation counts: {worker_conversation_counts}')
 
         return all_conversations_df
 
-    def _add_additional_per_turn_stats(self, d: dict, utt: dict) -> dict:
-        """
-        Add in additional statistics on the level of each conversation turn.
-
-        Useful for subclasses.
-        """
-        _ = utt  # utt is ignored in this passthrough method
-        return d
-
 
 if __name__ == '__main__':
+    """
+    python parlai/crowdsourcing/projects/multisession_chat/human_eval/compile_results.py
+    \
+
+    --problem-buckets they,you,new,none,engaging \
+    --model-nickname BST90M \
+    --output-folder parlai/crowdsourcing/projects/multisession_chat/human_eval/results/BST90M \
+    --results-folder parlai/crowdsourcing/projects/multisession_chat/human_eval/model_chat/BST90M \
+    --completed-run-stats-path parlai/crowdsourcing/projects/multisession_chat/human_eval/task_config/completed_run_stats.json
+    """
     parser_ = ModelChatResultsCompiler.setup_args()
     args_ = parser_.parse_args()
     ModelChatResultsCompiler(vars(args_)).compile_and_save_results()
