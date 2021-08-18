@@ -134,7 +134,7 @@ class ModelChatWorld(BaseModelChatWorld):
 
 
 def make_world(opt, agents, initialization_data):
-
+    # TODO: merge this function in with the make_world in in parlai/crowdsourcing/tasks/model_chat/worlds.py
     # Extract important components from opt
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
