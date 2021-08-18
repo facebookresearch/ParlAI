@@ -6,12 +6,13 @@
 
 import abc
 from copy import deepcopy
-from typing import Any, Dict, Set, Union
+from typing import Any, Dict, Set, Union, Optional, Tuple
 import json
 import logging
 import os
 
 from parlai.core.message import Message
+from parlai.core.metrics import F1Metric
 from parlai.core.params import ParlaiParser, Opt
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
@@ -292,6 +293,38 @@ class ActionKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
                 self.surrounding_objects_context(curr_state),
                 wrap_content(example['action'], consts.ACTION),
             ]
+        )
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ) -> None:
+        if model_response.is_padding() or (not model_response.get('text', None)):
+            return
+
+        expected_graph = set([mut.strip() for mut in labels[0].split('\n')])
+        predicted_graph = set(
+            [mut.strip() for mut in model_response['text'].split('\n')]
+        )
+
+        # Encoding the graph mutation operations into ints for readily use of F1Metric
+        expected_graph_enc = []
+        predicted_graph_enc = []
+        for mut_id, mut_op in enumerate(expected_graph.union(predicted_graph)):
+            mut_id_str = str(mut_id)
+            if mut_op in expected_graph:
+                expected_graph_enc.append(mut_id_str)
+            if mut_op in predicted_graph:
+                predicted_graph_enc.append(mut_id_str)
+
+        self.metrics.add(
+            'graph_mutation_f1',
+            F1Metric.compute(
+                guess=' '.join(predicted_graph_enc),
+                answers=[' '.join(predicted_graph_enc)],
+            ),
         )
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
