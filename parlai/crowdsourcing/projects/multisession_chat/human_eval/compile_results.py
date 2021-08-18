@@ -69,7 +69,7 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
         self.completed_run_stats_path = opt['completed_run_stats_path']
 
     def compile_results(self) -> pd.DataFrame:
-        # TODO modularize the shared components to dedup the code 
+        # TODO modularize the shared components to dedup the code
         read_folders = []
         date_strings = []
         import ipdb
@@ -433,12 +433,14 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
 
 if __name__ == '__main__':
     """
-    python parlai/crowdsourcing/projects/multisession_chat/human_eval/compile_results.py \
-        --problem-buckets they,you,new,none,engaging \
-        --model-nickname BST90M \
-        --output-folder parlai/crowdsourcing/projects/multisession_chat/human_eval/results/BST90M \
-        --results-folder parlai/crowdsourcing/projects/multisession_chat/human_eval/model_chat/BST90M \
-        --completed-run-stats-path parlai/crowdsourcing/projects/multisession_chat/human_eval/task_config/completed_run_stats.json
+    python parlai/crowdsourcing/projects/multisession_chat/human_eval/compile_results.py
+    \
+
+    --problem-buckets they,you,new,none,engaging \
+    --model-nickname BST90M \
+    --output-folder parlai/crowdsourcing/projects/multisession_chat/human_eval/results/BST90M \
+    --results-folder parlai/crowdsourcing/projects/multisession_chat/human_eval/model_chat/BST90M \
+    --completed-run-stats-path parlai/crowdsourcing/projects/multisession_chat/human_eval/task_config/completed_run_stats.json
     """
     parser_ = ModelChatResultsCompiler.setup_args()
     args_ = parser_.parse_args()
