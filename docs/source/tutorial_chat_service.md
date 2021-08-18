@@ -121,7 +121,6 @@ To create your own task, start with reading the tutorials on the provided exampl
 
 1. A conversation ends when a call between `parley` calls to `episode_done` returns True.
 2. Tasks with an overworld should return the name of the world that they want to queue a user into from the ``parley`` call in which the user makes that selection to enter a world.
-3. Tasks with no overworld will immediately attempt to put a user into the queue for the default task onboarding world or actual task world (if no onboarding world exists), and will do so again following the completion of a world (via `episode_done`).
 3. To collect the conversation, data should be collected during every `parley` and saved during the `world.shutdown` call. You must inform the user of the fact that the data is being collected as well as your intended use.
 4. Finally, if you wish to use and command line arguments as you would in ParlAI, specify those in the `opt` section of the config file.
 
