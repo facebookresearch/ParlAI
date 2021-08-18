@@ -332,7 +332,8 @@ class ActionKGTeacher(StateToKGTeacher):
         next_graph = knowledge_graph_as_str(example['next_state']['graph'])
         graph_diff = graph_mutation_diff(curr_graph, next_graph)
         return (
-            '\n'.join(graph_diff)
+            # sorting to pass the tests, otherwise the results are in various orders.
+            '\n'.join(sorted(graph_diff))
             if graph_diff
             else consts.GraphMutations.NO_MUTATION.name
         )
