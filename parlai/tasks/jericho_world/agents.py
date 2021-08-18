@@ -6,7 +6,7 @@
 
 import abc
 from copy import deepcopy
-from typing import Any, Dict, Union
+from typing import Any, Dict, Set, Union
 import json
 import logging
 import os
@@ -52,6 +52,13 @@ def wrap_content(content: str, content_type: str) -> str:
     return f'{s} {content} {e}'
 
 
+def graph_edge_as_str(subj: str, rel: str, obj: str) -> str:
+    """
+    Generate a formatted string from edge tuple components.
+    """
+    return '< ' + f' {consts.GRAPH_DELIM} '.join([subj, rel, obj]) + ' >'
+
+
 def knowledge_graph_as_str(graph):
     if not graph:
         return consts.EMPTY_GRAPH_TOKEN
@@ -60,11 +67,31 @@ def knowledge_graph_as_str(graph):
     for edge_info in graph:
         # NOTE: often there are incomplete nodes that we detect and skip.
         # (Github issue reported here: https://github.com/JerichoWorld/JerichoWorld/issues/3)
-        processed_edge = [s.strip() for s in edge_info if s.strip()]
+        processed_edge = [e.strip() for e in edge_info if e.strip()]
         if len(processed_edge) == 3:
             s, r, o = processed_edge
-            graph_comps.append(f'< {s} , {r} , {o}>')
+            graph_comps.append(graph_edge_as_str(s, r, o))
     return consts.SET_MEMBERS_DELIM.join(graph_comps)
+
+
+def break_knowledge_graph(graph_str: str) -> Set[str]:
+    return set([e.strip() for e in graph_str.split(consts.SET_MEMBERS_DELIM)])
+
+
+def graph_mutation_diff(source_graph, dest_graph):
+    source_graph_edges = break_knowledge_graph(source_graph)
+    dest_graph_edges = break_knowledge_graph(dest_graph)
+    diff_edges = source_graph_edges.symmetric_difference(dest_graph_edges)
+
+    mutations = []
+    for edge in diff_edges:
+        if edge in source_graph_edges:
+            op = consts.GraphMutations.DEL
+        else:
+            op = consts.GraphMutations.ADD
+        mutations.append(f'{op.name} {edge}')
+
+    return mutations
 
 
 def extract_state_data(example_state: Dict, delim: str = ' ') -> Dict:
@@ -256,6 +283,26 @@ class ActionKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
             if knowledge_graph_as_str(example[st]['graph']) == consts.EMPTY_GRAPH_TOKEN:
                 return True
         return False
+
+    def generate_example_text(self, example: Union[Dict, Message]) -> str:
+        curr_state = example['state']
+        return self.delim.join(
+            [
+                self.location_context(curr_state),
+                self.surrounding_objects_context(curr_state),
+                wrap_content(example['action'], consts.ACTION),
+            ]
+        )
+
+    def generate_example_label(self, example: Union[Dict, Message]) -> str:
+        curr_graph = knowledge_graph_as_str(example['state']['graph'])
+        next_graph = knowledge_graph_as_str(example['next_state']['graph'])
+        graph_diff = graph_mutation_diff(curr_graph, next_graph)
+        return (
+            '\n'.join(graph_diff)
+            if graph_diff
+            else consts.GraphMutations.NO_MUTATION.name
+        )
 
 
 class StateToActionTeacher(BaseJerichoWorldTeacher):

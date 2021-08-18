@@ -8,7 +8,7 @@ from enum import Enum
 
 
 class GraphMutations(Enum):
-    NO_MUT = 0
+    NO_MUTATION = 0
     DEL = 1
     ADD = 2
 
@@ -16,8 +16,10 @@ class GraphMutations(Enum):
 LOCATION_NAME = 'loc-name'
 LOCATION_DESCRIPTION = 'loc-desc'
 SURROUNDING_OBJECTS = 'surr_obj'
+ACTION = 'action'
 
 # The delimiter characetrs between members of a set (eg objects, graph edges, etc.)
 SET_MEMBERS_DELIM = ' ; '
+GRAPH_DELIM = ','
 
 EMPTY_GRAPH_TOKEN = '__empty-graph__'
