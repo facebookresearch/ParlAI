@@ -72,7 +72,11 @@ def knowledge_graph_as_str(graph):
         if len(processed_edge) == 3:
             s, r, o = processed_edge
             graph_comps.append(graph_edge_as_str(s, r, o))
-    return consts.SET_MEMBERS_DELIM.join(graph_comps)
+    return (
+        consts.SET_MEMBERS_DELIM.join(graph_comps)
+        if graph_comps
+        else consts.EMPTY_GRAPH_TOKEN
+    )
 
 
 def break_knowledge_graph(graph_str: str) -> Set[str]:
