@@ -38,7 +38,11 @@ PERSONA_AGENT = 'PersonaAgent'
 SEARCH_AGENT = 'SearchAgent'
 COORDINATOR_AGENT = 'Coordinator'
 
-# NOTE: do not forget to change ONBOARDING_PERSONA_KEYWORDS below if changing this
+# NOTE: do not forget to change ONBOARDING_PERSONA_KEYWORDS below if changing ONBOARDING_PERSONA.
+# During the onboarding we are checking for worker responses to have sufficient overlap with the
+# list of words in ONBOARDING_PERSONA_KEYWORDS, to ensure they are talking about something relevant
+# to the persona topic. Thus, changing ONBOARDING_PERSONA means you need to come up with a relevant
+# list of keywords for it in ONBOARDING_PERSONA_KEYWORDS.
 ONBOARDING_PERSONA = 'I do yoga on beach every morning.'
 # The keywords related to the Onboarding Persona
 ONBOARDING_PERSONA_KEYWORDS = (
