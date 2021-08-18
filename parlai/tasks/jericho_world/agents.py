@@ -206,7 +206,17 @@ class BaseJerichoWorldTeacher(DialogTeacher):
                 yield example, new_episode
 
 
-class StateToKGTeacher(BaseJerichoWorldTeacher):
+class BaseJerichoWorldTeacherSingleEpisode(BaseJerichoWorldTeacher):
+    """
+    Truns each examples into a single episode: No history.
+    """
+
+    def setup_data(self, datafile: str):
+        for example, _ in super().setup_data(datafile):
+            yield example, True
+
+
+class StateToKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
     """
     Game state to the knowledge graph.
     """
@@ -230,25 +240,22 @@ class StaticKGTeacher(StateToKGTeacher):
     """
 
     def skip_example(self, example: Dict) -> bool:
-        graph = knowledge_graph_as_str(example['state']['graph'])
-        return graph == consts.EMPTY_GRAPH_TOKEN
-
-    def setup_data(self, datafile: str):
-        for example, _ in super().setup_data(datafile):
-            yield example, True
+        return (
+            knowledge_graph_as_str(example['state']['graph'])
+            == consts.EMPTY_GRAPH_TOKEN
+        )
 
 
-class ActionKGTeacher(BaseJerichoWorldTeacher):
+class ActionKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
     """
     Generates the knowledge graph mutations after a given action.
     """
 
-    def skip_example(self, datafile: str):
-        for example, _ in super().setup_data(datafile):
-
-            if example['labels'][0] == consts.EMPTY_GRAPH_TOKEN:
-                continue
-            yield example, True
+    def skip_example(self, example: str):
+        for st in ('state', 'next_state'):
+            if knowledge_graph_as_str(example[st]['graph']) == consts.EMPTY_GRAPH_TOKEN:
+                return True
+        return False
 
 
 class StateToActionTeacher(BaseJerichoWorldTeacher):
