@@ -167,7 +167,7 @@ class Agent(object):
             A string for the 'text' field or a message which MUST
             comprise of the 'text' field apart from other fields.
         :param kwargs other_message_fields:
-            Provide fields for the message in the form of keyowrd arguments.
+            Provide fields for the message in the form of keyword arguments.
         :return:
             Agent's response to the message.
         :rtype:
@@ -295,7 +295,7 @@ def compare_init_model_opts(opt: Opt, curr_opt: Opt):
             and init_model_opt[k] != curr_opt.get(k)
         ):
             if isinstance(v, list):
-                if init_model_opt[k] != list(curr_opt[k]):
+                if init_model_opt[k] != list(curr_opt.get(k, [])):
                     different_opts[k] = ','.join([str(x) for x in v])
             else:
                 different_opts[k] = v

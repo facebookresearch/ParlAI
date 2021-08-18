@@ -133,12 +133,14 @@ python generate_dense_embeddings.py -mf zoo:hallucination/multiset_dpr/hf_bert_b
 --outfile /tmp/wiki_passage_embeddings/wiki_passages --num-shards 50 --shard-id 0 -bs 32
 ```
 
+**`--num-shards`**: If your dataset is relatively small, you can feel free to only generate with only one shard.
+
 ### 3. Index the Dense Embeddings
 
 The final step is to build the full FAISS index from these dense embeddings. You can use the [`index_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/index_dense_embeddings.py) script to achieve this. You can choose one of the following options when indexing your embeddings for varying results, depending on the size of your dataset:
 
-1. **Recommended** `--indexer-type compressed`: This will build a compressed index using FAISS compression techniques; this usually only takes a couple hours, and results in small index files, but comes at the cost of accuracy.
-2. `--indexer-type exact`: This will build a large HNSW-style index with the flat embeddings. The index that is built is generally as large, if not more so, than the sum of the sizes of the embeddings. Use with caution.
+1. **Recommended for large passage sets** `--indexer-type compressed`: This will build a compressed index using FAISS compression techniques; this usually only takes a couple hours, and results in small index files, but comes at the cost of accuracy. Only use this if your machine would struggle to fit all of your dense embedding vectors in memory.
+2. **Recommended for small passage sets** `--indexer-type exact`: This will build a large HNSW-style index with the flat embeddings. The index that is built is generally as large, if not more so, than the sum of the sizes of the embeddings. Use with caution with large passage sets; however, if you can reasonably fit all of your dense embedding vectors in memory, this is a suitable option.
 3. `--indexer-type compressed --compressed-indexer-factory <index_factory>`: If you know what you're doing (and understand how to use the [index factory in FAISS](https://github.com/facebookresearch/faiss/wiki/The-index-factory)), feel free to specify your own Index Factory settings. This method is only recommended if you're an advanced FAISS user.
 
 If we saved our embedding shards at `/path/to/saved/embeddings_0`, the script is used as follows:

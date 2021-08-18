@@ -63,7 +63,7 @@ statements into your code.
 Some agents include their own metrics that are computed for them. For example,
 generative models automatically compute `ppl`
 ([perplexity](https://en.wikipedia.org/wiki/Perplexity)) and `token_acc`, both
-which measure the generative model's ability to predict indivdual tokens.  As
+which measure the generative model's ability to predict individual tokens.  As
 an example, let's evaluate the [BlenderBot](https://parl.ai/projects/recipes/)
 90M model on DailyDialog:
 

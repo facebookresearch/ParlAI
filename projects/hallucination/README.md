@@ -87,6 +87,7 @@ The following commands demonstrate how to train some of the models above; we int
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
     --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
     --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
+    --model-file /path/to/saved/model
 
 #### Train a T5-Large RAG-Turn Doc-Then-Turn model with DPR Retrieval on WoW
 
@@ -98,6 +99,7 @@ The following commands demonstrate how to train some of the models above; we int
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
     --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
     --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
+    --model-file /path/to/saved/model
 
 #### Train a BlenderBot-2.7B RAG Sequence Model with DPR-Poly Retrieval on WoW
 
@@ -113,6 +115,7 @@ For the BlenderBot model, we add extra positions to the encoder, so that we can 
     --model-parallel True --optimizer adam \
     --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
     --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
+    --model-file /path/to/saved/model
 
 #### Train a BART-Large FiD Model, with a DPR Retriever initialized from a DPR Model trained with RAG.
 
@@ -127,6 +130,7 @@ This is the **BART FiD RAG** model specified above.
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
     --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
     --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
+    --model-file /path/to/saved/model
 
 #### Train a T5-Base FiD Model, using a smaller index for debug purposes.
 
@@ -142,3 +146,4 @@ We provide a smaller FAISS index comprising ~3k documents, which encompasses all
     --model-parallel True --optimizer adam --text-truncate 512 --truncate 512 \
     --learningrate 1e-05 --validation-metric-mode min --validation-every-n-epochs 0.25 \
     --validation-max-exs 1000 --validation-metric ppl --validation-patience 5 \
+    --model-file /path/to/saved/model

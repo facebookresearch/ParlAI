@@ -1014,7 +1014,7 @@ model_list = [
         "path": "zoo:tutorial_transformer_generator/model",
         "task": "pushshift.io",
         "description": (
-            "Small (87M paramter) generative transformer, pretrained on pushshift.io Reddit."
+            "Small (87M parameter) generative transformer, pretrained on pushshift.io Reddit."
         ),
         "example": "parlai interactive -mf zoo:tutorial_transformer_generator/model",
         "external_website": '',

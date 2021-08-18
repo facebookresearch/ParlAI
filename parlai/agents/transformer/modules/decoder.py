@@ -306,11 +306,11 @@ class TransformerDecoder(nn.Module):
             The target input IDs
         :param LongTensor[batch, seqlen] positions:
             Positions for input IDs. If None, computes defaults.
-        :param LongTensor[batch, seqlen] segements:
+        :param LongTensor[batch, seqlen] segments:
             Segment IDs for extra embedding features. If None, not used.
 
         :return (tensor, mask):
-            embeded input and mask
+            embedded input and mask
         """
         tensor = self.embeddings(input)
         if self.embeddings_scale:

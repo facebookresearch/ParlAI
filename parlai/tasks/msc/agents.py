@@ -210,7 +210,7 @@ class SessionBaseMscTeacher(DialogTeacher):
             '--session-openning',
             type=bool,
             default=False,
-            help="whether to only include session openning or not",
+            help="whether to only include session opening or not",
         )
         agent.add_argument(
             '--label-speaker-id',

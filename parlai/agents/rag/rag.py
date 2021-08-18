@@ -29,7 +29,7 @@ from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import History, Batch
+from parlai.core.torch_agent import History, Batch, Output
 from parlai.core.torch_generator_agent import PPLMetric, TorchGeneratorAgent, TreeSearch
 from parlai.utils.distributed import sync_parameters
 from parlai.utils.io import PathManager
@@ -278,6 +278,15 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         if 'input_turn_cnt_vec' not in observation:
             self._set_input_turn_cnt_vec(observation)
         return observation
+
+    def eval_step(self, batch: Batch) -> Optional[Output]:
+        output = super().eval_step(batch)
+        if output is None or not hasattr(self.model, 'retriever'):
+            return output
+        assert isinstance(self.model, RagModel)
+        if hasattr(self.model.retriever, 'top_docs'):
+            output.top_docs = self.model.retriever.top_docs  # type: ignore
+        return output
 
     ###### 1. Model Inputs ######
 
@@ -664,7 +673,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
     ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
         """
-        Optionall rerank beams, according to RAG Model type.
+        Optional rerank beams, according to RAG Model type.
 
         :param batch:
             current batch

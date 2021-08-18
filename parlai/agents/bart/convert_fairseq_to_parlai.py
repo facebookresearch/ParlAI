@@ -146,7 +146,7 @@ class ConversionScript(ParlaiScript):
         :return opt:
             opt parsed by ParlAI Parser
         """
-        # assume encoder/decoder symetrical except for number of layers
+        # assume encoder/decoder symmetrical except for number of layers
         state = self.state
         fairseq_args = state['args'].__dict__
 
