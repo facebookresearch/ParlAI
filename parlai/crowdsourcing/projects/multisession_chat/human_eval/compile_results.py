@@ -69,6 +69,7 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
         self.completed_run_stats_path = opt['completed_run_stats_path']
 
     def compile_results(self) -> pd.DataFrame:
+        # TODO modularize the shared components to dedup the code 
         read_folders = []
         date_strings = []
         import ipdb
@@ -76,6 +77,7 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
         ipdb.set_trace()
         for folder in self.results_folders:
             # Load paths
+            # TODO load this data in using DataBrowser
             date_strings = sorted(
                 [
                     obj
