@@ -281,6 +281,7 @@ class TestRegret(unittest.TestCase):
         if regret_mf:
             opt['regret_model_file'] = regret_mf
             opt['regret_override_index'] = True  # to use debug index
+            opt.update(GENERATION_OPTS['transformer/generator'])
         opt['rag_model_type'] = 'token'
         opt['no_cuda'] = True
         testing_utils.eval_model(opt, skip_test=True)
