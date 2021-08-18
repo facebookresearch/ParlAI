@@ -36,6 +36,22 @@ def _path(opt):
     return os.path.join(dpath, f'{dtype}.json')
 
 
+def clean_text(text: str) -> str:
+    """
+    Removes extra spaces and new lines from the text.
+    """
+    return text.replace('\n', ' ').strip()
+
+
+def wrap_content(content: str, content_type: str) -> str:
+    """
+    Wraps content in tokens that shows its beginning and the end.
+    """
+    s = f'__{content_type}__'
+    e = f'__end-{content_type}__'
+    return f'{s} {content} {e}'
+
+
 def knowledge_graph_as_str(graph):
     if not graph:
         return consts.EMPTY_GRAPH_TOKEN
@@ -47,10 +63,15 @@ def knowledge_graph_as_str(graph):
 
 
 def extract_state_data(example_state: Dict) -> Dict:
+    def concat_vals(d):
+        return [" ".join(p) for p in d.values()]
+
     return {
+        'location_name': example_state['location']['name'],
         'observation': example_state['obs'],
-        'loc_desc': example_state['loc_desc'],
-        'surrounding_objs': example_state['surrounding_objs'],
+        'location_desc': example_state['loc_desc'],
+        'surrounding_objs': concat_vals(example_state['surrounding_objs']),
+        'inventory_objs': concat_vals(example_state['inv_objs']),
         'valid_acts': list(example_state['valid_acts'].values()),
         'graph': example_state['graph'],
     }
@@ -68,7 +89,7 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         opt['datafile'] = _path(opt)
         self.datatype = get_dtype(opt)
         self.id = 'JerichoWorldtBase'
-        self._incld_loc = opt['include_location']
+        self._incld_loc_name = opt['include_location']
         self._incld_loc_desc = opt['include_location_description']
         self.keep_next_state = True
         super().__init__(opt, shared=shared)
@@ -114,6 +135,26 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         Implement this method for the expected label of your example.
         """
 
+    def location_context(self, example_state: Dict) -> str:
+        """
+        Generates the context text for the location.
+        """
+        loc_context = []
+
+        if self._incld_loc_name:
+            loc_context.append(
+                wrap_content(example_state['location_name'], consts.LOCATION_NAME)
+            )
+
+        if self._incld_loc_desc:
+            loc_context.append(
+                wrap_content(
+                    clean_text(example_state['location_desc']),
+                    consts.LOCATION_DESCRIPTION,
+                )
+            )
+        return " ".join(loc_context)
+
     def setup_data(self, datafile: str):
         print(datafile)
         with open(datafile) as df:
@@ -134,7 +175,7 @@ class StateToKGTeacher(BaseJerichoWorldTeacher):
     """
 
     def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        return example['state']['loc_desc'].replace('\n', ' ').strip()
+        return self.location_context(example['state'])
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return knowledge_graph_as_str(example['state']['graph'])
@@ -146,7 +187,7 @@ class StateToActionTeacher(BaseJerichoWorldTeacher):
     """
 
     def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        return example['state']['loc_desc'].replace('\n', ' ').strip()
+        return self.location_context(example['state'])
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return example['action']
