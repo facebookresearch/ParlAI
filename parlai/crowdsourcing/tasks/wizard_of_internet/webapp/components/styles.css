@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+ #ui-container {
+    display: contents;
+}
+
+.side-pane {
+    width: 55%;
+}
+
+#info-bar {
+    display: flex;
+    flex-direction: row;
+}
+
+.info-pane {
+    width: 50%;
+    padding: 2%;
+}
+
+.instruction-pane {
+    background-color: rgb(250, 210, 230);
+}
+
+.persona-pane {
+    background-color: lightblue;
+}
+
+#search-area {
+    background-color: rgb(128, 202, 140);
+    padding: 1%;
+}
+
+#no-answer {
+    background-color: rgb(245, 129, 129);
+    border-radius: 5px;
+    margin: 2px;
+    margin-bottom: 1%;
+    padding: 2%;
+}
+
+#search-bar {
+    background-color: rgb(143, 245, 129);
+    border-radius: 5px;
+    margin: 2px;
+    margin-bottom: 1%;
+    padding: 2%;
+}
+
+.search-results {
+    background-color: rgb(103, 211, 89);
+    padding: 2px;
+    margin: 2px;
+    margin-bottom: 2%;
+    border-radius: 5px;
+}
+
+.doc-title {
+    background-color: rgb(166, 223, 74);
+    padding: 2px;
+    margin: 2px;
+    border-width: 0;
+    border-radius: 3px;
+}
+
+.doc-sentence {
+    background-color: rgb(101, 179, 124);
+    padding: 2px;
+    margin: 2px;
+    border-radius: 3px;
+}
+
+.doc-button {
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    text-align: left
+}
+
+.expand-details-button {
+    border-width: 0;
+    background-color: rgba(0, 0, 0, 0);
+    text-align: left
+}
+
+.blinking {
+    border: 5px;
+    border-style: solid;
+    border-radius: 20px;
+    border-color: rgba(0, 0, 0, 0);
+    animation-name: blink-animation;
+    animation-duration: 1s;
+    animation-delay: 1s;
+    animation-iteration-count: 10;
+    animation-direction: alternate;
+    animation-timing-function: ease-in-out;
+  }
+
+  .non-blinking {
+    border: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0);
+  }
+  
+  @keyframes blink-animation {
+    from {
+      border-color: rgba(200, 0, 0, 50);
+    }
+    to {
+      border-color: rgba(0, 0, 0, 0);
+    }
+  }
