@@ -62,7 +62,7 @@ class AbstractResultsCompiler(ABC):
             f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
         )
 
-    def unit_acceptable(self, unit_data: Dict[str, Any]) -> bool:
+    def is_unit_acceptable(self, unit_data: Dict[str, Any]) -> bool:
         """
         Helps filtering units that are compiled. Override for use.
 
@@ -210,7 +210,7 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         task_data = []
         for unit in task_units:
             unit_data = self.get_data_from_unit(unit)
-            if unit_data and self.unit_acceptable(unit_data):
+            if unit_data and self.is_unit_acceptable(unit_data):
                 task_data.append(unit_data)
 
         return task_data
