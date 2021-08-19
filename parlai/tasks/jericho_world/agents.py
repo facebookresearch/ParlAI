@@ -274,12 +274,10 @@ class StateToKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
         if model_response.is_padding() or (not model_response.get('text', None)):
             return
 
-        expected_graph = set([mut.strip() for mut in labels[0].split('\n')])
-        predicted_graph = set(
-            [mut.strip() for mut in model_response['text'].split('\n')]
-        )
+        expected_graph = break_knowledge_graph(labels[0])
+        predicted_graph = break_knowledge_graph(model_response['text'])
 
-        # Encoding the graph mutation operations into ints for readily use of F1Metric
+        # Encoding the graph edges/mutation operations into ints for readily use of F1Metric
         expected_graph_enc = []
         predicted_graph_enc = []
         for mut_id, mut_op in enumerate(expected_graph.union(predicted_graph)):
@@ -293,7 +291,7 @@ class StateToKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
             'graph_mutation_f1',
             F1Metric.compute(
                 guess=' '.join(predicted_graph_enc),
-                answers=[' '.join(predicted_graph_enc)],
+                answers=[' '.join(expected_graph_enc)],
             ),
         )
 
