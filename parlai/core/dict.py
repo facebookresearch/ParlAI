@@ -786,8 +786,11 @@ class DictionaryAgent(Agent):
             ]
             tokens = [self[int(idx)] for idx in vector]
             text = self.bpe.decode(tokens, vector, delimiter)
+        elif self.tokenizer == 'char':
+            # character models handle delimiter internally
+            text = ''.join(tokens)
         else:
-            text = delimiter.join(self[int(idx)] for idx in vector)
+            text = delimiter.join(tokens)
 
         return text
 

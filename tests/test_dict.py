@@ -452,6 +452,27 @@ class TestBuildDict(unittest.TestCase):
         self._run_test({'dict_tokenizer': 'char'})
 
 
+class TestDictReversibility(unittest.TestCase):
+    def _run_test(self, opt):
+        with testing_utils.tempdir() as tmpdir:
+            # build dict
+            dict_file = os.path.join(tmpdir, "dict")
+            pp = build_dict.setup_args()
+            pp.set_defaults(**opt)
+            pp.set_defaults(task='babi')
+            popt = pp.parse_args([])
+            popt['dict_file'] = dict_file
+            build_dict.build_dict(popt)
+            # load dict
+            dict_agent = DictionaryAgent(popt)
+            # tokenize back and forth
+            string = "Daniel went back to the office."
+            assert dict_agent.vec2txt(dict_agent.txt2vec(string)) == string
+
+    def test_reverse_char(self):
+        self._run_test({'dict_tokenizer': 'char'})
+
+
 class TestGpt2HFInterop(unittest.TestCase):
     """
     Test for SlowBytelevelBPE.
