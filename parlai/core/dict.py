@@ -561,6 +561,12 @@ class DictionaryAgent(Agent):
         """
         return self.bpe.encode(text)
 
+    def char_tokenize(self, text):
+        """
+        Tokenize text as a literal list of characters.
+        """
+        return list(text)
+
     def add_to_dict(self, tokens):
         """
         Build dictionary from the list of provided tokens.
