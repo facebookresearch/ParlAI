@@ -64,7 +64,8 @@ class RagModel(TorchGeneratorModel):
             dictionary, opt['embedding_size'], self.pad_idx
         )
         # attrs
-        self.rag_model_interface = RAG_MODELS[opt['rag_model_type']](opt, self.pad_idx)
+        self.rag_model_type = opt['rag_model_type']
+        self.rag_model_interface = RAG_MODELS[self.rag_model_type](opt, self.pad_idx)
         self.generation_model = opt['generation_model']
         self.n_extra_positions = opt['n_extra_positions']
         self.n_positions = get_n_positions_from_options(opt) + opt['n_extra_positions']
