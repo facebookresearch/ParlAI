@@ -215,11 +215,8 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 regret_opt['path_to_index'] = self.opt['path_to_index']
                 regret_opt['path_to_dpr_passages'] = self.opt['path_to_dpr_passages']
 
-            model = RagModel(
-                regret_opt,
-                self.dictionary_class()(regret_opt),
-                retriever_shared=retriever_shared,
-            )
+            regret_dict = self.dictionary_class()(regret_opt)
+            model = RagModel(regret_opt, regret_dict, retriever_shared=retriever_shared)
             with PathManager.open(model_file, 'rb') as f:
                 states = torch.load(
                     f,
