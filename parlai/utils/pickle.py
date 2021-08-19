@@ -8,7 +8,7 @@
 ParlAI's custom unpickler.
 
 As modules move around or are renamed, it old torch model files become invalid,
-since they look for modules in all the wrong places. Furthermore, we occassionally
+since they look for modules in all the wrong places. Furthermore, we occasionally
 use APEX for performance reasons, but we don't want to outright die if the user
 has not installed it.
 

@@ -285,7 +285,7 @@ class StarspaceAgent(Agent):
         """
         Set overridable opts from loaded opt file.
 
-        Print out each added key and each overriden key. Only override args specific to
+        Print out each added key and each overridden key. Only override args specific to
         the model.
         """
         model_args = {'embeddingsize', 'optimizer'}
@@ -432,7 +432,7 @@ class StarspaceAgent(Agent):
                     xe, ye = self.model(xs, ys, self.fixedCands)
                     self.fixedX = ye
                 else:
-                    # fixed candidate embed vectors are cached, dont't recompute
+                    # fixed candidate embed vectors are cached, don't recompute
                     blah = torch.LongTensor([1])
                     xe, ye = self.model(xs, ys, [blah])
                     ye = self.fixedX
@@ -440,7 +440,7 @@ class StarspaceAgent(Agent):
                 # test set prediction uses candidates
                 xe, ye = self.model(xs, ys, cands[0])
             pred = nn.CosineSimilarity().forward(xe, ye)
-            # This is somewhat costly which we could avoid if we do not evalute ranking.
+            # This is somewhat costly which we could avoid if we do not evaluate ranking.
             # i.e. by only doing: val,ind = pred.max(0)
             val, ind = pred.sort(descending=True)
             # predict the highest scoring candidate, and return it.

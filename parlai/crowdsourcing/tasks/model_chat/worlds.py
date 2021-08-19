@@ -225,6 +225,15 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
+                if (
+                    agent == self.bot
+                    and hasattr(self.bot, 'agent_id')
+                    and self.bot.agent_id
+                ):
+                    # Set speaker name as self.bot_agent_id otherwise, at frontend bot name such as "TransformerGenerator" would appear
+                    Compatibility.backward_compatible_force_set(
+                        acts[idx], 'id', self.bot.agent_id
+                    )
                 acts[idx] = Message(
                     Compatibility.maybe_fix_act(acts[idx])
                 ).json_safe_payload()
@@ -454,7 +463,7 @@ class ModelChatWorld(BaseModelChatWorld):
             # The bot seeing its persona does not count as a "turn"
             self.bot.observe(validate(message), increment_turn=False)
 
-        if self.opt['conversation_start_mode'] == 'bst':
+        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
             print('[Displaying first utterances as per BST task.]')
             # Display the previous two utterances
             human_first_msg = {
@@ -588,7 +597,7 @@ class ModelChatWorld(BaseModelChatWorld):
         utterances, so it shouldn't get checked.
         """
         human_messages, violation_types = super()._prepare_acceptability_checking()
-        if self.opt['conversation_start_mode'] == 'bst':
+        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
             violation_types.append('penalize_greetings')
             human_messages = human_messages[1:]
         return human_messages, violation_types

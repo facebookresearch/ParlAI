@@ -243,7 +243,7 @@ def eval_model(opt):
         dict(zip(tasks, reports)), micro_average=opt.get('aggregate_micro', False)
     )
 
-    # print announcments and report
+    # print announcements and report
     print_announcements(opt)
     logging.info(
         f'Finished evaluating tasks {tasks} using datatype {opt.get("datatype")}'

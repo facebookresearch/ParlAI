@@ -63,6 +63,13 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     def __init__(self, opt: Dict[str, Any]):
 
         super().__init__(opt)
+        # Validate problem buckets
+        if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
+            # The code relies on a catchall "none" category if the user selects no other
+            # annotation bucket
+            raise ValueError(
+                'There must be a "none_all_good" category in self.problem_buckets!'
+            )
 
         # Input args
         assert len(self.results_folders) > 0

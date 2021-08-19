@@ -289,7 +289,7 @@ class TestByteLevelBPE(unittest.TestCase):
             [agent.tok2ind[w] for w in BYTELEVEL_BPE_RESULT],
         )
         # Test special token ids are mapped correctly:
-        # 4 special tokens are added in ParlAI dict in the begining and at the
+        # 4 special tokens are added in ParlAI dict in the beginning and at the
         # end for Hugging Face null token would be 0 in ParlAI dict and
         # original_vocab in Hugging Face
         assert agent.txt2vec("__null__") == [0]

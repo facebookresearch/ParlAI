@@ -7,7 +7,7 @@
 ##########################################################################
 #
 #  Note:  this file is mostly copied from the utility functions provided
-#         with the the datatset itself. For more information check
+#         with the the dataset itself. For more information check
 #         the original repository, linked blow:
 #   https://github.com/google-research-datasets/natural-questions
 #
@@ -94,7 +94,7 @@ def simplify_nq_example(nq_example):
     r"""Returns dictionary with blank separated tokens in `document_text` field.
 
     Removes byte offsets from annotations, and removes `document_html` and
-    `document_tokens` fields. All annotations in the ouput are represented as
+    `document_tokens` fields. All annotations in the output are represented as
     [start_token, end_token) offsets into the blank separated tokens in the
     `document_text` field.
 

@@ -20,7 +20,7 @@ class CrowdDataWorld(World):
     def get_custom_task_data(self):
         """
         This function should take the contents of whatever was collected during this
-        task that should be saved and return it in some format, preferrably a dict
+        task that should be saved and return it in some format, preferably a dict
         containing acts.
 
         If you need some extraordinary data storage that this doesn't cover, you can

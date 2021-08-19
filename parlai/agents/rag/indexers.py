@@ -6,7 +6,7 @@
 """
 FAISS-based Indexers.
 
-Adapated from https://github.com/facebookresearch/DPR/blob/master/dpr/indexer/faiss_indexers.py
+Adapted from https://github.com/facebookresearch/DPR/blob/master/dpr/indexer/faiss_indexers.py
 """
 from parlai.core.build_data import modelzoo_path
 from parlai.core.opt import Opt

@@ -192,7 +192,7 @@ class EpisodeMutator(Mutator):
     @abc.abstractmethod
     def episode_mutation(self, episode: List[Message]) -> List[Message]:
         """
-        Abstract epsiode mutation.
+        Abstract episode mutation.
 
         The main method to implement when implementing an EpisodeMutator.
 
