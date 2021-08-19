@@ -130,7 +130,7 @@ Each `<train/val/test>.json` file is a list of all dialogues in that split. An e
 - `dialog`: the list of dialogue turns
 - `chosen_topic_passage`: a list of sentences from the wiki passage corresponding to the chosen topic
 
-The entries of `dialog` (may) have the following keys; some are ommitted for the apprentice:
+The entries of `dialog` (may) have the following keys; some are omitted for the apprentice:
 
 - `speaker`: either `"wizard"` or `"apprentice"`
 - `text`: what the speaker wrote
