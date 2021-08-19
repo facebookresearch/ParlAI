@@ -53,7 +53,7 @@ should be an `iterable` (e.g. a list, a tuple).
 ## eval_labels
 
 During validation and testing, the "labels" field is moved to "eval_labels" in
-order to help prevent accidentaly training on evaluation data.
+order to help prevent accidentally training on evaluation data.
 
 However, by providing this field, models can still compute model-side metrics
 such as perplexity.
@@ -85,7 +85,7 @@ to compute metrics like `hits@10` or `MRR`.
 ## episode_done
 
 The "episode_done" flag is used to mark the end of an episode.
-Conversations in ParlAI don't necesarily have more than one exchange, but
+Conversations in ParlAI don't necessarily have more than one exchange, but
 many datasets do.
 
 For example, the WikiMovies dataset only has one:

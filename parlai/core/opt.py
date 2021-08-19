@@ -23,7 +23,7 @@ from typing import List
 from parlai.utils.io import PathManager
 
 # these keys are automatically removed upon save. This is a rather blunt hammer.
-# It's preferred you indicate this at option definiton time.
+# It's preferred you indicate this at option definition time.
 __AUTOCLEAN_KEYS__: List[str] = [
     "override",
     "batchindex",
@@ -161,15 +161,23 @@ class Opt(dict):
         elif PathManager.exists(user_filename):
             # use a user's custom opt preset
             return cls.load(user_filename)
-        elif pkg_resources.resource_exists("parlai", oa_filename):
-            # Maybe a bundled opt preset
-            return cls.load(pkg_resources.resource_filename("parlai", oa_filename))
         else:
-            raise FileNotFoundError(
-                f"Could not find filename '{optfile} or opt preset '{optfile}.opt'. "
-                "Please check https://parl.ai/docs/opt_presets.html for a list "
-                "of available opt presets."
-            )
+            # Maybe a bundled opt preset
+            for root in ['parlai', 'parlai_internal', 'parlai_fb']:
+                try:
+                    if pkg_resources.resource_exists(root, oa_filename):
+                        return cls.load(
+                            pkg_resources.resource_filename(root, oa_filename)
+                        )
+                except ModuleNotFoundError:
+                    continue
+
+        # made it through without a return path so raise the error
+        raise FileNotFoundError(
+            f"Could not find filename '{optfile} or opt preset '{optfile}.opt'. "
+            "Please check https://parl.ai/docs/opt_presets.html for a list "
+            "of available opt presets."
+        )
 
     def log(self, header="Opt"):
         from parlai.core.params import print_git_commit

@@ -15,14 +15,16 @@ from parlai.utils.torch import PipelineHelper, total_parameters, trainable_param
 from parlai.core.torch_agent import TorchAgent, Output
 from parlai.utils.misc import round_sigfigs, warn_once
 from parlai.core.metrics import Metric, AverageMetric
-from typing import List, Optional, Tuple, Dict
+from typing import List, Optional, Tuple, Dict, Union
+from typing import Counter
 from parlai.utils.typing import TScalar
 from parlai.utils.io import PathManager
+from sklearn.metrics import auc
+
 import parlai.utils.logging as logging
-
-
-import torch
 import torch.nn.functional as F
+import torch
+import math
 
 
 class ConfusionMatrixMetric(Metric):
@@ -168,6 +170,158 @@ class ClassificationF1Metric(ConfusionMatrixMetric):
             return numer / denom
 
 
+class AUCMetrics(Metric):
+    """
+    Computes Area Under ROC Curve (AUC) metrics.
+
+    Does so by keeping track of positives' and negatives' probability score counts in
+    Counters or dictionaries. Note the introduction of `max_bucket_dec_places`; this
+    integer number determines the number of digits to save for the probability scores. A
+    higher `max_bucket_dec_places` will a more accurate estimate of the exact AUC
+    metric, but may also use more space.
+
+    NOTE: currently only used for classifiers in the `eval_model` script; to use,
+    add the argument `-auc <max_bucket_dec_places>` when calling `eval_model` script
+    """
+
+    @property
+    def macro_average(self) -> bool:
+        """
+        Indicates whether this metric should be macro-averaged when globally reported.
+        """
+        return False
+
+    @classmethod
+    def raw_data_to_auc(
+        cls,
+        true_labels: List[Union[int, str]],
+        pos_probs: List[float],
+        class_name,
+        max_bucket_dec_places: int = 3,
+    ):
+        auc_object = cls(class_name, max_bucket_dec_places=max_bucket_dec_places)
+        auc_object.update_raw(
+            true_labels=true_labels, pos_probs=pos_probs, class_name=class_name
+        )
+        return auc_object
+
+    def __init__(
+        self,
+        class_name: Union[int, str],
+        max_bucket_dec_places: int = 3,
+        pos_dict: Optional[Counter[float]] = None,
+        neg_dict: Optional[Counter[float]] = None,
+    ):
+        # `_pos_dict` keeps track of the probabilities of the positive class
+        self._pos_dict = pos_dict if pos_dict else Counter()
+        # `_neg_dict` keeps track of the probabilities of the negative class
+        self._neg_dict = neg_dict if neg_dict else Counter()
+        self._class_name = class_name
+        self._max_bucket_dec_places = max_bucket_dec_places
+
+    def update_raw(
+        self, true_labels: List[Union[int, str]], pos_probs: List[float], class_name
+    ):
+        """
+        given the true/golden labels and the probabilities of the positive class, we
+        will update our bucket dictionaries of positive and negatives (based on the
+        class_name); `max_bucket_dec_places` is also used here to round the
+        probabilities and possibly.
+        """
+        assert self._class_name == class_name
+        assert len(true_labels) == len(pos_probs)
+
+        TO_INT_FACTOR = 10 ** self._max_bucket_dec_places
+        # add the upper and lower bound of the values
+        for label, prob in zip(true_labels, pos_probs):
+            # calculate the upper and lower bound of the values
+            prob_down = math.floor(prob * TO_INT_FACTOR) / TO_INT_FACTOR
+            if label == self._class_name:
+                interested_dict = self._pos_dict
+            else:
+                interested_dict = self._neg_dict
+            if interested_dict.get(prob_down):
+                interested_dict[prob_down] += 1
+            else:
+                interested_dict[prob_down] = 1
+
+    def __add__(self, other: Optional['AUCMetrics']) -> 'AUCMetrics':
+        if other is None:
+            return self
+        assert isinstance(other, AUCMetrics)
+        assert other._class_name == self._class_name
+        all_pos_dict = self._pos_dict + other._pos_dict
+        all_neg_dict = self._neg_dict + other._neg_dict
+
+        return AUCMetrics(
+            self._class_name, pos_dict=all_pos_dict, neg_dict=all_neg_dict
+        )
+
+    def _calc_fp_tp(self) -> List[Tuple[int]]:
+        """
+        Calculates the False Positives and True positives; returned as a list of pairs:
+
+        `[(fp, tp)]`
+        """
+        all_thresholds = sorted(
+            set(list(self._pos_dict.keys()) + list(self._neg_dict.keys()))
+        )
+        # sorted in ascending order,
+        # so adding a upper bound so that its tp, fp is (0, 0)
+        all_thresholds.append(all_thresholds[-1] + 1)
+        L = len(all_thresholds)
+        # false positives, true positives
+        fp_tp = [(0, 0)]
+
+        # the biggest one is always (0,0), so skip that one
+        for i in range(L - 2, -1, -1):
+            fp, tp = fp_tp[-1]
+            thres = all_thresholds[i]
+            # false positives
+            fp += self._neg_dict.get(thres, 0)
+            # true positives
+            tp += self._pos_dict.get(thres, 0)
+            fp_tp.append((fp, tp))
+        return fp_tp
+
+    def _calc_fpr_tpr(self) -> Tuple[Union[List[int], int]]:
+        """
+        Calculates the false positive rates and true positive rates Also returns the
+        total number of positives and negatives; returned as a list of pairs and two
+        integers:
+
+        `([(fpr, tpr)], positives, negatives)`; note that if the total
+        negatives/positives is 0, then will return 0 for either fpr/tpr instead of
+        raising an error
+        """
+        _tot_pos = sum(self._pos_dict.values())
+        _tot_neg = sum(self._neg_dict.values())
+        fp_tp = self._calc_fp_tp()
+        fps, tps = list(zip(*fp_tp))
+        if _tot_neg == 0:
+            fpr = [0] * len(fps)
+        else:
+            fpr = [fp / _tot_neg for fp in fps]
+
+        if _tot_pos == 0:
+            tpr = [0] * len(tps)
+        else:
+            tpr = [tp / _tot_pos for tp in tps]
+
+        return (list(zip(fpr, tpr)), _tot_pos, _tot_neg)
+
+    def value(self) -> float:
+        fpr_tpr, _tot_pos, _tot_neg = self._calc_fpr_tpr()
+
+        if _tot_pos == 0 and _tot_neg == 0:
+            return 0
+
+        # auc needs x-axis to be sorted
+        fpr_tpr.sort()
+        fpr, tpr = list(zip(*fpr_tpr))
+        return auc(fpr, tpr)
+
+
 class WeightedF1Metric(Metric):
     """
     Class that represents the weighted f1 from ClassificationF1Metric.
@@ -199,11 +353,8 @@ class WeightedF1Metric(Metric):
         values = list(self._values.values())
         if len(values) == 0:
             return weighted_f1
-        total_examples = (
-            values[0]._true_positives
-            + values[0]._true_negatives
-            + values[0]._false_positives
-            + values[0]._false_negatives
+        total_examples = sum(
+            [each._true_positives + each._false_negatives for each in values]
         )
         for each in values:
             actual_positive = each._true_positives + each._false_negatives
@@ -344,6 +495,26 @@ class TorchClassifierAgent(TorchAgent):
         else:
             self.threshold = None
 
+        # set up calculating auc
+        self.calc_auc = opt.get('area_under_curve_digits', -1) > 0
+
+        if self.calc_auc:
+            self.auc_bucket_decimal_size = opt.get('area_under_curve_digits')
+            if opt.get('area_under_curve_class') is None:
+                # self.auc_class_ind
+                interested_classes = self.class_list
+            else:
+                interested_classes = opt.get('area_under_curve_class')
+            try:
+                self.auc_class_indices = [
+                    self.class_dict[class_name] for class_name in interested_classes
+                ]
+            except Exception:
+                raise RuntimeError(
+                    f'The inputted classes for auc were probably invalid.\n Current class names: {self.class_list} \n Names of AUC classes passed in: {interested_classes}'
+                )
+            self.reset_auc()
+
         # set up model and optimizers
         states = {}
         if shared:
@@ -462,6 +633,12 @@ class TorchClassifierAgent(TorchAgent):
             )
         return preds
 
+    def _update_aucs(self, batch, probs):
+        probs_arr = probs.detach().cpu().numpy()
+        for index, curr_auc in zip(self.auc_class_indices, self.aucs):
+            class_probs = probs_arr[:, index]
+            curr_auc.update_raw(batch.labels, class_probs, self.class_list[index])
+
     def train_step(self, batch):
         """
         Train on a single batch of examples.
@@ -497,6 +674,10 @@ class TorchClassifierAgent(TorchAgent):
         self.model.eval()
         scores = self.score(batch)
         probs = F.softmax(scores, dim=1)
+
+        if self.calc_auc:
+            self._update_aucs(batch, probs)
+
         if self.threshold is None:
             _, prediction_id = torch.max(probs.cpu(), 1)
         else:
@@ -531,3 +712,13 @@ class TorchClassifierAgent(TorchAgent):
             class.
         """
         raise NotImplementedError('Abstract class: user must implement score()')
+
+    def reset_auc(self):
+        if self.calc_auc:
+            self.aucs = [
+                AUCMetrics(
+                    class_name=self.class_list[index],
+                    max_bucket_dec_places=self.auc_bucket_decimal_size,
+                )
+                for index in self.auc_class_indices
+            ]

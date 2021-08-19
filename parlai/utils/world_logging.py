@@ -97,6 +97,14 @@ class WorldLogger:
         """
         self._logs.append(episode)
 
+    def _check_episode_done(self, parley) -> bool:
+        """
+        Check whether an episode is done for a given parley.
+        """
+        if parley[0]:
+            return parley[0].get('episode_done', False)
+        return False
+
     def _is_batch_world(self, world):
         return (
             isinstance(world, BatchWorld) or isinstance(world, DynamicBatchWorld)
@@ -111,7 +119,7 @@ class WorldLogger:
             # in the buffer
             idx = parley[0]['dyn_batch_idx'] if 'dyn_batch_idx' in parley[0] else i
             self._add_msgs(parley, idx=idx)
-            if world.worlds[idx].episode_done():
+            if self._check_episode_done(parley):
                 self.reset_world(idx=idx)
 
     def log(self, world):

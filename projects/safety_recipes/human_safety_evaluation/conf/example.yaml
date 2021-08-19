@@ -2,6 +2,7 @@
 mephisto:
   blueprint:
     subtasks_per_unit: 3
+    response_field: False
     task_source: ${base_task_dir}/webapp/build/bundle.js
     extra_source_dir: ${base_task_dir}/webapp/src/static
     units_per_assignment: 1

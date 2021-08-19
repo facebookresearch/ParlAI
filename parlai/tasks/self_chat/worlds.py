@@ -15,7 +15,11 @@ from parlai.core.message import Message
 
 
 def load_openers(opt) -> Optional[List[str]]:
-    base_task = opt['task'].split(':')[0]
+    if opt['task'].startswith('internal:') or opt['task'].startswith('fb:'):
+        base_task = opt['task']
+    else:
+        base_task = opt['task'].split(':')[0]
+
     if base_task == 'self_chat':
         # TODO(#2284): Load default openers from s3
         return None
@@ -36,18 +40,21 @@ def load_openers(opt) -> Optional[List[str]]:
     task_world = create_task(task_opt, task_agent)
 
     # run through task data, collecting all first messages
-    openers = set()
+    openers = []
     is_first_turn = True
     while not task_world.epoch_done():
         task_world.parley()
         msg = task_world.get_acts()[0]
         # add only the first message in the episode
         if is_first_turn and msg.get('text'):
-            openers.add(msg['text'])
+            openers.append(msg['text'])
         is_first_turn = msg.get('episode_done', False)
 
+    # remove duplicates while preserving the ordering of the loaded openers
+    openers = list(dict.fromkeys(openers))
+
     print(f'[ loaded {len(openers)} openers ]')
-    return list(openers)
+    return openers
 
 
 def load_openers_from_file(filepath: str) -> List[str]:

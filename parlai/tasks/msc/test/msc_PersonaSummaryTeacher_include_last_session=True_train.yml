@@ -1,0 +1,168 @@
+acts:
+- - episode_done: true
+    id: msc_personasummary_1
+    init_personas:
+    - - I learned piano at age 6.
+      - I am trying to play in a local band.
+      - I'm a fan of system of a down.
+      - I am a vegan.
+    - - I drive a yellow convertible in the rain.
+      - I work as a lifeguard at a beach.
+      - I m a breath of fresh air.
+      - I listen to katie perry while in the shower.
+    initial_data_id: train:ordered_3053
+    labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    session_id: 1
+    speaker_idx: 2
+    text: 'Hi I''m playing my piano. What kind of music do you like?
+
+      I like hip hop my favorite is katie perry specially in the shower lol
+
+      I learned to play when I was 6. Now I am trying to get in a local band.
+
+      Cars has been my thing so I got me a yellow convertible
+
+      I like system of a down. Katie isn''t hip hop. Nobody likes her short hair.
+
+      Well what would you consider her music? And you are right'
+    utt_idx: 5
+- - episode_done: true
+    id: msc_personasummary_2
+    init_personas:
+    - - I'm a waitress at a popular houston club.
+      - I'm hoping to move to australia soon to marry my boyfriend.
+      - I like jogging in my spare time.
+      - I also give blood monthly in honor of my sister who died.
+    - - I'm a free spirit.
+      - I'm all about family and fun.
+      - The idea of working isn't my cup of tea.
+      - My parents were like this as well.
+      - I like to live off of the land.
+    initial_data_id: train:ordered_7392
+    labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    session_id: 2
+    speaker_idx: 2
+    text: 'Have you harvested anything recently?
+
+      I harvested some turnips last night with my brother. We had a big crop this
+      year!
+
+      Nice! Do you sell them you use them for yourself? Do you have another source
+      of income?
+
+      Sometimes we sell them at the local farmer''s market, but we mostly keep them
+      for our own use. I work for my father''s landscaping company. What do you do
+      for a living?
+
+      I''m a bartender with my boyfriend Jeff. It can be tiring but i get days off
+      to spend time with my family.]
+
+      What does your family think about Jeff?'
+    utt_idx: 5
+- - episode_done: true
+    id: msc_personasummary_3
+    init_personas:
+    - - I don't like my job.
+      - My favorite color is blue.
+      - I'm an athlete.
+      - I visit india often.
+      - I want to be an explorer.
+    - - My favorite season is winter.
+      - I take vitamin c when I have a cold.
+      - I don't eat bread.
+      - I'm disabled and cannot walk.
+      - My friend once bought me a car.
+    initial_data_id: train:ordered_1717
+    labels:
+    - I play tennis and do some strength training with a kettlebell.
+    session_id: 3
+    speaker_idx: 2
+    text: 'I just got back from the gym, feeling good but very exhausted right now.
+
+      A good work out is always a good thing. Do you go to the gym often?
+
+      Yes, mostly every day. And what about you? What is your favourite sport or work
+      out?
+
+      I love tennis as it is a good workout for my arms. I also do some strength training
+      with kettlebell. '
+    utt_idx: 3
+- - episode_done: true
+    id: msc_personasummary_1
+    init_personas:
+    - - I am trying to build my online business.
+      - I also meditate a lot.
+      - I have a marketing job.
+      - I'm a vegan.
+    - - I like to work on cars.
+      - I like to try different beers from various countries.
+      - I work in marketing for a large company.
+      - My favorite music genre is classic rock.
+    initial_data_id: train:ordered_6568
+    labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    session_id: 1
+    speaker_idx: 2
+    text: 'Hi let us get to know each other
+
+      Yes I concur let us do so. You work?
+
+      I''m working on a new business right now
+
+      Oh that''s exciting what does it do?
+
+      I am selling vegan subscription boxes
+
+      I am in marketing with a big firm maybe we can help you with that
+
+      That would be great. My day job is in marketing
+
+      So before we collaborate I must know do you like music?
+
+      I like peaceful music. For meditating
+
+      I''m into classic rock so I think we could work together.
+
+      Absolutely! I''m thinking of doing a lot of advertising online
+
+      Yeah that''s the way to go but how will you target people?'
+    utt_idx: 11
+- - episode_done: true
+    id: msc_personasummary_2
+    init_personas:
+    - - I play the bass.
+      - I've a large cd collection.
+      - I collect stamps.
+      - I like vintage furniture.
+    - - My father is from india.
+      - My mother is from greece.
+      - I love cooking!.
+      - I like to swim when the weather is hot.
+    initial_data_id: train:ordered_2115
+    labels:
+    - I enjoy Greek food. I enjoyed visiting Cambodia. I went to Cambodia last year.
+    session_id: 2
+    speaker_idx: 1
+    text: 'I am planning a trip for this year, and I have never been to India before.
+
+      Are you thinking about going to India this year then?
+
+      Yes. Since your mother is from India, maybe you could invite her to dinner so
+      I can pick her brain about their culture.
+
+      That''s a lovely idea. Is there a time next week that would be good for you
+      to come over?
+
+      Any day next week works for me. Thank you for arranging this! I can not wait
+      to meet her! Will your dad be there, too?
+
+      I''ll have to check with them and get back to you about that haha. Where did
+      you go last year?
+
+      I went to Cambodia last year. It was amazing! It would be awesome if your dad
+      could make us some Greek food next week. I love Greek food!'
+    utt_idx: 6
+num_episodes: 133290
+num_examples: 133290

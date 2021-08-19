@@ -205,7 +205,7 @@ We continue with the implementation of parley:
             # produce a model response
             model_act = self.model_copies[i].act()
             # compute any metrics of the response
-            self.teacher_copies[i].observe(model_act)   
+            self.teacher_copies[i].observe(model_act)
 ```
 
 <center>
@@ -261,6 +261,18 @@ operations. The new logic can be encapsulated in this graph:
 Tip: if you implement `batch_act()`, your `act()` method can just call
 `batch_act()` and pass the observation it is supposed to process in a
 list of length 1.
+:::
+
+:::{tip} Agent Convenience Functions
+Tip: Having implemented `batch_act()` and `act()`, you can make use of the agent convenience functions `batch_respond()` and `respond()` which provide the agent's response to messages by internally calling `batch_act()` and `act()` respectively. The function signatures are as follows:
+
+```python
+def respond(self, text_or_message: Union[str, Message], **other_message_fields) -> str:
+    pass
+
+def batch_respond(self, messages: List[Message]) -> List[str]:
+    pass
+```
 :::
 
 ## Dynamic Batching
@@ -372,4 +384,3 @@ from 4 to only 2! This is the trick of how dynamic batching can provide
 :::{tip}
 You can use this mode with `-dynb full` or `--dynamic-batching full`.
 :::
-

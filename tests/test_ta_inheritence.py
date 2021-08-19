@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Inheritence around add_cmdline_args can be tricky.
+Inheritance around add_cmdline_args can be tricky.
 
 This serves as an example, and verifies inheritence is behaving correctly.
 """

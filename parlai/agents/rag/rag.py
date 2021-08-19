@@ -19,6 +19,7 @@ import torch.cuda
 from typing import Any, Dict, List, Optional, Tuple, Union, Type
 
 from parlai.agents.bart.bart import BartAgent
+import parlai.agents.hugging_face.hugging_face  # noqa: F401
 from parlai.agents.hugging_face.t5 import T5Agent
 from parlai.agents.transformer.polyencoder import PolyencoderAgent
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
@@ -28,11 +29,12 @@ from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import History, Batch
+from parlai.core.torch_agent import History, Batch, Output
 from parlai.core.torch_generator_agent import PPLMetric, TorchGeneratorAgent, TreeSearch
 from parlai.utils.distributed import sync_parameters
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
+from parlai.utils.misc import recursive_getattr
 import parlai.utils.pickle
 from parlai.utils.torch import total_parameters, trainable_parameters, PipelineHelper
 from parlai.utils.typing import TShared
@@ -277,6 +279,15 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             self._set_input_turn_cnt_vec(observation)
         return observation
 
+    def eval_step(self, batch: Batch) -> Optional[Output]:
+        output = super().eval_step(batch)
+        if output is None or not hasattr(self.model, 'retriever'):
+            return output
+        assert isinstance(self.model, RagModel)
+        if hasattr(self.model.retriever, 'top_docs'):
+            output.top_docs = self.model.retriever.top_docs  # type: ignore
+        return output
+
     ###### 1. Model Inputs ######
 
     def _model_input(
@@ -328,19 +339,6 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         return self._model_input(batch)
 
     ##### 2. Standard TGA Function Overrides #####
-    def _dummy_batch(self, batchsize: int, maxlen: int) -> Batch:
-        """
-        Add query/input turn vecs.
-        """
-        batch = self._generation_agent._dummy_batch(self, batchsize, maxlen)
-        batch.query_vec = batch.text_vec.clone()
-        batch.input_turn_cnt_vec = (
-            None
-            if self.rag_model_type != 'turn'
-            else torch.ones(batch.query_vec.size(0)).to(batch.query_vec)
-        )
-        return batch
-
     def build_model(self) -> RagModel:
         """
         Build and return RagModel.
@@ -351,6 +349,36 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+    def _resize_token_embeddings(self, state_dict, msg=None):
+        """
+        Resize the token embeddings when are adding extra special tokens.
+
+        Modify TGA._resize_token_embeddings to access correct modules within RAG.
+        """
+        # map extra special tokens carefully
+        new_size = self.model.embeddings.weight.size()[0]
+        orig_size = state_dict['embeddings.weight'].size()[0]
+        logging.info(f'Resizing token embeddings from {orig_size} to {new_size}')
+        if new_size <= orig_size:
+            # new size should be greater than original size,
+            # as we are adding special tokens
+            raise RuntimeError(msg)
+
+        for emb_weights in [
+            'embeddings.weight',
+            'seq2seq_encoder.embeddings.weight',
+            'seq2seq_decoder.embeddings.weight',
+        ]:
+            # get new_embs
+            old_embs = state_dict[emb_weights]
+            new_embs = recursive_getattr(self.model, emb_weights).to(old_embs.device)
+            # copy over old weights
+            new_embs.data[:orig_size, :] = old_embs.data[:orig_size, :]
+            # reset in state dict
+            state_dict[emb_weights] = new_embs
+
+        return state_dict
 
     def build_dictionary(self) -> DictionaryAgent:
         """
@@ -394,24 +422,25 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             init_weight = (
                 model.seq2seq_encoder.position_embeddings.weight  # type: ignore
             )
-            state_dict[key] = torch.cat(
-                [
-                    state_dict[key].to(init_weight),  # type: ignore
-                    init_weight[-opt['n_extra_positions'] :, :],  # type: ignore
-                ],
-                dim=0,
-            )
+            if state_dict[key].size(0) < opt['n_positions'] + opt['n_extra_positions']:
+                # Make sure we're not adding more positions to a model trained
+                # with extra positions
+                state_dict[key] = torch.cat(
+                    [
+                        state_dict[key].to(init_weight),  # type: ignore
+                        init_weight[-opt['n_extra_positions'] :, :],  # type: ignore
+                    ],
+                    dim=0,
+                )
         return state_dict
 
     def _should_override_dpr_model_weights(self, opt: Opt):
         """
         Determine if we need to override the DPR Model weights.
 
-        Under certain circumstances, one may wish to specify a different
-        `--dpr-model-file` for a pre-trained, RAG model. Thus, we additionally
-        check to make sure that the loaded DPR model weights are not overwritten
-        by the state loading.
-
+        Under certain circumstances, one may wish to specify a different `--dpr-model-
+        file` for a pre-trained, RAG model. Thus, we additionally check to make sure
+        that the loaded DPR model weights are not overwritten by the state loading.
         """
         override_dpr = False
         overrides = opt.get('override', {})
@@ -438,10 +467,24 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                         for k, v in self.model.retriever.state_dict().items()  # type: ignore
                     }
                 )
-            super().load_state_dict(state_dict)
-        except RuntimeError:
+            self.model.load_state_dict(state_dict)
+        except RuntimeError as msg:
             state_dict = self.update_state_dict(self.opt, state_dict, self.model)
-            super().load_state_dict(state_dict)
+            msg_ = str(msg)
+            if 'size mismatch' in msg_ and 'embedding' in msg_:
+                if hasattr(self, 'special_toks') and len(self.special_toks) > 0:
+                    state_dict = self._resize_token_embeddings(state_dict, msg_)
+                    self.resized_embeddings = True  # make note that we resized here
+                else:
+                    raise RuntimeError(
+                        f'{msg_}\n'
+                        '-----------------\n'
+                        'Could not load the model due to a size mismatch in the '
+                        'embeddings. A common reason for this is trying to load '
+                        'a model trained with fp16 but loaded without fp16. Try '
+                        'adding --fp16 true or --force-fp16-tokens true.'
+                    )
+            self.model.load_state_dict(state_dict)
 
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
@@ -524,7 +567,10 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             return observation with query vec.
         """
         query_str = observation[self._query_key]
-        observation['query_vec'] = self.model.tokenize_query(query_str)
+        if hasattr(self.model, 'module'):
+            observation['query_vec'] = self.model.module.tokenize_query(query_str)
+        else:
+            observation['query_vec'] = self.model.tokenize_query(query_str)
         return observation
 
     def _set_input_turn_cnt_vec(self, observation: Message) -> Message:
@@ -627,7 +673,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
     ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
         """
-        Optionall rerank beams, according to RAG Model type.
+        Optional rerank beams, according to RAG Model type.
 
         :param batch:
             current batch

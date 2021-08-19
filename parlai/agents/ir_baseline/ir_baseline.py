@@ -16,7 +16,7 @@ Given an input message, either:
 
 Currently only (iii) is used.
 
-Additonally, TFIDF is either used (requires building a dictionary) or not,
+Additionally, TFIDF is either used (requires building a dictionary) or not,
 depending on whether you train on the train set first, or not.
 """
 

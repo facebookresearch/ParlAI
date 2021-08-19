@@ -8,6 +8,7 @@ from parlai.utils.io import PathManager
 import pytest
 import unittest
 import parlai.utils.testing as testing_utils
+from parlai.scripts.eval_model import get_task_world_logs
 
 
 class TestEvalModel(unittest.TestCase):
@@ -226,6 +227,34 @@ class TestEvalModel(unittest.TestCase):
             with PathManager.open(log_report) as f:
                 json_lines = f.readlines()
             assert len(json_lines) == 100
+
+    def test_save_multiple_logs(self):
+        """
+        Test that we can save multiple world_logs from eval model on multiple tasks.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            log_report = os.path.join(tmpdir, 'world_logs.jsonl')
+            save_report = os.path.join(tmpdir, 'report')
+            multitask = 'integration_tests,blended_skill_talk'
+            opt = dict(
+                task=multitask,
+                model='repeat_label',
+                datatype='valid',
+                batchsize=97,
+                num_examples=100,
+                display_examples=False,
+                world_logs=log_report,
+                report_filename=save_report,
+            )
+            valid, test = testing_utils.eval_model(opt)
+
+            for task in multitask.split(','):
+                task_log_report = get_task_world_logs(
+                    task, log_report, is_multitask=True
+                )
+                with PathManager.open(task_log_report) as f:
+                    json_lines = f.readlines()
+                assert len(json_lines) == 100
 
 
 if __name__ == '__main__':

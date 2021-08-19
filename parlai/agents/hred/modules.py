@@ -293,7 +293,7 @@ class HredDecoder(nn.Module):
         seqlen = xs.size(1)
         xes = self.dropout(self.lt(xs))
 
-        # concatentate context lstm hidden state
+        # concatenate context lstm hidden state
         context_hidden_final_layer = context_hidden[:, -1, :].unsqueeze(1)
         resized_context_h = context_hidden_final_layer.expand(-1, seqlen, -1)
         xes = torch.cat((xes, resized_context_h), dim=-1).to(xes.device)

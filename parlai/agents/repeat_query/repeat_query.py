@@ -31,3 +31,12 @@ class RepeatQueryAgent(Agent):
             reply['text'] = 'Nothing to repeat yet.'
         reply['episode_done'] = False
         return Message(reply)
+
+    def batch_act(self, observations):
+        batch_reply = []
+        original_obs = self.observation
+        for obs in observations:
+            self.observation = obs
+            batch_reply.append(self.act())
+        self.observation = original_obs
+        return batch_reply

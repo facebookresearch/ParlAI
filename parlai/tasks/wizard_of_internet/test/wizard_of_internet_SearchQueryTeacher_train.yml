@@ -1,0 +1,66 @@
+acts:
+- - episode_done: true
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    labels:
+    - Chopped
+    text: 'My favorite tv show is Chopped.
+
+      They play along with the show
+
+      I just watched chopped for 3 hours straight. The baskets were hard in some of
+      them.'
+- - episode_done: true
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    labels:
+    - Chopped
+    text: "My favorite tv show is Chopped.\nThey play along with the show\nI just\
+      \ watched chopped for 3 hours straight. The baskets were hard in some of them.\n\
+      \ Baskets? I don't know anything about this show. Is it something about cooking?\n\
+      Yes it is. Chefs have a basket with 4 mystery ingredients. They compete to make\
+      \ the best meal from the ingredients. "
+- - episode_done: true
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    labels:
+    - types of cuisine
+    text: "My favorite tv show is Chopped.\nThey play along with the show\nI just\
+      \ watched chopped for 3 hours straight. The baskets were hard in some of them.\n\
+      \ Baskets? I don't know anything about this show. Is it something about cooking?\n\
+      Yes it is. Chefs have a basket with 4 mystery ingredients. They compete to make\
+      \ the best meal from the ingredients. \nIt sounds like quite a challenge! Do\
+      \ you watch every episode? Have you tried to make the dishes yourself?\nYes,\
+      \ I agree. Some of the ingredients I've never heard of. I try to watch as many\
+      \ as I can, but not all. I only imagine what I would make. I have never tried\
+      \ by myself. "
+- - episode_done: true
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    labels:
+    - foodie
+    text: "My favorite tv show is Chopped.\nThey play along with the show\nI just\
+      \ watched chopped for 3 hours straight. The baskets were hard in some of them.\n\
+      \ Baskets? I don't know anything about this show. Is it something about cooking?\n\
+      Yes it is. Chefs have a basket with 4 mystery ingredients. They compete to make\
+      \ the best meal from the ingredients. \nIt sounds like quite a challenge! Do\
+      \ you watch every episode? Have you tried to make the dishes yourself?\nYes,\
+      \ I agree. Some of the ingredients I've never heard of. I try to watch as many\
+      \ as I can, but not all. I only imagine what I would make. I have never tried\
+      \ by myself. \nI think it would be a big challenge to do what Chefs on the program\
+      \ do. Is there a type of cuisine that they normally feature? Or it it cuisine\
+      \ from around the world? \nYes, i forgot to mention there is also only a 20\
+      \ or thirty minute time limit, depending on the round. The cuisine is from around\
+      \ the world. Fine dining to street style. "
+- - episode_done: true
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    labels:
+    - Tom Hanks movies
+    text: 'My favorite actor is Tom Hanks.
+
+      It''s absolutely incredible how many hit movies Tom Hanks has put out
+
+      What is your favorite Tom Hanks movie of them all?'
+num_episodes: 8614
+num_examples: 41476

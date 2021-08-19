@@ -10,6 +10,8 @@ End-to-end testing for the chat demo crowdsourcing task.
 import os
 import unittest
 
+import parlai.utils.testing as testing_utils
+
 
 # Desired inputs/outputs
 EXPECTED_STATE_AGENT_0 = {
@@ -372,6 +374,7 @@ try:
         def tearDown(self) -> None:
             self._teardown()
 
+        @testing_utils.retry(ntries=3)
         def test_base_task(self):
 
             # # Setup

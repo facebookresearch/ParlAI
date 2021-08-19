@@ -98,7 +98,7 @@ The default RAG parameters use the `zoo:hallucination/wiki_passages/psgs_w100.ts
 
 ### 1a. [**Recommended**] Obtain/Choose a (Pre-trained) DPR Model
 
-The RAG model works **really well** with DPR models as the backbone retrievers; check out the [DPR repository](https://github.com/facebookresearch/DPR) for some pre-trained DPR models (or, train your own!).
+The RAG model works **really well** with DPR models as the backbone retrievers; check out the [DPR repository](https://github.com/facebookresearch/DPR) for some pre-trained DPR models (or, train your own!). Alternatively, you can specify a RAG or FiD model with DPR weights (perhaps, e.g., one from the ParlAI model zoo, such as `zoo:hallucination/bart_rag_token/model`).
 
 ### 1b. Train your own Dropout Poly-encoder
 
@@ -115,12 +115,12 @@ Check `/path/to/ParlAI/data/models/hallucination/wiki_passages/psgs_w100.tsv` fo
 Then, you can use the [`generate_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/generate_dense_embeddings.py) script to run the following command:
 
 ```bash
-python generate_dense_embeddings.py -mf /path/to/dpr/model --dpr-model True \
+python generate_dense_embeddings.py --model-file /path/to/dpr/model --dpr-model True \
 --passages-file /path/to/passages --outfile /path/to/saved/embeddings \
 --shard-id <shard_id> --num-shards <num_shards> -bs <batchsize>
 ```
 
-The `--dpr-model True` flag signifies that the model file you are providing is a DPR model; if you use a Dropout Poly-encoder, set this to `False`. The script will generate embeddings with the DPR model for shard `<shard_id>` of the data, and save two files:
+If the provided `--model-file` is either a path to a DPR model or a path to a ParlAI RAG/FiD model, specify `--dpr-model True` so that the script can appropriately extract the DPR weights; if you use a Dropout Poly-encoder, set `--dpr-model` to `False`. The script will generate embeddings with the DPR model for shard `<shard_id>` of the data, and save two files:
 
 - `/path/to/saved/embeddings_<shard_id>`: The concatenated tensor of embeddings
 - `/path/to/saved/ids_<shard_id>`: The list of document ids that corresponds to these embeddings.
@@ -133,12 +133,14 @@ python generate_dense_embeddings.py -mf zoo:hallucination/multiset_dpr/hf_bert_b
 --outfile /tmp/wiki_passage_embeddings/wiki_passages --num-shards 50 --shard-id 0 -bs 32
 ```
 
+**`--num-shards`**: If your dataset is relatively small, you can feel free to only generate with only one shard.
+
 ### 3. Index the Dense Embeddings
 
 The final step is to build the full FAISS index from these dense embeddings. You can use the [`index_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/index_dense_embeddings.py) script to achieve this. You can choose one of the following options when indexing your embeddings for varying results, depending on the size of your dataset:
 
-1. **Recommended** `--indexer-type compressed`: This will build a compressed index using FAISS compression techniques; this usually only takes a couple hours, and results in small index files, but comes at the cost of accuracy.
-2. `--indexer-type exact`: This will build a large HNSW-style index with the flat embeddings. The index that is built is generally as large, if not more so, than the sum of the sizes of the embeddings. Use with caution.
+1. **Recommended for large passage sets** `--indexer-type compressed`: This will build a compressed index using FAISS compression techniques; this usually only takes a couple hours, and results in small index files, but comes at the cost of accuracy. Only use this if your machine would struggle to fit all of your dense embedding vectors in memory.
+2. **Recommended for small passage sets** `--indexer-type exact`: This will build a large HNSW-style index with the flat embeddings. The index that is built is generally as large, if not more so, than the sum of the sizes of the embeddings. Use with caution with large passage sets; however, if you can reasonably fit all of your dense embedding vectors in memory, this is a suitable option.
 3. `--indexer-type compressed --compressed-indexer-factory <index_factory>`: If you know what you're doing (and understand how to use the [index factory in FAISS](https://github.com/facebookresearch/faiss/wiki/The-index-factory)), feel free to specify your own Index Factory settings. This method is only recommended if you're an advanced FAISS user.
 
 If we saved our embedding shards at `/path/to/saved/embeddings_0`, the script is used as follows:
@@ -154,6 +156,8 @@ Example:
 python index_dense_embeddings.py --retriever-embedding-size 768  \
 --embeddings-dir /tmp/wiki_passage_embeddings/ --embeddings-name wiki_passages
 ```
+
+Note the default index factory setting is `IVF4096_HNSW128,PQ128`, if you are processing small files, you may encounter errors such as `Error: 'nx >= k' failed`, then you need to set `--compressed-indexer-factory` to other indexes in the [index factory in FAISS](https://github.com/facebookresearch/faiss/wiki/The-index-factory) such as `HNSW32`.
 
 ## Directory Structure / Custom Components
 

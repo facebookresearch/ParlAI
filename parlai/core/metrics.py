@@ -52,6 +52,10 @@ class MetricDisplayData(NamedTuple):
 
 METRICS_DISPLAY_DATA = {
     "accuracy": MetricDisplayData("Accuracy", "Exact match text accuracy"),
+    'auc': MetricDisplayData(
+        'AUC',
+        "Area Under the Receiver Operating Characteristic Curve (true positive rate vs false positive rate curve)",
+    ),
     "bleu-4": MetricDisplayData(
         "BLEU-4",
         "BLEU-4 of the generation, under a standardized (model-independent) tokenizer",

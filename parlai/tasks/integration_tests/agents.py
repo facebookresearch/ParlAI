@@ -568,3 +568,17 @@ class ShortFixedTeacher(FixedDialogCandidateTeacher):
 
 class DefaultTeacher(CandidateTeacher):
     pass
+
+
+class TinyTeacher(DialogTeacher):
+    """
+    Teacher with a single example, to test data stratification with fewer examples than
+    GPUs.
+    """
+
+    def __init__(self, opt, shared=None):
+        opt['datafile'] = 'tiny_data'
+        super().__init__(opt, shared)
+
+    def setup_data(self, _):
+        yield {'text': 'hi', 'label': 'there'}, True

@@ -215,7 +215,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
         """
         Get the model states for saving.
 
-        Overriden to include longest_label
+        Overridden to include longest_label
         """
         states = super().state_dict()
         if hasattr(self.model, 'module'):

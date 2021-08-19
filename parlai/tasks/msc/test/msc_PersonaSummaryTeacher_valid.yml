@@ -1,0 +1,134 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - My husbands car is blue. Blue is my favorite color.
+    id: msc_personasummary_1
+    init_personas:
+    - - I am married.
+      - I'm a woman.
+      - My favorite color is blue.
+      - I'm a vegetarian.
+      - I enjoy sports such as running.
+    - - I like to spend my money on cars.
+      - I have never had a steady relationship.
+      - I watch too much tv in spare time.
+      - I go to the gym most days just to socialize.
+      - I work from home.
+    initial_data_id: valid_258
+    session_id: 1
+    speaker_idx: 1
+    text: 'Hi there! I am eating tofu while running around the park.
+
+      Hi. That is an interesting combo! I love cars.
+
+      Awesome, my husband has a blue car. That''s my favorite color.'
+    utt_idx: 2
+- - episode_done: true
+    eval_labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    id: msc_personasummary_2
+    init_personas:
+    - - My current goal is to run a k.
+      - I won homecoming queen this year.
+      - When I grow up I want to be a physical therapist.
+      - I make straight as in school.
+    - - I spent a decade working in the human services field.
+      - I am a stay at home dad.
+      - Horror movies are my favorites.
+      - I have a son who is in junior high school.
+    initial_data_id: valid_856
+    session_id: 2
+    speaker_idx: 1
+    text: 'I hope you are well. I hear there is a new horror movie coming out. '
+    utt_idx: 0
+- - episode_done: true
+    eval_labels:
+    - I love Mexican food.
+    id: msc_personasummary_3
+    init_personas:
+    - - I'm partly deaf.
+      - I've a big library at home.
+      - I am a museum tour guide.
+      - I grow roses in my garden.
+      - I love to drink fancy tea.
+    - - I'm a construction worker.
+      - In my free time I like to watch nascar racing and ufc.
+      - I have been working since I was sixteen years old.
+      - My favorite food is mexican food.
+    initial_data_id: valid_695
+    session_id: 3
+    speaker_idx: 2
+    text: 'I think I finally found the secret to the BEST salsa recipe!
+
+      Oh I love salsa with mexican food! What''s the recipe?'
+    utt_idx: 1
+- - episode_done: true
+    eval_labels:
+    - __NO__PERSONA__BEAM__MIN__LEN__20__
+    id: msc_personasummary_1
+    init_personas:
+    - - I'm a recording engineer and own my own studio.
+      - I live in california but the recording artist market was dead last year.
+      - I prefer being inside.
+      - Whats up I am a 46 year old single dad 46 a kids.
+      - My ex cheated and left me for a lawyer.
+    - - I work in it and have been at the same company for 15 years.
+      - I own a house in florida.
+      - I've a children and a dogs.
+      - I am a male.
+      - I enjoy american sports.
+    initial_data_id: valid_411
+    session_id: 1
+    speaker_idx: 2
+    text: 'Hi how are you doing?
+
+      Hi, tracy here, my children and I leaving for out house in florida.
+
+      Cool, for a vacation or are you a snowbird?
+
+      Vacation! Today is football sunday. My dog name is snowbird.
+
+      That''s an unusual name, not much on traveling myself spend too much time working.
+
+      Great! It work wears me out. Thank god for my chidren and my dog.
+
+      I could use some it help at the moment, my protools isn''t syncing with the
+      mics.
+
+      Wow. All work and no travel huh? You like sports? I do.'
+    utt_idx: 7
+- - episode_done: true
+    eval_labels:
+    - I am planning on doing a long run this Saturday morning.
+    id: msc_personasummary_2
+    init_personas:
+    - - I won homecoming queen this year.
+      - My current goal is to run a k.
+      - When I grow up I want to be a physical therapist.
+      - I'm currently in high school.
+      - I make straight as in school.
+    - - I'm pregnant with my first child.
+      - I live with my husband in pennsylvania.
+      - I read a book every week.
+      - I started a new job as a pa three months ago.
+    initial_data_id: valid_111
+    session_id: 2
+    speaker_idx: 1
+    text: 'When do you plan to organize your baby shower?
+
+      I need to start soon. Are you available to help me, by any chance?
+
+      I would be honored! Let''s go together this weekend and get started!
+
+      Great - thanks! I am thinking something blue and yellow since it is a boy.
+
+      Do you want to incorporate animals? Shapes? Disney characters?
+
+      I haven''t gotten that far! You are giving me a lot to think about for this
+      weekend.
+
+      I have a long run scheduled for Saturday morning, so I will come by afterwards.
+      Probably around noon. Okay?'
+    utt_idx: 6
+num_episodes: 133290
+num_examples: 133290

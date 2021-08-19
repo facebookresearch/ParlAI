@@ -24,9 +24,9 @@ parlai multiprocessing_train -m transformer/generator --batchsize 16 --task conv
 """
 
 import torch
-import random
 import os
 import signal
+import traceback
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
 from parlai.core.script import ParlaiScript, register_script
@@ -41,13 +41,25 @@ def multiprocess_train(
     ) as opt:
         # Run the actual training
         opt['multiprocessing'] = True
-        return single_train.TrainLoop(opt).train()
+        try:
+            return single_train.TrainLoop(opt).train()
+        except Exception:
+            import parlai.utils.logging as logging
+
+            logging.critical(traceback.format_exc())
+            logging.critical(
+                f"Got the above exception on worker {rank + rank_offset}. "
+                "This may cause hangs requiring manual killing of processes."
+            )
+            raise
 
 
-def launch_and_train(opt, port):
+def launch_and_train(opt, port=None):
     """
     Perform a fork() to many processes.
     """
+    if port is None:
+        port = distributed_utils.find_free_port()
     # Launch multiple subprocesses
     spawncontext = torch.multiprocessing.start_processes(
         multiprocess_train,
@@ -88,7 +100,7 @@ class MultiProcessTrain(ParlaiScript):
 
     def run(self):
         if self.opt['port'] is None:
-            port = random.randint(32000, 48000)
+            port = None
         else:
             port = self.opt['port']
         return launch_and_train(self.opt, port)

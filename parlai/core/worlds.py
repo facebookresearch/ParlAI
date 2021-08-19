@@ -29,7 +29,7 @@ All worlds are initialized with the following parameters:
     ``agents`` -- the set of agents that should be attached to the world,
         e.g. for DialogPartnerWorld this could be the teacher (that defines the
         task/dataset) and the learner agent. This is ignored in the case of
-        sharing, and the shared parameter is used instead to initalize agents.
+        sharing, and the shared parameter is used instead to initialize agents.
     ``shared`` (optional) -- if not None, contains any shared data used to construct
         this particular instantiation of the world. This data might have been
         initialized by another world, so that different agents can share the same
@@ -1133,8 +1133,16 @@ class DynamicBatchWorld(World):
                 indices.append(i)
 
         # quick invariant checks
-        assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
+        assert (
+            len(indices) != 0 or self.world.num_examples() == 0
+        ), "DynamicBatchWorld ran out of data!"
         assert not any(self._scores[i] is None for i in indices)
+
+        if not indices:
+            # this worker got no examples. This can happen when there are fewer
+            # episodes than there are workers. "don't stress the small stuff."
+            assert self.world.num_examples() == 0
+            return
 
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)

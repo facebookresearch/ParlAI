@@ -361,12 +361,7 @@ def load_world_module(
         repo = 'parlai_internal'
         task = task[9:]
     task_path_list = task.split(':')
-    if '.' in task_path_list[0]:
-        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
-        # (i.e. specifying your own path directly, assumes DialogPartnerWorld)
-        return _get_default_world(default_world, num_agents)
 
-    task = task_path_list[0].lower()
     if len(task_path_list) > 1:
         task_path_list[1] = task_path_list[1][0].upper() + task_path_list[1][1:]
         world_name = task_path_list[1] + "World"
@@ -381,7 +376,19 @@ def load_world_module(
             world_name = "SelfChatWorld"
         else:
             world_name = "DefaultWorld"
-    module_name = "%s.tasks.%s.worlds" % (repo, task)
+
+    if '.' in task_path_list[0]:
+        # The case of opt['task'] = 'parlai.tasks.squad.agents:DefaultTeacher'
+        # (i.e. specifying your own path directly)
+        module_name_parts = task_path_list[0].split('.')
+        if module_name_parts[-1] == 'agents':
+            # The world will be located in ".worlds", so correct the path
+            module_name = '.'.join(module_name_parts[:-1]) + '.worlds'
+        else:
+            module_name = task_path_list[0]
+    else:
+        task = task_path_list[0].lower()
+        module_name = f"{repo}.tasks.{task}.worlds"
 
     try:
         my_module = importlib.import_module(module_name)
