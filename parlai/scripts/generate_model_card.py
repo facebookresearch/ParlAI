@@ -448,7 +448,7 @@ def make_img_links(img_list, height='500px', width=None):
 
 def get_dataset_info(tasks):
     """
-    dataset info comes from guessing where it would be at the tasks site 
+    dataset info comes from guessing where it would be at the tasks site
     and the task_list.py + anything else from the user
     """
     curr_task_info = []
@@ -1135,7 +1135,7 @@ class GenerateModelCard(ParlaiScript):
             for msg in err_msgs:
                 extra_special_print(msg, color='red', sep=' ')
         else:
-            extra_special_print('No error messages were met :)')
+            extra_special_print('No error messages were met.')
 
     ##########################################
     # model card setup-related class functions
@@ -1350,7 +1350,7 @@ class GenerateModelCard(ParlaiScript):
 
     def evaluation(self):
         """
-        returns a section with dataset info about the eval tasks if they exist, 
+        returns a section with dataset info about the eval tasks if they exist,
         information about the validation metric if it exists,
         and create a table with the validation metric.
         """
@@ -1552,7 +1552,7 @@ class GenerateModelCard(ParlaiScript):
         if defaults.get(section):
             return create_warning(defaults.get(section))
         if self.mode != M_final:
-            msg = f'Missing {section}: Probably need to be grabbed from paper & added by u (the creator)'
+            msg = f'Missing {section}: Probably need to be grabbed from paper & added by you (the creator)'
             return create_warning(msg)
 
     ##########################################
