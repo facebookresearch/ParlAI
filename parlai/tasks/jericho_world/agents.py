@@ -6,7 +6,8 @@
 
 import abc
 from copy import deepcopy
-from typing import Any, Dict, Set, Union, Optional, Tuple
+from turtle import st
+from typing import Any, Dict, List, Set, Union, Optional, Tuple
 import json
 import logging
 import os
@@ -97,6 +98,18 @@ def graph_mutation_diff(source_graph, dest_graph):
         mutations.append(f'{op.name} {edge}')
 
     return mutations
+
+
+def encode_set_elements(set1: Set[str], set2: Set[str]) -> Tuple[List[str]]:
+    set1_enc = []
+    set2_enc = []
+    for el_id, el in enumerate(set1.union(set2)):
+        el_id_str = str(el_id)
+        if el in set1:
+            set1_enc.append(el_id_str)
+        if el in set2:
+            set2_enc.append(el_id_str)
+    return set1_enc, set2_enc
 
 
 def extract_state_data(example_state: Dict, delim: str = ' ') -> Dict:
@@ -274,24 +287,44 @@ class StateToKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
         if model_response.is_padding() or (not model_response.get('text', None)):
             return
 
-        expected_graph = break_knowledge_graph(labels[0])
-        predicted_graph = break_knowledge_graph(model_response['text'])
+        expected_graph = break_knowledge_graph(labels[0].lower())
+        predicted_graph = break_knowledge_graph(model_response['text'].lower())
 
         # Encoding the graph edges/mutation operations into ints for readily use of F1Metric
-        expected_graph_enc = []
-        predicted_graph_enc = []
-        for mut_id, mut_op in enumerate(expected_graph.union(predicted_graph)):
-            mut_id_str = str(mut_id)
-            if mut_op in expected_graph:
-                expected_graph_enc.append(mut_id_str)
-            if mut_op in predicted_graph:
-                predicted_graph_enc.append(mut_id_str)
-
+        expected_graph_enc, predicted_graph_enc = encode_set_elements(
+            expected_graph, predicted_graph
+        )
         self.metrics.add(
-            'graph_mutation_f1',
+            'response_elements_f1',
             F1Metric.compute(
                 guess=' '.join(predicted_graph_enc),
                 answers=[' '.join(expected_graph_enc)],
+            ),
+        )
+
+        # Subject, Relation F1
+        # Changind "(MUT) < you , in , house >"   --into-->   "(MUT) < you , in "
+        # This is to check F1 for the predicted subject and relation overlap.
+        ekg_sub_rel = set([e.rsplit(',', 1)[0] for e in expected_graph])
+        pkg_sub_rel = set([e.rsplit(',', 1)[0] for e in predicted_graph])
+        ekg_sub_rel_ids, pkg_sub_rel_ids = encode_set_elements(ekg_sub_rel, pkg_sub_rel)
+        self.metrics.add(
+            'graph_subject_relation_f1',
+            F1Metric.compute(
+                guess=' '.join(pkg_sub_rel_ids), answers=[' '.join(ekg_sub_rel_ids)]
+            ),
+        )
+
+        # Subject F1
+        # Changind "(MUT) < you , in " (produced above)   --into-->   "(MUT) < you "
+        # This is to check F1 for the predicted subject overlap.
+        ekg_sub = set([e.split(',')[0] for e in ekg_sub_rel])
+        pkg_sub = set([e.split(',')[0] for e in pkg_sub_rel])
+        ekg_sub_ids, pkg_sub_ids = encode_set_elements(ekg_sub, pkg_sub)
+        self.metrics.add(
+            'graph_subject_f1',
+            F1Metric.compute(
+                guess=' '.join(pkg_sub_ids), answers=[' '.join(ekg_sub_ids)]
             ),
         )
 
