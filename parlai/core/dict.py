@@ -358,7 +358,7 @@ class DictionaryAgent(Agent):
 
         if hasattr(self, 'bpe'):
             self.bpe.add_special_tokens(self, self.additional_special_tokens)
-        elif self.tokenizer in ('split', 're', 'space'):
+        elif self.tokenizer in ('split', 're', 'space', 'char'):
             pass
         else:
             raise NotImplementedError(
@@ -512,6 +512,13 @@ class DictionaryAgent(Agent):
         """
         return text.strip().split(' ')
 
+    @staticmethod
+    def char_tokenize(text: str) -> List[str]:
+        """
+        Tokenize text as a list of characters.
+        """
+        return list(text)
+
     def span_tokenize(self, text):
         """
         Tokenize and find  starting index of each token in the original string.
@@ -532,7 +539,7 @@ class DictionaryAgent(Agent):
 
         Also handles special tokens for some tokenizers
         """
-        if self.tokenizer in ('re', 'split', 'space'):
+        if self.tokenizer in ('re', 'split', 'space', 'char'):
             for special_token in self.additional_special_tokens:
                 index = text.find(special_token)
                 if index == -1:
@@ -560,12 +567,6 @@ class DictionaryAgent(Agent):
         Return a sequence of BPE-tokens from the text.
         """
         return self.bpe.encode(text)
-
-    def char_tokenize(self, text):
-        """
-        Tokenize text as a literal list of characters.
-        """
-        return list(text)
 
     def add_to_dict(self, tokens):
         """

@@ -119,6 +119,15 @@ class TestDictionary(unittest.TestCase):
             ['this', 'is', 'a', 'test', '!'],
         )
 
+    def test_char_tokenize(self):
+        """
+        Char tokenize should split the string by characters.
+        """
+        self.assertEqual(
+            DictionaryAgent.char_tokenize('this is a test!'),
+            ['t', 'h', 'i', 's', ' ', 'i', 's', ' ', 'a', ' ', 't', 'e', 's', 't', '!'],
+        )
+
     def test_find_ngrams(self):
         """
         Test the ngram class properly recognize uni, bi, and trigrams test.
@@ -439,6 +448,9 @@ class TestBuildDict(unittest.TestCase):
     def test_build_bpe(self):
         self._run_test({'dict_tokenizer': 'bpe', 'max_tokens': 50})
 
+    def test_build_char(self):
+        self._run_test({'dict_tokenizer': 'char'})
+
 
 class TestGpt2HFInterop(unittest.TestCase):
     """
@@ -597,6 +609,9 @@ class SpecialTokenTests(unittest.TestCase):
 
     def test_specialtok_split(self):
         self._run_specialtok_test(dict_tokenizer='split')
+
+    def test_specialtok_char(self):
+        self._run_specialtok_test(dict_tokenizer='char')
 
     def test_specialtok_nonsupport(self):
         for tokenizer in ["bpe"]:
