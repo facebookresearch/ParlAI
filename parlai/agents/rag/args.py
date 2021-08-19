@@ -287,6 +287,12 @@ def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
         help='Path to model for initial round of retrieval. ',
     )
     regret_group.add_argument(
+        '--regret-dict-file',
+        type=str,
+        default=None,
+        help='Path to dict file for model for initial round of retrieval. ',
+    )
+    regret_group.add_argument(
         '--regret-override-index',
         type='bool',
         default=False,

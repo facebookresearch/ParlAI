@@ -215,6 +215,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 regret_opt['path_to_index'] = self.opt['path_to_index']
                 regret_opt['path_to_dpr_passages'] = self.opt['path_to_dpr_passages']
 
+            if self.opt['regret_dict_file']:
+                regret_opt['dict_file'] = self.opt['regret_dict_file']
+
             regret_dict = self.dictionary_class()(regret_opt)
             model = RagModel(regret_opt, regret_dict, retriever_shared=retriever_shared)
             with PathManager.open(model_file, 'rb') as f:
