@@ -77,14 +77,11 @@ We used the metric `class notok f1`, the f1 scores for the class notok as the va
 :---: | :---: | :---: | :---: | :---:
 `class notok f1` | 78.87% | 81.24% | 75.86% | 67.41%
 
-
-
-## Extra Analysis/Quantitative Analysis
-> :warning: Missing a section for extra analysis; please add!:warning:
+<!-- ## Extra Analysis/Quantitative Analysis -->
 
 ## Related Paper(s)
 
-> :warning: Missing related_paper: Probably need to be grabbed from paper & added by u (the creator):warning:
+[Build it Break it Fix it for Dialogue Safety: Robustness from Adversarial Human Attack](https://parl.ai/projects/dialogue_safety/)
 
 ## Hyperparameters
 

@@ -2,10 +2,10 @@
 
 
 
-90< parameter generative model finetuned on blended_skill_talk tasks.
+90M-parameter generative model finetuned on blended_skill_talk tasks.
 - Developed by Facebook AI Research using [ParlAI](https://parl.ai/) 
 -  Model started training on February 10, 2007. 
-- Type of model: Transformer/Generator 
+- Type of model: Transformer Generative Model 
 
 ### Quick Usage
 
@@ -35,15 +35,15 @@ Science fiction They supply knowledge... in a very palatable form... New adventu
 
 ## Intended Use
 
-> :warning: This model is intended for the use of....	:warning:
+BlenderBot(90M) is a chatbot built for research purposes only.
 
 ## Limitations
 
-> :warning: This model has has these limitations: ...	:warning:
+While we've made our model more engaginess and humanlike with generative model, those models cannot yet fully understand [safe or not](https://parl.ai/projects/safety_recipes/).
 
 ## Privacy
 
-> :warning: This model has the following privacy concerns....	:warning:
+Our work focuses on models with open-domain conversations wherein speakers may divulge personal interests. We remark that, during data collection, crowdworkers were specifically playing roles with given personality traits, not talking about themselves, and hence not identifying any personal information.         
 
 ## Datasets Used
 
