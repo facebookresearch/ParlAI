@@ -1,0 +1,27 @@
+[
+    {
+        "value": "they",
+        "name": "what THEY mentioned last time",
+        "color": "green"
+    },
+    {
+        "value": "you",
+        "name": "what YOU mentioned last time",
+        "color": "green"
+    },
+    {
+        "value": "new",
+        "name": "what's being discussed in this chat",
+        "color": "green"
+    },
+    {
+        "value": "none",
+        "name": "none",
+        "color": "green"
+    },
+    {
+        "value": "engaging",
+        "name": "Engaging",
+        "color": "blue"
+    }
+]

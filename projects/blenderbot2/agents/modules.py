@@ -107,6 +107,9 @@ class BlenderBot2RagModel(RagModel):
         self.should_generate_query = (
             self.knowledge_access_method is KnowledgeAccessMethod.CLASSIFY
             or self.search
+        ) and (
+            self.knowledge_access_method
+            not in [KnowledgeAccessMethod.MEMORY_ONLY, KnowledgeAccessMethod.NONE]
         )
 
     def has_query_generator(self) -> bool:
@@ -381,6 +384,7 @@ class BlenderBot2RagModel(RagModel):
                 memory_decoder_vec,
                 generated_memories,
             )
+            logging.debug(f'Memory Access Complete: {time.time() - start:.2f}')
             if memories is not None and memory_scores is not None:
                 self._fill_docs_and_scores(
                     top_docs, doc_scores, memory_indices, memories, memory_scores

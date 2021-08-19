@@ -170,6 +170,45 @@ class TestParlaiParser(unittest.TestCase):
             parser = ParlaiParser(True, True)
             parser.parse_kwargs(model='transformer/generator', fake_arg='foo')
 
+    def test_parse_kwargs_multirounds(self):
+        """Test parse_kwargs when we have options that depend on options."""
+        parser = ParlaiParser(True, False)
+        opt = parser.parse_kwargs(
+            task='integration_tests', mutators='episode_shuffle', preserve_context=True
+        )
+        assert opt['preserve_context'] is True
+        opt = parser.parse_kwargs(
+            task='integration_tests', mutators='episode_shuffle', preserve_context=False
+        )
+        assert opt['preserve_context'] is False
+
+        with self.assertRaises(KeyError):
+            parser.parse_kwargs(
+                task='integration_tests', mutators='episode_shuffle', fake_option=False
+            )
+
+        with self.assertRaises(KeyError):
+            parser.parse_kwargs(task='integration_tests', fake_option=False)
+
+    def test_parse_kwargs_nargsplus(self):
+        """
+        Test parse_kwargs when provided an argument with >1 item
+        """
+        parser = ParlaiParser(False, False)
+        parser.add_argument('--example', nargs='+', choices=['a', 'b', 'c'])
+        opt = parser.parse_args(['--example', 'a', 'b'])
+        assert opt['example'] == ['a', 'b']
+
+        parser = ParlaiParser(False, False)
+        parser.add_argument('--example', nargs='+', choices=['a', 'b', 'c'])
+        opt = parser.parse_kwargs(example=['a', 'b'])
+        assert opt['example'] == ['a', 'b']
+
+        parser = ParlaiParser(False, False)
+        parser.add_argument('--example', nargs='+')
+        opt = parser.parse_kwargs(example=['x', 'y'])
+        assert opt['example'] == ['x', 'y']
+
     def test_bool(self):
         """
         test add_argument(type=bool)
