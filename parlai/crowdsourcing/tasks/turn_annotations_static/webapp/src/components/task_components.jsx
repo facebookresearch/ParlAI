@@ -85,6 +85,24 @@ var handleUserInputUpdate = function (subtaskData) {
   }
 }
 
+var getAnnotationBuckets = function (taskData, annotationBuckets) {	
+  // return list of all the bucket ids
+  var buckets = []	
+  if (annotationBuckets !== null && 'config' in annotationBuckets){	
+    buckets = Object.keys(annotationBuckets.config);	
+  }	
+  taskData.forEach(elem => {	
+    if ('annotation_buckets' in elem) {	
+      (Object.keys(elem.annotation_buckets.config)).forEach(bucketKey => {	
+        if (!buckets.includes(bucketKey)) {	
+          buckets.push(bucketKey)	
+        }	
+      })	
+    }	
+  })	
+  return buckets	
+}
+
 var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initialTaskData, annotationBuckets, mephistoSubmit) {
   // initialTaskData is the initial task data for this index
   console.log('In handleSubtaskSubmit for subtask: ' + subtaskIndex);
@@ -103,8 +121,8 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
       'agent_idx': initialTaskData[i].agent_idx,
       'other_metadata': initialTaskData[i].other_metadata
     };
-    if (annotationBuckets !== null) {
-      var buckets = Object.keys(annotationBuckets.config);
+    var buckets = getAnnotationBuckets(initialTaskData, annotationBuckets)
+    if (buckets !== null && buckets.length > 0) {
       for (var j = 0; j < buckets.length; j++) {
         answersForTurn[buckets[j]] = null;
         var checkbox = document.getElementById(buckets[j] + '_' + i);
@@ -198,9 +216,18 @@ function SubtaskSubmitButton({ subtaskIndex, numSubtasks, onSubtaskSubmit }) {
   )
 }
 
-function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, onUserInputUpdate }) {
+function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, turnIdx, doAnnotateMessage, askReason, responseField, speakerLabel, onUserInputUpdate }) {
   var extraElements = '';
   var responseInputElement = '';
+  if (speakerLabel == null) {	
+    speakerLabel = turnIdx % 2 == 0 ? 'YOU' : 'THEM'
+  }	
+  var speakerElements = (	
+    <div>	
+      <b>{speakerLabel}:</b> {text}	
+    </div>	
+  )	
+
   if (doAnnotateMessage) {
     if (annotationBuckets !== null) { 
       extraElements = (<span key={'extra_' + turnIdx}><br /><br />
@@ -233,7 +260,8 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
   return (
     <div>
       <div className={`alert ${agentIdx == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${agentIdx == 0 ? "right" : "left"}`, display: 'table', minWidth: `${agentIdx == 0 ? "30%" : "80%"}`, marginTop: "auto" }}>
-        <span><b>{turnIdx % 2 == 0 ? 'YOU' : 'THEM'}:</b> {text}
+        <span>
+          {speakerElements}
           <ErrorBoundary>
             {extraElements}
           </ErrorBoundary>
@@ -266,11 +294,12 @@ function ContentPane({ subtaskData, taskConfig, subtaskIndex, numSubtasks }) {
                 text={m.text}
                 agentIdx={m.agent_idx}
                 turnIdx={idx}
-                annotationQuestion={annotationQuestion}
-                annotationBuckets={annotationBuckets}
+                annotationQuestion={ ('annotation_question' in m) ? m.annotation_question : annotationQuestion}
+                annotationBuckets={ ('annotation_buckets' in m) ? m.annotation_buckets : annotationBuckets}
                 doAnnotateMessage={m.do_annotate}
                 askReason={askReason}
                 responseField={responseField}
+                speakerLabel={('speaker_label' in m) ? m.speaker_label : null}
                 onUserInputUpdate={() => handleUserInputUpdate(subtaskData)}
               />
             </div>
