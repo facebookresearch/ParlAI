@@ -51,7 +51,7 @@ If some kind of model description has already been added to the [model_list.py](
    ```
 
 ### Examples 
-Here are some samples commands (click to see the results): 
+Here are some samples commands: 
 - Dialogue Safety (multi-turn)
 ```
 parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen -t dialogue_safety:wikiToxicComments,dialogue_safety:adversarial:round-only=False:round=1,dialogue_safety:multiturn -et dialogue_safety:wikiToxicComments,dialogue_safety:adversarial:round-only=False:round=1,dialogue_safety:multiturn --data-parallel False
@@ -183,9 +183,3 @@ To add sections, there's two ways to do this.
       ]
    }   
    ```
-
-:::{note}
-Automating model card generation is a brand new feature in ParlAI. If you experience any issues with it,
-please [file an issue](https://github.com/facebookresearch/ParlAI/issues/new?assignees=&labels=&template=other.md)
-on GitHub.
-:::
