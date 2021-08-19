@@ -1,5 +1,11 @@
 acts:
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - ComingSoon net New Movies Movie Trailers TV Digital
+    - 2021 Movies Movie Releases New Upcoming
+    - Movies Coming Soon Moviefone
+    - New Movies Theaters Near You Movie Tickets Showtimes
+    - Upcoming Hindi Movies 2021 Releasing This
+    __retrieved-docs-urls__:
     - https://www.comingsoon.net/
     - https://www.movieinsider.com/movies/2021
     - https://www.moviefone.com/coming-soon/
@@ -671,6 +677,7 @@ acts:
       Throwback video! When Salman Khan teased Katrina Kaif for missi...
 
       Pulwama terror attack: Ram Gopal Varma taunts Pakistan Prime Mi...'
+    __select-docs-titles__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -685,7 +692,13 @@ acts:
       I like going to the moives.
 
       I love to get the overpriced snacks.'
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Toy Story News Recap Photos Videos MTV
+    - Toy Story 1995 IMDb
+    - Toy Story Official Website Disney
+    - Toy Story 4 Disney Movies
+    - Toy Story Wikipedia
+    __retrieved-docs-urls__:
     - http://www.mtv.com/news/movie/toy-story/
     - https://www.imdb.com/title/tt0114709/
     - https://toystory.disney.com/
@@ -2604,6 +2617,8 @@ acts:
       Films with screenplays by Joss Whedon
 
       Films about dolls'
+    __select-docs-titles__:
+    - Toy Story 1995 IMDb
     __selected-docs__:
     - 'G | 1h 21min | Animation, Adventure, Comedy | 22 November 1995 (USA)
 
@@ -2782,7 +2797,13 @@ acts:
     id: WizInternetWizardTeacher
     search_query: movie toy story
     text: I have. I liked Toy Story. There was a marathon.
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Pixar Animation Studios Licenses NVIDIA Technology for
+    - Pixar Animation Studios Creative Kaizen Technology and
+    - Pixar Animation Studios
+    - Pixar Animation Studios Wiki Fandom
+    - Pixar Wikipedia
+    __retrieved-docs-urls__:
     - https://nvidianews.nvidia.com/news/pixar-animation-studios-licenses-nvidia-technology-for-accelerating-feature-film-production
     - https://digital.hbs.edu/platform-rctom/submission/pixar-animation-studios-creative-kaizen/
     - https://www.pixar.com/careers-at-pixar
@@ -4983,6 +5004,8 @@ acts:
       Disney acquisitions
 
       Empire Inspiration Award winners'
+    __select-docs-titles__:
+    - Pixar Animation Studios Creative Kaizen Technology and
     __selected-docs__:
     - "Pixar Animation Studios: Creative Kaizen\nBy HBSstudent11\nIliad S.A.: the\
       \ story behind France’s telecommunications maverick\nHow Pixar’s innovative\
@@ -5137,7 +5160,13 @@ acts:
     id: WizInternetWizardTeacher
     search_query: pixar animation studios technology
     text: It is neat to see how they progressed in the series with the quality.
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Windows 10 1809 update deleted all files from Documents
+    - Data Recovery Hall of Fame DriveSavers
+    - How One Line of Text Nearly Killed Toy Story 2 Mental Floss
+    - Toy Story 2 Was Accidentally Deleted During Development
+    - 18 Amazing Facts about Pixar that You Probably Didn t Know
+    __retrieved-docs-urls__:
     - https://answers.microsoft.com/en-us/windows/forum/windows_10-update/windows-10-1809-update-deleted-all-files-from/ff608374-2686-4a08-a4c2-caa4caa6d4e1
     - https://drivesaversdatarecovery.com/company/data-recovery-hall-of-fame/
     - https://www.mentalfloss.com/uk/entertainment/27204/how-one-line-of-text-nearly-killed-toy-story-2
@@ -5766,6 +5795,8 @@ acts:
       swim in it
 
       18 Unluckiest People In History Who Had It Worse Than You'
+    __select-docs-titles__:
+    - Toy Story 2 Was Accidentally Deleted During Development
     __selected-docs__:
     - 'Fun Facts › TV and Film Facts › Toy Story 2 Was Accidentally Deleted During
       Development and Almost Lost← NextRandomPrevious →
@@ -5829,7 +5860,13 @@ acts:
     search_query: laptop lost files pixar
     text: I once heard someone erased progress on it like a saved file but someone
       had it on their laptop or something.
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - The Cast of Pixar s Onward Cinemark Movie News
+    - Onward 2020 News IMDb
+    - Onward Pixar Wiki Fandom
+    - Onward Disney Wiki Fandom
+    - Onward Disney Movies
+    __retrieved-docs-urls__:
     - https://www.cinemark.com/movie-news/pixar-onward-cast
     - https://www.imdb.com/title/tt7146812/news
     - https://pixar.fandom.com/wiki/Onward
@@ -6504,6 +6541,8 @@ acts:
       UNICORNS aren’t the graceful and majestic creatures they once were. The dumpster-diving
       vermin of New Mushroomton are often seen eating garbage and hissing at anyone
       who poses a threat to their stinky stash.'
+    __select-docs-titles__:
+    - The Cast of Pixar s Onward Cinemark Movie News
     __selected-docs__:
     - 'Meet the Cast of Pixar s Onward
 

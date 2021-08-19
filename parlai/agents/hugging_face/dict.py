@@ -172,7 +172,7 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
 
     def _define_special_tokens(self, opt):
         if opt["add_special_tokens"]:
-            # Add addtional start/end/pad tokens
+            # Add additional start/end/pad tokens
             self.hf_tokenizer.add_special_tokens(SPECIAL_TOKENS)
             self.start_token = SPECIAL_TOKENS["bos_token"]
             self.end_token = SPECIAL_TOKENS["eos_token"]

@@ -296,7 +296,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             total_data.loc[total_data['sensitive'] < 1, 'is_sensitive'] = 0
             total_data.loc[total_data['sensitive'] >= 1, 'is_sensitive'] = 1
 
-            # Drop unecessary column
+            # Drop unnecessary column
             total_data = total_data.drop(columns=['id'])
 
             self.data_to_json(total_data, 'wiki-toxic-comments-default.json')

@@ -17,6 +17,7 @@ from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
 )
 from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
+import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +48,7 @@ register_script_config(name='scriptconfig', module=ScriptConfig)
 
 @hydra.main(config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
-    run_task(cfg=cfg, task_directory=TASK_DIRECTORY)
+    run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=world_module)
 
 
 if __name__ == "__main__":

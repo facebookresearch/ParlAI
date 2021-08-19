@@ -20,6 +20,7 @@ from PIL import Image
 from parlai.core.message import Message
 from parlai.core.metrics import Metric
 from parlai.core.params import ParlaiParser
+from parlai.core.loader import load_task_module
 from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 from parlai.tasks.blended_skill_talk.agents import ContextGenerator
 
@@ -411,7 +412,9 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
 
 
 def get_context_generator(
-    override_opt: Optional[Dict[str, Any]] = None
+    override_opt: Optional[Dict[str, Any]] = None,
+    conversation_start_mode: Optional[str] = 'blended_skill_talk',
+    **kwargs,
 ) -> ContextGenerator:
     """
     Return an object to return BlendedSkillTalk-style context info (personas, etc.).
@@ -421,7 +424,9 @@ def get_context_generator(
     if override_opt is not None:
         argparser.set_params(**override_opt)
     opt = argparser.parse_args([])
-    context_generator = ContextGenerator(opt, datatype='test', seed=0)
+    task_module = load_task_module(conversation_start_mode)
+    context_generator_class = getattr(task_module, 'ContextGenerator', None)
+    context_generator = context_generator_class(opt, datatype='test', seed=0, **kwargs)
     # We pull from the test set so that the model can't regurgitate
     # memorized conversations
     return context_generator

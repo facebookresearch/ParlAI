@@ -1203,62 +1203,79 @@ class ParlaiParser(argparse.ArgumentParser):
                 ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
                 kwname_to_action[kwname] = action
 
+        # since we can have options that depend on options, repeat until convergence
         string_args = []
-        for kwname, value in kwargs.items():
-            if kwname not in kwname_to_action:
-                # best guess, we need to delay it. hopefully this gets added
-                # during add_kw_Args
-                continue
-            action = kwname_to_action[kwname]
-            last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction):
-                if bool(value):
+        unparsed_args = set(kwargs.keys())
+        while unparsed_args:
+            string_args = []
+            for kwname, value in kwargs.items():
+                if kwname not in kwname_to_action:
+                    # best guess, we need to delay it. hopefully this gets added
+                    # during add_kw_Args
+                    continue
+                action = kwname_to_action[kwname]
+                last_option_string = action.option_strings[-1]
+                if isinstance(action, argparse._StoreTrueAction):
+                    if bool(value):
+                        string_args.append(last_option_string)
+                elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                     string_args.append(last_option_string)
-            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
-                string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value))
-            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
-                string_args.append(last_option_string)
-                string_args.extend([self._value2argstr(value) for v in value])
-            else:
-                raise TypeError(f"Don't know what to do with {action}")
-
-        # become aware of any extra args that might be specified if the user
-        # provides something like model="transformer/generator".
-        self.add_extra_args(string_args)
-
-        # do it again, this time knowing about ALL args.
-        kwname_to_action = {}
-        for action in self._actions:
-            if action.dest == 'help':
-                # no help allowed
-                continue
-            for option_string in action.option_strings:
-                kwname = option_string.lstrip('-').replace('-', '_')
-                assert (kwname not in kwname_to_action) or (
-                    kwname_to_action[kwname] is action
-                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
-                kwname_to_action[kwname] = action
-
-        string_args = []
-        for kwname, value in kwargs.items():
-            # note we don't have the if kwname not in kwname_to_action here.
-            # it MUST appear, or else we legitimately should be throwing a KeyError
-            # because user has provided an unspecified option
-            action = kwname_to_action[kwname]
-            last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction):
-                if bool(value):
+                    string_args.append(self._value2argstr(value))
+                elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                     string_args.append(last_option_string)
-            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
-                string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value))
-            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
-                string_args.append(last_option_string)
-                # Special case: Labels
-                string_args.extend([str(v) for v in value])
+                    string_args.extend([self._value2argstr(v) for v in value])
+                else:
+                    raise TypeError(f"Don't know what to do with {action}")
+
+            # become aware of any extra args that might be specified if the user
+            # provides something like model="transformer/generator".
+            self.add_extra_args(string_args)
+
+            # do it again, this time knowing about ALL args.
+            kwname_to_action = {}
+            for action in self._actions:
+                if action.dest == 'help':
+                    # no help allowed
+                    continue
+                for option_string in action.option_strings:
+                    kwname = option_string.lstrip('-').replace('-', '_')
+                    assert (kwname not in kwname_to_action) or (
+                        kwname_to_action[kwname] is action
+                    ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                    kwname_to_action[kwname] = action
+
+            new_unparsed_args = set()
+            string_args = []
+            for kwname, value in kwargs.items():
+                if kwname not in kwname_to_action:
+                    new_unparsed_args.add(kwname)
+                    continue
+
+                action = kwname_to_action[kwname]
+                last_option_string = action.option_strings[-1]
+                if isinstance(action, argparse._StoreTrueAction):
+                    if bool(value):
+                        string_args.append(last_option_string)
+                elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                    string_args.append(last_option_string)
+                    string_args.append(self._value2argstr(value))
+                elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                    string_args.append(last_option_string)
+                    # Special case: Labels
+                    string_args.extend([self._value2argstr(v) for v in value])
+                else:
+                    raise TypeError(f"Don't know what to do with {action}")
+
+            if new_unparsed_args == unparsed_args:
+                # if we have converged to a fixed point with no improvements, we
+                # truly found some unreachable args
+                raise KeyError(
+                    f'Failed to parse one or more kwargs: {", ".join(new_unparsed_args)}'
+                )
             else:
-                raise TypeError(f"Don't know what to do with {action}")
+                # We've seen some improvements on the number of unparsed args,
+                # iterate again
+                unparsed_args = new_unparsed_args
 
         return string_args
 

@@ -1,8 +1,10 @@
 acts:
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__: []
+    __retrieved-docs-urls__:
     - __no_urls__
     __retrieved-docs__:
     - __noretrieved-docs__
+    __select-docs-titles__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -14,10 +16,12 @@ acts:
     search_query: __no_search_used__
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n I work as a freelance\
       \ accountant.\nI enjoy reading books.   "
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__: []
+    __retrieved-docs-urls__:
     - __no_urls__
     __retrieved-docs__:
     - __noretrieved-docs__
+    __select-docs-titles__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -29,7 +33,13 @@ acts:
     search_query: __no_search_used__
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n All fiction!   With\
       \ COVID this past summer, I read 16 books in 3 months.  You?"
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Audit Procedures in Banks Your Business
+    - NETBankAudit Audit and advisory services for regional
+    - Associates NetBankAudit
+    - Bank Audit Resource Center AuditNet
+    - Verification of Bank Balance Role Auditor
+    __retrieved-docs-urls__:
     - https://yourbusiness.azcentral.com/audit-procedures-banks-25157.html
     - http://www.netbankaudit.com/
     - http://www.netbankaudit.com/associates/
@@ -774,6 +784,7 @@ acts:
       Verification of Debentures | Guidelines for Auditors
 
       Tags:Auditing, Role of Auditor'
+    __select-docs-titles__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -784,7 +795,13 @@ acts:
     id: WizInternetWizardTeacher
     search_query: bank audit
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n Audit banks.  You?"
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Super Bowl LV Wikipedia
+    - Official Super Bowl Tickets 2021 LV Tampa Bay
+    - Super Bowl 2021 Weekend Las Vegas Viewing Parties
+    - 2021 Super Bowl Party Supplies Oriental Trading Company
+    - Super Bowl Where is the game in 2021 2022 2023 2024
+    __retrieved-docs-urls__:
     - https://en.wikipedia.org/wiki/Super_Bowl_LV
     - https://nflonlocation.com/superbowl-tickets/
     - https://www.vegasunzipped.com/super-bowl-weekend/
@@ -2076,6 +2093,8 @@ acts:
       in tournament
 
       Seton Hall basketball: Inside Sandro Mamukelashvili s remarkable rebound'
+    __select-docs-titles__:
+    - Super Bowl LV Wikipedia
     __selected-docs__:
     - 'Raymond James Stadium in 2007
 
@@ -2290,7 +2309,13 @@ acts:
       \ third time that the Super Bowl is in the same state in back to back years\
       \ with Super Bowl LIV taking place at Hard Rock Stadium in Miami Gardens, Florida.[1]\
       \ __endknowledge__ \n Good for you!    Are you watching the Superbowl this year?"
-- - __retrieved-docs-urls__:
+- - __retrieved-docs-titles__:
+    - Tom Brady Wikipedia
+    - NFL Passing Yards Career Playoffs Leaders Pro Football
+    - Tom Brady Biography Accomplishments Facts Britannica
+    - Tom Brady Reveals Which NFL Record Means The Most To Him
+    - Tom Brady Just Set an NFL Rushing Record Yes Really
+    __retrieved-docs-urls__:
     - https://en.wikipedia.org/wiki/Tom_Brady
     - https://www.pro-football-reference.com/leaders/pass_yds_career_playoffs.htm
     - https://www.britannica.com/biography/Tom-Brady
@@ -6975,6 +7000,8 @@ acts:
       to mention dozens of more rushing yards – over the next three seasons.
 
       More of: New England PatriotsNFLtom brady'
+    __select-docs-titles__:
+    - Tom Brady Wikipedia
     __selected-docs__:
     - 'For other people named Tom Brady, see Tom Brady (disambiguation).
 

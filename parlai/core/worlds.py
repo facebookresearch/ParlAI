@@ -29,7 +29,7 @@ All worlds are initialized with the following parameters:
     ``agents`` -- the set of agents that should be attached to the world,
         e.g. for DialogPartnerWorld this could be the teacher (that defines the
         task/dataset) and the learner agent. This is ignored in the case of
-        sharing, and the shared parameter is used instead to initalize agents.
+        sharing, and the shared parameter is used instead to initialize agents.
     ``shared`` (optional) -- if not None, contains any shared data used to construct
         this particular instantiation of the world. This data might have been
         initialized by another world, so that different agents can share the same

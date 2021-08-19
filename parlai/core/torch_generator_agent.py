@@ -593,7 +593,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _fake_forward_backward_pass(self):
         """
-        Force a worker to syncronize with others in case of distributed mode.
+        Force a worker to synchronize with others in case of distributed mode.
 
         Necessary during recovery of OOMs to prevent hangs during the all-reduce of
         gradients.

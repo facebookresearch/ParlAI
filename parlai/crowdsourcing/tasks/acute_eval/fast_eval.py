@@ -123,7 +123,7 @@ class FastAcuteExecutor(object):
             and self.fast_acute_args.model_pairs is None
         ):
             raise RuntimeError(
-                'Either models or model-pairs should be set for comparision.'
+                'Either models or model-pairs should be set for comparison.'
             )
         if self.fast_acute_args.model_pairs is not None:
             model_pairs = self.fast_acute_args.model_pairs.split(',')

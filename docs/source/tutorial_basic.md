@@ -75,7 +75,7 @@ step.
 Messages are what we call the objects both observed by an agent
 (observations) and returned by an agent's act function (actions). These
 observations and actions are the primary way agents in ParlAI
-communicate with each other within their enviroment. The Message object
+communicate with each other within their environment. The Message object
 is a subclass of a python dict, whose key function is to prevent users
 from editing fields in an action or observation unintentionally.
 
