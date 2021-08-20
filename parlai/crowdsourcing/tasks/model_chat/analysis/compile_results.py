@@ -190,7 +190,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
                 if self.use_problem_buckets:
                     if not all(
-                        bucket in data['dialog'][1]['problem_data']
+                        bucket in data['dialog'][0]['problem_data']
                         for bucket in self.problem_buckets
                     ):
                         raise ValueError('Bucket(s) are missing from the problem data!')

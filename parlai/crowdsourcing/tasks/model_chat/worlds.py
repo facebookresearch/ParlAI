@@ -525,7 +525,7 @@ class ModelChatWorld(BaseModelChatWorld):
             }
             self.dialog.append(bot_utterance_data)
 
-        elif self.opt['conversation_start_mode'] == 'light':
+        elif self.opt['conversation_start_mode'] == 'light_dialog':
             print('Using LIGHT')
             human_first_msg = {
                 'episode_done': False,
