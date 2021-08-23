@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -14,7 +13,7 @@ Integration tests for the Dialogue Unlikelihood project
 
 
 FAST_MODE = True
-NUM_EXAMPLES = 512 if FAST_MODE else -1
+NUM_EXAMPLES = 128 if FAST_MODE else -1
 
 
 @testing_utils.skipUnlessGPU
@@ -27,8 +26,8 @@ class TestUnlikelihood(unittest.TestCase):
             'model': 'projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent',
             'load_from_checkpoint': False,
             'task': 'convai2',
-            'max_train_time': 120,
-            'validation_max_exs': 128,
+            'max_train_steps': 10,
+            'validation_max_exs': 64,
             'batchsize': 16,
             'truncate': 32,
             'short_final_eval': True,
@@ -49,8 +48,8 @@ class TestUnlikelihood(unittest.TestCase):
                 'model': 'projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent',
                 'load_from_checkpoint': False,
                 'task': 'convai2',
-                'max_train_time': 120,
-                'validation_max_exs': 128,
+                'max_train_steps': 10,
+                'validation_max_exs': 64,
                 'batchsize': 16,
                 'truncate': 32,
                 'short_final_eval': True,
@@ -75,8 +74,8 @@ class TestUnlikelihood(unittest.TestCase):
             skip_test=True,
         )
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 11.88, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.2047, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 11.01, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.2166, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 11.76, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1937, delta=0.0002)
@@ -97,8 +96,8 @@ class TestUnlikelihood(unittest.TestCase):
             skip_test=True,
         )
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 11.46, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.2130, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 10.50, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.2332, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 11.42, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.2029, delta=0.0002)
@@ -119,83 +118,11 @@ class TestUnlikelihood(unittest.TestCase):
             skip_test=True,
         )
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 11.98, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.2034, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 10.95, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.2220, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 11.85, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.1925, delta=0.0002)
-
-    @unittest.skip
-    def test_repeat_eli5_contextonly(self):
-        """
-        Verify recorded ppl and F1 scores for released models.
-        """
-        valid, _ = testing_utils.eval_model(
-            {
-                'model_file': 'zoo:dialogue_unlikelihood/rep_eli5_ctxt/model',
-                'model': 'projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent',
-                'task': 'eli5',
-                'beam_size': 1,
-                'batchsize': 64,
-                'num_examples': NUM_EXAMPLES,
-            },
-            skip_test=True,
-        )
-
-        if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 21.71, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1629, delta=0.0002)
-        else:
-            self.assertAlmostEqual(valid['ppl'], 21.37, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1628, delta=0.0002)
-
-    @unittest.skip
-    def test_repeat_eli5_labelonly(self):
-        """
-        Verify recorded ppl and F1 scores for released models.
-        """
-        valid, _ = testing_utils.eval_model(
-            {
-                'model_file': 'zoo:dialogue_unlikelihood/rep_eli5_label/model',
-                'model': 'projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent',
-                'task': 'eli5',
-                'beam_size': 1,
-                'batchsize': 64,
-                'num_examples': NUM_EXAMPLES,
-            },
-            skip_test=True,
-        )
-
-        if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 21.71, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1777, delta=0.0002)
-        else:
-            self.assertAlmostEqual(valid['ppl'], 21.39, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1825, delta=0.0002)
-
-    @unittest.skip
-    def test_repeat_eli5_contextandlabel(self):
-        """
-        Verify recorded ppl and F1 scores for released models.
-        """
-        valid, _ = testing_utils.eval_model(
-            {
-                'model_file': 'zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model',
-                'model': 'projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent',
-                'task': 'eli5',
-                'beam_size': 1,
-                'batchsize': 64,
-                'num_examples': NUM_EXAMPLES,
-            },
-            skip_test=True,
-        )
-
-        if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 22.13, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1805, delta=0.0002)
-        else:
-            self.assertAlmostEqual(valid['ppl'], 21.80, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1843, delta=0.0002)
 
     def test_repeat_wiki_contextonly(self):
         """
@@ -215,8 +142,8 @@ class TestUnlikelihood(unittest.TestCase):
         )
 
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 8.698, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.3430, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 8.071, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.3472, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 8.761, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.3456, delta=0.0002)
@@ -239,8 +166,8 @@ class TestUnlikelihood(unittest.TestCase):
         )
 
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 8.284, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.3744, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 7.667, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.3841, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 8.326, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.3714, delta=0.0002)
@@ -263,8 +190,8 @@ class TestUnlikelihood(unittest.TestCase):
         )
 
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 8.433, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.3614, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 7.861, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.3778, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 8.498, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.3582, delta=0.0002)
@@ -286,8 +213,8 @@ class TestUnlikelihood(unittest.TestCase):
             skip_test=True,
         )
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 11.26, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.2115, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 9.664, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.2165, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 11.42, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.2004, delta=0.0002)
@@ -309,57 +236,11 @@ class TestUnlikelihood(unittest.TestCase):
             skip_test=True,
         )
         if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 11.66, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.2118, delta=0.0002)
+            self.assertAlmostEqual(valid['ppl'], 10.05, delta=0.1)
+            self.assertAlmostEqual(valid['f1'], 0.2337, delta=0.0002)
         else:
             self.assertAlmostEqual(valid['ppl'], 11.82, delta=0.1)
             self.assertAlmostEqual(valid['f1'], 0.2009, delta=0.0002)
-
-    def test_vocab_alpha1e2(self):
-        """
-        Verify recorded ppl and F1 scores for released models.
-        """
-        valid, _ = testing_utils.eval_model(
-            {
-                'model_file': 'zoo:dialogue_unlikelihood/vocab_alpha1e2/model',
-                'model': 'projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent',
-                'task': 'convai2',
-                'beam_size': 1,
-                'batchsize': 12,
-                'num_examples': NUM_EXAMPLES,
-                'skip_generation': False,
-            },
-            skip_test=True,
-        )
-        if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 12.38, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1997, delta=0.0002)
-        else:
-            self.assertAlmostEqual(valid['ppl'], 12.48, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1903, delta=0.0002)
-
-    def test_vocab_alpha1e3(self):
-        """
-        Verify recorded ppl and F1 scores for released models.
-        """
-        valid, _ = testing_utils.eval_model(
-            {
-                'model_file': 'zoo:dialogue_unlikelihood/vocab_alpha1e3/model',
-                'model': 'projects.dialogue_unlikelihood.agents:TransformerSequenceVocabUnlikelihoodAgent',
-                'task': 'convai2',
-                'beam_size': 1,
-                'batchsize': 12,
-                'num_examples': NUM_EXAMPLES,
-                'skip_generation': False,
-            },
-            skip_test=True,
-        )
-        if FAST_MODE:
-            self.assertAlmostEqual(valid['ppl'], 14.12, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1872, delta=0.0002)
-        else:
-            self.assertAlmostEqual(valid['ppl'], 14.27, delta=0.1)
-            self.assertAlmostEqual(valid['f1'], 0.1734, delta=0.0002)
 
 
 if __name__ == '__main__':

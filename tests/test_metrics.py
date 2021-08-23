@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import unittest
+from typing import Dict
 import torch
 import random
 
@@ -20,8 +21,14 @@ from parlai.core.metrics import (
     aggregate_named_reports,
     InterDistinctMetric,
     IntraDistinctMetric,
+    FairseqBleuMetric,
 )
-from parlai.core.torch_classifier_agent import ConfusionMatrixMetric, WeightedF1Metric
+from parlai.core.torch_classifier_agent import (
+    ConfusionMatrixMetric,
+    WeightedF1Metric,
+    AUCMetrics,
+)
+import parlai.utils.testing as testing_utils
 
 
 class TestMetric(unittest.TestCase):
@@ -311,6 +318,327 @@ class TestAggregators(unittest.TestCase):
         assert agg['b/fixed'] == 4
         assert 'b/global_avg' not in agg
 
+    def test_auc_metrics(self):
+        class_name = 'class_notok'
+        class_to_int = {'class_notok': 1, 'class_ok': 0}
+        decimal_place = 3
+        # task 1; borrowing example from scikit learn
+        task1_probabilities = [0.1, 0.4, 0.35, 0.8]
+        task1_gold_labels = ['class_ok', 'class_ok', 'class_notok', 'class_notok']
+        task1_pos_buckets = {0.35: 1, 0.8: 1}
+        task1_neg_buckets = {0.1: 1, 0.4: 1}
+        task1_exp_fp_tp = {
+            # thres: (False positives, True positives)
+            0.1: (2, 2),
+            0.35: (1, 2),
+            0.4: (1, 1),
+            0.8: (0, 1),
+            '_': (0, 0),
+        }
+
+        # task 2; checking with an odd number
+        task2_probabilities = [0.05, 0.2, 0.6]
+        task2_gold_labels = ['class_ok', 'class_ok', 'class_notok']
+        task2_pos_buckets = {0.6: 1}
+        task2_neg_buckets = {0.05: 1, 0.2: 1}
+        task2_exp_fp_tp = {0.05: (2, 1), 0.2: (1, 1), 0.6: (0, 1), 1.5: (0, 0)}
+
+        # task 3: combining task 1 and task 2
+        task3_probabilities = task1_probabilities + task2_probabilities
+        task3_gold_labels = task1_gold_labels + task2_gold_labels
+        task3_pos_buckets = {0.35: 1, 0.8: 1, 0.6: 1}
+        task3_neg_buckets = {0.1: 1, 0.4: 1, 0.05: 1, 0.2: 1}
+        task3_exp_fp_tp = {
+            # threshold: FP, TP
+            0.05: (4, 3),
+            0.1: (3, 3),
+            0.2: (2, 3),
+            0.35: (1, 3),
+            0.4: (1, 2),
+            0.6: (0, 2),
+            0.8: (0, 1),
+            '_': (0, 0),
+        }
+
+        # task 4: testing when there's ones in the same bucket
+        task4_probabilities = [0.1, 0.400001, 0.4, 0.359, 0.35, 0.900001, 0.9]
+        task4_gold_labels = [
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+        ]
+        task4_neg_buckets = {0.1: 1, 0.4: 2}
+        task4_pos_buckets = {0.35: 1, 0.359: 1, 0.9: 2}
+        task4_exp_fp_tp = {
+            # thres: (False positives, True positives)
+            0.1: (3, 4),
+            0.35: (2, 4),
+            0.359: (2, 3),
+            0.4: (2, 2),
+            0.9: (0, 2),
+            '_': (0, 0),
+        }
+
+        # task 5: testing when there's more difference in the bucket (similar to task 4),
+        # but testing to make sure the rounding/flooring is correct, and the edge cases 0.0, 1.0
+        task5_probabilities = [0, 0.8, 0.4009, 0.400, 0.359, 0.35, 0.9999, 0.999, 1]
+        # 4 okay, 5 not okay
+        task5_gold_labels = [
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_ok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+            'class_notok',
+        ]
+        task5_neg_buckets = {0: 1, 0.8: 1, 0.4: 2}
+        task5_pos_buckets = {0.35: 1, 0.359: 1, 0.999: 2, 1: 1}
+        task5_exp_fp_tp = {
+            # thres: (False positives, True positives)
+            0: (4, 5),
+            0.35: (3, 5),
+            0.359: (3, 4),
+            0.4: (3, 3),
+            0.8: (1, 3),
+            0.9: (0, 3),
+            1.0: (0, 1),
+            '_': (0, 0),
+        }
+
+        # task 6: combining task 4 + task 5 (combining with same keys)
+        task6_probabilities = task4_probabilities + task5_probabilities
+        task6_gold_labels = task4_gold_labels + task5_gold_labels
+        task6_neg_buckets = {0: 1, 0.8: 1, 0.4: 4, 0.1: 1}
+        task6_pos_buckets = {0.35: 2, 0.359: 2, 0.9: 2, 0.999: 2, 1: 1}
+        task6_exp_fp_tp = {
+            # threshold: FP, TP
+            0: (7, 9),
+            0.1: (6, 9),
+            0.35: (5, 9),
+            0.359: (5, 7),
+            0.4: (5, 5),
+            0.8: (1, 5),
+            0.9: (0, 5),
+            0.999: (0, 3),
+            1: (0, 1),
+            '_': (0, 0),
+        }
+
+        # run and check the TPs and FPs for singles
+        task1_result = AUCMetrics.raw_data_to_auc(
+            task1_gold_labels,
+            task1_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task2_result = AUCMetrics.raw_data_to_auc(
+            task2_gold_labels,
+            task2_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task3_result = AUCMetrics.raw_data_to_auc(
+            task3_gold_labels,
+            task3_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task4_result = AUCMetrics.raw_data_to_auc(
+            task4_gold_labels,
+            task4_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task5_result = AUCMetrics.raw_data_to_auc(
+            task5_gold_labels,
+            task5_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task6_result = AUCMetrics.raw_data_to_auc(
+            task6_gold_labels,
+            task6_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+
+        # check the buckets first
+        self.assertEqual(task1_result._pos_dict, task1_pos_buckets)
+        self.assertEqual(task1_result._neg_dict, task1_neg_buckets)
+        self.assertEqual(task2_result._pos_dict, task2_pos_buckets)
+        self.assertEqual(task2_result._neg_dict, task2_neg_buckets)
+        self.assertEqual(task3_result._pos_dict, task3_pos_buckets)
+        self.assertEqual(task3_result._neg_dict, task3_neg_buckets)
+        self.assertEqual(task4_result._pos_dict, task4_pos_buckets)
+        self.assertEqual(task4_result._neg_dict, task4_neg_buckets)
+        self.assertEqual(task5_result._pos_dict, task5_pos_buckets)
+        self.assertEqual(task5_result._neg_dict, task5_neg_buckets)
+        self.assertEqual(task6_result._pos_dict, task6_pos_buckets)
+        self.assertEqual(task6_result._neg_dict, task6_neg_buckets)
+
+        # then check fp, tp
+        self.assertEqual(set(task1_result._calc_fp_tp()), set(task1_exp_fp_tp.values()))
+        self.assertEqual(set(task2_result._calc_fp_tp()), set(task2_exp_fp_tp.values()))
+        self.assertEqual(set(task3_result._calc_fp_tp()), set(task3_exp_fp_tp.values()))
+        self.assertEqual(set(task4_result._calc_fp_tp()), set(task4_exp_fp_tp.values()))
+        self.assertEqual(set(task5_result._calc_fp_tp()), set(task5_exp_fp_tp.values()))
+        self.assertEqual(set(task6_result._calc_fp_tp()), set(task6_exp_fp_tp.values()))
+
+        # check that merging also produces the same results
+        task3_result = task1_result + task2_result
+        self.assertEqual(task3_result._pos_dict, task3_pos_buckets)
+        self.assertEqual(task3_result._neg_dict, task3_neg_buckets)
+        self.assertEqual(set(task3_result._calc_fp_tp()), set(task3_exp_fp_tp.values()))
+
+        task6_result = task4_result + task5_result
+        self.assertEqual(task6_result._pos_dict, task6_pos_buckets)
+        self.assertEqual(task6_result._neg_dict, task6_neg_buckets)
+        self.assertEqual(set(task6_result._calc_fp_tp()), set(task6_exp_fp_tp.values()))
+
+        # now actually testing the area under curve
+        from sklearn.metrics import roc_auc_score
+
+        task1_labels_int = [
+            class_to_int[gold_label] for gold_label in task1_gold_labels
+        ]
+        task2_labels_int = [
+            class_to_int[gold_label] for gold_label in task2_gold_labels
+        ]
+        task3_labels_int = [
+            class_to_int[gold_label] for gold_label in task3_gold_labels
+        ]
+        task4_labels_int = [
+            class_to_int[gold_label] for gold_label in task4_gold_labels
+        ]
+        task5_labels_int = [
+            class_to_int[gold_label] for gold_label in task5_gold_labels
+        ]
+        task6_labels_int = [
+            class_to_int[gold_label] for gold_label in task6_gold_labels
+        ]
+
+        self.assertAlmostEqual(
+            roc_auc_score(task1_labels_int, task1_probabilities), task1_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task2_labels_int, task2_probabilities), task2_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task3_labels_int, task3_probabilities), task3_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task4_labels_int, task4_probabilities), task4_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task5_labels_int, task5_probabilities), task5_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task6_labels_int, task6_probabilities), task6_result.value()
+        )
+
+        # last task: adding everything together; uses task 3 & 6
+        # gonna just check roc scores
+        task_all_gold_labels = task3_gold_labels + task6_gold_labels
+        task_all_labels_int = task3_labels_int + task6_labels_int
+        task_all_probabilities = task3_probabilities + task6_probabilities
+
+        task_all_result = task3_result + task6_result
+
+        self.assertAlmostEqual(
+            roc_auc_score(task_all_labels_int, task_all_probabilities),
+            task_all_result.value(),
+        )
+
+        task_all_result2 = AUCMetrics.raw_data_to_auc(
+            task_all_gold_labels, task_all_probabilities, class_name
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task_all_labels_int, task_all_probabilities),
+            task_all_result2.value(),
+        )
+
+        ### now reusing the tests for the other class, just checking rocs
+        ## for binary classes, they should be the same?
+        class_name = 'class_ok'
+        task1_probabilities = [1 - curr_prob for curr_prob in task1_probabilities]
+        task2_probabilities = [1 - curr_prob for curr_prob in task2_probabilities]
+        task3_probabilities = [1 - curr_prob for curr_prob in task3_probabilities]
+        task4_probabilities = [1 - curr_prob for curr_prob in task4_probabilities]
+        task5_probabilities = [1 - curr_prob for curr_prob in task5_probabilities]
+        task6_probabilities = [1 - curr_prob for curr_prob in task6_probabilities]
+
+        task1_labels_int = [1 - curr for curr in task1_labels_int]
+        task2_labels_int = [1 - curr for curr in task2_labels_int]
+        task3_labels_int = [1 - curr for curr in task3_labels_int]
+        task4_labels_int = [1 - curr for curr in task4_labels_int]
+        task5_labels_int = [1 - curr for curr in task5_labels_int]
+        task6_labels_int = [1 - curr for curr in task6_labels_int]
+
+        # get the results
+        task1_result = AUCMetrics.raw_data_to_auc(
+            task1_gold_labels,
+            task1_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task2_result = AUCMetrics.raw_data_to_auc(
+            task2_gold_labels,
+            task2_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task3_result = AUCMetrics.raw_data_to_auc(
+            task3_gold_labels,
+            task3_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task4_result = AUCMetrics.raw_data_to_auc(
+            task4_gold_labels,
+            task4_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task5_result = AUCMetrics.raw_data_to_auc(
+            task5_gold_labels,
+            task5_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+        task6_result = AUCMetrics.raw_data_to_auc(
+            task6_gold_labels,
+            task6_probabilities,
+            class_name,
+            max_bucket_dec_places=decimal_place,
+        )
+
+        # check against roc_auc_score
+        self.assertAlmostEqual(
+            roc_auc_score(task1_labels_int, task1_probabilities), task1_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task2_labels_int, task2_probabilities), task2_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task3_labels_int, task3_probabilities), task3_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task4_labels_int, task4_probabilities), task4_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task5_labels_int, task5_probabilities), task5_result.value()
+        )
+        self.assertAlmostEqual(
+            roc_auc_score(task6_labels_int, task6_probabilities), task6_result.value()
+        )
+
     def test_classifier_metrics(self):
         # We assume a batch of 16 samples, binary classification case, from 2 tasks.
         # task 1
@@ -437,6 +765,60 @@ class TestDistinct(unittest.TestCase):
         m2 = IntraDistinctMetric.compute("this test test test test", 1)
         self.assertAlmostEqual(m2, 2 / 5)
         self.assertAlmostEqual(m1 + m2, 3 / 5)
+
+
+@testing_utils.skipUnlessFairseq
+class TestFairseqBleuMetric(unittest.TestCase):
+    """
+    We're just going to compare that scores from Fairseq's Bleu scorer are the same as
+    our scorer.
+    """
+
+    def test_scorer(self):
+        import random
+
+        vocab_length = num_ex = 100
+        ex_length = 10
+        pad_idx = 0
+        eos_idx = 1
+        unk_idx = 2
+
+        try:
+            from fairseq.scoring.bleu import Scorer
+            from fairseq.scoring.bleu import BleuConfig
+
+            fairseq_metrics: Scorer = Scorer(
+                BleuConfig(pad=pad_idx, eos=eos_idx, unk=unk_idx)
+            )
+        except ImportError:
+            # Bleuconfig is a recent version of fairseq
+            fairseq_metrics: Scorer = Scorer(pad_idx, eos_idx, unk_idx)
+
+        parlai_metrics: Dict[int, FairseqBleuMetric] = {k: [] for k in range(1, 5)}
+
+        for _ in range(num_ex):
+            guess = torch.LongTensor(random.sample(range(vocab_length), ex_length))
+            answer = torch.LongTensor(random.sample(range(vocab_length), ex_length))
+
+            parlai_bleu = FairseqBleuMetric.compute_many(
+                guess, answer.unsqueeze(0), pad_idx, eos_idx, unk_idx
+            )
+            for i, bleu in enumerate(parlai_bleu):
+                parlai_metrics[i + 1].append(bleu)
+            fairseq_metrics.add(answer.int(), guess.int())
+
+        parlai_bleus = {}
+        for k, v in parlai_metrics.items():
+            total = v[0]
+            for vv in v[1:]:
+                total = total + vv
+            parlai_bleus[k] = total
+
+        fairseq_bleus = {k: fairseq_metrics.score(order=k) for k in range(1, 5)}
+
+        assert all(
+            parlai_bleus[k] == fairseq_bleus[k] for k in range(1, 5)
+        ), f'{parlai_bleus}\n{fairseq_bleus}'
 
 
 if __name__ == '__main__':

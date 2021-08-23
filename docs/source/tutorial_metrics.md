@@ -1,8 +1,12 @@
-# Understanding and adding new metrics
+# Understanding and adding metrics
 
 Author: Stephen Roller
 
 ## Introduction and Standard Metrics
+
+:::{tip} List of metrics
+If you're not sure what a metric means, refer to our [List of metrics](#list-of-metrics).
+:::
 
 ParlAI contains a number of built-in metrics that are automatically computed when
 we train and evaluate models. Some of these metrics are _text generation_ metrics,
@@ -53,12 +57,13 @@ One nice thing about metrics is that they are automatically logged to the
 statements into your code.
 
 
+
 ### Agent-specific metrics
 
 Some agents include their own metrics that are computed for them. For example,
 generative models automatically compute `ppl`
 ([perplexity](https://en.wikipedia.org/wiki/Perplexity)) and `token_acc`, both
-which measure the generative model's ability to predict indivdual tokens.  As
+which measure the generative model's ability to predict individual tokens.  As
 an example, let's evaluate the [BlenderBot](https://parl.ai/projects/recipes/)
 90M model on DailyDialog:
 
@@ -402,3 +407,15 @@ __Under the hood__: Local metrics work by including a "metrics" field in the
 return message. This is a dictionary which maps field name to a metric value.
 When the teacher receives the response from the model, it utilizes the metrics
 field to update counters on its side.
+
+## List of Metrics
+
+Below is a list of metrics and a brief explanation of each.
+
+:::{note} List of metrics
+If you find a metric not listed here,
+please [file an issue on GitHub](https://github.com/facebookresearch/ParlAI/issues/new?assignees=&labels=Docs,Metrics&template=other.md).
+:::
+
+```{include} metric_list.inc
+```

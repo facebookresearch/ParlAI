@@ -8,7 +8,7 @@ Two variants of the blueprint are supported:
 - `TurnAnnotationStaticInFlightQABlueprint`
     - Includes the ability to add an additional in-flight (i.e. mid-HIT) quality assurance check
     - Called with `python parlai/crowdsourcing/tasks/turn_annotations_static/run_in_flight_qa.py`
-    
+
 For both variants of the blueprint, it is required to pass in your own file of conversations with `mephisto.blueprint.data_jsonl=${PATH_TO_CONVERSATIONS}`.
 
 See `turn_annotations_blueprint.py` for various parameters of this task, including passing in custom annotation bucket definitions using the `annotation_buckets` YAML flag, being able to group multiple conversations into one HIT using the `subtasks_per_unit` flag, passing in onboarding data with answers, and being able to ask only for the final utterance as an annotation.

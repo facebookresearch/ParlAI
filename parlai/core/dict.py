@@ -628,7 +628,7 @@ class DictionaryAgent(Agent):
         SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
         with PathManager.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
-                split = line.strip().split('\t')
+                split = line.rstrip("\n\r").split('\t')
                 token = unescape(split[0])
                 if lower_special and token in SPECIAL_TOKENS:
                     token = token.lower()
@@ -733,7 +733,7 @@ class DictionaryAgent(Agent):
         else:
             return self.vec2txt(txt_or_vec)
 
-    def txt2vec(self, text, vec_type=list):
+    def txt2vec(self, text: str, vec_type=list):
         """
         Convert a string to a vector (list of ints).
 
@@ -743,7 +743,11 @@ class DictionaryAgent(Agent):
             The type of the returned vector if the input is a string. Suggested
             ``list``, ``tuple``, ``set``, or ``np.ndarray``.
         """
-        itr = (self._word_lookup(token) for token in self.tokenize(str(text)))
+        assert isinstance(
+            text, str
+        ), f'Input to txt2vec must be string, not {type(text)}'
+
+        itr = (self._word_lookup(token) for token in self.tokenize(text))
         if vec_type == list or vec_type == tuple or vec_type == set:
             res = vec_type(itr)
         elif vec_type == np.ndarray:
@@ -768,9 +772,9 @@ class DictionaryAgent(Agent):
             # end of Hugging Face dict, there is an offset of #(extra tokens) between them.
             extra_tokens = 4  # length of special tokens
             vector = [
-                self.bpe.special_tok_map[idx]
-                if idx in self.bpe.special_tok_map
-                else idx - extra_tokens
+                self.bpe.special_tok_map[int(idx)]
+                if int(idx) in self.bpe.special_tok_map
+                else int(idx) - extra_tokens
                 for idx in vector
             ]
             tokens = [self[int(idx)] for idx in vector]

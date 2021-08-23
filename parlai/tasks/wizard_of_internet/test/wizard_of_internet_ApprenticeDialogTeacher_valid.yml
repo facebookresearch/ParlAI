@@ -1,0 +1,28 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - 'I enjoy reading books.   '
+    id: WizInternetApprenticeTeacher
+    text: I work as a freelance accountant.
+- - episode_done: false
+    eval_labels:
+    - All fiction!   With COVID this past summer, I read 16 books in 3 months.  You?
+    id: WizInternetApprenticeTeacher
+    text: Same here! What kind of books do you read?
+- - episode_done: false
+    eval_labels:
+    - Audit banks.  You?
+    id: WizInternetApprenticeTeacher
+    text: I am a big Harry Potter nerd! What do you do for work?
+- - episode_done: false
+    eval_labels:
+    - Good for you!    Are you watching the Superbowl this year?
+    id: WizInternetApprenticeTeacher
+    text: I do taxes actually!
+- - episode_done: false
+    eval_labels:
+    - It is.   Are you a Brady fan or foe?
+    id: WizInternetApprenticeTeacher
+    text: I will! It is on the 7th right ?
+num_episodes: 516
+num_examples: 2881

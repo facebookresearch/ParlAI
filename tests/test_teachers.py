@@ -12,16 +12,13 @@ A module for testing various teacher types in ParlAI
 import os
 import unittest
 from parlai.utils import testing as testing_utils
-from parlai.core.teachers import DialogTeacher
+from parlai.core.teachers import DialogTeacher, create_task_agent_from_taskname
 from parlai.core.metrics import SumMetric
 import regex as re
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
-from parlai.core.loader import register_agent
-from collections import defaultdict
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 
 
 class TestAbstractImageTeacher(unittest.TestCase):
@@ -252,37 +249,19 @@ class TestConversationTeacher(unittest.TestCase):
             self.assertEqual(num_episodes, 2)
 
 
-@register_agent("unique_examples")
-class UniqueExamplesAgent(RepeatLabelAgent):
-    """
-    Simple agent which asserts that it has only seen unique examples.
-
-    Useful for debugging. Inherits from RepeatLabelAgent.
-    """
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.unique_examples = defaultdict(int)
-
-    def reset(self):
-        super().reset()
-        self.unique_examples = defaultdict(int)
-
-    def act(self):
-        obs = self.observation
-        text = obs.get('text')
-        if text in self.unique_examples:
-            raise RuntimeError(f'Already saw example: {text}')
-        else:
-            self.unique_examples[text] += 1
-
-        return super().act()
-
-
 class TestChunkTeacher(unittest.TestCase):
     """
     Test chunked teacher.
     """
+
+    def test_iter(self):
+        with testing_utils.tempdir() as tmpdir:
+            teacher = create_task_agent_from_taskname(
+                {'task': 'integration_tests', 'datatype': 'valid', 'datapath': tmpdir}
+            )[0]
+            # twice to assert we reset iterators correctly
+            assert len(list(teacher)) == 100
+            assert len(list(teacher)) == 100
 
     def test_no_batched(self):
         valid, test = testing_utils.eval_model(
@@ -322,47 +301,25 @@ class TestChunkTeacher(unittest.TestCase):
         assert valid['exs'] == 100
         assert test['exs'] == 100
 
-    def test_stream_only(self):
-        with self.assertRaises(ValueError):
-            valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests:chunky',
-                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
-                    batchsize=32,
-                ),
-                valid_datatype='valid',
-            )
+    def test_non_stream_works(self):
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid',
+        )
 
-        with self.assertRaises(ValueError):
-            valid, test = testing_utils.eval_model(
-                dict(
-                    task='integration_tests:chunky',
-                    model='parlai.agents.test_agents.test_agents:MockTorchAgent',
-                    batchsize=32,
-                ),
-                valid_datatype='valid:stream',
-                test_datatype='test',
-            )
-
-    def test_slow_loading(self):
-        """
-        Test that a slow loading teacher sees the right examples during validation.
-        """
-        with testing_utils.tempdir() as tmpdir:
-            model_file = os.path.join(tmpdir, 'model')
-            valid, test = testing_utils.train_model(
-                dict(
-                    task='integration_tests:chunky_unique_slow',
-                    model='unique_examples',
-                    model_file=model_file,
-                    datatype='train:stream',
-                    num_epochs=0.5,
-                    validation_every_n_epochs=0.1,
-                    batchsize=1,
-                    dynamic_batching='full',
-                    dict_maxexs=0,
-                )
-            )
+        testing_utils.eval_model(
+            dict(
+                task='integration_tests:chunky',
+                model='parlai.agents.test_agents.test_agents:MockTorchAgent',
+                batchsize=32,
+            ),
+            valid_datatype='valid:stream',
+            test_datatype='test',
+        )
 
 
 class CustomEvaluationTeacher(DialogTeacher):
@@ -430,6 +387,15 @@ class ViolationTeacher(_MockTeacher):
 
 
 class TestDialogTeacher(unittest.TestCase):
+    def test_iter(self):
+        opt = Opt({'datatype': 'valid', 'datapath': '/tmp', 'task': 'test'})
+        teacher = TupleTeacher(opt)
+        # twice to ensure we reset iterators correctly
+        examples = list(teacher)
+        assert len(examples) == 9
+        examples = list(teacher)
+        assert len(examples) == 9
+
     def test_nodatafile(self):
         for dt in [
             'train:ordered',

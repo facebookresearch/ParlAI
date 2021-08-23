@@ -16,6 +16,7 @@ from parlai.utils.misc import msg_to_str
 from parlai.utils.conversations import Conversations
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
+from parlai.core.message import Message
 
 import copy
 from tqdm import tqdm
@@ -74,12 +75,19 @@ class WorldLogger:
         """
         msgs = []
         for act in acts:
+            # padding examples in the episode[0]
+            if not isinstance(act, Message):
+                act = Message(act)
+            if act.is_padding():
+                break
             if not self.keep_all:
                 msg = {f: act[f] for f in self.keep_fields if f in act}
             else:
                 msg = act
             msgs.append(msg)
 
+        if len(msgs) == 0:
+            return
         self._current_episodes.setdefault(idx, [])
         self._current_episodes[idx].append(msgs)
 
@@ -88,6 +96,14 @@ class WorldLogger:
         Add episode to the logs.
         """
         self._logs.append(episode)
+
+    def _check_episode_done(self, parley) -> bool:
+        """
+        Check whether an episode is done for a given parley.
+        """
+        if parley[0]:
+            return parley[0].get('episode_done', False)
+        return False
 
     def _is_batch_world(self, world):
         return (
@@ -103,7 +119,7 @@ class WorldLogger:
             # in the buffer
             idx = parley[0]['dyn_batch_idx'] if 'dyn_batch_idx' in parley[0] else i
             self._add_msgs(parley, idx=idx)
-            if world.worlds[idx].episode_done():
+            if self._check_episode_done(parley):
                 self.reset_world(idx=idx)
 
     def log(self, world):

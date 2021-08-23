@@ -35,6 +35,7 @@ class DefaultTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
@@ -157,6 +158,7 @@ class SimpleTeacher(DefaultTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
@@ -260,6 +262,7 @@ class SimpleMultiTeacher(DefaultTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
@@ -389,7 +392,7 @@ class ReversedTeacher(DefaultTeacher):
             '--light-hard-max-length-cap',
             type='bool',
             default=False,
-            help="if specificed, conversation max length is a hard cap - that is, "
+            help="if specified, conversation max length is a hard cap - that is, "
             "any conversations greater than --light-max-conv-length will be "
             "removed completely",
         )

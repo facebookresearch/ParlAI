@@ -10,7 +10,7 @@ import os
 
 RESOURCES = [
     DownloadableFile(
-        'https://storage.googleapis.com/dialog-data-corpus/CCPE-M-2019/data.json',
+        'https://raw.githubusercontent.com/google-research-datasets/ccpe/main/data.json',
         'ccpe.json',
         '4ff051ea7ea60cf0f480c911c7e2cfed56434e2e2c9ea8965ac5e26365773f0a',
         zipped=False,
@@ -20,7 +20,7 @@ RESOURCES = [
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'CCPE')
-    version = '1.0'
+    version = '1.1'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')

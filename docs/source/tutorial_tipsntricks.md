@@ -79,6 +79,18 @@ parlai display_data --task light_dialog:light_label_type=speech,light_dialog:lig
 That is, by adding a colon ":" followed by the flag name, an equals
 sign, and the value. You can add multiple flags, all separated by ":".
 
+Agent Convenience Functions
+----------
+Tip: Having implemented `batch_act()` and `act()`, you can make use of the agent convenience functions `batch_respond()` and `respond()` which provide the agent's response to messages by internally calling `batch_act()` and `act()` respectively. The function signatures are as follows:
+
+```python
+def respond(self, text_or_message: Union[str, Message], **other_message_fields) -> str:
+    pass
+
+def batch_respond(self, messages: List[Message]) -> List[str]:
+    pass
+```
+
 Self-Chats
 ----------
 
@@ -94,7 +106,7 @@ This will generate 10 self-chats between 2 poly-encoder models with persona cont
 Flags to generate and store the self-chat:
 
 - `--num-self-chats` specify the number of self-chats to generate (1 by default).
-- `--selfchat-max-turns` specify the number of self-chat turns (6 by default), including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia(WoW) topics) in addition to the model utterances. 
+- `--selfchat-max-turns` specify the number of self-chat turns (6 by default), including context turn, seeded-utterance turns. Some self-chat world includes context information (such as persona; Wizard of Wikipedia(WoW) topics) in addition to the model utterances.
 - `--selfchat-task` specify whether to create a self-chat version of the task. If True (by default), it allows for loading contexts and openers that seed the self-chat.
 - `--outfile` specify file to save self-chat logs.
 - `--save-format` specify the format to save self-chat logs in. Use `conversations` for jsonl format, or `parlai` for text format (`conversations` by default).
@@ -149,7 +161,7 @@ This handy script can prettify the display of json file of chats
 
 ```bash
 # Display conversation in HTML format.
-python parlai/scripts/convo_render.py -i projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html 
+python parlai/scripts/convo_render.py -i projects/wizard_of_wikipedia/chat_example1.jsonl -o /tmp/chat.html
 ```
 
 Some additional flags that can be used for convo-render:
@@ -165,46 +177,3 @@ git repository.
 
 For more detailed instructions and features, see the
 [README](http://github.com/facebookresearch/ParlAI/blob/master/example_parlai_internal)
-
-Contributing
-------------
-(contributing)=
-
-ParlAI is maintained by a small team, so we rely heavily on community contributions. We welcome pull requests with open wings!
-
-### Overview
-- Make your changes
-- Open a pull request
-- Iterate with reviewers, fix CI, add tests
-- Celebrate!
-
-### Creating a Pull Request
-
-**Selecting reviewers**
-
-There’s no master gatekeeper for ParlAI, so don’t worry about needing to add any particular person. Just take a look at the blame for the file you’re modifying and try to find someone who has made a significant and recent change to that code. Also, add people who might be affected by your change.
-
-Some members of the team regularly go through the PR queue and triage, so if there’s a better person to review they’ll reassign to them.
-
-**Work in progress**
-
-If you are not ready for the pull request to be reviewed, keep it as a draft or tag it with “[WIP]” and we’ll ignore it temporarily. If you are working on a complex change, it’s good to start things off as WIP, because you will need to spend time looking at CI results to see if things worked out or not.
-
-### Reviewing and Testing
-
-**Iterating**
-
-We’ll try our best to respond as quickly as possible, and will try to minimize the number of review roundtrips. Make sure to investigate lint errors and CI failures, as these should all be passing before merging. Keep iterating with us until it’s accepted!
-
-**Testing**
-
-See the [documentation on writing tests](http://parl.ai/docs/tutorial_tests.html)
-
-**Merging**
-
-Once a pull request is accepted, CI is passing, and there are no unresolved comments there is nothing else you need to do; we will merge the PR for you. 
-
-### Celebrate
-```bash
-parlai party
-```

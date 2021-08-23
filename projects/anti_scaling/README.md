@@ -18,7 +18,7 @@ When performing distillation, terms are added for losses on the encoder output, 
 
 Distillation in the style of [Jiao, Xiaoqi, et al. "Tinybert: Distilling bert for natural language understanding." *arXiv preprint arXiv:1909.10351* (2019).](https://arxiv.org/abs/1909.10351)
 
-With TinyBERT-style distillation, the student model can have smaller hidden and FFN dimensions than the teacher model, and projection matrices will be used to measure losses such as those between the hidden-layer outputs. Unlike with DistilBERT-style distillation, the weights of the teacher model cannot be used to initialize the student model. 
+With TinyBERT-style distillation, the student model can have smaller hidden and FFN dimensions than the teacher model, and projection matrices will be used to measure losses such as those between the hidden-layer outputs. Unlike with DistilBERT-style distillation, the weights of the teacher model cannot be used to initialize the student model.
 
 In addition to the losses of DistilBERT-style distillation above, losses are also included on the embedding layer and on the per-layer query/key product matrices from encoder self-attention, decoder self-attention, and encoder/decoder attention. `DistillNarrowTransformerAgent` is used for distilling `transformer/generator` models, and `DistillNarrowBartAgent` is used for distilling `bart` models.
 
@@ -36,6 +36,7 @@ parlai train_model \
 --allow-missing-init-opts True \
 --init-model None \
 --init-opt data/models/blender/blender_3B/model.opt \
+--dict-file data/models/blender/blender_3B/model.dict \
 --model projects.anti_scaling.distillation:DistillNarrowTransformerAgent \
 --teacher-model data/models/blender/blender_3B/model \
 --batchsize 16 \

@@ -8,14 +8,18 @@ import copy
 import random
 from typing import Any, Dict, List, Optional
 
-from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
+from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.core.agents import Agent
 from parlai.core.worlds import create_task, DialogPartnerWorld, validate
 from parlai.core.message import Message
 
 
 def load_openers(opt) -> Optional[List[str]]:
-    base_task = opt['task'].split(':')[0]
+    if opt['task'].startswith('internal:') or opt['task'].startswith('fb:'):
+        base_task = opt['task']
+    else:
+        base_task = opt['task'].split(':')[0]
+
     if base_task == 'self_chat':
         # TODO(#2284): Load default openers from s3
         return None
@@ -31,22 +35,33 @@ def load_openers(opt) -> Optional[List[str]]:
         task_opt['datatype'] = f'{datatype}:evalmode'
     task_opt['interactive_task'] = False
     task_opt['selfchat_task'] = False
-    task_agent = RepeatLabelAgent(task_opt)
+    task_opt['fixed_response'] = None
+    task_agent = FixedResponseAgent(task_opt)
     task_world = create_task(task_opt, task_agent)
 
     # run through task data, collecting all first messages
-    openers = set()
+    openers = []
     is_first_turn = True
     while not task_world.epoch_done():
         task_world.parley()
         msg = task_world.get_acts()[0]
         # add only the first message in the episode
         if is_first_turn and msg.get('text'):
-            openers.add(msg['text'])
+            openers.append(msg['text'])
         is_first_turn = msg.get('episode_done', False)
 
+    # remove duplicates while preserving the ordering of the loaded openers
+    openers = list(dict.fromkeys(openers))
+
     print(f'[ loaded {len(openers)} openers ]')
-    return list(openers)
+    return openers
+
+
+def load_openers_from_file(filepath: str) -> List[str]:
+    openers = []
+    with open(filepath, 'r') as f:
+        openers = [l.strip() for l in f]
+    return openers
 
 
 class SelfChatWorld(DialogPartnerWorld):
@@ -80,6 +95,8 @@ class SelfChatWorld(DialogPartnerWorld):
         """
         if self.opt.get('seed_messages_from_task'):
             self._openers = load_openers(self.opt)
+        elif self.opt.get('seed_messages_from_file'):
+            self._openers = load_openers_from_file(self.opt['seed_messages_from_file'])
 
     def get_openers(self, episode_num: int) -> Optional[List[str]]:
         """

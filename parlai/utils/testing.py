@@ -63,6 +63,14 @@ except ImportError:
     DETECTRON_AVAILABLE = False
 
 
+try:
+    import fairseq  # noqa: F401
+
+    FAIRSEQ_AVAILABLE = True
+except ImportError:
+    FAIRSEQ_AVAILABLE = False
+
+
 def is_this_circleci():
     """
     Return if we are currently running in CircleCI.
@@ -75,6 +83,16 @@ def skipUnlessTorch(testfn, reason='pytorch is not installed'):
     Decorate a test to skip if torch is not installed.
     """
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessTorch17(testfn, reason='Test requires pytorch 1.7+'):
+    if not TORCH_AVAILABLE:
+        skip = True
+    else:
+        from packaging import version
+
+        skip = version.parse(torch.__version__) < version.parse('1.7.0')
+    return unittest.skipIf(skip, reason)(testfn)
 
 
 def skipIfGPU(testfn, reason='Test is CPU-only'):
@@ -121,6 +139,13 @@ def skipUnlessDetectron(
     Decorate a test to skip unless maskrcnn_benchmark and opencv are installed.
     """
     return unittest.skipUnless(DETECTRON_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessFairseq(testfn, reason='fairseq not installed'):
+    """
+    Decorate a test to skip unless fairseq is installed.
+    """
+    return unittest.skipUnless(FAIRSEQ_AVAILABLE, reason)(testfn)
 
 
 class retry(object):

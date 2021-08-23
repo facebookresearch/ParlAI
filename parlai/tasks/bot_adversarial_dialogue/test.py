@@ -21,3 +21,7 @@ class TestBotAdversarialDialogueHumanTeacher(AutoTeacherTest):
 
 class TestHumanSafetyEvaluation(AutoTeacherTest):
     task = 'bot_adversarial_dialogue:HumanSafetyEvaluation'
+
+
+class TestHumanNonadvSafetyEvaluation(AutoTeacherTest):
+    task = 'bot_adversarial_dialogue:HumanNonadvSafetyEvaluation'

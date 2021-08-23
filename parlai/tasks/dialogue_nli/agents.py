@@ -13,6 +13,7 @@ from parlai.core.opt import Opt
 import json
 import os
 
+from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 from parlai.tasks.multinli.agents import convert_to_dialogData
@@ -42,6 +43,7 @@ class DialogueNliTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('DNLI Teacher Args')
         parser.add_argument(
             '-dfm',
@@ -133,7 +135,7 @@ class DialogueNliTeacher(FixedDialogTeacher):
             binary_classes=self.binary_classes,
         )
         new_entry = {k: entry[k] for k in ENTRY_FIELDS if k in entry}
-        return new_entry
+        return Message(new_entry)
 
 
 class ExtrasTeacher(DialogueNliTeacher):

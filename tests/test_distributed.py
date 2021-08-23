@@ -5,9 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
-import copy
 import unittest
-import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.build_dict as build_dict
 import parlai.scripts.multiprocessing_train as mp_train
@@ -16,21 +14,30 @@ import parlai.tasks.integration_tests.agents as inttests
 BATCHSIZE = 4
 
 
-def _forced_parse(parser, opt):
-    parser.set_params(**opt)
-    parser.set_params(log_every_n_sec=10)
-    popt = parser.parse_args([])
-    # in some rare cases, like for instance if the model class also
-    # overrides its default params, the params override will not
-    # be taken into account.
-    for k, v in opt.items():
-        popt[k] = v
-    return popt
+class _AbstractTest(unittest.TestCase):
+    def _distributed_train_model(self, **overrides):
+        opt = {**self.base_config, **overrides}
+        with testing_utils.tempdir() as tmpdir:
+            if 'model_file' not in opt:
+                opt['model_file'] = os.path.join(tmpdir, 'model')
+            if 'dict_file' not in opt:
+                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+
+            parser = mp_train.setup_args()
+            popt = parser.parse_kwargs(**opt)
+
+            # we need a prebuilt dictionary
+            parser = build_dict.setup_args()
+            build_dict.build_dict(popt)
+
+            valid, test = mp_train.launch_and_train(popt)
+
+        return (valid, test)
 
 
 @testing_utils.skipUnlessGPU
-class TestDistributed(unittest.TestCase):
-    _base_config = dict(
+class TestDistributed(_AbstractTest):
+    base_config = dict(
         task='integration_tests:overfit',
         model='transformer/generator',
         optimizer='adam',
@@ -39,7 +46,7 @@ class TestDistributed(unittest.TestCase):
         learningrate=1e-2,
         batchsize=BATCHSIZE,
         validation_every_n_epochs=5,
-        num_epochs=100,
+        num_epochs=150,
         n_layers=1,
         n_heads=1,
         ffn_size=32,
@@ -47,48 +54,23 @@ class TestDistributed(unittest.TestCase):
         verbose=True,
     )
 
-    def setUp(self):
-        print(f'[Setting up test {self._testMethodName}]')
-
-    def _distributed_train_model(self, opt):
-        with testing_utils.tempdir() as tmpdir:
-            if 'model_file' not in opt:
-                opt['model_file'] = os.path.join(tmpdir, 'model')
-            if 'dict_file' not in opt:
-                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-
-            parser = mp_train.setup_args()
-            popt = _forced_parse(parser, opt)
-
-            # we need a prebuilt dictionary
-            parser = build_dict.setup_args()
-            build_dict.build_dict(popt)
-
-            valid, test = mp_train.launch_and_train(popt, 31338)
-            dist.destroy_process_group()
-
-        return (valid, test)
-
-    @testing_utils.retry()
     def test_generator_distributed(self):
-        config = copy.deepcopy(self._base_config)
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model()
 
-        self.assertLessEqual(valid['ppl'], 1.50)
-        self.assertLessEqual(test['ppl'], 1.50)
+        self.assertLessEqual(valid['ppl'], 1.60)
+        self.assertLessEqual(test['ppl'], 1.60)
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
         self.assertEqual(valid['exs'].value(), BATCHSIZE)
         self.assertEqual(test['exs'].value(), BATCHSIZE)
 
-    @testing_utils.retry()
     def test_multitask_distributed(self):
-        config = copy.deepcopy(self._base_config)
-        config['num_epochs'] = 50
-        config['task'] = 'integration_tests:overfit,integration_tests:overfit_multiturn'
-        config['dynb'] = 'full'
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model(
+            num_epochs=50,
+            task='integration_tests:overfit,integration_tests:overfit_multiturn',
+            truncate=16,
+        )
 
         self.assertLessEqual(valid['ppl'], 1.20)
         self.assertLessEqual(test['ppl'], 1.20)
@@ -104,12 +86,12 @@ class TestDistributed(unittest.TestCase):
         )
 
     def test_distributed_eval_max_exs(self):
-        config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests'
-        config['num_epochs'] = 0.01
-        config['validation_max_exs'] = 90
-        config['short_final_eval'] = True
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model(
+            task='integration_tests',
+            num_epochs=0.01,
+            validation_max_exs=90,
+            short_final_eval=True,
+        )
 
         # Tests that DialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
@@ -124,11 +106,9 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 96)
 
     def test_distributed_eval_stream_mode(self):
-        config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests'
-        config['num_epochs'] = 0.01
-        config['datatype'] = 'train:stream'
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model(
+            task='integration_tests', num_epochs=0.01, datatype='train:stream'
+        )
 
         # Tests that StreamDialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
@@ -137,14 +117,13 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), inttests.NUM_TEST)
 
     def test_distributed_eval_stream_mode_max_exs(self):
-        config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests'
-        config['num_epochs'] = 0.01
-        config['datatype'] = 'train:stream'
-        config['validation_max_exs'] = 90
-        config['short_final_eval'] = True
-
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model(
+            task='integration_tests',
+            num_epochs=0.01,
+            datatype='train:stream',
+            validation_max_exs=90,
+            short_final_eval=True,
+        )
 
         # Tests that StreamDialogData.get() is doing the right thing
         # Ensure no duplication of examples among workers
@@ -159,51 +138,72 @@ class TestDistributed(unittest.TestCase):
         self.assertEqual(test['exs'].value(), 96)
 
     def test_chunked_dynamic_teacher(self):
-        config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests'
-        config['num_epochs'] = 0.01
-        config['datatype'] = 'train:stream'
-        config['dynamic_batching'] = 'full'
-        config['truncate'] = 16
-
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model(
+            task='integration_tests',
+            num_epochs=0.01,
+            datatype='train:stream',
+            dynamic_batching='full',
+            truncate=16,
+        )
         assert valid['exs'].value() == inttests.NUM_TEST
         assert test['exs'].value() == inttests.NUM_TEST
 
     def test_chunked_teacher(self):
-        config = copy.deepcopy(self._base_config)
-        config['task'] = 'integration_tests'
-        config['num_epochs'] = 0.01
-        config['datatype'] = 'train:stream'
-        config['num_epochs'] = 5
-        config['dynamic_batching'] = None
-
-        valid, test = self._distributed_train_model(config)
+        valid, test = self._distributed_train_model(
+            task='integration_tests',
+            datatype='train:stream',
+            num_epochs=5,
+            dynamic_batching=None,
+        )
         assert valid['exs'].value() == inttests.NUM_TEST
         assert test['exs'].value() == inttests.NUM_TEST
 
+
+@testing_utils.skipUnlessGPU
+class TestZero2(TestDistributed):
+    """
+    Integration tests for zero2 FSDP.
+    """
+
+    base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero2'}
+
+
+@unittest.skip
+@testing_utils.skipUnlessGPU
+class TestZero3(TestDistributed):
+    # Not supported at this time. See:
+    # https://github.com/facebookresearch/ParlAI/pull/3740
+    base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero3'}
+
+
+@testing_utils.skipUnlessGPU
+class TestNoModelParallel(_AbstractTest):
+    base_config = dict(
+        task='integration_tests:overfit',
+        optimizer='sgd',
+        validation_metric='loss',
+        learningrate=1e-2,
+        batchsize=BATCHSIZE,
+        validation_every_n_epochs=1,
+        num_epochs=1,
+        n_layers=1,
+        n_heads=1,
+        ffn_size=32,
+        embedding_size=8,
+        verbose=True,
+    )
+
     def test_no_model_parallel(self):
         """
-        Checks that we throw an error when combining mp_train with.
-
-        --model-parallel true.
+        Checks that we throw an error when combining mp_train with --model-parallel.
         """
-        config = copy.deepcopy(self._base_config)
-        config['model_parallel'] = True
-        for m in [
-            'transformer/generator',
-            'transformer/ranker',
-            'transformer/classifier',
-        ]:
-            config['model'] = m
+        for m in ['transformer/generator', 'transformer/ranker']:
             try:
-                _ = self._distributed_train_model(config)
+                _ = self._distributed_train_model(model=m, model_parallel=True)
             except RuntimeError:
                 pass
             else:
                 self.fail('Did not raise RuntimeError')
-            finally:
-                dist.destroy_process_group()
 
 
 @testing_utils.skipUnlessGPU
@@ -227,7 +227,6 @@ class TestDistributedEval(unittest.TestCase):
             self.assertAlmostEquals(
                 valid[key].value(), valid_mp[key].value(), delta=0.001
             )
-        dist.destroy_process_group()
 
 
 if __name__ == '__main__':

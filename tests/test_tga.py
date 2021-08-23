@@ -11,14 +11,15 @@ from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
+from parlai.agents.test_agents.transformer_generator_prefix import PREFIX_TEXT
 
 
-class TestUpgradeOpt(unittest.TestCase):
+class TestTGA(unittest.TestCase):
     """
-    Test upgrade_opt behavior.
+    Test various Torch Generator agent behaviors.
     """
 
-    def test_inference(self):
+    def test_upgrade_opt_inference(self):
         """
         Test --inference with simple options.
         """
@@ -97,9 +98,9 @@ class TestUpgradeOpt(unittest.TestCase):
         self.assertEqual(agent.beam_block_full_context, True)
 
 
-class TestTreeSearch(unittest.TestCase):
+class TestGeneration(unittest.TestCase):
     """
-    Tests various Tree Search functionalities.
+    Tests various generation functionalities.
 
     NOTE: Currently incomplete.
     """
@@ -112,6 +113,8 @@ class TestTreeSearch(unittest.TestCase):
             'beam',
             '--truncate',
             '1024',
+            '--beam-context-block-ngram',
+            '1',
         ]
         pp = ParlaiParser(True, True)
         agent = create_agent(pp.parse_args(args), True)
@@ -139,6 +142,34 @@ class TestTreeSearch(unittest.TestCase):
             agent2._get_context(batch, 0).tolist(),
             [5, 4, 6, 7] * 256 + [3] + [5, 4, 6, 7] * 256,
         )  # 3 is end token.
+
+    def test_prefix_tokens(self):
+        """
+        Test functionality of `get_prefix_tokens`.
+        """
+        args = [
+            '--model-file',
+            'zoo:unittest/transformer_generator2/model',
+            '--model',
+            'test_agents/transformer_generator_prefix',
+            '--inference',
+            'beam',
+            '--truncate',
+            '1024',
+            '--beam-size',
+            '2',
+        ]
+        pp = ParlaiParser(True, True)
+        agent = create_agent(pp.parse_args(args), True)
+        obs = {'text': '1 2 3 4 ' * 256, 'episode_done': False}
+        agent.observe(obs)
+        act = agent.act()
+        beam_texts = [x[0] for x in act['beam_texts']]
+        for beam in beam_texts:
+            # check that all beams start with the prefix text
+            assert beam.startswith(
+                PREFIX_TEXT
+            ), f"[{beam}] does not start with [{PREFIX_TEXT}]"
 
 
 if __name__ == '__main__':

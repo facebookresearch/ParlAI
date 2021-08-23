@@ -82,7 +82,7 @@ You may need to create your own `run.py` file with which to launch your script i
 
 You will also likely need to create the following helper files for your task:
 
-- `conf/example.yaml`: the file of Hydra parameter values that are set by your task by default when lauching `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
+- `conf/example.yaml`: the file of Hydra parameter values that are set by your task by default when launching `run.py`. The parameter values in this file should be set so as to easily demonstrate the basic functionality of your task without requiring additional configuration steps.
 - `task_config/`: the standard folder in which useful configuration files are stored, such as for specifying UI text, configuring models, providing sample onboarding parameters, etc.
 
 A few things to keep in mind:
@@ -92,7 +92,7 @@ A few things to keep in mind:
     start returning `True` for the `episode_done()` function.
 2.  Make sure to test your dialog task using Mephisto's sandbox mode (enabled by default) before
     pushing it live. See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live) for running live tasks.
-    
+
 Advanced Task Techniques
 ------------------------
 
@@ -127,7 +127,7 @@ Follow the steps below:
 -   Mephisto's default MTurk functionality requires a free Heroku account,
     which can be obtained [here](https://signup.heroku.com/). Running
     any Mephisto MTurk operation will walk you through linking the two.
-    
+
 To run a crowdsourcing task, launch its run file (typically `run.py`) with the proper flags, using a command like the following:
 
 ```bash
@@ -207,10 +207,10 @@ Mephisto MTurk Tips and Tricks
     __quite__ getting it allows those workers to work on other tasks for
     you in the future. You can soft-block workers by calling [`Worker.grant_qualification()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/data_model/qualification.py) for a certain `qualification_name`, which is typically set by the `mephisto.blueprint.block_qualification` parameter. That worker will then not be able to work on any
     tasks that use the same value for `mephisto.blueprint.block_qualification`.
-    
+
 ### Preventing and Handling Crashes
 
--   The `max_num_concurrent_units` argument when initializing [`TaskLauncher`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/operations/task_launcher.py) controls how many people can work on your task at any given time: set this sufficiently low for your task. Leaving this too high might cause your Heroku server to run into issues depending on how many messages per second it's trying to
+-   The `mephisto.task.max_num_concurrent_units` argument controls how many people can work on your task at any given time: set this sufficiently low for your task. Leaving this too high might cause your Heroku server to run into issues depending on how many messages per second it's trying to
     process, and on how much data is being sent in those messages (such
     as picture or video data).
 -   If you're running a model on your local machine, try to share the
@@ -251,4 +251,3 @@ Additional Credits
 -   Turker icon credit: [Amazon Mechanical
     Turk](https://requester.mturk.com/).
 -   Robot icon credit: [Icons8](https://icons8.com/).
-

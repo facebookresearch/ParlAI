@@ -14,8 +14,9 @@ parlai interactive --model-file "zoo:tutorial_transformer_generator/model"
 
 When prompted, enter something like: `Bob is Blue.\\nWhat is Bob?`
 
-Input is often model or task specific, but in drqa, it is always
-`context '\\n' question`.
+Input is often model or task specific. Some tasks will automatically format
+The input with context for the task, e.g. `-t convai2` will automatically add
+personas.
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent

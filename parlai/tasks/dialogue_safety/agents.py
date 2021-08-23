@@ -88,6 +88,7 @@ class MultiturnTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('Multiturn Safety Teacher Args')
         parser.add_argument(
             '--single-turn',
@@ -158,6 +159,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('Kaggle Toxic Comment Classification Data')
         parser.add_argument(
             '--use-test-set',
@@ -181,6 +183,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
         self.use_test_set = opt['use_test_set']
         self.balance_data = opt['balance_data']
+        self.DATA_SOURCE = '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>'
 
         self.data_path = os.path.join(
             opt['datapath'], 'dialogue_safety', 'wiki-toxic-comments'
@@ -224,8 +227,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             PathManager.mkdirs(self.data_path)
         if not PathManager.exists(os.path.join(self.data_path, 'train.csv')):
             raise RuntimeError(
-                f'\n\n{stars}\nThis data must be downloaded from '
-                '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>. '
+                f'\n\n{stars}\nThis data must be downloaded from {self.DATA_SOURCE}'
                 '\nIt cannot be automatically downloaded, as one must agree to '
                 'the competition rules outlined on the website before '
                 'gaining access to the data.\n\n'
@@ -294,7 +296,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             total_data.loc[total_data['sensitive'] < 1, 'is_sensitive'] = 0
             total_data.loc[total_data['sensitive'] >= 1, 'is_sensitive'] = 1
 
-            # Drop unecessary column
+            # Drop unnecessary column
             total_data = total_data.drop(columns=['id'])
 
             self.data_to_json(total_data, 'wiki-toxic-comments-default.json')

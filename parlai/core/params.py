@@ -186,8 +186,9 @@ def str2class(value):
     """
     From import path string, returns the class specified.
 
-    For example, the string 'parlai.agents.drqa.drqa:SimpleDictionaryAgent' returns
-    <class 'parlai.agents.drqa.drqa.SimpleDictionaryAgent'>.
+    For example, the string
+    'parlai.agents.hugging_face.dict:Gpt2DictionaryAgent' returns
+    <class 'parlai.agents.hugging_face.dict.Gpt2DictionaryAgent'>.
     """
     if ':' not in value:
         raise RuntimeError('Use a colon before the name of the class.')
@@ -755,6 +756,12 @@ class ParlaiParser(argparse.ArgumentParser):
             action='store_true',
             help='Print all messages',
         )
+        parlai.add_argument(
+            '--debug',
+            dest='is_debug',
+            action='store_true',
+            help='Enables some debug behavior',
+        )
         self.add_parlai_data_path(parlai)
 
     def add_distributed_training_args(self):
@@ -764,6 +771,16 @@ class ParlaiParser(argparse.ArgumentParser):
         grp = self.add_argument_group('Distributed Training')
         grp.add_argument(
             '--distributed-world-size', type=int, help='Number of workers.'
+        )
+        grp.add_argument(
+            '--ddp-backend',
+            # TODO: add in zero3. https://github.com/facebookresearch/ParlAI/issues/3753
+            choices=['ddp', 'zero2'],
+            default='ddp',
+            help=(
+                'Distributed backend. Zero2 can be faster but is more experimental. '
+                'DDP is the most tested.'
+            ),
         )
         return grp
 
@@ -964,11 +981,29 @@ class ParlaiParser(argparse.ArgumentParser):
         if args is None:
             # args default to the system args
             args = _sys.argv[1:]
+
         args = fix_underscores(args)
+        # handle the single dash stuff. See _handle_single_dash_addarg for info
+        actions = set()
+        for action in self._actions:
+            actions.update(action.option_strings)
+        if _sys.version_info >= (3, 8, 0):
+            newargs = []
+            for arg in args:
+                darg = f'-{arg}'
+                if arg.startswith('-') and not arg.startswith('--') and darg in actions:
+                    newargs.append(darg)
+                else:
+                    newargs.append(arg)
+            args = newargs
 
         if nohelp:
             # ignore help
-            args = [a for a in args if a != '-h' and a != '--help' and a != '--helpall']
+            args = [
+                a
+                for a in args
+                if a != '-h' and a != '--help' and a != '--helpall' and a != '--h'
+            ]
         return super().parse_known_args(args, namespace)
 
     def _load_known_opts(self, optfile, parsed):
@@ -978,7 +1013,7 @@ class ParlaiParser(argparse.ArgumentParser):
         Called before args are parsed; ``_load_opts`` is used for actually overriding
         opts after they are parsed.
         """
-        new_opt = Opt.load(optfile)
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in parsed or parsed[key] is None:
@@ -986,12 +1021,12 @@ class ParlaiParser(argparse.ArgumentParser):
 
     def _load_opts(self, opt):
         optfile = opt.get('init_opt')
-        new_opt = Opt.load(optfile)
+        new_opt = Opt.load_init(optfile)
         for key, value in new_opt.items():
             # existing command line parameters take priority.
             if key not in opt:
                 if opt.get('allow_missing_init_opts', False):
-                    logging.warn(
+                    logging.warning(
                         f'The "{key}" key in {optfile} will not be loaded, because it '
                         f'does not exist in the target opt.'
                     )
@@ -1130,7 +1165,6 @@ class ParlaiParser(argparse.ArgumentParser):
 
         self._process_args_to_opts(args)
         print_announcements(self.opt)
-        logging.set_log_level(self.opt.get('loglevel', 'info').upper())
 
         assert '_subparser' not in self.opt
 
@@ -1169,62 +1203,79 @@ class ParlaiParser(argparse.ArgumentParser):
                 ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
                 kwname_to_action[kwname] = action
 
+        # since we can have options that depend on options, repeat until convergence
         string_args = []
-        for kwname, value in kwargs.items():
-            if kwname not in kwname_to_action:
-                # best guess, we need to delay it. hopefully this gets added
-                # during add_kw_Args
-                continue
-            action = kwname_to_action[kwname]
-            last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction):
-                if bool(value):
+        unparsed_args = set(kwargs.keys())
+        while unparsed_args:
+            string_args = []
+            for kwname, value in kwargs.items():
+                if kwname not in kwname_to_action:
+                    # best guess, we need to delay it. hopefully this gets added
+                    # during add_kw_Args
+                    continue
+                action = kwname_to_action[kwname]
+                last_option_string = action.option_strings[-1]
+                if isinstance(action, argparse._StoreTrueAction):
+                    if bool(value):
+                        string_args.append(last_option_string)
+                elif isinstance(action, argparse._StoreAction) and action.nargs is None:
                     string_args.append(last_option_string)
-            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
-                string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value))
-            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
-                string_args.append(last_option_string)
-                string_args.extend([self._value2argstr(value) for v in value])
-            else:
-                raise TypeError(f"Don't know what to do with {action}")
-
-        # become aware of any extra args that might be specified if the user
-        # provides something like model="transformer/generator".
-        self.add_extra_args(string_args)
-
-        # do it again, this time knowing about ALL args.
-        kwname_to_action = {}
-        for action in self._actions:
-            if action.dest == 'help':
-                # no help allowed
-                continue
-            for option_string in action.option_strings:
-                kwname = option_string.lstrip('-').replace('-', '_')
-                assert (kwname not in kwname_to_action) or (
-                    kwname_to_action[kwname] is action
-                ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
-                kwname_to_action[kwname] = action
-
-        string_args = []
-        for kwname, value in kwargs.items():
-            # note we don't have the if kwname not in kwname_to_action here.
-            # it MUST appear, or else we legitimately should be throwing a KeyError
-            # because user has provided an unspecified option
-            action = kwname_to_action[kwname]
-            last_option_string = action.option_strings[-1]
-            if isinstance(action, argparse._StoreTrueAction):
-                if bool(value):
+                    string_args.append(self._value2argstr(value))
+                elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
                     string_args.append(last_option_string)
-            elif isinstance(action, argparse._StoreAction) and action.nargs is None:
-                string_args.append(last_option_string)
-                string_args.append(self._value2argstr(value))
-            elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
-                string_args.append(last_option_string)
-                # Special case: Labels
-                string_args.extend([str(v) for v in value])
+                    string_args.extend([self._value2argstr(v) for v in value])
+                else:
+                    raise TypeError(f"Don't know what to do with {action}")
+
+            # become aware of any extra args that might be specified if the user
+            # provides something like model="transformer/generator".
+            self.add_extra_args(string_args)
+
+            # do it again, this time knowing about ALL args.
+            kwname_to_action = {}
+            for action in self._actions:
+                if action.dest == 'help':
+                    # no help allowed
+                    continue
+                for option_string in action.option_strings:
+                    kwname = option_string.lstrip('-').replace('-', '_')
+                    assert (kwname not in kwname_to_action) or (
+                        kwname_to_action[kwname] is action
+                    ), f"No duplicate names! ({kwname}, {kwname_to_action[kwname]}, {action})"
+                    kwname_to_action[kwname] = action
+
+            new_unparsed_args = set()
+            string_args = []
+            for kwname, value in kwargs.items():
+                if kwname not in kwname_to_action:
+                    new_unparsed_args.add(kwname)
+                    continue
+
+                action = kwname_to_action[kwname]
+                last_option_string = action.option_strings[-1]
+                if isinstance(action, argparse._StoreTrueAction):
+                    if bool(value):
+                        string_args.append(last_option_string)
+                elif isinstance(action, argparse._StoreAction) and action.nargs is None:
+                    string_args.append(last_option_string)
+                    string_args.append(self._value2argstr(value))
+                elif isinstance(action, argparse._StoreAction) and action.nargs in '*+':
+                    string_args.append(last_option_string)
+                    # Special case: Labels
+                    string_args.extend([self._value2argstr(v) for v in value])
+                else:
+                    raise TypeError(f"Don't know what to do with {action}")
+
+            if new_unparsed_args == unparsed_args:
+                # if we have converged to a fixed point with no improvements, we
+                # truly found some unreachable args
+                raise KeyError(
+                    f'Failed to parse one or more kwargs: {", ".join(new_unparsed_args)}'
+                )
             else:
-                raise TypeError(f"Don't know what to do with {action}")
+                # We've seen some improvements on the number of unparsed args,
+                # iterate again
+                unparsed_args = new_unparsed_args
 
         return string_args
 
@@ -1278,12 +1329,40 @@ class ParlaiParser(argparse.ArgumentParser):
             kwargs['type'] = 'bool'
         return kwargs, action_attr
 
+    def _handle_single_dash_addarg(self, args):
+        """
+        Fixup argparse for parlai-style short args.
+
+        In python 3.8, argparsing was changed such that short arguments are not
+        required to have spaces after them. This causes our many short args to
+        be misinterpetted by the parser. For example `-emb` gets parsed as
+        `-e mb`.
+
+        Here we rewrite them into long args to get around the nonsense.
+        """
+        if _sys.version_info < (3, 8, 0):
+            # older python works fine
+            return args
+
+        # need the long options specified first, or `dest` will get set to
+        # the short name on accident!
+        out_long = []
+        out_short = []
+        for arg in args:
+            if arg.startswith('-') and not arg.startswith('--'):
+                out_short.append(f'-{arg}')
+            else:
+                out_long.append(arg)
+        # keep long args in front so they are used for the destination
+        return out_long + out_short
+
     def add_argument(self, *args, **kwargs):
         """
         Override to convert underscores to hyphens for consistency.
         """
         kwargs, newattr = self._handle_custom_options(kwargs)
-        action = super().add_argument(*fix_underscores(args), **kwargs)
+        args = self._handle_single_dash_addarg(fix_underscores(args))
+        action = super().add_argument(*args, **kwargs)
         for k, v in newattr.items():
             setattr(action, k, v)
         return action
@@ -1297,7 +1376,8 @@ class ParlaiParser(argparse.ArgumentParser):
 
         def ag_add_argument(*args, **kwargs):
             kwargs, newattr = self._handle_custom_options(kwargs)
-            action = original_add_arg(*fix_underscores(args), **kwargs)
+            args = self._handle_single_dash_addarg(fix_underscores(args))
+            action = original_add_arg(*args, **kwargs)
             for k, v in newattr.items():
                 setattr(action, k, v)
             return action

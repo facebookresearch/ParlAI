@@ -8,6 +8,7 @@ from parlai.core.opt import Opt
 from parlai.utils.misc import Timer, round_sigfigs, set_namedtuple_defaults, nice_report
 import parlai.utils.strings as string_utils
 from copy import deepcopy
+import random
 import time
 import unittest
 from parlai.utils.data import DatatypeHelper
@@ -190,6 +191,53 @@ class TestDatatypeHelper(unittest.TestCase):
 
         assert DatatypeHelper.is_training("test") is False
         assert DatatypeHelper.is_training("test:stream") is False
+
+    def test_split_subset_data_by_fold(self):
+        TOTAL_LEN = random.randint(100, 200)
+        a_end = random.randrange(1, TOTAL_LEN)
+        b_end = random.randrange(a_end, TOTAL_LEN)
+        SUBSET_A = [i for i in range(0, a_end)]
+        SUBSET_B = [i for i in range(a_end, b_end)]
+        SUBSET_C = [i for i in range(b_end, TOTAL_LEN)]
+
+        SUBSETS_A = [deepcopy(SUBSET_A)]
+        SUBSETS_A_B = [deepcopy(SUBSET_A), deepcopy(SUBSET_B)]
+        SUBSETS_C_B_A = [deepcopy(SUBSET_C), deepcopy(SUBSET_B), deepcopy(SUBSET_A)]
+
+        train_frac = random.uniform(0, 1)
+        valid_frac = random.uniform(0, 1 - train_frac)
+        test_frac = 1 - train_frac - valid_frac
+
+        TRAIN_A = DatatypeHelper.split_subset_data_by_fold(
+            "train", SUBSETS_A, train_frac, valid_frac, test_frac
+        )
+        TRAIN_A_B = DatatypeHelper.split_subset_data_by_fold(
+            "train", SUBSETS_A_B, train_frac, valid_frac, test_frac
+        )
+        TRAIN_C_B_A = DatatypeHelper.split_subset_data_by_fold(
+            "train", deepcopy(SUBSETS_C_B_A), train_frac, valid_frac, test_frac
+        )
+
+        # Check to make sure selected values for a fold within a domain are consistent even if different domains are used, and presented in different orders
+        for val in SUBSET_A:
+            state = bool(val in TRAIN_A)
+            assert bool(val in TRAIN_A_B) == state
+            assert bool(val in TRAIN_C_B_A) == state
+
+        for val in SUBSET_B:
+            state = bool(val in TRAIN_A_B)
+            assert bool(val in TRAIN_C_B_A) == state
+
+        # Check that train + valid + test covers everything
+        VALID_C_B_A = DatatypeHelper.split_subset_data_by_fold(
+            "valid", deepcopy(SUBSETS_C_B_A), train_frac, valid_frac, test_frac
+        )
+        TEST_C_B_A = DatatypeHelper.split_subset_data_by_fold(
+            "test", deepcopy(SUBSETS_C_B_A), train_frac, valid_frac, test_frac
+        )
+
+        assert len(TRAIN_C_B_A) + len(VALID_C_B_A) + len(TEST_C_B_A) is TOTAL_LEN
+        assert len(set(TRAIN_C_B_A + VALID_C_B_A + TEST_C_B_A)) is TOTAL_LEN
 
 
 if __name__ == '__main__':

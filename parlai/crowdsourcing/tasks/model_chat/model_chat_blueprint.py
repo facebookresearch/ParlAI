@@ -194,7 +194,9 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             f'"~" can\'t currently be parsed in the chat data folder path '
             f'{args.blueprint.chat_data_folder}'
         )
-        # TODO: allow ~ to be parsed correctly
+        # Currently Hydra overrides the tilde key at lower levels as described here: https://hydra.cc/docs/next/advanced/override_grammar/basic/#grammar
+        # Thus the TILDE key cannot be used in replacement for $HOME variable
+        # Some hacky solution can probably be achieved but won't be good code so for now this assert is written as a placeholder
 
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)
@@ -217,6 +219,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
         left_pane_path = os.path.expanduser(args.blueprint.left_pane_text_path)
         with open(left_pane_path, "r") as left_pane_file:
             self.left_pane_text = left_pane_file.read()
+        self.format_left_pane_text(args)
         self.annotations_config: Optional[str] = None
         if args.blueprint.get("annotations_config_path", "") != "":
             annotations_config_path = os.path.expanduser(
@@ -250,6 +253,12 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
                 'chat_data_folder': args.blueprint.chat_data_folder,
             }
         )
+
+    def format_left_pane_text(self, args: "DictConfig"):
+        """
+        Modifies self.left_pane_text for code injection.
+        """
+        pass
 
     @abstractmethod
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
@@ -298,8 +307,8 @@ class ModelChatBlueprintArgs(BaseModelChatBlueprintArgs):
     conversation_start_mode: str = field(
         default='hi',
         metadata={
-            "help": 'Whether to show "Hi!" or two previous utterances (as in BlendedSkillTalk) at the beginning of the conversation',
-            "choices": ['hi', 'bst'],
+            "help": 'Set to "hi" to show "Hi!" at the beginning of the conversation, or '
+            'set to a task name to specify a custom context'
         },
     )
     include_persona: bool = field(
@@ -375,7 +384,9 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         args.blueprint.num_conversations = sum(conversations_needed.values())
         super().assert_task_args(args=args, shared_state=shared_state)
 
-        if args.blueprint.get("annotations_config_path", "") != "":
+        if args.blueprint.get(
+            "annotations_config_path", ""
+        ) != "" and args.blueprint.get("onboarding_qualification", None):
             # We are going to do annotations, so check for the presence of an onboarding
             # data file that will be used to onboard users into knowing how to do the
             # annotations properly
@@ -391,20 +402,16 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         self, task_run: "TaskRun", args: "DictConfig", shared_state: "SharedTaskState"
     ):
 
-        # Set the number of conversations needed
-        conversations_needed_string = args.blueprint.conversations_needed_string
-        conversations_needed = {}
-        parts = conversations_needed_string.split(',')
-        for part in parts:
-            model_name, num_string = part.split(':')
-            conversations_needed[model_name] = int(num_string)
+        conversations_needed = self._process_conversations_needed(args)
         self.conversations_needed = conversations_needed
         shared_state.conversations_needed = conversations_needed
         args.blueprint.num_conversations = sum(conversations_needed.values())
 
         super().__init__(task_run=task_run, args=args, shared_state=shared_state)
 
-        if args.blueprint.get("annotations_config_path", "") != "":
+        if args.blueprint.get(
+            "annotations_config_path", ""
+        ) != "" and args.blueprint.get("onboarding_qualification", None):
             # We are going to do annotations, so load the onboarding data file that will
             # be used to onboard users into knowing how to do the annotations properly
             onboard_task_data_path = os.path.expanduser(
@@ -421,9 +428,12 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         context_generator: Optional[ContextGenerator] = None
         if (
             args.blueprint.include_persona
-            or args.blueprint.conversation_start_mode == 'bst'
+            # 'hi' mode does not use a context generator and instead just displays "Hi!" at the start of the conversation
+            or args.blueprint.conversation_start_mode != 'hi'
         ):
-            context_generator = get_context_generator(args.blueprint.override_opt)
+            context_generator = get_context_generator(
+                args.blueprint.override_opt, args.blueprint.conversation_start_mode
+            )
         shared_state.context_generator = context_generator
 
         # Lock for editing run statistics between threads
@@ -437,7 +447,9 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'statistics_condition': statistics_condition,
                 'max_onboard_time': args.blueprint.max_onboard_time,
                 'onboard_task_data': self.onboard_task_data,
-                'onboarding_qualification': args.blueprint.onboarding_qualification,
+                "onboarding_qualification": args.blueprint.get(
+                    "onboarding_qualification"
+                ),
             }
         )
         shared_state.world_opt.update(
@@ -451,13 +463,27 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
             }
         )
 
+    def _process_conversations_needed(self, args: "DictConfig") -> Dict[str, int]:
+        """
+        Set the number of conversations needed.
+        """
+
+        conversations_needed_string = args.blueprint.conversations_needed_string
+        conversations_needed = {}
+        parts = conversations_needed_string.split(',')
+        for part in parts:
+            model_name, num_string = part.split(':')
+            conversations_needed[model_name] = int(num_string)
+
+        return conversations_needed
+
     def _get_shared_models(self, args: "DictConfig") -> Dict[str, dict]:
         with open(args.blueprint.model_opt_path) as f:
             all_model_opts = yaml.safe_load(f.read())
         active_model_opts = {
             model: opt
             for model, opt in all_model_opts.items()
-            if self.conversations_needed[model] > 0
+            if self.conversations_needed.get(model, 0) > 0
         }
         return TurkLikeAgent.get_bot_agents(args=args, model_opts=active_model_opts)
 

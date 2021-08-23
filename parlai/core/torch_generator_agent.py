@@ -33,33 +33,15 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-from parlai.core.metrics import (
-    Metric,
-    SumMetric,
-    AverageMetric,
-    BleuMetric,
-    FairseqBleuMetric,
-)
+from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
+import parlai.utils.fsdp as fsdp_utils
 from parlai.utils.torch import (
     neginf,
     total_parameters,
     trainable_parameters,
     PipelineHelper,
 )
-
-
-try:
-    from nltk.translate import bleu_score as nltkbleu
-
-except ImportError:
-    nltkbleu = None
-
-try:
-    from fairseq.scoring import bleu as fairseq_bleu
-
-except ImportError:
-    fairseq_bleu = None
 
 
 class SearchBlocklist(object):
@@ -138,8 +120,9 @@ class TorchGeneratorModel(nn.Module, ABC):
         unknown_idx=3,
         input_dropout=0,
         longest_label=1,
+        **kwargs,
     ):
-        super().__init__()
+        super().__init__(**kwargs)
         self.NULL_IDX = padding_idx
         self.END_IDX = end_idx
         self.START_IDX = start_idx
@@ -497,8 +480,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
-            # ensure all distributed copies will always be in sync
-            self.model = self.build_model()
+            with fsdp_utils.maybe_fsdp_wrap(opt):
+                self.model = fsdp_utils.fsdp_wrap(self.build_model())
+                if self.fp16 and not fsdp_utils.delay_halving(opt):
+                    self.model = self.model.half()
 
             # load the block_list for beam search
             self.beam_block_list = self._load_beam_block_list()
@@ -516,15 +501,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     self.model.cuda()
                 self.criterion.cuda()
 
-            sync_parameters(self.model)
+            if not fsdp_utils.is_fsdp(self.model):
+                sync_parameters(self.model)
+
             train_params = trainable_parameters(self.model)
             total_params = total_parameters(self.model)
             logging.info(
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
-
-            if self.fp16:
-                self.model = self.model.half()
 
             if init_model is not None:
                 # load model parameters if available
@@ -538,14 +522,21 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
             # do this regardless of share state, but don't
-            self.init_optim(
+            was_reset = self.init_optim(
                 [p for p in self.model.parameters() if p.requires_grad],
                 optim_states=states.get('optimizer'),
                 saved_optim_type=states.get('optimizer_type'),
+                is_finetune=is_finetune,
             )
-            self.build_lr_scheduler(states, hard_reset=is_finetune)
+            if was_reset:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
-        if shared is None and is_distributed():
+        if (
+            shared is None
+            and is_distributed()
+            and opt.get('ddp_backend', fsdp_utils.DEFAULT_DDP_BACKEND) == 'ddp'
+        ):
             device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
                 self.model, device_ids=device_ids, broadcast_buffers=False
@@ -593,59 +584,36 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             self.skip_generation = self.opt.get('skip_generation', False)
 
-    def _dummy_batch(self, batchsize, maxlen):
+    def _cache_dummy_batch(self, batch: Batch):
         """
-        Create a dummy batch.
-
-        This is used to preinitialize the cuda buffer, or otherwise force a
-        null backward pass after an OOM.
-
-        If your model uses additional inputs beyond text_vec and label_vec,
-        you will need to override it to add additional fields.
+        Cache a batch to be used as a dummy during _fake_forward_backward_pass.
         """
-        text_vec = (
-            torch.arange(1, maxlen + 1)  # need it as long as specified
-            .clamp(max=3)  # cap at 3 for testing with tiny dictionaries
-            .unsqueeze(0)
-            .expand(batchsize, maxlen)
-            .cuda()
-        )
-        # label vec has two tokens to make it interesting, but we we can't use the
-        # start token, it's reserved.
-        label_vec = (
-            torch.LongTensor([self.END_IDX, self.NULL_IDX])
-            .unsqueeze(0)
-            .expand(batchsize, 2)
-            .cuda()
-        )
-        return Batch(
-            text_vec=text_vec, label_vec=label_vec, text_lengths=[maxlen] * batchsize
-        )
+        if not hasattr(self, '_dummy_batch'):
+            self._dummy_batch = batch
 
-    def _init_cuda_buffer(self, batchsize, maxlen, force=False):
+    def _fake_forward_backward_pass(self):
         """
-        Pre-initialize CUDA buffer by doing fake forward pass.
+        Force a worker to synchronize with others in case of distributed mode.
 
-        This is also used in distributed mode to force a worker to sync with others.
+        Necessary during recovery of OOMs to prevent hangs during the all-reduce of
+        gradients.
         """
-        if self.use_cuda and (force or not hasattr(self, 'buffer_initialized')):
-            try:
-                self._control_local_metrics(disabled=True)
-                loss = 0 * self.compute_loss(self._dummy_batch(batchsize, maxlen))
-                self._control_local_metrics(enabled=True)
-                self._temporarily_disable_local_metrics = False
-                self.backward(loss)
-                self.buffer_initialized = True
-            except RuntimeError as e:
-                if 'out of memory' in str(e):
-                    m = (
-                        'CUDA OOM: Lower batch size (-bs) from {} or lower '
-                        ' max sequence length (-tr) from {}'
-                        ''.format(batchsize, maxlen)
-                    )
-                    raise RuntimeError(m)
-                else:
-                    raise e
+        try:
+            self._control_local_metrics(disabled=True)
+            loss = 0 * self.compute_loss(self._dummy_batch)
+            self._control_local_metrics(enabled=True)
+            self.backward(loss)
+            self.buffer_initialized = True
+        except RuntimeError as e:
+            if 'out of memory' in str(e):
+                m = (
+                    'CUDA OOM: Lower batch size (-bs) from {} or lower '
+                    ' max sequence length (-tr) from {}'
+                    ''.format(self.opt['batchsize'], self.opt['truncate'])
+                )
+                raise RuntimeError(m)
+            else:
+                raise e
 
     def reset_metrics(self):
         """
@@ -670,6 +638,18 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         kwargs['add_start'] = False  # model does this in module code
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
+
+    def batchify(self, obs_batch, sort=True):
+        batch = super().batchify(obs_batch, sort=sort)
+        if (
+            self.beam_block_full_context
+            and obs_batch
+            and any('full_text_vec' in o for o in obs_batch)
+        ):
+            batch['full_text_vec'], _ = self._pad_tensor(
+                [obs_batch[i].get('full_text_vec', []) for i in batch.valid_indices]
+            )
+        return batch
 
     def _model_input(self, batch):
         """
@@ -712,7 +692,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             raise ValueError('Cannot compute loss without a label.')
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
-        score_view = scores.view(-1, scores.size(-1))
+        score_view = scores.reshape(-1, scores.size(-1))
         loss = self.criterion(score_view, batch.label_vec.view(-1))
         loss = loss.view(scores.shape[:-1]).sum(dim=1)
         # save loss to metrics
@@ -720,10 +700,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         target_tokens = notnull.long().sum(dim=-1)
         correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
+        # cross entropy loss
         self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        # perplexity
         self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        # token-wise accuracy
         self.record_local_metric(
             'token_acc', AverageMetric.many(correct, target_tokens)
+        )
+        # utterance-wise exact match
+        self.record_local_metric(
+            'token_em', AverageMetric.many(correct == target_tokens)
         )
         # actually do backwards loss
         loss = loss.sum()
@@ -737,10 +724,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         Train on a single batch of examples.
         """
-        # helps with memory usage
-        # note we want to use the opt's batchsize instead of the observed batch size
-        # in case dynamic batching is in use
-        self._init_cuda_buffer(self.opt['batchsize'], self.label_truncate or 256)
+        # cache a dummy batch in case we OOM and need to catch up
+        self._cache_dummy_batch(batch)
+
         self.model.train()
         self.zero_grad()
 
@@ -770,12 +756,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
             # gradients are synced on backward, now this model is going to be
             # out of sync! catch up with the other workers
-            self._init_cuda_buffer(8, 8, True)
+            self._fake_forward_backward_pass()
 
     def _construct_token_losses(self, labels, model_output):
         # Get non-aggregated losses
         scores, _, _ = model_output
-        score_view = scores.view(-1, scores.size(-1))
+        score_view = scores.reshape(-1, scores.size(-1))
         losses = self.criterion(score_view, labels.view(-1)).view(len(labels), -1)
 
         # Zip decoded tokens with losses
@@ -805,7 +791,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         assert label_vec is not None, "label_vec must exist for fairseq bleu"
         for i, t in enumerate(preds):
             result = FairseqBleuMetric.compute_many(
-                t[1:],
+                t,
                 label_vec[i].unsqueeze(0),
                 pad_idx=self.NULL_IDX,
                 end_idx=self.END_IDX,
@@ -819,50 +805,44 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         for k in range(4):
             self.record_local_metric(f'fairseq_bleu{k + 1}', bleu_scores[k])
 
-    def _compute_nltk_bleu(self, batch: Batch, texts: List[str]):
-        """
-        Compute BLEU score between text and label(s), using the NLTK BLEU Scorer.
-
-        Note this differs from BLEU in ParlAI metrics in that the answers
-        are unnormalized (no removal of stop words, etc.)
-
-        :param batch:
-            Batch of observations
-        :param texts:
-            list of string predictions
-        """
-
-        results: Dict[int, List[Metric]] = {}
-        observations = batch.observations
-        assert observations is not None, 'observations must not be none in nltk bleu'
-        for i, p in enumerate(texts):
-            obs = observations[i]
-            references = []
-            for lbl in obs['eval_labels']:
-                references.append(
-                    self._v2t(
-                        self._vectorize_text(
-                            lbl, True, True, self.label_truncate, False
-                        )
-                    )
-                )
-            for k in range(1, 5):
-                b = BleuMetric.compute(p, references, k)
-                if b is None:
-                    b = BleuMetric(0)
-                if k not in results:
-                    results[k] = []
-                results[k].append(b)
-
-        for k in range(1, 5):
-            self.record_local_metric(f'nltk_bleu{k}', results[k])
-
     def _add_generation_metrics(self, batch, preds):
         """
         Can be overridden to allow for some metrics on the generations calculated at
         eval.
         """
         pass
+
+    def rank_eval_label_candidates(self, batch, batchsize):
+        """
+        Rank label_candidates during eval_step.
+
+        Can be overridden to allow for different ways of ranking candidates. Must have
+        `--rank-candidates` set to True. By default, we roughly compute PPL to rank the
+        candidates.
+        """
+        # compute roughly ppl to rank candidates
+        cand_choices = []
+        cand_choices_scores = []
+        encoder_states = self.model.encoder(*self._encoder_input(batch))
+        for i in range(batchsize):
+            num_cands = len(batch.candidate_vecs[i])
+            enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
+            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            cands = cands.to(batch.text_vec.device)
+            scores, _ = self.model.decode_forced(enc, cands)
+            score_view = scores.reshape(num_cands * cands.size(1), -1)
+            cand_losses = F.cross_entropy(
+                score_view, cands.view(-1), reduction='none'
+            ).view(num_cands, cands.size(1))
+            # now cand_losses is cands x seqlen size, but we still need to
+            # check padding and such
+            mask = (cands != self.NULL_IDX).float()
+            cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
+            sorted_scores, ordering = cand_scores.sort()
+            cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices_scores.append(sorted_scores.tolist())
+
+        return cand_choices, cand_choices_scores
 
     def eval_step(self, batch):
         """
@@ -891,7 +871,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            beam_preds_scores, beams = self._generate(batch, self.beam_size, maxlen)
+            prefix_tokens = self.get_prefix_tokens(batch)
+            beam_preds_scores, beams = self._generate(
+                batch, self.beam_size, maxlen, prefix_tokens=prefix_tokens
+            )
             preds, scores = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
 
@@ -907,34 +890,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                         continue
 
         cand_choices = None
-        # TODO: abstract out the scoring here
+        cand_scores = None
         if self.rank_candidates:
-            # compute roughly ppl to rank candidates
-            cand_choices = []
-            encoder_states = self.model.encoder(*self._encoder_input(batch))
-            for i in range(bsz):
-                num_cands = len(batch.candidate_vecs[i])
-                enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-                cands, _ = self._pad_tensor(batch.candidate_vecs[i])
-                scores, _ = self.model.decode_forced(enc, cands)
-                cand_losses = F.cross_entropy(
-                    scores.view(num_cands * cands.size(1), -1),
-                    cands.view(-1),
-                    reduction='none',
-                ).view(num_cands, cands.size(1))
-                # now cand_losses is cands x seqlen size, but we still need to
-                # check padding and such
-                mask = (cands != self.NULL_IDX).float()
-                cand_scores = (cand_losses * mask).sum(dim=1) / (mask.sum(dim=1) + 1e-9)
-                _, ordering = cand_scores.sort()
-                cand_choices.append([batch.candidates[i][o] for o in ordering])
+            cand_choices, cand_scores = self.rank_eval_label_candidates(batch, bsz)
 
         text = [self._v2t(p) for p in preds] if preds is not None else None
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
-            self._compute_nltk_bleu(batch, text)
-        retval = Output(text, cand_choices, token_losses=token_losses)
+        retval = Output(
+            text, cand_choices, token_losses=token_losses, cand_scores=cand_scores
+        )
         if not self.skip_generation:
             retval.beam_texts = beam_texts
         return retval
@@ -1015,12 +981,26 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         Intentionally overridable for more complex model histories.
         """
+        if self.beam_context_block_ngram <= 0:
+            # We aren't context blocking, return empty tensor
+            return torch.LongTensor()
+
         ctxt = batch.text_vec[batch_idx]
         if self.beam_block_full_context:
-            full_ctxt = batch.observations[batch_idx].get('full_text_vec', ctxt)
-            if not isinstance(full_ctxt, torch.Tensor):
-                full_ctxt = torch.LongTensor(full_ctxt).to(ctxt.device)
-            ctxt = full_ctxt
+            ctxt = batch.full_text_vec[batch_idx]
+        return ctxt
+
+    def _get_batch_context(self, batch):
+        """
+        Version of TGA._get_context() that operates on full batches for speed.
+        """
+        if self.beam_context_block_ngram <= 0:
+            # We aren't context blocking, return empty tensor of the correct size
+            return torch.zeros(batch.batchsize, 0, dtype=torch.long)
+
+        ctxt = batch.text_vec
+        if self.beam_block_full_context:
+            ctxt = batch.full_text_vec
         return ctxt
 
     def _get_initial_decoder_input(
@@ -1068,6 +1048,17 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         decoder_input = torch.cat([prev_input, selection], dim=-1)
         return decoder_input
 
+    def get_prefix_tokens(self, batch: Batch) -> Optional[torch.LongTensor]:
+        """
+        Set prefix tokens to seed decoding at generation time.
+
+        By default, we do not utilize prefix tokens, but this is
+        left overridable by child classes.
+
+        Returned tensor should be of dimension bsz x len(prefix)
+        """
+        return None
+
     def _generate(
         self,
         batch: Batch,
@@ -1107,16 +1098,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             assert batch.label_vec is not None, "need label_vec for _generate"
             dev = batch.label_vec.device
 
-        bsz = (
-            len(batch.text_lengths)
-            if batch.text_lengths is not None
-            else len(batch.image)  # type: ignore
-        )
+        bsz = batch.batchsize
         if batch.text_vec is not None:
-            batchsize = batch.text_vec.size(0)
+            batchsize = batch.batchsize
+            batch_context_list = self._get_batch_context(batch).tolist()
             beams = [
                 self._treesearch_factory(dev)
-                .set_context(self._get_context(batch, batch_idx))
+                .set_batch_context(batch_context_list, batch_idx)
                 .set_block_list(self.beam_block_list)
                 for batch_idx in range(batchsize)
             ]
@@ -1148,15 +1136,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
-                prefix_toks = prefix_tokens[:, _ts].unsqueeze(-1).repeat(1, beam_size)
-                prefix_score = score.gather(-1, prefix_toks.unsqueeze(-1))
-                prefix_mask = prefix_toks.ne(self.NULL_IDX)
+                prefix_toks = prefix_tokens[:, _ts]
+                prefix_mask = torch.ones_like(score, dtype=torch.bool)
+                prefix_mask[
+                    :, :, prefix_toks
+                ] = False  # everything except prefix toks should be neginf
                 score[prefix_mask] = neginf(score.dtype)
-                score[prefix_mask] = score[prefix_mask].scatter_(
-                    -1,
-                    prefix_toks[prefix_mask].unsqueeze(-1),
-                    prefix_score[prefix_mask],
-                )
             for i, b in enumerate(beams):
                 if not b.is_done():
                     b.advance(score[i])
@@ -1306,6 +1291,22 @@ class TreeSearch(object):
         self.context = context.tolist()
         return self
 
+    def set_batch_context(
+        self: TSType, batch_context_list: List[List[int]], batch_idx: int
+    ) -> TSType:
+        """
+        Version of .set_context() that operates on a single element of a batch.
+
+        Set the internal context representation and return self.
+
+        :param batch_context_list:
+            a list of lists, each one containing the context for one member of the batch
+        :param batch_idx:
+            index of the batch
+        """
+        self.context = batch_context_list[batch_idx]
+        return self
+
     def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
         self.block_list = block_list
         return self
@@ -1428,8 +1429,9 @@ class TreeSearch(object):
 
         self.outputs.append(tok_ids)
         self.bookkeep.append(hyp_ids)
+        tok_id_list = tok_ids.tolist()
         self.partial_hyps = [
-            self.partial_hyps[hyp_ids[i]] + [tok_ids[i].item()]
+            self.partial_hyps[hyp_ids[i]] + [tok_id_list[i]]
             for i in range(self.beam_size)
         ]
 

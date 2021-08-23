@@ -76,6 +76,8 @@ class FastAcuteExecutor(object):
     Execute fast ACUTE runs.
     """
 
+    ANALYZER = AcuteAnalyzer
+
     def __init__(self, args: DictConfig, model_config: Optional[Dict[str, Any]] = None):
         """
         Pass in model_config directly to override the model config file,
@@ -121,7 +123,7 @@ class FastAcuteExecutor(object):
             and self.fast_acute_args.model_pairs is None
         ):
             raise RuntimeError(
-                'Either models or model-pairs should be set for comparision.'
+                'Either models or model-pairs should be set for comparison.'
             )
         if self.fast_acute_args.model_pairs is not None:
             model_pairs = self.fast_acute_args.model_pairs.split(',')
@@ -268,6 +270,10 @@ class FastAcuteExecutor(object):
         # (1) a model is specified in the config, meaning that we're collecting
         #   self-chats with that model
         # (2) we manually set 'is_selfchat' to True in the config
+        if is_selfchat:
+            # Set which speaker we will evaluate the conversation turns of
+            speaker_idx = self.model_config[model].get('speaker_idx', 0)
+            assert speaker_idx in [0, 1]
         conversation = {'context': [], 'dialogue': [], 'speakers': []}
         dialog = dialogue_dict['dialog']
         for act_pair in dialog:
@@ -276,7 +282,7 @@ class FastAcuteExecutor(object):
                     conversation['context'].append(ex)
                     continue
                 if is_selfchat:
-                    speaker_id = model if i == 0 else f'other_speaker'
+                    speaker_id = model if i == speaker_idx else f'other_speaker'
                 else:
                     speaker_id = ex['id']
                 if speaker_id not in conversation['speakers']:
@@ -329,12 +335,15 @@ class FastAcuteExecutor(object):
             self.fast_acute_args.matchups_per_pair
             * self.fast_acute_args.sufficient_matchups_multiplier
         )
-        # Write random pairs of conversations
+        # Write pairs of conversations
         for model_pair in self.combos:
-            for _ in range(pairs_per_model):
-                conversation_indices = [
-                    random.choice(range(len(conversations[m]))) for m in model_pair
-                ]
+            for i in range(pairs_per_model):
+                if self.fast_acute_args.randomize_conversations:
+                    conversation_indices = [
+                        random.choice(range(len(conversations[m]))) for m in model_pair
+                    ]
+                else:
+                    conversation_indices = [i for _ in model_pair]
                 pair = []
                 pair_ids = []
                 for i, c_id in enumerate(conversation_indices):
@@ -529,7 +538,7 @@ class FastAcuteExecutor(object):
             }
         )
 
-        analyzer = AcuteAnalyzer(opt)
+        analyzer = self.ANALYZER(opt)
         self.results = analyzer.get_matchup_totals_with_significance()
         analyzer.save_results()
 

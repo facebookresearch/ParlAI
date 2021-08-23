@@ -54,6 +54,11 @@ def setup_args(parser=None):
         help='Automatically seed conversation with messages from task dataset.',
     )
     parser.add_argument(
+        '--seed-messages-from-file',
+        default=None,
+        help='If specified, loads newline-separated strings from the file as conversation starters.',
+    )
+    parser.add_argument(
         '--outfile', type=str, default=None, help='File to save self chat logs'
     )
     parser.add_argument(

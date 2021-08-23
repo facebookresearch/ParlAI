@@ -114,7 +114,6 @@ class TestDialogptModel(unittest.TestCase):
             response = dialogpt.act()
             assert response['text'] == label
 
-    @testing_utils.retry(ntries=3, log_retry=True)
     def test_dialogpt(self):
         """
         Checks that DialoGPT gets a certain performance on the integration test task.
@@ -127,7 +126,7 @@ class TestDialogptModel(unittest.TestCase):
                 add_start_token=True,
                 optimizer='adam',
                 learningrate=1e-3,
-                batchsize=4,
+                batchsize=1,
                 num_epochs=100,
                 validation_every_n_epochs=5,
                 validation_metric='ppl',

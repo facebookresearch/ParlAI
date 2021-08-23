@@ -24,7 +24,7 @@ class TestBartModel(unittest.TestCase):
         Test out-of-the-box BART on repeat task.
         """
         valid, _ = testing_utils.eval_model(
-            dict(task='integration_tests', model='bart')
+            dict(task='integration_tests', model='bart', num_examples=10)
         )
         self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)
 
@@ -41,6 +41,27 @@ class TestBartModel(unittest.TestCase):
 
         self.assertEqual(act['text'], text)
 
+    def test_bart_cache_text_vec(self):
+        """
+        Test BART text vec caching
+        """
+        opt = ParlaiParser(True, True).parse_args(['--model', 'bart'])
+        bart = create_agent(opt)
+
+        # obs 1
+        text = "Don't have a cow, Man!"
+        in_obs = {'text': text, 'episode_done': True}
+        out_obs = bart.observe(in_obs)
+        cached_text_vec = out_obs['text_vec']
+        _ = bart.act()
+
+        # obs 2
+        in_obs = {'text_vec': cached_text_vec, 'episode_done': True}
+        out_obs = bart.observe(in_obs)
+        cached_text_vec_2 = out_obs['text_vec']
+
+        self.assertEqual(cached_text_vec.tolist(), cached_text_vec_2.tolist())
+
     @testing_utils.retry(ntries=3, log_retry=True)
     def test_bart_ft(self):
         """
@@ -54,14 +75,15 @@ class TestBartModel(unittest.TestCase):
                     task='integration_tests:reverse',
                     model='bart',
                     dict_file='zoo:bart/bart_large/model.dict',
-                    optimizer='adam',
-                    learningrate=3e-5,
-                    batchsize=4,
+                    optimizer='sgd',
+                    learningrate=1,
+                    batchsize=2,
                     num_epochs=1,
                     short_final_eval=True,
                     validation_max_exs=12,
                     model_file=mf,
                     model_parallel=True,
+                    fp16=True,
                 )
             )
             self.assertAlmostEqual(valid['ppl'].value(), 1.0, places=1)

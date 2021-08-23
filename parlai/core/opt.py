@@ -8,10 +8,14 @@
 Opt is the system for passing around options throughout ParlAI.
 """
 
+from __future__ import annotations
+
 import copy
 import json
 import pickle
 import traceback
+import os
+import pkg_resources
 import parlai.utils.logging as logging
 
 from typing import List
@@ -19,7 +23,7 @@ from typing import List
 from parlai.utils.io import PathManager
 
 # these keys are automatically removed upon save. This is a rather blunt hammer.
-# It's preferred you indicate this at option definiton time.
+# It's preferred you indicate this at option definition time.
 __AUTOCLEAN_KEYS__: List[str] = [
     "override",
     "batchindex",
@@ -119,7 +123,7 @@ class Opt(dict):
             f.write('\n')
 
     @classmethod
-    def load(cls, optfile: str) -> 'Opt':
+    def load(cls, optfile: str) -> Opt:
         """
         Load an Opt from disk.
         """
@@ -135,6 +139,45 @@ class Opt(dict):
             if key in dct:
                 del dct[key]
         return cls(dct)
+
+    @classmethod
+    def load_init(cls, optfile: str) -> Opt:
+        """
+        Like load, but also looks in opt_presets folders.
+
+        optfile may also be a comma-separated list of multiple presets/files.
+        """
+        if "," in optfile:
+            # load and combine each of the individual files
+            new_opt = cls()
+            for subopt in optfile.split(","):
+                new_opt.update(cls.load_init(subopt))
+            return new_opt
+
+        oa_filename = os.path.join("opt_presets", optfile + ".opt")
+        user_filename = os.path.join(os.path.expanduser(f"~/.parlai"), oa_filename)
+        if PathManager.exists(optfile):
+            return cls.load(optfile)
+        elif PathManager.exists(user_filename):
+            # use a user's custom opt preset
+            return cls.load(user_filename)
+        else:
+            # Maybe a bundled opt preset
+            for root in ['parlai', 'parlai_internal', 'parlai_fb']:
+                try:
+                    if pkg_resources.resource_exists(root, oa_filename):
+                        return cls.load(
+                            pkg_resources.resource_filename(root, oa_filename)
+                        )
+                except ModuleNotFoundError:
+                    continue
+
+        # made it through without a return path so raise the error
+        raise FileNotFoundError(
+            f"Could not find filename '{optfile} or opt preset '{optfile}.opt'. "
+            "Please check https://parl.ai/docs/opt_presets.html for a list "
+            "of available opt presets."
+        )
 
     def log(self, header="Opt"):
         from parlai.core.params import print_git_commit

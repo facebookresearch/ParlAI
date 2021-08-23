@@ -7,9 +7,15 @@
 from __future__ import annotations
 
 import argparse
+import os
 from abc import ABC, abstractmethod
+from datetime import datetime
 from typing import Any, Dict, List
+
 import pandas as pd
+
+from parlai.core.opt import Opt
+import parlai.utils.logging as logging
 
 # Defining the class only if Mephisto is installed, since it relies on Mephisto
 try:
@@ -33,10 +39,41 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
         )
+        parser.add_argument(
+            '--results-format',
+            type=str,
+            choices=['csv', 'json'],
+            default='csv',
+            help='Output format for results data',
+        )
         return parser
 
-    def __init__(self, opt: Dict[str, Any]):
+    def __init__(self, opt: Opt):
         self.output_folder = opt.get('output_folder')
+        self.results_format = opt['results_format']
+
+    def get_results_path_base(self) -> str:
+        """
+        Return the save path for the results file, not including the file extension.
+        """
+        now = datetime.now()
+        return os.path.join(
+            self.output_folder,
+            f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
+        )
+
+    def is_unit_acceptable(self, unit_data: Dict[str, Any]) -> bool:
+        """
+        Helps filtering units that are compiled. Override for use.
+
+        Returning False means that the unit data will be discarded.
+        """
+        if not unit_data:
+            # Add your task-specific qualificaiton logic that justifies
+            # discarding this unit, based on it data content.
+            return False
+
+        return True
 
     @abstractmethod
     def compile_results(self) -> pd.DataFrame:
@@ -45,6 +82,27 @@ class AbstractResultsCompiler(ABC):
 
         Each row of the dataframe consists of one utterance of one conversation.
         """
+
+    def compile_and_save_results(self):
+        """
+        Compile results and save them.
+
+        Results will be saved in the format given by --results-format.
+        """
+        result_df = self.compile_results()
+        results_path_base = self.get_results_path_base()
+        results_path = f'{results_path_base}.{self.results_format}'
+        os.makedirs(self.output_folder, exist_ok=True)
+        if self.results_format == 'csv':
+            result_df.to_csv(results_path, index=False)
+        elif self.results_format == 'json':
+            result_df.reset_index().to_json(results_path)
+            # Reset the index to make each row have a unique index value
+        else:
+            raise ValueError(
+                f'Results save format of "{self.results_format}" currently unsupported!'
+            )
+        print(f'Wrote results file to {results_path}.')
 
 
 class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
@@ -65,12 +123,12 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
         parser.add_argument(
             '--problem-buckets',
             type=str,
-            help='Comma-separated list of buckets used for annotation',
+            help='Comma-separated list of buckets used for annotation. Set to an empty string to not analyze problem buckets.',
             default='bucket_0,bucket_1,bucket_2,bucket_3,bucket_4,none_all_good',
         )
         return parser
 
-    def __init__(self, opt: Dict[str, Any]):
+    def __init__(self, opt: Opt):
 
         super().__init__(opt)
 
@@ -79,15 +137,12 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
             self.results_folders = opt['results_folders'].split(',')
         else:
             self.results_folders = None
-        self.problem_buckets = opt['problem_buckets'].split(',')
-
-        # Validate problem buckets
-        if 'none_all_good' not in self.problem_buckets:
-            # The code relies on a catchall "none" category if the user selects no other
-            # annotation bucket
-            raise ValueError(
-                'There must be a "none_all_good" category in self.problem_buckets!'
-            )
+        if opt['problem_buckets'].lower() not in ['', 'none']:
+            self.use_problem_buckets = True
+            self.problem_buckets = opt['problem_buckets'].split(',')
+        else:
+            self.use_problem_buckets = False
+            self.problem_buckets = []
 
 
 class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
@@ -105,8 +160,9 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         )
         return parser
 
-    def __init__(self, opt):
-        self.task_name = opt["task_name"]
+    def __init__(self, opt: Opt):
+        super().__init__(opt)
+        self.task_name = opt['task_name']
         self._mephisto_db = None
         self._mephisto_data_browser = None
 
@@ -135,12 +191,26 @@ class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
         data_browser = self.get_mephisto_data_browser()
         return data_browser.get_units_for_task_name(task_name)
 
-    def get_units_data(self, task_units: List[Unit]) -> List[dict]:
+    def get_data_from_unit(self, unit: Unit) -> Dict[str, Any]:
+        """
+        Retrieves task data for a single unit.
+        """
+        try:
+            data_browser = self.get_mephisto_data_browser()
+            return data_browser.get_data_from_unit(unit)
+        except (IndexError, AssertionError):
+            logging.warning(
+                f'Skipping unit {unit.db_id}. No message found for this unit.'
+            )
+
+    def get_units_data(self, task_units: List[Unit]) -> List[Dict[str, Any]]:
         """
         Retrieves task data for a list of Mephisto task units.
         """
-        data_browser = self.get_mephisto_data_browser()
         task_data = []
         for unit in task_units:
-            task_data.append(data_browser.get_data_from_unit(unit))
+            unit_data = self.get_data_from_unit(unit)
+            if unit_data and self.is_unit_acceptable(unit_data):
+                task_data.append(unit_data)
+
         return task_data

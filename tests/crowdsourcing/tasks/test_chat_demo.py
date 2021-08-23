@@ -10,6 +10,8 @@ End-to-end testing for the chat demo crowdsourcing task.
 import os
 import unittest
 
+import parlai.utils.testing as testing_utils
+
 
 # Desired inputs/outputs
 EXPECTED_STATE_AGENT_0 = {
@@ -372,6 +374,7 @@ try:
         def tearDown(self) -> None:
             self._teardown()
 
+        @testing_utils.retry(ntries=3)
         def test_base_task(self):
 
             # # Setup
@@ -382,6 +385,9 @@ try:
                 '+mephisto.blueprint.task_description_file=${task_dir}/task_description.html',
                 '+mephisto.blueprint.num_conversations=1',
                 '+mephisto.task.allowed_concurrent=0',
+                '+mephisto.task.assignment_duration_in_seconds=600',
+                '+mephisto.task.max_num_concurrent_units=0',
+                '+mephisto.task.maximum_units_per_worker=0',
                 '+num_turns=3',
                 '+turn_timeout=300',
             ]

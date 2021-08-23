@@ -242,7 +242,7 @@ class Conversations:
         if self.metadata is not None:
             logging.info(self.metadata)
         else:
-            logging.warn('No metadata available.')
+            logging.warning('No metadata available.')
 
     def __getitem__(self, index):
         return self.conversations[index]
@@ -296,7 +296,7 @@ class Conversations:
         """
         to_save = cls._get_path(datapath)
 
-        context_ids = context_ids.split(',')
+        context_ids = context_ids.strip().split(',')
         # save conversations
         speakers = []
         with PathManager.open(to_save, 'w') as f:
@@ -336,7 +336,7 @@ class Conversations:
                             convo['context'].append(turn)
                     if new_pair:
                         convo['dialog'].append(new_pair)
-                json_convo = json.dumps(convo)
+                json_convo = json.dumps(convo, default=lambda v: '<not serializable>')
                 f.write(json_convo + '\n')
         logging.info(f'Conversations saved to file: {to_save}')
 

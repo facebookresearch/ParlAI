@@ -55,6 +55,7 @@ class ForwardPassOutputs(AttrDict):
     """
 
     mask: torch.BoolTensor
+    decoder_mask: torch.BoolTensor
     tokens_per_example: torch.Tensor
     num_tokens: torch.Tensor
     context_mask: torch.BoolTensor
@@ -76,6 +77,7 @@ class ForwardPassOutputs(AttrDict):
     def __init__(
         self,
         mask,
+        decoder_mask,
         tokens_per_example,
         num_tokens,
         context_mask,
@@ -96,6 +98,7 @@ class ForwardPassOutputs(AttrDict):
     ):
         super().__init__(
             mask=mask,
+            decoder_mask=decoder_mask,
             tokens_per_example=tokens_per_example,
             num_tokens=num_tokens,
             context_mask=context_mask,
@@ -167,8 +170,8 @@ class AbstractDistillTransformerAgentMixin(ABC):
             override = {k: opt[k] for k in to_copy}
             override['datatype'] = 'train:evalmode'  # Don't initialize the optimizer
             teacher_agent = create_agent_from_model_file(opt['teacher_model'], override)
+            self.teacher_agent_opt = teacher_agent.opt
             self.teacher_model = teacher_agent.model
-            assert teacher_agent.opt['n_heads'] == opt['n_heads']
             self.teacher_model.eval()
 
         super().__init__(opt, shared)
@@ -338,6 +341,9 @@ class AbstractDistillTransformerAgentMixin(ABC):
         mask = self._manipulate_mask(
             mask=mask, student_scores=student_scores, batch=batch
         )
+        decoder_mask = self._manipulate_mask(
+            mask=mask, student_scores=student_embedding_outputs["decoder"], batch=batch
+        )
 
         # Record teacher accuracy
         teacher_acc = ((student_preds == teacher_preds) * mask).sum(dim=-1)
@@ -348,6 +354,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
 
         return ForwardPassOutputs(
             mask=mask,
+            decoder_mask=decoder_mask,
             tokens_per_example=tokens_per_example,
             num_tokens=num_tokens,
             context_mask=context_mask,
@@ -502,7 +509,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         dec_emb_loss, dec_emb_loss_per_example = self._get_component_embedding_loss(
             student_emb_output=fwd_pass.student_embedding_outputs['decoder'],
             teacher_emb_output=fwd_pass.teacher_embedding_outputs['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             num_tokens=fwd_pass.num_tokens,
         )
         self.record_local_metric(
@@ -559,7 +566,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         dec_hidden_loss, dec_hidden_loss_per_example = self._get_component_hidden_loss(
             student_hidden_states=fwd_pass.student_hidden_states['decoder'],
             teacher_hidden_states=fwd_pass.teacher_hidden_states['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             num_tokens=fwd_pass.num_tokens,
             mapped_layers=self.mapped_dec_layers,
         )
@@ -631,7 +638,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         dec_self_attn_loss = self._get_and_record_component_attention_loss(
             student_attention_matrices=fwd_pass.student_attention_matrices['decoder'],
             teacher_attention_matrices=fwd_pass.teacher_attention_matrices['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             tokens_per_example=fwd_pass.tokens_per_example,
             num_tokens=fwd_pass.num_tokens,
             mapped_layers=self.mapped_dec_layers,
@@ -641,7 +648,7 @@ class AbstractDistillTransformerAgentMixin(ABC):
         enc_dec_attn_loss = self._get_and_record_component_attention_loss(
             student_attention_matrices=fwd_pass.student_attention_matrices['decoder'],
             teacher_attention_matrices=fwd_pass.teacher_attention_matrices['decoder'],
-            mask=fwd_pass.mask,
+            mask=fwd_pass.decoder_mask,
             tokens_per_example=fwd_pass.tokens_per_example,
             num_tokens=fwd_pass.num_tokens,
             mapped_layers=self.mapped_dec_layers,
@@ -767,6 +774,8 @@ class DistillTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
                 "with --init-model!"
             )
         super().__init__(opt, shared)
+        if shared is None:
+            assert self.teacher_agent_opt['n_heads'] == opt['n_heads']
 
     def build_model(self):
 
@@ -860,6 +869,10 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         self.self_attn_loss_coeff = opt['self_attn_loss_coeff']
         self.enc_dec_attn_loss_coeff = opt['enc_dec_attn_loss_coeff']
         super().__init__(opt, shared)
+        if shared is None:
+            assert self.teacher_agent_opt['n_heads'] == opt['n_heads'] or (
+                self.self_attn_loss_coeff == 0 and self.enc_dec_attn_loss_coeff == 0
+            ), 'The number of attention heads can only differ between the student and teacher models if both attention loss coefficients are 0!'
 
     def build_model(self):
         student_model = super().build_model()
@@ -956,11 +969,18 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         enc_hidden_loss, dec_hidden_loss = self._get_hidden_losses(fwd_pass)
 
         # Calculate the losses on the attention matrices
-        (
-            enc_self_attn_loss,
-            dec_self_attn_loss,
-            enc_dec_attn_loss,
-        ) = self._get_attention_losses(fwd_pass)
+        if self.self_attn_loss_coeff != 0 or self.enc_dec_attn_loss_coeff != 0:
+            (
+                enc_self_attn_loss,
+                dec_self_attn_loss,
+                enc_dec_attn_loss,
+            ) = self._get_attention_losses(fwd_pass)
+        else:
+            # Skip calculating the losses and just set them to 0 because they do not
+            # form part of the loss function. This is useful if the number of attention
+            # heads is different between the student and teacher, because in that case
+            # that the attention query-key matrices will be of different shape.
+            enc_self_attn_loss = dec_self_attn_loss = enc_dec_attn_loss = 0
 
         # Calculate the KL loss on the teacher's prediction layer
         pred_loss = self._get_prediction_loss(fwd_pass)
@@ -1025,9 +1045,11 @@ class BartLikeAgent(BartAgent):
     ) -> torch.BoolTensor:
         """
         Add one extra (masked-out) token to the mask, for compatibility with BART.
+
+        Only necessary when examining decoder outputs directly.
         """
-        assert student_scores.size(1) == batch.label_vec.size(1) + 1
-        mask = torch.cat([mask.new_zeros([mask.size(0), 1]), mask], dim=1)
+        if student_scores.size(1) == batch.label_vec.size(1) + 1:
+            mask = torch.cat([mask.new_zeros([mask.size(0), 1]), mask], dim=1)
         return mask
 
 

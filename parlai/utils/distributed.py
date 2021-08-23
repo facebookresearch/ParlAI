@@ -290,7 +290,23 @@ def distributed_context(
         # force a sync so that no one gets ahead, and all are seeded together
         sync_object(None)
 
-        yield opt
+        try:
+            yield opt
+        finally:
+            dist.destroy_process_group()
+
+
+def get_dist_group():
+    """
+    Find the default pytorch distributed group.
+
+    Used within FSDP to mark which workers are participating. Important to manually call
+    this because FSDP will cache old groups, but our test suite will instantiate new
+    groups per test.
+    """
+    from torch.distributed.distributed_c10d import _get_default_group
+
+    return _get_default_group()
 
 
 @contextlib.contextmanager
@@ -343,3 +359,15 @@ def slurm_distributed_context(opt):
     except FileNotFoundError:
         # Slurm is not installed
         raise RuntimeError('SLURM does not appear to be installed.')
+
+
+def find_free_port() -> int:
+    """
+    Find a free port we can bind to locally.
+
+    Credit: https://stackoverflow.com/questions/1365265/on-localhost-how-do-i-pick-a-free-port-number
+    """
+    with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(('', 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]

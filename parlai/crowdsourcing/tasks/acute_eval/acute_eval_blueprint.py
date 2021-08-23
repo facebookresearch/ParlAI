@@ -9,9 +9,9 @@ import math
 from dataclasses import dataclass, field
 from typing import ClassVar, List, Type, Any, Dict, Iterable, TYPE_CHECKING
 
-from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import Blueprint, BlueprintArgs, SharedTaskState
 from mephisto.data_model.assignment import InitializationData
+from mephisto.operations.registry import register_mephisto_abstraction
 from omegaconf import MISSING, DictConfig
 
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_agent_state import (
@@ -19,6 +19,7 @@ from parlai.crowdsourcing.tasks.acute_eval.acute_eval_agent_state import (
 )
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_builder import AcuteEvalBuilder
 from parlai.crowdsourcing.tasks.acute_eval.acute_eval_runner import AcuteEvalRunner
+from parlai.utils.misc import warn_once
 
 if TYPE_CHECKING:
     from mephisto.abstractions.blueprint import AgentState, TaskRunner, TaskBuilder
@@ -63,6 +64,12 @@ be able to compare to. These pairings should be provided as a .jsonl with \
     block_on_onboarding_fail: bool = field(
         default=True, metadata={"help": "whether to block on onboarding failure"}
     )
+    randomize_conversations: bool = field(
+        default=True,
+        metadata={
+            'help': "Randomize conversations used for match-ups or take conversations in order"
+        },
+    )
     num_matchup_pairs: int = field(
         default=2, metadata={"help": "Number of pairs per model matchup, default 2"}
     )
@@ -96,7 +103,10 @@ class AcuteEvalBlueprint(Blueprint):
     @classmethod
     def assert_task_args(cls, args: DictConfig, shared_state: SharedTaskState) -> None:
         """
-        Ensure that the data can be properly loaded.
+        ACUTE-Eval-specific argument checking.
+
+        Ensure that the data can be properly loaded and that recommended worker settings
+        are used.
         """
         if args.blueprint.get("pairings_filepath", None) is not None:
             pairings_filepath = os.path.expanduser(args.blueprint.pairings_filepath)
@@ -113,6 +123,15 @@ class AcuteEvalBlueprint(Blueprint):
                 raise AssertionError(
                     "Must provide `block_qualification` to use `block_on_onboarding_fail`"
                 )
+
+        if args.task.get('maximum_units_per_worker', None) != 1:
+            warn_once(
+                'It is *strongly* recommended to use a '
+                'args.task.maximum_units_per_worker value of 1, as was done in the '
+                'ACUTE-Eval paper! Anything else will not provide consistent results '
+                'as quoted there. Go to ParlAI\'s GitHub Discussion page if you\'d '
+                'like to discuss further.'
+            )
 
     def get_frontend_args(self) -> Dict[str, Any]:
         """

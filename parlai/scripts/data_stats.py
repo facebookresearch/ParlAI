@@ -63,7 +63,7 @@ def _report(world, counts):
 
 def verify(opt):
     if opt['datatype'] == 'train':
-        logging.warn('changing datatype from train to train:ordered')
+        logging.warning('changing datatype from train to train:ordered')
         opt['datatype'] = 'train:ordered'
 
     # create repeat label agent and assign it to the specified task
@@ -108,12 +108,14 @@ def verify(opt):
     while not world.epoch_done() and world.total_exs < max_cnt:
         world.parley()
         act = world.get_acts()[opt.get('agent')]
+        if act.is_padding():
+            continue
         for itype in {'input', 'labels'}:
             if itype == 'input':
                 if opt.get('new_line_new_utt'):
                     txts = act.get('text').split('\n')
                 else:
-                    txts = [act.get('text')]
+                    txts = [act.get('text', '')]
             else:
                 txts = act.get('labels', act.get('eval_labels', ['']))
 

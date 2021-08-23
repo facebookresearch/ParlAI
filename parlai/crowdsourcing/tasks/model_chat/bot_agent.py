@@ -44,8 +44,7 @@ class TurkLikeAgent:
                 act_out = self.model_agent.act()
         else:
             act_out = self.model_agent.act()
-        act_out = Message(act_out)
-        # Wrap as a Message for compatibility with older ParlAI models
+        act_out = Message(act_out).json_safe_payload()
 
         if 'dict_lower' in self.opt and not self.opt['dict_lower']:
             # model is cased so we don't want to normalize the reply like below
@@ -53,7 +52,7 @@ class TurkLikeAgent:
         else:
             final_message_text = normalize_reply(act_out['text'])
 
-        act_out.force_set('text', final_message_text)
+        act_out['text'] = final_message_text
         assert ('episode_done' not in act_out) or (not act_out['episode_done'])
         self.turn_idx += 1
         return {**act_out, 'episode_done': False}
@@ -103,16 +102,16 @@ class TurkLikeAgent:
             # If we load many models at once, we have to keep it on CPU
             model_overrides['no_cuda'] = no_cuda
         else:
-            logging.warn(
+            logging.warning(
                 'WARNING: MTurk task has no_cuda FALSE. Models will run on GPU. Will '
                 'not work if loading many models at once.'
             )
 
         # Convert opt strings to Opt objects
-        parser = ParlaiParser(True, True)
-        parser.set_params(**model_overrides)
         processed_opts = {}
         for name, opt_string in model_opts.items():
+            parser = ParlaiParser(True, True)
+            parser.set_params(**model_overrides)
             processed_opts[name] = parser.parse_args(opt_string.split())
 
         # Load and share all model agents

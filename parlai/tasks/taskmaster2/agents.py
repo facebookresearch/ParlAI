@@ -52,6 +52,7 @@ class _Abstract(DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--include-ontology', type=bool, default=False)
         parser.add_argument(
             '--domains',
@@ -328,6 +329,7 @@ class FewShotTeacher(_Abstract):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument(
             '--holdout',
             default=DOMAINS[0],

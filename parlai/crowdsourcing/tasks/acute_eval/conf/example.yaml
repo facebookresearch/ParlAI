@@ -13,10 +13,12 @@ mephisto:
     s1_choice: "I would prefer to talk to <Speaker 1>"
     s2_choice: "I would prefer to talk to <Speaker 2>"
     subtasks_per_unit: 5
+    randomize_conversations: True
   task:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 600
-    maximum_units_per_worker: 0
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes 
+    maximum_units_per_worker: 1  # important for replicability and reliability
     task_description: "Evaluate quality of conversations through comparison."
     task_name: acute_eval_${current_time}
     task_reward: 0.5

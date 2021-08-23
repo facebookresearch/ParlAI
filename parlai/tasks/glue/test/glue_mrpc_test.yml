@@ -1,0 +1,92 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - equivalent
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    sentence1: PCCW 's chief operating officer , Mike Butcher , and Alex Arena , the
+      chief financial officer , will report directly to Mr So .
+    sentence2: Current Chief Operating Officer Mike Butcher and Group Chief Financial
+      Officer Alex Arena will report to So .
+    text: 'PCCW ''s chief operating officer , Mike Butcher , and Alex Arena , the
+      chief financial officer , will report directly to Mr So .
+
+      Current Chief Operating Officer Mike Butcher and Group Chief Financial Officer
+      Alex Arena will report to So .'
+- - episode_done: true
+    eval_labels:
+    - equivalent
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    sentence1: The world 's two largest automakers said their U.S. sales declined
+      more than predicted last month as a late summer sales frenzy caused more of
+      an industry backlash than expected .
+    sentence2: Domestic sales at both GM and No. 2 Ford Motor Co. declined more than
+      predicted as a late summer sales frenzy prompted a larger-than-expected industry
+      backlash .
+    text: 'The world ''s two largest automakers said their U.S. sales declined more
+      than predicted last month as a late summer sales frenzy caused more of an industry
+      backlash than expected .
+
+      Domestic sales at both GM and No. 2 Ford Motor Co. declined more than predicted
+      as a late summer sales frenzy prompted a larger-than-expected industry backlash
+      .'
+- - episode_done: true
+    eval_labels:
+    - equivalent
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    sentence1: According to the federal Centers for Disease Control and Prevention
+      ( news - web sites ) , there were 19 reported cases of measles in the United
+      States in 2002 .
+    sentence2: The Centers for Disease Control and Prevention said there were 19 reported
+      cases of measles in the United States in 2002 .
+    text: 'According to the federal Centers for Disease Control and Prevention ( news
+      - web sites ) , there were 19 reported cases of measles in the United States
+      in 2002 .
+
+      The Centers for Disease Control and Prevention said there were 19 reported cases
+      of measles in the United States in 2002 .'
+- - episode_done: true
+    eval_labels:
+    - not_equivalent
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    sentence1: A tropical storm rapidly developed in the Gulf of Mexico Sunday and
+      was expected to hit somewhere along the Texas or Louisiana coasts by Monday
+      night .
+    sentence2: A tropical storm rapidly developed in the Gulf of Mexico on Sunday
+      and could have hurricane-force winds when it hits land somewhere along the Louisiana
+      coast Monday night .
+    text: 'A tropical storm rapidly developed in the Gulf of Mexico Sunday and was
+      expected to hit somewhere along the Texas or Louisiana coasts by Monday night
+      .
+
+      A tropical storm rapidly developed in the Gulf of Mexico on Sunday and could
+      have hurricane-force winds when it hits land somewhere along the Louisiana coast
+      Monday night .'
+- - episode_done: true
+    eval_labels:
+    - not_equivalent
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    sentence1: The company didn 't detail the costs of the replacement and repairs
+      .
+    sentence2: But company officials expect the costs of the replacement work to run
+      into the millions of dollars .
+    text: 'The company didn ''t detail the costs of the replacement and repairs .
+
+      But company officials expect the costs of the replacement work to run into the
+      millions of dollars .'
+num_episodes: 1725
+num_examples: 1725

@@ -79,6 +79,21 @@ def _untar_dataset_files(dpath):
         _untar_dir_files(unzip_files_path)
 
 
+def _move_valid_files_from_dev_to_valid(dpath):
+    """
+    Files from Google are stored at `nq-dev-##.jsonl.gz` and get untar'd to `nq-
+    dev-##.jsonl`.
+
+    The agent expects them to be stored at `nq-valid-00.jsonl`. This moves them over if
+    need be.
+    """
+    valid_path = os.path.join(dpath, 'valid')
+    for f in os.listdir(valid_path):
+        if "dev" in f:
+            new = f.replace('dev', 'valid')
+            os.rename(os.path.join(valid_path, f), os.path.join(valid_path, new))
+
+
 def build(opt):
     dpath = os.path.join(opt['datapath'], DATASET_NAME_LOCAL)
     version = 'v1.0'
@@ -92,4 +107,5 @@ def build(opt):
         build_data.make_dir(dpath)
         _download_with_cloud_storage_client(dpath)
         _untar_dataset_files(dpath)
+        _move_valid_files_from_dev_to_valid(dpath)
         build_data.mark_done(dpath, version_string=version)

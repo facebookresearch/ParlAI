@@ -60,6 +60,7 @@ class DefaultTeacher(ParlAIDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
@@ -148,6 +149,7 @@ class SimpleTeacher(DefaultTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',
@@ -214,6 +216,7 @@ class SimpleMultiTeacher(DefaultTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('LIGHT Dialogue options')
         agent.add_argument(
             '--light_use_repeat',

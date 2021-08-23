@@ -46,7 +46,9 @@ BART_ARGS = {
 }
 
 
-def download(datapath, version='v1.0'):
+def download(datapath, version='v1.1'):
+    # v1.0: initial release
+    # v1.1: change the datatype in conversion for a lighter model file
     dpath = os.path.join(datapath, 'models', 'bart')
 
     if not build_data.built(dpath, version):

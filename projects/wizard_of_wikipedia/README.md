@@ -118,6 +118,28 @@ You can run an interactive session with the model with:
 
 Check back later for more pretrained models soon!
 
+## Raw Data
+
+If you want to work with the raw data, we describe the setup of the `json` files.
+
+Each `<train/val/test>.json` file is a list of all dialogues in that split. An entry in the list has the following keys:
+
+- `chosen_topic`: the chosen topic of the conversation
+- `persona`: a corresponding persona that motivated the topic (note this was not used during data collection)
+- `wizard_eval`: an evaluation of the wizard provided by the apprentice at the end of the dialogue
+- `dialog`: the list of dialogue turns
+- `chosen_topic_passage`: a list of sentences from the wiki passage corresponding to the chosen topic
+
+The entries of `dialog` (may) have the following keys; some are omitted for the apprentice:
+
+- `speaker`: either `"wizard"` or `"apprentice"`
+- `text`: what the speaker wrote
+- `retrieved_topics`: the topics retrieved for that utterance
+- `retrieved_passages`: a list of 1 entry dicts, mapping a topic to the sentences in the passage
+- `checked_sentence`: (wizard only) a 1 entry dict mapping the topic to the chosen sentence by the wizard 
+- `checked_passage`: (wizard only) a 1 entry dict mapping the topic to the chosen topic by the wizard 
+
+
 ## Citation
 
 If you use the dataset or models in your own work, please cite with the

@@ -159,6 +159,7 @@ class DefaultTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('COCO Caption arguments')
         agent.add_argument(
             '--use_intro',

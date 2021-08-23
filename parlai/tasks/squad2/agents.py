@@ -40,6 +40,7 @@ class IndexTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         add_common_cmdline_args(parser)
         return parser
 
@@ -117,6 +118,7 @@ class DefaultTeacher(DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         add_common_cmdline_args(parser)
         return parser
 
@@ -162,6 +164,7 @@ class OpenSquadTeacher(DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         add_common_cmdline_args(parser)
         return parser
 

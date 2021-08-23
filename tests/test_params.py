@@ -47,6 +47,44 @@ class TestParlaiParser(unittest.TestCase):
         opt = pp.parse_args(["-m", "memnn"])
         print(opt)
 
+    def test_opt_presets(self):
+        """
+        Tests whether opt presets bundled with parlai work as expected.
+        """
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        # hardcoded example
+        opt = pp.parse_args(['--model', 'transformer/generator', '-o', 'gen/meena'])
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['topk'] == 40
+        # and preference for command line over opt presets
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        opt = pp.parse_args(
+            ['--model', 'transformer/generator', '-o', 'gen/meena', '--topk', '7']
+        )
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['topk'] == 7
+        # double check ordering doesn't matter
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        opt = pp.parse_args(
+            ['--model', 'transformer/generator', '--topk', '8', '-o', 'gen/meena']
+        )
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['topk'] == 8
+        # check composability
+        pp = ParlaiParser(True, False)
+        pp.add_argument("-m", "--model")
+        opt = pp.parse_args(['-o', 'arch/blenderbot_3B,gen/meena'])
+        assert opt['beam_size'] == 20
+        assert opt['inference'] == 'topk'
+        assert opt['model'] == 'transformer/generator'
+        assert opt['n_encoder_layers'] == 2
+
     def test_upgrade_opt(self):
         """
         Test whether upgrade_opt works.
@@ -131,6 +169,45 @@ class TestParlaiParser(unittest.TestCase):
         with self.assertRaises(KeyError):
             parser = ParlaiParser(True, True)
             parser.parse_kwargs(model='transformer/generator', fake_arg='foo')
+
+    def test_parse_kwargs_multirounds(self):
+        """Test parse_kwargs when we have options that depend on options."""
+        parser = ParlaiParser(True, False)
+        opt = parser.parse_kwargs(
+            task='integration_tests', mutators='episode_shuffle', preserve_context=True
+        )
+        assert opt['preserve_context'] is True
+        opt = parser.parse_kwargs(
+            task='integration_tests', mutators='episode_shuffle', preserve_context=False
+        )
+        assert opt['preserve_context'] is False
+
+        with self.assertRaises(KeyError):
+            parser.parse_kwargs(
+                task='integration_tests', mutators='episode_shuffle', fake_option=False
+            )
+
+        with self.assertRaises(KeyError):
+            parser.parse_kwargs(task='integration_tests', fake_option=False)
+
+    def test_parse_kwargs_nargsplus(self):
+        """
+        Test parse_kwargs when provided an argument with >1 item
+        """
+        parser = ParlaiParser(False, False)
+        parser.add_argument('--example', nargs='+', choices=['a', 'b', 'c'])
+        opt = parser.parse_args(['--example', 'a', 'b'])
+        assert opt['example'] == ['a', 'b']
+
+        parser = ParlaiParser(False, False)
+        parser.add_argument('--example', nargs='+', choices=['a', 'b', 'c'])
+        opt = parser.parse_kwargs(example=['a', 'b'])
+        assert opt['example'] == ['a', 'b']
+
+        parser = ParlaiParser(False, False)
+        parser.add_argument('--example', nargs='+')
+        opt = parser.parse_kwargs(example=['x', 'y'])
+        assert opt['example'] == ['x', 'y']
 
     def test_bool(self):
         """

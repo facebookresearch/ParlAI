@@ -77,6 +77,7 @@ class PersonalityCaptionsTeacher(FixedDialogTeacher):
         """
         Add command line args.
         """
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('Personality-Captions arguments')
         agent.add_argument(
             '--include-personality',

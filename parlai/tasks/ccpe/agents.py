@@ -38,15 +38,11 @@ class CCPEAllTeacher(FixedDialogTeacher):
         fpath = os.path.join(self.opt['datapath'], 'CCPE', 'ccpe.json')
 
         with PathManager.open(fpath, 'r') as infile:
-            data = infile.read()
-            new_data = data.replace('}\n{', '},{')
-            json_data = json.loads(f'[{new_data}]')
+            json_data = json.load(infile)
 
         flattenedData = []
-
         for ep in range(len(json_data)):
             currEp = []
-
             entry = {}
             currSegments = []
             for i, utterance in enumerate(json_data[ep]['utterances']):

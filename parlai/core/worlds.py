@@ -29,7 +29,7 @@ All worlds are initialized with the following parameters:
     ``agents`` -- the set of agents that should be attached to the world,
         e.g. for DialogPartnerWorld this could be the teacher (that defines the
         task/dataset) and the learner agent. This is ignored in the case of
-        sharing, and the shared parameter is used instead to initalize agents.
+        sharing, and the shared parameter is used instead to initialize agents.
     ``shared`` (optional) -- if not None, contains any shared data used to construct
         this particular instantiation of the world. This data might have been
         initialized by another world, so that different agents can share the same
@@ -39,17 +39,22 @@ All worlds are initialized with the following parameters:
 import copy
 import random
 
-from typing import List, Dict, Union
+from typing import Dict, List, Optional, Union
 
+import parlai.utils.logging as logging
 from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
-from parlai.core.metrics import aggregate_named_reports
+from parlai.core.metrics import (
+    aggregate_named_reports,
+    aggregate_unnamed_reports,
+    TeacherMetrics,
+)
 from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
-import parlai.utils.logging as logging
 
 
 def validate(observation):
@@ -303,6 +308,17 @@ class DialogPartnerWorld(World):
     This basic world switches back and forth between two agents, giving each agent one
     chance to speak per turn and passing that back to the other one.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Return the parser as-is.
+
+        Self-chat-specific world flags can be added here.
+        """
+        return parser
 
     def __init__(self, opt: Opt, agents=None, shared=None):
         if not ((agents is not None) ^ (shared is not None)):
@@ -994,7 +1010,12 @@ class DynamicBatchWorld(World):
             )
 
         # size of the buffer we will use to find worlds
-        self._BUFFER_SIZE = 1021  # chosen as a prime number
+        if opt['dynamic_batching']:
+            self._BUFFER_SIZE = 1021  # chosen as a prime number
+        else:
+            # we're secretly running in vanilla BS mode, via background
+            # preprocessing
+            self._BUFFER_SIZE = opt['batchsize']
 
         if opt['dynamic_batching'] == 'full':
             # full dynamic batching, we can grow our batchsize
@@ -1012,6 +1033,14 @@ class DynamicBatchWorld(World):
         self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
 
         self.reset()
+
+    def shutdown(self):
+        """
+        Shutdown each world.
+        """
+        for w in self.worlds:
+            w.shutdown()
+        self.world.shutdown()
 
     def reset(self):
         super().reset()
@@ -1094,7 +1123,7 @@ class DynamicBatchWorld(World):
             # we log the task act and the index of the act
             # in the buffer for world logging purposes
             self._task_acts[i] = act  # for world logging
-            self._task_acts[i]['dyn_batch_idx'] = i
+            self._task_acts[i].force_set('dyn_batch_idx', i)
 
             obs = self.worlds[i].get_model_agent().observe(act)
             self._obs[i] = obs
@@ -1104,8 +1133,16 @@ class DynamicBatchWorld(World):
                 indices.append(i)
 
         # quick invariant checks
-        assert len(indices) != 0, "DynamicBatchWorld ran out of data!"
+        assert (
+            len(indices) != 0 or self.world.num_examples() == 0
+        ), "DynamicBatchWorld ran out of data!"
         assert not any(self._scores[i] is None for i in indices)
+
+        if not indices:
+            # this worker got no examples. This can happen when there are fewer
+            # episodes than there are workers. "don't stress the small stuff."
+            assert self.world.num_examples() == 0
+            return
 
         # sort all the indices by their score, so that we can find similarly lengthed
         # items in O(1)
@@ -1157,7 +1194,7 @@ class DynamicBatchWorld(World):
         assert len(batch) <= self.max_batch_size
 
         # great, this batch is good to go! let's run it!
-        acts = self.world.get_model_agent().batch_act([self._obs[i] for i in batch])
+        acts = self.handle_batch([self._obs[i] for i in batch])
         self.acts = [[self._task_acts[i] for i in batch], acts]
         # broadcast the results back to all the models
         for i, act in zip(batch, acts):
@@ -1170,7 +1207,7 @@ class DynamicBatchWorld(World):
             # we log the task act and the index of the act
             # in the buffer for world logging purposes
             self._task_acts[i] = act
-            self._task_acts[i]['dyn_batch_idx'] = i
+            self._task_acts[i].force_set('dyn_batch_idx', i)
             # save the observations to form a batch
             obs = self.worlds[i].get_model_agent().observe(act)
             self._scores[i] = self._score(obs)
@@ -1180,6 +1217,10 @@ class DynamicBatchWorld(World):
         self.total_parleys += 1
         self.total_exs += len(batch)
 
+    def handle_batch(self, batch):
+        acts = self.world.get_model_agent().batch_act(batch)
+        return acts
+
     def get_total_exs(self):
         return self.total_exs
 
@@ -1188,6 +1229,135 @@ class DynamicBatchWorld(World):
 
     def report(self):
         return self.world.report()
+
+
+class BackgroundDriverWorld(World):
+    def __init__(self, opt: Opt, world: World):
+        self.world = world
+        super().__init__(opt, agents=world.agents, shared=None)
+
+        import torch.multiprocessing as mp
+
+        self._num_workers = self.opt['num_workers']
+        # 4 per worker is somewhat arbitrary. 1 is potentially too few:
+        # every worker is prevented from queuing up multiple batches.
+        # Unbounded could fill up our memory too much. So 4 per worker.
+        self._process_queue = mp.Queue(maxsize=4 * self._num_workers)
+        self._process_pool = self._start_processes()
+
+        self._batch_buffer = []
+        self.metrics = TeacherMetrics()
+
+    def _start_processes(self):
+        import torch.multiprocessing as mp
+
+        return mp.start_processes(
+            fn=BackgroundWorkerDynamicBatchWorld.launch_process,
+            nprocs=self._num_workers,
+            # note that index is an an implied argument added by start_processes
+            args=(self.opt, self.get_model_agent(), self._process_queue),
+            join=False,
+            # launch in fork mode so that we can share the model agent easily
+            # note that this prevents us from using ANY threads in ANY of the
+            # subprocesses! (See ChunkTeacher for one example). Fortunately, we
+            # CAN use threads in the MAIN process, and we exploit this at
+            # times.
+            start_method='fork',
+        )
+
+    def reset(self):
+        """
+        Reset all subworlds.
+        """
+        self.world.reset()
+
+    def reset_metrics(self):
+        """
+        Reset metrics in all subworlds.
+        """
+        self.world.reset_metrics()
+        self.metrics.clear()
+
+    def get_task_agent(self):
+        return self.world.get_task_agent()
+
+    def get_model_agent(self):
+        return self.world.get_model_agent()
+
+    def num_examples(self):
+        return self.world.num_examples()
+
+    def num_episodes(self):
+        return self.world.num_episodes()
+
+    def _queue_get(self):
+        import queue
+
+        while True:
+            try:
+                return self._process_queue.get(timeout=10)
+            except queue.Empty:
+                # not getting anything, let's check for exceptions on the
+                self._process_pool.join(timeout=0.1)
+
+    def parley(self):
+        index, batch = self._queue_get()
+        response_object = self.get_model_agent().batch_act(batch)
+        # compute metrics
+        for response in response_object:
+            self.metrics._consume_user_metrics(response)
+        self.total_parleys += 1
+        self.total_exs += batch.batchsize
+
+    def get_total_exs(self):
+        return self.total_exs
+
+    def get_total_epochs(self):
+        return self.total_exs / self.num_examples()
+
+    def report(self):
+        return aggregate_unnamed_reports([self.world.report(), self.metrics.report()])
+
+    def shutdown(self):
+        logging.debug("Killing all the worker processes")
+        for p in self._process_pool.processes:
+            p.kill()
+        super().shutdown()
+
+
+class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
+    @classmethod
+    def launch_process(cls, index, opt, model_agent, process_queue):
+        import torch
+
+        torch.set_num_threads(1)  # prevent threads from spawning in this worker
+        logging.info(f"Launching background on Index {index}")
+        opt = copy.deepcopy(opt)
+        opt['background_index'] = index
+        try:
+            world = cls(opt, model_agent=model_agent, process_queue=process_queue)
+            while True:
+                world.parley()
+        except Exception:
+            import traceback
+
+            error = traceback.format_exc()
+            logging.critical(
+                f'Exception on background preprocesser index {index}!\n' + error
+            )
+            raise
+
+    def __init__(self, opt: Opt, model_agent=None, process_queue=None):
+        base_world = create_task_world(opt, [model_agent])
+        self.process_queue = process_queue
+        self.index = opt['background_index']
+        super().__init__(opt, base_world)
+
+    def handle_batch(self, batch):
+        batchified = self.world.get_model_agent().batchify(batch)
+        self.process_queue.put((self.index, batchified))
+        acts = [{} for i in batch]
+        return acts
 
 
 ################################################################################
@@ -1266,7 +1436,13 @@ def create_task(opt: Opt, user_agents, default_world=None):
         # TODO: remove and replace with multiteachers only?
         world = MultiWorld(opt, user_agents, default_world=default_world)
 
-    if opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
+    if DatatypeHelper.is_training(opt['datatype']) and opt.get('num_workers', 0) > 0:
+        # note that we never use Background preprocessing in the valid/test
+        # worlds, as we are unable to call Teacher.observe(model_act) in BG
+        # preprocessing, so we are unable to compute Metrics or accurately
+        # differentiate MultiWorld stats.
+        world = BackgroundDriverWorld(opt, world)
+    elif opt.get('batchsize', 1) > 1 and opt.get('dynamic_batching'):
         world = DynamicBatchWorld(opt, world)
     elif opt.get('batchsize', 1) > 1:
         # otherwise check if should use batchworld

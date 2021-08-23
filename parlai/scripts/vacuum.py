@@ -10,7 +10,6 @@ Reduces the size of a model file by stripping the optimizer.
 Assumes we are working with a TorchAgent
 """
 
-import os
 import torch
 
 from parlai.core.params import ParlaiParser
@@ -36,6 +35,9 @@ class Vacuum(ParlaiScript):
             dest='path',
             help="Path to model file.",
         )
+        parser.add_argument(
+            '--no-backup', action='store_true', help="Do not create a backup."
+        )
         return parser
 
     def run(self):
@@ -43,15 +45,16 @@ class Vacuum(ParlaiScript):
         model_file = self.opt['path']
         if not model_file:
             raise RuntimeError('--model-file argument is required')
-        if not os.path.isfile(model_file):
+        if not PathManager.isfile(model_file):
             raise RuntimeError(f"'{model_file}' does not exist")
         logging.info(f"Loading {model_file}")
         with PathManager.open(model_file, 'rb') as f:
             states = torch.load(
                 f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
             )
-        logging.info(f"Backing up {model_file} to {model_file}.unvacuumed")
-        os.rename(model_file, model_file + ".unvacuumed")
+        if not self.opt['no_backup']:
+            logging.info(f"Backing up {model_file} to {model_file}.unvacuumed")
+            PathManager.mv(model_file, model_file + ".unvacuumed")
         for key in [
             'optimizer',
             'optimizer_type',

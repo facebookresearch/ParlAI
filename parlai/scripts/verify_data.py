@@ -57,7 +57,7 @@ def warn(txt, act, opt):
 
 def verify(opt):
     if opt['datatype'] == 'train':
-        logging.warn("changing datatype from train to train:ordered")
+        logging.warning("changing datatype from train to train:ordered")
         opt['datatype'] = 'train:ordered'
     opt.log()
     # create repeat label agent and assign it to the specified task

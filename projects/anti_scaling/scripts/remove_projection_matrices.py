@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import argparse
-import shutil
 
 import torch
 
@@ -19,8 +18,8 @@ def remove_projection_matrices(model_file: str):
     Remove all projection matrices used for distillation from the model and re-save it.
     """
 
-    print(f'Creating a backup copy of the original model at {model_file}.')
-    shutil.copyfile(model_file, f'{model_file}._orig')
+    print(f'Creating a backup copy of the original model at {model_file}._orig.')
+    PathManager.copy(model_file, f'{model_file}._orig')
 
     print(f"Loading {model_file}.")
     with PathManager.open(model_file, 'rb') as f:

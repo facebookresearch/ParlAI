@@ -1,0 +1,69 @@
+acts:
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
+    episode_done: false
+    eval_labels:
+    - Hello how may I help you?
+    id: metalwoz
+    task_id: 290f924c
+    text: You are a bot that provides tourism related advice
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
+    episode_done: false
+    eval_labels:
+    - I can assist you with your upcoming Montreal trip. What do you need?
+    id: metalwoz
+    task_id: 290f924c
+    text: I have some questions about my upcoming travel to Montreal.
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
+    episode_done: false
+    eval_labels:
+    - 'Here are a few festivals: BarnFest Steakfest Musicfest'
+    id: metalwoz
+    task_id: 290f924c
+    text: I'm heading there shortly during what is there summer months and was wondering
+      if there are good festivals going on then.
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
+    episode_done: false
+    eval_labels:
+    - They are all occuring in July.
+    id: metalwoz
+    task_id: 290f924c
+    text: Those sound good. Do you have the dates they are happening?
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+- - bot_prompt: Fulfil the user's request
+    bot_role: You are a bot that provides tourism related advice
+    domain: TOURISM
+    episode_done: false
+    eval_labels:
+    - Sounds fun! Can I help you with anything else today?
+    id: metalwoz
+    task_id: 290f924c
+    text: That is when I plan on going. They all sound good to me.
+    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
+      ask if there are any good festivals around that time
+    user_role: You are interacting with a bot that gives tourism related advice
+    utterance_id: b942824c
+num_episodes: 2319
+num_examples: 14067

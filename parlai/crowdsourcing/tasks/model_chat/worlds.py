@@ -12,8 +12,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from parlai.core.worlds import validate
 from parlai.core.agents import create_agent_from_shared
+from parlai.core.message import Message
+from parlai.core.worlds import validate
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
@@ -224,10 +225,18 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
-                acts[idx] = Compatibility.maybe_fix_act(acts[idx])
-                if 'metrics' in acts[idx]:
-                    del acts[idx]['metrics']
-                    # Metrics can't be saved to JSON and are not needed here
+                if (
+                    agent == self.bot
+                    and hasattr(self.bot, 'agent_id')
+                    and self.bot.agent_id
+                ):
+                    # Set speaker name as self.bot_agent_id otherwise, at frontend bot name such as "TransformerGenerator" would appear
+                    Compatibility.backward_compatible_force_set(
+                        acts[idx], 'id', self.bot.agent_id
+                    )
+                acts[idx] = Message(
+                    Compatibility.maybe_fix_act(acts[idx])
+                ).json_safe_payload()
                 print(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
@@ -297,9 +306,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     'agent_idx': idx,
                     # Get rid of annotations HTML if it's the bot response
                     'text': acts[idx]['text'].split('<br>')[0],
-                    'id': acts[idx]['id']
-                    if 'id' in acts[idx]
-                    else 'NULL_ID',  # Person1 or Polyencoder
+                    'id': acts[idx].get(
+                        'id', 'NULL_ID'
+                    ),  # In case model doesn't set id
                 }
                 self.dialog.append(utterance_data)
                 if idx == 0:
@@ -454,7 +463,7 @@ class ModelChatWorld(BaseModelChatWorld):
             # The bot seeing its persona does not count as a "turn"
             self.bot.observe(validate(message), increment_turn=False)
 
-        if self.opt['conversation_start_mode'] == 'bst':
+        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
             print('[Displaying first utterances as per BST task.]')
             # Display the previous two utterances
             human_first_msg = {
@@ -588,7 +597,7 @@ class ModelChatWorld(BaseModelChatWorld):
         utterances, so it shouldn't get checked.
         """
         human_messages, violation_types = super()._prepare_acceptability_checking()
-        if self.opt['conversation_start_mode'] == 'bst':
+        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
             violation_types.append('penalize_greetings')
             human_messages = human_messages[1:]
         return human_messages, violation_types

@@ -1,0 +1,111 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    labels:
+    - 'True'
+    passage: Persian language -- Persian (/ˈpɜːrʒən, -ʃən/), also known by its endonym
+      Farsi (فارسی fārsi (fɒːɾˈsiː) ( listen)), is one of the Western Iranian languages
+      within the Indo-Iranian branch of the Indo-European language family. It is primarily
+      spoken in Iran, Afghanistan (officially known as Dari since 1958), and Tajikistan
+      (officially known as Tajiki since the Soviet era), and some other regions which
+      historically were Persianate societies and considered part of Greater Iran.
+      It is written in the Persian alphabet, a modified variant of the Arabic script,
+      which itself evolved from the Aramaic alphabet.
+    question: do iran and afghanistan speak the same language
+    text: 'Persian language -- Persian (/ˈpɜːrʒən, -ʃən/), also known by its endonym
+      Farsi (فارسی fārsi (fɒːɾˈsiː) ( listen)), is one of the Western Iranian languages
+      within the Indo-Iranian branch of the Indo-European language family. It is primarily
+      spoken in Iran, Afghanistan (officially known as Dari since 1958), and Tajikistan
+      (officially known as Tajiki since the Soviet era), and some other regions which
+      historically were Persianate societies and considered part of Greater Iran.
+      It is written in the Persian alphabet, a modified variant of the Arabic script,
+      which itself evolved from the Aramaic alphabet.
+
+      do iran and afghanistan speak the same language'
+- - episode_done: true
+    hypothesis: the language was peeled down
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: It was a complex language. Not written down but handed down. One might
+      say it was peeled down.
+    text: 'It was a complex language. Not written down but handed down. One might
+      say it was peeled down.
+
+      the language was peeled down'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - The sun was rising.
+    - The grass was cut.
+    labels:
+    - The sun was rising.
+    premise: My body cast a shadow over the grass.
+    question: cause
+    text: 'My body cast a shadow over the grass.
+
+      cause'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - 'False'
+    - 'True'
+    labels:
+    - 'True'
+    passage: 'Good Samaritan law -- Good Samaritan laws offer legal protection to
+      people who give reasonable assistance to those who are, or who they believe
+      to be, injured, ill, in peril, or otherwise incapacitated. The protection is
+      intended to reduce bystanders'' hesitation to assist, for fear of being sued
+      or prosecuted for unintentional injury or wrongful death. An example of such
+      a law in common-law areas of Canada: a good Samaritan doctrine is a legal principle
+      that prevents a rescuer who has voluntarily helped a victim in distress from
+      being successfully sued for wrongdoing. Its purpose is to keep people from being
+      reluctant to help a stranger in need for fear of legal repercussions should
+      they make some mistake in treatment. By contrast, a duty to rescue law requires
+      people to offer assistance and holds those who fail to do so liable.'
+    question: do good samaritan laws protect those who help at an accident
+    text: 'Good Samaritan law -- Good Samaritan laws offer legal protection to people
+      who give reasonable assistance to those who are, or who they believe to be,
+      injured, ill, in peril, or otherwise incapacitated. The protection is intended
+      to reduce bystanders'' hesitation to assist, for fear of being sued or prosecuted
+      for unintentional injury or wrongful death. An example of such a law in common-law
+      areas of Canada: a good Samaritan doctrine is a legal principle that prevents
+      a rescuer who has voluntarily helped a victim in distress from being successfully
+      sued for wrongdoing. Its purpose is to keep people from being reluctant to help
+      a stranger in need for fear of legal repercussions should they make some mistake
+      in treatment. By contrast, a duty to rescue law requires people to offer assistance
+      and holds those who fail to do so liable.
+
+      do good samaritan laws protect those who help at an accident'
+- - episode_done: true
+    hypothesis: no women are allowed to take part in this ritual
+    id: huggingface
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    labels:
+    - entailment
+    premise: It is part of their religion, a religion I do not scoff at as it holds
+      many elements which match our own even though it lacks the truth of ours. At
+      one of their great festivals they have the ritual of driving out the devils
+      from their bodies. First the drummers come on - I may say that no women are
+      allowed to take part in this ritual and the ladies here will perhaps agree with
+      me that they are fortunate in that omission.
+    text: 'It is part of their religion, a religion I do not scoff at as it holds
+      many elements which match our own even though it lacks the truth of ours. At
+      one of their great festivals they have the ritual of driving out the devils
+      from their bodies. First the drummers come on - I may say that no women are
+      allowed to take part in this ritual and the ladies here will perhaps agree with
+      me that they are fortunate in that omission.
+
+      no women are allowed to take part in this ritual'
+num_episodes: 10077
+num_examples: 10077

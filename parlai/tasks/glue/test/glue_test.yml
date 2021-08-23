@@ -1,0 +1,79 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - acceptable
+    id: huggingface
+    label_candidates:
+    - unacceptable
+    - acceptable
+    sentence: Bill whistled past the house.
+    text: Bill whistled past the house.
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    hypothesis: Hierbas is a name worth looking out for.
+    id: huggingface
+    label_candidates:
+    - entailment
+    - neutral
+    - contradiction
+    premise: Hierbas, ans seco, ans dulce, and frigola are just a few names worth
+      keeping a look-out for.
+    text: 'Hierbas, ans seco, ans dulce, and frigola are just a few names worth keeping
+      a look-out for.
+
+      Hierbas is a name worth looking out for.'
+- - episode_done: true
+    eval_labels:
+    - equivalent
+    id: huggingface
+    label_candidates:
+    - not_equivalent
+    - equivalent
+    sentence1: PCCW 's chief operating officer , Mike Butcher , and Alex Arena , the
+      chief financial officer , will report directly to Mr So .
+    sentence2: Current Chief Operating Officer Mike Butcher and Group Chief Financial
+      Officer Alex Arena will report to So .
+    text: 'PCCW ''s chief operating officer , Mike Butcher , and Alex Arena , the
+      chief financial officer , will report directly to Mr So .
+
+      Current Chief Operating Officer Mike Butcher and Group Chief Financial Officer
+      Alex Arena will report to So .'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    question: What organization is devoted to Jihad against Israel?
+    sentence: For some decades prior to the First Palestine Intifada in 1987, the
+      Muslim Brotherhood in Palestine took a "quiescent" stance towards Israel, focusing
+      on preaching, education and social services, and benefiting from Israel's "indulgence"
+      to build up a network of mosques and charitable organizations.
+    text: 'For some decades prior to the First Palestine Intifada in 1987, the Muslim
+      Brotherhood in Palestine took a "quiescent" stance towards Israel, focusing
+      on preaching, education and social services, and benefiting from Israel''s "indulgence"
+      to build up a network of mosques and charitable organizations.
+
+      What organization is devoted to Jihad against Israel?'
+- - episode_done: true
+    eval_labels:
+    - duplicate
+    id: huggingface
+    label_candidates:
+    - not_duplicate
+    - duplicate
+    question1: Would the idea of Trump and Putin in bed together scare you, given
+      the geopolitical implications?
+    question2: Do you think that if Donald Trump were elected President, he would
+      be able to restore relations with Putin and Russia as he said he could, based
+      on the rocky relationship Putin had with Obama and Bush?
+    text: 'Would the idea of Trump and Putin in bed together scare you, given the
+      geopolitical implications?
+
+      Do you think that if Donald Trump were elected President, he would be able to
+      restore relations with Putin and Russia as he said he could, based on the rocky
+      relationship Putin had with Obama and Bush?'
+num_episodes: 415358
+num_examples: 415358

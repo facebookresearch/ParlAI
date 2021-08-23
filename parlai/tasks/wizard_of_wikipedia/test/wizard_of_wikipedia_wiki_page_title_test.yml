@@ -1,0 +1,46 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Royal Blue (train)
+    id: WikiPageTitleTeacher
+    text: 'Blue is my favorite primary color.
+
+      Blue is always nice. I like royal blue.'
+- - episode_done: true
+    eval_labels:
+    - Blue Skies (1946 film)
+    id: WikiPageTitleTeacher
+    text: 'Blue is my favorite primary color.
+
+      Blue is always nice. I like royal blue.
+
+      I once road on The Royal Blue train from New York to D.C
+
+      Oh that sounds really nice. I bet there was a lot of scenery and blue skies.'
+- - episode_done: true
+    eval_labels:
+    - Cinematography
+    id: WikiPageTitleTeacher
+    text: Hi buddy, What you think about cinematography
+- - episode_done: true
+    eval_labels:
+    - Cinematography
+    id: WikiPageTitleTeacher
+    text: "Hi buddy, What you think about cinematography\nCinematography,is a type\
+      \ of motion picture , captured electronically by means of an image \nYes buddy,\
+      \  Images captured with an electronic image-sensor, produces an electrical charge.The\
+      \ word \"cinematography\" is based on the Greek words  meaning movement, motion."
+- - episode_done: true
+    eval_labels:
+    - Photography
+    id: WikiPageTitleTeacher
+    text: "Hi buddy, What you think about cinematography\nCinematography,is a type\
+      \ of motion picture , captured electronically by means of an image \nYes buddy,\
+      \  Images captured with an electronic image-sensor, produces an electrical charge.The\
+      \ word \"cinematography\" is based on the Greek words  meaning movement, motion.\n\
+      It works by lens used to repeatedly focus the light reflected from objects into\
+      \ real images on the light-sensitive surface .\n Muybridge sequence of a horse\
+      \ galloping In the 1830s, moving images were produced on revolving drums and\
+      \ disks"
+num_episodes: 3181
+num_examples: 3181

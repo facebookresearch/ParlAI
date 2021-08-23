@@ -45,6 +45,7 @@ class HollETeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         group = parser.add_argument_group('Holl-E Knowledge arguments')
         group.add_argument(
             '--knowledge-types',

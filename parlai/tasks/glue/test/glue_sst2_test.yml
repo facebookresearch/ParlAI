@@ -1,0 +1,56 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: uneasy mishmash of styles and genres .
+    text: uneasy mishmash of styles and genres .
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: 'this film ''s relationship to actual tension is the same as what christmas-tree
+      flocking in a spray can is to actual snow : a poor -- if durable -- imitation
+      .'
+    text: 'this film ''s relationship to actual tension is the same as what christmas-tree
+      flocking in a spray can is to actual snow : a poor -- if durable -- imitation
+      .'
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: by the end of no such thing the audience , like beatrice , has a watchful
+      affection for the monster .
+    text: by the end of no such thing the audience , like beatrice , has a watchful
+      affection for the monster .
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: director rob marshall went out gunning to make a great one .
+    text: director rob marshall went out gunning to make a great one .
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: huggingface
+    label_candidates:
+    - negative
+    - positive
+    sentence: lathan and diggs have considerable personal charm , and their screen
+      rapport makes the old story seem new .
+    text: lathan and diggs have considerable personal charm , and their screen rapport
+      makes the old story seem new .
+num_episodes: 1821
+num_examples: 1821

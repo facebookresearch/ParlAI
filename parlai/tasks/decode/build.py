@@ -10,14 +10,14 @@ from parlai.core.build_data import DownloadableFile
 
 DECODE = 'decode'
 DECODE_PREFIX = 'decode_'
-DECODE_VERSION = 'v0.1'
+DECODE_VERSION = 'v0.1.1'
+DECODE_FOLDER_VERSION = 'v0.1'
 
 
 RESOURCES = [
     DownloadableFile(
-        'https://sharenlpfile-01.s3.amazonaws.com/data/decode_v0.1.zip',
+        'http://parl.ai/downloads/decode/decode_v0.1.zip',
         'decode_v0.1.zip',
-        # '0badc03c41813ae9748f259370ce655e576d736fea2d084dd6a786ac59f2f2a1',
         '084aab98652a04ce4a78c1a63d91575f5ab416a0c474b962ca1f4508a56b7484',
         True,
         False,

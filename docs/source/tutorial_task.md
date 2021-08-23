@@ -490,7 +490,7 @@ your chunk data.
 
 In this case, one would inherit from the Teacher class. For this class,
 at least the `act()` method and probably the `observe()` method must be
-overriden. Quite a bit of functinoality will not be built in, such as a
+overridden. Quite a bit of functinoality will not be built in, such as a
 support for hogwild and batching, but metrics will be set up and can be
 used to track stats like the number of correctly answered examples.
 
@@ -606,7 +606,7 @@ directory, created." This is expected the first time. You should now see a
 Add these files to your git commit.
 
 Next run the test again. This time, you should see all tests pass. If so,
-go ahead and [create your PR](contributing).
+go ahead and [create your PR](https://github.com/facebookresearch/ParlAI/blob/master/CONTRIBUTING.md).
 
 Note, if you need to make further changes to your teacher, you may need
 to update the regression fixtures. You can do this by adding `--force-regen`

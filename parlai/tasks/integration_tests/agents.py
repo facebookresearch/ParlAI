@@ -31,6 +31,8 @@ import json
 from abc import ABC
 from typing import Tuple, List
 import time
+from parlai.core.message import Message
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
 
 # default parameters
@@ -200,6 +202,7 @@ class OverfitTeacher(CandidateTeacher, DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--corpus-size', default=4, type=int)
         return parser
 
@@ -228,6 +231,7 @@ class OverfitMultiturnTeacher(CandidateTeacher, DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser.add_argument('--corpus-size', default=4, type=int)
         return parser
 
@@ -483,37 +487,74 @@ class ChunkyTeacher(ChunkTeacher):
 
     def create_message(self, sample_item, entry_idx=0):
         text, label = sample_item
-        return {'text': text, 'labels': [label], 'episode_done': True}
+        return Message({'text': text, 'labels': [label], 'episode_done': True})
 
 
-class InfiniteTrainTeacher(ChunkyTeacher):
+class WrongExamplesChunkyTeacher(ChunkyTeacher):
     """
-    Chunk teacher with an effectively infinite number of training examples.
+    Chunk teacher with an incorrect number of examples.
+
+    Useful for testing we don't get a deadlock from a common user error.
     """
 
-    def get_num_samples(self, opt) -> Tuple[int, int]:
-        datatype = opt['datatype']
-        if 'train' in datatype:
-            return INFINITE, INFINITE
-        elif 'valid' in datatype:
-            return NUM_TEST, NUM_TEST
-        elif 'test' in datatype:
-            return NUM_TEST, NUM_TEST
+    def num_examples(self):
+        return 10
 
 
-class ChunkyUniqueSlowTeacher(ChunkyTeacher):
+class WrongEpisodesChunkyTeacher(ChunkyTeacher):
+    """
+    Chunk teacher with an incorrect number of episodes.
+    """
+
+    def num_episodes(self):
+        return 10
+
+
+class WrongExamplesEpisodesChunkyTeacher(ChunkyTeacher):
+    """
+    Chunk teacher with an incorrect number of episodes and examples.
+    """
+
+    def num_examples(self):
+        return 10
+
+    def num_episodes(self):
+        return 10
+
+
+class ChunkySmallBufferTeacher(ChunkyTeacher):
+    def get_buffersize(self):
+        return NUM_TEST // 2
+
+
+class InfiniteTrainTeacher(FixedDialogTeacher):
+    """
+    Teacher with an effectively infinite number of training examples.
+    """
+
+    def num_examples(self):
+        return INFINITE
+
+    def num_episodes(self):
+        return INFINITE
+
+    def get(self, episode_idx=0, entry_idx=0):
+        field = (
+            'labels'
+            if DatatypeHelper.is_training(self.opt['datatype'])
+            else 'eval_labels'
+        )
+        return Message({'text': '1 2 3 4', field: ['1 2 3 4'], 'episode_done': True})
+
+
+class ChunkySlowTeacher(ChunkyTeacher):
     """
     Unique examples that load slowly.
     """
 
     def load_from_chunk(self, chunk_idx: int):
-        output = []
-        for i in range(10):
-            text = str(i + chunk_idx * 10)
-            resp = str(i + chunk_idx * 10)
-            output.append((text, resp))
-            time.sleep(0.1)
-        return output
+        time.sleep(0.1)
+        return super().load_from_chunk(chunk_idx)
 
 
 class ShortFixedTeacher(FixedDialogCandidateTeacher):
@@ -527,3 +568,17 @@ class ShortFixedTeacher(FixedDialogCandidateTeacher):
 
 class DefaultTeacher(CandidateTeacher):
     pass
+
+
+class TinyTeacher(DialogTeacher):
+    """
+    Teacher with a single example, to test data stratification with fewer examples than
+    GPUs.
+    """
+
+    def __init__(self, opt, shared=None):
+        opt['datafile'] = 'tiny_data'
+        super().__init__(opt, shared)
+
+    def setup_data(self, _):
+        yield {'text': 'hi', 'label': 'there'}, True

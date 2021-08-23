@@ -645,8 +645,9 @@ def str_to_msg(txt, ignore_fields=''):
 
     def tolist(txt):
         vals = txt.split('|')
-        for v in vals:
+        for i, v in enumerate(vals):
             v = tostr(v)
+            vals[i] = v
         return vals
 
     def convert(key, value):
@@ -659,6 +660,11 @@ def str_to_msg(txt, ignore_fields=''):
             or key == 'text_candidates'
         ):
             return tolist(value)
+        elif key == 'reward':
+            try:
+                return int(value)
+            except ValueError:
+                return float(value)
         elif key == 'episode_done':
             return bool(value)
         else:
@@ -765,7 +771,7 @@ def warn_once(msg: str) -> None:
     global _seen_logs
     if msg not in _seen_logs:
         _seen_logs.add(msg)
-        logging.warn(msg)
+        logging.warning(msg)
 
 
 def error_once(msg: str) -> None:

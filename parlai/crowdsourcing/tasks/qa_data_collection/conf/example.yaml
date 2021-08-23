@@ -6,6 +6,10 @@ mephisto:
     custom_source_bundle: ${task_dir}/webapp/build/bundle.js
     num_conversations: 1
   task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 3
     task_name: parlai-qa-example
     task_title: "Test ParlAI QA Data Collection Task"
     task_description: >

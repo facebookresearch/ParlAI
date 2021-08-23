@@ -114,16 +114,6 @@ class EndToEndAgent(_GenericWizardAgent):
         self.max_knowledge = opt.get('max_knowledge')
         self.knowledge_alpha = opt['knowledge_alpha']
 
-    def _dummy_batch(self, bsz, maxlen):
-        batch = super()._dummy_batch(bsz, maxlen)
-        batch['know_vec'] = th.zeros(bsz, 2, 2).long().cuda()
-        # bool/uint8 backwards for pytorch 1.0/1.2 compatibility
-        ck_mask = (th.ones(bsz, 2, dtype=th.uint8) != 0).cuda()
-        batch['ck_mask'] = ck_mask
-        batch['cs_ids'] = th.zeros(bsz).long().cuda()
-        batch['use_cs_ids'] = True
-        return batch
-
     def compute_loss(self, batch, return_output=False):
         # first compute our regular forced decoding loss
         token_loss, model_output = super().compute_loss(batch, return_output=True)
@@ -265,7 +255,7 @@ class EndToEndAgent(_GenericWizardAgent):
             for k in flattened_knowledge
         ]
         knowledge_vec, _ = padded_tensor(
-            knowledge_vec, self.NULL_IDX, self.use_cuda, left_padded=True
+            knowledge_vec, pad_idx=self.NULL_IDX, left_padded=True
         )
         knowledge_vec[:, -1] = self.END_IDX
         T = knowledge_vec.size(-1)

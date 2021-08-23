@@ -24,6 +24,7 @@ class BartModel(TransformerGeneratorModel):
         """
         # project back to vocabulary
         output = F.linear(tensor, self.embeddings.weight)
+
         return output
 
     def _get_initial_forced_decoder_input(self, bsz: int, inputs: torch.LongTensor):
@@ -71,3 +72,15 @@ class BartModel(TransformerGeneratorModel):
                 incr_state_l['self_attn']['prev_mask'] = self_attn_mask[:, -1:, :]
 
         return super().reorder_decoder_incremental_state(incremental_state, inds)
+
+    def decode_forced(self, encoder_states, ys):
+        """
+        Override to cut off score for start token.
+        """
+        logits, preds = super().decode_forced(encoder_states, ys)
+        # ignore start
+        if logits.size(1) != ys.size(1):
+            logits = logits[:, 1:, :]
+            preds = preds[:, 1:]
+
+        return logits, preds

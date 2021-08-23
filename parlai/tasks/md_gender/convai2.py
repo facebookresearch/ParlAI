@@ -51,6 +51,7 @@ class Convai2Teacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = gend_utils.add_common_args(parser)
         agent = parser.add_argument_group('ConvAI2 gender')
         agent.add_argument(

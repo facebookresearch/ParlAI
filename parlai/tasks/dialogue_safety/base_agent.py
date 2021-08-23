@@ -33,6 +33,7 @@ class _BaseSafetyTeacher(FixedDialogTeacher, ABC):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('Safety Teacher Args')
         parser.add_argument(
             '--round',

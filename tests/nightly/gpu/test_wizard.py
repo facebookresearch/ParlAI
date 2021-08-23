@@ -17,9 +17,10 @@ from projects.wizard_of_wikipedia.knowledge_retriever.knowledge_retriever import
 END2END_OPTIONS = {
     'task': 'wizard_of_wikipedia:generator:random_split',
     'model_file': 'zoo:wizard_of_wikipedia/end2end_generator/model',
-    'batchsize': 32,
+    'batchsize': 4,
     'log_every_n_secs': 30,
     'embedding_type': 'random',
+    'num_examples': 128,
 }
 
 
@@ -29,12 +30,13 @@ RETRIEVAL_OPTIONS = {
     'model_file': 'zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model',
     'datatype': 'test',
     'n_heads': 6,
-    'batchsize': 32,
+    'batchsize': 4,
     'ffn_size': 1200,
     'embeddings_scale': False,
     'delimiter': ' __SOC__ ',
     'n_positions': 1000,
     'legacy': True,
+    'num_examples': 128,
 }
 
 
@@ -44,27 +46,25 @@ class TestWizardModel(unittest.TestCase):
     Checks that pre-trained Wizard models give the correct results.
     """
 
-    @classmethod
-    def setUpClass(cls):
-        # go ahead and download things here
-        parser = display_data.setup_args()
-        parser.set_defaults(**END2END_OPTIONS)
-        opt = parser.parse_args([])
-        opt['num_examples'] = 1
-        opt['verbose'] = True
-        display_data.display_data(opt)
-
     def test_end2end(self):
         valid, _ = testing_utils.eval_model(END2END_OPTIONS, skip_test=True)
-        self.assertAlmostEqual(valid['ppl'], 61.21, places=2)
-        self.assertAlmostEqual(valid['f1'], 0.1717, places=4)
-        self.assertAlmostEqual(valid['know_acc'], 0.2201, places=4)
+        # For full dataset, remove `num_examples` from the END2END_OPTIONS
+        # self.assertAlmostEqual(valid['ppl'], 61.21, places=2)
+        # self.assertAlmostEqual(valid['f1'], 0.1717, places=4)
+        # self.assertAlmostEqual(valid['know_acc'], 0.2201, places=4)
+        self.assertAlmostEqual(valid['ppl'], 71.49, places=2)
+        self.assertAlmostEqual(valid['f1'], 0.1741, places=4)
+        self.assertAlmostEqual(valid['know_acc'], 0.1797, places=4)
 
     def test_retrieval(self):
         _, test = testing_utils.eval_model(RETRIEVAL_OPTIONS, skip_valid=True)
-        self.assertAlmostEqual(test['accuracy'], 0.8631, places=4)
-        self.assertAlmostEqual(test['hits@5'], 0.9814, places=4)
-        self.assertAlmostEqual(test['hits@10'], 0.9917, places=4)
+        # for full dataset, remove `num_examples` from END2END_OPTIONS
+        # self.assertAlmostEqual(test['accuracy'], 0.8631, places=4)
+        # self.assertAlmostEqual(test['hits@5'], 0.9814, places=4)
+        # self.assertAlmostEqual(test['hits@10'], 0.9917, places=4)
+        self.assertAlmostEqual(test['accuracy'], 0.9141, places=4)
+        self.assertAlmostEqual(test['hits@5'], 1.0, places=4)
+        self.assertAlmostEqual(test['hits@10'], 1.0, places=4)
 
 
 class TestKnowledgeRetriever(unittest.TestCase):

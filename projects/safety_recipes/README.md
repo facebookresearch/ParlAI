@@ -19,16 +19,22 @@ We release the Bot-Adversarial Dialogue task at `parlai/tasks/bot_adversarial_di
 parlai display_data -t bot_adversarial_dialogue --bad-include-persona True
 ```
 
-To view the data used for the fixed test set, run:
+To view the data used for the adversarial fixed test set, run:
 
 ```
 parlai display_data -t bot_adversarial_dialogue:HumanSafetyEvaluation --bad-include-persona True
 ```
 
+To view the data used for the non-adversarial fixed test set, run:
+
+```
+parlai display_data -t bot_adversarial_dialogue:HumanNonadvSafetyEvaluation
+```
+
 <p align="center"><img width="60%" src="BAD_safety_diagram.png" /></p>
 
 
-Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083), used as baselines, can be found [here](parl.ai/projects/dialogue_safety).
+Data (and models) from the [Build-it, Break-it, Fix-it paper](https://arxiv.org/abs/1908.06083), used as baselines, can be found [here](https://parl.ai/projects/dialogue_safety).
 
 
 We also release the validation set for the sensitive topics detection as described in the paper. The data can be viewed with the following command:
@@ -75,7 +81,22 @@ parlai eval_model -mf zoo:sensitive_topics_classifier/model -t sensitive_topics_
 ```
 python projects/safety_recipes/human_safety_evaluation/run.py
 ```
-See [Mephisto](https://github.com/facebookresearch/Mephisto) to install Mephisto, a platform for launching your crowdsourcing tasks on Amazon Mechanical Turk. To enable onboarding task, please edit the [onboarding task](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/onboarding.json). To render your own chats, please include your chat logs [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl) and turn indices per conversation to annotate [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl).
+See [Mephisto](https://github.com/facebookresearch/Mephisto) to install Mephisto, a platform for launching your crowdsourcing tasks on Amazon Mechanical Turk. 
+
+To enable onboarding task, please edit the [onboarding task](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/onboarding.json). 
+
+To create your own chat logs [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl)
+
+1) The following command will generate original chat logs of Blender 90M model responding to Bot Adversarial Task testset for human safety evaluation and write the 180 examples to `/tmp/world_logs.jsonl` in ParlAI format:
+```
+parlai em -t bot_adversarial_dialogue:HumanSafetyEvaluation --flatten-dialogue True --split-lines True -mf zoo:blender/blender_90M/model -bs 64 --world-logs /tmp/world_logs.jsonl
+```
+2) To automatically format the generated logs from ParlAI format `world_logs.jsonl` to human safety evaluation ready format as in [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/task_data.jsonl)
+```
+python projects/safety_recipes/human_safety_evaluation/format_safety_ready.py --world-logs-path /tmp/world_logs.jsonl --eval-logs-dir projects/safety_recipes/human_safety_evaluation/task_config/
+```
+Running the format script above will also automatically generate the `annotation_indices.jsonl` specifying turn indices per conversation to annotate for safety similar to [here](https://github.com/facebookresearch/ParlAI/blob/master/projects/safety_recipes/human_safety_evaluation/task_config/annotation_indices.jsonl). For bot adversarial test set consisting of 180 examples, we only evaluate the last reply of each conversation. 
+
 
 
 - Evaluating engagingness: To run ACUTE-Eval human evaluations for engagingness, see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval).

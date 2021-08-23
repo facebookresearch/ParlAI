@@ -316,11 +316,8 @@ class TestTorchAgent(unittest.TestCase):
             # nothing has been vectorized yet so should be empty
             batch = agent.batchify(obs_batch)
             self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
             self.assertIsNone(batch.label_vec)
-            self.assertIsNone(batch.label_lengths)
             self.assertIsNone(batch.labels)
-            self.assertIsNone(batch.valid_indices)
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
@@ -341,11 +338,8 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(obs_batch)
             self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
             self.assertIsNone(batch.label_vec)
-            self.assertIsNone(batch.label_lengths)
             self.assertIsNone(batch.labels)
-            self.assertIsNone(batch.valid_indices)
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
@@ -359,11 +353,8 @@ class TestTorchAgent(unittest.TestCase):
             batch = agent.batchify(obs_vecs)
             # which fields were filled vs should be empty?
             self.assertIsNotNone(batch.text_vec)
-            self.assertIsNotNone(batch.text_lengths)
             self.assertIsNotNone(batch.label_vec)
-            self.assertIsNotNone(batch.label_lengths)
             self.assertIsNotNone(batch.labels)
-            self.assertIsNotNone(batch.valid_indices)
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
@@ -373,12 +364,10 @@ class TestTorchAgent(unittest.TestCase):
                 batch.text_vec.tolist(),
                 [[1, 2, 3, 4, 5, 0], [1, 2, 3, 4, 5, 6], [1, 2, 0, 0, 0, 0]],
             )
-            self.assertEqual(batch.text_lengths, [5, 6, 2])
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1, 2, 0, 0, 0]],
             )
-            self.assertEqual(batch.label_lengths, [1, 5, 2])
             self.assertEqual(batch.labels, [o[lab_key][0] for o in obs_batch])
             self.assertEqual(list(batch.valid_indices), [0, 1, 2])
 
@@ -388,12 +377,10 @@ class TestTorchAgent(unittest.TestCase):
                 batch.text_vec.tolist(),
                 [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 0], [1, 2, 0, 0, 0, 0]],
             )
-            self.assertEqual(batch.text_lengths, [6, 5, 2])
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 2, 3, 4, 5], [1, 0, 0, 0, 0], [1, 2, 0, 0, 0]],
             )
-            self.assertEqual(batch.label_lengths, [5, 1, 2])
             labs = [o[lab_key][0] for o in obs_batch]
             self.assertEqual(batch.labels, [labs[i] for i in [1, 0, 2]])
             self.assertEqual(list(batch.valid_indices), [1, 0, 2])
@@ -411,14 +398,11 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(new_vecs, sort=True)
             self.assertIsNone(batch.text_vec)
-            self.assertIsNone(batch.text_lengths)
             self.assertIsNotNone(batch.label_vec)
-            self.assertIsNotNone(batch.label_lengths)
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 2, 3, 4, 5], [1, 2, 0, 0, 0], [1, 0, 0, 0, 0]],
             )
-            self.assertEqual(batch.label_lengths, [5, 2, 1])
             labs = [o[lab_key][0] for o in new_vecs]
             self.assertEqual(batch.labels, [labs[i] for i in [1, 2, 0]])
             self.assertEqual(list(batch.valid_indices), [1, 2, 0])
@@ -431,9 +415,7 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(obs_vecs)
             self.assertEqual(batch.text_vec.tolist(), [[1, 2]])
-            self.assertEqual(batch.text_lengths, [2])
             self.assertEqual(batch.label_vec.tolist(), [[1, 2]])
-            self.assertEqual(batch.label_lengths, [2])
             self.assertEqual(batch.labels, obs_batch[2][lab_key])
             self.assertEqual(list(batch.valid_indices), [2])
 
@@ -463,9 +445,7 @@ class TestTorchAgent(unittest.TestCase):
         batch = agent.batchify(obs_cands)
         self.assertTrue(agent.rank_candidates, 'Agent not set up to rank.')
         self.assertIsNone(batch.text_vec)
-        self.assertIsNone(batch.text_lengths)
         self.assertIsNone(batch.label_vec)
-        self.assertIsNone(batch.label_lengths)
         self.assertIsNone(batch.labels)
         self.assertIsNotNone(batch.valid_indices)
         self.assertIsNotNone(batch.candidates)
@@ -782,6 +762,38 @@ class TestTorchAgent(unittest.TestCase):
             == 'your persona: filler\nhello i am stephen\ni am bob'
         )
 
+    def test_temp_history_observe(self):
+        """
+        Test temp_history when provided via a field in the observation.
+        """
+        agent = get_agent(dict_file='zoo:unittest/transformer_generator2/model.dict')
+        obs = agent.observe(
+            {'text': '1 2 3', 'temp_history': '4 5 6', 'episode_done': False}
+        )
+        assert len(obs['text_vec']) == 6
+        assert obs['full_text'] == '1 2 34 5 6'
+        obs = agent.observe(
+            {'text': '1 2 3', 'temp_history': '6', 'episode_done': False}
+        )
+        assert len(obs['text_vec']) == 7
+        assert obs['full_text'] == '1 2 3\n1 2 36'
+        obs = agent.observe({'text': '1 2 3', 'episode_done': False})
+        assert len(obs['text_vec']) == 9
+        assert obs['full_text'] == '1 2 3\n1 2 3\n1 2 3'
+
+        # make sure temp history is forgotten after a reset
+        obs = agent.observe(
+            {'text': '1 2 3', 'temp_history': '4', 'episode_done': True}
+        )
+        assert len(obs['text_vec']) == 13
+        assert obs['full_text'] == '1 2 3\n1 2 3\n1 2 3\n1 2 34'
+        agent.act()  # get that self-observe in
+
+        obs = agent.observe({'text': '1 2 3', 'episode_done': True})
+        assert len(obs['text_vec']) == 3
+        assert obs['full_text'] == '1 2 3'
+        agent.act()  # get that self-observe in
+
     def test_observe(self):
         """
         Make sure agent stores and returns observation.
@@ -884,6 +896,92 @@ class TestTorchAgent(unittest.TestCase):
         for i in range(len(obs_elabs_vecs)):
             self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
 
+    def test_respond(self):
+        """
+        Tests respond() in the base Agent class, where the agent provides
+        a string response to a single message.
+        """
+        agent = get_agent()
+        message = Message(
+            {
+                'text': "It's only a flesh wound.",
+                'labels': ['Yield!'],
+                'episode_done': True,
+            }
+        )
+        response = agent.respond(message)
+        self.assertEqual(response, 'Training 0!')
+        message = Message(
+            {
+                'text': "It's only a flesh wound.",
+                'eval_labels': ['Yield!'],
+                'episode_done': True,
+            }
+        )
+        response = agent.respond(message)
+        self.assertIn('Evaluating 0', response)
+
+    def test_batch_respond(self):
+        """
+        Tests batch_respond() in the base Agent class, where the agent provides
+        a batch response to a batch of messages.
+        """
+        agent = get_agent()
+
+        obs_labs = [
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
+        ]
+        response = agent.batch_respond(obs_labs)
+        for i, resp in enumerate(response):
+            self.assertEqual(resp, 'Training {}!'.format(i))
+
+        obs_elabs = [
+            Message(
+                {
+                    'text': "It's only a flesh wound.",
+                    'eval_labels': ['Yield!'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'The needs of the many outweigh...',
+                    'eval_labels': ['The needs of the few.'],
+                    'episode_done': True,
+                }
+            ),
+            Message(
+                {
+                    'text': 'Hello there.',
+                    'eval_labels': ['General Kenobi.'],
+                    'episode_done': True,
+                }
+            ),
+        ]
+        response = agent.batch_respond(obs_elabs)
+        for i, resp in enumerate(response):
+            self.assertIn('Evaluating {}'.format(i), resp)
+
     def test_interactive_mode(self):
         """
         Test if conversation history is destroyed in MTurk mode.
@@ -962,7 +1060,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.observe(obs)
         _ = agent.act()
         self.assertEqual(
-            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to Call)!'
+            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to [[1]])!'
         )
         # now some of the other possible values of --use-reply
         # --use-reply model. even if there is a label, we should see the model's out
@@ -1054,3 +1152,19 @@ class TestTorchAgent(unittest.TestCase):
             init_model_file, is_finetune = agent._get_init_model(popt, None)
             self.assertEqual(init_model_file, '{}.checkpoint'.format(mf))
             self.assertFalse(is_finetune)
+
+    def test_truncate_metrics(self):
+        agent = get_agent(model='test_agents/unigram', truncate=5)
+        obs = {
+            'text': "I'll be back. I'll be back. I'll be back.",
+            'labels': ["I'll be back. I'll be back. I'll be back."],
+            'episode_done': True,
+        }
+        obs = agent.observe(obs)
+        agent.act()
+        self.assertEqual(agent._local_metrics['ctrunc'][0].value(), 1.0)
+        self.assertEqual(agent._local_metrics['ltrunc'][0].value(), 1.0)
+        self.assertEqual(agent._local_metrics['clen'][0].value(), 9)
+        self.assertEqual(agent._local_metrics['llen'][0].value(), 11)
+        self.assertEqual(agent._local_metrics['ctrunclen'][0].value(), 4)
+        self.assertEqual(agent._local_metrics['ltrunclen'][0].value(), 6)

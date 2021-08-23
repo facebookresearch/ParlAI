@@ -59,6 +59,7 @@ class InteractiveWorld(InteractiveBaseWorld):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('ConvAI2 Interactive World')
         parser.add_argument(
             '--display-partner-persona',

@@ -164,6 +164,7 @@ class LightGenderTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('LIGHT Gender Args')
         OrigLightTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
         parser.add_argument(

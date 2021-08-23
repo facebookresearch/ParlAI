@@ -16,7 +16,6 @@ import torch.nn as nn
 from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     TransformerEncoder,
-    _normalize,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -39,39 +38,12 @@ class ImageSeq2seqModel(TransformerGeneratorModel):
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent):
-        if opt.get('n_positions'):
-            # if the number of positions is explicitly provided, use that
-            n_positions = opt['n_positions']
-        else:
-            # else, use the worst case from truncate
-            n_positions = max(
-                opt.get('truncate') or 0,
-                opt.get('text_truncate') or 0,
-                opt.get('label_truncate') or 0,
-            )
-            if n_positions == 0:
-                # default to 1024
-                n_positions = 1024
-
         super().__init__(opt, dictionary)
         self.encoder = ContextWithImageEncoder(
-            n_heads=opt['n_heads'],
-            n_layers=opt['n_layers'],
-            embedding_size=opt['embedding_size'],
-            ffn_size=opt['ffn_size'],
+            opt=opt,
             vocabulary_size=len(dictionary),
             embedding=self.embeddings,
-            dropout=opt['dropout'],
-            attention_dropout=opt['attention_dropout'],
-            relu_dropout=opt['relu_dropout'],
             padding_idx=self.pad_idx,
-            learn_positional_embeddings=opt['learn_positional_embeddings'],
-            embeddings_scale=opt['embeddings_scale'],
-            n_positions=n_positions,
-            n_segments=opt.get('n_segments', 0),
-            activation=opt['activation'],
-            variant=opt['variant'],
-            output_scaling=opt['output_scaling'],
             image_encoder_num_layers=opt['image_encoder_num_layers'],
             image_features_dim=opt['image_features_dim'],
             fusion=opt['image_fusion_type'],
@@ -89,23 +61,13 @@ class ContextWithImageEncoder(TransformerEncoder):
 
     def __init__(
         self,
-        n_heads,
-        n_layers,
-        embedding_size,
-        ffn_size,
-        vocabulary_size,
+        opt: Opt,
+        vocabulary_size: int,
         embedding=None,
-        dropout=0.0,
-        attention_dropout=0.0,
-        relu_dropout=0.0,
         padding_idx=0,
-        learn_positional_embeddings=False,
-        embeddings_scale=False,
-        n_positions=1024,
-        activation='relu',
-        variant='aiayn',
-        n_segments=0,
-        output_scaling=1.0,
+        reduction_type='mean',
+        n_segments=None,
+        embeddings_scale=None,
         image_encoder_num_layers=1,
         image_features_dim=2048,
         image_combination_mode='append',
@@ -132,27 +94,18 @@ class ContextWithImageEncoder(TransformerEncoder):
                 'Image encoding cannot be added to context encoding if there is more than one image token!'
             )
         if self.fusion is FusionType.EARLY:
-            assert n_segments == 2, "must use segment embeddings for early fusion"
+            assert (
+                opt['n_segments'] == 2
+            ), "must use segment embeddings for early fusion"
         reduction_type = None  # Must pass back unreduced encoding and mask
         super().__init__(
-            n_heads=n_heads,
-            n_layers=n_layers,
-            embedding_size=embedding_size,
-            ffn_size=ffn_size,
+            opt=opt,
             vocabulary_size=vocabulary_size,
             embedding=embedding,
-            dropout=dropout,
-            attention_dropout=attention_dropout,
-            relu_dropout=relu_dropout,
             padding_idx=padding_idx,
-            learn_positional_embeddings=learn_positional_embeddings,
-            embeddings_scale=embeddings_scale,
             reduction_type=reduction_type,
-            n_positions=n_positions,
-            activation=activation,
-            variant=variant,
             n_segments=n_segments,
-            output_scaling=output_scaling,
+            embeddings_scale=embeddings_scale,
         )
         self.full_embedding_size = self.embedding_size * self.n_image_tokens
         # Images will be embedded to this size, and then the embedding will be folded
@@ -328,14 +281,14 @@ class ContextWithImageEncoder(TransformerEncoder):
 
         # WARNING: Below follows the rest of TransformerEncoder.forward
         if self.variant == 'xlm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         # --dropout on the embeddings
         tensor = self.dropout(tensor)
         tensor *= mask.unsqueeze(-1).type_as(tensor)
         # apply transformer layers
         tensor = self.forward_layers(tensor, mask)
         if self.variant == 'prelayernorm':
-            tensor = _normalize(tensor, self.norm_embeddings)
+            tensor = self.norm_embeddings(tensor)
         # reduce output
         tensor, out_mask = self.reduce_output(tensor, mask)
         return tensor, out_mask

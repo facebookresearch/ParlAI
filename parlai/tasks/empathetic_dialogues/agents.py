@@ -13,6 +13,7 @@ from typing import Any, List
 import numpy as np
 
 from parlai.utils.io import PathManager
+from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 from .build import build
 
@@ -59,6 +60,7 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('EmpatheticDialogues teacher arguments')
         agent.add_argument(
             '--train-experiencer-only',
@@ -219,18 +221,21 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
         ep = self.data[episode_idx]
         ep_i = ep[entry_idx]
         episode_done = entry_idx >= (len(ep) - 1)
-        action = {
-            'situation': ep_i[3],
-            'emotion': ep_i[2],
-            'text': ep_i[0],
-            'labels': [ep_i[1]],
-            'prepend_ctx': ep_i[6],
-            'prepend_cand': ep_i[7],
-            'deepmoji_ctx': ep_i[4],
-            'deepmoji_cand': ep_i[5],
-            'episode_done': episode_done,
-            'label_candidates': ep_i[8],
-        }
+        action = Message(
+            {
+                'situation': ep_i[3],
+                'emotion': ep_i[2],
+                'text': ep_i[0],
+                'labels': [ep_i[1]],
+                'prepend_ctx': ep_i[6],
+                'prepend_cand': ep_i[7],
+                'deepmoji_ctx': ep_i[4],
+                'deepmoji_cand': ep_i[5],
+                'episode_done': episode_done,
+                'label_candidates': ep_i[8],
+            }
+        )
+
         return action
 
     def share(self):
@@ -267,7 +272,7 @@ class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
         ex = self.data[episode_idx]
         episode_done = True
 
-        return {'labels': [ex[2]], 'text': ex[3], 'episode_done': episode_done}
+        return Message({'labels': [ex[2]], 'text': ex[3], 'episode_done': episode_done})
 
 
 class DefaultTeacher(EmpatheticDialoguesTeacher):

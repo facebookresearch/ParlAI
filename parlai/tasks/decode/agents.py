@@ -11,7 +11,7 @@ import os
 from parlai.utils.io import PathManager
 from parlai.core.teachers import DialogTeacher
 
-from .build import build, DECODE, DECODE_PREFIX, DECODE_VERSION
+from .build import build, DECODE, DECODE_PREFIX, DECODE_FOLDER_VERSION
 
 
 def _path(opt, test_type):
@@ -32,7 +32,7 @@ def _path(opt, test_type):
         raise RuntimeError('Not valid datatype.')
 
     data_directory = os.path.join(
-        opt['datapath'], DECODE, DECODE_PREFIX + DECODE_VERSION
+        opt['datapath'], DECODE, DECODE_PREFIX + DECODE_FOLDER_VERSION
     )
 
     data_path = os.path.join(data_directory, suffix + '.jsonl')
@@ -43,6 +43,7 @@ def _path(opt, test_type):
 class DecodeTeacher(DialogTeacher):
     @classmethod
     def add_cmdline_args(cls, parser, partial_opt):
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('DECODE Teacher Args')
         parser.add_argument(
             '--test_type',

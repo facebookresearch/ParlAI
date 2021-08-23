@@ -6,7 +6,6 @@
 
 import unittest
 from parlai.core.agents import create_agent
-import torch.distributed as dist
 import parlai.utils.testing as testing_utils
 import parlai.scripts.multiprocessing_train as mp_train
 import parlai.scripts.build_dict as build_dict
@@ -20,7 +19,7 @@ class TestHuggingFaceDict(unittest.TestCase):
         from parlai.core.params import ParlaiParser
 
         parser = ParlaiParser(False, False)
-        parser.set_defaults(gpt2_size="small", add_special_tokens=True)
+        parser.set_defaults(gpt2_size="small", add_special_tokens=True, fp16=True)
         Gpt2DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
         with testing_utils.tempdir() as tmpdir:
             opt = parser.parse_kwargs(dict_file=os.path.join(tmpdir, 'dict'))
@@ -119,6 +118,7 @@ class TestGpt2(unittest.TestCase):
             'beam_size': 1,
             'batchsize': 1,
             'add_special_tokens': False,
+            'fp16': True,
         }
         gpt2 = create_agent(opt)
         gpt2.observe({'text': 'My name is', 'episode_done': True})
@@ -137,9 +137,10 @@ class TestDistributed(unittest.TestCase):
         'beam_min_length': 8,
         'inference': 'beam',
         'beam_size': 1,
-        'batchsize': 4,
+        'batchsize': 2,
         'add_special_tokens': True,
         'validation_metric': 'ppl',
+        'fp16': True,
     }
 
     def setUp(self):
@@ -173,7 +174,6 @@ class TestDistributed(unittest.TestCase):
             build_dict.build_dict(popt)
 
             valid, test = mp_train.launch_and_train(popt, 31338)
-            dist.destroy_process_group()
 
         return (valid, test)
 
@@ -188,6 +188,7 @@ class TestDistributed(unittest.TestCase):
         config['learningrate'] = 1.0
         config['momentum'] = 0.90
         config['skip_generation'] = True
+        config['fp16'] = True
         valid, test = self._distributed_train_model(config)
 
         self.assertLessEqual(valid['ppl'], 10)

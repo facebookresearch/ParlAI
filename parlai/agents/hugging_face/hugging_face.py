@@ -12,14 +12,18 @@ are GPT2 and DialoGPT. To use these models, run with `-m hugging_face/gpt2` or `
 hugging_face/dialogpt`.
 """
 try:
-    import transformers  # noqa: F401
+    import transformers
 except ImportError:
     raise ImportError('Please run `pip install transformers`.')
+
+
+HF_VERSION = float('.'.join(transformers.__version__.split('.')[:2]))
 
 
 class HuggingFaceAgent:
     def __init__(self, opt, shared=None):
         raise RuntimeError(
             '`-m hugging_face` is not a valid choice. Please run with '
-            '`-m hugging_face/gpt2` or `-m hugging_face/dialogpt`.'
+            '`-m hugging_face/gpt2`, `-m hugging_face/dialogpt`, '
+            'or `-m hugging_face/t5`'
         )

@@ -42,6 +42,9 @@ from parlai.utils.distributed import (
     get_rank,
 )
 
+# the index to access classifier agent's output in the world
+CLASSIFIER_AGENT = 1
+
 
 def setup_args(parser=None):
     if parser is None:
@@ -68,6 +71,21 @@ def setup_args(parser=None):
         type=str,
         default='conversations',
         choices=['conversations', 'parlai'],
+    )
+    parser.add_argument(
+        '--area-under-curve-digits',
+        '-auc',
+        type=int,
+        default=-1,
+        help='a positive number indicates to calculate the area under the roc curve and it also determines how many decimal digits of the predictions to keep (higher numbers->more precise); also used to determine whether or not to calculate the AUC metric',
+    )
+    parser.add_argument(
+        '--area-under-curve-class',
+        '-auclass',
+        type=str,
+        default=None,
+        nargs='*',
+        help='the name(s) of the class to calculate the auc for',
     )
     parser.add_argument('-ne', '--num-examples', type=int, default=-1)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
@@ -118,13 +136,27 @@ def _save_eval_stats(opt, report):
         f.write("\n")  # for jq
 
 
+def get_task_world_logs(task, world_logs, is_multitask=False):
+    if not is_multitask:
+        return world_logs
+    else:
+        base_outfile, extension = os.path.splitext(world_logs)
+        return f'{base_outfile}_{task}{extension}'
+
+
 def _eval_single_world(opt, agent, task):
     logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
-    world_logger = WorldLogger(opt) if opt['world_logs'] else None
-
     task_opt = opt.copy()  # copy opt since we're editing the task
     task_opt['task'] = task
+    # add task suffix in case of multi-tasking
+    if opt['world_logs']:
+        task_opt['world_logs'] = get_task_world_logs(
+            task, task_opt['world_logs'], is_multitask=len(opt['task'].split(',')) > 1
+        )
+
+    world_logger = WorldLogger(task_opt) if task_opt['world_logs'] else None
+
     world = create_task(task_opt, agent)  # create worlds for tasks
 
     # set up logging
@@ -139,7 +171,7 @@ def _eval_single_world(opt, agent, task):
     total_cnt = world.num_examples()
 
     if is_distributed():
-        logging.warn('Progress bar is approximate in distributed mode.')
+        logging.warning('Progress bar is approximate in distributed mode.')
 
     while not world.epoch_done() and cnt < max_cnt:
         cnt += opt.get('batchsize', 1)
@@ -161,15 +193,25 @@ def _eval_single_world(opt, agent, task):
         world_logger.reset()  # add final acts to logs
         if is_distributed():
             rank = get_rank()
-            base_outfile, extension = os.path.splitext(opt['world_logs'])
+            base_outfile, extension = os.path.splitext(task_opt['world_logs'])
             outfile = base_outfile + f'_{rank}' + extension
         else:
-            outfile = opt['world_logs']
+            outfile = task_opt['world_logs']
         world_logger.write(outfile, world, file_format=opt['save_format'])
 
     report = aggregate_unnamed_reports(all_gather_list(world.report()))
-    world.reset()
 
+    if isinstance(world.agents, list) and len(world.agents) > 1:
+        classifier_agent = world.agents[CLASSIFIER_AGENT]
+        if hasattr(classifier_agent, 'calc_auc') and classifier_agent.calc_auc:
+            for class_indices, curr_auc in zip(
+                classifier_agent.auc_class_indices, classifier_agent.aucs
+            ):
+                report[f'AUC_{classifier_agent.class_list[class_indices]}'] = curr_auc
+            classifier_agent.reset_auc()
+            # for safety measures
+            agent.reset_auc()
+    world.reset()
     return report
 
 
@@ -201,7 +243,7 @@ def eval_model(opt):
         dict(zip(tasks, reports)), micro_average=opt.get('aggregate_micro', False)
     )
 
-    # print announcments and report
+    # print announcements and report
     print_announcements(opt)
     logging.info(
         f'Finished evaluating tasks {tasks} using datatype {opt.get("datatype")}'

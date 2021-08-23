@@ -27,6 +27,7 @@ class JsonTeacher(ConversationTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         agent = parser.add_argument_group('JsonFile Task Arguments')
         agent.add_argument('-jfdp', '--jsonfile-datapath', type=str, help="Data file")
         agent.add_argument(
