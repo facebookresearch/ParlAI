@@ -1,13 +1,13 @@
-# Generating Model Cards Semi-Automatically
+# Generating Model Cards
 
 **Author**: Wendy Zhang
 
 
 ## What is a model card?
 
-Think of model cards as a condensed medical card for models :). It is a great way for people who might not have the time to read a paper in detail to get the gist of what a model is doing, the datasets involved, how it is performing, and any concerns that the author might have about the model.
+Think of model cards as a condensed medical card for models. It is a great way for people who might not have the time to read a paper in detail to get the gist of what a model is doing, the datasets involved, how it is performing, and any concerns that the author might have about the model.
 
-You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/ivylee/model-cards-and-datasheets) to some more model card examples. 
+You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/facebookresearch/ParlAI/tree/master/sample_model_cards) to some more model card examples. 
 
 ## The Process
 There are two steps in generating the model cards.
