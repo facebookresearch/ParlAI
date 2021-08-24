@@ -495,6 +495,7 @@ def modelzoo_path(datapath, path):
                 animal_ = '.'.join(animal.split(".")[:-1]) + '.build'
                 module_name_ = 'parlai.zoo.{}'.format(animal_)
                 my_module = importlib.import_module(module_name_)
+                my_module.download(datapath)
             except (ImportError, AttributeError) as exc:
                 # truly give up
                 raise ImportError(
