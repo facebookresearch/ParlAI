@@ -95,10 +95,14 @@ class DprEncoder(TransformerEncoder):
         encoder_type: str = 'query',
     ):
         # Override options
-        config_path = PathManager.get_local_path(
-            os.path.join(opt['datapath'], "bert_base_uncased", self.CONFIG_PATH)
-        )
-        config: BertConfig = BertConfig.from_pretrained(config_path)
+        try:
+            config: BertConfig = BertConfig.from_pretrained('bert-base-uncased')
+        except OSError:
+            config_path = PathManager.get_local_path(
+                os.path.join(opt['datapath'], "bert_base_uncased", self.CONFIG_PATH)
+            )
+            config: BertConfig = BertConfig.from_pretrained(config_path)
+
         pretrained_path = modelzoo_path(
             opt['datapath'], pretrained_path
         )  # type: ignore

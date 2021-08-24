@@ -56,10 +56,14 @@ class BertConversionUtils:
             return a state_dict with loaded weights.
         """
 
-        model_path = PathManager.get_local_path(
-            os.path.join(datapath, "bert_base_uncased")
-        )
-        bert_model = BertModel.from_pretrained(model_path)
+        try:
+            bert_model = BertModel.from_pretrained('bert-base-uncased')
+        except OSError:
+            model_path = PathManager.get_local_path(
+                os.path.join(datapath, "bert_base_uncased")
+            )
+            bert_model = BertModel.from_pretrained(model_path)
+
         if pretrained_dpr_path:
             BertConversionUtils.load_dpr_model(
                 bert_model, pretrained_dpr_path, encoder_type

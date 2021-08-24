@@ -15,9 +15,13 @@ from parlai.core.message import Message
 import torch
 import torch.cuda
 import torch.nn
+import transformers
 from tqdm import tqdm
 
-from transformers import BertTokenizer
+try:
+    from transformers import BertTokenizerFast as BertTokenizer
+except ImportError:
+    from transformers import BertTokenizer
 from typing import Tuple, List, Dict, Union, Optional, Any
 from typing_extensions import final
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -261,10 +265,13 @@ class RagRetrieverTokenizer:
             ParlAI dictionary agent
         """
         if self.query_model in ['bert', 'bert_from_parlai_rag']:
-            vocab_path = PathManager.get_local_path(
-                os.path.join(self.datapath, "bert_base_uncased", self.VOCAB_PATH)
-            )
-            return BertTokenizer.from_pretrained(vocab_path)
+            try:
+                return BertTokenizer.from_pretrained('bert-base-uncased')
+            except ImportError or OSError:
+                vocab_path = PathManager.get_local_path(
+                    os.path.join(self.datapath, "bert_base_uncased", self.VOCAB_PATH)
+                )
+                return transformers.BertTokenizer.from_pretrained(vocab_path)
         else:
             return dictionary
 
