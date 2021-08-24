@@ -267,7 +267,7 @@ class RagRetrieverTokenizer:
         if self.query_model in ['bert', 'bert_from_parlai_rag']:
             try:
                 return BertTokenizer.from_pretrained('bert-base-uncased')
-            except ImportError or OSError:
+            except (ImportError, OSError):
                 vocab_path = PathManager.get_local_path(
                     os.path.join(self.datapath, "bert_base_uncased", self.VOCAB_PATH)
                 )
