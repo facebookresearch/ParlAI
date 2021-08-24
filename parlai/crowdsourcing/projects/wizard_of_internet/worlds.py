@@ -17,8 +17,8 @@ from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.worlds import validate
 import parlai.utils.logging as logging
-from parlai.crowdsourcing.tasks.wizard_of_internet import constants
-from parlai.crowdsourcing.tasks.wizard_of_internet.acceptability import (
+from parlai.crowdsourcing.projects.wizard_of_internet import constants
+from parlai.crowdsourcing.projects.wizard_of_internet.acceptability import (
     WizardOfInternetAcceptabilityChecker,
 )
 
