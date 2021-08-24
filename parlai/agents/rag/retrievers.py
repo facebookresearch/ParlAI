@@ -843,7 +843,10 @@ class DPRThenTorchReranker(RagRetrieverReranker, DPRRetriever, ABC):
         logging.enable()
         assert isinstance(agent, TorchRankerAgent)
 
-        return agent.model, RagRetrieverTokenizer(opt['datapath'], '', agent.dict, max_length=360)
+        return (
+            agent.model,
+            RagRetrieverTokenizer(opt['datapath'], '', agent.dict, max_length=360),
+        )
 
     def _retrieve_initial(
         self, query: torch.LongTensor

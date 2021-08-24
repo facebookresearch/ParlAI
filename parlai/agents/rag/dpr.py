@@ -143,7 +143,9 @@ class DprEncoder(TransformerEncoder):
 
         self._load_state(opt['datapath'], dpr_model, pretrained_path, encoder_type)
 
-    def _load_state(self, datapath: str, dpr_model: str, pretrained_path: str, encoder_type: str):
+    def _load_state(
+        self, datapath: str, dpr_model: str, pretrained_path: str, encoder_type: str
+    ):
         """
         Load pre-trained model states.
 
