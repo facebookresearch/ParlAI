@@ -84,6 +84,10 @@ def break_knowledge_graph(graph_str: str) -> Set[str]:
 
 
 def graph_mutation_diff(source_graph, dest_graph):
+    """
+    Generates the set of operations (ADD, DEL) needed to go from `source_graph` to
+    `dest_graph`.
+    """
     source_graph_edges = break_knowledge_graph(source_graph)
     dest_graph_edges = break_knowledge_graph(dest_graph)
     diff_edges = source_graph_edges.symmetric_difference(dest_graph_edges)
@@ -100,6 +104,9 @@ def graph_mutation_diff(source_graph, dest_graph):
 
 
 def encode_set_elements(set1: Set[str], set2: Set[str]) -> Tuple[List[str]]:
+    """
+    Encodes (maps to int indices) elements in the union of two sets.
+    """
     set1_enc = []
     set2_enc = []
     for el_id, el in enumerate(set1.union(set2)):
@@ -137,13 +144,16 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         opt = deepcopy(opt)
         opt['datafile'] = _path(opt)
         self.datatype = get_dtype(opt)
-        self.id = 'JerichoWorldtBase'
         self._incld_loc_name = opt['include_location']
         self.delim = opt['delimiter']
+        self._incld_teacher_token = opt['include_teacher_token']
         self._incld_loc_desc = opt['include_location_description']
         self._incld_surr_objs = opt['include_surrounding_objects']
         self.keep_next_state = True
         super().__init__(opt, shared=shared)
+
+    def get_id(self):
+        return 'JerichoWorldtBase'
 
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
@@ -156,6 +166,12 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             help='Whether to include the name of the location',
         )
         arg_group.add_argument(
+            '--include-teacher-token',
+            type='bool',
+            default=True,
+            help='Whether to include the name of the teacher',
+        )
+        arg_group.add_argument(
             '--include-location-description',
             type='bool',
             default=True,
@@ -164,7 +180,7 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         arg_group.add_argument(
             '--include-surrounding-objects',
             type='bool',
-            default=True,
+            default=False,
             help='Whether to include the list of surrounding objects',
         )
         arg_group.add_argument(
@@ -186,11 +202,22 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             example['next_state'] = extract_state_data(game_step['next_state'])
         return example
 
-    @abc.abstractmethod
-    def generate_example_text(self, example: Union[Dict, Message]) -> str:
+    def generate_example_text_parts(self, example: Union[Dict, Message]) -> List[str]:
         """
-        Implement this method for the expected text of your example.
+        Returns the expected parts of the text for your example.
+
+        These parts will be joined with `delim` to generate the text string.
         """
+        teacher_token = (
+            wrap_content(self.get_id(), 'tt') if self._incld_teacher_token else ''
+        )
+
+        curr_state = example['state']
+        return [
+            teacher_token,
+            self.location_context(curr_state),
+            self.surrounding_objects_context(curr_state),
+        ]
 
     @abc.abstractmethod
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
@@ -238,19 +265,46 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         """
         return False
 
+    def check_fix_state_kg(self, game: Dict, game_step_id: int) -> None:
+        """
+        Tries to fix the KG for the state associate with game_step_id, in place.
+
+        It replaces the KG for game_step_id with the KG for `next_step` from previous
+        step, or uses the `graph_diff` if game_step_id == 0.
+        """
+        if game[game_step_id]['state']['graph']:
+            return
+
+        if game_step_id == 0:
+            # The first empty step, replace with the diff.
+            game[0]['state']['graph'] = game[0]['graph_diff']
+        else:
+            # Get the graph from the next_state that was created in the previous step.
+            prev_state_next = game[game_step_id - 1]['next_state']
+            game[game_step_id]['state']['graph'] = deepcopy(prev_state_next['graph'])
+
+    def _generate_example_text(self, text_parts: List[str]) -> str:
+        """
+        Concatnates the non-empty parts of text fetrue into a single string.
+        """
+        return self.delim.join([s.strip() for s in text_parts if s.strip()])
+
     def setup_data(self, datafile: str):
         for game in self.load_data(datafile):
             for step_i, game_step in enumerate(game):
+                self.check_fix_state_kg(game, step_i)
                 if self.skip_example(game_step):
                     continue
                 example = self._clean_example(game_step)
-                example['text'] = self.generate_example_text(example)
+                example['text'] = self._generate_example_text(
+                    self.generate_example_text_parts(example)
+                )
                 example['labels'] = [self.generate_example_label(example)]
                 new_episode = step_i == 0
                 yield example, new_episode
 
 
-class BaseJerichoWorldTeacherSingleEpisode(BaseJerichoWorldTeacher):
+class BaseJerichoWorldSingleEpisodeTeacher(BaseJerichoWorldTeacher):
     """
     Truns each examples into a single episode: No history.
     """
@@ -260,19 +314,13 @@ class BaseJerichoWorldTeacherSingleEpisode(BaseJerichoWorldTeacher):
             yield example, True
 
 
-class StateToKGTeacher(BaseJerichoWorldTeacherSingleEpisode):
+class StateToKGTeacher(BaseJerichoWorldSingleEpisodeTeacher):
     """
     Game state to the knowledge graph.
     """
 
-    def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        curr_state = example['state']
-        return self.delim.join(
-            [
-                self.location_context(curr_state),
-                self.surrounding_objects_context(curr_state),
-            ]
-        )
+    def get_id(self):
+        return 'StateKG'
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return knowledge_graph_as_str(example['state']['graph'])
@@ -333,6 +381,9 @@ class StaticKGTeacher(StateToKGTeacher):
     Generates the knowledge graph from a single state.
     """
 
+    def get_id(self):
+        return 'StaticStateKG'
+
     def skip_example(self, example: Dict) -> bool:
         return (
             knowledge_graph_as_str(example['state']['graph'])
@@ -345,21 +396,19 @@ class ActionKGTeacher(StateToKGTeacher):
     Generates the knowledge graph mutations after a given action.
     """
 
+    def get_id(self):
+        return 'Action2KGMutation'
+
     def skip_example(self, example: str):
         for st in ('state', 'next_state'):
             if knowledge_graph_as_str(example[st]['graph']) == consts.EMPTY_GRAPH_TOKEN:
                 return True
         return False
 
-    def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        curr_state = example['state']
-        return self.delim.join(
-            [
-                self.location_context(curr_state),
-                self.surrounding_objects_context(curr_state),
-                wrap_content(example['action'], consts.ACTION),
-            ]
-        )
+    def generate_example_text_parts(self, example: Union[Dict, Message]) -> List[str]:
+        prts = super().generate_example_text_parts(example)
+        prts.append(wrap_content(example['action'], consts.ACTION))
+        return prts
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         curr_graph = knowledge_graph_as_str(example['state']['graph'])
@@ -377,15 +426,6 @@ class StateToActionTeacher(BaseJerichoWorldTeacher):
     """
     Game state to action.
     """
-
-    def generate_example_text(self, example: Union[Dict, Message]) -> str:
-        curr_state = example['state']
-        return self.delim.join(
-            [
-                self.location_context(curr_state),
-                self.surrounding_objects_context(curr_state),
-            ]
-        )
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
         return example['action']
