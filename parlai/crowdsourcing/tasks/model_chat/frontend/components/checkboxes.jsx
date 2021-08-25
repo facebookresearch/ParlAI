@@ -46,14 +46,14 @@ function Checkboxes({
               }} 
               disabled={!enabled}
             />
-            <span style={{ marginRight: '15px' }}>
+            <span style={{ marginRight: '15px', color: annotationBuckets[c].color}}>
               {annotationBuckets[c].name}
             </span>
           </span>
         ))
       }
-      <div id={'checkbox_description_' + turnIdx} style={{ height: '24px' }}></div>
-      {reasonComponent}
+      {/* <div id={'checkbox_description_' + turnIdx} style={{ height: '24px' }}></div>
+      {reasonComponent} */}
     </div>
   )
 }

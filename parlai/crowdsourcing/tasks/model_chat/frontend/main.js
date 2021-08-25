@@ -13,7 +13,25 @@ import "bootstrap-chat/styles.css";
 import { CustomOnboardingChatApp } from "./components/chat_app_with_onboarding.jsx"
 import { DefaultTaskDescription } from "bootstrap-chat";
 import { ResponseComponent } from "./components/response_panes.jsx";
-import { RenderChatMessage } from "./components/message.jsx";
+import { RenderChatMessage, PersonaLines } from "./components/message.jsx";
+
+function PersonaContext({taskContext, isLeftPane}){
+  if (taskContext){
+      return (
+        <div>
+              <span id="image">
+                <PersonaLines
+              taskData={{personas: taskContext.personas, time_num: taskContext.time_num, time_unit: taskContext.time_unit}}
+              isLeftPane={isLeftPane}
+              />
+              </span>
+            </div>
+      )
+  } else {
+    return null;
+
+  }
+}
 
 function MainApp() {
   return (
@@ -28,20 +46,15 @@ function MainApp() {
           key={message.message_id + "-" + idx}
         />
       )}
-      renderSidePane={({ mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
+      renderSidePane={({mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
         <DefaultTaskDescription
           chatTitle={taskConfig.chat_title}
           taskDescriptionHtml={taskConfig.task_description}
         >
-          {(taskContext.hasOwnProperty('image_src') && taskContext['image_src']) ? (
-            <div>
-              <h4>Conversation image:</h4>
-              <span id="image">
-                <img src={taskContext.image_src} alt='Image'/>
-              </span>
-              <br />
-            </div>
-          ) : null}
+              <PersonaContext
+              taskContext={taskContext}
+              isLeftPane={true}
+              />
         </DefaultTaskDescription>
       )}
       renderTextResponse={

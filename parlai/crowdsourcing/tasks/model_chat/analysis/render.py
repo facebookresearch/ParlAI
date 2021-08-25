@@ -39,13 +39,6 @@ OVERRIDE_OPT_FILENAMES = {
 }
 
 
-def get_completed_run_stats(model_nickname, is_engaging):
-    subfolder = 'engaging' if is_engaging else 'normal'
-    return os.path.join(
-        TASK_DIR, f'task_config/{subfolder}/{OVERRIDE_OPT_FILENAMES[model_nickname]}'
-    )
-
-
 def get_output_folder(model_nickname, is_engaging):
     subfolder = 'engaging' if is_engaging else 'normal'
     return os.path.join(TASK_DIR, f'results/{subfolder}/{model_nickname}')
