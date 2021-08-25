@@ -1,0 +1,37 @@
+#@package _global_
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/engaging/annotations_config.json
+    # onboarding_qualification: skip_onboarding
+    block_qualification: bq-hhchat0428
+    chat_data_folder: ${task_dir}/model_chat/engaging/FiD_SUMMSC/ # TOCHANGE
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: true
+    include_persona: true
+    conversation_start_mode: 'bst'
+    annotation_question: What piece of previous chat history does this comment from your parnter (THEY) correctly recall or pay attention to? And is it engaging? (Check all that apply)
+    conversations_needed_string: "FiD_SUMMSC:1" # # TOCHANGE with override_opt, chat_data_folder. task_name
+    task_description_file: ${task_dir}/task_config/task_description.html
+    final_rating_question: How interesting overall do you find talking to your partner (THEY)? (1=very boring, 5=very interesting)
+    completed_run_stats: ${task_dir}/task_config/engaging/override_opt_fidsummsc.json # TOCHANGE
+    max_resp_time: 360
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 1200
+    max_num_concurrent_units: 10  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 4
+    task_description: |
+      <b><h4>Task Description</h4></b>
+      <br>
+      Chat with a Fellow on An Engaging Topic
+
+      Lorem ipsum.
+      <br><br>
+    task_name: efidsummsc # # TOCHANGE
+    task_reward: 5
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a Fellow on An Engaging Topic"
+mturk:
+  worker_blocklist_paths: '/private/home/jingxu23/ParlAI/parlai_internal/crowdsourcing/projects/reverse_persona/parlai_chat_task_demo/block_lists/bad_turkers.txt,/private/home/jingxu23/ParlAI/parlai_internal/crowdsourcing/projects/reverse_persona/parlai_chat_task_demo/block_lists/block_for_disconnect.txt'

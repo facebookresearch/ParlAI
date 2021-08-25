@@ -1,0 +1,37 @@
+#@package _global_
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    # onboarding_qualification: skip_onboarding
+    block_qualification: bq-hhchat0428
+    chat_data_folder: ${task_dir}/model_chat/BST2.7B/
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: true
+    include_persona: true
+    conversation_start_mode: 'bst'
+    annotation_question: What piece of previous chat history does this comment from your parnter (THEY) correctly call or pay attention to? (Check all that apply)
+    conversations_needed_string: "BST2.7B:29" # to change with override_opt, chat_data_folder
+    task_description_file: ${task_dir}/task_config/task_description.html
+    final_rating_question: How interesting do you find talking to THEY? (1=very boring, 5=very interesting)
+    completed_run_stats: ${task_dir}/task_config/override_opt_bb.json
+    max_resp_time: 360
+  task:
+    allowed_concurrent: 2
+    assignment_duration_in_seconds: 1200
+    max_num_concurrent_units: 20  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 5
+    task_description: |
+      <b><h4>Task Description</h4></b>
+      <br>
+      Dummy Task Description.
+
+      Lorem ipsum.
+      <br><br>
+    task_name: bb27b # TOCHANGE with new models
+    task_reward: 2.5
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a Fellow on An Engaging Topic"
+mturk:
+  worker_blocklist_paths: '/private/home/jingxu23/ParlAI/parlai_internal/crowdsourcing/projects/reverse_persona/parlai_chat_task_demo/block_lists/bad_turkers.txt,/private/home/jingxu23/ParlAI/parlai_internal/crowdsourcing/projects/reverse_persona/parlai_chat_task_demo/block_lists/block_for_disconnect.txt'
