@@ -17,6 +17,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.loader import register_agent
 from parlai.core.opt import Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
 
 
@@ -84,6 +85,8 @@ class DprEncoder(TransformerEncoder):
     models.
     """
 
+    CONFIG_PATH = 'config.json'
+
     def __init__(
         self,
         opt: Opt,
@@ -92,7 +95,14 @@ class DprEncoder(TransformerEncoder):
         encoder_type: str = 'query',
     ):
         # Override options
-        config: BertConfig = BertConfig.from_pretrained('bert-base-uncased')
+        try:
+            config: BertConfig = BertConfig.from_pretrained('bert-base-uncased')
+        except OSError:
+            config_path = PathManager.get_local_path(
+                os.path.join(opt['datapath'], "bert_base_uncased", self.CONFIG_PATH)
+            )
+            config: BertConfig = BertConfig.from_pretrained(config_path)
+
         pretrained_path = modelzoo_path(
             opt['datapath'], pretrained_path
         )  # type: ignore
@@ -131,9 +141,11 @@ class DprEncoder(TransformerEncoder):
             reduction_type='first',
         )
 
-        self._load_state(dpr_model, pretrained_path, encoder_type)
+        self._load_state(opt['datapath'], dpr_model, pretrained_path, encoder_type)
 
-    def _load_state(self, dpr_model: str, pretrained_path: str, encoder_type: str):
+    def _load_state(
+        self, datapath: str, dpr_model: str, pretrained_path: str, encoder_type: str
+    ):
         """
         Load pre-trained model states.
 
@@ -146,6 +158,7 @@ class DprEncoder(TransformerEncoder):
         """
         if dpr_model == 'bert':
             state_dict = BertConversionUtils.load_bert_state(
+                datapath,
                 self.state_dict(),
                 pretrained_dpr_path=pretrained_path,
                 encoder_type=encoder_type,
