@@ -2097,14 +2097,14 @@ model_list = [
         "title": "BlenderBot3B with token-bin control-generation gender-bias reduction",
         "id": "dialogue_bias",
         "path": "zoo:dialogue_bias/gender__ctrl_gen_tokens/model",
-        "agent": "transformer/generator",
+        "agent": "projects.dialogue_bias.agents:NoBiasStyleGenAgent",
         "task": "blended_skill_talk",
         "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
         "description": (
             "BlenderBot3B model tuned with the control-generation technique (based on the amount of gender over-indexing per token bin) to have lower gender bias."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__ctrl_gen_tokens/model -t blended_skill_talk"
+            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__ctrl_gen_tokens/model --model projects.dialogue_bias.agents:NoBiasStyleGenAgent -t blended_skill_talk"
         ),
         "result": (
             "Enter Your Message: Hi how are you?\n"
@@ -2122,7 +2122,7 @@ model_list = [
             "BlenderBot3B model tuned with the (sequence-level) unlikelihood training technique to have lower gender bias."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__unlikelihood_sequence_level/model -t blended_skill_talk"
+            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__unlikelihood_sequence_level/model --model transformer/generator -t blended_skill_talk"
         ),
         "result": (
             "Enter Your Message: Hi how are you?\n"
