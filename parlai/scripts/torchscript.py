@@ -32,7 +32,7 @@ def export_model(opt: Opt):
         from parlai.torchscript.modules import TorchScriptGreedySearch
 
     overrides = {
-        "model_parallel": False,  # model_parallel is not currently supported when TorchScripting,
+        "model_parallel": False  # model_parallel is not currently supported when TorchScripting,
     }
     if opt.get("script_module"):
         script_module_name, script_class_name = opt["script_module"].split(":", 1)
