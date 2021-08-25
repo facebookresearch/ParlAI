@@ -388,7 +388,7 @@ jobs:
   long_gpu_tests:
     executor: gpu
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 1
     steps:
       - runtests:
           more_installs:
@@ -397,7 +397,7 @@ jobs:
           install_cuda: true
           cachename: nightly
           marker: nightly_gpu
-          pytest_flags: -v -s
+          pytest_flags: -v -s -k test_torchscript
 
   crowdsourcing_tests:
     executor: small_cpu37
@@ -473,9 +473,9 @@ workflows:
       - unittests_osx:
           requires:
             - unittests_37
-      - long_gpu_tests:
-          requires:
-            - unittests_37
+#      - long_gpu_tests:
+#          requires:
+#            - unittests_37
       - crowdsourcing_tests:
           requires:
             - unittests_37
