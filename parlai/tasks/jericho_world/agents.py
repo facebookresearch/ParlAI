@@ -149,6 +149,7 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         self._incld_teacher_token = opt['include_teacher_token']
         self._incld_loc_desc = opt['include_location_description']
         self._incld_surr_objs = opt['include_surrounding_objects']
+        self._prune_kg = opt['prune_knowledge_graph']
         self.keep_next_state = True
         super().__init__(opt, shared=shared)
 
@@ -184,6 +185,12 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             help='Whether to include the list of surrounding objects',
         )
         arg_group.add_argument(
+            '--prune-knowledge-graph',
+            type='bool',
+            default=False,
+            help='If true, items in knowledge graph that were not in the state description will be eliminiated.',
+        )
+        arg_group.add_argument(
             '--delimiter',
             type=str,
             default='\n',
@@ -201,6 +208,40 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         if self.keep_next_state:
             example['next_state'] = extract_state_data(game_step['next_state'])
         return example
+
+    def extract_knowledge_graph_str(self, state: Dict[str, Any]) -> str:
+        """
+        Generates the string representing knowledge graph.
+
+        It may modifiy the knowledge graph, for example when --prune-knowledge-graph is true.
+        """
+
+        def has_word_overlap(main_text, content_text):
+            if not main_text or not content_text:
+                return False
+
+            for word in main_text.lower().split():
+                if not word or len(word) < 3:
+                    continue
+                if word in content_text:
+                    return True
+            return False
+
+        if self._prune_kg:
+            # Prunning the knowledge graph for the entities that are mentioned in the description
+            old_graph = state['graph']
+            new_graph = []
+
+            loc_desc = f'{state["location_desc"]} {state["location_name"]}'.lower()
+            for edge in old_graph:
+                # Each graph edge is a tuple: (subject, relation, object)
+                sub, _, obj = edge
+                if has_word_overlap(sub, loc_desc) and has_word_overlap(obj, loc_desc):
+                    new_graph.append(edge)
+
+            state['graph'] = new_graph
+
+        return knowledge_graph_as_str(state['graph'])
 
     def generate_example_text_parts(self, example: Union[Dict, Message]) -> List[str]:
         """
@@ -293,9 +334,9 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         for game in self.load_data(datafile):
             for step_i, game_step in enumerate(game):
                 self.check_fix_state_kg(game, step_i)
-                if self.skip_example(game_step):
-                    continue
                 example = self._clean_example(game_step)
+                if self.skip_example(example):
+                    continue
                 example['text'] = self._generate_example_text(
                     self.generate_example_text_parts(example)
                 )
@@ -323,7 +364,7 @@ class StateToKGTeacher(BaseJerichoWorldSingleEpisodeTeacher):
         return 'StateKG'
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
-        return knowledge_graph_as_str(example['state']['graph'])
+        return self.extract_knowledge_graph_str(example['state'])
 
     def custom_evaluation(
         self,
@@ -386,7 +427,7 @@ class StaticKGTeacher(StateToKGTeacher):
 
     def skip_example(self, example: Dict) -> bool:
         return (
-            knowledge_graph_as_str(example['state']['graph'])
+            self.extract_knowledge_graph_str(example['state'])
             == consts.EMPTY_GRAPH_TOKEN
         )
 
@@ -401,7 +442,7 @@ class ActionKGTeacher(StateToKGTeacher):
 
     def skip_example(self, example: str):
         for st in ('state', 'next_state'):
-            if knowledge_graph_as_str(example[st]['graph']) == consts.EMPTY_GRAPH_TOKEN:
+            if self.extract_knowledge_graph_str(st) == consts.EMPTY_GRAPH_TOKEN:
                 return True
         return False
 
@@ -411,8 +452,8 @@ class ActionKGTeacher(StateToKGTeacher):
         return prts
 
     def generate_example_label(self, example: Union[Dict, Message]) -> str:
-        curr_graph = knowledge_graph_as_str(example['state']['graph'])
-        next_graph = knowledge_graph_as_str(example['next_state']['graph'])
+        curr_graph = self.extract_knowledge_graph_str(example['state'])
+        next_graph = self.extract_knowledge_graph_str(example['next_state'])
         graph_diff = graph_mutation_diff(curr_graph, next_graph)
         return (
             # sorting to pass the tests, otherwise the results are in various orders.
