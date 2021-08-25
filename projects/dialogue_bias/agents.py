@@ -33,10 +33,11 @@ from projects.style_gen.style_gen import StyleGenAgent
 
 class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
     """
-    Agent for gender debiasing via unlikelihood.
-    """
+    Agent for reducing gender bias via unlikelihood.
 
-    # TODO: expand docstring
+    During training, tokens will be generated until EOS, and tokens overindexed for the
+    specified gender will be penalized in the loss term.
+    """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -160,7 +161,7 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
 
     def _get_bins(self, counts: Counter):
         """
-        TODO: docstring
+        Get the distribution of token frequency split by the 6 token bins.
         """
         c = Counter()
         for k, v in counts.items():
@@ -173,7 +174,7 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
 
     def _l2dist(self, dist: Dict[str, Dict[str, float]]):
         """
-        TODO: docstring
+        Return the (squared) L2 distance between the desired + actual token frequencies.
         """
         l2dist = 0.0
         for gend in ['female', 'male']:
@@ -191,9 +192,6 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
         return l2dist
 
     def report(self):
-        """
-        TODO: docstring
-        """
         r = super().report()
         r['kldiv_female_male'] = self._kldiv(
             self.running_generation['female'], self.running_generation['male']
@@ -241,7 +239,11 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
 
     def batchify(self, obs_batch, sort=True):
         """
-        TODO: docstring
+        Add for each observation which gender is associated with it.
+
+        Allows the unlikelihood technique to know which tokens to penalize: for
+        instance, for female observations, all overindexed female tokens will be
+        penalized.
         """
         batch = super().batchify(obs_batch, sort=sort)
         batch['is_female'] = torch.BoolTensor(
@@ -255,7 +257,10 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
 
     def compute_loss(self, batch, return_output=False):
         """
-        TODO: docstring
+        Compute the loss, including the unlikelihood penalty loss term.
+
+        Generate from a randomly chosen time step until EOS, compute the unlikelihood
+        penalty for all generated tokens, and add it to the NLL loss.
         """
 
         if self._last_was_training is not self.is_training:
@@ -327,7 +332,10 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
         self, batch: Batch, gentoks: torch.Tensor, scores: Optional[torch.Tensor] = None
     ) -> dict:
         """
-        TODO: docstring
+        Compute unlikelihood penality losses per gender.
+
+        For observations of each gender, figure out how to penalize all generated
+        tokens, and return the mean penalty per token.
         """
 
         ul_losses = dict()
@@ -406,7 +414,7 @@ def report_bin_biases(
     dict_: Optional[DictionaryAgent] = None,
 ) -> Tuple[List[float], Dict[int, str], Dict[str, Dict[str, float]], List[str]]:
     """
-    TODO: docstring
+    Return detailed information about the amount of bias per token bin.
     """
 
     log = []
