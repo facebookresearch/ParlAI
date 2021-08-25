@@ -2093,4 +2093,58 @@ model_list = [
             "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
         ),  # TODO revise
     },
+    {
+        "title": "BlenderBot3B with name-scrambling gender-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender__name_scrambling/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the name-scrambling technique to have lower gender bias."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__name_scrambling/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
+        ),  # TODO revise
+    },
+    {
+        "title": "BlenderBot3B with name-scrambling gender-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender__name_scrambling/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the name-scrambling technique to have lower gender bias."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__name_scrambling/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
+        ),  # TODO revise
+    },
+    {
+        "title": "BlenderBot3B with name-scrambling gender-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender__name_scrambling/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the name-scrambling technique to have lower gender bias."
+        ),
+        "example": (
+            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__name_scrambling/model -t blended_skill_talk"
+        ),
+        "result": (
+            "Enter Your Message: Hi how are you?\n"
+            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
+        ),  # TODO revise
+    },
 ]
