@@ -38,29 +38,27 @@ class TestTorchScript(unittest.TestCase):
         tasks = ['taskmaster2', 'convai2']
         compiled_pattern = regex.compile(Gpt2BpeHelper.PATTERN)
 
-        with testing_utils.tempdir() as tmpdir:
-            for task in tasks:
-                opt = TorchScript.setup_args().parse_kwargs(
-                    task=task, datatype='train:ordered'
-                )
-                agent = RepeatLabelAgent(opt)
-                # TODO(roller): make a proper create_teacher helper
-                teacher = create_task(opt, agent).get_task_agent()
-                num_examples = teacher.num_examples()
+        for task in tasks:
+            opt = TorchScript.setup_args().parse_kwargs(
+                task=task, datatype='train:ordered'
+            )
+            agent = RepeatLabelAgent(opt)
+            # TODO(roller): make a proper create_teacher helper
+            teacher = create_task(opt, agent).get_task_agent()
+            num_examples = teacher.num_examples()
 
-                print(
-                    f'\nStarting to test {num_examples:d} examples for the '
-                    f'{task} task.'
-                )
-                for idx, message in enumerate(teacher):
-                    if idx % 10000 == 0:
-                        print(f'Testing example #{idx:d}.')
-                    text = message['text']
-                    canonical_tokens = regex.findall(compiled_pattern, text)
-                    scriptable_tokens = ScriptableGpt2BpeHelper.findall(text)
-                    self.assertEqual(canonical_tokens, scriptable_tokens)
-                    if idx + 1 == num_examples:
-                        break
+            print(
+                f'\nStarting to test {num_examples:d} examples for the ' f'{task} task.'
+            )
+            for idx, message in enumerate(teacher):
+                if idx % 10000 == 0:
+                    print(f'Testing example #{idx:d}.')
+                text = message['text']
+                canonical_tokens = regex.findall(compiled_pattern, text)
+                scriptable_tokens = ScriptableGpt2BpeHelper.findall(text)
+                self.assertEqual(canonical_tokens, scriptable_tokens)
+                if idx + 1 == num_examples:
+                    break
 
     def test_special_tokenization(self):
         from parlai.core.dict import DictionaryAgent
@@ -102,7 +100,6 @@ class TestTorchScript(unittest.TestCase):
             tokenized = sda.txt2vec(text)
             assert len(tokenized) == 15
             assert sda.vec2txt(tokenized) == text
-            nice_tok = [sda.ind2tok[i] for i in tokenized]
 
             orig_dict = DictionaryAgent(opt)
             orig_dict.add_additional_special_tokens(SPECIAL)
@@ -126,7 +123,6 @@ class TestTorchScript(unittest.TestCase):
             assert len(special_tokenized) == 15
             assert sda.vec2txt(special_tokenized) == text
             assert special_tokenized != tokenized
-            nice_specialtok = [sda.ind2tok[i] for i in special_tokenized]
 
     def test_torchscript_agent(self):
         """
