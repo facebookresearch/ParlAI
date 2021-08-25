@@ -159,7 +159,8 @@ class TestTorchScript(unittest.TestCase):
 
     def test_gpu_torchscript_agent(self):
         """
-        Test exporting a model to TorchScript for GPU and then testing it on sample data.
+        Test exporting a model to TorchScript for GPU and then testing it on sample
+        data.
         """
 
         from parlai.scripts.torchscript import TorchScript
