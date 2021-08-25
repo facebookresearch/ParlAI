@@ -291,8 +291,7 @@ commands:
           name: check for bad links
           working_directory: ~/ParlAI/
           command: |
-            sudo apt-get update
-            sudo apt-get install linkchecker
+            pip install linkchecker
             python -m http.server --directory website/build >/dev/null &
             linkchecker http://localhost:8000/
             kill %1
@@ -388,7 +387,7 @@ jobs:
   long_gpu_tests:
     executor: gpu
     working_directory: ~/ParlAI
-    parallelism: 1
+    parallelism: 8
     steps:
       - runtests:
           more_installs:
@@ -397,7 +396,7 @@ jobs:
           install_cuda: true
           cachename: nightly
           marker: nightly_gpu
-          pytest_flags: -v -s -k test_torchscript
+          pytest_flags: -v -s
 
   crowdsourcing_tests:
     executor: small_cpu37
@@ -473,9 +472,9 @@ workflows:
       - unittests_osx:
           requires:
             - unittests_37
-      - long_gpu_tests
-#          requires:
-#            - unittests_37
+      - long_gpu_tests:
+          requires:
+            - unittests_37
       - crowdsourcing_tests:
           requires:
             - unittests_37
