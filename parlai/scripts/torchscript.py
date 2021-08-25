@@ -34,6 +34,10 @@ def export_model(opt: Opt):
     overrides = {
         "model_parallel": False,  # model_parallel is not currently supported when TorchScripting,
     }
+    if opt.get("script_for_gpu", False):
+        opt["no_cuda"] = False
+    else:
+        opt["no_cuda"] = True
     if opt.get("script_module"):
         script_module_name, script_class_name = opt["script_module"].split(":", 1)
         script_module = importlib.import_module(script_module_name)
@@ -89,6 +93,13 @@ def setup_args() -> ParlaiParser:
         type=str,
         default="parlai.torchscript.modules:TorchScriptGreedySearch",
         help="module to TorchScript. Example: parlai.torchscript.modules:TorchScriptGreedySearch",
+    )
+    parser.add_argument(
+        "-sfg",
+        "--script-for-gpu",
+        type=bool,
+        default="parlai.torchscript.modules:TorchScriptGreedySearch",
+        help="should torchscript for gpu",
     )
     return parser
 
