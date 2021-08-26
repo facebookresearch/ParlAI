@@ -20,8 +20,6 @@ from parlai.utils.io import PathManager
 def export_model(opt: Opt):
     """
     Export a model to TorchScript so that inference can be run outside of ParlAI.
-
-    Currently, only CPU greedy-search inference on BART models is supported.
     """
 
     if version.parse(torch.__version__) < version.parse("1.7.0"):
@@ -34,8 +32,7 @@ def export_model(opt: Opt):
         from parlai.torchscript.modules import TorchScriptGreedySearch
 
     overrides = {
-        "no_cuda": True,  # TorchScripting is CPU only
-        "model_parallel": False,  # model_parallel is not currently supported when TorchScripting
+        "model_parallel": False  # model_parallel is not currently supported when TorchScripting,
     }
     if opt.get("script_module"):
         script_module_name, script_class_name = opt["script_module"].split(":", 1)
@@ -54,7 +51,10 @@ def export_model(opt: Opt):
     original_module = script_class(agent)
 
     # Script the module and save
-    scripted_module = torch.jit.script(script_class(agent))
+    instantiated = script_class(agent)
+    if not opt["no_cuda"]:
+        instantiated = instantiated.cuda()
+    scripted_module = torch.jit.script(instantiated)
     with PathManager.open(opt["scripted_model_file"], "wb") as f:
         torch.jit.save(scripted_module, f)
 
