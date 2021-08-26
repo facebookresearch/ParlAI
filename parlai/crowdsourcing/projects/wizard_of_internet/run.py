@@ -273,7 +273,7 @@ def add_banned_words_frontend_conf(task_state, fpath: str = None):
     task_state.task_config['bannedWords'] = banned_words
 
 
-@hydra.main(config_name='scriptconfig')
+@hydra.main(config_path="hydra_configs", config_name='scriptconfig')
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
     world_opt = get_world_opt(cfg)

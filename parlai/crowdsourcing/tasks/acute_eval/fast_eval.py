@@ -570,7 +570,7 @@ class TestScriptConfig(MTurkRunScriptConfig):
 register_script_config(name='fast_acute_scriptconfig', module=TestScriptConfig)
 
 
-@hydra.main(config_name="fast_acute_scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="fast_acute_scriptconfig")
 def main(cfg: DictConfig) -> None:
 
     runner = FastAcuteExecutor(cfg)
