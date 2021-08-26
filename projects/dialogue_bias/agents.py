@@ -116,7 +116,12 @@ class TransformerGenderDebiasAgent(TransformerGeneratorAgent):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         grp = super().add_cmdline_args(parser, partial_opt=partial_opt)
-        grp.add_argument('--alpha', default=1.0, type=float)
+        grp.add_argument(
+            '--alpha',
+            default=1.0,
+            type=float,
+            help='Strength of the unlikelihood loss term',
+        )
         grp.add_argument('--frequencies-file', type=str, default=None)
         grp.add_argument(
             '--bin-percentages',
