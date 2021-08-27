@@ -150,6 +150,7 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         self._incld_loc_desc = opt['include_location_description']
         self._incld_surr_objs = opt['include_surrounding_objects']
         self._prune_kg = opt['prune_knowledge_graph']
+        self._keep_inv_during_kg_prune = False
         self.keep_next_state = True
         super().__init__(opt, shared=shared)
 
@@ -229,6 +230,22 @@ class BaseJerichoWorldTeacher(DialogTeacher):
                     return True
             return False
 
+        def keep_edge(edge, text_tokens):
+            # Each graph edge is a tuple: (subject, relation, object)
+            sub, rel, obj = [s.strip().lower() for s in edge]
+
+            if sub == 'you':
+                # player location
+                if rel == 'in':
+                    return True
+                # user inventory object
+                elif rel == 'have' and self._keep_inv_during_kg_prune:
+                    return True
+
+            return has_word_overlap(sub, text_tokens) and has_word_overlap(
+                obj, text_tokens
+            )
+
         if self._prune_kg:
             # Prunning the knowledge graph for the entities that are mentioned in the description
             old_graph = state['graph']
@@ -242,12 +259,7 @@ class BaseJerichoWorldTeacher(DialogTeacher):
 
             # We prune the knowledge graph for items that are partially mentioned in `text_desc`
             for edge in old_graph:
-                # Each graph edge is a tuple: (subject, relation, object)
-                sub, rel, obj = [s.strip().lower() for s in edge]
-                if (sub == 'you' and rel == 'in') or (
-                    has_word_overlap(sub, text_desc_tokens)
-                    and has_word_overlap(obj, text_desc_tokens)
-                ):
+                if keep_edge(edge, text_desc_tokens):
                     new_graph.append(edge)
 
             state['graph'] = new_graph
@@ -486,6 +498,10 @@ class ActionKGTeacher(StateToKGTeacher):
     Generates the knowledge graph mutations after a given action.
     """
 
+    def __init__(self, opt: Opt, shared=None):
+        self._keep_inv_during_kg_prune = True
+        super().__init__(opt, shared=shared)
+
     def get_id(self):
         return 'Action2KGMutation'
 
@@ -544,6 +560,7 @@ class ActionPredictionBase(BaseJerichoWorldSingleEpisodeTeacher):
 
     def __init__(self, opt: Opt, shared=None):
         self._incld_knwldg_grph = opt['include_knowledge_graph']
+        self._keep_inv_during_kg_prune = True
         super().__init__(opt, shared=shared)
 
     @classmethod
