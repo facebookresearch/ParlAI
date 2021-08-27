@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from enum import Enum
+import nltk
 from nltk.corpus import stopwords
 
 
@@ -12,6 +13,12 @@ class GraphMutations(Enum):
     NO_MUTATION = 0
     DEL = 1
     ADD = 2
+
+
+try:
+    stopwords.words('english')
+except LookupError:
+    nltk.download('stopwords')
 
 
 # The set of words in the description of graph that we skip while checking
