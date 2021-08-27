@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from enum import Enum
+from nltk.corpus import stopwords
 
 
 class GraphMutations(Enum):
@@ -12,6 +13,10 @@ class GraphMutations(Enum):
     DEL = 1
     ADD = 2
 
+
+# The set of words in the description of graph that we skip while checking
+# for overlap between knowledge grapj vertices and the description.
+GRAPH_VERT_SKIP_TOKEN = set(stopwords.words('english')) - {'you'}
 
 LOCATION_NAME = 'loc-name'
 LOCATION_DESCRIPTION = 'loc-desc'

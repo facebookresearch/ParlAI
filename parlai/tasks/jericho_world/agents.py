@@ -209,21 +209,23 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             example['next_state'] = extract_state_data(game_step['next_state'])
         return example
 
-    def extract_knowledge_graph_str(self, state: Dict[str, Any]) -> str:
+    def extract_knowledge_graph_str(
+        self, state: Dict[str, Any], include_inv_objs: bool = False
+    ) -> str:
         """
         Generates the string representing knowledge graph.
 
         It may modifiy the knowledge graph, for example when --prune-knowledge-graph is true.
         """
 
-        def has_word_overlap(main_text, content_text):
-            if not main_text or not content_text:
+        def has_word_overlap(main_text, content_text_tokens):
+            if not main_text or not content_text_tokens:
                 return False
 
             for word in main_text.lower().split():
-                if not word or len(word) < 3:
+                if not word or len(word) < 3 or word in consts.GRAPH_VERT_SKIP_TOKEN:
                     continue
-                if word in content_text:
+                if word in content_text_tokens:
                     return True
             return False
 
@@ -232,11 +234,20 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             old_graph = state['graph']
             new_graph = []
 
-            loc_desc = f'{state["location_desc"]} {state["location_name"]}'.lower()
+            # `text_desc` is the context that we show the model the generate the knowledge graph from.
+            text_desc = f'{state["location_desc"]} {state["location_name"]}'
+            if include_inv_objs:
+                text_desc = f'{text_desc} {state["inventory_objs"]}'
+            text_desc_tokens = text_desc.lower().split()
+
+            # We prune the knowledge graph for items that are partially mentioned in `text_desc`
             for edge in old_graph:
                 # Each graph edge is a tuple: (subject, relation, object)
-                sub, _, obj = edge
-                if has_word_overlap(sub, loc_desc) and has_word_overlap(obj, loc_desc):
+                sub, rel, obj = [s.strip().lower() for s in edge]
+                if (sub == 'you' and rel == 'in') or (
+                    has_word_overlap(sub, text_desc_tokens)
+                    and has_word_overlap(obj, text_desc_tokens)
+                ):
                     new_graph.append(edge)
 
             state['graph'] = new_graph
