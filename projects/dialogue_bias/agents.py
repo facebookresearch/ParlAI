@@ -4,29 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import math
-import os
-import random
-from collections import Counter, defaultdict
+from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
 
-import numpy as np
 import pandas as pd
-import torch
-import torch.nn.functional as F
 
-from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
-from parlai.core.metrics import AverageMetric, SumMetric
-from parlai.core.opt import Opt
-from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch
-from parlai.utils import logging as logging
-from parlai.utils.io import PathManager
-from parlai.utils.misc import round_sigfigs
-from parlai.utils.torch import NEAR_INF, NEAR_INF_FP16
-from projects.dialogue_unlikelihood.agents import div
 from projects.style_gen.modules import STYLE_SEP_TOKEN
 from projects.style_gen.style_gen import StyleGenAgent
 
