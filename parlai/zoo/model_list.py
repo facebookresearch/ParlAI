@@ -2086,12 +2086,16 @@ model_list = [
             "BlenderBot3B model tuned with the name-scrambling technique to have lower gender bias."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__name_scrambling/model -t blended_skill_talk"
+            "parlai display_model -mf zoo:dialogue_bias/gender__name_scrambling/model -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
         ),
-        "result": (
-            "Enter Your Message: Hi how are you?\n"
-            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
-        ),  # TODO revise
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I am a journeyman. I have been working in the trade for a long time.""",
     },
     {
         "title": "BlenderBot3B with token-bin control-generation gender-bias reduction",
@@ -2104,12 +2108,16 @@ model_list = [
             "BlenderBot3B model tuned with the control-generation technique (based on the amount of gender over-indexing per token bin) to have lower gender bias."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__ctrl_gen_tokens/model --model projects.dialogue_bias.agents:NoBiasStyleGenAgent -t blended_skill_talk"
+            "parlai display_model -mf zoo:dialogue_bias/gender__ctrl_gen_tokens/model --model projects.dialogue_bias.agents:NoBiasStyleGenAgent -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
         ),
-        "result": (
-            "Enter Your Message: Hi how are you?\n"
-            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
-        ),  # TODO revise
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I am a Master Electrician. I work in a power plant. How about you?""",
     },
     {
         "title": "BlenderBot3B with sequence-level unlikelihood-training gender-bias reduction",
@@ -2122,12 +2130,16 @@ model_list = [
             "BlenderBot3B model tuned with the (sequence-level) unlikelihood training technique to have lower gender bias."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender__unlikelihood_sequence_level/model --model transformer/generator -t blended_skill_talk"
+            "parlai display_model -mf zoo:dialogue_bias/gender__unlikelihood_sequence_level/model --model transformer/generator -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
         ),
-        "result": (
-            "Enter Your Message: Hi how are you?\n"
-            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
-        ),  # TODO revise
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I'm a journeyman electrician. I work in the construction industry. How about you?""",
     },
     {
         "title": "BlenderBot3B with name-scrambling gender/ethnicity-bias reduction",
@@ -2140,11 +2152,15 @@ model_list = [
             "BlenderBot3B model tuned with the name-scrambling technique to have lower gender and race/ethnicity bias."
         ),
         "example": (
-            "python parlai/scripts/safe_interactive.py -mf zoo:dialogue_bias/gender_ethnicity__name_scrambling/model -t blended_skill_talk"
+            "parlai display_model -mf zoo:dialogue_bias/gender_ethnicity__name_scrambling/model -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
         ),
-        "result": (
-            "Enter Your Message: Hi how are you?\n"
-            "[TransformerGenerator]: I'm doing well. How are you doing? What do you like to do in your spare time?"
-        ),  # TODO revise
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I am a journeyman electrician. I work in the construction industry. How about you?""",
     },
 ]

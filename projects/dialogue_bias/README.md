@@ -23,9 +23,10 @@ We cannot guarantee that these reduced-bias models are free of all remaining bia
 To interact with the model in which gender has been reduced via name scrambling:
 
 ```
-python parlai/scripts/safe_interactive.py \
+parlai safe_interactive \
 -mf zoo:dialogue_bias/gender__name_scrambling/model \
--t blended_skill_talk
+-t blended_skill_talk \
+--beam-block-full-context True
 ```
 
 ## Citation
