@@ -7,7 +7,7 @@
 from parlai.utils.testing import AutoTeacherTest
 
 
-class TestDefaultTeacher(AutoTeacherTest):
+class StaticKGTeacher(AutoTeacherTest):
     task = 'jericho_world'
 
 
@@ -17,6 +17,10 @@ class TestStaticKGTeacher(AutoTeacherTest):
 
 class TestActionKGTeacher(AutoTeacherTest):
     task = 'jericho_world:ActionKGTeacher'
+
+
+class TestStateToValidActionsTeacher(AutoTeacherTest):
+    task = 'jericho_world:StateToValidActionsTeacher'
 
 
 class TestStateToActionTeacher(AutoTeacherTest):

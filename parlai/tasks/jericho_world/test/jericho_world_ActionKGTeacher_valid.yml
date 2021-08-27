@@ -1,4 +1,79 @@
 acts:
+- - action: west
+    episode_done: true
+    eval_labels:
+    - NO_MUTATION
+    id: jericho_world:ActionKGTeacher
+    next_state:
+      graph:
+      - - you
+        - have
+        - piece of white paper
+      - - you
+        - in
+        - Chief's office
+      inventory_objs:
+      - white piece paper
+      location_desc: << Chief's office >> You are standing in the Chief's office.
+        He is telling you "The Mayor was murdered yeaterday night at 12:03 am. I want
+        you to solve it before we get any bad publicity or the FBI has to come in.
+        "Yessir!" You reply. He hands you a sheet of paper. Once you have read it,
+        go north or west.
+      location_name: Chief's office
+      observation: Taken.  [Your score has just gone up by ten points.]
+      surrounding_objs:
+      - paper
+      - north
+      - west
+      valid_acts:
+      - east
+      - north
+      - west
+      - put piece down
+    state:
+      graph:
+      - - you
+        - have
+        - piece of white paper
+      - - you
+        - in
+        - Chief's office
+      inventory_objs: []
+      location_desc: << Chief's office >> You are standing in the Chief's office.
+        He is telling you "The Mayor was murdered yeaterday night at 12:03 am. I want
+        you to solve it before we get any bad publicity or the FBI has to come in.
+        "Yessir!" You reply. He hands you a sheet of paper. Once you have read it,
+        go north or west.  You can see a piece of white paper here.
+      location_name: Chief's office
+      observation: << Chief's office >> You are standing in the Chief's office. He
+        is telling you "The Mayor was murdered yeaterday night at 12:03 am. I want
+        you to solve it before we get any bad publicity or the FBI has to come in.
+        "Yessir!" You reply. He hands you a sheet of paper. Once you have read it,
+        go north or west.  You can see a piece of white paper here.
+      surrounding_objs:
+      - north
+      - piece paper white
+      - west
+      valid_acts:
+      - east
+      - take piece
+      - north
+      - west
+    text: '__tt__ Action2KGMutation __end-tt__
+
+      __loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s office
+      >> You are standing in the Chief''s office. He is telling you "The Mayor was
+      murdered yeaterday night at 12:03 am. I want you to solve it before we get any
+      bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you a
+      sheet of paper. Once you have read it, go north or west.  You can see a piece
+      of white paper here. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Chief''s office
+      > __end-KG__
+
+      __obs__ Taken.  [Your score has just gone up by ten points.] __end-obs__
+
+      __action__ west __end-action__'
 - - action: abstract small to paper
     episode_done: true
     eval_labels:
@@ -9,7 +84,7 @@ acts:
       ADD < you , in , Closet >
 
       DEL < you , in , Chief''s office >'
-    id: JerichoWorldtBase
+    id: jericho_world:ActionKGTeacher
     next_state:
       graph:
       - - you
@@ -26,31 +101,11 @@ acts:
         - Closet
       inventory_objs:
       - white piece paper
-      location_desc: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-
-        You can see a small black pistol here.
-
-        '
+      location_desc: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.  You can see a small black pistol here.
       location_name: Closet
-      observation: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-
-        You can see a small black pistol here.
-
-        '
+      observation: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.  You can see a small black pistol here.
       surrounding_objs:
       - black small gun pistol
       - floor
@@ -72,26 +127,13 @@ acts:
         - Chief's office
       inventory_objs:
       - white piece paper
-      location_desc: '
-
-
-        << Chief''s office >>
-
-        You are standing in the Chief''s office. He is telling you "The Mayor was
-        murdered yeaterday night at 12:03 am. I want you to solve it before we get
-        any bad publicity or the FBI has to come in. "Yessir!" You reply. He hands
-        you a sheet of paper. Once you have read it, go north or west.
-
-        '
+      location_desc: << Chief's office >> You are standing in the Chief's office.
+        He is telling you "The Mayor was murdered yeaterday night at 12:03 am. I want
+        you to solve it before we get any bad publicity or the FBI has to come in.
+        "Yessir!" You reply. He hands you a sheet of paper. Once you have read it,
+        go north or west.
       location_name: Chief's office
-      observation: '
-
-        Taken.
-
-
-        [Your score has just gone up by ten points.]
-
-        '
+      observation: Taken.  [Your score has just gone up by ten points.]
       surrounding_objs:
       - paper
       - north
@@ -101,13 +143,19 @@ acts:
       - north
       - west
       - put piece down
-    text: '__loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s
-      office >> You are standing in the Chief''s office. He is telling you "The Mayor
-      was murdered yeaterday night at 12:03 am. I want you to solve it before we get
-      any bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you
-      a sheet of paper. Once you have read it, go north or west. __end-loc-desc__
+    text: '__tt__ Action2KGMutation __end-tt__
 
-      __surr_obj__ paper ; north ; west __end-surr_obj__
+      __loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s office
+      >> You are standing in the Chief''s office. He is telling you "The Mayor was
+      murdered yeaterday night at 12:03 am. I want you to solve it before we get any
+      bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you a
+      sheet of paper. Once you have read it, go north or west. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Chief''s office
+      > __end-KG__
+
+      __obs__ << Closet >> You are in a closet. There is a gun on the floor. Better
+      get it. To exit, go east.  You can see a small black pistol here. __end-obs__
 
       __action__ abstract small to paper __end-action__'
 - - action: abstract black to piece
@@ -118,7 +166,7 @@ acts:
       DEL < Closet , west , Chief''s office >
 
       DEL < small black pistol , in , Closet >'
-    id: JerichoWorldtBase
+    id: jericho_world:ActionKGTeacher
     next_state:
       graph:
       - - you
@@ -132,23 +180,10 @@ acts:
         - piece of white paper
       inventory_objs:
       - paper white piece
-      location_desc: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-        '
+      location_desc: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.
       location_name: Closet
-      observation: '
-
-        (the piece of white paper)
-
-        [Abstracted.]
-
-        '
+      observation: (the piece of white paper) [Abstracted.]
       surrounding_objs:
       - floor
       valid_acts:
@@ -172,31 +207,11 @@ acts:
         - Closet
       inventory_objs:
       - white piece paper
-      location_desc: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-
-        You can see a small black pistol here.
-
-        '
+      location_desc: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.  You can see a small black pistol here.
       location_name: Closet
-      observation: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-
-        You can see a small black pistol here.
-
-        '
+      observation: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.  You can see a small black pistol here.
       surrounding_objs:
       - black small gun pistol
       - floor
@@ -208,18 +223,23 @@ acts:
       - abstract small to paper
       - abstract paper to small
       - push small to floor
-    text: '__loc-name__ Closet __end-loc-name__ __loc-desc__ << Closet >> You are
-      in a closet. There is a gun on the floor. Better get it. To exit, go east.  You
-      can see a small black pistol here. __end-loc-desc__
+    text: '__tt__ Action2KGMutation __end-tt__
 
-      __surr_obj__ black small gun pistol ; floor __end-surr_obj__
+      __loc-name__ Closet __end-loc-name__ __loc-desc__ << Closet >> You are in a
+      closet. There is a gun on the floor. Better get it. To exit, go east.  You can
+      see a small black pistol here. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < Closet , west , Chief''s office
+      > ; < you , in , Closet > ; < small black pistol , in , Closet > __end-KG__
+
+      __obs__ (the piece of white paper) [Abstracted.] __end-obs__
 
       __action__ abstract black to piece __end-action__'
 - - action: put piece down
     episode_done: true
     eval_labels:
     - NO_MUTATION
-    id: JerichoWorldtBase
+    id: jericho_world:ActionKGTeacher
     next_state:
       graph:
       - - you
@@ -233,21 +253,10 @@ acts:
         - piece of white paper
       inventory_objs:
       - paper white piece
-      location_desc: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-        '
+      location_desc: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.
       location_name: Closet
-      observation: '
-
-        [Abstracted.]
-
-        '
+      observation: '[Abstracted.]'
       surrounding_objs:
       - floor
       valid_acts:
@@ -268,23 +277,10 @@ acts:
         - piece of white paper
       inventory_objs:
       - paper white piece
-      location_desc: '
-
-
-        << Closet >>
-
-        You are in a closet. There is a gun on the floor. Better get it. To exit,
-        go east.
-
-        '
+      location_desc: << Closet >> You are in a closet. There is a gun on the floor.
+        Better get it. To exit, go east.
       location_name: Closet
-      observation: '
-
-        (the piece of white paper)
-
-        [Abstracted.]
-
-        '
+      observation: (the piece of white paper) [Abstracted.]
       surrounding_objs:
       - floor
       valid_acts:
@@ -292,63 +288,29 @@ acts:
       - put piece down
       - abstract black to piece
       - east
-    text: '__loc-name__ Closet __end-loc-name__ __loc-desc__ << Closet >> You are
-      in a closet. There is a gun on the floor. Better get it. To exit, go east. __end-loc-desc__
+    text: '__tt__ Action2KGMutation __end-tt__
 
-      __surr_obj__ floor __end-surr_obj__
+      __loc-name__ Closet __end-loc-name__ __loc-desc__ << Closet >> You are in a
+      closet. There is a gun on the floor. Better get it. To exit, go east. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Closet > ; < small
+      black pistol , in , piece of white paper > __end-KG__
+
+      __obs__ [Abstracted.] __end-obs__
 
       __action__ put piece down __end-action__'
-- - action: west
+- - action: north
     episode_done: true
     eval_labels:
-    - 'ADD < Outside , north , Outside >
+    - 'ADD < Outside , north , Chief''s office >
 
-      DEL < Outside , north , Chief''s office >'
-    id: JerichoWorldtBase
+      ADD < you , in , Outside >
+
+      DEL < small black pistol , in , piece of white paper >
+
+      DEL < you , in , Closet >'
+    id: jericho_world:ActionKGTeacher
     next_state:
-      graph:
-      - - Outside
-        - north
-        - Outside
-      - - you
-        - in
-        - Outside
-      - - you
-        - have
-        - piece of white paper
-      inventory_objs:
-      - white piece paper
-      location_desc: '
-
-
-        << Outside >>
-
-        You are outside in the cold. To the east is a dead end. To the west is the
-        rest of the street. Papers are blowing around. It''s amazingly cold for this
-        time of year.
-
-        '
-      location_name: Outside
-      observation: '
-
-        You can''t go north from here!
-
-
-        << Outside >>
-
-        You are outside in the cold. To the east is a dead end. To the west is the
-        rest of the street. Papers are blowing around. It''s amazingly cold for this
-        time of year.
-
-        '
-      surrounding_objs:
-      - east
-      - west
-      valid_acts:
-      - north
-      - west
-      - put paper down
-    state:
       graph:
       - - you
         - have
@@ -361,142 +323,68 @@ acts:
         - Chief's office
       inventory_objs:
       - white piece paper
-      location_desc: '
-
-
-        << Outside >>
-
-        You are outside in the cold. To the east is a dead end. To the west is the
-        rest of the street. Papers are blowing around. It''s amazingly cold for this
-        time of year.
-
-        '
+      location_desc: << Outside >> You are outside in the cold. To the east is a dead
+        end. To the west is the rest of the street. Papers are blowing around. It's
+        amazingly cold for this time of year.
       location_name: Outside
-      observation: '
-
-
-        << Outside >>
-
-        You are outside in the cold. To the east is a dead end. To the west is the
-        rest of the street. Papers are blowing around. It''s amazingly cold for this
-        time of year.
-
-        '
+      observation: << Outside >> You are outside in the cold. To the east is a dead
+        end. To the west is the rest of the street. Papers are blowing around. It's
+        amazingly cold for this time of year.
       surrounding_objs:
       - east
       - west
       valid_acts:
       - north
       - west
-      - put paper down
-    text: '__loc-name__ Outside __end-loc-name__ __loc-desc__ << Outside >> You are
-      outside in the cold. To the east is a dead end. To the west is the rest of the
-      street. Papers are blowing around. It''s amazingly cold for this time of year.
-      __end-loc-desc__
-
-      __surr_obj__ east ; west __end-surr_obj__
-
-      __action__ west __end-action__'
-- - action: put paper down
-    episode_done: true
-    eval_labels:
-    - 'ADD < Outside , west , Outside >
-
-      DEL < Outside , north , Outside >'
-    id: JerichoWorldtBase
-    next_state:
-      graph:
-      - - you
-        - have
-        - piece of white paper
-      - - you
-        - in
-        - Outside
-      - - Outside
-        - west
-        - Outside
-      inventory_objs:
-      - white piece paper
-      location_desc: '
-
-
-        << Outside >>
-
-        You are still on the streets. To the north is a restraunt where the mayor
-        ate often. To the east is the Mayor''s home.
-
-        '
-      location_name: Outside
-      observation: '
-
-
-        << Outside >>
-
-        You are still on the streets. To the north is a restraunt where the mayor
-        ate often. To the east is the Mayor''s home.
-
-
-        [Your score has just gone up by ten points.]
-
-        '
-      surrounding_objs:
-      - east
-      - north
-      valid_acts:
-      - west
-      - east
-      - north
       - put paper down
     state:
       graph:
-      - - Outside
-        - north
-        - Outside
-      - - you
-        - in
-        - Outside
       - - you
         - have
         - piece of white paper
+      - - you
+        - in
+        - Closet
+      - - small black pistol
+        - in
+        - piece of white paper
       inventory_objs:
       - white piece paper
-      location_desc: '
-
-
-        << Outside >>
-
-        You are outside in the cold. To the east is a dead end. To the west is the
-        rest of the street. Papers are blowing around. It''s amazingly cold for this
-        time of year.
-
-        '
-      location_name: Outside
-      observation: '
-
-        You can''t go north from here!
-
-
-        << Outside >>
-
-        You are outside in the cold. To the east is a dead end. To the west is the
-        rest of the street. Papers are blowing around. It''s amazingly cold for this
-        time of year.
-
-        '
+      location_desc: << Chief's office >> You are standing in the Chief's office.
+        He is telling you "The Mayor was murdered yeaterday night at 12:03 am. I want
+        you to solve it before we get any bad publicity or the FBI has to come in.
+        "Yessir!" You reply. He hands you a sheet of paper. Once you have read it,
+        go north or west.
+      location_name: Chief's office
+      observation: << Chief's office >> You are standing in the Chief's office. He
+        is telling you "The Mayor was murdered yeaterday night at 12:03 am. I want
+        you to solve it before we get any bad publicity or the FBI has to come in.
+        "Yessir!" You reply. He hands you a sheet of paper. Once you have read it,
+        go north or west.
       surrounding_objs:
-      - east
-      - west
-      valid_acts:
+      - paper
       - north
       - west
-      - put paper down
-    text: '__loc-name__ Outside __end-loc-name__ __loc-desc__ << Outside >> You are
-      outside in the cold. To the east is a dead end. To the west is the rest of the
-      street. Papers are blowing around. It''s amazingly cold for this time of year.
-      __end-loc-desc__
+      valid_acts:
+      - east
+      - north
+      - west
+      - put piece down
+    text: '__tt__ Action2KGMutation __end-tt__
 
-      __surr_obj__ east ; west __end-surr_obj__
+      __loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s office
+      >> You are standing in the Chief''s office. He is telling you "The Mayor was
+      murdered yeaterday night at 12:03 am. I want you to solve it before we get any
+      bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you a
+      sheet of paper. Once you have read it, go north or west. __end-loc-desc__
 
-      __action__ put paper down __end-action__'
-num_episodes: 3220
-num_examples: 3220
+      __KG__ < you , have , piece of white paper > ; < you , in , Closet > ; < small
+      black pistol , in , piece of white paper > __end-KG__
+
+      __obs__ << Outside >> You are outside in the cold. To the east is a dead end.
+      To the west is the rest of the street. Papers are blowing around. It''s amazingly
+      cold for this time of year. __end-obs__
+
+      __action__ north __end-action__'
+num_episodes: 3918
+num_examples: 3918

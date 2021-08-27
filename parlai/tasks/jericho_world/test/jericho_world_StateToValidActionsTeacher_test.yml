@@ -2,8 +2,11 @@ acts:
 - - action: west
     episode_done: true
     eval_labels:
-    - < you , have , piece of white paper > ; < you , in , Chief's office >
-    id: jericho_world:StaticKGTeacher
+    - east
+    - take piece
+    - north
+    - west
+    id: jericho_world:StateToValidActionsTeacher
     next_state:
       graph:
       - - you
@@ -59,19 +62,25 @@ acts:
       - take piece
       - north
       - west
-    text: '__tt__ StaticStateKG __end-tt__
+    text: '__tt__ ValidActionsTeacher __end-tt__
 
       __loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s office
       >> You are standing in the Chief''s office. He is telling you "The Mayor was
       murdered yeaterday night at 12:03 am. I want you to solve it before we get any
       bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you a
       sheet of paper. Once you have read it, go north or west.  You can see a piece
-      of white paper here. __end-loc-desc__'
+      of white paper here. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Chief''s office
+      > __end-KG__'
 - - action: abstract small to paper
     episode_done: true
     eval_labels:
-    - < you , have , piece of white paper > ; < you , in , Chief's office >
-    id: jericho_world:StaticKGTeacher
+    - east
+    - north
+    - west
+    - put piece down
+    id: jericho_world:StateToValidActionsTeacher
     next_state:
       graph:
       - - you
@@ -130,19 +139,27 @@ acts:
       - north
       - west
       - put piece down
-    text: '__tt__ StaticStateKG __end-tt__
+    text: '__tt__ ValidActionsTeacher __end-tt__
 
       __loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s office
       >> You are standing in the Chief''s office. He is telling you "The Mayor was
       murdered yeaterday night at 12:03 am. I want you to solve it before we get any
       bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you a
-      sheet of paper. Once you have read it, go north or west. __end-loc-desc__'
+      sheet of paper. Once you have read it, go north or west. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Chief''s office
+      > __end-KG__'
 - - action: abstract black to piece
     episode_done: true
     eval_labels:
-    - < you , have , piece of white paper > ; < Closet , west , Chief's office > ;
-      < you , in , Closet > ; < small black pistol , in , Closet >
-    id: jericho_world:StaticKGTeacher
+    - north
+    - take small
+    - east
+    - put paper down
+    - abstract small to paper
+    - abstract paper to small
+    - push small to floor
+    id: jericho_world:StateToValidActionsTeacher
     next_state:
       graph:
       - - you
@@ -199,17 +216,22 @@ acts:
       - abstract small to paper
       - abstract paper to small
       - push small to floor
-    text: '__tt__ StaticStateKG __end-tt__
+    text: '__tt__ ValidActionsTeacher __end-tt__
 
       __loc-name__ Closet __end-loc-name__ __loc-desc__ << Closet >> You are in a
       closet. There is a gun on the floor. Better get it. To exit, go east.  You can
-      see a small black pistol here. __end-loc-desc__'
+      see a small black pistol here. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < Closet , west , Chief''s office
+      > ; < you , in , Closet > ; < small black pistol , in , Closet > __end-KG__'
 - - action: put piece down
     episode_done: true
     eval_labels:
-    - < you , have , piece of white paper > ; < you , in , Closet > ; < small black
-      pistol , in , piece of white paper >
-    id: jericho_world:StaticKGTeacher
+    - north
+    - put piece down
+    - abstract black to piece
+    - east
+    id: jericho_world:StateToValidActionsTeacher
     next_state:
       graph:
       - - you
@@ -258,16 +280,21 @@ acts:
       - put piece down
       - abstract black to piece
       - east
-    text: '__tt__ StaticStateKG __end-tt__
+    text: '__tt__ ValidActionsTeacher __end-tt__
 
       __loc-name__ Closet __end-loc-name__ __loc-desc__ << Closet >> You are in a
-      closet. There is a gun on the floor. Better get it. To exit, go east. __end-loc-desc__'
+      closet. There is a gun on the floor. Better get it. To exit, go east. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Closet > ; < small
+      black pistol , in , piece of white paper > __end-KG__'
 - - action: north
     episode_done: true
     eval_labels:
-    - < you , have , piece of white paper > ; < you , in , Closet > ; < small black
-      pistol , in , piece of white paper >
-    id: jericho_world:StaticKGTeacher
+    - east
+    - north
+    - west
+    - put piece down
+    id: jericho_world:StateToValidActionsTeacher
     next_state:
       graph:
       - - you
@@ -328,12 +355,15 @@ acts:
       - north
       - west
       - put piece down
-    text: '__tt__ StaticStateKG __end-tt__
+    text: '__tt__ ValidActionsTeacher __end-tt__
 
       __loc-name__ Chief''s office __end-loc-name__ __loc-desc__ << Chief''s office
       >> You are standing in the Chief''s office. He is telling you "The Mayor was
       murdered yeaterday night at 12:03 am. I want you to solve it before we get any
       bad publicity or the FBI has to come in. "Yessir!" You reply. He hands you a
-      sheet of paper. Once you have read it, go north or west. __end-loc-desc__'
+      sheet of paper. Once you have read it, go north or west. __end-loc-desc__
+
+      __KG__ < you , have , piece of white paper > ; < you , in , Closet > ; < small
+      black pistol , in , piece of white paper > __end-KG__'
 num_episodes: 3918
 num_examples: 3918
