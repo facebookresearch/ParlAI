@@ -11,4 +11,4 @@ ParlAI teachers for the [JerichoWorld Dataset](https://github.com/JerichoWorld/J
 
 > **_NOTE:_**  There were often incomplete graphs in the dataset (see [this issue](https://github.com/JerichoWorld/JerichoWorld/issues/3)).
 Here, we discard knowledge graph, or their entities that seem corrupted. 
-In addition, setting `--prune-knowledge-graph` to true forces the knowledge graph to keep only the entities that are mentioned in the description. This is to avoid hallucination.
+In addition, setting `--prune-knowledge-graph` to true forces the knowledge graph to keep only the entities that are mentioned in the description for `StaticKGTeacher` or objects that are in the inventory (eg, `[you , have , x]` edges in the knowledge graph). This is to avoid hallucination.
