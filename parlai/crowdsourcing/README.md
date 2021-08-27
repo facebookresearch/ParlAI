@@ -10,7 +10,7 @@ Tasks are launched by calling the appropriate run script: for instance, an ACUTE
 
 ### Specifying your own YAML file
 
- The easiest way to specify a different YAML file is to create a new file, say, `my_params.yaml`, in the `conf/` subfolder of the task. Then, you can launch HITs with `python ${TASK_FOLDER}/run.py conf=my_params`.
+ The easiest way to specify a different YAML file is to create a new file, say, `my_params.yaml`, in the `hydra_configs/conf/` subfolder of the task. Then, you can launch HITs with `python ${TASK_FOLDER}/run.py conf=my_params`.
 
  You also can specify a path to a YAML file existing *outside* of `${TASK_FOLDER}`: you will need to have your YAML file stored at a location `${CUSTOM_FOLDER}/conf/my_params.yaml`, and then you can add a `--config-dir ${CUSTOM_FOLDER}` string to the launch command above.
 
