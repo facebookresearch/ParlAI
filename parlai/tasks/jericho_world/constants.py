@@ -21,7 +21,9 @@ GRAPH_VERT_SKIP_TOKEN = set(stopwords.words('english')) - {'you'}
 LOCATION_NAME = 'loc-name'
 LOCATION_DESCRIPTION = 'loc-desc'
 SURROUNDING_OBJECTS = 'surr_obj'
+KNOWLEDGE_GRAPH = 'KG'
 ACTION = 'action'
+OBSERVATION = 'obs'
 
 # The delimiter characetrs between members of a set (eg objects, graph edges, etc.)
 SET_MEMBERS_DELIM = ' ; '
