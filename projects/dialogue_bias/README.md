@@ -13,7 +13,6 @@ Eric Michael Smith, Adina Williams
 ## Code
 
 - `projects.dialogue_bias.agents:NoBiasStyleGenAgent`: Agent that appends a `"no_bias"` string to the context of every example in order to perform controllable generation.
-- `projects.dialogue_bias.agents:TransformerGenderDebiasAgent`: Agent that penalizes tokens during training proportional to the amount of over-indexing of those tokens for the specified gender. Specify `--penalize-generations True` in order to generate tokens until EOS during training, which allows the training distribution of prefix strings to better match that at generation time.
 
 ## Models
 
