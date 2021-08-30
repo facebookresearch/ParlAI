@@ -80,7 +80,9 @@ class AbstractCrowdsourcingTest:
         relative_task_directory = os.path.relpath(
             task_directory, os.path.dirname(__file__)
         )
-        relative_config_path = os.path.join(relative_task_directory, 'conf')
+        relative_config_path = os.path.join(
+            relative_task_directory, 'hydra_configs', 'conf'
+        )
         if overrides is None:
             overrides = []
         with initialize(config_path=relative_config_path):
