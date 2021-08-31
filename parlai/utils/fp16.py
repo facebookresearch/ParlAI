@@ -182,7 +182,7 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
             self.scaler.loss_scale = state_dict['loss_scaler']
         self.optimizer.load_state_dict(state_dict)
 
-    def backward(self, loss, update_master_grads=False):
+    def backward(self, loss, update_main_grads=False):
         """
         Computes the sum of gradients of the given tensor w.r.t. graph leaves.
 
@@ -193,8 +193,8 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
             loss = loss * self.scaler.loss_scale
         loss.backward()
         self._needs_sync = True
-        if update_master_grads:
-            self.update_master_grads()
+        if update_main_grads:
+            self.update_main_grads()
 
     def _sync_fp16_grads_to_fp32(self, multiply_grads=1.0):
         if self._needs_sync:
@@ -224,10 +224,10 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
             for p32 in self.fp32_params:
                 p32.grad.data.mul_(c)
 
-    def update_master_grads(self):
+    def update_main_grads(self):
         self._sync_fp16_grads_to_fp32()
 
-    def clip_master_grads(self, max_norm):
+    def clip_main_grads(self, max_norm):
         """
         Clips gradient norm and updates dynamic loss scaler.
         """
@@ -466,7 +466,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         else:
             assert multiply_grads == 1.0
 
-    def clip_master_grads(self, gradient_clip):
+    def clip_main_grads(self, gradient_clip):
         """
         Clips gradient norm and updates dynamic loss scaler.
 
@@ -496,7 +496,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
 
         return grad_norm
 
-    def update_master_grads(self):
+    def update_main_grads(self):
         # No-op
         pass
 
@@ -511,7 +511,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
                 if p.grad is not None:
                     p.grad.data.mul_(c)
 
-    def backward(self, loss, update_master_grads=False):
+    def backward(self, loss, update_main_grads=False):
         """
         Computes the sum of gradients of the given tensor w.r.t. graph leaves.
 
