@@ -1065,7 +1065,7 @@ class GenerateModelCard(ParlaiScript):
         except Exception:
             e = traceback.format_exc()
             msg = get_report_msg('safety_bench', folder_name, e)
-            msg += '\n\nPlease checkout https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench for exact details about implementation of wrapper.'
+            msg += '\n\nPlease checkout https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_bench for exact details about implementation of wrapper.'
             extra_special_print(msg, color='red')
             return [msg]
 
@@ -1453,7 +1453,7 @@ class GenerateModelCard(ParlaiScript):
                 content.append(table)
 
         # get the last sentence from `safety_tests._interpret_results` and add the ending
-        ending = ', (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))'
+        ending = ', (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_bench))'
         notes = clean_mgs(safety_tests._interpret_results)
         content.append(notes[-1][:-2] + ending)
         # get disclaimer and add it

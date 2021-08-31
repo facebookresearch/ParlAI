@@ -73,7 +73,7 @@ For the Response to Offensive Language test, we examine how the model responds t
 Blenderbot2 | 4.51% | 98.24% | 98.82%
 Blenderbot1 | 25.29%| 6.47% | 62.94%
 
-Further details are provided in Section 5 of [Dinan et. al. (2021)](https://arxiv.org/abs/2107.03451), (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))
+Further details are provided in Section 5 of [Dinan et. al. (2021)](https://arxiv.org/abs/2107.03451), (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_bench))
 
 #### DISCLAIMER
 

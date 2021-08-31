@@ -12,7 +12,7 @@ We currently support the following chat services:
 You can find more information on how to set up these services below.
 
 :::{note}
-If you'd like to use a service outside of the 4 listed above, please read [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service) for information on how to set up a new chat service.
+If you'd like to use a service outside of the 4 listed above, please read [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/chat_service) for information on how to set up a new chat service.
 :::
 
 ## Overview
@@ -102,7 +102,7 @@ python run.py --config-path ../../tasks/chatbot/config.yml
 
 ## Example Tasks
 
-As an example, the [Overworld Demo](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/) displays three separate tasks connected together by an overworld.
+As an example, the [Overworld Demo](https://github.com/facebookresearch/ParlAI/blob/main/parlai/chat_service/tasks/overworld_demo/) displays three separate tasks connected together by an overworld.
 
 - The `echo` task is a simple example of an echo bot, and shows the functionality and flow of a simple single-person world.
 - The `onboard data` task is an example that shows how an onboarding world can collect information that is later exposed in the active task world.
@@ -110,8 +110,8 @@ As an example, the [Overworld Demo](https://github.com/facebookresearch/ParlAI/b
 
 In addition to the overworld demo, the following example tasks are provided:
 
-- [Generic Chatbot](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/chatbot/): Allow conversations with any ParlAI models, for instance the [PersonaChat](https://github.com/facebookresearch/ParlAI/tree/master/projects/personachat) model.
-- [QA Data Collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/qa_data_collection/): collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
+- [Generic Chatbot](https://github.com/facebookresearch/ParlAI/blob/main/parlai/chat_service/tasks/chatbot/): Allow conversations with any ParlAI models, for instance the [PersonaChat](https://github.com/facebookresearch/ParlAI/tree/main/projects/personachat) model.
+- [QA Data Collection](https://github.com/facebookresearch/ParlAI/blob/main/parlai/chat_service/tasks/qa_data_collection/): collect questions and answers from people, given a random Wikipedia paragraph from SQuAD.
 
 ### Creating your Own Task
 
@@ -175,7 +175,7 @@ Additional flags can be used (you can also specify these in the `config.yml` fil
 
 **Other things to keep in mind when creating your Messenger tasks:**
 - Your world can utilize the complete set of [Facebook Messenger Templates](https://developers.facebook.com/docs/messenger-platform/send-messages/templates) by putting the formatted data in the 'payload' field of the observed action.
-- Quick replies can be attached to any action, the `MessengerOverworld` of the [Overworld Demo](https://github.com/facebookresearch/ParlAI/blob/master/parlai/chat_service/tasks/overworld_demo/) displays this functionality.
+- Quick replies can be attached to any action, the `MessengerOverworld` of the [Overworld Demo](https://github.com/facebookresearch/ParlAI/blob/main/parlai/chat_service/tasks/overworld_demo/) displays this functionality.
 
 
 ### Terminal
@@ -197,9 +197,9 @@ If no port number is specified in `--port` then the default port used will be `3
 
 ### Web Sockets
 
-See **Browser** above for an example implementation of a websockets-based chat service. You can view the code [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/services/browser_chat).
+See **Browser** above for an example implementation of a websockets-based chat service. You can view the code [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/chat_service/services/browser_chat).
 
 ### Adding a New Chat Service
 
-For full instructions on adding a new chat service to ParlAI, please read [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/chat_service/).
+For full instructions on adding a new chat service to ParlAI, please read [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/chat_service/).
 
