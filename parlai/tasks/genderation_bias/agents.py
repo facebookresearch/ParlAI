@@ -142,7 +142,7 @@ class ControllableTaskTeacher(FixedDialogTeacher):
         """
         Load list of explicitly gendered words.
 
-        Words taken from <https://github.com/uclanlp/gn_glove/blob/master/wordlist/>.
+        Words taken from <https://github.com/uclanlp/gn_glove/blob/main/wordlist/>.
 
         Examples include brother, girl, actress, husbands, etc.
         """

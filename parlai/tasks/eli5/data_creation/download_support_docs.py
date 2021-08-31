@@ -15,7 +15,7 @@ from data_utils import word_url_tokenize, make_ccid_filter
 from parlai.utils.io import PathManager
 
 """
-Adapted from https://github.com/facebookresearch/ELI5/blob/master/data_creation/download_support_docs.py
+Adapted from https://github.com/facebookresearch/ELI5/blob/main/data_creation/download_support_docs.py
 to download specific CommonCrawl IDs and URLs.
 """
 

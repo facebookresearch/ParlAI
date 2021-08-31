@@ -313,7 +313,7 @@ class DynamicLossScaler(object):
     <https://docs.nvidia.com/deeplearning/performance/mixed-precision-training/index.html#lossscaling>
 
     Shamelessly stolen and adapted from Fairseq.
-    <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py>
+    <https://github.com/pytorch/fairseq/blob/main/fairseq/optim/fp16_optimizer.py>
     """
 
     def __init__(
@@ -395,7 +395,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
     This class wraps an optimizer to perform FP16 training.
     This implementation is heavily based on the Fairseq implementation
     of `MemoryEfficientFP16Optimizer`, which can be found here:
-    <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/fp16_optimizer.py#L382>
+    <https://github.com/pytorch/fairseq/blob/main/fairseq/optim/fp16_optimizer.py#L382>
 
     This allows you to train bigger models on a single GPU, but can be unstable.
     Prefer the SafeFP16 implementation if you do not have concerns about memory.
@@ -677,7 +677,7 @@ class Adafactor(torch.optim.Optimizer):
     (see https://arxiv.org/abs/1804.04235)
 
     Taken from the fairseq implementation, which can be found here:
-    <https://github.com/pytorch/fairseq/blob/master/fairseq/optim/adafactor.py>.
+    <https://github.com/pytorch/fairseq/blob/main/fairseq/optim/adafactor.py>.
 
     :param params (iterable):
         iterable of parameters to optimize or dicts defining parameter groups
