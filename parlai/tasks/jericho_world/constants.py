@@ -22,7 +22,9 @@ except LookupError:
 
 
 # The set of words in the description of graph that we skip while checking
-# for overlap between knowledge grapj vertices and the description.
+# for overlap between knowledge graph vertices and the description.
+# We remove the word "you" from this set becuase otherwise the edges that have you (player) vertices,
+# which are quite important, will be reduced to empty vertices, and thus dropped.
 GRAPH_VERT_SKIP_TOKEN = set(stopwords.words('english')) - {'you'}
 
 LOCATION_NAME = 'loc-name'
