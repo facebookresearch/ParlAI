@@ -8,6 +8,7 @@ from collections import defaultdict
 from typing import List, Dict, Optional, Tuple
 
 import torch.jit
+from parlai.agents.bart.bart import BartAgent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.bpe import Gpt2BpeHelper
@@ -39,7 +40,7 @@ class TorchScriptGreedySearch(nn.Module):
     def __init__(self, agent: TorchAgent):
         super().__init__()
 
-        self.is_bart = agent.opt["model"] == "bart"
+        self.is_bart = isinstance(agent, BartAgent)
         self.device = agent.model.encoder.embeddings.weight.device
         # Dictionary/tokenization setup
         for key, val in self.CAIRAOKE_DICT_PARAMS.items():
