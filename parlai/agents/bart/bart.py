@@ -42,6 +42,10 @@ class BartAgent(TransformerGeneratorAgent):
     """
 
     @classmethod
+    def _get_cmdline_defaults(cls):
+        return BART_ARGS
+
+    @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
@@ -63,13 +67,16 @@ class BartAgent(TransformerGeneratorAgent):
             help='where to save fairseq conversion',
         )
         parser.set_defaults(dict_tokenizer='gpt2')
-        parser.set_defaults(**BART_ARGS)
+        parser.set_defaults(**cls._get_cmdline_defaults())
         return parser
 
     def __init__(self, opt: Opt, shared: TShared = None):
         if not shared:
             opt = self._initialize_bart(opt)
         super().__init__(opt, shared)
+
+    def _get_download_info(self):
+        return 'bart.large'
 
     def _initialize_bart(self, opt: Opt) -> Opt:
         """
@@ -87,9 +94,12 @@ class BartAgent(TransformerGeneratorAgent):
         if not opt.get('converting') and (
             init_model is None or not PathManager.exists(init_model)
         ):
-            download(opt['datapath'])
+            model_name = self._get_download_info()
+            folder = model_name.replace('.', '_')
+
+            download(opt['datapath'], model_name=model_name)
             opt['init_model'] = os.path.join(
-                opt['datapath'], 'models/bart/bart_large/model'
+                opt['datapath'], f'models/bart/{folder}/model'
             )
         if opt.get('init_fairseq_model'):
             opt = self._convert_model(opt)
@@ -141,6 +151,7 @@ class BartAgent(TransformerGeneratorAgent):
         """
         Build and return model.
         """
+        __import__("ipdb").set_trace()  # FIXME
         model = BartModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(

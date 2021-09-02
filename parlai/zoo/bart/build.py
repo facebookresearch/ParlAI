@@ -21,12 +21,12 @@ CONVERSION_ARGS = {
     'tokenizer': 'gpt2',
     'delimiter': '\n',
     'retain_bos_emb': True,
-    'model': 'bart',
     'fp16': True,
     'history_add_global_end_token': None,
 }
 
 BART_ARGS = {
+    'model': 'bart',
     'embedding_size': 1024,
     'ffn_size': 4096,
     'dropout': 0.1,
@@ -45,13 +45,36 @@ BART_ARGS = {
     'learn_positional_embeddings': True,
 }
 
+BASE_ARGS = {
+    'model': 'bart/base',
+    'embedding_size': 768,
+    'ffn_size': 3072,
+    'dropout': 0.1,
+    'attention_dropout': 0.1,
+    'n_heads': 12,
+    'n_positions': 1024,
+    'variant': 'bart',
+    'activation': 'gelu',
+    'n_encoder_layers': 6,
+    'n_decoder_layers': 6,
+    'force_fp16_tokens': True,
+    'fp16': True,
+    'dict_tokenizer': 'gpt2',
+    'embeddings_scale': False,
+    'history_add_global_end_token': None,
+    'learn_positional_embeddings': True,
+}
 
-def download(datapath, version='v1.1'):
+
+def download(datapath, version='v1.2', model_name='bart.large'):
     # v1.0: initial release
     # v1.1: change the datatype in conversion for a lighter model file
-    dpath = os.path.join(datapath, 'models', 'bart')
+    # v1.2: support for bart-base
 
-    if not build_data.built(dpath, version):
+    dpath = os.path.join(datapath, 'models', 'bart')
+    out_folder = os.path.join(dpath, model_name.replace('.', '_'))
+
+    if True or not build_data.built(out_folder, version):
         print('[downloading BART models: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
@@ -59,14 +82,13 @@ def download(datapath, version='v1.1'):
         build_data.make_dir(dpath)
 
         # Download the data.
-        model_name = 'bart.large'
         url = f'http://dl.fbaipublicfiles.com/fairseq/models/{model_name}.tar.gz'
-        build_data.download(url, dpath, f'{model_name}.tar.gz')
-        build_data.untar(dpath, f'{model_name}.tar.gz')
+        # build_data.download(url, dpath, f'{model_name}.tar.gz')
+        # build_data.untar(dpath, f'{model_name}.tar.gz')
         args = CONVERSION_ARGS.copy()
         args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
-        args['output'] = os.path.join(dpath, model_name.replace('.', '_'), 'model')
+        args['output'] = os.path.join(out_folder, 'model')
         ConversionScript.main(**args)
 
         # Mark the data as built.
-        build_data.mark_done(dpath, version)
+        build_data.mark_done(out_folder, version)
