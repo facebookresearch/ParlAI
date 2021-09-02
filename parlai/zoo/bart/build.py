@@ -86,6 +86,7 @@ def download(datapath, version='v1.2', model_name='bart.large'):
         # build_data.download(url, dpath, f'{model_name}.tar.gz')
         # build_data.untar(dpath, f'{model_name}.tar.gz')
         args = CONVERSION_ARGS.copy()
+        args['model'] = 'bart' if model_name == 'bart.large' else 'bart/base'
         args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
         args['output'] = os.path.join(out_folder, 'model')
         ConversionScript.main(**args)

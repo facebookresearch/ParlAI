@@ -151,7 +151,6 @@ class BartAgent(TransformerGeneratorAgent):
         """
         Build and return model.
         """
-        __import__("ipdb").set_trace()  # FIXME
         model = BartModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(

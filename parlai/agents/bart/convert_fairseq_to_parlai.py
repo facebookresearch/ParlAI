@@ -401,10 +401,25 @@ class ConversionScript(ParlaiScript):
 
         # 6. Shuffle embedding matrix given dictionary.
         enc_emb_key = 'encoder.embeddings.weight'
-        bart_dict = os.path.join(opt['datapath'], 'models/bart/bart.large/dict.txt')
+        bart_dict = self.opt['input'][0].replace('model.pt', 'dict.txt')
+
+        offset_dict = {}
         with PathManager.open(bart_dict) as f:
-            offset_dict = {i: l.split()[0] for i, l in enumerate(f.readlines())}
+            for i, l in enumerate(f.readlines()):
+                r = l.split()[0]
+                if r.startswith('madeupword'):
+                    pad_idx = int(r[-4:])
+                    if pad_idx > 2:
+                        continue
+                offset_dict[i] = r
+
         new_embs = return_dict[enc_emb_key].clone()
+
+        if len(new_embs) > len(self.agent.dict):
+            # the bart.base dictionary has a large number of totally unnecessary
+            # madeupword tokens. let's strip them
+            new_embs = new_embs[: len(self.agent.dict)]
+
         for idx, new_idx in offset_dict.items():
             try:
                 new_embs[int(new_idx) + 4] = return_dict[enc_emb_key][idx + 4]
@@ -412,10 +427,8 @@ class ConversionScript(ParlaiScript):
                 # if idx is not an int
                 if 'madeupword' in new_idx:
                     pad_idx = int(new_idx.split('madeupword')[1])
-                    new_embs[-(4 - pad_idx)] = return_dict['encoder.embeddings.weight'][
-                        idx + 4
-                    ]
-        return_dict['encoder.embeddings.weight'] = new_embs
+                    new_embs[-(4 - pad_idx)] = return_dict[enc_emb_key][idx + 4]
+        return_dict[enc_emb_key] = new_embs
 
         # 7. Swap special tokens
         #    Fairseq swaps the bos and eos token order for seq2seq models.
