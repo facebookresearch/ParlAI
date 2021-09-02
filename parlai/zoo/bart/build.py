@@ -83,8 +83,8 @@ def download(datapath, version='v1.2', model_name='bart.large'):
 
         # Download the data.
         url = f'http://dl.fbaipublicfiles.com/fairseq/models/{model_name}.tar.gz'
-        # build_data.download(url, dpath, f'{model_name}.tar.gz')
-        # build_data.untar(dpath, f'{model_name}.tar.gz')
+        build_data.download(url, dpath, f'{model_name}.tar.gz')
+        build_data.untar(dpath, f'{model_name}.tar.gz')
         args = CONVERSION_ARGS.copy()
         args['model'] = 'bart' if model_name == 'bart.large' else 'bart/base'
         args['input'] = [os.path.join(dpath, model_name, 'model.pt')]
