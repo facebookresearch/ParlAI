@@ -10,11 +10,23 @@ import os
 
 RESOURCES = [
     DownloadableFile(
-        'https://raw.githubusercontent.com/kushalchawla/CaSiNo/main/data/casino.json',
-        'casino.json',
-        '4f2c4560a0070906ed018c3f0766e35f8f8f31b36274ebf35b608621915744ab',
+        'https://raw.githubusercontent.com/kushalchawla/CaSiNo/main/data/split/casino_train.json',
+        'casino_train.json',
+        '6b953d153fc8c78f27e911c1439b93b9b3519357e3ba825091b2e567845ba3a7',
         zipped=False,
-    )
+    ),
+    DownloadableFile(
+        'https://raw.githubusercontent.com/kushalchawla/CaSiNo/main/data/split/casino_valid.json',
+        'casino_valid.json',
+        '91f2d1f09accedf98667ac081fd5083752738390734e991601b036643da077e0',
+        zipped=False,
+    ),
+    DownloadableFile(
+        'https://raw.githubusercontent.com/kushalchawla/CaSiNo/main/data/split/casino_test.json',
+        'casino_test.json',
+        'bf6da2d7c105396300d85a65819c04d99304ac9abb8a590ba342fd0c86b4dd12',
+        zipped=False,
+    ),
 ]
 
 

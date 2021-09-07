@@ -7,41 +7,19 @@
 from parlai.core.teachers import Teacher
 from .build import build
 from parlai.utils.io import PathManager
-
+import json
 import os
 import random
+import copy
 
-WELCOME_MESSAGE = (
-    'Negotiate with your opponent to decide who gets how many of each item. '
-    'You must both agree on the distribution of items (or you both get zero), '
-    'but try to get as much value as you can. There are {book_cnt} book(s), '
-    'each with a value of {book_val}, {hat_cnt} hat(s), each with a value of '
-    '{hat_val}, and {ball_cnt} ball(s), each with a value of {ball_val}.'
-)
-
-EOS_TOKEN = '<eos>'
-SELECTION_TOKEN = '<selection>'
-YOU_TOKEN = 'YOU:'
-THEM_TOKEN = 'THEM:'
-
-INPUT_TAG = 'input'
-DIALOGUE_TAG = 'dialogue'
-OUTPUT_TAG = 'output'
+WELCOME_MESSAGE = "Negotiate with your opponent to decide who gets how many of each item. There are three quantities each of Food, Water, and Firewood. Try hard to get as much value as you can, while still leaving your partner satisfied and with a positive perception about you. If you fail to come to an agreement, both parties get 5 points. Refer to the following preference order and arguments for your negotiation: \n\nFood\nValue:{food_val} points for each package\nArgument:{food_argument}\n\nWater\nValue:{water_val} points for each package\nArgument:{water_argument}\n\nFirewood\nValue:{firewood_val} points for each package\nArgument:{firewood_argument}\n"
 
 
-def get_tag(tokens, tag):
+class CasinoTeacher(Teacher):
     """
-    Extracts the value inside the given tag.
-    """
-    start = tokens.index('<' + tag + '>') + 1
-    stop = tokens.index('</' + tag + '>')
-    return tokens[start:stop]
+    A negotiation teacher that loads the CaSiNo data from https://github.com/kushalchawla/CaSiNo.
 
-
-class NegotiationTeacher(Teacher):
-    """
-    End-to-end negotiation teacher that loads the data from
-    https://github.com/facebookresearch/end-to-end-negotiator.
+    Each dialogue is converted into two datapoints, one from the perspective of each participant.
     """
 
     def __init__(self, opt, shared=None):
@@ -51,21 +29,16 @@ class NegotiationTeacher(Teacher):
         self.random = self.datatype_ == 'train'
         build(opt)
 
-        filename = 'val' if self.datatype == 'valid' else self.datatype
+        filename = self.datatype
         data_path = os.path.join(
-            opt['datapath'],
-            'negotiation',
-            'end-to-end-negotiator-bbb93bbf00f69fced75d5c0d22e855bda07c9b78',
-            'src',
-            'data',
-            'negotiate',
-            filename + '.txt',
+            opt['datapath'], 'casino', 'casino_' + filename + '.json'
         )
 
         if shared and 'data' in shared:
             self.episodes = shared['episodes']
         else:
             self._setup_data(data_path)
+        print(f"Total episodes: {self.num_episodes()}")
 
         # for ordered data in batch mode (especially, for validation and
         # testing), each teacher in the batch gets a start index and a step
@@ -74,6 +47,41 @@ class NegotiationTeacher(Teacher):
         self.data_offset = opt.get('batchindex', 0)
 
         self.reset()
+
+    def _setup_data(self, data_path):
+        print('loading: ' + data_path)
+        with PathManager.open(data_path) as data_file:
+
+            dialogues = json.load(data_file)
+            episodes = []
+
+            for dialogue in dialogues:
+
+                # divide the dialogue into two perspectives, one for each participant
+                episode = copy.deepcopy(dialogue)
+                episode[
+                    'perspective'
+                ] = (
+                    'mturk_agent_1'
+                )  # id of the agent whose perspective will be used in this dialog
+                episodes.append(episode)
+
+                episode = copy.deepcopy(dialogue)
+                episode[
+                    'perspective'
+                ] = (
+                    'mturk_agent_2'
+                )  # id of the agent whose perspective will be used in this dialog
+                episodes.append(episode)
+
+            self.episodes = episodes
+
+    def reset(self):
+        super().reset()
+        self.episode_idx = self.data_offset - self.step_size
+        self.dialogue_idx = None
+        self.expected_reponse = None
+        self.epochDone = False
 
     def num_examples(self):
         # 1 example for every expected learner text response (YOU), and 1
@@ -91,22 +99,10 @@ class NegotiationTeacher(Teacher):
     def num_episodes(self):
         return len(self.episodes)
 
-    def reset(self):
-        super().reset()
-        self.episode_idx = self.data_offset - self.step_size
-        self.dialogue_idx = None
-        self.expected_reponse = None
-        self.epochDone = False
-
     def share(self):
         shared = super().share()
         shared['episodes'] = self.episodes
         return shared
-
-    def _setup_data(self, data_path):
-        print('loading: ' + data_path)
-        with PathManager.open(data_path) as data_file:
-            self.episodes = data_file.readlines()
 
     def observe(self, observation):
         """
