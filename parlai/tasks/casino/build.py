@@ -10,15 +10,16 @@ import os
 
 RESOURCES = [
     DownloadableFile(
-        'https://github.com/facebookresearch/end-to-end-negotiator/archive/bbb93bbf00f69fced75d5c0d22e855bda07c9b78.zip',
-        'negotiation.zip',
-        '101f1ce90c3d86a55b097821de812af8e747004beb7a763a63127545b178ddf4',
+        'https://raw.githubusercontent.com/kushalchawla/CaSiNo/main/data/casino.json',
+        'casino.json',
+        '4f2c4560a0070906ed018c3f0766e35f8f8f31b36274ebf35b608621915744ab',
+        zipped=False,
     )
 ]
 
 
 def build(opt):
-    dpath = os.path.join(opt['datapath'], 'negotiation')
+    dpath = os.path.join(opt['datapath'], 'casino')
     version = "v1.1"
 
     if not build_data.built(dpath, version_string=version):
