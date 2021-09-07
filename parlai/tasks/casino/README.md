@@ -2,6 +2,7 @@ Task: CampSite Negotiation Dialogue (CaSiNo)
 ======================
 
 **Description**
+
 We provide a novel dataset (referred to as CaSiNo) of 1030 negotiation dialogues. Two participants take the role of campsite neighbors and negotiate for Food, Water, and Firewood packages, based on their individual preferences and requirements. This design keeps the task tractable, while still facilitating linguistically rich and personal conversations. This helps to overcome the limitations of prior negotiation datasets such as Deal or No Deal and Craigslist Bargain. Each dialogue consists of rich meta-data including participant demographics, personality, and their subjective evaluation of the negotiation in terms of satisfaction and opponent likeness.
 
 **Citation**
@@ -16,6 +17,7 @@ We provide a novel dataset (referred to as CaSiNo) of 1030 negotiation dialogues
 ```
 
 Dataset Homepage: https://github.com/kushalchawla/CaSiNo
+
 NAACL 2021 Paper: https://aclanthology.org/2021.naacl-main.254.pdf
 
 Tags: #CaSiNo, #All, #Negotiation
