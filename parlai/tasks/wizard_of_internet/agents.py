@@ -591,7 +591,7 @@ class CheckedSentenceAsLabel(MessageMutator):
             label = message.pop('labels')[0]
             checked_sentence = ' '.join(message.get(CONST.SELECTED_SENTENCES, ''))
 
-            text += f'\n_label_ {label}'
+            text += f'\n__label__ {label} __endlabel__'
             message['text'] = text
 
             message['labels'] = [checked_sentence]
@@ -624,7 +624,7 @@ class CheckedSentenceAsLabelLm(MessageMutator):
             label1 = ' '.join(ls[0:ind])
             label2 = ' '.join(ls[ind : len(ls)])
 
-            text += f'{label1}\n_label_ {label2}'
+            text += f'{label1}\n__label__ {label2} __endlabel__'
             message['text'] = text
 
             message['labels'] = [checked_sentence]
