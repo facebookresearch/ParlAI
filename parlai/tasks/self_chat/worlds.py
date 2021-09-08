@@ -189,9 +189,7 @@ class SelfChatWorld(DialogPartnerWorld):
         self.episode_cnt += 1
         self.contexts = None
         self.seed_utterances = None
-        agents = self.get_agents()
-        for a in agents:
-            a.reset()
+        self.reset_agents()
 
     def _use_seed_utterances(self) -> bool:
         """
