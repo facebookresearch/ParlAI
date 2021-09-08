@@ -37,6 +37,8 @@ import random
 TOKEN_NOCHOSEN = 'no_passages_used'
 TOKEN_KNOWLEDGE = '__knowledge__'
 TOKEN_END_KNOWLEDGE = '__endknowledge__'
+TOKEN_LABEL = '__label__'
+TOKEN_END_LABEL = '__endlabel__'
 
 
 def _first_val(dictionary):
@@ -1315,7 +1317,7 @@ class AddDialogueSentence(MessageMutator):
         dialogue_response = labels[0]
         checked_sentence = message.get('checked_sentence', '')
 
-        text += f'\n{TOKEN_KNOWLEDGE} {dialogue_response} {TOKEN_END_KNOWLEDGE}'
+        text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
         message['text'] = text
         message['labels'] = [checked_sentence]
 
