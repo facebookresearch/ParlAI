@@ -18,6 +18,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 from __future__ import annotations
 from typing import Iterable, Optional, Tuple
 from parlai.core.message import Message
+from parlai.core.mutators import register_mutator, MessageMutator
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
@@ -1273,3 +1274,45 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     """
 
     pass
+
+
+@register_mutator("add_checked_sentence")
+class AddCheckedSentence(MessageMutator):
+    """
+    Adds the checked sentence to the end of text. But only a single time.
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        original_message = message.copy()
+        if 'text' not in message:
+            return original_message
+        text = message.pop('text')
+        checked_sentence = message.get('checked_sentence', '')
+
+        text += f'\n{TOKEN_KNOWLEDGE} {checked_sentence} {TOKEN_END_KNOWLEDGE}'
+        message['text'] = text
+
+        return message
+
+
+@register_mutator("add_dialogue_sentence")
+class AddDialogueSentence(MessageMutator):
+    """
+    Adds the dialogue sentence. But only a single time. The label then becomes
+    the checked sentence.
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        original_message = message.copy()
+        if 'text' not in message or 'labels' not in message or not message['labels']:
+            return original_message
+        text = message.pop('text')
+        labels = message.pop('labels')
+        dialogue_response = labels[0]
+        checked_sentence = message.get('checked_sentence', '')
+
+        text += f'\n{TOKEN_KNOWLEDGE} {dialogue_response} {TOKEN_END_KNOWLEDGE}'
+        message['text'] = text
+        message['labels'] = [checked_sentence]
+
+        return message
