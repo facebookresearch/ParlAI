@@ -1300,8 +1300,8 @@ class AddCheckedSentence(MessageMutator):
         return message
 
 
-@register_mutator("add_dialogue_sentence")
-class AddDialogueSentence(MessageMutator):
+@register_mutator("checked_sentence_as_label")
+class CheckedSentenceAsLabel(MessageMutator):
     """
     Adds the dialogue sentence.
 
