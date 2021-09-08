@@ -3,7 +3,7 @@ Running crowdsourcing tasks
 __Authors__: Jack Urbanek, Emily Dinan, Will Feng, Eric Smith
 
 :::{warning}
-ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and the ParlAI crowdsourcing code has moved from `parlai.mturk` to [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing). Before reading this tutorial, it may be useful to read the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for a concise guide on how to run crowdsourcing tasks in the current version of ParlAI. This tutorial provides more in-depth information on setting up and configuring crowdsourcing tasks.
+ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and the ParlAI crowdsourcing code has moved from `parlai.mturk` to [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing). Before reading this tutorial, it may be useful to read the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/README.md) for a concise guide on how to run crowdsourcing tasks in the current version of ParlAI. This tutorial provides more in-depth information on setting up and configuring crowdsourcing tasks.
 
 If you wish to access the old version of this tutorial for pre-Mephisto crowdsourcing tasks, switch to the `final_mturk` tag of ParlAI:
 ```bash
@@ -38,11 +38,11 @@ Example Tasks
 
 We provide a few examples of using crowdsourcing tasks with ParlAI:
 
-- [Chat demo](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/chat_demo): have two humans chat back and forth for a multi-turn conversation.
-- [Model chat](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/model_chat): have a human chat with a model agent in a conversation, perhaps about an image, and optionally have the human select among checkboxes to annotate the model's responses.
-- [Static turn annotations](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/turn_annotations_static): have a human read a static conversation between two partners and select among checkboxes to annotate one of the speakers' responses.
-- [QA data collection](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/): collect questions and answers from Turkers, given a random Wikipedia paragraph from SQuAD.
-- [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation question such as, "Who would you prefer to talk to for a long conversation?"
+- [Chat demo](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/tasks/chat_demo): have two humans chat back and forth for a multi-turn conversation.
+- [Model chat](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/tasks/model_chat): have a human chat with a model agent in a conversation, perhaps about an image, and optionally have the human select among checkboxes to annotate the model's responses.
+- [Static turn annotations](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/tasks/turn_annotations_static): have a human read a static conversation between two partners and select among checkboxes to annotate one of the speakers' responses.
+- [QA data collection](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/tasks/qa_data_collection/): collect questions and answers from Turkers, given a random Wikipedia paragraph from SQuAD.
+- [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/tasks/acute_eval): run a comparison test where a human reads two conversations and chooses one or the other based on an evaluation question such as, "Who would you prefer to talk to for a long conversation?"
 
 ### Sample Task: Collecting Data
 
@@ -50,7 +50,7 @@ One of the biggest use cases of Mechanical Turk is to collect natural
 language data from human Turkers.
 
 As an example, the [QA data collection
-task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/tasks/qa_data_collection/)
+task](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/tasks/qa_data_collection/)
 does the following:
 
 1.  Pick a random Wikipedia paragraph from the SQuAD dataset.
@@ -71,11 +71,11 @@ Creating Your Own Task
 
 Mephisto provides a generic MTurk dialog interface that you can use to
 implement any kind of dialog task. To create your own task, start by
-reading the README of the existing task in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing) that your desired task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following classes (or classes that inherit from them):
+reading the README of the existing task in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing) that your desired task most resembles, and then subclass the appropriate components in order to write your own task. You may need to subclass the following classes (or classes that inherit from them):
 
 - `CrowdOnboardingWorld`: the base world class that handles the logic for determining whether a crowdsource worker passes or fails onboarding. This logic is typically used to judge whether the crowdsource worker is likely to be able to complete your task in an acceptable manner.
 - `CrowdTaskWorld`: the base world class that handles the logic for how each of the human or bot agents will act during each turn of the task, as defined by a call to `CrowdTaskWorld.parley()`.
-- `Blueprint`: the base class containing task-specific logic for setting up a task run. See the Mephisto [Blueprint README](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/blueprints/README.md) and [architecture overview](https://github.com/facebookresearch/Mephisto/blob/master/docs/architecture_overview.md) for more information.
+- `Blueprint`: the base class containing task-specific logic for setting up a task run. See the Mephisto [Blueprint README](https://github.com/facebookresearch/Mephisto/blob/main/mephisto/abstractions/blueprints/README.md) and [architecture overview](https://github.com/facebookresearch/Mephisto/blob/main/docs/architecture_overview.md) for more information.
 - `BlueprintArgs`: defines the specific arguments needed for configuring a blueprint. Subclasses of `BlueprintArgs` retain all arguments defined by their superclasses and add additional task-specific ones.
 
 You may need to create your own `run.py` file with which to launch your script if you wish to have more control over setup of HITs, initialize custom objects shared across HITs with `SharedParlAITaskState`, or call a custom `Blueprint` so that its arguments can be read in correctly by [Hydra](https://github.com/facebookresearch/hydra). (Note that having to create a new `run.py` file in order to call a specific `Blueprint` should no longer be necessary as of the upcoming Hydra 1.1.)
@@ -91,13 +91,13 @@ A few things to keep in mind:
     `'episode_done'` set to `True`, as this signals that the world should
     start returning `True` for the `episode_done()` function.
 2.  Make sure to test your dialog task using Mephisto's sandbox mode (enabled by default) before
-    pushing it live. See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live) for running live tasks.
+    pushing it live. See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing#running-tasks-live) for running live tasks.
 
 Advanced Task Techniques
 ------------------------
 
 The Mephisto platform allows for a number of advanced customization
-techniques to cover specialized tasks. See the [`bootstrap-chat` README](https://github.com/facebookresearch/Mephisto/blob/master/packages/bootstrap-chat/README.md) for a discussion of how to utilize Bootstrap-based UI components for crowdsourcing tasks.
+techniques to cover specialized tasks. See the [`bootstrap-chat` README](https://github.com/facebookresearch/Mephisto/blob/main/packages/bootstrap-chat/README.md) for a discussion of how to utilize Bootstrap-based UI components for crowdsourcing tasks.
 
 Running a Task
 --------------
@@ -136,7 +136,7 @@ mephisto.blueprint.num_conversations <num_conversations> \
 mephisto.task.task_reward <reward>
 ```
 (Note that the command will launch HITs on the sandbox by default.) For instance, to create 2 conversations for the [QA Data
-Collection](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/qa_data_collection)
+Collection](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/qa_data_collection)
 task with a reward of $0.05 per assignment in sandbox mode, run:
 
 ```bash
@@ -145,7 +145,7 @@ mephisto.blueprint.num_conversations 2 \
 mephisto.task.task_reward 0.05
 ```
 
-Make sure to test your task in sandbox mode first before pushing it live: see the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#running-tasks-live) for how to run a live task.
+Make sure to test your task in sandbox mode first before pushing it live: see the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing#running-tasks-live) for how to run a live task.
 
 Additional parameters can be used for more specific purposes:
 
@@ -157,13 +157,13 @@ Additional parameters can be used for more specific purposes:
     windows/tabs). This defaults to 0, which is unlimited.
 -   `mephisto.task.assignment_duration_in_seconds` sets a maximum limit for how long a specific worker can work on your task.
 
-See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#mturk-specific-task-configuration) for some more commonly used command-line flags. Also see the [README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing#specifying-your-own-yaml-file) for how to specify your own YAML file of parameter values.
+See the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing#mturk-specific-task-configuration) for some more commonly used command-line flags. Also see the [README](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing#specifying-your-own-yaml-file) for how to specify your own YAML file of parameter values.
 
 Reviewing Turker's Work
 -----------------------
 
 You can programmatically review work using the commands available in the
-`CrowdTaskWorld` class: for example, see the sample code in the docstring of [`CrowdTaskWorld.review_work()`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/utils/worlds.py). In particular, you can set HITs to be
+`CrowdTaskWorld` class: for example, see the sample code in the docstring of [`CrowdTaskWorld.review_work()`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/utils/worlds.py). In particular, you can set HITs to be
 automatically approved if they are deemed completed by the world.
 
 By default, if you don't take any action to approve/reject HITs within 1 week, all HITs will be auto-approved
@@ -174,7 +174,7 @@ Mephisto MTurk Tips and Tricks
 
 ### Approving Work
 
--   Unless you explicitly set the `auto_approve_delay` argument in [`create_hit_type()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/providers/mturk/mturk_utils.py), or approve work by calling [`MTurkAgent.approve_work()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/providers/mturk/mturk_agent.py), work will be auto-approved after 7 days. Workers like getting paid quickly, so be mindful to not have too much delay before their HITs are approved.
+-   Unless you explicitly set the `auto_approve_delay` argument in [`create_hit_type()`](https://github.com/facebookresearch/Mephisto/blob/main/mephisto/abstractions/providers/mturk/mturk_utils.py), or approve work by calling [`MTurkAgent.approve_work()`](https://github.com/facebookresearch/Mephisto/blob/main/mephisto/abstractions/providers/mturk/mturk_agent.py), work will be auto-approved after 7 days. Workers like getting paid quickly, so be mindful to not have too much delay before their HITs are approved.
 -   Occasionally Turkers will take advantage of getting paid immediately
     without review if you auto-approve their work by calling
     `MTurkAgent.approve_work()` at the close of the task. If you aren't
@@ -205,7 +205,7 @@ Mephisto MTurk Tips and Tricks
 
 -   Soft-blocking workers who are clearly trying on a task but not
     __quite__ getting it allows those workers to work on other tasks for
-    you in the future. You can soft-block workers by calling [`Worker.grant_qualification()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/data_model/qualification.py) for a certain `qualification_name`, which is typically set by the `mephisto.blueprint.block_qualification` parameter. That worker will then not be able to work on any
+    you in the future. You can soft-block workers by calling [`Worker.grant_qualification()`](https://github.com/facebookresearch/Mephisto/blob/main/mephisto/data_model/qualification.py) for a certain `qualification_name`, which is typically set by the `mephisto.blueprint.block_qualification` parameter. That worker will then not be able to work on any
     tasks that use the same value for `mephisto.blueprint.block_qualification`.
 
 ### Preventing and Handling Crashes
@@ -217,11 +217,11 @@ Mephisto MTurk Tips and Tricks
     model parameters across all HITs if possible. Needing to store a separate set of parameters for each
     of your conversations might make your machine run out of memory, causing
     the data collection to crash in an manner that ParlAI can't handle.
--   If your task crashes, it's good to run [`mephisto/scripts/mturk/cleanup.py`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/scripts/mturk/cleanup.py) to find the task that had crashed and remove the orphan HITs.
+-   If your task crashes, it's good to run [`mephisto/scripts/mturk/cleanup.py`](https://github.com/facebookresearch/Mephisto/blob/main/mephisto/scripts/mturk/cleanup.py) to find the task that had crashed and remove the orphan HITs.
 -   If a worker emails you about a task crash with sufficient evidence
     that they were working on that task, offer to compensate them by sending
     them a bonus for their failed task on one of their other completed
-    tasks, and bonus the HIT ID by calling [`MTurkWorker.bonus_worker()`](https://github.com/facebookresearch/Mephisto/blob/master/mephisto/abstractions/providers/mturk/mturk_worker.py).
+    tasks, and bonus the HIT ID by calling [`MTurkWorker.bonus_worker()`](https://github.com/facebookresearch/Mephisto/blob/main/mephisto/abstractions/providers/mturk/mturk_worker.py).
 
 ### Task Design
 

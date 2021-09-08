@@ -3,7 +3,7 @@ name: Lint
 on:
   push:
     branches:
-    - master
+    - main
   pull_request:
 
 jobs:
@@ -30,9 +30,9 @@ jobs:
       - name: Fix git
         run: |
           set -eux
-          git fetch origin master
+          git fetch origin main
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            git branch -f master origin/master
+            git branch -f main origin/main
           fi
       - name: Run flake8
         run: |
@@ -68,9 +68,9 @@ jobs:
       - name: Fix git
         run: |
           set -eux
-          git fetch origin master
+          git fetch origin main
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            git branch -f master origin/master
+            git branch -f main origin/main
           fi
       - name: caching dependencies
         uses: actions/cache@v1
@@ -88,10 +88,10 @@ jobs:
         run: |
           set -eux
           mypy | sort | grep -v '^Found ' > typeerrors-HEAD.txt
-          forkpoint=$(git merge-base master HEAD)
+          forkpoint=$(git merge-base main HEAD)
           git checkout -f $forkpoint
-          mypy | sort | grep -v '^Found ' > typeerrors-MASTER.txt
-          diff -u typeerrors-MASTER.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
+          mypy | sort | grep -v '^Found ' > typeerrors-main.txt
+          diff -u typeerrors-main.txt typeerrors-HEAD.txt | grep -v '^+++' | grep '^+' > typeerrors-CHANGED.txt || true
           cat typeerrors-CHANGED.txt | sed 's/^+//' | sed 's/: error:/:1: mypy:/' | tee ${GITHUB_WORKSPACE}/output-annotations.txt
       - name: Add annotations
         uses: stephenroller/add-annotations-github-action@master

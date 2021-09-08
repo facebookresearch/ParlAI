@@ -31,7 +31,7 @@ pseudo-code as its parley:
 
 :::{note}
 This is only pseudo-code, but the
-[real code](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/worlds.py)
+[real code](https://github.com/facebookresearch/ParlAI/blob/main/parlai/core/worlds.py)
 is reasonably easy to read, even for newcomers.
 :::
 
@@ -126,7 +126,7 @@ class PseudoAgent(Agent):
 :::{note} Real implementations
 The above is really just a very simple example. You may find it illuminating to
 read the implementation of
-[UnigramAgent](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/unigram/unigram.py)
+[UnigramAgent](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/unigram/unigram.py)
 or even [TorchAgent](parlai.core.torch_agent.TorchAgent).
 :::
 
@@ -280,7 +280,7 @@ def batch_respond(self, messages: List[Message]) -> List[str]:
 :::{note}
 This is only a sketch. The real code is more complicated, but advanced users
 may be interested in
-[reading it](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/worlds.py).
+[reading it](https://github.com/facebookresearch/ParlAI/blob/main/parlai/core/worlds.py).
 :::
 
 As a final diversion, we'll discuss at a high level of how Dynamic Batching

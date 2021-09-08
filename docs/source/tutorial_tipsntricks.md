@@ -117,13 +117,13 @@ Flags to generate and store the self-chat:
 Self-Chat World
 
 If the self-chat needs additional context to start with, e.g. persona, topics, one can specify it with `-t <task_name>` (in the above case "convai2") which links to a ParlAI world in the task world module `parlai.tasks.{task_name}.worlds` that handles the particular nature of interactions, e.g.
-[here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/convai2/worlds.py#L98)
+[here](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/convai2/worlds.py#L98)
 or
-[here](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wizard_of_wikipedia/worlds.py#L106).
+[here](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/wizard_of_wikipedia/worlds.py#L106).
 
 The base [SelfChatWorld](https://github.com/facebookresearch/ParlAI/blob/selfchat_feature/parlai/tasks/self_chat/worlds.py#L52) consists of:
-- ` contexts ` specify [context](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/self_chat/worlds.py#L135) information such as persona, topics, sometimes initial utterances.
-- ` _opener` consists of [seeded messages](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/self_chat/worlds.py#L146) from the task.
+- ` contexts ` specify [context](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/self_chat/worlds.py#L135) information such as persona, topics, sometimes initial utterances.
+- ` _opener` consists of [seeded messages](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/self_chat/worlds.py#L146) from the task.
 - [` parley()`](https://github.com/facebookresearch/ParlAI/blob/selfchat_feature/parlai/tasks/self_chat/worlds.py#L116) handles the logic of two agents interacting with each other with additional seeded contexts and/or utterances.
 
 
@@ -176,4 +176,4 @@ and tasks, create your own model zoo, and manage it all with a separate
 git repository.
 
 For more detailed instructions and features, see the
-[README](http://github.com/facebookresearch/ParlAI/blob/master/example_parlai_internal)
+[README](http://github.com/facebookresearch/ParlAI/blob/main/example_parlai_internal)

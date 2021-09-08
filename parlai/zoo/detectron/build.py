@@ -9,7 +9,7 @@ Detectron Models used in
 "12-in-1: Multi-Task Vision and Language Representation Learning" (Lu et. al).
 
 See https://github.com/facebookresearch/vilbert-multi-task and
-specifically https://github.com/facebookresearch/vilbert-multi-task/tree/master/data
+specifically https://github.com/facebookresearch/vilbert-multi-task/tree/main/data
 for more details.
 """
 
