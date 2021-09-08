@@ -18,6 +18,7 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
+from parlai.core.mutators import register_mutator, MessageMutator
 
 from .build import build
 
@@ -573,37 +574,25 @@ class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
         return CONST.SELECTED_DOCS_TITLES
 
 
-class PredictKnowledgeGivenLabelTeacher(WizardOfInternetBaseTeacher):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared=shared)
-        self.id = 'PredictKnowledgeGivenLabelTeacher'
+@register_mutator("add_checked_sentence")
+class AddCheckedSentence(MessageMutator):
+    """
+    Adds the checked sentences as the label, and the label to the end of text.
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators flatten,add_checked_sentence
+    """
 
-    def _teacher_action_type(self) -> str:
-        return CONST.ACTION_WIZARD_DOC_SELECTION
+    def message_mutation(self, message: Message) -> Message:
+        original_message = message.copy()
+        try:
+            text = message.pop('text')
+            label = message.pop('labels')[0]
+            checked_sentence = ' '.join(message.get(CONST.SELECTED_SENTENCES, ''))
 
-    def _knowledge_piece(self):
-        return CONST.SELECTED_SENTENCES
+            text += f'\n_label_ {label}'
+            message['text'] = text
 
-    def additional_message_content(self, parlai_message: Message, action: Dict):
-        for item_key in (
-            CONST.SELECTED_DOCS,
-            CONST.SELECTED_DOCS_TITLES,
-            CONST.SELECTED_SENTENCES,
-        ):
-            parlai_message[item_key] = action[item_key]
+            message['labels'] = [checked_sentence]
+        except KeyError:
+            return original_message
 
-    def create_parlai_message(self, dict_message: Dict):
-        parlai_msg = Message(
-            {
-                CONST.SPEAKER_ID: dict_message[CONST.SPEAKER_ID],
-                # CONST.MESSAGE_TEXT: dict_message[CONST.MESSAGE_TEXT] + "\n _label_ " +
-                CONST.LABELS: [' '.join(dict_message[CONST.SELECTED_SENTENCES])],
-            }
-        )
-        prv_msg = dict_message.get(CONST.PARTNER_PREVIOUS_MESSAGE)
-        label = '\n_label_ ' + dict_message[CONST.MESSAGE_TEXT]
-        if prv_msg:
-            parlai_msg[CONST.MESSAGE_TEXT] = prv_msg[1][CONST.MESSAGE_TEXT] + label
-        else:
-            parlai_msg[CONST.MESSAGE_TEXT] = label
-        return parlai_msg
+        return message
