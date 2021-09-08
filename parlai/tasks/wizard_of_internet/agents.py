@@ -604,8 +604,8 @@ class CheckedSentenceAsLabel(MessageMutator):
 @register_mutator("checked_sentence_as_label_lm")
 class CheckedSentenceAsLabelLm(MessageMutator):
     """
-    Sets the checked sentences as the label, and the label to the end of text.
-    Language modeling version where a random piece of the label is sampled in the input.
+    Sets the checked sentences as the label, and the label to the end of text. Language
+    modeling version where a random piece of the label is sampled in the input.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
     flatten,checked_sentence_as_label_lm
