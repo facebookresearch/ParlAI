@@ -15,6 +15,23 @@ import copy
 WELCOME_MESSAGE = "Negotiate with your opponent to decide who gets how many of each item. There are three quantities each of Food, Water, and Firewood. Try hard to get as much value as you can, while still leaving your partner satisfied and with a positive perception about you. If you fail to come to an agreement, both parties get 5 points. Refer to the following preference order and arguments for your negotiation: \n\nFood\nValue:{food_val} points for each package\nArgument:{food_argument}\n\nWater\nValue:{water_val} points for each package\nArgument:{water_argument}\n\nFirewood\nValue:{firewood_val} points for each package\nArgument:{firewood_argument}\n"
 
 
+def get_welcome_values(part_info):
+
+    value2points = {'High': 5, 'Medium': 4, 'Low': 3}
+
+    issue2points = {v: value2points[k] for k, v in part_info['value2issue'].items()}
+    issue2reason = {
+        v: part_info['value2reason'][k] for k, v in part_info['value2issue'].items()
+    }
+
+    welcome_values = {}
+    for issue in ['Food', 'Water', 'Firewood']:
+        welcome_values[issue.lower() + '_val'] = issue2points[issue]
+        welcome_values[issue.lower() + '_argument'] = issue2reason[issue]
+
+    return welcome_values
+
+
 class CasinoTeacher(Teacher):
     """
     A negotiation teacher that loads the CaSiNo data from https://github.com/kushalchawla/CaSiNo.
@@ -80,21 +97,24 @@ class CasinoTeacher(Teacher):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
         self.dialogue_idx = None
+        self.perspective = None
         self.expected_reponse = None
         self.epochDone = False
 
     def num_examples(self):
-        # 1 example for every expected learner text response (YOU), and 1
-        # example for the expected learner final negotiation output values
+        """
+        Lets simply return the total number of utterances in all the dialogues. This will include special utterances for submit-deal, accept-deal, and reject-deal.
+
+        Half of this quantity will correspond to the number of responses that an agent would generate in one epoch.
+        """
         num_exs = 0
-        dialogues = [
-            self._split_dialogue(get_tag(episode.strip().split(), DIALOGUE_TAG))
-            for episode in self.episodes
-        ]
-        num_exs = sum(
-            len([d for d in dialogue if YOU_TOKEN in d]) + 1 for dialogue in dialogues
-        )
-        return num_exs
+
+        for episode in self.episodes:
+            num_exs += len(episode['chat_logs'])
+
+        return (
+            num_exs // 2
+        )  # since each dialogue was converted into 2 perspectives, one for each participant: see _setup_data
 
     def num_episodes(self):
         return len(self.episodes)
@@ -130,51 +150,39 @@ class CasinoTeacher(Teacher):
             self.episode_idx = (self.episode_idx + self.step_size) % len(self.episodes)
             return self._start_dialogue()
 
-    def _split_dialogue(self, words, separator=EOS_TOKEN):
-        sentences = []
-        start = 0
-        for stop in range(len(words)):
-            if words[stop] == separator:
-                sentences.append(words[start:stop])
-                start = stop + 1
-        if stop >= start:
-            sentences.append(words[start:])
-        return sentences
-
     def _start_dialogue(self):
-        words = self.episodes[self.episode_idx].strip().split()
-        self.values = get_tag(words, INPUT_TAG)
-        self.dialogue = self._split_dialogue(get_tag(words, DIALOGUE_TAG))
-        self.output = get_tag(words, OUTPUT_TAG)
-        # The dialogue should end with a selection token
-        assert self.dialogue[-1][1] == SELECTION_TOKEN
 
-        (book_cnt, book_val, hat_cnt, hat_val, ball_cnt, ball_val) = self.values
+        episode = self.episodes[self.episode_idx]
+        self.perspective = episode['perspective']
+
+        part_info = episode['participant_info'][self.perspective]
+        welcome_values = get_welcome_values(part_info)
+
         welcome = WELCOME_MESSAGE.format(
-            book_cnt=book_cnt,
-            book_val=book_val,
-            hat_cnt=hat_cnt,
-            hat_val=hat_val,
-            ball_cnt=ball_cnt,
-            ball_val=ball_val,
+            food_val=welcome_values['food_val'],
+            water_val=welcome_values['water_val'],
+            firewood_val=welcome_values['firewood_val'],
+            food_argument=welcome_values['food_argument'],
+            water_argument=welcome_values['water_argument'],
+            firewood_argument=welcome_values['firewood_argument'],
         )
 
+        self.dialogue = episode['chat_logs']
+        self.output = part_info['outcomes']
+        # The dialogue should end with accept deal
+        assert (
+            self.dialogue[-1]['text'] == 'Accept-Deal'
+        ), 'The dialogue should end with accept deal.'
+
         self.dialogue_idx = -1
-        if self.dialogue[0][0] == THEM_TOKEN:
+        if self.dialogue[0]['id'] != self.perspective:
+            # the other party (or the teacher) starts the dialogue.
             action = self._continue_dialogue()
             action['text'] = welcome + '\n' + action['text']
         else:
+            # the agent (whose perspective we are in) starts the dialogue.
             action = self._continue_dialogue(skip_teacher=True)
             action['text'] = welcome
-
-        action['items'] = {
-            "book_cnt": book_cnt,
-            "book_val": book_val,
-            "hat_cnt": hat_cnt,
-            "hat_val": hat_val,
-            "ball_cnt": ball_cnt,
-            "ball_val": ball_val,
-        }
 
         return action
 
@@ -187,9 +195,9 @@ class CasinoTeacher(Teacher):
             if self.dialogue_idx >= len(self.dialogue):
                 action['text'] = SELECTION_TOKEN
             else:
-                sentence = self.dialogue[self.dialogue_idx]
-                assert sentence[0] == THEM_TOKEN
-                action['text'] = ' '.join(sentence[1:])
+                utterance = self.dialogue[self.dialogue_idx]
+                assert utterance['id'] != self.perspective
+                action['text'] = utterance['text']
 
         # Fill in learner's response (YOU)
         self.dialogue_idx += 1
@@ -213,5 +221,5 @@ class CasinoTeacher(Teacher):
         return action
 
 
-class DefaultTeacher(NegotiationTeacher):
+class DefaultTeacher(CasinoTeacher):
     pass
