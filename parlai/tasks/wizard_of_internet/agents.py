@@ -18,7 +18,7 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
-from parlai.core.mutators import register_mutator
+from parlai.core.mutators import register_mutator, ManyEpisodeMutator
 from parlai.tasks.wizard_of_wikipedia.agents import (
     AddLabel as AddLabelWizWiki,
     AddLabelLM as AddLabelLMWizWiki,
