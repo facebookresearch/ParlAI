@@ -1287,17 +1287,23 @@ class AddCheckedSentence(MessageMutator):
     But only a single time.
     """
 
+    @property
+    def checked_sentence_kword(self):
+        return 'checked_sentence'
+
     def message_mutation(self, message: Message) -> Message:
-        original_message = message.copy()
+        new_message = message.copy()
         if 'text' not in message:
-            return original_message
-        text = message.pop('text')
-        checked_sentence = message.get('checked_sentence', '')
+            return message
+        text = new_message.pop('text')
+        checked_sentence = new_message.get(self.checked_sentence_kword, '')
+        if isinstance(checked_sentence, list):
+            checked_sentence = ' '.join(checked_sentence)
 
         text += f'\n{TOKEN_KNOWLEDGE} {checked_sentence} {TOKEN_END_KNOWLEDGE}'
-        message['text'] = text
+        new_message['text'] = text
 
-        return message
+        return new_message
 
 
 @register_mutator("checked_sentence_as_label")
@@ -1306,16 +1312,22 @@ class CheckedSentenceAsLabel(MessageMutator):
     Uses the checked sentence (knowledge) as label.
     """
 
-    def message_mutation(self, message: Message) -> Message:
-        original_message = message.copy()
-        if 'text' not in message or 'labels' not in message or not message['labels']:
-            return original_message
-        labels = message.pop('labels')
-        checked_sentence = message.get('checked_sentence', '')
+    @property
+    def checked_sentence_kword(self):
+        return 'checked_sentence'
 
-        message['dialogue_response'] = labels
-        message['labels'] = [checked_sentence]
-        return message
+    def message_mutation(self, message: Message) -> Message:
+        new_message = message.copy()
+        if 'text' not in message or 'labels' not in message or not message['labels']:
+            return message
+        labels = new_message.pop('labels')
+        checked_sentence = new_message.get(self.checked_sentence_kword, '')
+        if isinstance(checked_sentence, list):
+            checked_sentence = ' '.join(checked_sentence)
+
+        new_message['dialogue_response'] = labels
+        new_message['labels'] = [checked_sentence]
+        return new_message
 
 
 @register_mutator("add_label_to_input")
@@ -1327,49 +1339,57 @@ class AddLabel(MessageMutator):
     """
 
     def message_mutation(self, message: Message) -> Message:
-        original_message = message.copy()
+        new_message = message.copy()
         if 'text' not in message or 'labels' not in message or not message['labels']:
-            return original_message
-        if 'dialogue_response' in message:
+            return message
+        if 'dialogue_response' in new_message:
             # checked_sentence_as_label was applied before
-            labels = message['dialogue_response']
+            labels = new_message['dialogue_response']
         else:
-            labels = message['labels']
+            labels = new_message['labels']
         dialogue_response = labels[0]
-        text = message.pop('text')
+        text = new_message.pop('text')
 
         text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
-        message['text'] = text
+        new_message['text'] = text
 
-        return message
+        return new_message
 
 
-@register_mutator("checked_sentence_as_label_lm")
-class CheckedSentenceAsLabelLm(MessageMutator):
+@register_mutator("add_label_to_input_lm")
+class AddLabelLM(MessageMutator):
     """
-    Sets the checked sentences as the label, and the label to the end of text. Language
-    modeling version where a random piece of the label is sampled in the input.
+    Adds the dialogue sentence to the input (language modeling version).
+
+    Language modeling version where a random piece of the label is sampled in
+    the input. The rest is placed inside special tokens.
 
     E.g. run with: parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label_lm --add-missing-turns all
+    flatten,add_label_to_input_lm
+
+    To add the checked sentence as the label, use:
+        parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
+        flatten,add_label_to_input_lm,checked_sentence_as_label
     """
 
     def message_mutation(self, message: Message) -> Message:
-        original_message = message.copy()
+        new_message = message.copy()
         if 'text' not in message or 'labels' not in message or not message['labels']:
-            return original_message
-        text = message.pop('text')
-        labels = message.pop('labels')
+            return message
+        if 'dialogue_response' in new_message:
+            # checked_sentence_as_label was applied before
+            labels = new_message['dialogue_response']
+        else:
+            labels = new_message['labels']
         dialogue_response = labels[0]
-        checked_sentence = message.get('checked_sentence', '')
+        text = new_message.pop('text')
 
-        ls = dialogue_response.split(' ')
+        ls = dialogue_response.split()
         ind = random.randint(0, len(ls) - 1)
         label1 = ' '.join(ls[0:ind])
         label2 = ' '.join(ls[ind : len(ls)])
 
         text += f'\n{label1}\n{TOKEN_LABEL} {label2} {TOKEN_END_LABEL}'
-        message['text'] = text
-        message['labels'] = [checked_sentence]
+        new_message['text'] = text
 
-        return message
+        return new_message
