@@ -1350,6 +1350,31 @@ class AddLabel(MessageMutator):
         dialogue_response = labels[0]
         text = new_message.pop('text')
 
+        message['dialogue_response'] = labels
+        message['labels'] = [checked_sentence]
+        return message
+
+
+@register_mutator("add_label_to_input")
+class AddLabel(MessageMutator):
+    """
+    Adds the dialogue sentence to the input.
+
+    But only a single time.
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        original_message = message.copy()
+        if 'text' not in message or 'labels' not in message or not message['labels']:
+            return original_message
+        if 'dialogue_response' in message:
+            # checked_sentence_as_label was applied before
+            labels = message['dialogue_response']
+        else:
+            labels = message['labels']
+        dialogue_response = labels[0]
+        text = message.pop('text')
+
         text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
         new_message['text'] = text
 
