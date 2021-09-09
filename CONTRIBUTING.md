@@ -10,7 +10,7 @@ We actively welcome your pull requests.
 
 1. Fork the repo and then clone the forked repository. (See this [github guide](https://guides.github.com/activities/forking/) on forking for more info).
    **If you have already cloned the repo directly and committed changes, follow the steps in the [section below](#moving-changes-youve-committed-to-a-fork)**
-2. Create your branch from `master`. Set up your environment
+2. Create your branch from `main`. Set up your environment
    and run `pre-commit install` once.
 3. Make your changes
 4. If you've added code that should be tested, [add tests](http://parl.ai/docs/tutorial_tests.html).
@@ -42,7 +42,7 @@ We actively welcome your pull requests.
    ```
 5. Make your local branch track the remote branch (of the forked repo)
    ```
-   git branch --set-upstream-to origin/master master
+   git branch --set-upstream-to origin/main main
    ```
 
 ## Contributor License Agreement ("CLA")

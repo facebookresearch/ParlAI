@@ -6,4 +6,4 @@ The list of models can also be found in the documentation:
 http://www.parl.ai/docs/zoo.html
 
 or in this file:
-https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py
+https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py

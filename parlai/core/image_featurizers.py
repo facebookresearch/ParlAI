@@ -272,7 +272,7 @@ class ImageLoader:
 
 class DetectronFeatureExtractor:
     """
-    Code adapted from https://github.com/facebookresearch/mmf/blob/master/tools/scripts/
+    Code adapted from https://github.com/facebookresearch/mmf/blob/main/tools/scripts/
     features/extract_features_vmb.py.
 
     Docstrings and type annotations added post hoc.

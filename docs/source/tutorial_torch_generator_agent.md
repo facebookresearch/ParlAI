@@ -145,7 +145,7 @@ class Decoder(nn.Module):
 
 ### Training
 
-The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/examples/seq2seq.py). To call training:
+The full code for the agent can be seen [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/examples/seq2seq.py). To call training:
 
 ```bash
 parlai train_model --model examples/seq2seq \

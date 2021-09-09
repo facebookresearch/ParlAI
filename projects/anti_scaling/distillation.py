@@ -921,7 +921,7 @@ class DistillNarrowTransformerAgentMixin(AbstractDistillTransformerAgentMixin):
         layer = nn.Linear(student_hidden_dim, teacher_hidden_dim)
 
         # From TinyBERT's BertPreTrainedModel.init_bert_weights() method at
-        # https://github.com/huawei-noah/Pretrained-Language-Model/blob/master/TinyBERT/transformer/modeling.py#L628
+        # https://github.com/huawei-noah/Pretrained-Language-Model/blob/main/TinyBERT/transformer/modeling.py#L628
         layer.weight.data.normal_(mean=0.0, std=0.02)
         layer.bias.data.zero_()
 

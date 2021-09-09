@@ -669,6 +669,7 @@ class LongTermMemory(RagRetriever):
             pretrained_path=opt['memory_writer_model_file'],
         ).eval()
         self._tokenizer = RagRetrieverTokenizer(
+            datapath=opt['datapath'],
             query_model=opt['query_model'],
             dictionary=dictionary,
             delimiter='\n',

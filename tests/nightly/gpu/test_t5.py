@@ -6,7 +6,7 @@
 """
 Shamelessly copying relevant integration tests from HuggingFace.
 
-https://github.com/huggingface/transformers/blob/master/tests/test_modeling_t5.py
+https://github.com/huggingface/transformers/blob/main/tests/test_modeling_t5.py
 
 Additionally includes some toy fine-tuning in ParlAI (similar to BART)
 """

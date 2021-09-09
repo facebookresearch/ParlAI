@@ -256,13 +256,20 @@ class World(object):
         """
         Reset all agents in the world, and world statistics.
         """
-        for a in self.agents:
-            a.reset()
+        self.reset_agents()
         self.max_exs = None
         self.total_exs = 0
         self.total_epochs = 0
         self.total_parleys = 0
         self.time.reset()
+
+    def reset_agents(self):
+        """
+        Reset all agents in the world.
+        """
+        agents = self.get_agents()
+        for a in agents:
+            a.reset()
 
     def reset_metrics(self):
         """
