@@ -1279,7 +1279,7 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     pass
 
 
-@register_mutator("add_checked_sentence")
+@register_mutator("add_checked_sentence_to_input")
 class AddCheckedSentence(MessageMutator):
     """
     Adds the checked sentence to the end of text.
@@ -1303,22 +1303,42 @@ class AddCheckedSentence(MessageMutator):
 @register_mutator("checked_sentence_as_label")
 class CheckedSentenceAsLabel(MessageMutator):
     """
-    Adds the dialogue sentence.
-
-    But only a single time. The label then becomes the checked sentence.
+    Uses the checked sentence (knowledge) as label.
     """
 
     def message_mutation(self, message: Message) -> Message:
         original_message = message.copy()
         if 'text' not in message or 'labels' not in message or not message['labels']:
             return original_message
-        text = message.pop('text')
         labels = message.pop('labels')
-        dialogue_response = labels[0]
         checked_sentence = message.get('checked_sentence', '')
+
+        message['dialogue_response'] = labels
+        message['labels'] = [checked_sentence]
+        return message
+
+
+@register_mutator("add_label_to_input")
+class AddLabel(MessageMutator):
+    """
+    Adds the dialogue sentence to the input.
+
+    But only a single time.
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        original_message = message.copy()
+        if 'text' not in message or 'labels' not in message or not message['labels']:
+            return original_message
+        if 'dialogue_response' in message:
+            # checked_sentence_as_label was applied before
+            labels = message['dialogue_response']
+        else:
+            labels = message['labels']
+        dialogue_response = labels[0]
+        text = message.pop('text')
 
         text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
         message['text'] = text
-        message['labels'] = [checked_sentence]
 
         return message
