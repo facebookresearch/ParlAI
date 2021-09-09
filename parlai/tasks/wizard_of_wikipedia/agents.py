@@ -1303,9 +1303,8 @@ class AddCheckedSentence(MessageMutator):
 @register_mutator("checked_sentence_as_label")
 class CheckedSentenceAsLabel(MessageMutator):
     """
-    Adds the dialogue sentence.
-
-    But only a single time. The label then becomes the checked sentence.
+    Adds the dialogue sentence to the end of the text. But only a single time. 
+    The label then becomes the checked sentence.
     """
 
     def message_mutation(self, message: Message) -> Message:
@@ -1318,6 +1317,37 @@ class CheckedSentenceAsLabel(MessageMutator):
         checked_sentence = message.get('checked_sentence', '')
 
         text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
+        message['text'] = text
+        message['labels'] = [checked_sentence]
+
+        return message
+
+
+@register_mutator("checked_sentence_as_label_lm")
+class CheckedSentenceAsLabelLm(MessageMutator):
+    """
+    Sets the checked sentences as the label, and the label to the end of text. Language
+    modeling version where a random piece of the label is sampled in the input.
+
+    E.g. run with: parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
+    flatten,checked_sentence_as_label_lm --add-missing-turns all
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        original_message = message.copy()
+        if 'text' not in message or 'labels' not in message or not message['labels']:
+            return original_message
+        text = message.pop('text')
+        labels = message.pop('labels')
+        dialogue_response = labels[0]
+        checked_sentence = message.get('checked_sentence', '')
+
+        ls = dialogue_response.split(' ')
+        ind = random.randint(0, len(ls) - 1)
+        label1 = ' '.join(ls[0:ind])
+        label2 = ' '.join(ls[ind : len(ls)])
+
+        text += f'\n{label1}\n{TOKEN_LABEL} {label2} {TOKEN_END_LABEL}'
         message['text'] = text
         message['labels'] = [checked_sentence]
 
