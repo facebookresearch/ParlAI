@@ -53,7 +53,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.data import DatatypeHelper
-from parlai.utils.misc import Timer, display_messages
+from parlai.utils.misc import Timer, display_messages, warn_once
 from parlai.tasks.tasks import ids_to_tasks
 
 
@@ -580,7 +580,7 @@ class MultiWorld(World):
         for each_world in self.worlds:
             world_id = each_world.getID()
             if world_id in task_ids:
-                raise AssertionError(
+                warn_once(
                     '{} and {} teachers have overlap in id {}.'.format(
                         task_ids[world_id],
                         each_world.get_agents()[0].__class__,

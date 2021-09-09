@@ -24,6 +24,7 @@ from parlai.tasks.wizard_of_wikipedia.agents import (
     AddLabelLM as AddLabelLMWizWiki,
     CheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
     AddCheckedSentence as AddCheckedSentenceWizWiki,
+    FilterNoPassageUsed as FilterNoPassageUsedWizWiki,
 )
 
 import random
@@ -638,3 +639,24 @@ class AddLabelLM(AddLabelLMWizWiki):
     """
 
     pass
+
+
+@register_mutator("filter_no_passage_used")
+class FilterNoPassageUsed(FilterNoPassageUsedWizWiki):
+    """
+    Allows to filter any examples where no passage was selected to base the wizard reply on.
+    This works best in flattened mode.
+    E.g. run with: parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
+    flatten+filter_no_passage_used
+    """
+
+    def many_episode_mutation(self, episode):
+        out_episodes = []
+        for e in episode:
+            checked_sentences = e.get(CONST.SELECTED_SENTENCES)
+            checked_sentences = ' '.join(checked_sentences)
+            if checked_sentences == CONST.NO_SELECTED_SENTENCES_TOKEN:
+                pass
+            else:
+                out_episodes.append([e])
+        return out_episodes

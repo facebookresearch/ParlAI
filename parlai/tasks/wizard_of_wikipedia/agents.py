@@ -18,7 +18,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 from __future__ import annotations
 from typing import Iterable, Optional, Tuple
 from parlai.core.message import Message
-from parlai.core.mutators import register_mutator, MessageMutator
+from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
@@ -1393,3 +1393,23 @@ class AddLabelLM(MessageMutator):
         new_message['text'] = text
 
         return new_message
+
+
+@register_mutator("filter_no_passage_used")
+class FilterNoPassageUsed(ManyEpisodeMutator):
+    """
+    Allows to filter any examples where no passage was selected to base the wizard reply on.
+    This works best in flattened mode.
+    E.g. run with: parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
+    flatten+filter_no_passage_used
+    """
+
+    def many_episode_mutation(self, episode):
+        out_episodes = []
+        for e in episode:
+            checked_sentence = e.get('checked_sentence', '')
+            if checked_sentence == TOKEN_NOCHOSEN:
+                pass
+            else:
+                out_episodes.append([e])
+        return out_episodes
