@@ -32,6 +32,22 @@ def get_welcome_values(part_info):
     return welcome_values
 
 
+def get_utterance_text(utterance):
+
+    if utterance['text'] == '<DUMMY>':
+        return ''
+
+    # the utterance is not a dummy one at this point
+    if utterance['text'] != 'Submit-Deal':
+        # simply return it
+        return utterance['text']
+
+    # if it is a Submit-Deal -> attach task_data
+    txt = f"{utterance['text']} What I get- Food:{utterance['task_data']['issue2youget']['Food']}, Water: {utterance['task_data']['issue2youget']['Water']}, Firewood: {utterance['task_data']['issue2youget']['Firewood']}; What you get- Food:{utterance['task_data']['issue2theyget']['Food']}, Water: {utterance['task_data']['issue2theyget']['Water']}, Firewood: {utterance['task_data']['issue2theyget']['Firewood']}"
+
+    return txt
+
+
 class CasinoTeacher(Teacher):
     """
     A negotiation teacher that loads the CaSiNo data from https://github.com/kushalchawla/CaSiNo.
@@ -68,52 +84,88 @@ class CasinoTeacher(Teacher):
     def _setup_data(self, data_path):
         print('loading: ' + data_path)
         with PathManager.open(data_path) as data_file:
-
             dialogues = json.load(data_file)
-            episodes = []
 
-            for dialogue in dialogues:
+        episodes = []
+        for dialogue in dialogues:
 
-                # divide the dialogue into two perspectives, one for each participant
-                episode = copy.deepcopy(dialogue)
-                episode[
-                    'perspective'
-                ] = (
-                    'mturk_agent_1'
-                )  # id of the agent whose perspective will be used in this dialog
-                episodes.append(episode)
+            # divide the dialogue into two perspectives, one for each participant
+            episode = copy.deepcopy(dialogue)
+            episode[
+                'perspective'
+            ] = (
+                'mturk_agent_1'
+            )  # id of the agent whose perspective will be used in this dialog
+            episodes.append(episode)
 
-                episode = copy.deepcopy(dialogue)
-                episode[
-                    'perspective'
-                ] = (
-                    'mturk_agent_2'
-                )  # id of the agent whose perspective will be used in this dialog
-                episodes.append(episode)
+            episode = copy.deepcopy(dialogue)
+            episode[
+                'perspective'
+            ] = (
+                'mturk_agent_2'
+            )  # id of the agent whose perspective will be used in this dialog
+            episodes.append(episode)
 
-            self.episodes = episodes
+        self.episodes = episodes
+
+        # add dummy data to ensure that every chat begins with a teacher utterance (THEM) and ends at the agent's utterance (YOU). This is done for uniformity while parsing the data. It makes the code simpler and easier to read than DealNoDeal counterpart.
+        for ix, episode in enumerate(self.episodes):
+
+            chat_logs = episode['chat_logs']
+            perspective = episode['perspective']
+
+            if chat_logs[0]['id'] == perspective:
+                # chat must start with a teacher; add dummy utterance
+                dummy_utterance = {
+                    'text': '<DUMMY>',
+                    'task_data': {},
+                    'id': 'mturk_agent_1'
+                    if perspective == 'mturk_agent_2'
+                    else 'mturk_agent_2',
+                }
+
+                chat_logs = [dummy_utterance] + chat_logs
+
+            if chat_logs[-1]['id'] != perspective:
+                # chat must end with the agent; add dummy utterance
+                dummy_utterance = {
+                    'text': '<DUMMY>',
+                    'task_data': {},
+                    'id': 'mturk_agent_1'
+                    if perspective == 'mturk_agent_1'
+                    else 'mturk_agent_2',
+                }
+
+                chat_logs = chat_logs + [dummy_utterance]
+
+            self.episodes[ix]['chat_logs'] = chat_logs
 
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
         self.dialogue_idx = None
         self.perspective = None
-        self.expected_reponse = None
+        self.dialogue = None
+        self.output = None
+        self.expected_response = None
         self.epochDone = False
 
     def num_examples(self):
         """
-        Lets simply return the total number of utterances in all the dialogues. This will include special utterances for submit-deal, accept-deal, and reject-deal.
-
-        Half of this quantity will correspond to the number of responses that an agent would generate in one epoch.
+        Lets return the the number of responses that an agent would generate in one epoch + 1 count for every output. This will include special utterances for submit-deal, accept-deal, and reject-deal.
+ 
         """
         num_exs = 0
 
         for episode in self.episodes:
-            num_exs += len(episode['chat_logs'])
 
-        return (
-            num_exs // 2
+            for utt in episode['chat_logs']:
+                if utt['text'] != '<DUMMY>':
+                    # skip the dummy utterances
+                    num_exs += 1
+
+        return (num_exs // 2) + len(
+            self.episodes
         )  # since each dialogue was converted into 2 perspectives, one for each participant: see _setup_data
 
     def num_episodes(self):
@@ -128,9 +180,9 @@ class CasinoTeacher(Teacher):
         """
         Process observation for metrics.
         """
-        if self.expected_reponse is not None:
-            self.metrics.evaluate_response(observation, self.expected_reponse)
-            self.expected_reponse = None
+        if self.expected_response is not None:
+            self.metrics.evaluate_response(observation, self.expected_response)
+            self.expected_response = None
         return observation
 
     def act(self):
@@ -151,13 +203,22 @@ class CasinoTeacher(Teacher):
             return self._start_dialogue()
 
     def _start_dialogue(self):
+        """
+        Starting a dialogue should be the same as continuing a dialogue but with just one difference: it will attach the welcome note to the teacher's utterance.
+
+        Each dialogue has two agents possible: mturk_agent_1 or mturk_agent_2. One of them will act as the perspective for this episode.
+        """
 
         episode = self.episodes[self.episode_idx]
         self.perspective = episode['perspective']
+        self.other_id = (
+            'mturk_agent_1' if self.perspective == 'mturk_agent_2' else 'mturk_agent_2'
+        )
 
         part_info = episode['participant_info'][self.perspective]
-        welcome_values = get_welcome_values(part_info)
+        part_info_other = episode['participant_info'][self.other_id]
 
+        welcome_values = get_welcome_values(part_info)
         welcome = WELCOME_MESSAGE.format(
             food_val=welcome_values['food_val'],
             water_val=welcome_values['water_val'],
@@ -168,49 +229,70 @@ class CasinoTeacher(Teacher):
         )
 
         self.dialogue = episode['chat_logs']
-        self.output = part_info['outcomes']
-        # The dialogue should end with accept deal
-        assert (
-            self.dialogue[-1]['text'] == 'Accept-Deal'
-        ), 'The dialogue should end with accept deal.'
+        self.output = {
+            'your_points_scored': part_info['outcomes']['points_scored'],
+            'how_satisfied_is_your_partner': part_info_other['outcomes'][
+                'satisfaction'
+            ],
+            'how_much_does_your_partner_like_you': part_info_other['outcomes'][
+                'opponent_likeness'
+            ],
+        }
 
         self.dialogue_idx = -1
-        if self.dialogue[0]['id'] != self.perspective:
-            # the other party (or the teacher) starts the dialogue.
-            action = self._continue_dialogue()
-            action['text'] = welcome + '\n' + action['text']
+
+        action = self._continue_dialogue()
+        if action['text']:
+            action['text'] = f"{welcome}\n{action['text']}"
         else:
-            # the agent (whose perspective we are in) starts the dialogue.
-            action = self._continue_dialogue(skip_teacher=True)
             action['text'] = welcome
 
         return action
 
-    def _continue_dialogue(self, skip_teacher=False):
+    def _continue_dialogue(self):
+        """
+        Return an action object
+
+        From the perspective of a specific agent's id, all utterances authored by the other agent are coming from the teacher as the text of the action object, and all utterances authored by this agent appear as the labels.
+        """
         action = {}
 
         # Fill in teacher's message (THEM)
-        if not skip_teacher:
-            self.dialogue_idx += 1
-            if self.dialogue_idx >= len(self.dialogue):
-                action['text'] = SELECTION_TOKEN
-            else:
-                utterance = self.dialogue[self.dialogue_idx]
-                assert utterance['id'] != self.perspective
-                action['text'] = utterance['text']
+        self.dialogue_idx += 1
+        if self.dialogue_idx < len(self.dialogue):
+            # this is a usual dialogue teacher-agent pair; return the teacher's utterance as action text.
+            utterance = self.dialogue[self.dialogue_idx]
+            assert utterance['id'] != self.perspective
+            utterance_text = get_utterance_text(
+                utterance
+            )  # will take care of special submit-deal utterance and dummy utterances
+            action['text'] = utterance_text
+        else:
+            # the primary dialogue is over; now is the time to return the output of this dialogue
+            action[
+                'text'
+            ] = f"Your points scored: {self.output['your_points_scored']}, How satisfied is your partner: {self.output['how_satisfied_is_your_partner']}, How much does your partner like you: {self.output['how_much_does_your_partner_like_you']}"
 
         # Fill in learner's response (YOU)
         self.dialogue_idx += 1
-        if self.datatype.startswith('train'):
-            if self.dialogue_idx >= len(self.dialogue):
-                # the agent should finish by reporting what they think the
-                # agreed decision was
-                self.expected_reponse = [' '.join(self.output)]
+        self.expected_response = None
+        if self.dialogue_idx < len(self.dialogue):
+            # usual dialogue going on; return the agent's utterance as the labels
+            utterance = self.dialogue[self.dialogue_idx]
+            assert utterance['id'] == self.perspective
+            utterance_text = get_utterance_text(
+                utterance
+            )  # will take care of special submit-deal utterance and dummy utterances
+            self.expected_response = [utterance_text] if utterance_text else None
+        else:
+            # no label required when the primary dialogue is complete
+            pass
+
+        if self.expected_response:
+            if self.datatype.startswith('train'):
+                action['labels'] = self.expected_response
             else:
-                sentence = self.dialogue[self.dialogue_idx]
-                assert sentence[0] == YOU_TOKEN
-                self.expected_reponse = [' '.join(sentence[1:])]
-            action['labels'] = self.expected_reponse
+                action['eval_labels'] = self.expected_response
 
         if self.dialogue_idx >= len(self.dialogue):
             self.dialogue_idx = None
