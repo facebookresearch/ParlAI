@@ -401,7 +401,7 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         #  returned Unit
         # TODO: 'bad_workers' is for compatibility. Before, it was only non-empty if a
         #  worker abandoned, returned, etc. a HIT, but now we don't even save chat
-        #  data in that case. Remove this key once fully once on DataBrowswer!
+        #  data in that case. Remove this key once fully once on DataBrowser
         if self.check_acceptability:
             data['acceptability_violations'] = (violations_string,)
             # Make a tuple for compatibility with a human/human conversation in
