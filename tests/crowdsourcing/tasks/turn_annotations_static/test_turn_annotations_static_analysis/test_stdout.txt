@@ -1,6 +1,6 @@
 Got 4 folders to read.
 Average task completion time (seconds) was: 187.5
-Returning master dataframe with 48 annotations.
+Returning dataframe with 48 annotations.
 Dropped 1 inconsistently annotated utterances (none_all_good and a problem bucket). Now have 7 utterances.
 Removed 1 that did not have annotations by 3 workers. 6 annotations remaining.
 summed_df has length 2; bot_only_df: 4
