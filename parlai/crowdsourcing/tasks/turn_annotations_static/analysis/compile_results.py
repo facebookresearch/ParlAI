@@ -300,7 +300,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     row[k] = utt[k] if utt['agent_idx'] == 1 else ''
                 rows.append(row)
         df = pd.DataFrame(rows)
-        print(f'Returning main dataframe with {len(df)} annotations.')
+        print(f'Returning dataframe with {len(df)} annotations.')
         return df
 
     def _add_additional_columns(self, row: Dict[str, Any], utt: dict) -> Dict[str, Any]:
