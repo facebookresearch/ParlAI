@@ -264,6 +264,10 @@ class TestUniqueness(unittest.TestCase):
         class Mutator1(Mutator):
             pass
 
+        # don't freak out if we accidentally register the exact same class twice
+        register_mutator("test_unique_mutator")(Mutator1)
+
+        # but do demand uniqueness
         with self.assertRaises(NameError):
 
             @register_mutator("test_unique_mutator")
