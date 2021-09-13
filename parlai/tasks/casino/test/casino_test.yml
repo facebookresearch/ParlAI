@@ -1,0 +1,46 @@
+acts:
+- - episode_done: false
+    labels:
+    - 'hello, that could be a good idea, but I think I need more rations '
+    meta-info:
+      firewood_argument: to cook and stay warm.
+      firewood_val: 3
+      food_argument: because I am diabetic. I need to eat small many meals
+      food_val: 4
+      water_argument: 'to stay hydrated, I will need more water because I need to
+        stay hydrated, If I don''t I will faint. '
+      water_val: 5
+    text: "Negotiate with your opponent to decide who gets how many items of each\
+      \ kind. There are three kinds of packages: Food, Water, and Firewood. Each has\
+      \ a quantity of 3. Try hard to get as much value as you can, while still leaving\
+      \ your partner satisfied and with a positive perception about you. If you fail\
+      \ to come to an agreement, both parties get 5 points. Refer to the following\
+      \ preference order and arguments for your negotiation: \n\nFood\nValue: 4 points\
+      \ for each package\nArgument: because I am diabetic. I need to eat small many\
+      \ meals\n\nWater\nValue: 5 points for each package\nArgument: to stay hydrated,\
+      \ I will need more water because I need to stay hydrated, If I don't I will\
+      \ faint. \n\nFirewood\nValue: 3 points for each package\nArgument: to cook and\
+      \ stay warm.\n\nHi we would like you to consider giving us all of the rations\
+      \ for the trip."
+- - episode_done: false
+    labels:
+    - 'I need more food and water, you see I am diabetic, I need to eat many small
+      meals '
+    text: How important are they to you? We would like to get a good mix, preferably
+      more food.
+- - episode_done: false
+    labels:
+    - 'let me have two food and three parts of water, I can let you have all the firewood
+      and one fpart food '
+    text: 😡 I can let the firewood and water lax if you provide us food.
+- - episode_done: false
+    labels:
+    - '😡my type of diabetes needs many meals otherwise my insulin levels will be low '
+    text: We do have a fire to start, but we are very hungry. Diabetics can eat less
+      food because of the small meals. Don't lie to me.
+- - episode_done: false
+    labels:
+    - 'your type maybe needs wild fruits which you can easily gather🙂 '
+    text: I am diabetic also.
+num_episodes: 200
+num_examples: 1594
