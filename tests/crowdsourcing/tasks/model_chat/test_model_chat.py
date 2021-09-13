@@ -174,6 +174,21 @@ fixed_response: >
                     actual_value=actual_chat_data, expected_value=expected_chat_data
                 )
 
+        def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+            # TODO: in `self._check_output_key()`, there is other logic for ignoring
+            #  keys with non-deterministic values. Consolidate all of that logic here!
+            custom_data = actual_state['outputs']['messages'][-2]['data']['WORLD_DATA'][
+                'custom_data'
+            ]
+            # The second-to-last message contains the custom data saved by the
+            # model-chat task code
+            for key in ['datapath', 'parlai_home', 'starttime']:
+                # The 'datapath' and 'parlai_home' keys will change depending on where
+                # the test is run
+                del custom_data['task_description']['model_opt'][key]
+            del custom_data['dialog'][0]['message_id']
+            return actual_state
+
 
 except ImportError:
     pass

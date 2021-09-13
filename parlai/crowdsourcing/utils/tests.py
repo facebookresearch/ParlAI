@@ -349,25 +349,12 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 f'arrived!'
             )
 
-        # Remove keys that do not have deterministic values and thus cannot be checked
-        # TODO: in `self._check_output_key()`, there is other logic for ignoring keys
-        #  with non-deterministic values. Consolidate all of that logic here!
-        custom_data = actual_states[0]['outputs']['messages'][-2]['data']['WORLD_DATA'][
-            'custom_data'
-        ]
-        # The second-to-last message contains the custom data saved by the model-chat
-        # task code
-        for key in ['datapath', 'parlai_home', 'starttime']:
-            # The 'datapath' and 'parlai_home' keys will change depending on where the
-            # test is run
-            del custom_data['task_description']['model_opt'][key]
-        del custom_data['dialog'][0]['message_id']
-
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
-            assert actual_state['inputs'] == expected_state['inputs']
+            clean_actual_state = self._remove_non_deterministic_keys(actual_state)
+            assert clean_actual_state['inputs'] == expected_state['inputs']
             for actual_message, expected_message in zip(
-                actual_state['outputs']['messages'],
+                clean_actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
             ):
                 for key, expected_value in expected_message.items():
@@ -376,6 +363,13 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         actual_value=actual_message[key],
                         expected_value=expected_value,
                     )
+
+    def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+        """
+        Allow for subclasses to delete certain keys in the actual state that will change
+        on each run.
+        """
+        return actual_state
 
     def _check_output_key(
         self: Union['AbstractParlAIChatTest', unittest.TestCase],
