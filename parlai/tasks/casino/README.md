@@ -16,6 +16,8 @@ We provide a novel dataset (referred to as CaSiNo) of 1030 negotiation dialogues
 }
 ```
 
+LICENSE: This dataset has been released under the CC-BY-4.0 License. Please refer to the LICENSE_DOCUMENTATION file in this repository for more information.
+
 Dataset Homepage: https://github.com/kushalchawla/CaSiNo
 
 NAACL 2021 Paper: https://aclanthology.org/2021.naacl-main.254.pdf

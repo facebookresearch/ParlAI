@@ -140,16 +140,6 @@ class CasinoTeacher(Teacher):
 
             self.episodes[ix]['chat_logs'] = chat_logs
 
-        """
-        #filter for testing
-        eps = []
-        for episode in self.episodes:
-            if(episode['dialogue_id'] == 19):
-                eps.append(episode)
-        
-        self.episodes = eps
-        """
-
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
