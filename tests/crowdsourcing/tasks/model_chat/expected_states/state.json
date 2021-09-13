@@ -533,7 +533,6 @@
                                     "dynamic_batching": null,
                                     "verbose": false,
                                     "is_debug": false,
-                                    "datapath": "/home/circleci/ParlAI/data",
                                     "model": "fixed_response",
                                     "model_file": null,
                                     "init_model": null,
@@ -542,12 +541,10 @@
                                     "image_cropsize": 224,
                                     "fixed_response": "I don't know.",
                                     "model_parallel": true,
-                                    "parlai_home": "/home/circleci/ParlAI",
                                     "override": {
                                         "model_parallel": true,
                                         "model": "fixed_response"
-                                    },
-                                    "starttime": "Sep13_13-15"
+                                    }
                                 }
                             },
                             "personas": null,

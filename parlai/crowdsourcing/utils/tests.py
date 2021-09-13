@@ -349,6 +349,20 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 f'arrived!'
             )
 
+        # Remove keys that do not have deterministic values and thus cannot be checked
+        # TODO: in `self._check_output_key()`, there is other logic for ignoring keys
+        #  with non-deterministic values. Consolidate all of that logic here!
+        custom_data = actual_states[0]['outputs']['messages'][-2]['data']['WORLD_DATA'][
+            'custom_data'
+        ]
+        # The second-to-last message contains the custom data saved by the model-chat
+        # task code
+        for key in ['datapath', 'parlai_home']:
+            del custom_data['task_description']['model_opt'][key]
+            # These keys will change depending on where the test is run
+        del custom_data['task_description']['model_opt']['starttime']
+        # The start time will change on every run
+
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
             assert actual_state['inputs'] == expected_state['inputs']
