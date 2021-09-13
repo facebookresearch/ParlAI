@@ -249,6 +249,8 @@ class CasinoTeacher(Teacher):
             # text is empty, meaning that the teacher did not start the conversation but the empty string is just a result of the dummy teacher utterance added in _setup_data
             action['text'] = welcome
 
+        action['meta-info'] = welcome_values
+
         return action
 
     def _continue_dialogue(self):
