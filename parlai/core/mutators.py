@@ -233,7 +233,7 @@ class ManyEpisodeMutator(Mutator):
         Abstract many-episode mutation.
 
         The main method to implement when creation a ManyEpisodeMutator.
-        You should map this episode to one-or-more episodes.
+        You should map this episode to zero-or-more episodes.
 
         If you wish to create multiple episodes, you need to output
         one-sublist-per-new-episode. As with EpisodeMutator, "episode_done"
