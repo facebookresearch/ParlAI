@@ -12,7 +12,7 @@ import os
 import random
 import copy
 
-WELCOME_MESSAGE = "Negotiate with your opponent to decide who gets how many of each item. There are three quantities each of Food, Water, and Firewood. Try hard to get as much value as you can, while still leaving your partner satisfied and with a positive perception about you. If you fail to come to an agreement, both parties get 5 points. Refer to the following preference order and arguments for your negotiation: \n\nFood\nValue:{food_val} points for each package\nArgument:{food_argument}\n\nWater\nValue:{water_val} points for each package\nArgument:{water_argument}\n\nFirewood\nValue:{firewood_val} points for each package\nArgument:{firewood_argument}\n"
+WELCOME_MESSAGE = "Negotiate with your opponent to decide who gets how many items of each kind. There are three kinds of packages: Food, Water, and Firewood. Each has a quantity of 3. Try hard to get as much value as you can, while still leaving your partner satisfied and with a positive perception about you. If you fail to come to an agreement, both parties get 5 points. Refer to the following preference order and arguments for your negotiation: \n\nFood\nValue: {food_val} points for each package\nArgument: {food_argument}\n\nWater\nValue: {water_val} points for each package\nArgument: {water_argument}\n\nFirewood\nValue: {firewood_val} points for each package\nArgument: {firewood_argument}\n"
 
 
 def get_welcome_values(part_info):
@@ -140,6 +140,16 @@ class CasinoTeacher(Teacher):
 
             self.episodes[ix]['chat_logs'] = chat_logs
 
+        """
+        #filter for testing
+        eps = []
+        for episode in self.episodes:
+            if(episode['dialogue_id'] == 19):
+                eps.append(episode)
+        
+        self.episodes = eps
+        """
+
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
@@ -256,9 +266,9 @@ class CasinoTeacher(Teacher):
         From the perspective of a specific agent's id, all utterances authored by the other agent are coming from the teacher as the text of the action object, and all utterances authored by this agent appear as the labels.
         """
         action = {}
-
         # Fill in teacher's message (THEM)
         self.dialogue_idx += 1
+        print('teacher: ', self.dialogue_idx)
         if self.dialogue_idx < len(self.dialogue):
             # this is a usual dialogue teacher-agent pair; return the teacher's utterance as action text.
             utterance = self.dialogue[self.dialogue_idx]
@@ -267,6 +277,17 @@ class CasinoTeacher(Teacher):
                 utterance
             )  # will take care of special submit-deal utterance and dummy utterances
             action['text'] = utterance_text
+
+            if action['text'] == 'Reject-Deal':
+                # merge with the next dialogue_idx since that is from the same participant while this code assumes alternative utterances.
+                self.dialogue_idx += 1  # we know that this will be valid
+                print('teacher: ', self.dialogue_idx)
+                utterance = self.dialogue[self.dialogue_idx]
+                assert utterance['id'] != self.perspective
+                utterance_text = get_utterance_text(
+                    utterance
+                )  # will take care of special submit-deal utterance and dummy utterances
+                action['text'] = action['text'] + ' ' + utterance_text
         else:
             # the primary dialogue is over; now is the time to return the output of this dialogue
             action[
@@ -275,24 +296,41 @@ class CasinoTeacher(Teacher):
 
         # Fill in learner's response (YOU)
         self.dialogue_idx += 1
+        print('agent: ', self.dialogue_idx)
         self.expected_response = None
         if self.dialogue_idx < len(self.dialogue):
             # usual dialogue going on; return the agent's utterance as the labels
             utterance = self.dialogue[self.dialogue_idx]
-            assert utterance['id'] == self.perspective
-            utterance_text = get_utterance_text(
+            assert (
+                utterance['id'] == self.perspective
+            ), f"id: {utterance['id']}, perspect: {self.perspective}"
+            utterance_text1 = get_utterance_text(
                 utterance
             )  # will take care of special submit-deal utterance and dummy utterances
-            self.expected_response = [utterance_text] if utterance_text else None
+
+            utterance_text2 = ''
+            if utterance_text1 == 'Reject-Deal':
+                # merge with the next dialogue_idx since that is from the same participant while this code assumes alternative utterances.
+                self.dialogue_idx += 1  # we know that this will be valid
+                print('agent: ', self.dialogue_idx)
+                utterance = self.dialogue[self.dialogue_idx]
+                assert utterance['id'] == self.perspective
+                utterance_text2 = get_utterance_text(
+                    utterance
+                )  # will take care of special submit-deal utterance and dummy utterances
+
+            self.expected_response = (
+                [utterance_text1 + ' ' + utterance_text2]
+                if (utterance_text1 + ' ' + utterance_text2).strip()
+                else None
+            )
         else:
             # no label required when the primary dialogue is complete
             pass
 
         if self.expected_response:
-            if self.datatype.startswith('train'):
-                action['labels'] = self.expected_response
-            else:
-                action['eval_labels'] = self.expected_response
+            # since labels is automatically renamed to eval_labels for valid/test, doing just this takes care of everything. Ensures that labels can atleast be accessed regardless of the datatype.
+            action['labels'] = self.expected_response
 
         if self.dialogue_idx >= len(self.dialogue):
             self.dialogue_idx = None
