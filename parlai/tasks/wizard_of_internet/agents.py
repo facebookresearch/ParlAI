@@ -18,7 +18,13 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
-from parlai.core.mutators import register_mutator, MessageMutator
+from parlai.core.mutators import register_mutator
+from parlai.tasks.wizard_of_wikipedia.agents import (
+    AddLabel as AddLabelWizWiki,
+    AddLabelLM as AddLabelLMWizWiki,
+    CheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
+    AddCheckedSentence as AddCheckedSentenceWizWiki,
+)
 
 import random
 from .build import build
@@ -575,60 +581,60 @@ class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
         return CONST.SELECTED_DOCS_TITLES
 
 
-@register_mutator("checked_sentence_as_label")
-class CheckedSentenceAsLabel(MessageMutator):
+@register_mutator("add_checked_sentence_to_input")
+class AddCheckedSentence(AddCheckedSentenceWizWiki):
     """
-    Sets the checked sentences as the label, and the label to the end of text.
+    Adds the checked sentence to the end of the text.
+
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+    flatten,add_checked_sentence_to_input
+    """
+
+    @property
+    def checked_sentence_kword(self):
+        return CONST.SELECTED_SENTENCES
+
+
+@register_mutator("checked_sentence_as_label")
+class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
+    """
+    Uses the checked sentence (knowledge) as label.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
     flatten,checked_sentence_as_label
     """
 
-    def message_mutation(self, message: Message) -> Message:
-        original_message = message.copy()
-        try:
-            text = message.pop('text')
-            label = message.pop('labels')[0]
-            checked_sentence = ' '.join(message.get(CONST.SELECTED_SENTENCES, ''))
-
-            text += f'\n__label__ {label} __endlabel__'
-            message['text'] = text
-
-            message['labels'] = [checked_sentence]
-        except KeyError:
-            return original_message
-
-        return message
+    @property
+    def checked_sentence_kword(self):
+        return CONST.SELECTED_SENTENCES
 
 
-@register_mutator("checked_sentence_as_label_lm")
-class CheckedSentenceAsLabelLm(MessageMutator):
+@register_mutator("add_label_to_input")
+class AddLabel(AddLabelWizWiki):
     """
-    Sets the checked sentences as the label, and the label to the end of text. Language
-    modeling version where a random piece of the label is sampled in the input.
+    Adds the dialogue sentence to the input.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label_lm
+    flatten,checked_sentence_as_label,add_label_to_input
     """
 
-    def message_mutation(self, message: Message) -> Message:
-        original_message = message.copy()
-        try:
-            text = message.pop('text')
-            label = message.pop('labels')[0]
-            checked_sentence = ' '.join(message.get(CONST.SELECTED_SENTENCES, ''))
+    pass
 
-            ls = label.split(' ')
-            ind = random.randint(0, len(ls) - 1)
 
-            label1 = ' '.join(ls[0:ind])
-            label2 = ' '.join(ls[ind : len(ls)])
+@register_mutator("add_label_to_input_lm")
+class AddLabelLM(AddLabelLMWizWiki):
+    """
+    Adds the dialogue sentence to the input (language modeling version).
 
-            text += f'\n{label1}\n__label__ {label2} __endlabel__'
-            message['text'] = text
+    Language modeling version where a random piece of the label is sampled in
+    the input. The rest is placed inside special tokens.
 
-            message['labels'] = [checked_sentence]
-        except KeyError:
-            return original_message
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+    flatten,add_label_to_input_lm
 
-        return message
+    To add the checked sentence as the label, use:
+        parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+        flatten,add_label_to_input_lm,checked_sentence_as_label
+    """
+
+    pass
