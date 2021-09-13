@@ -357,11 +357,11 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         ]
         # The second-to-last message contains the custom data saved by the model-chat
         # task code
-        for key in ['datapath', 'parlai_home']:
+        for key in ['datapath', 'parlai_home', 'starttime']:
+            # The 'datapath' and 'parlai_home' keys will change depending on where the
+            # test is run
             del custom_data['task_description']['model_opt'][key]
-            # These keys will change depending on where the test is run
-        del custom_data['task_description']['model_opt']['starttime']
-        # The start time will change on every run
+        del custom_data['dialog'][0]['message_id']
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):

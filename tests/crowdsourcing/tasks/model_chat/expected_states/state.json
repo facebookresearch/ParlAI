@@ -402,8 +402,7 @@
                                     "id": "Worker",
                                     "text": "Hi!",
                                     "fake_start": true,
-                                    "agent_idx": 0,
-                                    "message_id": "2f75177e-4e24-4267-a656-ec80cfb1241c"
+                                    "agent_idx": 0
                                 },
                                 {
                                     "agent_idx": 1,
