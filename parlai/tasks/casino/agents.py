@@ -243,8 +243,10 @@ class CasinoTeacher(Teacher):
 
         action = self._continue_dialogue()
         if action['text']:
+            # This is non-empty; meaning the teacher starts the conversation and has something to say.
             action['text'] = f"{welcome}\n{action['text']}"
         else:
+            # text is empty, meaning that the teacher did not start the conversation but the empty string is just a result of the dummy teacher utterance added in _setup_data
             action['text'] = welcome
 
         return action
@@ -258,7 +260,6 @@ class CasinoTeacher(Teacher):
         action = {}
         # Fill in teacher's message (THEM)
         self.dialogue_idx += 1
-        print('teacher: ', self.dialogue_idx)
         if self.dialogue_idx < len(self.dialogue):
             # this is a usual dialogue teacher-agent pair; return the teacher's utterance as action text.
             utterance = self.dialogue[self.dialogue_idx]
@@ -271,7 +272,6 @@ class CasinoTeacher(Teacher):
             if action['text'] == 'Reject-Deal':
                 # merge with the next dialogue_idx since that is from the same participant while this code assumes alternative utterances.
                 self.dialogue_idx += 1  # we know that this will be valid
-                print('teacher: ', self.dialogue_idx)
                 utterance = self.dialogue[self.dialogue_idx]
                 assert utterance['id'] != self.perspective
                 utterance_text = get_utterance_text(
@@ -286,7 +286,6 @@ class CasinoTeacher(Teacher):
 
         # Fill in learner's response (YOU)
         self.dialogue_idx += 1
-        print('agent: ', self.dialogue_idx)
         self.expected_response = None
         if self.dialogue_idx < len(self.dialogue):
             # usual dialogue going on; return the agent's utterance as the labels
@@ -302,7 +301,6 @@ class CasinoTeacher(Teacher):
             if utterance_text1 == 'Reject-Deal':
                 # merge with the next dialogue_idx since that is from the same participant while this code assumes alternative utterances.
                 self.dialogue_idx += 1  # we know that this will be valid
-                print('agent: ', self.dialogue_idx)
                 utterance = self.dialogue[self.dialogue_idx]
                 assert utterance['id'] == self.perspective
                 utterance_text2 = get_utterance_text(
