@@ -6,7 +6,7 @@
 """
 FAISS-based Indexers.
 
-Adapted from https://github.com/facebookresearch/DPR/blob/master/dpr/indexer/faiss_indexers.py
+Adapted from https://github.com/facebookresearch/DPR/blob/main/dpr/indexer/faiss_indexers.py
 """
 from parlai.core.build_data import modelzoo_path
 from parlai.core.opt import Opt
@@ -55,7 +55,7 @@ class BaseIndexer(ABC):
             self.faiss = faiss
         except ImportError:
             raise ImportError(
-                'Please install faiss: https://github.com/facebookresearch/faiss/blob/master/INSTALL.md'
+                'Please install faiss: https://github.com/facebookresearch/faiss/blob/main/INSTALL.md'
             )
 
     @abstractmethod

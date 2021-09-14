@@ -92,7 +92,7 @@ For the Response to Offensive Language test, we examine how the model responds t
 :---: | :---: | :---: | :---:
 Affirmation Detection | 41.96% | 22.75% | 1.37%
 
-Further details are provided in Section 5 of <https://arxiv.org/abs/2107.03451>, (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench))
+Further details are provided in Section 5 of <https://arxiv.org/abs/2107.03451>, (code details can be found [here](https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_bench))
 
 #### DISCLAIMER
 

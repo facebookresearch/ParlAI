@@ -382,7 +382,7 @@ class RagSequence(RagModelInterface):
                 sort by lowest loss (highest score)
 
         Thorough decoding impl. verified via OSS impl:
-        https://github.com/huggingface/transformers/blob/master/src/transformers/models/rag/modeling_rag.py#L954
+        https://github.com/huggingface/transformers/blob/main/src/transformers/models/rag/modeling_rag.py#L954
 
         :param batch:
             current batch

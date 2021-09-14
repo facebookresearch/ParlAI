@@ -1,4 +1,4 @@
-The code in `parlai/mturk/` has been deprecated. All code for running crowdsourcing tasks can now be found in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing), and all crowdsourcing tasks now utilize the [Mephisto](https://github.com/facebookresearch/Mephisto) platform.
+The code in `parlai/mturk/` has been deprecated. All code for running crowdsourcing tasks can now be found in [`parlai/crowdsourcing/`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing), and all crowdsourcing tasks now utilize the [Mephisto](https://github.com/facebookresearch/Mephisto) platform.
 
 -----
 
@@ -14,7 +14,7 @@ git checkout final_mturk
 
 ### tasks/acute_eval/
 
-The current Mephisto-based version of the ACUTE-Eval task can be found in [`parlai.crowdsourcing.tasks.acute_eval`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval). The obsolete pre-Mephisto version of this task can be restored by switching to the `acute_eval` tag of ParlAI:
+The current Mephisto-based version of the ACUTE-Eval task can be found in [`parlai.crowdsourcing.tasks.acute_eval`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval). The obsolete pre-Mephisto version of this task can be restored by switching to the `acute_eval` tag of ParlAI:
 
 ```bash
 git checkout acute_eval
@@ -47,7 +47,7 @@ If you just need to read the code, for reference, you may browse it
 
 ### tasks/image_chat/
 
-The current Mephisto-based version of the human+model image-chat task can be found in [`parlai.crowdsourcing.tasks.model_chat`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/model_chat). The obsolete pre-Mephisto version of this task can be restored by switching to the `v0.10.0` tag of ParlAI:
+The current Mephisto-based version of the human+model image-chat task can be found in [`parlai.crowdsourcing.tasks.model_chat`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/model_chat). The obsolete pre-Mephisto version of this task can be restored by switching to the `v0.10.0` tag of ParlAI:
 
 ```bash
 git checkout v0.10.0
@@ -107,7 +107,7 @@ git checkout v0.10.0
 
 ### tasks/qa_data_collection/
 
-The current Mephisto-based version of the QA data collection task can be found in [`parlai.crowdsourcing.tasks.qa_data_collection`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/qa_data_collection). The obsolete pre-Mephisto version of this task can be restored by switching to the `qa_data_collection` tag of ParlAI:
+The current Mephisto-based version of the QA data collection task can be found in [`parlai.crowdsourcing.tasks.qa_data_collection`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/qa_data_collection). The obsolete pre-Mephisto version of this task can be restored by switching to the `qa_data_collection` tag of ParlAI:
 
 ```bash
 git checkout qa_data_collection
@@ -148,7 +148,7 @@ If you just need to read the code, for reference, you may browse it
 
 ### tasks/turn_annotations/
 
-The current Mephisto-based version of the turn annotations task can be found in [`parlai.crowdsourcing.tasks.model_chat`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/model_chat). The obsolete pre-Mephisto version of this task can be restored by switching to the `turn_annotations` tag of ParlAI:
+The current Mephisto-based version of the turn annotations task can be found in [`parlai.crowdsourcing.tasks.model_chat`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/model_chat). The obsolete pre-Mephisto version of this task can be restored by switching to the `turn_annotations` tag of ParlAI:
 
 ```bash
 git checkout turn_annotations

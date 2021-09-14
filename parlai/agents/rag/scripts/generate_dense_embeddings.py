@@ -6,7 +6,7 @@
 """
 Generate Dense Embeddings for use in a FAISS Index.
 
-Modified/Adapted from https://github.com/facebookresearch/DPR/blob/master/generate_dense_embeddings.py.
+Modified/Adapted from https://github.com/facebookresearch/DPR/blob/main/generate_dense_embeddings.py.
 
 The input file must be a .tsv file with three elements per row: 1) id; 2) text; 3) title, in that order.
 

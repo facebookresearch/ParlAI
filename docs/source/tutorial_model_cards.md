@@ -7,7 +7,7 @@
 
 Think of model cards as a condensed medical card for models. It is a great way for people who might not have the time to read a paper in detail to get the gist of what a model is doing, the datasets involved, how it is performing, and any concerns that the author might have about the model.
 
-You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/facebookresearch/ParlAI/tree/master/sample_model_cards) to some more model card examples. 
+You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/facebookresearch/ParlAI/tree/main/sample_model_cards) to some more model card examples. 
 
 ## The Process
 There are two steps in generating the model cards.
@@ -30,8 +30,8 @@ parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_single --mode ge
 
 However, depending on the situation, we might need to add these arguments as well:
 - `--wrapper / -w` **only if** the model is a generation model
-   - check the [safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench) for more info
-- `--model-type / -mt` **only if** the model isn't added to or already in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py)
+   - check the [safety bench](https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_bench) for more info
+- `--model-type / -mt` **only if** the model isn't added to or already in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py)
    - possible choices include `ranker`, `generator`, `classifier`, `retriever`
 - `--task / -t` and `--evaltask/-et` **only if** the original model.opt used task/datasets not in the form of a teacher or if the task/dataset is no longer accessible
    - tasks starting with `fromfile` or `jsonfile` will be ignored unless `--ignore-unfound-tasks` is set to False (by default, it's true)
@@ -42,7 +42,7 @@ In addition, if the model itself needs certain arguments (ie. `--search-server`)
 Check out the section about [generating reports](#details-of-report-generation) for more information on the report generation process and how to generate single reports (very useful for debugging).
 
 ### Step 2: Model Card Generation
-If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command 
+If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command 
    ```
    # template
    parlai gmc -mf <model file> -fts <folder to save>
@@ -71,7 +71,7 @@ In the end, it should generate the following reports under the `--folder-to-save
 - a folder `data_stats/` that contains the data stats of the training set
 - a `eval_results.json` that contains the evaluation results based on the evaltasks
 - a `sample.json` file contain a sample input and output from the model
-- for generators, it should generate a folder `safety_bench_res` that contains the safety_bench results ([click here to learn more about the safety bench](https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_bench)).
+- for generators, it should generate a folder `safety_bench_res` that contains the safety_bench results ([click here to learn more about the safety bench](https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_bench)).
 
 
 Here are some images of the expected behavior:
@@ -112,7 +112,7 @@ Sometimes, you might want to generate only certain reports. In this case, instea
 We can use `--extra-args-path` to pass in longer arguments. By default, the `---extra-args-path` will be `<folder-to-save>/args.json`, so if we create a file at that location, we don't need to add `args.json`.
 
 #### Adding Custom Dataset and Model Info
-By default, the code will try to find a sections in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py). However, instead of changing `model_list.py`, we can also pass in a `.json` file to `--extra-args-path` with out new section. Here's us trying to add the intended use section
+By default, the code will try to find a sections in [`model_list.py`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py). However, instead of changing `model_list.py`, we can also pass in a `.json` file to `--extra-args-path` with out new section. Here's us trying to add the intended use section
 
 ```
 # args.json
@@ -126,7 +126,7 @@ By default, the code will try to find a sections in [`model_list.py`](https://gi
 }
 ```
 
-Similarly, if we don't want to touch [`task_list.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py) (information about the tasks), we can also pass the details via `--extra-args-path`. Here's us trying add a description for `dummy_task`:
+Similarly, if we don't want to touch [`task_list.py`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/task_list.py) (information about the tasks), we can also pass the details via `--extra-args-path`. Here's us trying add a description for `dummy_task`:
 ```
 # args.json
 {

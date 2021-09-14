@@ -122,32 +122,33 @@ class SelfChatWorld(DialogPartnerWorld):
     def _get_seed_utt_acts(
         self, episode_num: int, agents: List[Agent]
     ) -> List[Dict[str, Any]]:
+        """
+        Return acts of any utterances to "seed" the conversation with.
+        """
+
         def make_agent_action(utterance: str, agent: Agent) -> Dict[str, Any]:
             return {'text': utterance, 'episode_done': False, 'id': agent.id}
 
-        openers = self.get_openers(episode_num)
-        if not openers:
-            return []
-        return list(map(make_agent_action, openers, agents))
+        if self.turn_cnt == 0:
+            # Create the seed utterances from any openers
+            openers = self.get_openers(episode_num)
+            if not openers:
+                return []
+            return list(map(make_agent_action, openers, agents))
+        else:
+            # Just return the existing seed utterances, if any exist
+            return self.seed_utterances
 
     def parley(self):
         if self.episode_done():
-            self.turn_cnt = 0
-            self.episode_cnt += 1
-            self.contexts = None
-            self.seed_utterances = None
-            agents = self.get_agents()
-            for a in agents:
-                a.reset()
+            self._end_episode()
 
         if self.turn_cnt == 0:
             self.acts = [None, None]
-            # get the beginning of the conversation, which can include contexts
-            # and/or any number of starting messages
+            # get any context for the beginning of the conversation
             self.contexts = self.get_contexts()
-            self.seed_utterances = self._get_seed_utt_acts(
-                self.episode_cnt, self.agents
-            )
+
+        self.seed_utterances = self._get_seed_utt_acts(self.episode_cnt, self.agents)
 
         if self.contexts:
             assert len(self.contexts) == 2
@@ -186,3 +187,13 @@ class SelfChatWorld(DialogPartnerWorld):
 
         self.update_counters()
         self.turn_cnt += 1
+
+    def _end_episode(self):
+        """
+        Apply logic to end the episode.
+        """
+        self.turn_cnt = 0
+        self.episode_cnt += 1
+        self.contexts = None
+        self.seed_utterances = None
+        self.reset_agents()

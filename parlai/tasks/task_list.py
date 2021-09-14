@@ -1441,4 +1441,15 @@ task_list = [
             "It contains 5k full converesations from session 2 to session 5 (session 1 being PersonaChat) "
         ),
     },
+    {
+        "id": "jericho_world",
+        "display_name": "JerichoWorld",
+        "task": "jericho_world",
+        "tags": [],
+        "description": (
+            "Jericho World dataset: common sense in a text-based game. "
+            "The goal is generating the knowledge graph of the game state "
+            "or the set of valid actions from the text descriptions of the world."
+        ),
+    },
 ]

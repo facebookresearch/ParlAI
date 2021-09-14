@@ -77,7 +77,7 @@ class YelpTeacher(FixedDialogTeacher):
             raise RuntimeError(
                 f'\n\n{stars}\nThis data must be downloaded following instructions in '
                 'the README here:'
-                '<https://github.com/facebookresearch/MultipleAttributeTextRewriting/blob/master/data/README.md>. '
+                '<https://github.com/facebookresearch/MultipleAttributeTextRewriting/blob/main/data/README.md>. '
                 '\nIt cannot be automatically downloaded, as one must agree to '
                 'the terms outlined on the website before gaining access to the data.\n\n'
                 'Once downloaded, please put the data in the following '

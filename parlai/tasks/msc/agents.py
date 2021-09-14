@@ -31,6 +31,7 @@ from parlai.tasks.msc.constants import (
     UI_OPT,
     COMMON_CONFIG,
 )
+import parlai.tasks.msc.mutators  # type: ignore
 
 
 NOPERSONA = '__NO__PERSONA__BEAM__MIN__LEN__20__'

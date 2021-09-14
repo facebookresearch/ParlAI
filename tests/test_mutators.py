@@ -227,6 +227,19 @@ class TestSpecificMutators(unittest.TestCase):
         assert set(ex3['text'].split()) == set(EXAMPLE3['text'].split())
         assert set(ex4['text'].split()) == set(EXAMPLE4['text'].split())
 
+    def test_msc_ltm_mutator(self):
+        from parlai.tasks.msc.mutators import LongTermMemoryMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(LongTermMemoryMutator)
+
+        assert (
+            ex1['labels']
+            == ex2['labels']
+            == ex3['labels']
+            == ex4['labels']
+            == ['personal_knowledge']
+        )
+
 
 class TestMutatorStickiness(unittest.TestCase):
     """

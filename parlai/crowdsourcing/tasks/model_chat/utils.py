@@ -413,7 +413,7 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
 
 def get_context_generator(
     override_opt: Optional[Dict[str, Any]] = None,
-    conversation_start_mode: Optional[str] = 'blended_skill_talk',
+    task: Optional[str] = 'blended_skill_talk',
     **kwargs,
 ) -> ContextGenerator:
     """
@@ -424,7 +424,7 @@ def get_context_generator(
     if override_opt is not None:
         argparser.set_params(**override_opt)
     opt = argparser.parse_args([])
-    task_module = load_task_module(conversation_start_mode)
+    task_module = load_task_module(task)
     context_generator_class = getattr(task_module, 'ContextGenerator', None)
     context_generator = context_generator_class(opt, datatype='test', seed=0, **kwargs)
     # We pull from the test set so that the model can't regurgitate

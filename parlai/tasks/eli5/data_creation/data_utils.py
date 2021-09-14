@@ -6,7 +6,7 @@
 
 """
 Taken from
-https://github.com/facebookresearch/ELI5/blob/master/data_creation/data_utils.py.
+https://github.com/facebookresearch/ELI5/blob/main/data_creation/data_utils.py.
 """
 
 import json

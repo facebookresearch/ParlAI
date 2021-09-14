@@ -35,7 +35,7 @@ COLORS = [
     '\033[1;38;5;204m',  # red
 ]
 
-# Frames from https://github.com/jmhobbs/terminal-parrot/blob/master/data.go,
+# Frames from https://github.com/jmhobbs/terminal-parrot/blob/main/data.go,
 # The MIT License (MIT)
 #
 # Copyright (c) 2016 John Hobbs

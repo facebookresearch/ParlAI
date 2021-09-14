@@ -497,12 +497,12 @@ class Gpt2BpeHelper(BPEHelper):
     BPE Helper for GPT2 Models.
 
     Original source:
-        https://github.com/openai/gpt-2/blob/master/src/encoder.py
+        https://github.com/openai/gpt-2/blob/main/src/encoder.py
 
     Original license: MIT
 
     This is a modified implementation from that of fairseq:
-        https://github.com/pytorch/fairseq/blob/master/fairseq/data/encoders/gpt2_bpe_utils.py
+        https://github.com/pytorch/fairseq/blob/main/fairseq/data/encoders/gpt2_bpe_utils.py
 
     Fairseq license: MIT
     """
