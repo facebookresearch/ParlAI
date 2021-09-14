@@ -335,6 +335,27 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
     Abstract test class for testing model chat code.
     """
 
+    def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+        # TODO: in `self._check_output_key()`, there is other logic for ignoring
+        #  keys with non-deterministic values. Consolidate all of that logic here!
+        custom_data = self._get_custom_data(actual_state)
+        for key in ['datapath', 'parlai_home', 'starttime']:
+            # The 'datapath' and 'parlai_home' keys will change depending on where
+            # the test is run
+            del custom_data['task_description']['model_opt'][key]
+        return actual_state
+
+    def _get_custom_data(self, actual_state: dict) -> dict:
+        """
+        Return the custom task data (without making a copy).
+
+        The second-to-last message contains the custom data saved by the model-chat
+        task code.
+        """
+        return actual_state['outputs']['messages'][-2]['data']['WORLD_DATA'][
+            'custom_data'
+        ]
+
     def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
         """
         Special logic for handling the 'final_chat_data' key.
