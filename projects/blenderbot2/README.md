@@ -83,7 +83,7 @@ Nevertheless, as ever much work remains to be done in the area of safety. While 
 ### Model Zoo
 
 - BlenderBot 2.0 400m: `--model-file zoo:blenderbot2/blenderbot2_400M/model`
-- BlenderBot 2.0 2.7B ([model card](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/blenderbot2/model_card.md)): `--model-file zoo:blenderbot2/blenderbot2_3B/model`
+- BlenderBot 2.0 2.7B ([model card](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/blenderbot2/model_card.md)): `--model-file zoo:blenderbot2/blenderbot2_3B/model`
 
 ## Datasets
 

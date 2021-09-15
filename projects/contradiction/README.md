@@ -42,7 +42,7 @@ parlai display_data -t decode -dt test --test_type rct -v           # RCT
 
 ## Directly Download Data.
 You can also download the data directly from s3.
-See [download data from s3 with raw format](https://github.com/facebookresearch/ParlAI/blob/master/projects/contradiction/download_with_raw_format.md).
+See [download data from s3 with raw format](https://github.com/facebookresearch/ParlAI/blob/main/projects/contradiction/download_with_raw_format.md).
 
 ## Citation
 If you use the dataset or models in your own work, please cite with the following BibTex entry:

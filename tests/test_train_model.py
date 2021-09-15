@@ -10,6 +10,7 @@ Basic tests that ensure train_model.py behaves in predictable ways.
 import os
 import unittest
 import json
+import parlai.utils.logging as logging
 import parlai.utils.testing as testing_utils
 from parlai.core.metrics import AverageMetric
 from parlai.core.worlds import create_task
@@ -164,13 +165,12 @@ class TestTrainModel(unittest.TestCase):
         )
 
     def test_multitasking_id_overlap(self):
-        with self.assertRaises(AssertionError) as context:
-            pp = ParlaiParser()
-            opt = pp.parse_args(['--task', 'integration_tests,integration_tests'])
+        pp = ParlaiParser()
+        opt = pp.parse_args(['--task', 'integration_tests,integration_tests'])
+        with self.assertLogs(logging.logger) as cm:
             self.world = create_task(opt, None)
-            self.assertTrue(
-                'teachers have overlap in id integration_tests.'
-                in str(context.exception)
+            self.assertIn(
+                "have overlap in id 'integration_tests'", "\n".join(cm.output)
             )
 
     def _test_opt_step_opts(self, update_freq: int):

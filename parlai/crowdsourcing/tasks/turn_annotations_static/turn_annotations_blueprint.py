@@ -60,6 +60,12 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             "help": "Specify which utterance indices to annotate per conversation in a JSONL file. Must be same length as conversations data-jsonl file. See example file in task_config/annotation_indices_example.jsonl"
         },
     )
+    annotation_last_only: Optional[bool] = field(
+        default=False,
+        metadata={
+            "help": "If you only want to annotate the last utterance of each conversation. Cannot be used with annotation_indices_jsonl."
+        },
+    )
     ask_reason: bool = field(
         default=False,
         metadata={
@@ -113,6 +119,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         np.random.seed(self.args.blueprint.random_seed)
         self.subtasks_per_unit = self.args.blueprint.subtasks_per_unit
         self.conversation_count = self.args.blueprint.conversation_count
+        self.annotation_last_only = self.args.blueprint.annotation_last_only
 
         if self.subtasks_per_unit <= 0:
             raise Exception(
@@ -125,6 +132,10 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         # conversation to annotate
         self.annotation_indices = None
         if self.args.blueprint.annotation_indices_jsonl:
+            if self.annotation_last_only:
+                raise RuntimeError(
+                    'Cannot use flag annotation_last_only and supply a file with annotation indices.'
+                )
             self.annotation_indices = []
             with open(
                 self.args.blueprint.annotation_indices_jsonl, "r", encoding="utf-8-sig"
@@ -216,14 +227,26 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 for a in annotation_indices[conv_idx]:
                     processed_dialog = self._process_conversation(d, [a])
                     output.append(processed_dialog)
+            elif self.annotation_last_only:
+                # Annotate only the last utterance
+                last_idx = len(d['dialog']) * 2 - 1
+                processed_dialog = self._process_conversation(
+                    d, annotation_indices=[last_idx]
+                )
+                total_annotation_count += 1
+                output.append(processed_dialog)
             else:
+                # Annotate all the model utterances
+                total_annotation_count += len(d['dialog']) / 2
                 processed_dialog = self._process_conversation(
                     d, annotation_indices=None
                 )
                 output.append(processed_dialog)
+
         print(
-            f'Processed {len(data_dicts)} total conversations into {len(output)} conversations to be used in crowdsourcing task with {total_annotation_count} total annotations.'
+            f'process_data: Processed {len(data_dicts)} total conversations into {len(output)} conversations in the full data with {total_annotation_count} total turn annotations. (Does not account for units per assignment value - i.e. multiple annotations.)'
         )
+
         np.random.shuffle(output)
         return output
 
@@ -257,7 +280,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 continue
             # If there is a persona, which is context as in the ConvAI2
             # task, we don't want to display the persona utterances
-            if 'persona' not in full_turn[0]['text']:
+            # Persona strings have the format "your persona:"
+            if 'your persona:' not in full_turn[0]['text']:
                 do_annotate = False
                 new_dialogue.append(
                     {
@@ -268,7 +292,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                     }
                 )
                 adjusted_turn_idx += 1
-            if 'persona' not in full_turn[1]['text']:
+            if 'your persona:' not in full_turn[1]['text']:
                 if annotation_indices:
                     do_annotate = adjusted_turn_idx in annotation_indices
                 else:
@@ -287,6 +311,10 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             raise Exception(
                 f'Conversation had {adjusted_turn_idx} but max_turn_to_show was {max_turn_to_show}'
             )
+        assert any(
+            nd['do_annotate'] for nd in new_dialogue
+        ), f'Have to annotate at least one index in the conversation! But new_dialogue was: {new_dialogue}, raw dialogue was: {d["dialog"]}, annotation_indices was: {annotation_indices}, length of dialogue was {len(new_dialogue)}, adjusted_turn_idx was: {adjusted_turn_idx}, max_turn_to_show: {max_turn_to_show}'
+
         return new_dialogue
 
 

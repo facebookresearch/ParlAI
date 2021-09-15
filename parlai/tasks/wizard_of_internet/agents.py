@@ -18,7 +18,15 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
+from parlai.core.mutators import register_mutator
+from parlai.tasks.wizard_of_wikipedia.agents import (
+    AddLabel as AddLabelWizWiki,
+    AddLabelLM as AddLabelLMWizWiki,
+    CheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
+    AddCheckedSentence as AddCheckedSentenceWizWiki,
+)
 
+import random
 from .build import build
 
 
@@ -571,3 +579,62 @@ class GoldDocsTeacher(BaseKnowledgeTeacher):
 class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
     def _knowledge_piece(self):
         return CONST.SELECTED_DOCS_TITLES
+
+
+@register_mutator("add_checked_sentence_to_input")
+class AddCheckedSentence(AddCheckedSentenceWizWiki):
+    """
+    Adds the checked sentence to the end of the text.
+
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+    flatten,add_checked_sentence_to_input
+    """
+
+    @property
+    def checked_sentence_kword(self):
+        return CONST.SELECTED_SENTENCES
+
+
+@register_mutator("checked_sentence_as_label")
+class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
+    """
+    Uses the checked sentence (knowledge) as label.
+
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+    flatten,checked_sentence_as_label
+    """
+
+    @property
+    def checked_sentence_kword(self):
+        return CONST.SELECTED_SENTENCES
+
+
+@register_mutator("add_label_to_input")
+class AddLabel(AddLabelWizWiki):
+    """
+    Adds the dialogue sentence to the input.
+
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+    flatten,checked_sentence_as_label,add_label_to_input
+    """
+
+    pass
+
+
+@register_mutator("add_label_to_input_lm")
+class AddLabelLM(AddLabelLMWizWiki):
+    """
+    Adds the dialogue sentence to the input (language modeling version).
+
+    Language modeling version where a random piece of the label is sampled in
+    the input. The rest is placed inside special tokens.
+
+    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+    flatten,add_label_to_input_lm
+
+    To add the checked sentence as the label, use:
+        parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
+        flatten,add_label_to_input_lm,checked_sentence_as_label
+    """
+
+    pass

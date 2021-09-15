@@ -115,7 +115,7 @@ location:
   on this dataset. They have the advantage of being easy to compute and
   understand. An example of a modeling metric is `slot_p`, which is part of
   some of our Task Oriented Datasets, such as
-  [`google_sgd`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/google_sgd/agents.py)
+  [`google_sgd`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/google_sgd/agents.py)
 - __Global metrics__ (model metric): Global metrics are computed by the model,
   and are globally tracked. These metrics are easy to understand and track, but
   work poorly when doing multitasking. One example of a global metric includes
@@ -135,7 +135,7 @@ examples of how to add these metrics in your setup.
 
 Teacher metrics are useful for items that depend on a specific dataset.
 For example, in some of our task oriented datasets, like
-[`google_sgd`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/google_sgd/agents.py),
+[`google_sgd`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/google_sgd/agents.py),
 we want to additionally compute metrics around slots.
 
 Teacher metrics can be added by adding the following method to your teacher:

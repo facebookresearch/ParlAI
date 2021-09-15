@@ -15,7 +15,7 @@ See `turn_annotations_blueprint.py` for various parameters of this task, includi
 
 The validation of the response field is handled by `validateFreetextResponse` function in `task_components.jsx` and checks for a minimum number of characters, words, and vowels specified by function parameters. To change this, modify the values passed in to the function call or override the function to set your own validation requirements.
 
-**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
+**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
 
 ## Analysis
 

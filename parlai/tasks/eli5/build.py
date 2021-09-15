@@ -109,5 +109,5 @@ def build(opt):
         print(
             '\nDid not find one of the ELI5 test, train, valid json files.',
             '\nPlease make sure you have run the steps in',
-            'https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/eli5\n',
+            'https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks/eli5\n',
         )

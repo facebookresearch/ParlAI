@@ -21,12 +21,16 @@ from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+# To run the task with your own config outside this folder (recommended!)
+# Use the command formulation below. For more info,
+# check the README in parlai/crowdsourcing/
+# python turn_annotations_static/run.py conf=<conf name sans yaml> --config-dir <path to directory with a conf/ folder>
 
 defaults = [
     {'mephisto/blueprint': STATIC_BLUEPRINT_TYPE},
     {"mephisto/architect": "local"},
     {"mephisto/provider": "mock"},
-    {"conf": "example"},
+    {"conf": 'example'},
 ]
 
 
