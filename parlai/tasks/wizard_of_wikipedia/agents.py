@@ -1279,7 +1279,7 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     pass
 
 
-@register_mutator("add_checked_sentence_to_input")
+@register_mutator("add_checked_sentence_to_input_wow")
 class AddCheckedSentence(MessageMutator):
     """
     Adds the checked sentence to the end of the text.

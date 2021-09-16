@@ -581,13 +581,13 @@ class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
         return CONST.SELECTED_DOCS_TITLES
 
 
-@register_mutator("add_checked_sentence_to_input")
+@register_mutator("add_checked_sentence_to_input_woi")
 class AddCheckedSentence(AddCheckedSentenceWizWiki):
     """
     Adds the checked sentence to the end of the text.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,add_checked_sentence_to_input
+    flatten,add_checked_sentence_to_input_woi
     """
 
     @property
