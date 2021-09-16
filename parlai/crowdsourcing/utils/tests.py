@@ -351,9 +351,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
-            assert actual_state['inputs'] == expected_state['inputs']
+            clean_actual_state = self._remove_non_deterministic_keys(actual_state)
+            assert clean_actual_state['inputs'] == expected_state['inputs']
             for actual_message, expected_message in zip(
-                actual_state['outputs']['messages'],
+                clean_actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
             ):
                 for key, expected_value in expected_message.items():
@@ -362,6 +363,13 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         actual_value=actual_message[key],
                         expected_value=expected_value,
                     )
+
+    def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+        """
+        Allow for subclasses to delete certain keys in the actual state that will change
+        on each run.
+        """
+        return actual_state
 
     def _check_output_key(
         self: Union['AbstractParlAIChatTest', unittest.TestCase],
