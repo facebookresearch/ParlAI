@@ -45,7 +45,7 @@ class TestDialogueBias(unittest.TestCase):
                 },
                 skip_valid=True,
             )
-            self.assertAlmostEqual(test['ppl'], desired_ppl, delta=0.005)
+            self.assertAlmostEqual(test['ppl'], desired_ppl, delta=0.05)
 
 
 if __name__ == '__main__':
