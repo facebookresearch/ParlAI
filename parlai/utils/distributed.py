@@ -333,13 +333,10 @@ def slurm_distributed_context(opt):
         hostnames = subprocess.check_output(
             ['scontrol', 'show', 'hostnames', node_list]
         )
-    except subprocess.CalledProcessError as e:
-        # scontrol failed
-        raise e
     except FileNotFoundError as e:
         # Slurm is not installed
         raise RuntimeError(
-            'SLURM does not appear to be installed. Missing file: ' + e.filename
+            f'SLURM does not appear to be installed. Missing file: {e.filename}'
         )
 
     main_host = hostnames.split()[0].decode('utf-8')
