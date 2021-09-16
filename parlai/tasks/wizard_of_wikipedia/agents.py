@@ -1369,7 +1369,7 @@ class AddLabelLM(MessageMutator):
 
     To add the checked sentence as the label, use:
         parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
-        flatten,add_label_to_input_lm_wow,checked_sentence_as_label
+        flatten,add_label_to_input_lm_wow,checked_sentence_as_label_wow
     """
 
     def message_mutation(self, message: Message) -> Message:

@@ -615,7 +615,7 @@ class AddLabel(AddLabelWizWiki):
     Adds the dialogue sentence to the input.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label_woi,add_label_to_input
+    flatten,checked_sentence_as_label_woi,add_label_to_input_woi
     """
 
     pass
@@ -634,7 +634,7 @@ class AddLabelLM(AddLabelLMWizWiki):
 
     To add the checked sentence as the label, use:
         parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-        flatten,add_label_to_input_lm_woi,checked_sentence_as_label
+        flatten,add_label_to_input_lm_woi,checked_sentence_as_label_woi
     """
 
     pass
