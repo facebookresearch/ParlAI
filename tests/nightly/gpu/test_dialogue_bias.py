@@ -17,18 +17,20 @@ from parlai.core.opt import Opt
 class TestDialogueBias(unittest.TestCase):
     def test_perplexities(self):
         """
-        Test perplexities of reduced-biase models in the zoo.
+        Test perplexities of reduced-bias models in the zoo.
         """
         test_cases = [
-            ('gender__name_scrambling', 'transformer/generator', 1.0),
+            ('gender__name_scrambling', 'transformer/generator', 22.91),
             (
                 'gender__ctrl_gen_tokens',
                 'projects.dialogue_bias.agents:NoBiasStyleGenAgent',
-                1.0,
+                22.61,
             ),
-            ('gender__unlikelihood_sequence_level', 'transformer/generator', 1.0),
-            ('gender_ethnicity__name_scrambling', 'transformer/generator', 1.0),
+            ('gender__unlikelihood_sequence_level', 'transformer/generator', 11.44),
+            ('gender_ethnicity__name_scrambling', 'transformer/generator', 19.57),
         ]
+        # Perplexities are high because models were tuned on conversations starting with
+        # "Hi! My name is ___."
         for model_name, model, desired_ppl in test_cases:
             _, test = testing_utils.eval_model(
                 opt={
