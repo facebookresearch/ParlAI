@@ -20,14 +20,12 @@
 Contains abstract classes that provide the basic functionalities for compiling data from a Mephsito task.
 Mephisto provides two interfaces for retrieving its crowdsourced data; `MephistoDB` and `DataBrowser`.
 Using `AbstractResultsCompiler` you do not need to directly interact with these two modules---it provides an abstraction on top of these two.
+This class has methods such as `get_task_data` and `get_task_units` which handles interacting with Mephisto abstractions.
 For compiling your dataset from your crowdsourced Mephisto task, you need to extend this class and implement the following methods:
 
 * `compile_results` that returns a python *dictionary* (key-value pairs) or a pandas *dataframe*. We assume that, each unit of the crowdsourcing task (for example, annotation or conversation) has a unique id. This id is the key in the former case (the data from the unit is the value) and the row id for the latter.
 
 * (optoinal) `is_unit_acceptable` helps with simple filtering and data clean up. It receives the data from a unit of work and returns a boolean. We discrad this unit if it returns `False`.
-
-
-`AbstractResultsCompiler` provides methods such as `get_task_data` and `get_task_units` which handles interacting with Mephisto abstractions.
 
 ### Example
 Imagine you have a Mephisto task that the output of each unit of its work looks like this:
