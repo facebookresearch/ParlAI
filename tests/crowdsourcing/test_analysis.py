@@ -7,8 +7,20 @@
 import unittest
 from typing import Any, Dict, List
 from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
-from mephisto.data_model.unit import Unit
 from collections import defaultdict
+
+try:
+    from mephisto.data_model.unit import Unit
+
+    class MockUnit(Unit):
+        pass
+
+
+except ModuleNotFoundError:
+
+    class MockUnit:
+        def __init__(self, *args, **kwargs) -> None:
+            pass
 
 
 ######################################################################
@@ -31,10 +43,6 @@ class MockMephistoDB:
 
     def get_worker_name(self, worker_id: str):
         return {'worker_name': f'UNITTEST_MOCK_{worker_id}'}
-
-
-class MockUnit(Unit):
-    pass
 
 
 class MockMephistoBrowser:
