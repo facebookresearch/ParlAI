@@ -18,7 +18,7 @@ from collections import defaultdict
 ######################################################################
 
 
-MOCK_TASK_NAME = 'mock_task_name'
+DUMMY_OPT = {'task_name': 'mock_task_name', 'output_folder': '/dummy/tmp'}
 LEN_MOCK_DATA = 5
 
 
@@ -103,8 +103,7 @@ class TestResultsCompiler(unittest.TestCase):
     """
 
     def test_compile_all_results(self):
-        opt = {'task_name': MOCK_TASK_NAME}
-        data_compiler = MockResultsCompiler(opt)
+        data_compiler = MockResultsCompiler(DUMMY_OPT)
 
         compiled_data = data_compiler.compile_results()
         self.assertIsNotNone(compiled_data)
@@ -112,8 +111,7 @@ class TestResultsCompiler(unittest.TestCase):
         self.assertEqual(len(compiled_data), LEN_MOCK_DATA)
 
     def test_compile_results_with_eliminated_workers(self):
-        opt = {'task_name': MOCK_TASK_NAME}
-        data_compiler = MockResultsCompilerWithFilter(opt)
+        data_compiler = MockResultsCompilerWithFilter(DUMMY_OPT)
 
         compiled_data = data_compiler.compile_results()
         self.assertIsNotNone(compiled_data)

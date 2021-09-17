@@ -54,7 +54,7 @@ class AbstractResultsCompiler(ABC):
 
     def __init__(self, opt: Opt):
         self.task_name = opt['task_name']
-        self.output_folder = opt.get('output_folder')
+        self.output_folder = opt['output_folder']
         self.results_format = opt.get('results_format', 'json')
 
         # We lazily load these later, or inject their mock version during testing.
@@ -169,7 +169,7 @@ class AbstractResultsCompiler(ABC):
                 )
             compiled_results.to_csv(results_path, index=False)
         elif self.results_format == 'json':
-            if not isinstance(compiled_results, pd.DataFrame):
+            if isinstance(compiled_results, pd.DataFrame):
                 logging.warning(
                     "The requested data output format was 'json' while the data was compiled as a 'dataframe'. "
                     'Transforming dataframe into json using pandas.'
