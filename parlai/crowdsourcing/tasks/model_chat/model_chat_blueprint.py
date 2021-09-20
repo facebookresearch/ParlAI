@@ -287,7 +287,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             "annotation_buckets": annotation_buckets,
             "onboarding_data": getattr(self, 'onboard_task_data', None),
             "left_pane_text": self.left_pane_text,
-            "frame_height": '650px',
+            "frame_height": 650,
             "final_rating_question": self.args.blueprint.final_rating_question,
             "block_mobile": True,
         }
