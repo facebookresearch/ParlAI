@@ -140,7 +140,7 @@ class AbstractResultsCompiler(ABC):
     @abstractmethod
     def compile_results(self) -> Union[pd.DataFrame, Dict[str, Any]]:
         """
-        Method for returning the final results as a datafram or a json.
+        Method for returning the final results as a dataframe or a json.
 
         For Dict output each key is a unique identifier (eg Assignment ID) for a unit of
         crowdsourcing work. The data for that unit is stored in the value as dictionary.
@@ -148,7 +148,7 @@ class AbstractResultsCompiler(ABC):
         Each row of the dataframe consists of one utterance of one conversation, or crowdsourcing interaction.
 
         NOTE: Preference for new projects is Dict output (see the TODO below).
-        TODO: Only support Dict. Deprecate ` pd.DataFrame` when no other code is relyig on it.
+        TODO: Only support Dict. Deprecate ` pd.DataFrame` when no other code is relying on it.
         """
 
     def _validate_compiled_result_type(self, results):

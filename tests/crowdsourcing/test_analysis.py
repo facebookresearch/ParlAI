@@ -10,6 +10,8 @@ from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
 from collections import defaultdict
 
 try:
+    # First, trying to test with a class derived from the Mephisto's own Unit object.
+    # This MockUnit will cover testing some of the functionalities derived from its parent (Unit).
     from mephisto.data_model.unit import Unit
 
     class MockUnit(Unit):
@@ -17,7 +19,7 @@ try:
 
 
 except ModuleNotFoundError:
-
+    # In case Mephisto is not installed we use a simpler mock object.
     class MockUnit:
         def __init__(self, *args, **kwargs) -> None:
             pass

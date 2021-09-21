@@ -23,9 +23,11 @@ Using `AbstractResultsCompiler` you do not need to directly interact with these 
 This class has methods such as `get_task_data` and `get_task_units` which handles interacting with Mephisto abstractions.
 For compiling your dataset from your crowdsourced Mephisto task, you need to extend this class and implement the following methods:
 
-* `compile_results` that returns a python *dictionary* (key-value pairs) or a pandas *dataframe*. We assume that, each unit of the crowdsourcing task (for example, annotation or conversation) has a unique id. In the json formnat, this id is the key for the entry that keeps dialogue data for that conversation. If the format is a dataframe, the convension is to have each row of the dataframe keep the data for a single utterance (interaction). Hence, the conversation id needs to be stored in a column for distinguishing the data from different dialogues.
+* `compile_results` that returns a python *dictionary* (key-value pairs) or a pandas *dataframe*. We assume that, each unit of the crowdsourcing task (for example, annotation or conversation) has a unique id.
+In the json format, this id is the key for the entry that keeps dialogue data for that conversation.
+If the format is a dataframe, the convention is to have each row of the dataframe keep the data for a single utterance (interaction). Hence, the conversation id needs to be stored in a column for distinguishing the data from different dialogues.
 
-* (optional) `is_unit_acceptable` helps with simple filtering and data clean up. It receives the data from a unit of work and returns a boolean. We discrad this unit if it returns `False`.
+* (optional) `is_unit_acceptable` helps with simple filtering and data clean up. It receives the data from a unit of work and returns a boolean. We discard this unit if it returns `False`.
 
 ### Example
 Imagine you have a Mephisto task that the output of each unit of its work looks like this:
@@ -51,7 +53,7 @@ class MyResultsCompiler(AbstractResultsCompiler):
     def compile_results(self):
         data = dict()
         for work_unit in self.get_task_data():
-            unit_id = work_unit.pop('ID)
+            unit_id = work_unit.pop('ID')
             data[unit_id] = work_unit
         return data
 
