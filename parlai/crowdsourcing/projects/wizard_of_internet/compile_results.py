@@ -10,7 +10,6 @@ Compiles the final dataset (a json file) from the this Mephisto crowdsourcing ta
 Example use:
 
     python compile_results.py --task-name wizard-of-internet --output-folder=/dataset/wizard-internet
-    
 """
 
 from typing import Dict, Union
