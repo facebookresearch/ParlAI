@@ -16,7 +16,7 @@ It sends its response also as a json under a key named `response` which has a li
 
 ## Creating the dataset
 
-Having collected data from crowdsourcing task, you may use `compile_resullts.py` to create your dataset, as a json file.
+Having collected data from crowdsourcing task, you may use `compile_resullts.py` to compile your dataset as a json file.
 For example, if you called your task `wizard-of-internet` (you set this name in the config file that you ran with your task from `hydra_config`),
 the following code creates your dataset as a json file in the directory specified by `--output-folder` flag:
 
