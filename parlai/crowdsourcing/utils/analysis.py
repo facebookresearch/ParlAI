@@ -84,7 +84,10 @@ class AbstractResultsCompiler(ABC):
 
     def get_worker_name(self, worker_id: str) -> str:
         """
-        Gets the global (AWS) id of a worker from their Mephisto worker_id.
+        Gets the global id of a worker from their Mephisto worker_id.
+
+        The worker_id is the unique id that the crowdsourcing platforms (eg, Amazon
+        Mechanical Turk) assign to a single human worker in their system.
         """
         db = self.get_mephisto_db()
         return db.get_worker(worker_id)["worker_name"]
@@ -103,7 +106,8 @@ class AbstractResultsCompiler(ABC):
         try:
             data_browser = self.get_mephisto_data_browser()
             return data_browser.get_data_from_unit(unit)
-        except (IndexError, AssertionError):
+        except (IndexError, AssertionError) as error:
+            logging.error(error)
             logging.warning(
                 f'Skipping unit {unit.db_id}. No message found for this unit.'
             )
@@ -136,9 +140,15 @@ class AbstractResultsCompiler(ABC):
     @abstractmethod
     def compile_results(self) -> Union[pd.DataFrame, Dict[str, Any]]:
         """
-        Method for returning the final results dataframe.
+        Method for returning the final results as a datafram or a json.
 
-        Each row of the dataframe consists of one utterance of one conversation.
+        For Dict output each key is a unique identifier (eg Assignment ID) for a unit of
+        crowdsourcing work. The data for that unit is stored in the value as dictionary.
+
+        Each row of the dataframe consists of one utterance of one conversation, or crowdsourcing interaction.
+
+        NOTE: Preference for new projects is Dict output (see the TODO below).
+        TODO: Only support Dict. Deprecate ` pd.DataFrame` when no other code is relyig on it.
         """
 
     def _validate_compiled_result_type(self, results):

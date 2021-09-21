@@ -2,8 +2,8 @@
 
 ## Overview
 - `acceptability.py`: Used to ensure that a worker's messages throughout a conversation meet certain criteria (not too short, not all caps, not a lot of repetition, safety, etc.). More details about the acceptability checker can be found in the `acceptability.AcceptabilityChecker` section below.
-- `analysis.py`: Abstract base classes for compiling the results of crowdsourcing runs.
-- `frontend.py`: Method for compiling the frontend code of crowdsourcing tasks. See `analysis.py` section below.
+- `analysis.py`: Abstract base classes for compiling the results of crowdsourcing runs. See `analysis.py` section below.
+- `frontend.py`: Method for compiling the frontend code of crowdsourcing tasks.
 - `mturk.py`: Code for soft-blocking MTurk crowdsourcing workers (preventing them from working on this specific task), as well as a Hydra flag to pass in lists of workers to soft-block.
 - `tests.py`: Abstract base classes for testing different categories of crowdsourcing tasks.
 - `worlds.py`: Abstract base classes for onboarding and chat worlds.
@@ -23,9 +23,9 @@ Using `AbstractResultsCompiler` you do not need to directly interact with these 
 This class has methods such as `get_task_data` and `get_task_units` which handles interacting with Mephisto abstractions.
 For compiling your dataset from your crowdsourced Mephisto task, you need to extend this class and implement the following methods:
 
-* `compile_results` that returns a python *dictionary* (key-value pairs) or a pandas *dataframe*. We assume that, each unit of the crowdsourcing task (for example, annotation or conversation) has a unique id. This id is the key in the former case (the data from the unit is the value) and the row id for the latter.
+* `compile_results` that returns a python *dictionary* (key-value pairs) or a pandas *dataframe*. We assume that, each unit of the crowdsourcing task (for example, annotation or conversation) has a unique id. In the json formnat, this id is the key for the entry that keeps dialogue data for that conversation. If the format is a dataframe, the convension is to have each row of the dataframe keep the data for a single utterance (interaction). Hence, the conversation id needs to be stored in a column for distinguishing the data from different dialogues.
 
-* (optoinal) `is_unit_acceptable` helps with simple filtering and data clean up. It receives the data from a unit of work and returns a boolean. We discrad this unit if it returns `False`.
+* (optional) `is_unit_acceptable` helps with simple filtering and data clean up. It receives the data from a unit of work and returns a boolean. We discrad this unit if it returns `False`.
 
 ### Example
 Imagine you have a Mephisto task that the output of each unit of its work looks like this:
