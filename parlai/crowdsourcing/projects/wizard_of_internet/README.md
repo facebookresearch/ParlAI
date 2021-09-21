@@ -11,8 +11,6 @@ You need to have a functional search server running, and sets its address in `se
 This server responds to the search requests sent by the worker who takes *wizard* role during this task:
 It receieves a json with two keys: `q` and `n`, which are a string that is the search query, and an integer that is the number of pages to return, respectively.
 It sends its response also as a json under a key named `response` which has a list of documents retrieved for the received search query. Each document is a mapping (dictionary) of *string->string* with at least 3 fields: `url`, `title`, and `content` (see [SearchEngineRetriever](https://github.com/facebookresearch/ParlAI/blob/70ee4a2c63008774fc9e66a8392847554920a14d/parlai/agents/rag/retrieve_api.py#L73) for more info on how this task interacts with the search server).
-<<<<<<< HEAD
-=======
 
 ## Creating the dataset
 
@@ -23,4 +21,3 @@ the following code creates your dataset as a json file in the directory specifie
 ```.python
 python compile_results.py --task-name wizard-of-internet --output-folder=/dataset/wizard-internet
 ```
->>>>>>> 88a1c99a (dataset compiler)
