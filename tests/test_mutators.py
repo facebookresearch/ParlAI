@@ -263,3 +263,26 @@ class TestMutatorStickiness(unittest.TestCase):
             second_epoch.append(teacher.act())
 
         assert all(f == s for f, s in zip(first_epoch, second_epoch))
+
+
+class TestUniqueness(unittest.TestCase):
+    """
+    Test that mutators cannot have duplicate names.
+    """
+
+    def test_uniqueness(self):
+        from parlai.core.mutators import register_mutator, Mutator
+
+        @register_mutator("test_unique_mutator")
+        class Mutator1(Mutator):
+            pass
+
+        # don't freak out if we accidentally register the exact same class twice
+        register_mutator("test_unique_mutator")(Mutator1)
+
+        # but do demand uniqueness
+        with self.assertRaises(NameError):
+
+            @register_mutator("test_unique_mutator")
+            class Mutator2(Mutator):
+                pass

@@ -1279,7 +1279,7 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     pass
 
 
-@register_mutator("add_checked_sentence_to_input")
+@register_mutator("add_checked_sentence_to_input_wow")
 class AddCheckedSentence(MessageMutator):
     """
     Adds the checked sentence to the end of the text.
@@ -1306,7 +1306,7 @@ class AddCheckedSentence(MessageMutator):
         return new_message
 
 
-@register_mutator("checked_sentence_as_label")
+@register_mutator("checked_sentence_as_label_wow")
 class CheckedSentenceAsLabel(MessageMutator):
     """
     Uses the checked sentence (knowledge) as label.
@@ -1330,7 +1330,7 @@ class CheckedSentenceAsLabel(MessageMutator):
         return new_message
 
 
-@register_mutator("add_label_to_input")
+@register_mutator("add_label_to_input_wow")
 class AddLabel(MessageMutator):
     """
     Adds the dialogue sentence to the input.
@@ -1356,7 +1356,7 @@ class AddLabel(MessageMutator):
         return new_message
 
 
-@register_mutator("add_label_to_input_lm")
+@register_mutator("add_label_to_input_lm_wow")
 class AddLabelLM(MessageMutator):
     """
     Adds the dialogue sentence to the input (language modeling version).
@@ -1365,11 +1365,11 @@ class AddLabelLM(MessageMutator):
     the input. The rest is placed inside special tokens.
 
     E.g. run with: parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
-    flatten,add_label_to_input_lm
+    flatten,add_label_to_input_lm_wow
 
     To add the checked sentence as the label, use:
         parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
-        flatten,add_label_to_input_lm,checked_sentence_as_label
+        flatten,add_label_to_input_lm_wow,checked_sentence_as_label_wow
     """
 
     def message_mutation(self, message: Message) -> Message:

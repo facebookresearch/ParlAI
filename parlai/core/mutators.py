@@ -58,6 +58,11 @@ def register_mutator(name: str) -> Callable[[Type], Type]:
 
     def _inner(cls_: Type) -> Type:
         global MUTATOR_REGISTRY
+        if name in MUTATOR_REGISTRY and cls_ is not MUTATOR_REGISTRY[name]:
+            raise NameError(
+                "Mutators must be uniquely named, but detected two mutators with "
+                f"the name '{name}'."
+            )
         MUTATOR_REGISTRY[name] = cls_
         return cls_
 

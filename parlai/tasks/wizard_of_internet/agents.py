@@ -581,13 +581,13 @@ class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
         return CONST.SELECTED_DOCS_TITLES
 
 
-@register_mutator("add_checked_sentence_to_input")
+@register_mutator("add_checked_sentence_to_input_woi")
 class AddCheckedSentence(AddCheckedSentenceWizWiki):
     """
     Adds the checked sentence to the end of the text.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,add_checked_sentence_to_input
+    flatten,add_checked_sentence_to_input_woi
     """
 
     @property
@@ -595,13 +595,13 @@ class AddCheckedSentence(AddCheckedSentenceWizWiki):
         return CONST.SELECTED_SENTENCES
 
 
-@register_mutator("checked_sentence_as_label")
+@register_mutator("checked_sentence_as_label_woi")
 class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
     """
     Uses the checked sentence (knowledge) as label.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label
+    flatten,checked_sentence_as_label_woi
     """
 
     @property
@@ -609,19 +609,19 @@ class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
         return CONST.SELECTED_SENTENCES
 
 
-@register_mutator("add_label_to_input")
+@register_mutator("add_label_to_input_woi")
 class AddLabel(AddLabelWizWiki):
     """
     Adds the dialogue sentence to the input.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label,add_label_to_input
+    flatten,checked_sentence_as_label_woi,add_label_to_input_woi
     """
 
     pass
 
 
-@register_mutator("add_label_to_input_lm")
+@register_mutator("add_label_to_input_lm_woi")
 class AddLabelLM(AddLabelLMWizWiki):
     """
     Adds the dialogue sentence to the input (language modeling version).
@@ -630,11 +630,11 @@ class AddLabelLM(AddLabelLMWizWiki):
     the input. The rest is placed inside special tokens.
 
     E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,add_label_to_input_lm
+    flatten,add_label_to_input_lm_woi
 
     To add the checked sentence as the label, use:
         parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-        flatten,add_label_to_input_lm,checked_sentence_as_label
+        flatten,add_label_to_input_lm_woi,checked_sentence_as_label_woi
     """
 
     pass
