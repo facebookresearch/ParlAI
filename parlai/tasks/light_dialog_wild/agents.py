@@ -8,6 +8,8 @@ from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.teachers import ParlAIDialogTeacher
+from parlai.core.message import Message
+from parlai.core.mutators import register_mutator, MessageMutator
 from .build import build, get_fpath
 
 import copy
@@ -456,3 +458,29 @@ class SelfchatTeacher(SimpleTeacher):
     """
 
     pass
+
+
+@register_mutator("self_say_once")
+class SelfSayOnce(MessageMutator):
+    """
+    Do not copy the label to the input when flatten.
+
+    When we use the flatten mutator, the self_say utterance appears twice
+    in the input for every turn.
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        new_message = message.copy()
+        if (
+            'text' not in message
+            or not message['text'].split('\n')
+            or 'labels' not in message
+            or not message['labels']
+        ):
+            return message
+
+        text = new_message.pop('text')
+        lines = text.split('\n')
+        new_text = '\n'.join([line for line in lines if line.startswith('_')])
+        new_message['text'] = new_text
+        return new_message
