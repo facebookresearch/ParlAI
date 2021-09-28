@@ -786,6 +786,8 @@ class BlenderBot2RagAgent(RagAgent):
             output.top_docs = self.model.retriever.top_docs
         if hasattr(self.model.retriever, 'search_queries'):
             output.search_queries = self.model.retriever.search_queries
+        if hasattr(self.model.memory_decoder, 'memories_full_list'):
+            output.memories = self.model.memory_decoder.memories_full_list
         return output
 
     def _model_input(
