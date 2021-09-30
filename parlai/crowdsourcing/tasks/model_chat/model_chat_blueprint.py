@@ -467,6 +467,7 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
                 'statistics_condition': statistics_condition,
                 'conversation_start_mode': args.blueprint.conversation_start_mode,
                 'include_persona': args.blueprint.include_persona,
+                'task_question': args.blueprint.task_question,
             }
         )
 
