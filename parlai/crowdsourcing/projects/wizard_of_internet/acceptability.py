@@ -128,7 +128,7 @@ def poor_knowledge_selection(messages, persona, stemmer, knwldg_ovlp_thrshld):
         if msg['id'] != 'Wizard':
             continue
 
-        selections = msg.get('task_data', {}).get('selected_text_candaidtes')
+        selections = msg.get('task_data', {}).get('selected_text_candidates')
         if not selections or selections[0][0]:
             continue
 

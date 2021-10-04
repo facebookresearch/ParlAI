@@ -10,7 +10,7 @@ Compiles the final dataset (a json file) from the this Mephisto crowdsourcing ta
 Example use:
 
     python compile_results.py --task-name wizard-of-internet --output-folder=/dataset/wizard-internet
-    
+
 """
 
 from typing import Dict, Union
@@ -102,7 +102,7 @@ class ChatMessage:
                     return {'Persona': context_data['form_responses'][0]['response']}
                 return {
                     CONTENTS: context_data.get('text_candidates', ''),
-                    SELECTED_CONTENTS: context_data.get('selected_text_candaidtes', ''),
+                    SELECTED_CONTENTS: context_data.get('selected_text_candidates', ''),
                 }
         # Must be SEARCH_AGENT
         return {CONTENTS: context_data['search_results']}
