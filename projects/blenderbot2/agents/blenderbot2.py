@@ -622,7 +622,7 @@ class BlenderBot2RagAgent(RagAgent):
             sentences = observation[self.opt['gold_sentence_key']]
             document_titles = observation[self.opt['gold_document_titles_key']]
             if isinstance(selected_documents, str):
-                documents = [selected_documents]
+                selected_documents = [selected_documents]
             assert isinstance(selected_documents, list)
 
             documents = []
