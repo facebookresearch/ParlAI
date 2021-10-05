@@ -340,6 +340,27 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
     Abstract test class for testing model chat code.
     """
 
+    def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+        # TODO: in `self._check_output_key()`, there is other logic for ignoring
+        #  keys with non-deterministic values. Consolidate all of that logic here!
+        custom_data = self._get_custom_data(actual_state)
+        for key in ['datapath', 'parlai_home', 'starttime']:
+            # The 'datapath' and 'parlai_home' keys will change depending on where
+            # the test is run
+            del custom_data['task_description']['model_opt'][key]
+        return actual_state
+
+    def _get_custom_data(self, actual_state: dict) -> dict:
+        """
+        Return the custom task data (without making a copy).
+
+        The second-to-last message contains the custom data saved by the model-chat
+        task code.
+        """
+        return actual_state['outputs']['messages'][-2]['data']['WORLD_DATA'][
+            'custom_data'
+        ]
+
     def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
         """
         Special logic for handling the 'final_chat_data' key.
@@ -418,7 +439,7 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
 
 def get_context_generator(
     override_opt: Optional[Dict[str, Any]] = None,
-    conversation_start_mode: Optional[str] = 'blended_skill_talk',
+    task: Optional[str] = 'blended_skill_talk',
     **kwargs,
 ) -> ContextGenerator:
     """
@@ -429,7 +450,7 @@ def get_context_generator(
     if override_opt is not None:
         argparser.set_params(**override_opt)
     opt = argparser.parse_args([])
-    task_module = load_task_module(conversation_start_mode)
+    task_module = load_task_module(task)
     context_generator_class = getattr(task_module, 'ContextGenerator', None)
     context_generator = context_generator_class(opt, datatype='test', seed=0, **kwargs)
     # We pull from the test set so that the model can't regurgitate

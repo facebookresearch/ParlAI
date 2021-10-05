@@ -174,6 +174,13 @@ fixed_response: >
                     actual_value=actual_chat_data, expected_value=expected_chat_data
                 )
 
+        def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+            actual_state = super()._remove_non_deterministic_keys(actual_state)
+            custom_data = self._get_custom_data(actual_state)
+            del custom_data['dialog'][0]['message_id']
+            # This chat task additionally includes a message_id in the first message
+            return actual_state
+
 
 except ImportError:
     pass

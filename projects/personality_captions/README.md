@@ -14,7 +14,7 @@ The Personality-Captions dataset can be accessed via ParlAI, with `-t personalit
 See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 Additionally, the ParlAI MTurk tasks for data collection and human evaluation
-are [available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md) in an older release of ParlAI (see the `personality_captions` task).
+are [available](https://github.com/facebookresearch/ParlAI/tree/main/parlai/mturk/README.md) in an older release of ParlAI (see the `personality_captions` task).
 
 ## Leaderboards for Personality-Captions Task
 

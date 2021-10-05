@@ -92,7 +92,7 @@ def make_projects_landing():
         'housed in the ParlAI repo, others are maintained via external websites. '
         'Please also refer',
         'See the [ParlAI projects](https://github.com/facebookresearch/ParlAI/'
-        'tree/master/projects) page on GitHub for more information. Refer',
+        'tree/main/projects) page on GitHub for more information. Refer',
     )
     landing_html = template.replace('{{{CONTENT}}}', ghmarkdown(landing))
     html = wrap_base(landing_html, "Projects | ParlAI")
@@ -115,7 +115,7 @@ def make_projects_individual():
         content_html = content_html.replace(
             'src="',
             'src="https://raw.githubusercontent.com/facebookresearch/'
-            'ParlAI/master/projects/{}'.format(p + '/' if p else ''),
+            'ParlAI/main/projects/{}'.format(p + '/' if p else ''),
         )
         title = p.title().replace("_", " ")
         html = wrap_base(content_html, title)

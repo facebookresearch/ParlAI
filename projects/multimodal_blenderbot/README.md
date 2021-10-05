@@ -18,7 +18,7 @@ Recent work in open-domain conversational agents has demonstrated that significa
 
 ## Code and models
 
-See the [model card](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/multimodal_blenderbot/README.md) for details.
+See the [model card](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/multimodal_blenderbot/README.md) for details.
 
 ## Citation
 

@@ -58,6 +58,11 @@ def register_mutator(name: str) -> Callable[[Type], Type]:
 
     def _inner(cls_: Type) -> Type:
         global MUTATOR_REGISTRY
+        if name in MUTATOR_REGISTRY and cls_ is not MUTATOR_REGISTRY[name]:
+            raise NameError(
+                "Mutators must be uniquely named, but detected two mutators with "
+                f"the name '{name}'."
+            )
         MUTATOR_REGISTRY[name] = cls_
         return cls_
 
@@ -233,7 +238,7 @@ class ManyEpisodeMutator(Mutator):
         Abstract many-episode mutation.
 
         The main method to implement when creation a ManyEpisodeMutator.
-        You should map this episode to one-or-more episodes.
+        You should map this episode to zero-or-more episodes.
 
         If you wish to create multiple episodes, you need to output
         one-sublist-per-new-episode. As with EpisodeMutator, "episode_done"

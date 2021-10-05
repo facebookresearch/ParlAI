@@ -200,7 +200,7 @@ function CustomTextResponse({
         task_data: {
           search_query: searchQuery,
           text_candidates: searchResults,
-          selected_text_candaidtes: selectedSearchResults,
+          selected_text_candidates: selectedSearchResults,
         }
       }).then(() => {
         setTextValue("");

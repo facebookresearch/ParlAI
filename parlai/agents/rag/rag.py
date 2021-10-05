@@ -756,7 +756,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         for i in range(batch.batchsize):
             vec_i = pred_vecs[i]
             txt_i = self._v2t(vec_i)
-            query_i = torch.LongTensor(self.model.tokenize_query(txt_i))
+            query_i = torch.LongTensor(self.model.tokenize_query(txt_i)).to(query_vec)
             if self.retriever_query == 'one_turn':
                 new_queries.append(query_i)
             else:

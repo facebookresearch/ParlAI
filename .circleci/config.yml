@@ -47,14 +47,14 @@ executors:
 # -------------------------------------------------------------------------------------
 commands:
   fixgit:
-    # circleci sets master to the tip of the branch, which isn't super useful for us.
-    # better if master looks like it would on our local machines
+    # circleci sets main to the tip of the branch, which isn't super useful for us.
+    # better if main looks like it would on our local machines
     description: Fixes git
     steps:
       - run:
           name: Fixes git
           command: |
-            ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
+            ( [[ "$CIRCLE_BRANCH" != "main" ]] && git branch -f main origin/main ) || true
 
   setup:
     description: Sets up the virtual environment
@@ -167,7 +167,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.3.4 -b stable
+              cd Mephisto; git checkout v0.4.0 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -484,11 +484,11 @@ workflows:
       - build_website:
           filters:
             branches:
-              ignore: master
+              ignore: main
       - deploy_website:
           filters:
             branches:
-              only: master
+              only: main
       - test_website:
           requires:
             - deploy_website
