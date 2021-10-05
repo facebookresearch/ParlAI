@@ -1,6 +1,6 @@
 # Local Human
 
-This is an agent which takes input from the command line in the `act` function. It is used in the [interactive script](https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/interactive.py).
+This is an agent which takes input from the command line in the `act` function. It is used in the [interactive script](https://github.com/facebookresearch/ParlAI/blob/main/parlai/scripts/interactive.py).
 
 ## Basic Examples
 

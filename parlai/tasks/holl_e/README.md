@@ -21,7 +21,7 @@ full: All of the below
  
  fact_table: Data containing box office earnings, similar movies, taglines, awards.
 
- More information can be found at https://github.com/nikitacs16/Holl-E/blob/master/data%20documentation/raw_data.md
+ More information can be found at https://github.com/nikitacs16/Holl-E/blob/main/data%20documentation/raw_data.md
  
 
 **Tags: #All, #ChitChat**

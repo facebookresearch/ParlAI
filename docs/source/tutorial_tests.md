@@ -4,7 +4,7 @@ Author: Kurt Shuster
 
 ## Running a Test
 
-To run tests in ParlAI, we use [pytest](https://docs.pytest.org/en/stable/). The following commands are taken from the `tests` directory [README](https://github.com/facebookresearch/ParlAI/tree/master/tests).
+To run tests in ParlAI, we use [pytest](https://docs.pytest.org/en/stable/). The following commands are taken from the `tests` directory [README](https://github.com/facebookresearch/ParlAI/tree/main/tests).
 
 *To run all tests in your current directory, simply run:*
 ```bash
@@ -35,10 +35,10 @@ pytest -s -k TransformerRanker
 
 ### Continuous Integration, Explained
 
-So, you want to develop in ParlAI - awesome! We welcome any and all contributions. However, we always want to ensure that the platform remains stable and functioning, so we often encourage authors of pull requests to include a test with their changes. To ensure that our code remains correct and properly functioning, we use **continuous integration** - on each commit in a pull request, CircleCI will run a suite of tests that we've written to ensure that nothing breaks. Our CircleCI configuration can be found [here](https://github.com/facebookresearch/ParlAI/blob/master/.circleci/config.yml); you don't need to fully understand what's in that file, however the gist is that we have several parallel checks (unit tests, gpu tests) on several different setups (OS X, various PyTorch releases) that covers nearly all of the environments in which we expect ParlAI to function.
+So, you want to develop in ParlAI - awesome! We welcome any and all contributions. However, we always want to ensure that the platform remains stable and functioning, so we often encourage authors of pull requests to include a test with their changes. To ensure that our code remains correct and properly functioning, we use **continuous integration** - on each commit in a pull request, CircleCI will run a suite of tests that we've written to ensure that nothing breaks. Our CircleCI configuration can be found [here](https://github.com/facebookresearch/ParlAI/blob/main/.circleci/config.yml); you don't need to fully understand what's in that file, however the gist is that we have several parallel checks (unit tests, gpu tests) on several different setups (OS X, various PyTorch releases) that covers nearly all of the environments in which we expect ParlAI to function.
 
 :::{note}
-Changes to anything within the [`parlai/tasks`](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks) directory will trigger a failing test; a bot on GitHub will comment on your Pull Request with a note on what test to run manually.
+Changes to anything within the [`parlai/tasks`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks) directory will trigger a failing test; a bot on GitHub will comment on your Pull Request with a note on what test to run manually.
 :::
 
 ### Types of Tests in ParlAI
@@ -47,13 +47,13 @@ There are several types of tests in ParlAI, and it is important to understand th
 
 #### Unit Tests
 
-Unit tests are tests that measure basic functionality of core ParlAI constructs. Breaking a unit test implies that something fundamental about the pull request is flawed, or at least breaks some well-defined ParlAI paradigm. As such, ParlAI has unit tests for *several* commonly used scripts and abstractions, including [model training](https://github.com/facebookresearch/ParlAI/blob/master/tests/test_train_model.py), [argument parsing](https://github.com/facebookresearch/ParlAI/blob/master/tests/test_params.py), [metrics tracking](https://github.com/facebookresearch/ParlAI/blob/master/tests/test_metrics.py), and [higher level agent abstractions](https://github.com/facebookresearch/ParlAI/blob/master/tests/test_torch_agent.py). These tests generally live in the top level [`tests`](https://github.com/facebookresearch/ParlAI/tree/master/tests) directory in ParlAI.
+Unit tests are tests that measure basic functionality of core ParlAI constructs. Breaking a unit test implies that something fundamental about the pull request is flawed, or at least breaks some well-defined ParlAI paradigm. As such, ParlAI has unit tests for *several* commonly used scripts and abstractions, including [model training](https://github.com/facebookresearch/ParlAI/blob/main/tests/test_train_model.py), [argument parsing](https://github.com/facebookresearch/ParlAI/blob/main/tests/test_params.py), [metrics tracking](https://github.com/facebookresearch/ParlAI/blob/main/tests/test_metrics.py), and [higher level agent abstractions](https://github.com/facebookresearch/ParlAI/blob/main/tests/test_torch_agent.py). These tests generally live in the top level [`tests`](https://github.com/facebookresearch/ParlAI/tree/main/tests) directory in ParlAI.
 #### Data Tests
-There is one main test that is required to pass when one adds tasks and datasets to ParlAI, and GitHub will comment on your pull request to run [the test](https://github.com/facebookresearch/ParlAI/tree/master/tests/datatests/test_new_tasks.py) manually if you add a new task.
+There is one main test that is required to pass when one adds tasks and datasets to ParlAI, and GitHub will comment on your pull request to run [the test](https://github.com/facebookresearch/ParlAI/tree/main/tests/datatests/test_new_tasks.py) manually if you add a new task.
 #### Task Tests
-The data test is a barebones test that simply verifies the teacher data is correctly formatted in appropriate ParlAI [`Message`](parlai.core.message.Message) dicts. However, it is sometimes good to write more nuanced, specific tests for commonly used datasets, to ensure that any changes or updates to the teacher do not mar the specific expected teacher output. These tests are found in the [`tests/tasks`](https://github.com/facebookresearch/ParlAI/tree/master/tests/tasks) directory and include tests for the [Wizard of Wikipedia](https://github.com/facebookresearch/ParlAI/blob/master/tests/tasks/test_wizard_of_wikipedia.py) and [Blended Skill Talk](https://github.com/facebookresearch/ParlAI/blob/master/tests/tasks/test_blended_skill_talk.py) tasks, among others.
+The data test is a barebones test that simply verifies the teacher data is correctly formatted in appropriate ParlAI [`Message`](parlai.core.message.Message) dicts. However, it is sometimes good to write more nuanced, specific tests for commonly used datasets, to ensure that any changes or updates to the teacher do not mar the specific expected teacher output. These tests are found in the [`tests/tasks`](https://github.com/facebookresearch/ParlAI/tree/main/tests/tasks) directory and include tests for the [Wizard of Wikipedia](https://github.com/facebookresearch/ParlAI/blob/main/tests/tasks/test_wizard_of_wikipedia.py) and [Blended Skill Talk](https://github.com/facebookresearch/ParlAI/blob/main/tests/tasks/test_blended_skill_talk.py) tasks, among others.
 #### Nightly Tests
-Nightly tests are tests that require significantly more computational resources than your standard unit test; the majority of nightly tests are [GPU tests](https://github.com/facebookresearch/ParlAI/tree/master/tests/nightly/gpu), i.e., the tests require GPUs to run. Nightly tests are commonly used to test models in the ParlAI model zoo, ensuring that the models either train correctly or perform appropriately on their respective tasks. These tests are important as they prevent code changes from introducing regressions in model performance for known, pre-trained models.
+Nightly tests are tests that require significantly more computational resources than your standard unit test; the majority of nightly tests are [GPU tests](https://github.com/facebookresearch/ParlAI/tree/main/tests/nightly/gpu), i.e., the tests require GPUs to run. Nightly tests are commonly used to test models in the ParlAI model zoo, ensuring that the models either train correctly or perform appropriately on their respective tasks. These tests are important as they prevent code changes from introducing regressions in model performance for known, pre-trained models.
 
 ### Writing a Test
 
@@ -61,7 +61,7 @@ Writing and running tests in ParlAI is **not** a gargantuan task - we offer seve
 
 #### Common Testing Utilities
 
-We offer several testing utility functions in our [`testing` utilities](https://github.com/facebookresearch/ParlAI/blob/master/parlai/utils/testing.py) file. Below are some commonly used, and very helpful, abstractions:
+We offer several testing utility functions in our [`testing` utilities](https://github.com/facebookresearch/ParlAI/blob/main/parlai/utils/testing.py) file. Below are some commonly used, and very helpful, abstractions:
 
 ##### **Test Decorators**
 
@@ -160,12 +160,12 @@ class MyTestClass(unittest.TestCase):
 
 #### Integration Testing Teachers
 
-As you may have seen in some of the examples above, we often do not use real ParlAI tasks for testing, as they are generally too large (and require downloads), whereas simple integration task teachers provide easy ways to quickly measure model performance. The integration testing teachers can be used via specifying `task='integration_tests:TestTeacher`, and they are all found in [`parlai/tasks/integration_tests/agents.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/integration_tests/agents.py). The default teacher is a teacher whose text and label are identical, and provides some label candidates as well. Other variations include a `ReverseTeacher` (the label is the reverse of the text), an `ImageTeacher` (which provides dummy images for testing image-based models), `MultiturnTeacher` (for testing agents on multi-turn tasks), etc.
+As you may have seen in some of the examples above, we often do not use real ParlAI tasks for testing, as they are generally too large (and require downloads), whereas simple integration task teachers provide easy ways to quickly measure model performance. The integration testing teachers can be used via specifying `task='integration_tests:TestTeacher`, and they are all found in [`parlai/tasks/integration_tests/agents.py`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/integration_tests/agents.py). The default teacher is a teacher whose text and label are identical, and provides some label candidates as well. Other variations include a `ReverseTeacher` (the label is the reverse of the text), an `ImageTeacher` (which provides dummy images for testing image-based models), `MultiturnTeacher` (for testing agents on multi-turn tasks), etc.
 
 
 #### Writing your own **Unit Test**
 
-Now that we've enumerated what's available to you, let's right a unit test! Woo! I can hear your excitement from here! To make this as useful as possible, we will walk through a simple change recently (as of this writing) made in ParlAI that required a thoughtful unit test (full source code is [here](https://github.com/facebookresearch/ParlAI/blob/master/tests/test_tga.py)).
+Now that we've enumerated what's available to you, let's right a unit test! Woo! I can hear your excitement from here! To make this as useful as possible, we will walk through a simple change recently (as of this writing) made in ParlAI that required a thoughtful unit test (full source code is [here](https://github.com/facebookresearch/ParlAI/blob/main/tests/test_tga.py)).
 
 ##### Scenario
 For our generative models, we provide an inference interface for various types of generation: nucleus sampling, top-k sampling, beam search, etc. We additionally provide finer-grained options, such as blocking from generating repeated n-grams in the current sentence, or even n-grams in the recent dialogue history. The `--beam-context-block-ngram` controls this functionality, and if set to a positive nonzero number N, the [`TorchGeneratorAgent`](parlai.core.torch_generator_agent.TorchGeneratorAgent) will ensure that there are no repeated N-grams in generation that appeared in **any part** of the dialogue history.

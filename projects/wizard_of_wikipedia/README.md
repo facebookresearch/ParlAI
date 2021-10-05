@@ -32,7 +32,7 @@ You can train your own ParlAI agent on the Wizard of Wikipedia task with
 See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 The ParlAI MTurk collection scripts are also
-[available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md) in an older release of ParlAI (see the `wizard_of_wikipedia` task),
+[available](https://github.com/facebookresearch/ParlAI/tree/main/parlai/mturk/README.md) in an older release of ParlAI (see the `wizard_of_wikipedia` task),
 for those interested in replication, analysis, or additional data collection.
 The MTurk task for evaluating pre-trained models is made available in this
 directory.

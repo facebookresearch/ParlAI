@@ -61,7 +61,7 @@ parlai eval_model -mf zoo:msc/dialog_summarizer/model -t msc:PersonaSummary -dt 
 
 ## Human Evaluations
 
-Human evaluations were performed using the Mephisto task [given here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/model_chat).
+Human evaluations were performed using the Mephisto task [given here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/model_chat).
 
 ```
 python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/projects/multisession_chat/human_eval/run.py

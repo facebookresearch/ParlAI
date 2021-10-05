@@ -356,9 +356,11 @@ def slurm_distributed_context(opt):
     except subprocess.CalledProcessError as e:
         # scontrol failed
         raise e
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         # Slurm is not installed
-        raise RuntimeError('SLURM does not appear to be installed.')
+        raise RuntimeError(
+            'SLURM does not appear to be installed. Missing file: ' + e.filename
+        )
 
 
 def find_free_port() -> int:

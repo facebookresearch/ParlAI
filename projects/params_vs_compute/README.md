@@ -43,4 +43,4 @@ In summary, our work has examined the issues of computation vs. parameter size, 
 To get more into the details read the [Hash Layers](https://arxiv.org/abs/2106.04426)
 and [Staircase Attention](https://arxiv.org/abs/2106.04279) papers.
 
-Code is available [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/params_vs_compute/hash_ladder).
+Code is available [here](https://github.com/facebookresearch/ParlAI/tree/main/projects/params_vs_compute/hash_ladder).

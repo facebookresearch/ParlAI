@@ -55,6 +55,7 @@ from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
+from parlai.utils.misc import error_once
 
 
 def validate(observation):
@@ -256,13 +257,20 @@ class World(object):
         """
         Reset all agents in the world, and world statistics.
         """
-        for a in self.agents:
-            a.reset()
+        self.reset_agents()
         self.max_exs = None
         self.total_exs = 0
         self.total_epochs = 0
         self.total_parleys = 0
         self.time.reset()
+
+    def reset_agents(self):
+        """
+        Reset all agents in the world.
+        """
+        agents = self.get_agents()
+        for a in agents:
+            a.reset()
 
     def reset_metrics(self):
         """
@@ -573,12 +581,12 @@ class MultiWorld(World):
         for each_world in self.worlds:
             world_id = each_world.getID()
             if world_id in task_ids:
-                raise AssertionError(
-                    '{} and {} teachers have overlap in id {}.'.format(
-                        task_ids[world_id],
-                        each_world.get_agents()[0].__class__,
-                        world_id,
-                    )
+                world_class = each_world.get_agents()[0].__class__
+                error_once(
+                    f"{task_ids[world_id]} and {world_class} teachers have overlap "
+                    f"in id '{world_id}'. This will cause their metrics to be "
+                    "intermingled. Change the id attribute of one to remove this "
+                    "message."
                 )
             else:
                 task_ids[world_id] = each_world.get_task_agent()

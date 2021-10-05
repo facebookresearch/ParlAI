@@ -12,4 +12,4 @@ Some useful parameters to set:
 - `mephisto.teacher.task`: the ParlAI dataset to pull passages from. Defaults to SQuAD
 - `mephisto.teacher.datatype`: the fold of the dataset in `mephisto.teacher.task` to pull passages from. Defaults to the training set
 
-**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
+**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.

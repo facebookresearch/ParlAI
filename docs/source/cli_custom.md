@@ -12,7 +12,7 @@ The [`ParlaiScript`](parlai.core.script.ParlaiScript) class is the abstract clas
 
 #### `setup_args`
 
-The `setup_args` function returns a ParlaiParser with relevant command line args specified. As an example, the [`TrainModel`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/train_model.py) script adds several arguments required for training a model (number of train epochs, validation statistics, etc.).
+The `setup_args` function returns a ParlaiParser with relevant command line args specified. As an example, the [`TrainModel`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/scripts/train_model.py) script adds several arguments required for training a model (number of train epochs, validation statistics, etc.).
 
 #### `run`
 

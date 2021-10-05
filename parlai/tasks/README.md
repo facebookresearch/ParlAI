@@ -3,7 +3,7 @@ The set of tasks in ParlAI.
 Each directory contains a task or a set of related tasks.
 
 The list of tasks can also be found in this file:
-https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py
+https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/task_list.py
 
 or in the documentation, here:
 http://www.parl.ai/docs/tasks.html

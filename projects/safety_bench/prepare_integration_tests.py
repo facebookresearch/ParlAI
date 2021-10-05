@@ -6,7 +6,7 @@
 """
 Prepare data for integration tests. User will need to subsequently follow instructions in
 the `Human Evalulations` section of the README here:
-<https://github.com/facebookresearch/ParlAI/tree/master/projects/safety_recipes>
+<https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_recipes>
 
 For example, to prepare integration tests for the adversarial setting for the wrapper for
 the 90M parameter BlenderBot model, try the following fommand:

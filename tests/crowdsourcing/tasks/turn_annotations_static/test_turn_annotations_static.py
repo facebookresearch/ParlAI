@@ -139,6 +139,7 @@ try:
 
             # Set up the config and database
             overrides += [
+                '+mephisto.blueprint.annotation_last_only=False',
                 '+mephisto.blueprint.conversation_count=null',
                 'mephisto.blueprint.onboarding_qualification=null',
                 '+mephisto.blueprint.random_seed=42',

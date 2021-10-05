@@ -21,7 +21,7 @@ Its goal is to provide researchers:
     to connect agents with humans in a chat interface
 
 You can also see the
-[README](https://github.com/facebookresearch/ParlAI/blob/master/README.md)
+[README](https://github.com/facebookresearch/ParlAI/blob/main/README.md)
 for more basic info on ParlAI, or continue reading this document.
 
 Core Concepts
@@ -319,7 +319,7 @@ by setting '-t {task}' in the following format:
 
 These flags are used across ParlAI. Here are some examples of using them
 for displaying data with the existing script
-[display\_data](https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/display_data.py):
+[display\_data](https://github.com/facebookresearch/ParlAI/blob/main/parlai/scripts/display_data.py):
 
 ```python
 #Display 10 random examples from task 1 of the "1k training examples" bAbI task:
@@ -348,7 +348,7 @@ that data from the train set comes in a random order (whereas valid and
 test data is ordered by default).
 
 We maintain a complete task list in the [code
-here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/task_list.py)
+here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks/task_list.py)
 or in this [documentation here](tasks). The set of tasks in ParlAI
 is continually growing from contributors. See [this
 tutorial](tutorial_task) for making your own tasks.
@@ -357,9 +357,9 @@ tutorial](tutorial_task) for making your own tasks.
 
 For now, we'll look at the scripts we've provided for training and
 evaluation:
-[train\_model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/train_model.py)
+[train\_model](https://github.com/facebookresearch/ParlAI/blob/main/parlai/scripts/train_model.py)
 and
-[eval\_model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/scripts/eval_model.py).
+[eval\_model](https://github.com/facebookresearch/ParlAI/blob/main/parlai/scripts/eval_model.py).
 Here are some examples:
 
 ```python
@@ -386,7 +386,7 @@ The main flags are:
 
 1\) --model (-model) which sets the agent type that will be trained. The
 agents available in parlAI [are
-here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents).
+here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents).
 See [this tutorial](tutorial_task) for making your own agents.
 
 2)  --model-file (-mf) points to the file name of where to save your
@@ -419,7 +419,7 @@ __Model Zoo__
 
 ParlAI now maintains a _model zoo_ of existing model files of agents
 that have been trained on tasks. See the devoted documentation section
-or [here for details](https://github.com/facebookresearch/ParlAI/blob/master/parlai/zoo/model_list.py).
+or [here for details](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py).
 
 The set of agents and models in the model zoo in ParlAI is continually
 growing from contributors.

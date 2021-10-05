@@ -188,6 +188,11 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.acceptability_checker = AcceptabilityChecker()
         self.block_qualification = opt['block_qualification']
 
+        self.final_chat_data = None
+        # TODO: remove this attribute once chat data is only stored in the Mephisto
+        #  TaskRun for this HIT (see .get_custom_task_data() docstring for more
+        #  information)
+
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
         print(
@@ -269,14 +274,14 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     chat_data_subfolder,
                     f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
                 )
-                final_chat_data = self.get_final_chat_data()
+                self.final_chat_data = self.get_final_chat_data()
                 self.agent.mephisto_agent.state.messages.append(
-                    {'final_chat_data': final_chat_data}
+                    {'final_chat_data': self.final_chat_data}
                 )
                 # Append the chat data directly to the agent state's message list in
                 # order to prevent the worker from seeing a new text response in the UI
                 with open(chat_data_path, 'w+') as f_json:
-                    data_str = json.dumps(final_chat_data)
+                    data_str = json.dumps(self.final_chat_data)
                     f_json.write(data_str)
                 print(
                     f'{self.__class__.__name__}:{self.tag}: Data saved at '
@@ -284,9 +289,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 )
 
                 # Soft-block the worker if there were acceptability violations
-                acceptability_violations = final_chat_data['acceptability_violations'][
-                    0
-                ]
+                acceptability_violations = self.final_chat_data[
+                    'acceptability_violations'
+                ][0]
                 if (
                     acceptability_violations is not None
                     and acceptability_violations != ''
@@ -391,15 +396,30 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 'model_opt': self.bot.model_agent.opt,
             },
         }
-        # 'bad_workers' is for compatibility. Before, it was only non-empty if a
-        # worker abandoned, returned, etc. a HIT, but now we don't even save chat
-        # data in that case
+        # TODO: once the analysis scripts are fully switched over to DataBrowser, remove
+        #  the 'workers' and 'assignment_ids' keys, which will now be duplicated in the
+        #  returned Unit
+        # TODO: 'bad_workers' is for compatibility. Before, it was only non-empty if a
+        #  worker abandoned, returned, etc. a HIT, but now we don't even save chat
+        #  data in that case. Remove this key once fully once on DataBrowser
         if self.check_acceptability:
             data['acceptability_violations'] = (violations_string,)
             # Make a tuple for compatibility with a human/human conversation in
             # which we check both sides for acceptability
 
         return data
+
+    def get_custom_task_data(self):
+        """
+        Retrieves the final chat data for storage in the Mephisto database.
+
+        TODO: the final chat data is currently stored both in
+         mephisto.blueprint.chat_data_folder and in the Mephisto database. It'd be best
+         to remove the chat_data_folder arg completely, and to move the current logic in
+         self.get_final_chat_data() into this method, in order to have a single storage
+         location.
+        """
+        return self.final_chat_data
 
     def _prepare_acceptability_checking(self) -> Tuple[List[str], List[str]]:
         """

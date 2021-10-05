@@ -351,7 +351,7 @@ download instructions above. You'll find them in the `evaluation_logs/` folder.
 
 A Jupyter notebook which generates the graphs and tables for the human experiments
 is available in the
-[project folder](https://github.com/facebookresearch/ParlAI/tree/master/projects/controllable_dialogue).
+[project folder](https://github.com/facebookresearch/ParlAI/tree/main/projects/controllable_dialogue).
 The notebook should be launched from the ParlAI root directory.
 
 ### Running evaluations
@@ -378,7 +378,7 @@ which models are being evaluated, and then you can launch the experiment with:
 ```
 python parlai/mturk/tasks/controllable_dialogue/run.py -r 0.9 --count-complete --hobby --max-resp-time 1200 --max-connections 20 -nc 1200 --sandbox
 ```
-(See [this README](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/README.md) for how to access this now deprecated script.) Change `--sandbox` to `--live` if you're prepared to spend actual currency. The output must be
+(See [this README](https://github.com/facebookresearch/ParlAI/tree/main/parlai/mturk/README.md) for how to access this now deprecated script.) Change `--sandbox` to `--live` if you're prepared to spend actual currency. The output must be
 lightly postprocessed to use it with the analysis tools released. If you intend to do
 this, please file an issue on the
 [ParlAI GitHub](https://github.com/facebookresearch/ParlAI/).

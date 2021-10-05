@@ -59,7 +59,7 @@ We could look at that data using the usual display data script:
 
 The text file data format is called ParlAI Dialog format, and is
 described in the [teachers documentation](core/teachers); and
-in [pyparlai.core.teachers.ParlAIDialogTeacher](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/teachers.py#L1268).
+in [pyparlai.core.teachers.ParlAIDialogTeacher](https://github.com/facebookresearch/ParlAI/blob/main/parlai/core/teachers.py#L1268).
 Essentially, there is one
 training example every line, and each field in a ParlAI message is tab
 separated with the name of the field, followed by a colon. E.g. the
@@ -110,7 +110,7 @@ We can then again look at that data using the usual display data script, using t
     [epoch done]
     [loaded 1 episodes with a total of 2 examples]
 
-The file format consists of one dialogue episode per line, and closely follows the ParlAI messages format. See [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/utils/conversations.py#L167) for more documentation.
+The file format consists of one dialogue episode per line, and closely follows the ParlAI messages format. See [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/utils/conversations.py#L167) for more documentation.
 
 For train/valid/test splits, you can do the same as for text files, using the analogous --jsonfile-datatype-extension true flag.
 
@@ -126,7 +126,7 @@ You will need to create a directory for your new task there.
 
 If your data is in the ParlAI format, you effectively only need a tiny
 bit of boilerplate to load it, see e.g. the code for the
-[fromfile task agent we just used](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/fromfile).
+[fromfile task agent we just used](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks/fromfile).
 
 But right now, let's go through all the steps. You will need to:
 
@@ -606,7 +606,7 @@ directory, created." This is expected the first time. You should now see a
 Add these files to your git commit.
 
 Next run the test again. This time, you should see all tests pass. If so,
-go ahead and [create your PR](https://github.com/facebookresearch/ParlAI/blob/master/CONTRIBUTING.md).
+go ahead and [create your PR](https://github.com/facebookresearch/ParlAI/blob/main/CONTRIBUTING.md).
 
 Note, if you need to make further changes to your teacher, you may need
 to update the regression fixtures. You can do this by adding `--force-regen`
