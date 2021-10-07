@@ -547,14 +547,7 @@ class FastAcuteExecutor(object):
         self._print_progress(f'ACUTE results saved to {self.results_path}')
 
 
-defaults = [
-    '_self_',
-    {"mephisto/blueprint": FAST_ACUTE_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    'conf/base_fast_acute',
-    {"conf": "example_fast_acute"},
-]
+defaults = ['_self_', {"conf": "example_fast_acute"}]
 
 
 @dataclass
