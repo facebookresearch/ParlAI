@@ -33,6 +33,9 @@ __AUTOCLEAN_KEYS__: List[str] = [
     # we don't save interactive mode or load from checkpoint, it's only decided by scripts or CLI
     "interactive_mode",
     "load_from_checkpoint",
+    # added 2021-10-07
+    # internal discussion: https://fb.workplace.com/groups/770643789812374/permalink/1780621008814642/
+    "datatype",  
 ]
 
 
