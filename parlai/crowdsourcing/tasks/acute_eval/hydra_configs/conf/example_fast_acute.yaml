@@ -1,4 +1,6 @@
 #@package _global_
+defaults:
+  - base_fast_acute
 mephisto:
   blueprint:
     acute_eval_type: engaging
