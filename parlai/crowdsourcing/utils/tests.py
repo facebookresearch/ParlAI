@@ -89,10 +89,10 @@ class AbstractCrowdsourcingTest:
             self.config = compose(
                 config_name="example",
                 overrides=[
-                    f'+mephisto.blueprint._blueprint_type={blueprint_type}',
+                    f'mephisto.blueprint._blueprint_type={blueprint_type}',
                     f'+mephisto.blueprint.link_task_source=False',
-                    f'+mephisto/architect=mock',
-                    f'+mephisto/provider=mock',
+                    f'mephisto/architect=mock',
+                    f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
                     f'+current_time={int(time.time())}',
                 ]
