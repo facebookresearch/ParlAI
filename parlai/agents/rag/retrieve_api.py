@@ -100,7 +100,7 @@ class SearchEngineRetriever(RetrieverAPI):
         if address.startswith('http://') or address.startswith('https://'):
             return address
         PROTOCOL = 'http://'
-        logging.warning(f'No portocol provided, using "{PROTOCOL}"')
+        logging.warning(f'No protocol provided, using "{PROTOCOL}"')
         return f'{PROTOCOL}{address}'
 
     def _retrieve_single(self, search_query: str, num_ret: int):
