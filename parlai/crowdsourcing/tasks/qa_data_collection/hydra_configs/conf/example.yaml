@@ -1,4 +1,8 @@
 #@package _global_
+defaults:
+  - /mephisto/blueprint: parlai_chat
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
     world_file: ${task_dir}/worlds.py
