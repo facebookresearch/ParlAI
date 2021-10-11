@@ -1,4 +1,8 @@
 #@package _global_
+defaults:
+  - /mephisto/blueprint: model_image_chat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
     annotations_config_path: ""
