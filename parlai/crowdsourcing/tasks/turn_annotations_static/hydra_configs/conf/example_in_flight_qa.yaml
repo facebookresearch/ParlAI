@@ -1,4 +1,8 @@
 #@package _global_
+defaults:
+  - /mephisto/blueprint: turn_annotations_static_inflight_qa_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
     subtasks_per_unit: 6
@@ -6,7 +10,6 @@ mephisto:
     data_jsonl: FIXME_TASK_DATA_PATH
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 5
-    onboarding_qualification: turn_annotations_static
   task:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 600
