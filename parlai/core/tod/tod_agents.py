@@ -13,8 +13,8 @@ from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed, get_rank, num_workers
 
-import parlai.tod.tod_core as tod
-from parlai.tod.tod_core import SerializationHelpers
+import parlai.core.tod.tod_core as tod
+from parlai.core.tod.tod_core import SerializationHelpers
 
 from typing import Optional, List
 import json

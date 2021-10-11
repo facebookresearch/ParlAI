@@ -8,10 +8,13 @@
 Helpers so we don't need to create agents all over.
 """
 
-import parlai.tod.tod_agents as tod_agents
-import parlai.tod.tod_teachers as tod_teachers
-import parlai.tod.tod_core as tod_core
+import parlai.core.tod.tod_agents as tod_agents
+import parlai.core.tod.tod_teachers as tod_teachers
+import parlai.core.tod.tod_core as tod_core
 
+import os 
+
+API_DATABASE_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "standalone_api_file.pickle")
 
 def episode_has_broken_api_turn(episode_idx, max_turns):
     return episode_idx % 2 == 1 and max_turns > 0

@@ -13,8 +13,8 @@ from parlai.core.worlds import World
 from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.utils.misc import display_messages
 
-import parlai.tod.tod_core as tod
-import parlai.tod.tod_world_metrics as tod_metrics
+import parlai.core.tod.tod_core as tod
+import parlai.core.tod.tod_world_metrics as tod_metrics
 
 import sys
 import copy

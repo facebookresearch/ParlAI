@@ -10,7 +10,7 @@ Tests different (more complicated) slot metrics.
 
 import unittest
 
-from parlai.tod.tod_core import (
+from parlai.core.tod.tod_core import (
     STANDARD_API_NAME_SLOT,
     STANDARD_REQUIRED_KEY,
     STANDARD_OPTIONAL_KEY,
@@ -19,10 +19,10 @@ from parlai.tod.tod_core import (
     TodAgentType,
     TOD_AGENT_TYPE_TO_PREFIX,
 )
-from parlai.tod.tod_world_metrics import (
+from parlai.core.tod.tod_world_metrics import (
     TodMetrics,
 )
-from parlai.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
+from parlai.core.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
 
 GOAL__SINGLE_ONE_KEY = [{STANDARD_API_NAME_SLOT: "name", "a": "1"}]
 GOAL__SINGLE_THREE_KEYS = [

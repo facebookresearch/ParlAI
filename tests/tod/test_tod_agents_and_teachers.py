@@ -11,8 +11,8 @@ Tests different (more complicated) slot metrics.
 import unittest
 
 import copy
-import parlai.tod.tod_core as tod_core
-import parlai.tod.tod_test_utils.agents_and_teachers as aat
+import parlai.core.tod.tod_core as tod_core
+import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
 
 
 class TestTodAgentsAndTeachersBase(unittest.TestCase):

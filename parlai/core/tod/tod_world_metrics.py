@@ -11,13 +11,13 @@ from parlai.core.message import Message
 from parlai.core.metrics import (
     Metrics,
 )
-from parlai.tod.tod_core import (
+from parlai.core.tod.tod_core import (
     TodAgentType,
     TOD_AGENT_TYPE_TO_PREFIX,
     SerializationHelpers,
 )
 from typing import Any, Dict
-from parlai.tod.tod_world_metrics_handlers import (
+from parlai.core.tod.tod_world_metrics_handlers import (
     WORLD_METRIC_HANDLERS,
     TodMetricsHandler,
 )

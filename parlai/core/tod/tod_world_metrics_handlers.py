@@ -18,7 +18,7 @@ from parlai.core.metrics import (
     BleuMetric,
     SumMetric,
 )
-from parlai.tod.tod_core import (
+from parlai.core.tod.tod_core import (
     STANDARD_API_NAME_SLOT,
     STANDARD_DONE,
     STANDARD_REQUIRED_KEY,

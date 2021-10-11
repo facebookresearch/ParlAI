@@ -11,12 +11,11 @@ Tests tod world, notably for batching.
 import copy
 import unittest
 
-from parlai import __file__ as PARLAI_FILE
-import parlai.tod.tod_test_utils.agents_and_teachers as aat
-import parlai.tod.tod_core as tod_core
-import parlai.tod.scripts.tod_world_script as tod_world_script
-from parlai.tod.tod_agents import TodStandaloneApiAgent
-from parlai.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
+import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
+import parlai.core.tod.tod_core as tod_core
+import parlai.scripts.tod_world_script as tod_world_script
+from parlai.core.tod.tod_agents import TodStandaloneApiAgent
+from parlai.core.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
 from parlai.core.metrics import dict_report
 import os
 
@@ -54,10 +53,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         opts["datatype"] = "DUMMY"
         opts["datafile"] = "DUMMY"
         opts["episodes_randomization_seed"] = 32  # test it!
-        opts["standalone_api_file"] = os.path.join(
-            os.path.dirname(PARLAI_FILE),
-            "tod/tod_test_utils/standalone_api_file.pickle",
-        )  # hope this doesn't break anything...
+        opts["standalone_api_file"] = aat.API_DATABASE_FILE
         opts["exact_api_call"] = True
         opts["log_keep_fields"] = "all"
         opts["display_examples"] = False
