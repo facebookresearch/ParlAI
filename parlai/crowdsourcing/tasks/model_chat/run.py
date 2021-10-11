@@ -12,7 +12,6 @@ import hydra
 from mephisto.operations.hydra_config import register_script_config
 from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import BLUEPRINT_TYPE
 from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
@@ -21,12 +20,7 @@ import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-defaults = [
-    {'mephisto/blueprint': BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": "example"}]
 
 
 @dataclass
