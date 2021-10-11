@@ -44,7 +44,7 @@ class TodWorldLogger(WorldLogger):
         return True
 
     def _log_batch(self, world):
-        batch_acts = world.get_acts()
+        batch_acts = world.get_batch_acts()
         for i, acts in enumerate(batch_acts):
             # filter out for empty
             acts = [act for act in acts if act["id"] != "" and act["text"] != ""]
@@ -214,6 +214,7 @@ class TodWorldScript(ParlaiScript):
         elif len(opt.get(f"{prefix}_model", "")) > 0:
             model = self._make_agent(opt, f"{prefix}_model", "")
         else:
+            print(opt)
             raise KeyError(
                 f"Both `--{prefix}-model-file` and `--{prefix}-model` specified. Neither currently set."
             )
@@ -275,7 +276,7 @@ class TodWorldScript(ParlaiScript):
 
         world.reset()
         world_logger.reset_world()  # flush this episode
-        return zip(world.get_last_episode_goal(), world.get_last_episode_metrics())
+        return zip(world.get_last_batch_goals(), world.get_last_batch_episode_metrics())
 
     def _save_outputs(self, opt, world, logger, episode_metrics):
         if is_distributed():  # flatten everything intelligently if need be
@@ -354,12 +355,16 @@ class TodWorldScript(ParlaiScript):
 
         return report
 
+    def _setup_world(self):
+        # setup world, manually finaggling necessary opt info as needed
+        self.opt["task"] = "TodWorld"
+        world = tod_world.TodWorld(self.opt, agents=self._get_tod_agents(self.opt))
+        return world
+
     def run(self):
         opt = self.opt
 
-        # setup world, manually finaggling necessary opt info as needed
-        opt["task"] = "TodWorld"
-        world = tod_world.TodWorld(opt, agents=self._get_tod_agents(opt))
+        world = self._setup_world()
         logger = TodWorldLogger(opt)
 
         # set up logging
@@ -385,12 +390,6 @@ class TodWorldScript(ParlaiScript):
                 report = world.report()
                 text, report = log_time.log(ep_count, max_episodes, report)
                 logging.info(text)
-
-        # little wonky that this is necessary, but just to flush out any last things.
-        world.reset()
-        episode_metrics.extend(
-            zip(world.get_last_episode_goal(), world.get_last_episode_metrics())
-        )
 
         return self._save_outputs(opt, world, logger, episode_metrics)
 

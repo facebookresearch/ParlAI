@@ -16,14 +16,13 @@ import parlai.tod.tod_test_utils.agents_and_teachers as aat
 import parlai.tod.tod_core as tod_core
 import parlai.tod.scripts.tod_world_script as tod_world_script
 from parlai.tod.tod_agents import TodStandaloneApiAgent
-
 import os
 
 
 class TestTodWorldScript(tod_world_script.TodWorldScript):
     """
-    Wrap around it to check its logic; also aat.makes it easier to do things w/
-    underlying World.
+    Wrap around it to check its logic; also makes it easier to do things w/ underlying
+    World.
     """
 
     def _get_tod_agents(self, opt):
@@ -37,7 +36,6 @@ class TestTodWorldScript(tod_world_script.TodWorldScript):
     def _save_outputs(self, opt, world, logger, episode_metrics):
         self.world = world
         self.logger = logger
-        self.episode_metrics = episode_metrics
 
 
 class TodWorldInScriptTestBase(unittest.TestCase):
@@ -111,7 +109,6 @@ class TodWorldInScriptTestBase(unittest.TestCase):
             # Check the rest
             world_utts = [[x["text"] for x in turn] for turn in episode_from_world[1:]]
             # ... ignore the last DONE turn here cause it's not that important
-            print(world_utts)
 
             self.assertEquals(
                 world_utts[:-1],
@@ -222,7 +219,6 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
                     single_context[0]["text"][len("APIS:") :].strip()
                 )
                 self.assertEqual(len(single_des), 1)
-                print(single_goal, single_des)
                 self.assertEqual(single_goal[0]["api_name"], single_des[0]["api_name"])
 
                 single_idx += 1

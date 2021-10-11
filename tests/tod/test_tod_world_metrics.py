@@ -22,6 +22,7 @@ from parlai.tod.tod_core import (
 from parlai.tod.tod_world_metrics import (
     TodMetrics,
 )
+from parlai.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
 
 GOAL__SINGLE_ONE_KEY = [{STANDARD_API_NAME_SLOT: "name", "a": "1"}]
 GOAL__SINGLE_THREE_KEYS = [
@@ -83,6 +84,9 @@ API_DESCRIPTION__ONE_CALL_HARD = [
 class TodMetricsTestHelper:
     def __init__(self, e: TodStructuredEpisode):
         self.m = TodMetrics()
+        self.m.handlers = [
+            x() for x in METRICS_HANDLER_CLASSES_TEST_REGISTRY
+        ]  # run on ALL
         self.e = e
 
     def _process(self, t: TodAgentType, text: str):
@@ -201,7 +205,6 @@ class TestApiCallMalformedMetricsHandler(unittest.TestCase):
         )
         helper = TodMetricsTestHelper(e)
         helper.run()
-        print(helper.report())
         return helper.report()
 
     def test_no_api_name_slot(self):

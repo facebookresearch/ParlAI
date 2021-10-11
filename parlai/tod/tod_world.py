@@ -61,9 +61,9 @@ class TodWorld(World):
         super().__init__(opt, agents, shared)
         self.batchsize = opt["batchsize"]
         self.batch_agents = []
-        self.acts = []
-        self.goals = []  # for case when num_episodes < batchsize
-        self.tod_world_metrics = []
+        self.batch_acts = []
+        self.batch_goals = []  # for case when num_episodes < batchsize
+        self.batch_tod_world_metrics = []
         for i in range(self.batchsize):
             here_agents = []
             for j, agent in enumerate(agents):
@@ -77,8 +77,8 @@ class TodWorld(World):
                 batch_opt["batchindex"] = i
                 here_agents.append(share["class"](batch_opt, share))
             self.batch_agents.append(here_agents)
-            self.acts.append([Message.padding_example()] * 4)
-            self.tod_world_metrics.append(tod_metrics.TodMetrics())
+            self.batch_acts.append([Message.padding_example()] * 4)
+            self.batch_tod_world_metrics.append(tod_metrics.TodMetrics())
         self.end_episode = [False] * self.batchsize
 
         self.max_turns = self.opt.get("max_turns", 30)
@@ -120,7 +120,7 @@ class TodWorld(World):
             "getting goal preempt. (Must start with `{tod.STANDARD_GOAL}`)",
             GOAL_PREEMPT_IDX,
         )
-        self.goals = [act[SYSTEM_UTT_IDX] for act in self.acts]
+        self.batch_goals = [act[SYSTEM_UTT_IDX] for act in self.batch_acts]
         self.turns = 0
 
     def parley(self):
@@ -147,19 +147,19 @@ class TodWorld(World):
             batch_observations = []
             for i in range(self.batchsize):
                 if not self.end_episode[i]:
-                    observe = self.acts[i][observe_idx]
+                    observe = self.batch_acts[i][observe_idx]
                     observe = self.batch_agents[i][act_agent_idx].observe(observe)
                     batch_observations.append(Message(observe))
                 else:
                     # We're done with this episode, so just do a pad.
                     # NOTE: This could cause issues with RL down the line
                     batch_observations.append(Message.padding_example())
-                    self.acts[i][record_output_idx] = {"text": "", "id": ""}
+                    self.batch_acts[i][record_output_idx] = {"text": "", "id": ""}
             batch_actions = act_agent.batch_act(batch_observations)
             for i in range(self.batchsize):
                 if self.end_episode[i]:
                     continue
-                self.acts[i][record_output_idx] = batch_actions[i]
+                self.batch_acts[i][record_output_idx] = batch_actions[i]
                 self.batch_agents[i][record_output_idx].self_observe(batch_actions[i])
         else:  # Run on agents individually
             for i in range(self.batchsize):
@@ -174,24 +174,26 @@ class TodWorld(World):
                     # Following line exists because:
                     # 1. Code for writing converseations is not hapy if an "id" does not exists with a sample
                     # 2. Because of the `self.end_episode` code, no agent will see this example anyway.
-                    self.acts[i][record_output_idx] = {"text": "", "id": ""}
+                    self.batch_acts[i][record_output_idx] = {"text": "", "id": ""}
                     continue
-                act_agent.observe(self.acts[i][observe_idx])
+                act_agent.observe(self.batch_acts[i][observe_idx])
                 if isinstance(act_agent, LocalHumanAgent):
                     print(
                         f"Getting message for {SPEAKER_TO_NAME[record_output_idx]} for {info} in batch {i}"
                     )
                 try:
-                    self.acts[i][record_output_idx] = act_agent.act()
+                    self.batch_acts[i][record_output_idx] = act_agent.act()
                 except StopIteration:
                     self.end_episode[i] = True
         for i in range(self.batchsize):
             if self.end_episode[i]:
                 continue
-            self.tod_world_metrics[i].handle_message(
-                self.acts[i][record_output_idx], SPEAKER_TO_NAME[act_agent_idx]
+            self.batch_tod_world_metrics[i].handle_message(
+                self.batch_acts[i][record_output_idx], SPEAKER_TO_NAME[act_agent_idx]
             )
-            if tod.STANDARD_DONE in self.acts[i][record_output_idx].get("text", ""):
+            if tod.STANDARD_DONE in self.batch_acts[i][record_output_idx].get(
+                "text", ""
+            ):
                 # User models trained to output a "DONE" on last turn; same with human agents.
                 self.end_episode[i] = True
 
@@ -202,7 +204,7 @@ class TodWorld(World):
 
         metrics_separate = []
         for i in range(self.batchsize):
-            here_metrics = self.tod_world_metrics[i].report()
+            here_metrics = self.batch_tod_world_metrics[i].report()
             for name, agent in [
                 (SPEAKER_TO_NAME[j], self.batch_agents[i][j])
                 for j in [USER_UTT_IDX, API_CALL_IDX, API_RESP_IDX, SYSTEM_UTT_IDX]
@@ -231,22 +233,24 @@ class TodWorld(World):
         self.need_preempt = True
         self.turns = 0
 
-        self.episode_metrics = []
-        self.acts = []
+        self.last_batch_episode_metrics = []
+        self.batch_acts = []
         for i in range(self.batchsize):
             for agent in self.batch_agents[i]:
                 agent.reset()
-            self.acts.append([None] * 4)
-            metrics = self.tod_world_metrics[i].episode_reset()
+            self.batch_acts.append([None] * 4)
+
+            self.batch_tod_world_metrics[i].episode_reset()
+            metrics = self.batch_tod_world_metrics[i].get_last_episode_metrics()
             if metrics:
-                self.episode_metrics.append(metrics)
+                self.last_batch_episode_metrics.append(metrics)
         self.end_episode = [False] * self.batchsize
 
-    def get_last_episode_metrics(self):
-        return self.episode_metrics
+    def get_last_batch_episode_metrics(self):
+        return self.last_batch_episode_metrics
 
-    def get_last_episode_goal(self):
-        return self.goals
+    def get_last_batch_goals(self):
+        return self.batch_goals
 
     def episode_done(self):
         if self.turns >= self.max_turns or all(self.end_episode):
@@ -254,8 +258,8 @@ class TodWorld(World):
         for i in range(self.batchsize):
             for j in [USER_UTT_IDX, API_CALL_IDX, API_RESP_IDX, SYSTEM_UTT_IDX]:
                 if (
-                    self.acts[i][j] is not None
-                    and tod.STANDARD_DONE in self.acts[i][j].get("text", "")
+                    self.batch_acts[i][j] is not None
+                    and tod.STANDARD_DONE in self.batch_acts[i][j].get("text", "")
                 ) or (
                     hasattr(self.batch_agents[i][j], "episode_done")
                     and self.batch_agents[i][j].episode_done()
@@ -277,12 +281,15 @@ class TodWorld(World):
             return 0
         return result
 
+    def get_batch_acts(self):
+        return self.batch_acts
+
     def display(self):
         s = "[--batchsize " + str(self.batchsize) + "--]\n"
         for i in range(self.batchsize):
             s += "[batch " + str(i) + ":]\n"
             s += display_messages(
-                self.acts[i],
+                self.batch_acts[i],
                 ignore_agent_reply=self.opt.get("ignore_agent_reply", False),
                 add_fields=self.opt.get("display_add_fields", ""),
                 prettify=self.opt.get("display_prettify", False),

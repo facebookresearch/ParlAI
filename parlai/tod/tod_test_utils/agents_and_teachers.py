@@ -13,9 +13,21 @@ import parlai.tod.tod_teachers as tod_teachers
 import parlai.tod.tod_core as tod_core
 
 
-def make_api_call_machine(round_idx):
+def episode_has_broken_api_turn(episode_idx, max_turns):
+    return episode_idx % 2 == 1 and max_turns > 0
+
+
+def use_broken_api_calls_this_turn(round_idx, episode_idx):
+    return episode_idx % 2 == 1 and round_idx % 3 == 1
+
+
+def make_api_call_machine(round_idx, episode_idx=0, use_broken_mock_api_calls=False):
     if round_idx == 0:
         return {}
+    if use_broken_mock_api_calls:
+        # Hack as a way to test metrics reporting in tod world script
+        if use_broken_api_calls_this_turn(round_idx, episode_idx):
+            round_idx = -1 * round_idx
     return {tod_core.STANDARD_API_NAME_SLOT: f"name_{round_idx}", "in": round_idx}
 
 
@@ -40,11 +52,13 @@ def make_goal_calls_machine(max_rounds):
     return [make_api_call_machine(x) for x in range(1, max_rounds)]
 
 
-def get_rounds(episode_idx, max_rounds):
+def get_rounds(episode_idx, max_rounds, use_broken_mock_api_calls=False):
     return [
         tod_core.TodStructuredRound(
             user_utt=f"user_utt_{episode_idx}_{round_idx}",
-            api_call_machine=make_api_call_machine(round_idx),
+            api_call_machine=make_api_call_machine(
+                round_idx, episode_idx, use_broken_mock_api_calls
+            ),
             api_resp_machine=make_api_resp_machine(round_idx),
             sys_utt=f"sys_utt_{episode_idx}_{round_idx}",
         )
@@ -146,9 +160,14 @@ class TestDataParser(tod_agents.TodStructuredDataAgent):
                     api_descriptions_machine=make_api_descriptions_machine(
                         self.opt[TEST_NUM_ROUNDS_OPT_KEY]
                     ),
-                    rounds=get_rounds(ep_idx, self.opt[TEST_NUM_ROUNDS_OPT_KEY]),
+                    rounds=get_rounds(
+                        ep_idx,
+                        self.opt[TEST_NUM_ROUNDS_OPT_KEY],
+                        self.opt.get("use_broken_mock_api_calls", False),
+                    ),
                 )
             )
+        #        print(result, self.opt)
         return result
 
     def get_id_task_prefix(self):
