@@ -56,7 +56,7 @@ class ScriptConfig(MTurkRunScriptConfig):
 register_script_config(name='scriptconfig', module=ScriptConfig)
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     check_override_opt(cfg.mephisto)
     run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=None)

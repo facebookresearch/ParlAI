@@ -80,7 +80,9 @@ class AbstractCrowdsourcingTest:
         relative_task_directory = os.path.relpath(
             task_directory, os.path.dirname(__file__)
         )
-        relative_config_path = os.path.join(relative_task_directory, 'conf')
+        relative_config_path = os.path.join(
+            relative_task_directory, 'hydra_configs', 'conf'
+        )
         if overrides is None:
             overrides = []
         with initialize(config_path=relative_config_path):
@@ -88,6 +90,7 @@ class AbstractCrowdsourcingTest:
                 config_name="example",
                 overrides=[
                     f'+mephisto.blueprint._blueprint_type={blueprint_type}',
+                    f'+mephisto.blueprint.link_task_source=False',
                     f'+mephisto/architect=mock',
                     f'+mephisto/provider=mock',
                     f'+task_dir={task_directory}',

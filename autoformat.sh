@@ -120,7 +120,7 @@ fi
 if [[ $RUN_ALL_FILES -eq 1 ]]; then
     CHECK_FILES="$(git $REPO ls-files | grep '\.py$' | reroot $ROOT | onlyexists $ROOT | tr '\n' ' ')"
 else
-    CHECK_FILES="$(git $REPO diff --name-only master... | grep '\.py$' | reroot $ROOT | onlyexists | tr '\n' ' ')"
+    CHECK_FILES="$(git $REPO diff --name-only main... | grep '\.py$' | reroot $ROOT | onlyexists | tr '\n' ' ')"
 fi
 
 # if we're doing all the tests, we should run them in serial

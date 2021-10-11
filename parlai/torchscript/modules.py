@@ -30,8 +30,7 @@ class TorchScriptGreedySearch(nn.Module):
         "dict_max_ngram_size": -1,
         "dict_minfreq": 0,
         "dict_maxtokens": -1,
-        "dict_tokenizer": "gpt2",
-        "dict_lower": False,
+        "dict_tokenizer": ["gpt2", "slow_bytelevel_bpe"],
         "dict_textfields": "text,labels",
         "dict_loaded": True,
         "bpe_debug": False,
@@ -44,9 +43,14 @@ class TorchScriptGreedySearch(nn.Module):
         self.device = agent.model.encoder.embeddings.weight.device
         # Dictionary/tokenization setup
         for key, val in self.CAIRAOKE_DICT_PARAMS.items():
-            assert (
-                agent.opt.get(key, val) == val
-            ), f'The only currently supported value of "{key}" is {val}!'
+            if type(val) == list and len(val) > 0:
+                assert (
+                    agent.opt.get(key, val[0]) in val
+                ), f'The only currently supported values of "{key}" are {", ".join(val)}!'
+            else:
+                assert (
+                    agent.opt.get(key, val) == val
+                ), f'The only currently supported value of "{key}" is {val}!'
         orig_dict: DictionaryAgent = agent.dict
         orig_bpe: Gpt2BpeHelper = orig_dict.bpe
         assert all(len(key) == 2 for key in orig_bpe.bpe_ranks.keys())

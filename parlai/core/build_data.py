@@ -21,6 +21,7 @@ import hashlib
 import tqdm
 import gzip
 import math
+import contextlib
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 
@@ -28,6 +29,17 @@ try:
     from torch.multiprocessing import Pool
 except ImportError:
     from multiprocessing import Pool
+
+
+try:
+    # internal infra requires special attention to use http sessions
+    from parlai_fb import get_http_session
+except (ImportError, AttributeError):
+
+    @contextlib.contextmanager
+    def get_http_session():
+        with requests.Session() as session:
+            yield session
 
 
 class DownloadableFile:
@@ -96,17 +108,20 @@ class DownloadableFile:
         """
         Performs a HEAD request to check if the URL / Google Drive ID is live.
         """
-        session = requests.Session()
-        if self.from_google:
-            URL = 'https://docs.google.com/uc?export=download'
-            response = session.head(URL, params={'id': self.url}, stream=True)
-        else:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36'
-            }
-            response = session.head(self.url, allow_redirects=True, headers=headers)
-        status = response.status_code
-        session.close()
+        with get_http_session() as session:
+            if self.from_google:
+                URL = 'https://docs.google.com/uc?export=download'
+                response = session.head(URL, params={'id': self.url}, stream=True)
+            else:
+                headers = {
+                    'User-Agent': (
+                        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) '
+                        'AppleWebKit/537.36 (KHTML, like Gecko) '
+                        'Chrome/77.0.3865.90 Safari/537.36'
+                    )
+                }
+                response = session.head(self.url, allow_redirects=True, headers=headers)
+            status = response.status_code
 
         assert status == 200
 
@@ -167,7 +182,7 @@ def download(url, path, fname, redownload=False, num_retries=5):
     while download and retry > 0:
         response = None
 
-        with requests.Session() as session:
+        with get_http_session() as session:
             try:
                 response = session.get(url, stream=True, timeout=5)
 
@@ -390,7 +405,7 @@ def download_from_google_drive(gd_id, destination):
     """
     URL = 'https://docs.google.com/uc?export=download'
 
-    with requests.Session() as session:
+    with get_http_session() as session:
         response = session.get(URL, params={'id': gd_id}, stream=True)
         token = _get_confirm_token(response)
 

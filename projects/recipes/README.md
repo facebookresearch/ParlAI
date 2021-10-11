@@ -88,6 +88,10 @@ To run ACUTE-Eval human evaluations, see [here](https://github.com/facebookresea
 
 Logs of crowdworker conversations talking to the 2.7B model are provided in [rendered viewable format](chatlog_2.7B_render.html) or [json format](chatlog_2.7B.json).
 
+## Reduced-bias models
+
+See [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias) for information on using experimental variants of the 2.7B-parameter BlenderBot that have been tuned to reduce the amount of bias along the axes of gender and race/ethnicity.
+
 ## Citation
 
 If you use the models in your own work, please cite with the following BibTex entry:

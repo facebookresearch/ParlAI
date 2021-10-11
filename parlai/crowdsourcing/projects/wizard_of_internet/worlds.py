@@ -78,7 +78,7 @@ def _has_selected_sentence_from_search_results(action: Union[Dict, Message]):
     Whether there is any knowledges selected with this message.
     """
     k_task = 'task_data'
-    k_selected = 'selected_text_candaidtes'
+    k_selected = 'selected_text_candidates'
     if (k_task in action) and (k_selected in action[k_task]):
         # Boolean value that user has not selected any option
         return not action[k_task][k_selected][0][0]
@@ -508,7 +508,7 @@ class WizardOnboardingWorld(SharedOnboardWorld):
             task_data = msg.get('task_data')
             if not (task_data and isinstance(task_data, dict)):
                 continue
-            sel_options = task_data.get('selected_text_candaidtes')
+            sel_options = task_data.get('selected_text_candidates')
             if not sel_options or len(sel_options) == 1:  # No choices
                 continue
             if not sel_options[0][0]:
