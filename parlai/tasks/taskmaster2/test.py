@@ -8,8 +8,8 @@ from parlai.utils.testing import AutoTeacherTest
 
 
 class TestDefaultTeacher(AutoTeacherTest):
-    task = "metalwoz"
+    task = "taskmaster2"
 
 
 class TestUserSimulatorTeacher(AutoTeacherTest):
-    task = "metalwoz:UserSimulatorTeacher"
+    task = "taskmaster2:UserSimulatorTeacher"

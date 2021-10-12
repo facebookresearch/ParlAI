@@ -7,9 +7,9 @@
 from parlai.utils.testing import AutoTeacherTest
 
 
-class TestDefaultTeacher(AutoTeacherTest):
-    task = "metalwoz"
+class TestSystemTeacher(AutoTeacherTest):
+    task = "multidogo:SystemTeacher"
 
 
 class TestUserSimulatorTeacher(AutoTeacherTest):
-    task = "metalwoz:UserSimulatorTeacher"
+    task = "multidogo:UserSimulatorTeacher"

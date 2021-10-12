@@ -8,22 +8,18 @@
 Google The Schema-Guided Dialogue(SGD) Dataset implementation for ParlAI.
 """
 
-import argparse
 import glob
 import json
 import os
 import random
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 import parlai.tasks.google_sgd.build as build_
 import parlai.core.tod.tod_core as tod
 import parlai.core.tod.tod_agents_and_teachers as tod_agents_and_teachers
 from parlai.core.tod.tod_core import SerializationHelpers
 from parlai.core.params import ParlaiParser
-from parlai.core.message import Message
-from parlai.core.metrics import AverageMetric
 from parlai.core.opt import Opt
-from parlai.core.teachers import DialogTeacher
 from parlai.utils.io import PathManager
 
 
@@ -223,18 +219,23 @@ class GoogleSGDParser(tod_agents_and_teachers.TodStructuredDataParser):
         return "GoogleSGD"
 
 
-
 class SystemTeacher(GoogleSGDParser, tod_agents_and_teachers.SystemTeacher):
     pass
+
 
 class DefaultTeacher(SystemTeacher):
     pass
 
-class UserSimulatorTeacher(GoogleSGDParser, tod_agents_and_teachers.UserSimulatorTeacher):
+
+class UserSimulatorTeacher(
+    GoogleSGDParser, tod_agents_and_teachers.UserSimulatorTeacher
+):
     pass
 
 
-class StandaloneApiTeacher(GoogleSGDParser, tod_agents_and_teachers.TodStandaloneApiTeacher):
+class StandaloneApiTeacher(
+    GoogleSGDParser, tod_agents_and_teachers.TodStandaloneApiTeacher
+):
     pass
 
 
@@ -254,5 +255,7 @@ class UserUttAgent(GoogleSGDParser, tod_agents_and_teachers.TodUserUttAgent):
     pass
 
 
-class ApiCallAndSysUttAgent(GoogleSGDParser, tod_agents_and_teachers.TodApiCallAndSysUttAgent):
+class ApiCallAndSysUttAgent(
+    GoogleSGDParser, tod_agents_and_teachers.TodApiCallAndSysUttAgent
+):
     pass

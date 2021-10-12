@@ -1,0 +1,55 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Southern NYC, maybe the East Village
+    - Southern NYC
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - restaurant_reservation.location.restaurant.accept
+    - - restaurant_reservation.location.restaurant.accept
+    text: Somewhere in Southern NYC, maybe the East Village?
+- - episode_done: false
+    eval_labels:
+    - Thursday Kitche
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - restaurant_reservation.name.restaurant.reject
+    text: Ok, great.  There's Thursday Kitchen, it has great reviews.
+- - episode_done: false
+    eval_labels:
+    - table
+    - 7 pm
+    - '8'
+    - at the bar,
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - restaurant_reservation.type.seating
+    - - restaurant_reservation.time.reservation
+      - restaurant_reservation.time.reservation
+    - - restaurant_reservation.num.guests
+      - restaurant_reservation.num.guests
+    - - restaurant_reservation.type.seating
+    text: That's great. So I need a table for tonight at 7 pm for 8 people. We don't
+      want to sit at the bar, but anywhere else is fine.
+- - episode_done: false
+    eval_labels:
+    - 7 pm
+    - 7 pm.
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - restaurant_reservation.time.reservation
+    - - restaurant_reservation.time.reservation.reject
+    text: They don't have any availability for 7 pm.
+- - episode_done: false
+    eval_labels:
+    - '5'
+    - '8'
+    id: taskmaster:self_dialogue_segment
+    label_types:
+    - - restaurant_reservation.time.reservation
+      - restaurant_reservation.time.reservation
+    - - restaurant_reservation.time.reservation
+      - restaurant_reservation.time.reservation
+    text: 5 or 8.
+num_episodes: 7691
+num_examples: 68228

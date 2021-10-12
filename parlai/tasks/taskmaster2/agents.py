@@ -14,7 +14,6 @@ splits.
 from parlai.core.params import ParlaiParser
 import os
 import pandas as pd
-import random
 from collections import Counter
 from parlai.core.opt import Opt
 import parlai.core.tod.tod_core as tod
@@ -227,66 +226,6 @@ class Taskmaster2Parser(tod_agents.TodStructuredDataParser):
         return cum_calls
 
 
-class FullShotTeacher(Taskmaster2Parser, tod_teachers.SystemTeacher):
-    """
-    The full shot teacher uses a standard 80-10-10 split, without regarding domain.
-    """
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared=shared)
-        # hack: modify the data in place if we've also got a few shot teacher
-        if self.opt.get("holdout"):
-            assert not DatatypeHelper.is_streaming(opt["datatype"])
-            self.data.data = [
-                ep
-                for ep in self.data.data
-                if ep[0]["domain"] != self.opt.get("holdout")
-            ]
-
-
-class FewShotTeacher(Taskmaster2Parser, tod_teachers.SystemTeacher):
-    """
-    Few shot teacher tests for generalization to new domains.
-    """
-
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        parser.add_argument(
-            "--holdout",
-            default=DOMAINS[0],
-            choices=DOMAINS,
-            help="Domain which is held out from test",
-        )
-        parser.add_argument(
-            "--n-shot", default=100, type=int, help="Number of conversations to keep."
-        )
-        parser.add_argument(
-            "--data-seed", default=1, type=int, help="Random seed for the subset"
-        )
-        return super().add_cmdline_args(parser, partial_opt=partial_opt)
-
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared=shared)
-        if self.opt.get("holdout"):
-            # hack, modify the data in place
-            data = self.data.data
-            assert not DatatypeHelper.is_streaming(opt["datatype"])
-            data = [
-                ep
-                for ep in data
-                if ep[0]["domain"].strip() == self.opt["holdout"].strip()
-            ]
-            if DatatypeHelper.is_training(opt["datatype"]):
-                # randomly sample, but perserve ordering so higher n-shot is a
-                # strict superset
-                rng = random.Random(opt["data_seed"])
-                rng.shuffle(data)
-                data = data[: self.opt["n_shot"]]
-            self.data.data = data
-
-
 class UserSimulatorTeacher(Taskmaster2Parser, tod_teachers.UserSimulatorTeacher):
     pass
 
@@ -311,7 +250,7 @@ class ApiCallAndSysUttAgent(Taskmaster2Parser, tod_agents.TodApiCallAndSysUttAge
     pass
 
 
-class SystemTeacher(FullShotTeacher):
+class SystemTeacher(Taskmaster2Parser, tod_teachers.SystemTeacher):
     pass
 
 

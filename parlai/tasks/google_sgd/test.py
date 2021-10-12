@@ -10,5 +10,6 @@ from parlai.utils.testing import AutoTeacherTest
 class TestDefaultTeacher(AutoTeacherTest):
     task = "google_sgd"
 
+
 class TestUserSimulatorTeacher(AutoTeacherTest):
     task = "google_sgd:UserSimulatorTeacher"

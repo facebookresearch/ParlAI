@@ -16,11 +16,10 @@ from parlai.core.metrics import AverageMetric
 from parlai.core.message import Message
 import parlai.core.tod.tod_agents_and_teachers as tod_agents
 import parlai.core.tod.tod_agents_and_teachers as tod_teachers
-from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.tasks.google_sgd.agents import GoogleSGDParser
 
-from typing import List, Optional
+from typing import List
 
 
 class GoogleSgdInDomainParser(GoogleSGDParser):
@@ -68,9 +67,7 @@ class InDomainGoalAgent(GoogleSgdInDomainParser, tod_agents.TodGoalAgent):
     pass
 
 
-class InDomainApiSchemaAgent(
-    GoogleSgdInDomainParser, tod_agents.TodApiSchemaAgent
-):
+class InDomainApiSchemaAgent(GoogleSgdInDomainParser, tod_agents.TodApiSchemaAgent):
     pass
 
 
