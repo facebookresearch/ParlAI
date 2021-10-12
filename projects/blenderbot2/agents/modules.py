@@ -11,7 +11,7 @@ import torch
 import torch.nn
 from typing import List, Tuple, Dict, Optional
 
-from parlai.agents.fid.fid import FidModel, T5FidModel, concat_enc_outs
+from parlai.agents.fid.fid import FidModel, T5FidModel, concat_enc_outs, Fid
 from parlai.agents.rag.args import RetrieverType
 from parlai.agents.rag.rag import RagModel, T5RagModel
 from parlai.agents.rag.dpr import DprQueryEncoder, DprDocumentEncoder
@@ -780,9 +780,32 @@ class LongTermMemory(RagRetriever):
         return top_docs, torch.stack(top_doc_scores)
 
 
+class BlenderBot2Fid(Fid):
+    """
+    FiD Interface for BB2.
+    """
+
+    def __init__(self, opt: Opt, null_idx: int):
+        super().__init__(opt, null_idx)
+        if (
+            KnowledgeAccessMethod(opt['knowledge_access_method'])
+            is KnowledgeAccessMethod.ALL
+        ):
+            self.n_docs *= 2
+
+
 class BlenderBot2FidModelMixin:
     embedding_size: int
     pad_idx: int
+
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
+        super().__init__(
+            opt, dictionary, retriever_shared=retriever_shared
+        )  # type: ignore
+        self._rag_model_interface = BlenderBot2Fid(
+            opt, dictionary[dictionary.null_token]
+        )
+        self.embedding_size = opt['embedding_size']
 
     def encoder(
         self,
