@@ -12,19 +12,20 @@ import copy
 import unittest
 
 import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
-import parlai.core.tod.tod_core as tod_core
 import parlai.scripts.tod_world_script as tod_world_script
-from parlai.core.tod.tod_agents import TodStandaloneApiAgent
-from parlai.core.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
+from parlai.core.tod.tod_agents_and_teachers import TodStandaloneApiAgent
+from parlai.core.tod.impl.world_metrics_handlers import (
+    METRICS_HANDLER_CLASSES_TEST_REGISTRY,
+)
 from parlai.core.metrics import dict_report
-import os
 
 
 class TestTodWorldScript(tod_world_script.TodWorldScript):
     """
-    Wrap around it to check its logic; also makes it easier to do things w/
-    underlying World.
+    Wrap around it to check its logic; also makes it easier to do things w/ underlying
+    World.
     """
+
     def _get_tod_agents(self, opt):
         """
         Hack so we can separate out logic of making sure agent parsing is correct.
@@ -36,7 +37,9 @@ class TestTodWorldScript(tod_world_script.TodWorldScript):
     def _setup_world(self):
         world = super()._setup_world()
         for i in range(len(world.batch_tod_world_metrics)):
-            world.batch_tod_world_metrics[i].handlers = [ x() for x in METRICS_HANDLER_CLASSES_TEST_REGISTRY] 
+            world.batch_tod_world_metrics[i].handlers = [
+                x() for x in METRICS_HANDLER_CLASSES_TEST_REGISTRY
+            ]
         return world
 
     def _save_outputs(self, opt, world, logger, episode_metrics):
@@ -58,7 +61,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         opts["log_keep_fields"] = "all"
         opts["display_examples"] = False
         opts[
-            "include_api_descriptions"
+            "include_api_schemas"
         ] = True  # do this to aat.make sure they're done correctly.
         return opts
 
@@ -70,7 +73,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
             sys,
             TodStandaloneApiAgent(full_opts),
             sys,
-            aat.ApiDescriptionAgent(full_opts),
+            aat.ApiSchemaAgent(full_opts),
             aat.GoalAgent(full_opts),
         ]
         return agents, full_opts
@@ -86,16 +89,14 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         config["use_broken_mock_api_calls"] = True
         add = self.config_args()
         for key in add:
-            config[key] = add[key] 
+            config[key] = add[key]
         agents, opt = self.setup_agents(config)
         script = TestTodWorldScript(opt)
         script.agents = agents
         script.run()
         self._check_metrics_correct(script, opt)
 
-    def _check_metrics_correct(
-        self, script, opt
-    ):
+    def _check_metrics_correct(self, script, opt):
         """
         Last argument is only relevant for the max_turn test.
         """
@@ -103,15 +104,27 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         max_episodes = opt[aat.TEST_NUM_EPISODES_OPT_KEY]
         episode_metrics = script.episode_metrics
         for episode_idx, episode in enumerate(episode_metrics):
-    #        if episode_idx >= max_episodes:
-    #            break
+            #        if episode_idx >= max_episodes:
+            #            break
             # See how we make broken mock api calls in the aat.
             goal, episode_metric = episode
             episode_metric = dict_report(episode_metric.report())
-            self.assertAlmostEqual(episode_metric["all_goals_hit"], not aat.episode_has_broken_api_turn(episode_idx, max_rounds))
-        broken_episodes = sum([aat.episode_has_broken_api_turn(i, max_rounds) for i in range(max_episodes)])
+            self.assertAlmostEqual(
+                episode_metric["all_goals_hit"],
+                not aat.episode_has_broken_api_turn(episode_idx, max_rounds),
+            )
+        broken_episodes = sum(
+            [
+                aat.episode_has_broken_api_turn(i, max_rounds)
+                for i in range(max_episodes)
+            ]
+        )
         report = dict_report(script.world.report())
-        self.assertAlmostEqual(report["all_goals_hit"], float(max_episodes - broken_episodes) / max_episodes)
+        self.assertAlmostEqual(
+            report["all_goals_hit"],
+            float(max_episodes - broken_episodes) / max_episodes,
+        )
+
 
 class TodWorldSingleBatchTest(TodWorldInScriptTestBase):
     def config_args(self):
@@ -133,7 +146,6 @@ class TodWorldNonSingleBatchTest(TodWorldInScriptTestBase):
 
     def test_metricsCorrect(self):
         self._run_test()
-
 
 
 if __name__ == "__main__":

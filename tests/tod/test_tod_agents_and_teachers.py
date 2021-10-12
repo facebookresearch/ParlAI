@@ -55,25 +55,25 @@ class TestTodAgentsAndTeachersBase(unittest.TestCase):
 
 
 class TestSystemTeacher(TestTodAgentsAndTeachersBase):
-    def test_apiDescriptions_with_yesApiDescriptions(self):
+    def test_apiSchemas_with_yesApiSchemas(self):
         values = self.dump_teacher_text(
             aat.SystemTeacher,
             aat.EPISODE_SETUP__SINGLE_API_CALL,
-            {"api_descriptions": True},
+            {"api_schemas": True},
         )
         self.assertEqual(
             values[0][0][0],
             "APIS: "
             + tod_core.SerializationHelpers.list_of_maps_to_str(
-                aat.make_api_descriptions_machine(2)
+                aat.make_api_schemas_machine(2)
             ),
         )
 
-    def test_apiDescriptions_with_noApiDescriptions(self):
+    def test_apiSchemas_with_noApiSchemas(self):
         values = self.dump_teacher_text(
             aat.SystemTeacher,
             aat.EPISODE_SETUP__SINGLE_API_CALL,
-            {"api_descriptions": False},
+            {"api_schemas": False},
         )
         self.assertEqual(values[0][0][0], "APIS: ")
 
@@ -139,18 +139,18 @@ class TestGoalAgent(TestTodAgentsAndTeachersBase):
         self._test_roundDataCorrect()
 
 
-class TestApiDescriptionAgent(TestTodAgentsAndTeachersBase):
+class TestApiSchemaAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
         max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
         max_episodes = config[aat.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
-            aat.ApiDescriptionAgent, config, {}
+            aat.ApiSchemaAgent, config, {}
         )
 
         apis_texts = [
             "APIS: "
             + tod_core.SerializationHelpers.list_of_maps_to_str(
-                aat.make_api_descriptions_machine(max_rounds)
+                aat.make_api_schemas_machine(max_rounds)
             )
             for _ in range(max_episodes)
         ]
@@ -183,17 +183,17 @@ class TestSingleGoalAgent(TestTodAgentsAndTeachersBase):
         self._test_roundDataCorrect()
 
 
-class TestSingleApiDescriptionAgent(TestTodAgentsAndTeachersBase):
+class TestSingleApiSchemaAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
         max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
         max_episodes = config[aat.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
-            aat.SingleApiDescriptionAgent, config, {}
+            aat.SingleApiSchemaAgent, config, {}
         )
 
         apis_text = []
         for _ in range(max_episodes):
-            apis = aat.make_api_descriptions_machine(max_rounds)
+            apis = aat.make_api_schemas_machine(max_rounds)
             for x in apis:
                 apis_text.append(
                     "APIS: " + tod_core.SerializationHelpers.list_of_maps_to_str([x])
@@ -204,9 +204,9 @@ class TestSingleApiDescriptionAgent(TestTodAgentsAndTeachersBase):
         self._test_roundDataCorrect()
 
 
-class TestSingleGoalWithSingleApiDescriptionAgent(TestTodAgentsAndTeachersBase):
+class TestSingleGoalWithSingleApiSchemaAgent(TestTodAgentsAndTeachersBase):
     """
-    Make sure the SingleGoal + SingleApiDescription agents correspond.
+    Make sure the SingleGoal + SingleApiSchema agents correspond.
     """
 
     def _test_roundDataCorrect_helper(self, config):
@@ -214,12 +214,12 @@ class TestSingleGoalWithSingleApiDescriptionAgent(TestTodAgentsAndTeachersBase):
             aat.SingleGoalAgent, config, {}
         )
         apis = self.dump_single_utt_per_episode_agent_text(
-            aat.SingleApiDescriptionAgent, config, {}
+            aat.SingleApiSchemaAgent, config, {}
         )
 
         for i in range(len(goals)):
             goal = tod_core.SerializationHelpers.str_to_goals(goals[i][len("GOALS:") :])
-            api = tod_core.SerializationHelpers.str_to_api_descriptions(
+            api = tod_core.SerializationHelpers.str_to_api_schemas(
                 apis[i][len("APIS:") :]
             )
             self.assertEqual(

@@ -8,13 +8,16 @@
 Helpers so we don't need to create agents all over.
 """
 
-import parlai.core.tod.tod_agents as tod_agents
-import parlai.core.tod.tod_teachers as tod_teachers
+import parlai.core.tod.tod_agents_and_teachers as tod_agents
+import parlai.core.tod.tod_agents_and_teachers as tod_teachers
 import parlai.core.tod.tod_core as tod_core
 
-import os 
+import os
 
-API_DATABASE_FILE = os.path.join(os.path.dirname(os.path.realpath(__file__)), "standalone_api_file.pickle")
+API_DATABASE_FILE = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), "standalone_api_file.pickle"
+)
+
 
 def episode_has_broken_api_turn(episode_idx, max_turns):
     return episode_idx % 2 == 1 and max_turns > 0
@@ -40,7 +43,7 @@ def make_api_resp_machine(round_idx):
     return {"out": round_idx}
 
 
-def make_api_descriptions_machine(max_rounds):
+def make_api_schemas_machine(max_rounds):
     return [
         {
             tod_core.STANDARD_API_NAME_SLOT: f"name_{round_idx}",
@@ -119,7 +122,7 @@ EPISODE_SETUP__SINGLE_API_CALL = {
     TEST_NUM_ROUNDS_OPT_KEY: 2,
     TEST_NUM_EPISODES_OPT_KEY: 1,
 }
-# Will start testing multiple api calls + descriptions, multi-round logic
+# Will start testing multiple api calls + schemas, multi-round logic
 EPISODE_SETUP__MULTI_ROUND = {TEST_NUM_ROUNDS_OPT_KEY: 5, TEST_NUM_EPISODES_OPT_KEY: 1}
 
 # Test that episode logic is correct
@@ -135,7 +138,7 @@ EPISODE_SETUP__MULTI_EPISODE_BS = {
 }
 
 
-class TestDataParser(tod_agents.TodStructuredDataAgent):
+class TestDataParser(tod_agents.TodStructuredDataParser):
     """
     Assume that when we init, we init w/ num of episodes + rounds as opts.
     """
@@ -160,7 +163,7 @@ class TestDataParser(tod_agents.TodStructuredDataAgent):
                         make_api_call_machine(x)
                         for x in range(1, self.opt[TEST_NUM_ROUNDS_OPT_KEY])
                     ],
-                    api_descriptions_machine=make_api_descriptions_machine(
+                    api_schemas_machine=make_api_schemas_machine(
                         self.opt[TEST_NUM_ROUNDS_OPT_KEY]
                     ),
                     rounds=get_rounds(
@@ -193,7 +196,7 @@ class GoalAgent(TestDataParser, tod_agents.TodGoalAgent):
     pass
 
 
-class ApiDescriptionAgent(TestDataParser, tod_agents.TodApiDescriptionAgent):
+class ApiSchemaAgent(TestDataParser, tod_agents.TodApiSchemaAgent):
     pass
 
 
@@ -201,9 +204,7 @@ class SingleGoalAgent(TestDataParser, tod_agents.TodSingleGoalAgent):
     pass
 
 
-class SingleApiDescriptionAgent(
-    TestDataParser, tod_agents.TodSingleApiDescriptionAgent
-):
+class SingleApiSchemaAgent(TestDataParser, tod_agents.TodSingleApiSchemaAgent):
     pass
 
 

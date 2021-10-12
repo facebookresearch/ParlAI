@@ -12,7 +12,6 @@ Note that only metrics handler classes in `WORLD_METRIC_HANDLERS` are actively b
 from parlai.core.message import Message
 from parlai.core.metrics import (
     Metric,
-    Metrics,
     AverageMetric,
     normalize_answer,
     BleuMetric,
@@ -23,12 +22,9 @@ from parlai.core.tod.tod_core import (
     STANDARD_DONE,
     STANDARD_REQUIRED_KEY,
     STANDARD_OPTIONAL_KEY,
-    STANDARD_API_DESCRIPTIONS,
-    TodAgentType,
-    TOD_AGENT_TYPE_TO_PREFIX,
-    SerializationHelpers,
+    STANDARD_API_SCHEMAS,
 )
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 try:
     from nltk.translate import bleu_score as nltkbleu
@@ -37,54 +33,75 @@ except ImportError:
     # We'll just turn off things, but we might want to warn the user
     nltkbleu = None
 
-METRICS_HANDLER_CLASSES_TEST_REGISTRY = set() # for tests
+METRICS_HANDLER_CLASSES_TEST_REGISTRY = set()  # for tests
+
+
 def register_metrics_handler(cls):
     METRICS_HANDLER_CLASSES_TEST_REGISTRY.add(cls)
     return cls
 
+
 class TodMetricsHandler:
     """
-    Base for Tod Metrics handlers class. The `TodMetrics` class will call the following. 
+    Base for Tod Metrics handlers class. The `TodMetrics` class will call the following.
 
     Override as necessary.
     """
+
     def __init__(self):
         self.episode_reset()
 
     def episode_reset(self):
         pass
 
-    def handle_api_descriptions(self, message: Message, api_descriptions: List[Dict]) -> Optional[Dict[str, Metric]]:
-        self.api_descriptions = api_descriptions
+    def handle_api_schemas(
+        self, message: Message, api_schemas: List[Dict]
+    ) -> Optional[Dict[str, Metric]]:
+        self.api_schemas = api_schemas
 
-    def handle_goals(self, message: Message, goals: List[Dict]) -> Optional[Dict[str, Metric]]:
+    def handle_goals(
+        self, message: Message, goals: List[Dict]
+    ) -> Optional[Dict[str, Metric]]:
         self.goals = goals
 
-    def handle_user_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_user_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         pass
 
-    def handle_api_call(self, message: Message, api_call: Dict) -> Optional[Dict[str, Metric]]:
+    def handle_api_call(
+        self, message: Message, api_call: Dict
+    ) -> Optional[Dict[str, Metric]]:
         pass
 
-    def handle_api_resp(self, message: Message, api_resp: Dict) -> Optional[Dict[str, Metric]]:
+    def handle_api_resp(
+        self, message: Message, api_resp: Dict
+    ) -> Optional[Dict[str, Metric]]:
         pass
 
-    def handle_sys_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_sys_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         pass
 
     def get_episode_metrics(self) -> Optional[Dict[str, Metric]]:
         pass
 
-################################
-# Functions and classes associated with calculating statistics between API Calls and Goals. 
 
-def get_req_only_goals(goals_list: List[Dict], api_descriptions: List[Dict]) -> List[Dict]:
+################################
+# Functions and classes associated with calculating statistics between API Calls and Goals.
+
+
+def get_req_only_goals(goals_list: List[Dict], api_schemas: List[Dict]) -> List[Dict]:
     """
-    Given a list of goals and a list of api descriptions that say if slots are required or optional, this function filters for the goals to be only the required ones. 
-    
-    If we have no api descriptions or a goal is malformed, we return the empty list. If a goal is malformed, we print a warning, since this whole req-only goals thing is experimental at best anyhow. 
+    Given a list of goals and a list of api schemas that say if slots are required or
+    optional, this function filters for the goals to be only the required ones.
+
+    If we have no api schemas or a goal is malformed, we return the empty list. If a
+    goal is malformed, we print a warning, since this whole req-only goals thing is
+    experimental at best anyhow.
     """
-    if len(api_descriptions) == 0:
+    if len(api_schemas) == 0:
         return []
     result = []
     for goal in goals_list:
@@ -94,24 +111,26 @@ def get_req_only_goals(goals_list: List[Dict], api_descriptions: List[Dict]) -> 
             print(f"No {STANDARD_API_NAME_SLOT} in goal `{goal}`")
             return []
         required = []
-        for description in api_descriptions:
-            if description.get(STANDARD_API_NAME_SLOT, "") == method:
-                required = description.get(STANDARD_REQUIRED_KEY, {})
+        for schema in api_schemas:
+            if schema.get(STANDARD_API_NAME_SLOT, "") == method:
+                required = schema.get(STANDARD_REQUIRED_KEY, {})
         for key in required:
             if key not in goal:
                 print(f"No required key `{key}` in goal `{goal}`")
-                return [] 
+                return []
             req_goals[key] = goal[key]
         if len(req_goals) > 0:
             req_goals[STANDARD_API_NAME_SLOT] = method  # for consistency with all.
             result.append(req_goals)
     return result
 
+
 def goals_slots_helper(
     goals: List[Dict], turnDict: List[Dict]
 ) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     """
-    Helper function to see how well the slot keys + slot values match between attempted API calls and goals. 
+    Helper function to see how well the slot keys + slot values match between attempted
+    API calls and goals.
 
     Output is precision, recall.
     """
@@ -133,11 +152,13 @@ def goals_slots_helper(
         AverageMetric(len(call_in_goal), len(all_goal_slots)),
     )
 
+
 def goals_hit_helper(
-    goals: List[Dict], turnDict: List[Dict], permissive = False
+    goals: List[Dict], turnDict: List[Dict], permissive=False
 ) -> (AverageMetric, AverageMetric, AverageMetric):
     """
-    Helper function that aids in seeing if the API calls the system has attempted to make manages to meet the goals the conversation has.
+    Helper function that aids in seeing if the API calls the system has attempted to
+    make manages to meet the goals the conversation has.
 
     Return values:
     * if all goals hit
@@ -145,9 +166,10 @@ def goals_hit_helper(
     * fraction of goals hit
     """
     goals_left = goals
-    
+
     def exact_match(goal, turn):
         return goal == turn
+
     def permissive_match(goal, turn):
         for key in goal:
             if turn.get(key, "definitelyNotIn") != goal[key]:
@@ -157,9 +179,7 @@ def goals_hit_helper(
     compare_func = permissive_match if permissive else exact_match
 
     for i, turn in enumerate(turnDict):
-        goals_left = [
-            goal for goal in goals_left if not compare_func(goal, turn)
-        ]
+        goals_left = [goal for goal in goals_left if not compare_func(goal, turn)]
         if len(goals_left) == 0:
             return AverageMetric(True), AverageMetric(i + 1), AverageMetric(1)
     return (
@@ -167,6 +187,7 @@ def goals_hit_helper(
         AverageMetric(0),
         AverageMetric(len(goals) - len(goals_left), len(goals)),
     )
+
 
 class _ApiCallGoalInteractionHelper(TodMetricsHandler):
     """
@@ -179,29 +200,36 @@ class _ApiCallGoalInteractionHelper(TodMetricsHandler):
     def episode_reset(self):
         self.api_turns = []
 
-    def handle_api_call(self, message: Message, api_call: Dict) -> Optional[Dict[str, Metric]]:
+    def handle_api_call(
+        self, message: Message, api_call: Dict
+    ) -> Optional[Dict[str, Metric]]:
         if len(api_call) > 0:
             self.api_turns.append(api_call)
-    
+
+
 @register_metrics_handler
 class LegacyGoalApiCallInteractionsMetricsHandler(_ApiCallGoalInteractionHelper):
     """
-    This class was reporting a few too many metrics, but is useful for test purposes, so we're keeping it around.
-    `AllGoalApiCallSuccessMetricsHandler` is the streamlined, less spammy version of this class.  
+    This class was reporting a few too many metrics, but is useful for test purposes, so
+    we're keeping it around.
+
+    `AllGoalApiCallSuccessMetricsHandler` is the streamlined, less spammy version of
+    this class.
     """
-    def handle_goals(self, message: Message, goals: List[Dict]) -> Optional[Dict[str, Metric]]:
+
+    def handle_goals(
+        self, message: Message, goals: List[Dict]
+    ) -> Optional[Dict[str, Metric]]:
         self.goals = goals
-        self.required_goals = get_req_only_goals(goals, self.api_descriptions)
+        self.required_goals = get_req_only_goals(goals, self.api_schemas)
 
     def get_episode_metrics(self) -> Optional[Dict[str, Metric]]:
         all_goals_hit, all_goals_hit_turn_count, all_part_hit = goals_hit_helper(
             self.goals, self.api_turns
         )
-        all_precision, all_recall = goals_slots_helper(
-            self.goals, self.api_turns
-        )
+        all_precision, all_recall = goals_slots_helper(self.goals, self.api_turns)
         req_goals_hit, req_goals_hit_turn_count, req_part_hit = goals_hit_helper(
-            self.required_goals, self.api_turns, permissive = True
+            self.required_goals, self.api_turns, permissive=True
         )
         req_precision, req_recall = goals_slots_helper(
             self.required_goals, self.api_turns
@@ -219,29 +247,32 @@ class LegacyGoalApiCallInteractionsMetricsHandler(_ApiCallGoalInteractionHelper)
             "req_goals_slot_precision": req_precision,
             "req_goals_slot_recall": req_recall,
             "call_attempts": AverageMetric(call_attempts),
-        }    
-    
+        }
+
+
 @register_metrics_handler
 class AllGoalApiCallSuccessMetricsHandler(_ApiCallGoalInteractionHelper):
     """
-    Calculates sTSR basically. Test coverage of this class is with `LegacyGoalApiCallInteractionsMetricsHandler`
+    Calculates sTSR basically.
+
+    Test coverage of this class is with `LegacyGoalApiCallInteractionsMetricsHandler`
     """
+
     def get_episode_metrics(self) -> Optional[Dict[str, Metric]]:
-        all_goals_hit, _, _ = goals_hit_helper(
-            self.goals, self.api_turns
-        )
+        all_goals_hit, _, _ = goals_hit_helper(self.goals, self.api_turns)
         call_attempts = len(self.api_turns)
         return {
             "synthetic_task_success": all_goals_hit,
             "api_call_attempts": AverageMetric(call_attempts),
         }
 
+
 @register_metrics_handler
 class UserGoalSlotCoverageMetricHandler(TodMetricsHandler):
     """
     How well does our user simulator do at outputting utterances that goes closer to
-    satisfying relevant preempted goals? Does it dump out all of the slots at once or is
-    it more intelligent than that?
+    satisfying relevant groundinged goals? Does it dump out all of the slots at once or
+    is it more intelligent than that?
 
     Since this is the user and we don't know the identity of potential slots, we ignore
     the short (< 4 chars) goal slots since this tends to be things that are substrings
@@ -255,11 +286,13 @@ class UserGoalSlotCoverageMetricHandler(TodMetricsHandler):
         self.all_goal_slot_values = set()
         self.all_req_goal_slot_values = set()
 
-    def handle_goals(self, message: Message, goals: List[Dict]) -> Optional[Dict[str, Metric]]:
+    def handle_goals(
+        self, message: Message, goals: List[Dict]
+    ) -> Optional[Dict[str, Metric]]:
         """
         Parse out all the slots as a blob, filtering out for short things.
         """
-        required_goals = get_req_only_goals(goals, self.api_descriptions)
+        required_goals = get_req_only_goals(goals, self.api_schemas)
 
         def get_slot_values(goal_list):
             result = set()
@@ -269,10 +302,12 @@ class UserGoalSlotCoverageMetricHandler(TodMetricsHandler):
                         result.add(value)
             return result
 
-        all_goal_slot_values = get_slot_values(goals)
-        all_req_goal_slot_values = get_slot_values(required_goals)
+        self.all_goal_slot_values = get_slot_values(goals)
+        self.all_req_goal_slot_values = get_slot_values(required_goals)
 
-    def handle_user_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_user_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         """
         Grab slots out of the user utterance based on an exact match.
         """
@@ -310,9 +345,11 @@ class UserGoalSlotCoverageMetricHandler(TodMetricsHandler):
         self.mentioned_req_slot_values = set()
         return result
 
+
 class _ExactRepeatMetricsHandler(TodMetricsHandler):
     """
-    Helper class for defining % of episodes where a given agent type has exactly repeated the same utterance.
+    Helper class for defining % of episodes where a given agent type has exactly
+    repeated the same utterance.
     """
 
     def episode_reset(self):
@@ -322,7 +359,9 @@ class _ExactRepeatMetricsHandler(TodMetricsHandler):
     def metric_key(self):
         raise NotImplementedError("must implement")
 
-    def handle_message_helper(self, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_message_helper(
+        self, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         normalized = normalize_answer(prefix_stripped_text)
         if normalized in self.turns:
             self.repeated = True
@@ -340,7 +379,9 @@ class UserUttRepeatMetricHandler(_ExactRepeatMetricsHandler):
     def metric_key(self):
         return "user_utt_repeat"
 
-    def handle_user_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_user_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         return self.handle_message_helper(prefix_stripped_text)
 
 
@@ -349,7 +390,9 @@ class SystemUttRepeatMetricHandler(_ExactRepeatMetricsHandler):
     def metric_key(self):
         return "sys_utt_repeat"
 
-    def handle_sys_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_sys_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         return self.handle_message_helper(prefix_stripped_text)
 
 
@@ -367,8 +410,10 @@ class _Bleu3MetricsHandler(TodMetricsHandler):
     def metric_key(self):
         raise NotImplementedError("must implement")
 
-    def handle_message_helper(self, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
-        here = [ normalize_answer(x) for x in prefix_stripped_text.split(" ")]
+    def handle_message_helper(
+        self, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
+        here = [normalize_answer(x) for x in prefix_stripped_text.split(" ")]
         score = 1
         if len(self.turns) > 0:
             score = nltkbleu.corpus_bleu(
@@ -386,7 +431,9 @@ class UserUttSelfBleu3MetricHandler(_Bleu3MetricsHandler):
     def metric_key(self):
         return "user_utt_self_bleu3"
 
-    def handle_user_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_user_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         return self.handle_message_helper(prefix_stripped_text)
 
 
@@ -395,18 +442,22 @@ class SystemUttSelfBleu3MetricHandler(_Bleu3MetricsHandler):
     def metric_key(self):
         return "sys_utt_self_bleu3"
 
-    def handle_sys_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_sys_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         return self.handle_message_helper(prefix_stripped_text)
 
 
 @register_metrics_handler
 class ApiCallMalformedMetricHandler(TodMetricsHandler):
     def episode_reset(self):
-        self.api_descriptions = []
+        self.api_schemas = []
 
-    def handle_api_call(self, message: Message, api_call: Dict) -> Optional[Dict[str, Metric]]:
-        if STANDARD_API_DESCRIPTIONS in message["text"]:
-            return  # Happens for API call preemption, so it's fine
+    def handle_api_call(
+        self, message: Message, api_call: Dict
+    ) -> Optional[Dict[str, Metric]]:
+        if STANDARD_API_SCHEMAS in message["text"]:
+            return  # Happens for API call groundingion, so it's fine
         if len(api_call) == 0:
             return
         if STANDARD_API_NAME_SLOT not in api_call:
@@ -417,12 +468,12 @@ class ApiCallMalformedMetricHandler(TodMetricsHandler):
         method = api_call[STANDARD_API_NAME_SLOT]
 
         method_found = False
-        if len(self.api_descriptions) > 0:
-            for description in self.api_descriptions:
-                if method == description.get(STANDARD_API_NAME_SLOT, ""):
+        if len(self.api_schemas) > 0:
+            for schema in self.api_schemas:
+                if method == schema.get(STANDARD_API_NAME_SLOT, ""):
                     method_found = True
                     check = api_call.keys()
-                    required = set(description.get(STANDARD_REQUIRED_KEY, []))
+                    required = set(schema.get(STANDARD_REQUIRED_KEY, []))
                     required.add(STANDARD_API_NAME_SLOT)
                     for req in required:
                         if req not in check:  # miissing required
@@ -431,7 +482,7 @@ class ApiCallMalformedMetricHandler(TodMetricsHandler):
                                 "apiCall_missingRequiredSlot_count": SumMetric(1),
                             }
                     opt_count = 0
-                    for opt in description.get(STANDARD_OPTIONAL_KEY, []):
+                    for opt in schema.get(STANDARD_OPTIONAL_KEY, []):
                         if opt in check:
                             opt_count += 1
                     if opt_count + len(required) != len(check):
@@ -458,7 +509,9 @@ class UserGeneratedDoneMetricHandler(TodMetricsHandler):
         self.done_seen = False
         self.turn_count = 0
 
-    def handle_user_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_user_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         self.done_seen |= STANDARD_DONE in message["text"]
         self.turn_count += 1
 
@@ -479,10 +532,14 @@ class PseudoInformMetricsHandler(TodMetricsHandler):
     def episode_reset(self):
         self.api_resp_slots = {}
 
-    def handle_api_resp(self, message: Message, api_resp: Dict) -> Optional[Dict[str, Metric]]:
+    def handle_api_resp(
+        self, message: Message, api_resp: Dict
+    ) -> Optional[Dict[str, Metric]]:
         self.api_resp_slots.update(api_resp)
 
-    def handle_sys_utt(self, message: Message, prefix_stripped_text: str) -> Optional[Dict[str, Metric]]:
+    def handle_sys_utt(
+        self, message: Message, prefix_stripped_text: str
+    ) -> Optional[Dict[str, Metric]]:
         count = 0
         for val in self.api_resp_slots.values():
             if val in prefix_stripped_text:
@@ -495,8 +552,8 @@ class PseudoInformMetricsHandler(TodMetricsHandler):
     def get_episode_metrics(self):
         self.api_resp_slots = {}
 
+
 WORLD_METRIC_HANDLERS = [
     AllGoalApiCallSuccessMetricsHandler,
-    UserGeneratedDoneMetricHandler, 
+    UserGeneratedDoneMetricHandler,
 ]
-

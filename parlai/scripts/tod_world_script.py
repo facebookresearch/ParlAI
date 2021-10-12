@@ -14,7 +14,7 @@ import os
 
 import parlai.utils.logging as logging
 import parlai.core.tod.tod_world as tod_world
-import parlai.core.tod.tod_agents as tod_world_agents
+import parlai.core.tod.tod_agents_and_teachers as tod_world_agents
 from parlai.core.agents import create_agent
 from parlai.core.metrics import dict_report, aggregate_unnamed_reports
 from parlai.core.opt import Opt
@@ -73,8 +73,8 @@ class TodWorldParser(ParlaiParser):
         for model in [
             "system_model",
             "user_model",
-            "api_description_preempt_model",
-            "goal_preempt_model",
+            "api_schema_grounding_model",
+            "goal_grounding_model",
             "api_resp_model",
         ]:
             if (
@@ -139,15 +139,15 @@ class TodWorldScript(ParlaiScript):
         )
 
         tod_args.add_argument(
-            "--api-description-preempt-model",
+            "--api-schema-grounding-model",
             default="",
-            help="Agent used in first turn to preempt api call/response agents with api descriptions. Will use TodEmptyApiDescriptionAgent if not set.",
+            help="Agent used in first turn to grounding api call/response agents with api schemas. Will use TodEmptyApiDescriptionAgent if not set.",
         )
 
         tod_args.add_argument(
-            "--goal-preempt-model",
+            "--goal-grounding-model",
             default="",
-            help="Agent used in first turn to preempt user agent with goal. Will use TodEmptyGoalAgent if not set",
+            help="Agent used in first turn to grounding user agent with goal. Will use TodEmptyGoalAgent if not set",
         )
 
     @classmethod
@@ -238,15 +238,13 @@ class TodWorldScript(ParlaiScript):
         agents[tod_world.API_CALL_IDX] = system_model
 
         agents[tod_world.API_RESP_IDX] = self._make_agent(opt, "api_resp_model")
-        agents[
-            tod_world.API_DESCRIPTION_PREEMPT_IDX
-        ] = self._get_model_or_default_agent(
+        agents[tod_world.API_SCHEMA_GROUNDING_IDX] = self._get_model_or_default_agent(
             opt,
-            "api_description_preempt_model",
+            "api_schema_grounding_model",
             tod_world_agents.TodEmptyApiDescriptionAgent,
         )
-        agents[tod_world.GOAL_PREEMPT_IDX] = self._get_model_or_default_agent(
-            opt, "goal_preempt_model", tod_world_agents.TodEmptyGoalAgent
+        agents[tod_world.GOAL_GROUNDING_IDX] = self._get_model_or_default_agent(
+            opt, "goal_grounding_model", tod_world_agents.TodEmptyGoalAgent
         )
 
         return agents

@@ -18,7 +18,7 @@ STANDARD_SYSTEM_UTTERANCE = "SYSTEM: "
 STANDARD_USER_UTTERANCE = "USER: "
 
 STANDARD_GOAL = "GOAL: "
-STANDARD_API_DESCRIPTIONS = "APIS: "
+STANDARD_API_SCHEMAS = "APIS: "
 
 STANDARD_API_NAME_SLOT = "api_name"
 STANDARD_REQUIRED_KEY = "reqArg"
@@ -35,8 +35,8 @@ class TodAgentType(str, Enum):
     API_CALL_AGENT = "api_call_model"
     API_RESP_AGENT = "api_resp_model"
     SYSTEM_UTT_AGENT = "system_utt_model"
-    API_DESCRIPTION_PREEMPT_AGENT = "api_description_preempt_model"
-    GOAL_PREEMPT_AGENT = "goal_preempt_model"
+    API_SCHEMA_GROUNDING_AGENT = "api_schema_grounding_model"
+    GOAL_GROUNDING_AGENT = "goal_grounding_model"
 
 
 TOD_AGENT_TYPE_TO_PREFIX = {
@@ -44,8 +44,8 @@ TOD_AGENT_TYPE_TO_PREFIX = {
     TodAgentType.API_CALL_AGENT: STANDARD_CALL,
     TodAgentType.API_RESP_AGENT: STANDARD_RESP,
     TodAgentType.SYSTEM_UTT_AGENT: STANDARD_SYSTEM_UTTERANCE,
-    TodAgentType.API_DESCRIPTION_PREEMPT_AGENT: STANDARD_API_DESCRIPTIONS,
-    TodAgentType.GOAL_PREEMPT_AGENT: STANDARD_GOAL,
+    TodAgentType.API_SCHEMA_GROUNDING_AGENT: STANDARD_API_SCHEMAS,
+    TodAgentType.GOAL_GROUNDING_AGENT: STANDARD_GOAL,
 }
 
 
@@ -76,17 +76,17 @@ class TodStructuredEpisode:
     delex: bool = False  # Set to true for delexicalized call + response utterances.
     domain: str = ""
     all_domains: [str] = field(default_factory=list)  # list of strings
-    api_descriptions_machine: List[Dict[str, List]] = field(default_factory=list)
+    api_schemas_machine: List[Dict[str, List]] = field(default_factory=list)
     goal_calls_machine: List[Dict[str, str]] = field(default_factory=list)
     rounds: List[TodStructuredRound] = field(default_factory=list)
 
-    api_descriptions_utt: str = field(init=False)
+    api_schemas_utt: str = field(init=False)
     goal_calls_utt: str = field(init=False)
     extras: Dict = field(default_factory=dict)
 
     def __post_init__(self):
-        self.api_descriptions_utt = SerializationHelpers.list_of_maps_to_str(
-            self.api_descriptions_machine
+        self.api_schemas_utt = SerializationHelpers.list_of_maps_to_str(
+            self.api_schemas_machine
         )
         self.goal_calls_machine = [
             call for call in self.goal_calls_machine if len(call) > 0
@@ -192,7 +192,7 @@ class SerializationHelpers:
         return SerializationHelpers.str_to_list_of_maps(s)
 
     @classmethod
-    def str_to_api_descriptions(cls, s):
+    def str_to_api_schemas(cls, s):
         api_call_lists = SerializationHelpers.str_to_list_of_maps(s)
 
         def further_split(api_call):

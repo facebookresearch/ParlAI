@@ -14,8 +14,7 @@ import unittest
 import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
 import parlai.core.tod.tod_core as tod_core
 import parlai.scripts.tod_world_script as tod_world_script
-from parlai.core.tod.tod_agents import TodStandaloneApiAgent
-import os
+from parlai.core.tod.tod_agents_and_teachers import TodStandaloneApiAgent
 
 
 class TestTodWorldScript(tod_world_script.TodWorldScript):
@@ -51,7 +50,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         opts["log_keep_fields"] = "all"
         opts["display_examples"] = False
         opts[
-            "include_api_descriptions"
+            "include_api_schemas"
         ] = True  # do this to aat.make sure they're done correctly.
         return opts
 
@@ -63,7 +62,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
             sys,
             TodStandaloneApiAgent(full_opts),
             sys,
-            aat.ApiDescriptionAgent(full_opts),
+            aat.ApiSchemaAgent(full_opts),
             aat.GoalAgent(full_opts),
         ]
         return agents, full_opts
@@ -92,7 +91,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
                 context[0]["text"],
                 "APIS: "
                 + tod_core.SerializationHelpers.list_of_maps_to_str(
-                    aat.make_api_descriptions_machine(max_rounds)
+                    aat.make_api_schemas_machine(max_rounds)
                 ),
             )
             self.assertEquals(
@@ -183,16 +182,14 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
         config[aat.TEST_NUM_ROUNDS_OPT_KEY] = 10
         config[aat.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
         single_agents, opt = self.setup_agents(
-            config, aat.SingleApiDescriptionAgent, aat.SingleGoalAgent
+            config, aat.SingleApiSchemaAgent, aat.SingleGoalAgent
         )
         single_script = TestTodWorldScript(opt)
         single_script.agents = single_agents
         single_script.run()
         single_logs = [x for x in single_script.logger.get_logs() if len(x) > 0]
 
-        multi_agents, opt = self.setup_agents(
-            config, aat.ApiDescriptionAgent, aat.GoalAgent
-        )
+        multi_agents, opt = self.setup_agents(config, aat.ApiSchemaAgent, aat.GoalAgent)
         multi_script = TestTodWorldScript(opt)
         multi_script.agents = multi_agents
         multi_script.run()
@@ -211,7 +208,7 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
                 )
                 self.assertEqual(len(single_goal), 1)
                 self.assertEquals(goal, single_goal[0])
-                single_des = tod_core.SerializationHelpers.str_to_api_descriptions(
+                single_des = tod_core.SerializationHelpers.str_to_api_schemas(
                     single_context[0]["text"][len("APIS:") :].strip()
                 )
                 self.assertEqual(len(single_des), 1)

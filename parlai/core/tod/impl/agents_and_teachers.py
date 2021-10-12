@@ -9,12 +9,15 @@ Default agents for TODWorld.
 
 from parlai.core.agents import Agent
 from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
+from parlai.core.teachers import DialogTeacher
 from parlai.utils.distributed import is_distributed, get_rank, num_workers
 
 import parlai.core.tod.tod_core as tod
 from parlai.core.tod.tod_core import SerializationHelpers
+import parlai.core.core.impl.teacher_metrics
 
 from typing import Optional, List
 import json
@@ -23,35 +26,10 @@ import difflib
 import random
 from math import ceil
 
-######### Default dummy agents
-
-
-class TodEmptyApiDescriptionAgent(Agent):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.id = "TodEmptyApiDescriptionAgent"
-
-    def act(self):
-        msg = {
-            "id": self.getID(),
-            "text": tod.STANDARD_API_DESCRIPTIONS,
-            "episode_done": False,
-        }
-        return Message(msg)
-
-
-class TodEmptyGoalAgent(Agent):
-    def __init__(self, opt, shared=None):
-        super().__init__(opt)
-        self.id = "TodEmptyGoalAgent"
-
-    def act(self):
-        msg = {"id": self.getID(), "text": tod.STANDARD_GOAL, "episode_done": False}
-        return Message(msg)
-
-
 ######### Agents that dump information from a dataset; base classes
-class TodStructuredDataAgent(Agent):
+
+
+class TodStructuredDataParser(Agent):
     """
     Base class that specifies intermediate generation representations.
     """
@@ -111,8 +89,8 @@ class TodStructuredDataAgent(Agent):
         raise NotImplementedError("Must set in downstream agent")
 
 
-######### Agents that dump information from a dataset as gold (not a teacher_
-class TodDataDumpAgent(TodStructuredDataAgent):
+######### Agents that dump information from a dataset as gold (explicitly should *not* be used with teachers)
+class _TodDataDumpAgent(TodStructuredDataParser):
     """
     For agents which dump data from some dataset, without training/other modifications.
 
@@ -168,9 +146,9 @@ class TodDataDumpAgent(TodStructuredDataAgent):
         self._setup_next_episode()
 
 
-class TodGoalAgent(TodDataDumpAgent):
+class TodGoalAgent(_TodDataDumpAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataAgent.
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
     """
 
     def act(self):
@@ -185,28 +163,28 @@ class TodGoalAgent(TodDataDumpAgent):
         return "Goal"
 
 
-class TodApiDescriptionAgent(TodDataDumpAgent):
+class TodApiSchemaAgent(_TodDataDumpAgent):
     def act(self):
         return {
-            "text": f"{tod.STANDARD_API_DESCRIPTIONS}{self.episode.api_descriptions_utt}",
+            "text": f"{tod.STANDARD_API_SCHEMAS}{self.episode.api_schemas_utt}",
             "id": self.id,
             "domain": self.episode.domain,
             "episode_done": False,
         }
 
     def get_agent_type_suffix(self):
-        return "ApiDescription"
+        return "ApiSchema"
 
 
-############# Single Goal + Api Description Agent
-class EpisodeToSingleGoalProcessor(TodDataDumpAgent):
+############# Single Goal + Api Schema Agent
+class _EpisodeToSingleGoalProcessor(_TodDataDumpAgent):
     """
     Iterate through all of the goals of a dataset, one by one.
 
     Slightly different logic than the dump agent since how we count + setup examples for
     an episode are different
 
-    Used as a mixin in the SingleGoal and SingleApiDescription agents below.
+    Used as a mixin in the SingleGoal and SingleApiSchema agents below.
     """
 
     def __init__(self, opt: Opt, shared=None):
@@ -215,7 +193,7 @@ class EpisodeToSingleGoalProcessor(TodDataDumpAgent):
         if shared is None:
             self.episodes = self._setup_single_goal_episodes()
         else:
-            # Handled fine in TodDataDumpAgent
+            # Handled fine in _TodDataDumpAgent
             pass
 
         self.max_episodes = len(self.episodes)
@@ -234,25 +212,25 @@ class EpisodeToSingleGoalProcessor(TodDataDumpAgent):
         prior.
 
         Based on the `__init__` order of this class, it should be done in
-        `TodStructuredDataAgent` by this point.
+        `TodStructuredDataParser` by this point.
         """
         raw_episodes = self.episodes
         result = []
         for raw in raw_episodes:
             for call in self.filter_goals(raw.goal_calls_machine):
-                description = {}
-                for cand in raw.api_descriptions_machine:
+                schema = {}
+                for cand in raw.api_schemas_machine:
                     if (
                         cand[tod.STANDARD_API_NAME_SLOT]
                         == call[tod.STANDARD_API_NAME_SLOT]
                     ):
-                        description = cand
+                        schema = cand
 
                 result.append(
                     tod.TodStructuredEpisode(
                         domain=raw.domain,
                         all_domains=raw.all_domains,
-                        api_descriptions_machine=[description],
+                        api_schemas_machine=[schema],
                         goal_calls_machine=[call],
                         rounds=[],
                     )
@@ -266,34 +244,32 @@ class EpisodeToSingleGoalProcessor(TodDataDumpAgent):
         return goals
 
 
-class TodSingleGoalAgent(EpisodeToSingleGoalProcessor, TodGoalAgent):
+class TodSingleGoalAgent(_EpisodeToSingleGoalProcessor, TodGoalAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataAgent.
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
 
-    NOTE: If an API description agent is used, this *must* be used with `TodSingleApiDescriptionAgent` since it will be nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
+    NOTE: If an API schema agent is used, this *must* be used with `TodSingleApiSchemaAgent` since it will be nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
     """
 
     def get_agent_type_suffix(self):
         return "SingleGoal"
 
 
-class TodSingleApiDescriptionAgent(
-    EpisodeToSingleGoalProcessor, TodApiDescriptionAgent
-):
+class TodSingleApiSchemaAgent(_EpisodeToSingleGoalProcessor, TodApiSchemaAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataAgent.
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
 
     NOTE: Must be used with TodSingleGoalAgent since nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
     """
 
     def get_agent_type_suffix(self):
-        return "SingleApiDescription"
+        return "SingleApiSchema"
 
 
 ###### User + System  agents
 
 
-class TodUserUttAgent(TodDataDumpAgent):
+class TodUserUttAgent(_TodDataDumpAgent):
     """
     Hack for getting TOD Metrics in a model-teacher chat (or to get TOD Metrics on a
     ground-truth TOD dataset)
@@ -322,7 +298,7 @@ class TodUserUttAgent(TodDataDumpAgent):
         return "User"
 
 
-class TodApiCallAndSysUttAgent(TodDataDumpAgent):
+class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
     """
     Hack for getting TOD Metrics in a model-teacher chat (or to get TOD Metrics on a
     ground-truth TOD dataset)
@@ -341,9 +317,9 @@ class TodApiCallAndSysUttAgent(TodDataDumpAgent):
 
     def act(self):
         self.already_reset = False
-        if tod.STANDARD_API_DESCRIPTIONS in self.observation.get("text", ""):
+        if tod.STANDARD_API_SCHEMAS in self.observation.get("text", ""):
             return {
-                "text": tod.STANDARD_API_DESCRIPTIONS,
+                "text": tod.STANDARD_API_SCHEMAS,
                 "id": self.id,
                 "domain": self.episode.domain,
                 "episode_down": False,
@@ -378,7 +354,7 @@ class TodApiCallAndSysUttAgent(TodDataDumpAgent):
         return "System"
 
 
-class TodApiResponseAgent(TodDataDumpAgent):
+class TodApiResponseAgent(_TodDataDumpAgent):
     """
     Hack for getting TOD Metrics in a model-teacher chat (or to get TOD Metrics on a
     ground-truth TOD dataset)
@@ -410,7 +386,9 @@ class TodApiResponseAgent(TodDataDumpAgent):
 ###### Standalone API agent
 class TodStandaloneApiAgent(Agent):
     """
-    Trainable agent that save API information.
+    Trainable agent that saves API calls and responses.
+
+    Use `TodStandaloneApiTeacher` to train this class.
     """
 
     EMPTY_RESP = {
@@ -517,3 +495,261 @@ class TodStandaloneApiAgent(Agent):
                 print(f"Dumped output to {self.db_path}")
             with open(self.path_base + ".opt", "w") as f:
                 json.dump(self.opt, f)
+
+
+######### Default dummy agents
+
+
+class TodEmptyApiSchemaAgent(Agent):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt)
+        self.id = "TodEmptyApiSchemaAgent"
+
+    def act(self):
+        msg = {
+            "id": self.getID(),
+            "text": tod.STANDARD_API_SCHEMAS,
+            "episode_done": False,
+        }
+        return Message(msg)
+
+
+class TodEmptyGoalAgent(Agent):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt)
+        self.id = "TodEmptyGoalAgent"
+
+    def act(self):
+        msg = {"id": self.getID(), "text": tod.STANDARD_GOAL, "episode_done": False}
+        return Message(msg)
+
+
+############# Teachers
+class SystemTeacher(TodStructuredDataParser, DialogTeacher):
+    """
+    TOD agent teacher which produces both API calls and NLG responses.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = super().add_cmdline_args(parser, partial_opt)
+        parser.add_argument(
+            "--api-schemas",
+            type="bool",
+            default=False,
+            help="Preempt first turn with intents + required/optional parameters as key/value for given domain",
+        )
+        parser.add_argument(
+            "--standalone-api",
+            type="bool",
+            default=True,
+            help="Noop for this agent. Included to make sweeps easier.",
+        )
+        parser.add_argument(
+            "--api-jga-record",
+            type=bool,
+            default=True,
+            help="Should we save jga information per api schema?",
+        )
+        parser.add_argument(
+            "--domain-jga-record",
+            type=bool,
+            default=False,
+            help="Should we save jga information per domain?",
+        )
+        parser.add_argument(
+            "--domain-nlg-record",
+            type=bool,
+            default=False,
+            help="Should we save nlg information per domain?",
+        )
+        return parser
+
+    def custom_evaluation(
+        self, teacher_action: Message, labels, model_response: Message
+    ):
+        resp = model_response.get("text")
+        if not resp:
+            return
+        if teacher_action["type"] == tod.STANDARD_CALL:
+            if resp.startswith(tod.STANDARD_CALL):
+                resp = resp[len(tod.STANDARD_CALL) :]
+            predicted = SerializationHelpers.str_to_api_dict(resp)
+            domains = (
+                [teacher_action["domain"]] if self.opt["domain_jga_record"] else []
+            )
+
+            metrics = SlotMetrics(
+                teacher_slots=teacher_action["slots"],
+                predicted_slots=predicted,
+                avg_jga_nlg_bleu=True,
+                prefixes=domains,
+            ).report()
+            for key, value in metrics.items():
+                self.metrics.add(key, value)
+
+            if self.opt["api_jga_record"] and len(teacher_action["slots"]) > 0:
+                teacher = teacher_action["slots"]
+                slots = list(teacher.keys())
+                slots.remove(tod.STANDARD_API_NAME_SLOT)
+                api_here = (
+                    "api-"
+                    + teacher[tod.STANDARD_API_NAME_SLOT]
+                    + "--"
+                    + "-".join(slots)
+                )
+                self.metrics.add(f"{api_here}/jga", AverageMetric(teacher == predicted))
+
+        elif teacher_action["type"] == tod.STANDARD_SYSTEM_UTTERANCE:
+            domains = (
+                [teacher_action["domain"]] if self.opt["domain_nlg_record"] else []
+            )
+            metrics = NlgMetrics(
+                guess=resp,
+                labels=labels,
+                prefixes=domains,
+                avg_jga_nlg_bleu=True,
+            ).report()
+            for key, value in metrics.items():
+                self.metrics.add(key, value)
+
+    def setup_data(self, fold):
+        for episode in self.generate_episodes():
+            if self.opt.get("api_schemas"):
+                schemas = episode.api_schemas_utt
+            else:
+                schemas = ""
+            yield {
+                "text": f"{tod.STANDARD_API_SCHEMAS}{schemas}",
+                "label": f"{tod.STANDARD_API_SCHEMAS}",
+                "domain": episode.domain,
+                "type": tod.STANDARD_API_SCHEMAS,
+                "slots": {},
+            }, True
+            for r in episode.rounds:
+                yield {
+                    "text": f"{tod.STANDARD_USER_UTTERANCE}{r.user_utt}",
+                    "label": f"{tod.STANDARD_CALL}{r.api_call_utt}",
+                    "domain": episode.domain,
+                    "type": tod.STANDARD_CALL,
+                    "slots": r.api_call_machine,
+                }, False
+                yield {
+                    "text": f"{tod.STANDARD_RESP}{r.api_resp_utt}",
+                    "label": f"{tod.STANDARD_SYSTEM_UTTERANCE}{r.sys_utt}",
+                    "domain": episode.domain,
+                    "slots": r.api_resp_machine,
+                    "type": tod.STANDARD_SYSTEM_UTTERANCE,
+                }, False
+
+    def get_agent_type_suffix(self):
+        return "SystemTeacher"
+
+
+class UserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
+    """
+    Teacher that tries to simulate user actions (ie, switches text/labels between USER
+    and SYSTEM)
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = super().add_cmdline_args(parser, partial_opt)
+        parser.add_argument(
+            "--api-schemas",
+            type="bool",
+            default=False,
+            help="Noop for this teacher. Included here mostly to make sweeps easy",
+        )
+        parser.add_argument(
+            "--standalone-api",
+            type="bool",
+            default=True,
+            help="Use a separately constructed class to handle API calls, in contrast to having the 'user' model also generate API responses.",
+        )
+        return parser
+
+    def setup_data(self, fold):
+        for episode in self.generate_episodes():
+            if len(episode.rounds) < 1:
+                continue
+            yield {
+                "text": f"{tod.STANDARD_GOAL}{episode.goal_calls_utt}",
+                "label": f"{tod.STANDARD_USER_UTTERANCE}{episode.rounds[0].user_utt}",
+                "domain": episode.domain,
+                "type": tod.STANDARD_USER_UTTERANCE,
+            }, True
+            for i, r in enumerate(episode.rounds):
+                if i == len(episode.rounds) - 1:
+                    continue
+                if not self.opt.get("standalone_api", True):
+                    yield {
+                        "text": f"{tod.STANDARD_CALL}{r.api_call_utt}",
+                        "label": f"{tod.STANDARD_RESP}{r.api_resp_utt}",
+                        "domain": episode.domain,
+                        "slots": r.api_resp_machine,
+                        "type": tod.STANDARD_RESP,
+                    }, False
+                yield {
+                    "text": f"{tod.STANDARD_SYSTEM_UTTERANCE}{r.sys_utt}",
+                    "label": f"{tod.STANDARD_USER_UTTERANCE}{episode.rounds[i+1].user_utt}",
+                    "domain": episode.domain,
+                    "type": tod.STANDARD_USER_UTTERANCE,
+                    "slots": {},  # slots in agent/user turns are meaningless
+                }, False
+
+    def custom_evaluation(
+        self, teacher_action: Message, labels, model_response: Message
+    ):
+        resp = model_response.get("text")
+        if not resp:
+            return
+        if (
+            not self.opt.get("standalone_api")
+            and teacher_action["type"] == tod.STANDARD_RESP
+        ):
+            if resp.startswith(tod.STANDARD_RESP):
+                resp = resp[len(tod.STANDARD_RESP) :]
+            predicted = SerializationHelpers.str_to_api_dict(resp)
+
+            metrics = SlotMetrics(teacher_action["slots"], predicted).report()
+            for key, value in metrics.items():
+                self.metrics.add(key, value)
+
+        elif teacher_action["type"] == tod.STANDARD_USER_UTTERANCE:
+            metrics = NlgMetrics(resp, labels).report()
+            for key, value in metrics.items():
+                self.metrics.add(key, value)
+
+    def get_agent_type_suffix(self):
+        return "UserSimulatorTeacher"
+
+
+class TodStandaloneApiTeacher(TodStructuredDataParser, DialogTeacher):
+    """
+    Use this to generate a database for `TodStandaloneApiAgent`.
+
+    (Set this as the teacher with `TodStandaloneApiAgent` as the agent.)
+    """
+
+    def setup_data(self, fold):
+        # As a default, just put everything in
+        for fold_overwrite in ["train", "valid", "test"]:
+            for episode in self.setup_episodes(fold_overwrite):
+                first = True
+                for r in episode.rounds:
+                    if len(r.api_call_machine) > 0:
+                        yield {
+                            "text": f"{tod.STANDARD_CALL}{r.api_call_utt}",
+                            "label": f"{tod.STANDARD_RESP}{r.api_resp_utt}",
+                            "id": self.id,
+                            "domain": episode.domain,
+                        }, first
+                        first = False
+
+    def get_agent_type_suffix(self):
+        return "StandaloneApiTeacher"

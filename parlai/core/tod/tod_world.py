@@ -14,7 +14,7 @@ from parlai.agents.local_human.local_human import LocalHumanAgent
 from parlai.utils.misc import display_messages
 
 import parlai.core.tod.tod_core as tod
-import parlai.core.tod.tod_world_metrics as tod_metrics
+import parlai.core.tod.impl.world_metrics as tod_metrics
 
 import sys
 import copy
@@ -24,8 +24,8 @@ USER_UTT_IDX = 0
 API_CALL_IDX = 1
 API_RESP_IDX = 2
 SYSTEM_UTT_IDX = 3
-API_DESCRIPTION_PREEMPT_IDX = 4
-GOAL_PREEMPT_IDX = 5
+API_SCHEMA_GROUNDING_IDX = 4
+GOAL_GROUNDING_IDX = 5
 AGENT_COUNT = 6
 
 SPEAKER_TO_NAME = {
@@ -33,8 +33,8 @@ SPEAKER_TO_NAME = {
     API_CALL_IDX: tod.TodAgentType.API_CALL_AGENT,
     API_RESP_IDX: tod.TodAgentType.API_RESP_AGENT,
     SYSTEM_UTT_IDX: tod.TodAgentType.SYSTEM_UTT_AGENT,
-    API_DESCRIPTION_PREEMPT_IDX: tod.TodAgentType.API_DESCRIPTION_PREEMPT_AGENT,
-    GOAL_PREEMPT_IDX: tod.TodAgentType.GOAL_PREEMPT_AGENT,
+    API_SCHEMA_GROUNDING_IDX: tod.TodAgentType.API_SCHEMA_GROUNDING_AGENT,
+    GOAL_GROUNDING_IDX: tod.TodAgentType.GOAL_GROUNDING_AGENT,
 }
 
 NAME_TO_IDX = {v: k for k, v in SPEAKER_TO_NAME.items()}
@@ -49,8 +49,8 @@ class TodWorld(World):
         * Currently assumed to be same as system utt agent in script code, though used as if separate in this world.
     * API responder agent
     * System utt agent
-    * API description preempter agent (given to api call + response agent)
-    * Goal preempter agent (given to user)
+    * API schema groundinger agent (given to api call + response agent)
+    * Goal groundinger agent (given to user)
 
     As is standard for ParlAI, these agents may be models or may be standalone classes that extend the "Agent" class. The models for these *are* expected to have their utterances in a standard format.
 
@@ -83,50 +83,50 @@ class TodWorld(World):
 
         self.max_turns = self.opt.get("max_turns", 30)
         self.turns = 0
-        self.need_preempt = True
+        self.need_grounding = True
 
-    def preempt(self):
+    def grounding(self):
         """
-        Preempt with goal and schema-based intent descriptions.
+        Preempt with goal and schema-based intent schemas.
 
-        As a logging hack, we stick the schema intent descriptions in as a user
-        utterance, but manually pass the value in to the relevant API call/resp agent,
-        since passing it to the API call agent elsewhere is a little awkward. Similarly,
-        we stick the goal as a system utterance so that it is captured in logging.
-        However, we do not pass it in manually, since getting the user utterance will be
-        the first turn of `parley()`.
+        As a logging hack, we stick the schema gronding in as a user utterance, but
+        manually pass the value in to the relevant API call/resp agent, since passing it
+        to the API call agent elsewhere is a little awkward. Similarly, we stick the
+        goal as a system utterance so that it is captured in logging. However, we do not
+        pass it in manually, since getting the user utterance will be the first turn of
+        `parley()`.
         """
         self._observe_and_act(
             SYSTEM_UTT_IDX,  # Doesn't matter, empty at this point
             USER_UTT_IDX,  # Hack in to a place that'll look nice when printing
-            "getting API description preempt. (Must start with `{tod.STANDARD_API_DESCRIPTIONS}`)",
-            API_DESCRIPTION_PREEMPT_IDX,
+            "getting API schema grounding. (Must start with `{tod.STANDARD_API_SCHEMAS}`)",
+            API_SCHEMA_GROUNDING_IDX,
         )
 
         self._observe_and_act(
             USER_UTT_IDX,
             API_CALL_IDX,
-            "responding to api description preempt (empty enter is usually fine) ",
+            "responding to api schema grounding (empty enter is usually fine) ",
         )
         self._observe_and_act(
             USER_UTT_IDX,
             API_RESP_IDX,
-            "responding to api description preempt (empty enter is usually fine)",
+            "responding to api schema grounding (empty enter is usually fine)",
         )
 
         self._observe_and_act(
             SYSTEM_UTT_IDX,  # Doesn't matter for the most part, but want something empty
             SYSTEM_UTT_IDX,  # Hack into a place per comment above
-            "getting goal preempt. (Must start with `{tod.STANDARD_GOAL}`)",
-            GOAL_PREEMPT_IDX,
+            "getting goal grounding. (Must start with `{tod.STANDARD_GOAL}`)",
+            GOAL_GROUNDING_IDX,
         )
         self.batch_goals = [act[SYSTEM_UTT_IDX] for act in self.batch_acts]
         self.turns = 0
 
     def parley(self):
-        if self.need_preempt:
-            self.preempt()
-            self.need_preempt = False
+        if self.need_grounding:
+            self.grounding()
+            self.need_grounding = False
 
         else:
             self._observe_and_act(SYSTEM_UTT_IDX, USER_UTT_IDX)
@@ -230,7 +230,7 @@ class TodWorld(World):
 
     def reset(self):
         super().reset()
-        self.need_preempt = True
+        self.need_grounding = True
         self.turns = 0
 
         self.last_batch_episode_metrics = []

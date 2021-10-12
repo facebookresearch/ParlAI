@@ -19,10 +19,12 @@ from parlai.core.tod.tod_core import (
     TodAgentType,
     TOD_AGENT_TYPE_TO_PREFIX,
 )
-from parlai.core.tod.tod_world_metrics import (
+from parlai.core.tod.impl.world_metrics import (
     TodMetrics,
 )
-from parlai.core.tod.tod_world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
+from parlai.core.tod.impl.world_metrics_handlers import (
+    METRICS_HANDLER_CLASSES_TEST_REGISTRY,
+)
 
 GOAL__SINGLE_ONE_KEY = [{STANDARD_API_NAME_SLOT: "name", "a": "1"}]
 GOAL__SINGLE_THREE_KEYS = [
@@ -56,7 +58,7 @@ API_CALL__FUNKY_AGAINST_HARD = {
     "diff": "wrong",
 }
 
-API_DESCRIPTION__ONE_CALL_ONE_REQ_MATCH_ONE_KEY = [
+API_SCHEMA__ONE_CALL_ONE_REQ_MATCH_ONE_KEY = [
     {
         STANDARD_API_NAME_SLOT: "name",
         STANDARD_REQUIRED_KEY: ["a"],
@@ -64,7 +66,7 @@ API_DESCRIPTION__ONE_CALL_ONE_REQ_MATCH_ONE_KEY = [
     }
 ]
 
-API_DESCRIPTION__ONE_CALL_MATCH_THREE_KEYS = [
+API_SCHEMA__ONE_CALL_MATCH_THREE_KEYS = [
     {
         STANDARD_API_NAME_SLOT: "name",
         STANDARD_REQUIRED_KEY: ["a"],
@@ -72,7 +74,7 @@ API_DESCRIPTION__ONE_CALL_MATCH_THREE_KEYS = [
     }
 ]
 
-API_DESCRIPTION__ONE_CALL_HARD = [
+API_SCHEMA__ONE_CALL_HARD = [
     {
         STANDARD_API_NAME_SLOT: "otherName",
         STANDARD_REQUIRED_KEY: ["w", "x"],
@@ -93,10 +95,8 @@ class TodMetricsTestHelper:
         self.m.handle_message({"text": f"{TOD_AGENT_TYPE_TO_PREFIX[t]}{text}"}, t)
 
     def run(self):
-        self._process(
-            TodAgentType.API_DESCRIPTION_PREEMPT_AGENT, self.e.api_descriptions_utt
-        )
-        self._process(TodAgentType.GOAL_PREEMPT_AGENT, self.e.goal_calls_utt)
+        self._process(TodAgentType.API_SCHEMA_GROUNDING_AGENT, self.e.api_schemas_utt)
+        self._process(TodAgentType.GOAL_GROUNDING_AGENT, self.e.goal_calls_utt)
 
         for r in self.e.rounds:
             self._process(TodAgentType.USER_UTT_AGENT, r.user_utt)
@@ -111,11 +111,9 @@ class TodMetricsTestHelper:
 
 
 class TestApiGoalHitMetricsHandler(unittest.TestCase):
-    def __helper(
-        self, api_descriptions_machine, goal_calls_machine, single_turn_api_call
-    ):
+    def __helper(self, api_schemas_machine, goal_calls_machine, single_turn_api_call):
         e = TodStructuredEpisode(
-            api_descriptions_machine=api_descriptions_machine,
+            api_schemas_machine=api_schemas_machine,
             goal_calls_machine=goal_calls_machine,
             rounds=[TodStructuredRound(api_call_machine=single_turn_api_call)],
         )
@@ -126,7 +124,7 @@ class TestApiGoalHitMetricsHandler(unittest.TestCase):
 
     def test_one_goal_only_req(self):
         result = self.__helper(
-            api_descriptions_machine=API_DESCRIPTION__ONE_CALL_ONE_REQ_MATCH_ONE_KEY,
+            api_schemas_machine=API_SCHEMA__ONE_CALL_ONE_REQ_MATCH_ONE_KEY,
             goal_calls_machine=GOAL__SINGLE_ONE_KEY,
             single_turn_api_call=API_CALL__SINGLE_ONE_KEY,
         )
@@ -144,7 +142,7 @@ class TestApiGoalHitMetricsHandler(unittest.TestCase):
 
     def test_one_goal_api_name_missing_slots(self):
         result = self.__helper(
-            api_descriptions_machine=API_DESCRIPTION__ONE_CALL_ONE_REQ_MATCH_ONE_KEY,
+            api_schemas_machine=API_SCHEMA__ONE_CALL_ONE_REQ_MATCH_ONE_KEY,
             goal_calls_machine=GOAL__SINGLE_ONE_KEY,
             single_turn_api_call=API_CALL__VALID_NAME_BUT_EMPTY,
         )
@@ -162,7 +160,7 @@ class TestApiGoalHitMetricsHandler(unittest.TestCase):
 
     def test_one_goal_with_opts(self):
         result = self.__helper(
-            api_descriptions_machine=API_DESCRIPTION__ONE_CALL_MATCH_THREE_KEYS,
+            api_schemas_machine=API_SCHEMA__ONE_CALL_MATCH_THREE_KEYS,
             goal_calls_machine=GOAL__SINGLE_THREE_KEYS,
             single_turn_api_call=API_CALL__SINGLE_ONE_KEY,
         )
@@ -180,7 +178,7 @@ class TestApiGoalHitMetricsHandler(unittest.TestCase):
 
     def test_hard_case(self):
         result = self.__helper(
-            api_descriptions_machine=API_DESCRIPTION__ONE_CALL_HARD,
+            api_schemas_machine=API_SCHEMA__ONE_CALL_HARD,
             goal_calls_machine=GOAL__HARD,
             single_turn_api_call=API_CALL__FUNKY_AGAINST_HARD,
         )
@@ -200,7 +198,7 @@ class TestApiGoalHitMetricsHandler(unittest.TestCase):
 class TestApiCallMalformedMetricsHandler(unittest.TestCase):
     def __helper(self, single_turn_api_call):
         e = TodStructuredEpisode(
-            api_descriptions_machine=API_DESCRIPTION__ONE_CALL_MATCH_THREE_KEYS,
+            api_schemas_machine=API_SCHEMA__ONE_CALL_MATCH_THREE_KEYS,
             rounds=[TodStructuredRound(api_call_machine=single_turn_api_call)],
         )
         helper = TodMetricsTestHelper(e)

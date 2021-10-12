@@ -17,7 +17,7 @@ from parlai.core.tod.tod_core import (
     SerializationHelpers,
 )
 from typing import Any, Dict
-from parlai.core.tod.tod_world_metrics_handlers import (
+from parlai.core.tod.impl.world_metrics_handlers import (
     WORLD_METRIC_HANDLERS,
     TodMetricsHandler,
 )
@@ -41,7 +41,7 @@ class TodMetrics(Metrics):
     def handle_message(self, message: Message, agent_type: TodAgentType):
         if "text" not in message:
             return
-        if agent_type == TodAgentType.GOAL_PREEMPT_AGENT:
+        if agent_type == TodAgentType.GOAL_GROUNDING_AGENT:
             # Only count a conversation as started if there is a goal.
             self.convo_started = True
         for handler in self.handlers:
@@ -57,12 +57,12 @@ class TodMetrics(Metrics):
         prefix_stripped_text = message["text"].replace(
             TOD_AGENT_TYPE_TO_PREFIX[agent_type], ""
         )
-        if agent_type is TodAgentType.API_DESCRIPTION_PREEMPT_AGENT:
-            return handler.handle_api_descriptions(
+        if agent_type is TodAgentType.API_SCHEMA_GROUNDING_AGENT:
+            return handler.handle_api_schemas(
                 message,
-                SerializationHelpers.str_to_api_descriptions(prefix_stripped_text),
+                SerializationHelpers.str_to_api_schemas(prefix_stripped_text),
             )
-        if agent_type is TodAgentType.GOAL_PREEMPT_AGENT:
+        if agent_type is TodAgentType.GOAL_GROUNDING_AGENT:
             return handler.handle_goals(
                 message, SerializationHelpers.str_to_goals(prefix_stripped_text)
             )
