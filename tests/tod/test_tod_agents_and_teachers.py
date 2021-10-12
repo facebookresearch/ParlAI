@@ -20,7 +20,7 @@ class TestTodAgentsAndTeachersBase(unittest.TestCase):
         full_opts = {**round_opt, **opt}
         full_opts["datatype"] = "DUMMY"
         full_opts["datafile"] = "DUMMY"
-        full_opts["episodes_randomization_seed"] = 0
+        full_opts["episodes_randomization_seed"] = -1  # no random here
         return class_type(full_opts)
 
     def dump_single_utt_per_episode_agent_text(self, class_type, round_opt, opt):
@@ -228,6 +228,97 @@ class TestSingleGoalWithSingleApiSchemaAgent(TestTodAgentsAndTeachersBase):
 
     def test_roundDataCorrect(self):
         self._test_roundDataCorrect()
+
+
+class TestLowShot(TestTodAgentsAndTeachersBase):
+    FEW_SHOT_SAMPLES = [0, 1, 5, 15]
+    PERCENTAGES = [0, 0.1, 0.3, 0.5]
+
+    def setup_agent_or_teacher(self, class_type, round_opt, opt):
+        full_opts = {**round_opt, **opt}
+        full_opts["datatype"] = "DUMMY"
+        full_opts["datafile"] = "DUMMY"
+        return class_type(full_opts)
+
+    def test_few_shot_lengths_correct(self):
+        def helper(n_shot):
+            values = self.dump_teacher_text(
+                aat.SystemTeacher,
+                aat.EPISODE_SETUP__MULTI_EPISODE_BS,
+                {
+                    "episodes_randomization_seed": 0,
+                    "n_shot": n_shot,
+                },
+            )
+            self.assertEqual(len(values), n_shot)
+
+        for i in self.FEW_SHOT_SAMPLES:
+            helper(i)
+
+    def _test_subsets(self, data_dumps):
+        for i in range(len(data_dumps) - 1):
+            small = data_dumps[i]
+            larger = data_dumps[i + 1]
+            for i, episode in enumerate(small):
+                self.assertEqual(episode, larger[i])
+
+    def test_few_shot_subset(self):
+        def helper(n_shot, seed):
+            return self.dump_teacher_text(
+                aat.SystemTeacher,
+                aat.EPISODE_SETUP__MULTI_EPISODE,
+                {
+                    "episodes_randomization_seed": seed,
+                    "n_shot": n_shot,
+                },
+            )
+
+        data_dumps_seed_zero = [helper(i, 0) for i in self.FEW_SHOT_SAMPLES]
+        self._test_subsets(data_dumps_seed_zero)
+        data_dumps_seed_three = [helper(i, 3) for i in self.FEW_SHOT_SAMPLES]
+        self._test_subsets(data_dumps_seed_three)
+        self.assertNotEqual(data_dumps_seed_zero[-1], data_dumps_seed_three[-1])
+
+    def test_percent_shot_lengths_correct(self):
+        def helper(percent_shot, correct):
+            values = self.dump_teacher_text(
+                aat.SystemTeacher,
+                aat.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
+                {
+                    "episodes_randomization_seed": 0,
+                    "percent_shot": percent_shot,
+                },
+            )
+            self.assertEqual(len(values), correct)
+
+        helper(0, 0)
+        helper(0.1, 3)
+        helper(0.3, 10)
+
+    def test_percent_shot_subset(self):
+        def helper(percent_shot, seed):
+            return self.dump_teacher_text(
+                aat.SystemTeacher,
+                aat.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
+                {
+                    "episodes_randomization_seed": seed,
+                    "percent_shot": percent_shot,
+                },
+            )
+
+        data_dumps_seed_zero = [helper(i, 0) for i in self.PERCENTAGES]
+        self._test_subsets(data_dumps_seed_zero)
+        data_dumps_seed_three = [helper(i, 3) for i in self.PERCENTAGES]
+        self._test_subsets(data_dumps_seed_three)
+
+    def test_correct_throw_when_both_shots_defined(self):
+        self.assertRaises(
+            RuntimeError,
+            self.dump_teacher_text,
+            aat.SystemTeacher,
+            aat.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
+            {"episodes_randomization_seed": 0, "percent_shot": 0.3, "n_shot": 3},
+        )
 
 
 if __name__ == "__main__":

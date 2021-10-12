@@ -44,7 +44,7 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         opts = copy.deepcopy(base_opts)
         opts["datatype"] = "DUMMY"
         opts["datafile"] = "DUMMY"
-        opts["episodes_randomization_seed"] = 32  # test it!
+        opts["episodes_randomization_seed"] = -1
         opts["standalone_api_file"] = aat.API_DATABASE_FILE
         opts["exact_api_call"] = True
         opts["log_keep_fields"] = "all"

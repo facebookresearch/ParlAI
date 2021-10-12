@@ -17,7 +17,7 @@ from parlai.utils.distributed import is_distributed, get_rank, num_workers
 
 import parlai.core.tod.tod_core as tod
 from parlai.core.tod.tod_core import SerializationHelpers
-import parlai.core.core.impl.teacher_metrics
+from parlai.core.tod.impl.teacher_metrics import SlotMetrics, NlgMetrics
 
 from typing import Optional, List
 import json
@@ -45,9 +45,19 @@ class TodStructuredDataParser(Agent):
             "--episodes-randomization-seed",
             type=int,
             default=-1,
-            help="Randomize episodes in a predictable way (eg, for few shot or for "
-            "randomizing ordered domains. Set to -1 for no randomization). This will "
-            "be used in common for all TodStructuredDatasetAgents",
+            help="Randomize episodes in a predictable way (eg, for few shot). Set to -1 for no randomization. ",
+        )
+        parser.add_argument(
+            "--n-shot",
+            default=-1,
+            type=int,
+            help="Number of dialogues to keep for each of train/valid/test. -1 means all. Dialogues of lower numbers are strict subsets of larger numbers. Do not use in conjunction with `--percent-shot`. Use `--episodes-randomization-seed` to change seed. NOTE: Beware of using this flag when multitasking as this will apply to *all* datasets unless the ':' syntax for specifying per-dataset flags is used.",
+        )
+        parser.add_argument(
+            "--percent-shot",
+            default=-1,
+            type=float,
+            help="Percentage of dialogues to keep for each of train/valid/test. -1 means all. Dialogues of lower numbers are strict subsets of larger numbers. Do not use in conjunction with `--n-shot`. Use `--episodes-randomization-seed` to change seed. NOTE: Beware of using this flag when multitasking as this will apply to *all* datasets unless the ':' syntax for specifying per-dataset flags is used.",
         )
         return parser
 
@@ -71,9 +81,16 @@ class TodStructuredDataParser(Agent):
         raise NotImplementedError("Must have method for generating an episode")
 
     def generate_episodes(self) -> List[tod.TodStructuredEpisode]:
+        if self.opt.get("n_shot", -1) >= 0 and self.opt.get("percent_shot", -1) >= 0:
+            # Validate before spending a while to load eeverything
+            raise RuntimeError("Both `--n-shot` and `--percent-shot` in use!")
         episodes = list(self.setup_episodes(self.fold))
-        if self.opt["episodes_randomization_seed"] != -1:
+        if self.opt.get("episodes_randomization_seed", -1) != -1:
             random.Random(self.opt["episodes_randomization_seed"]).shuffle(episodes)
+        if self.opt.get("n_shot", -1) != -1:
+            episodes = episodes[: self.opt["n_shot"]]
+        elif self.opt.get("percent_shot", -1) >= 0:
+            episodes = episodes[: int(len(episodes) * self.opt["percent_shot"])]
         return episodes
 
     def get_id_task_prefix(self) -> str:
@@ -654,25 +671,6 @@ class UserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
     and SYSTEM)
     """
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        parser = super().add_cmdline_args(parser, partial_opt)
-        parser.add_argument(
-            "--api-schemas",
-            type="bool",
-            default=False,
-            help="Noop for this teacher. Included here mostly to make sweeps easy",
-        )
-        parser.add_argument(
-            "--standalone-api",
-            type="bool",
-            default=True,
-            help="Use a separately constructed class to handle API calls, in contrast to having the 'user' model also generate API responses.",
-        )
-        return parser
-
     def setup_data(self, fold):
         for episode in self.generate_episodes():
             if len(episode.rounds) < 1:
@@ -686,14 +684,6 @@ class UserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
             for i, r in enumerate(episode.rounds):
                 if i == len(episode.rounds) - 1:
                     continue
-                if not self.opt.get("standalone_api", True):
-                    yield {
-                        "text": f"{tod.STANDARD_CALL}{r.api_call_utt}",
-                        "label": f"{tod.STANDARD_RESP}{r.api_resp_utt}",
-                        "domain": episode.domain,
-                        "slots": r.api_resp_machine,
-                        "type": tod.STANDARD_RESP,
-                    }, False
                 yield {
                     "text": f"{tod.STANDARD_SYSTEM_UTTERANCE}{r.sys_utt}",
                     "label": f"{tod.STANDARD_USER_UTTERANCE}{episode.rounds[i+1].user_utt}",
@@ -708,10 +698,7 @@ class UserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
         resp = model_response.get("text")
         if not resp:
             return
-        if (
-            not self.opt.get("standalone_api")
-            and teacher_action["type"] == tod.STANDARD_RESP
-        ):
+        if teacher_action["type"] == tod.STANDARD_RESP:
             if resp.startswith(tod.STANDARD_RESP):
                 resp = resp[len(tod.STANDARD_RESP) :]
             predicted = SerializationHelpers.str_to_api_dict(resp)

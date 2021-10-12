@@ -145,7 +145,6 @@ class TestDataParser(tod_agents.TodStructuredDataParser):
 
     def __init__(self, opt, shared=None):
         opt["datafile"] = "DUMMY"
-        opt["episodes_randomization_seed"] = -1  # no random.
         self.fold = "DUMMY"
         # Following lines are only reelvant in training the standalone api teacher
         if TEST_NUM_EPISODES_OPT_KEY not in opt:
