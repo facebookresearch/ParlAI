@@ -141,7 +141,7 @@ class TodWorldScript(ParlaiScript):
         tod_args.add_argument(
             "--api-schema-grounding-model",
             default="",
-            help="Agent used in first turn to grounding api call/response agents with api schemas. Will use TodEmptyApiDescriptionAgent if not set.",
+            help="Agent used in first turn to grounding api call/response agents with api schemas. Will use TodEmptyApiSchemaAgent if not set.",
         )
 
         tod_args.add_argument(
@@ -221,7 +221,7 @@ class TodWorldScript(ParlaiScript):
         return model
 
     def _get_model_or_default_agent(self, opt, key, default_class):
-        if len(opt.get(key)) > 0:
+        if len(opt.get(key, "")) > 0:
             return self._make_agent(opt, key)
         return default_class(opt)
 
@@ -241,7 +241,7 @@ class TodWorldScript(ParlaiScript):
         agents[tod_world.API_SCHEMA_GROUNDING_IDX] = self._get_model_or_default_agent(
             opt,
             "api_schema_grounding_model",
-            tod_world_agents.TodEmptyApiDescriptionAgent,
+            tod_world_agents.TodEmptyApiSchemaAgent,
         )
         agents[tod_world.GOAL_GROUNDING_IDX] = self._get_model_or_default_agent(
             opt, "goal_grounding_model", tod_world_agents.TodEmptyGoalAgent

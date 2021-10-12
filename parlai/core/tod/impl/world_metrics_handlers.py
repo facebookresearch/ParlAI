@@ -108,7 +108,6 @@ def get_req_only_goals(goals_list: List[Dict], api_schemas: List[Dict]) -> List[
         req_goals = {}
         method = goal.get(STANDARD_API_NAME_SLOT, None)
         if method is None:
-            print(f"No {STANDARD_API_NAME_SLOT} in goal `{goal}`")
             return []
         required = []
         for schema in api_schemas:
@@ -418,7 +417,7 @@ class _Bleu3MetricsHandler(TodMetricsHandler):
         if len(self.turns) > 0:
             score = nltkbleu.corpus_bleu(
                 [self.turns],
-                here,
+                [here],
                 smoothing_function=nltkbleu.SmoothingFunction(epsilon=1e-12).method1,
                 weights=[1.0 / 3.0] * 3,
             )
