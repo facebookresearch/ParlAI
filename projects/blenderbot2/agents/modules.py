@@ -76,6 +76,8 @@ class BlenderBot2RagModel(RagModel):
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
+        from .blenderbot2 import RAG_MODELS
+
         # TODO: Get rid of this hack
         opt['converting'] = True
         super().__init__(opt, dictionary, retriever_shared)
@@ -97,6 +99,7 @@ class BlenderBot2RagModel(RagModel):
         self.memory_decoder = MemoryDecoder(opt)
 
         # attrs
+        self._rag_model_interface = RAG_MODELS[self.rag_model_type](opt, self.pad_idx)
         self.knowledge_access_method = KnowledgeAccessMethod(
             opt['knowledge_access_method']
         )
