@@ -6,6 +6,7 @@ defaults:
 mephisto:
   blueprint:
     annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    onboarding_qualification: model_chat_onboarding
     block_qualification: model_chat_block
     chat_data_folder: ${task_dir}/model_chat/
     model_opt_path: ${task_dir}/task_config/model_opts.yaml
