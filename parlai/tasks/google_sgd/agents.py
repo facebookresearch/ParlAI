@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 import parlai.tasks.google_sgd.build as build_
 import parlai.core.tod.tod_core as tod
 import parlai.core.tod.tod_agents_and_teachers as tod_agents_and_teachers
-from parlai_fb.core.tod import SerializationHelpers
+from parlai.core.tod.tod_core import SerializationHelpers
 from parlai.core.params import ParlaiParser
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric
@@ -137,7 +137,7 @@ class GoogleSGDParser(tod_agents_and_teachers.TodStructuredDataParser):
             result[intent["name"]] = here
         return result
 
-    def _get_intent_preempting(self, schema, domains):
+    def _get_intent_groundinging(self, schema, domains):
         """
         Returns map where keys are intents and values are names of required/optional
         slots.
@@ -201,7 +201,7 @@ class GoogleSGDParser(tod_agents_and_teachers.TodStructuredDataParser):
             episode = tod.TodStructuredEpisode(
                 domain=SerializationHelpers.inner_list_join(domains),
                 all_domains=dialogue["services"],
-                api_schemas_machine=self._get_intent_preempting(
+                api_schemas_machine=self._get_intent_groundinging(
                     schema_lookup, set(dialogue["services"])
                 ),
                 goal_calls_machine=self._get_all_service_calls(turns),
