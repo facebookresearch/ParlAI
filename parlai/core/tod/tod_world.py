@@ -99,7 +99,7 @@ class TodWorld(World):
         self._observe_and_act(
             SYSTEM_UTT_IDX,  # Doesn't matter, empty at this point
             USER_UTT_IDX,  # Hack in to a place that'll look nice when printing
-            "getting API schema grounding. (Must start with `{tod.STANDARD_API_SCHEMAS}`)",
+            f"getting API schema grounding. (Must start with `{tod.STANDARD_API_SCHEMAS}`)",
             API_SCHEMA_GROUNDING_IDX,
         )
 
@@ -117,7 +117,7 @@ class TodWorld(World):
         self._observe_and_act(
             SYSTEM_UTT_IDX,  # Doesn't matter for the most part, but want something empty
             SYSTEM_UTT_IDX,  # Hack into a place per comment above
-            "getting goal grounding. (Must start with `{tod.STANDARD_GOAL}`)",
+            f"getting goal grounding. (Must start with `{tod.STANDARD_GOAL}`)",
             GOAL_GROUNDING_IDX,
         )
         self.batch_goals = [act[SYSTEM_UTT_IDX] for act in self.batch_acts]

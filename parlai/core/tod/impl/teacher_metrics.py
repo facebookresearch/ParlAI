@@ -95,7 +95,7 @@ class NlgMetrics(Metrics):
         avg_jga_nlg_bleu: bool = False,
     ) -> None:
         super().__init__(shared=shared)
-        self.prefixes = prefixes if prefixes else None
+        self.prefixes = prefixes if prefixes else []
         bleu = BleuMetric.compute(guess, labels)
         f1 = F1Metric.compute(guess, labels)
         self.add_with_prefixes("nlg_bleu", bleu)
