@@ -326,6 +326,14 @@ class BlenderBot2RagModel(RagModel):
                 num_memories = num_memories.repeat_interleave(
                     input_turns_cnt, dim=0
                 )  # type: ignore
+            if memory_decoder_vec is not None:
+                memory_decoder_vec = memory_decoder_vec.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
+            if num_memory_decoder_vecs is not None:
+                num_memory_decoder_vecs = num_memory_decoder_vecs.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
         n_input = (
             input_turns_cnt.sum().item()
             if input_turns_cnt is not None
