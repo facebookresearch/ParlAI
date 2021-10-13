@@ -799,6 +799,7 @@ class BlenderBot2Fid(Fid):
             KnowledgeAccessMethod(opt['knowledge_access_method'])
             is KnowledgeAccessMethod.ALL
         ):
+            # Need to account for memories + search results
             self.n_docs *= 2
 
 
