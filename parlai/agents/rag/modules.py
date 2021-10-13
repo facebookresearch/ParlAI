@@ -65,7 +65,7 @@ class RagModel(TorchGeneratorModel):
         )
         # attrs
         self.rag_model_type = opt['rag_model_type']
-        self.rag_model_interface = RAG_MODELS[self.rag_model_type](opt, self.pad_idx)
+        self._rag_model_interface = RAG_MODELS[self.rag_model_type](opt, self.pad_idx)
         self.generation_model = opt['generation_model']
         self.n_extra_positions = opt['n_extra_positions']
         self.n_positions = get_n_positions_from_options(opt) + opt['n_extra_positions']
@@ -226,7 +226,7 @@ class RagModel(TorchGeneratorModel):
             )  # [bsz * beam_size, n_docs, input_len, esz]
 
             # 3. Marginalize
-            marginalized = self.rag_model_interface.marginalize(
+            marginalized = self._rag_model_interface.marginalize(
                 out_probs, F.log_softmax(doc_scores, dim=1), input_turns_cnt
             )
         else:
@@ -257,7 +257,7 @@ class RagModel(TorchGeneratorModel):
         bsz = ys.size(0)
         seqlen = ys.size(1)
         inputs = ys.narrow(1, 0, seqlen - 1)
-        dec_inputs = self.rag_model_interface.get_initial_forced_decoder_input(
+        dec_inputs = self._rag_model_interface.get_initial_forced_decoder_input(
             bsz,
             inputs,
             n_docs=1,
@@ -415,17 +415,19 @@ class RagModel(TorchGeneratorModel):
             indices = torch.LongTensor(indices).to(
                 encoder_states[0].device
             )  # type: ignore
-        return self.rag_model_interface.reorder_encoder_states(encoder_states, indices)
+        return self._rag_model_interface.reorder_encoder_states(encoder_states, indices)
 
     def reorder_decoder_incremental_state(
         self,
         incremental_state: Dict[str, Any],
         inds: Union[List[int], torch.LongTensor],
-    ) -> Optional[Dict[str, Any]]:
+    ) -> Optional[Dict[int, dict]]:
         """
         TODO: Determine how to do this
         """
-        return None
+        return self._rag_model_interface.reorder_decoder_incremental_state(
+            incremental_state, inds, self.seq2seq_decoder
+        )
 
     def decode_forced(
         self, encoder_states: Tuple[torch.Tensor, ...], ys: torch.LongTensor
@@ -458,7 +460,7 @@ class RagModel(TorchGeneratorModel):
             )
         doc_scores = encoder_states[-1]
 
-        inputs = self.rag_model_interface.get_initial_forced_decoder_input(
+        inputs = self._rag_model_interface.get_initial_forced_decoder_input(
             bsz,
             inputs,
             n_docs=doc_scores.size(1) if doc_scores is not None else None,
