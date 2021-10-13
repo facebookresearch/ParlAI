@@ -2081,7 +2081,7 @@ model_list = [
         "path": "zoo:dialogue_bias/gender__name_scrambling/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
         "description": (
             "BlenderBot3B model tuned with the name-scrambling technique to have lower gender bias."
         ),
@@ -2103,7 +2103,7 @@ Which level are you at?
         "path": "zoo:dialogue_bias/gender__ctrl_gen_tokens/model",
         "agent": "projects.dialogue_bias.agents:NoBiasStyleGenAgent",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
         "description": (
             "BlenderBot3B model tuned with the control-generation technique (based on the amount of gender over-indexing per token bin) to have lower gender bias."
         ),
@@ -2125,7 +2125,7 @@ Which level are you at?
         "path": "zoo:dialogue_bias/gender__unlikelihood_sequence_level/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
         "description": (
             "BlenderBot3B model tuned with the (sequence-level) unlikelihood training technique to have lower gender bias."
         ),
@@ -2147,7 +2147,7 @@ Which level are you at?
         "path": "zoo:dialogue_bias/gender_ethnicity__name_scrambling/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
         "description": (
             "BlenderBot3B model tuned with the name-scrambling technique to have lower gender and race/ethnicity bias."
         ),

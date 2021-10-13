@@ -48,7 +48,7 @@ class TransformerEncoderLayer(nn.Module):
         variant: Optional[str] = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__()
 
         def _default(val, default):
             """
@@ -141,7 +141,7 @@ class TransformerEncoder(nn.Module):
         output_scaling: Optional[float] = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__()
 
         def _default(val, default):
             return val if val is not None else default
