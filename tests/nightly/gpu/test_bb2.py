@@ -25,8 +25,8 @@ except ImportError:
 LOCAL = True
 
 if TRANSFORMER_INSTALLED:
-    SEARCH_QUERY_MODEL = ZOO_MEMORY_DECODER
-    PERSONA_SUMMARY_MODEL = ZOO_QUERY_GENERATOR
+    SEARCH_QUERY_MODEL = ZOO_QUERY_GENERATOR
+    PERSONA_SUMMARY_MODEL = ZOO_MEMORY_DECODER
     ZOO_BB2 = 'zoo:blenderbot2/blenderbot2_400M/model'
     ZOO_BB2_3B = 'zoo:blenderbot2/blenderbot2_3B/model'
     SEARCH_SERVER = '<SERVER_API>'
@@ -50,7 +50,6 @@ if TRANSFORMER_INSTALLED:
         opt = copy.deepcopy(common_opt)
         opt['knowledge_access_method'] = retrieval_method.value
         opt.update(dict(kwargs))
-        print(' '.join([f'--{k} {v}' for k, v in opt.items()]))
         testing_utils.eval_model(opt, skip_test=True)
         torch.cuda.empty_cache()
 

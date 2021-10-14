@@ -105,6 +105,8 @@ You can also interact with the model with:
 
     parlai interactive -mf models:wizard_of_wikipedia/end2end_generator/model -t wizard_of_wikipedia
 
+_Note_: an unofficial Tensorflow implementation of the End2End generative model can be found [here](https://lucehe.github.io/wow/).
+
 ## Retrieval Model
 
 You can evaluate a retrieval model on the full dialogue task by running the
@@ -136,8 +138,8 @@ The entries of `dialog` (may) have the following keys; some are omitted for the 
 - `text`: what the speaker wrote
 - `retrieved_topics`: the topics retrieved for that utterance
 - `retrieved_passages`: a list of 1 entry dicts, mapping a topic to the sentences in the passage
-- `checked_sentence`: (wizard only) a 1 entry dict mapping the topic to the chosen sentence by the wizard 
-- `checked_passage`: (wizard only) a 1 entry dict mapping the topic to the chosen topic by the wizard 
+- `checked_sentence`: (wizard only) a 1 entry dict mapping the topic to the chosen sentence by the wizard
+- `checked_passage`: (wizard only) a 1 entry dict mapping the topic to the chosen topic by the wizard
 
 
 ## Citation

@@ -8,6 +8,7 @@ fairscale==0.3.7
 docformatter==1.3.0
 flake8-bugbear==19.8.0
 flake8==3.7.8
+importlib-metadata<4.3
 iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
@@ -15,7 +16,7 @@ hydra-core~=1.1.0
 ipython==7.19.0
 torch>=1.4.0
 joblib==0.14.1
-nltk==3.4.5
+nltk==3.6.4
 numpy==1.17.5
 omegaconf~=2.1.1
 pandas==1.1.1
@@ -27,7 +28,7 @@ py-gfm==1.0.2
 py-rouge==1.1
 pyyaml==5.4
 pyzmq==18.1.0
-regex==2020.1.8
+regex>=2021.8.3
 myst-parser~=0.12.2
 attrs~=20.2.0
 requests-mock==1.7.0

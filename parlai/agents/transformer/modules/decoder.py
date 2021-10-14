@@ -57,7 +57,7 @@ class TransformerDecoderLayer(nn.Module):
         variant: str = 'aiayn',
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__()
 
         def _default(val, default):
             """
@@ -215,7 +215,7 @@ class TransformerDecoder(nn.Module):
         n_positions: Optional[int] = None,
         **kwargs,
     ):
-        super().__init__(**kwargs)
+        super().__init__()
         self.opt = opt
 
         def _default(val, default):
