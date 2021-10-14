@@ -58,6 +58,8 @@ class OffensiveLanguageClassifier:
         """
         Returns the probability that a message is safe according to the classifier.
         """
+        if not text:
+            return False, 1.0
         act = {'text': text, 'episode_done': True}
         self.model.observe(act)
         response = self.model.act()['text']
@@ -242,6 +244,8 @@ class OffensiveStringMatcher:
         """
         Determine if text contains any offensive words in the filter.
         """
+        if not text:
+            return None
         if type(text) is str:
             toks = self.tokenize(text.lower())
         elif type(text) is list or type(text) is tuple:

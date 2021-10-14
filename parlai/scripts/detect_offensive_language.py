@@ -81,8 +81,6 @@ def detect(opt):
         return log
 
     def classify(text, stats):
-        if not text:
-            return
         offensive = False
         stats['total'] += 1
         if opt['safety'] == 'string_matcher' or opt['safety'] == 'all':
