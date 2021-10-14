@@ -15,7 +15,7 @@ import torch
 import torch.nn
 import torch.nn.functional as F
 import torch.cuda
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 from parlai.core.message import Message
@@ -24,7 +24,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch
 from parlai.utils.torch import padded_tensor, FP16_PAD_SIZE
 
-from parlai.agents.rag.modules import RagModel
+from parlai.agents.rag.modules import RagDecoder, RagModel
 from parlai.agents.rag.retrievers import Document
 
 
@@ -93,6 +93,33 @@ def get_forced_decoder_inputs(
         tens = torch.LongTensor([start_idx]).expand(inputs.size(0), 1).to(inputs)
     dec_inputs = torch.cat([tens, inputs], 1)
     return dec_inputs  # type: ignore
+
+
+def fix_incremental_state(
+    generation_model: str, incremental_state: Dict[int, Any]
+) -> Dict[int, Any]:
+    """
+    Fix incremental state. Essentially takes BART into account.
+
+    :param generation_model:
+        generation model
+    :param incremental_state:
+        incremental decoded state
+    """
+    if generation_model == 'bart':
+        for incr_state_l in incremental_state.values():
+            assert 'self_attn' in incr_state_l
+            assert 'prev_mask' in incr_state_l['self_attn']
+            self_attn_mask = incr_state_l['self_attn']['prev_mask']
+            # check this is on the very first run with incremental state
+            if self_attn_mask.ndim == 3 and tuple(self_attn_mask.shape[1:]) == (2, 2):
+                # cut off the inappropriate incremental state
+                incr_state_l['self_attn']['prev_mask'] = self_attn_mask[:, -1:, :]
+    elif generation_model == 't5':
+        # No current solution for t5 exists.
+        incremental_state = {}
+
+    return incremental_state
 
 
 class RagModelInterface(ABC):
@@ -196,6 +223,21 @@ class RagModelInterface(ABC):
         Reorder the encoder states, for beam search.
 
         See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
+        """
+
+    @abstractmethod
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        Reorder the decoder incremental state, for incremental decoding.
+
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+
+        Each RagModelType will require specialized reordering, depending on the method used.
         """
 
     ###########################################
@@ -339,6 +381,28 @@ class RagSequence(RagModelInterface):
         enc = torch.index_select(enc, 0, indices)
         mask = torch.index_select(mask, 0, indices)
         return enc, mask, None, None, None  # type: ignore
+
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        For RAG Sequence, each doc/context pair is it's own batch item.
+
+        So, we can simply reorder normally.
+        """
+        assert incremental_state is not None
+        incremental_state = fix_incremental_state(
+            self.generation_model, incremental_state
+        )
+        if not incremental_state:
+            return incremental_state
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(decoder.layers)
+        }
 
     def get_ctxt_index(self, batch: Batch, batch_idx: int) -> int:
         """
@@ -761,6 +825,43 @@ class RagToken(RagModelInterface):
 
         return enc, mask, input_turns_cnt, docs, doc_probs  # type: ignore
 
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        For RAG Token, we send each decoder input through n_docs times.
+
+        Similarly to reordering the encoder states, we need to reorder according
+        to the documents dimensions.
+        """
+        assert incremental_state is not None
+        incremental_state = fix_incremental_state(
+            self.generation_model, incremental_state
+        )
+        if not incremental_state:
+            return incremental_state
+        for incr_state_l in incremental_state.values():
+            for key in incr_state_l:
+                for sub_key in incr_state_l[key]:
+                    incr_state_l[key][sub_key] = _unstack_ctxt(
+                        incr_state_l[key][sub_key], self.n_docs
+                    )
+
+        new_incr_state = {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(decoder.layers)
+        }
+
+        for incr_state_l in new_incr_state.values():
+            for key in incr_state_l:
+                for sub_key in incr_state_l[key]:
+                    incr_state_l[key][sub_key] = _stack_ctxt(incr_state_l[key][sub_key])
+
+        return new_incr_state
+
     def rerank_beams(
         self,
         model: RagModel,
@@ -1052,6 +1153,17 @@ class RagTurn(RagModelInterface):
         doc_probs = doc_probs.index_select(0, indices)
 
         return enc, mask, input_turns_cnt, docs, doc_probs  # type: ignore
+
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        Unsupported for Rag Turn.
+        """
+        return None  # type: ignore
 
     def rerank_beams(
         self,
