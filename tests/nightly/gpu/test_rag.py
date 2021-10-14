@@ -277,7 +277,11 @@ class TestRegret(unittest.TestCase):
 
     def _test_regret(self, regret_mf: Optional[str] = None):
         opt = copy.deepcopy(test_opt)
-        opt['regret_model_file'] = regret_mf
+        opt['regret'] = True
+        if regret_mf:
+            opt['regret_model_file'] = regret_mf
+            opt['regret_override_index'] = True  # to use debug index
+            opt['regret_dict_file'] = f'{regret_mf}.dict'
         opt['rag_model_type'] = 'token'
         opt['no_cuda'] = True
         testing_utils.eval_model(opt, skip_test=True)

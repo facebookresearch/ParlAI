@@ -23,7 +23,7 @@ We show that large scale models can learn these skills when given appropriate tr
 
 You may talk with our models. The 2.7B can be interacted with on a 16gb P100 GPU or better. The 9.4B parameter model requires at least two 32gb V100 GPUs to interact with.
 
-We also provide two smaller variants of the 2.7B-parameter model that were created using [knowledge distillation](https://github.com/facebookresearch/ParlAI/blob/master/projects/anti_scaling/README.md#knowledge-distillation). The 1.4B-parameter model is roughly 2x faster than the 2.7B-parameter model during inference and performs very nearly as well as it, and the 360M-parameter one is roughly 5x faster and has performance in between that of the 2.7B-parameter and 90M-parameter models.
+We also provide two smaller variants of the 2.7B-parameter model that were created using [knowledge distillation](https://github.com/facebookresearch/ParlAI/blob/main/projects/anti_scaling/README.md#knowledge-distillation). The 1.4B-parameter model is roughly 2x faster than the 2.7B-parameter model during inference and performs very nearly as well as it, and the 360M-parameter one is roughly 5x faster and has performance in between that of the 2.7B-parameter and 90M-parameter models.
 
 **Safety** We have studied improved safety from toxic language ([Dinan et al., 2019b](http://parl.ai/projects/dialogue_safety/)), but much work remains to be done. While we have made our models publicly available, and added a safety layer to the interaction, we have not mitigated all safety issues. We believe their release can help the community work together to understand further and fix these issues, and we recommend their use for that line of research.
 
@@ -81,12 +81,16 @@ python parlai/scripts/eval_model.py -t blended_skill_talk -mf zoo:blender/blende
 
 ## Running Human Evaluations (ACUTE-Eval)
 
-To run ACUTE-Eval human evaluations, see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval).
+To run ACUTE-Eval human evaluations, see [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval).
 
 
 ## Crowdworker conversation logs
 
 Logs of crowdworker conversations talking to the 2.7B model are provided in [rendered viewable format](chatlog_2.7B_render.html) or [json format](chatlog_2.7B.json).
+
+## Reduced-bias models
+
+See [here](https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_bias) for information on using experimental variants of the 2.7B-parameter BlenderBot that have been tuned to reduce the amount of bias along the axes of gender and race/ethnicity.
 
 ## Citation
 

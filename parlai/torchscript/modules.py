@@ -8,6 +8,7 @@ from collections import defaultdict
 from typing import List, Dict, Optional, Tuple
 
 import torch.jit
+from parlai.agents.bart.bart import BartAgent
 from parlai.core.dict import DictionaryAgent
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.bpe import Gpt2BpeHelper
@@ -29,8 +30,7 @@ class TorchScriptGreedySearch(nn.Module):
         "dict_max_ngram_size": -1,
         "dict_minfreq": 0,
         "dict_maxtokens": -1,
-        "dict_tokenizer": "gpt2",
-        "dict_lower": False,
+        "dict_tokenizer": ["gpt2", "slow_bytelevel_bpe"],
         "dict_textfields": "text,labels",
         "dict_loaded": True,
         "bpe_debug": False,
@@ -39,13 +39,18 @@ class TorchScriptGreedySearch(nn.Module):
     def __init__(self, agent: TorchAgent):
         super().__init__()
 
-        self.is_bart = agent.opt["model"] == "bart"
-
+        self.is_bart = isinstance(agent, BartAgent)
+        self.device = agent.model.encoder.embeddings.weight.device
         # Dictionary/tokenization setup
         for key, val in self.CAIRAOKE_DICT_PARAMS.items():
-            assert (
-                agent.opt.get(key, val) == val
-            ), f'The only currently supported value of "{key}" is {val}!'
+            if type(val) == list and len(val) > 0:
+                assert (
+                    agent.opt.get(key, val[0]) in val
+                ), f'The only currently supported values of "{key}" are {", ".join(val)}!'
+            else:
+                assert (
+                    agent.opt.get(key, val) == val
+                ), f'The only currently supported value of "{key}" is {val}!'
         orig_dict: DictionaryAgent = agent.dict
         orig_bpe: Gpt2BpeHelper = orig_dict.bpe
         assert all(len(key) == 2 for key in orig_bpe.bpe_ranks.keys())
@@ -98,7 +103,10 @@ class TorchScriptGreedySearch(nn.Module):
         wrapped_model = ModelIncrStateFlattener(agent.model)
 
         # Create sample inputs for tracing
-        sample_tokens = torch.tensor([[1, 2, 3, 4, 5]], dtype=torch.long)
+        sample_tokens = torch.tensor(
+            [[1, 2, 3, 4, 5]], dtype=torch.long, device=self.device
+        )
+        sample_tokens = sample_tokens.to(self.device)
         encoder_states = agent.model.encoder(sample_tokens)
         initial_generations = self._get_initial_decoder_input(sample_tokens)
         latent, initial_incr_state = wrapped_decoder(
@@ -137,6 +145,9 @@ class TorchScriptGreedySearch(nn.Module):
             wrapped_decoder, (generations, encoder_states, incr_state), strict=False
         )
 
+    def get_device(self):
+        return self.encoder.embeddings.weight.device
+
     def _get_initial_decoder_input(self, x: torch.Tensor) -> torch.Tensor:
         """
         Workaround because we can't use TGM._get_initial_decoder_input() directly.
@@ -147,7 +158,9 @@ class TorchScriptGreedySearch(nn.Module):
         """
         bsz = x.size(0)
         return (
-            torch.tensor(self.initial_decoder_input, dtype=torch.long)
+            torch.tensor(
+                self.initial_decoder_input, dtype=torch.long, device=self.device
+            )
             .expand(bsz, len(self.initial_decoder_input))
             .to(x.device)
         )
@@ -213,6 +226,8 @@ class TorchScriptGreedySearch(nn.Module):
             )
 
         # Pass through the encoder and decoder to generate tokens
+
+        flattened_text_vec = flattened_text_vec.to(self.get_device())
         batch_text_vec = torch.unsqueeze(flattened_text_vec, dim=0)  # Add batch dim
         encoder_states = self.encoder(batch_text_vec)
         generations = self._get_initial_decoder_input(batch_text_vec)
@@ -255,6 +270,7 @@ class TorchScriptGreedySearch(nn.Module):
     def postprocess_output_generations(self, label: str) -> str:
         """
         Post-process the model output.
+
         Returns the model output by default, override to add custom logic
         """
         return label

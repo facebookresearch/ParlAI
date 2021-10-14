@@ -19,7 +19,11 @@ from parlai.agents.transformer.transformer import TransformerGeneratorModel
 from parlai.agents.rag.args import RetrieverType
 from parlai.agents.rag.modules import RagModel, Document, T5RagModel
 from parlai.agents.rag.rag import RagAgent
-from parlai.agents.rag.model_types import RagToken, get_forced_decoder_inputs
+from parlai.agents.rag.model_types import (
+    RagToken,
+    get_forced_decoder_inputs,
+    fix_incremental_state,
+)
 from parlai.utils.typing import TShared
 
 
@@ -66,7 +70,7 @@ class FidModel(RagModel):
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
         super().__init__(opt, dictionary, retriever_shared=retriever_shared)
-        self.rag_model_interface = Fid(opt, dictionary[dictionary.null_token])
+        self._rag_model_interface = Fid(opt, dictionary[dictionary.null_token])
         self.embedding_size = opt['embedding_size']
 
     def reorder_encoder_states(
@@ -83,6 +87,25 @@ class FidModel(RagModel):
         return TransformerGeneratorModel.reorder_encoder_states(
             self, (enc, mask), indices
         )
+
+    def reorder_decoder_incremental_state(
+        self, incremental_state: Dict[int, dict], inds: torch.Tensor
+    ) -> Dict[int, dict]:
+        """
+        Override RagModel.reorder_decoder_incremental_state to resort back
+        to normal reordering.
+
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+        """
+        incremental_state = fix_incremental_state(
+            self.generation_model, incremental_state
+        )
+        if not incremental_state:
+            return incremental_state
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(self.seq2seq_decoder.layers)
+        }
 
     def encoder(
         self,

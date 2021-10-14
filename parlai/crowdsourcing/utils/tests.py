@@ -80,7 +80,9 @@ class AbstractCrowdsourcingTest:
         relative_task_directory = os.path.relpath(
             task_directory, os.path.dirname(__file__)
         )
-        relative_config_path = os.path.join(relative_task_directory, 'conf')
+        relative_config_path = os.path.join(
+            relative_task_directory, 'hydra_configs', 'conf'
+        )
         if overrides is None:
             overrides = []
         with initialize(config_path=relative_config_path):
@@ -88,6 +90,7 @@ class AbstractCrowdsourcingTest:
                 config_name="example",
                 overrides=[
                     f'+mephisto.blueprint._blueprint_type={blueprint_type}',
+                    f'+mephisto.blueprint.link_task_source=False',
                     f'+mephisto/architect=mock',
                     f'+mephisto/provider=mock',
                     f'+task_dir={task_directory}',
@@ -351,9 +354,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
-            assert actual_state['inputs'] == expected_state['inputs']
+            clean_actual_state = self._remove_non_deterministic_keys(actual_state)
+            assert clean_actual_state['inputs'] == expected_state['inputs']
             for actual_message, expected_message in zip(
-                actual_state['outputs']['messages'],
+                clean_actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
             ):
                 for key, expected_value in expected_message.items():
@@ -362,6 +366,13 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         actual_value=actual_message[key],
                         expected_value=expected_value,
                     )
+
+    def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+        """
+        Allow for subclasses to delete certain keys in the actual state that will change
+        on each run.
+        """
+        return actual_state
 
     def _check_output_key(
         self: Union['AbstractParlAIChatTest', unittest.TestCase],

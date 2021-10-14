@@ -8,10 +8,12 @@
 Conversion Scripts for RAG/DPR.
 """
 from collections import OrderedDict
+import os
 import torch
 from transformers import BertModel
 from typing import Dict
 
+from parlai.utils.io import PathManager
 from parlai.utils.misc import recursive_getattr
 
 # Mapping from BERT key to ParlAI Key
@@ -35,6 +37,7 @@ class BertConversionUtils:
 
     @staticmethod
     def load_bert_state(
+        datapath: str,
         state_dict: Dict[str, torch.Tensor],
         pretrained_dpr_path: str,
         encoder_type: str = 'query',
@@ -52,7 +55,15 @@ class BertConversionUtils:
         :return new_state_dict:
             return a state_dict with loaded weights.
         """
-        bert_model = BertModel.from_pretrained('bert-base-uncased')
+
+        try:
+            bert_model = BertModel.from_pretrained('bert-base-uncased')
+        except OSError:
+            model_path = PathManager.get_local_path(
+                os.path.join(datapath, "bert_base_uncased")
+            )
+            bert_model = BertModel.from_pretrained(model_path)
+
         if pretrained_dpr_path:
             BertConversionUtils.load_dpr_model(
                 bert_model, pretrained_dpr_path, encoder_type

@@ -5,7 +5,7 @@
 
 from parlai.tasks.task_list import task_list
 
-MASTER = "https://github.com/facebookresearch/ParlAI/tree/master"
+MAIN = "https://github.com/facebookresearch/ParlAI/tree/main"
 
 categories = set()
 for task_dict in task_list:
@@ -44,7 +44,7 @@ for num_category, (category, tl) in enumerate(category_task_list.items()):
         description = task_dict.get('description', None)
         notes = task_dict.get('notes', None)
         code_urlend = task[: max(task.find(':'), len(task))]
-        code_url = f"{MASTER}/parlai/tasks/{code_urlend}"
+        code_url = f"{MAIN}/parlai/tasks/{code_urlend}"
         links = task_dict.get("links", {})
         assert isinstance(links, dict), f"task {id} is poorly formatted"
         urls = [(k, v) for k, v in links.items()]
