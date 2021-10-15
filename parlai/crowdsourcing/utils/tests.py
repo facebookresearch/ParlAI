@@ -132,6 +132,64 @@ class AbstractCrowdsourcingTest:
         else:
             raise ValueError('No channel could be detected!')
 
+    def _register_and_onboard_mock_agents(self, num_agents: int = 1) -> List[str]:
+        """
+        Register mock agents and onboard them for testing, taking the place of crowdsourcing workers.
+
+        Specify the number of agents to register. Return the agents' IDs after creation.
+        """
+        for idx in range(num_agents):
+
+            mock_worker_name = f"MOCK_WORKER_{idx:d}"
+            max_num_tries = 6
+            initial_wait_time = 0.5  # In seconds
+            num_tries = 0
+            wait_time = initial_wait_time
+            while num_tries < max_num_tries:
+                try:
+
+                    # Register the worker
+                    self.server.register_mock_worker(mock_worker_name)
+                    workers = self.db.find_workers(worker_name=mock_worker_name)
+                    worker_id = workers[0].db_id
+
+                    # Register the agent
+                    mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
+                    self.server.register_mock_agent(worker_id, mock_agent_details)
+
+                    # Submit onboarding from the agent
+                    onboard_agents = self.db.find_onboarding_agents()
+                    onboard_data = {"onboarding_data": {"success": True}}
+                    self.server.register_mock_agent_after_onboarding(
+                        worker_id, onboard_agents[0].get_agent_id(), onboard_data
+                    )
+                    _ = self.db.find_agents()[idx]
+                    # Make sure the agent can be found, or else raise an IndexError
+
+                    break
+                except IndexError:
+                    num_tries += 1
+                    print(
+                        f'The agent could not be registered after {num_tries:d} '
+                        f'attempt(s), out of {max_num_tries:d} attempts total. Waiting '
+                        f'for {wait_time:0.1f} seconds...'
+                    )
+                    time.sleep(wait_time)
+                    wait_time *= 2  # Wait for longer next time
+            else:
+                raise ValueError('The worker could not be registered!')
+
+        # Get all agents' IDs
+        agents = self.db.find_agents()
+        if len(agents) != num_agents:
+            raise ValueError(
+                f'The actual number of agents is {len(agents):d} instead of the '
+                f'desired {num_agents:d}!'
+            )
+        agent_ids = [agent.db_id for agent in agents]
+
+        return agent_ids
+
     def _register_mock_agents(self, num_agents: int = 1) -> List[str]:
         """
         Register mock agents for testing, taking the place of crowdsourcing workers.
@@ -215,7 +273,10 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         """
 
         # Set up the mock human agent
-        agent_id = self._register_mock_agents(num_agents=1)[0]
+        if self.config.mephisto.blueprint.get("onboarding_qualification", None):
+            agent_id = self._register_and_onboard_mock_agents(num_agents=1)[0]
+        else:
+            agent_id = self._register_mock_agents(num_agents=1)[0]
 
         # Set initial data
         self.server.request_init_data(agent_id)
