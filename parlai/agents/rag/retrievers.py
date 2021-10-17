@@ -1128,7 +1128,7 @@ class SearchQueryRetriever(RagRetriever):
 
 class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
     """
-    A retriever that uses a search engine server for rertrieving documents.
+    A retriever that uses a search engine server for retrieving documents.
 
     It instantiates a `SearchEngineRetriever` object that in turns send search queries
     to an external server for retrieving documents.
