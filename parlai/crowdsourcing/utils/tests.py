@@ -136,8 +136,8 @@ class AbstractCrowdsourcingTest:
         self, num_agents: int = 1, assume_onboarding: bool = False
     ) -> List[str]:
         """
-        Register mock agents for testing and onboard them if needed,
-        taking the place of crowdsourcing workers.
+        Register mock agents for testing and onboard them if needed, taking the place of
+        crowdsourcing workers.
 
         Specify the number of agents to register. Return the agents' IDs after creation.
         """
