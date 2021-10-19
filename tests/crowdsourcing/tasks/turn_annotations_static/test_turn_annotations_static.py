@@ -141,7 +141,7 @@ try:
             overrides += [
                 '+mephisto.blueprint.annotation_last_only=False',
                 '+mephisto.blueprint.conversation_count=null',
-                'mephisto.blueprint.onboarding_qualification=test_turn_annoataions',
+                'mephisto.blueprint.onboarding_qualification=test_turn_annotations',
                 '+mephisto.blueprint.random_seed=42',
                 'mephisto.task.assignment_duration_in_seconds=1800',
             ]
