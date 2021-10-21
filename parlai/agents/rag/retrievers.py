@@ -1176,25 +1176,28 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
     ) -> Tuple[List[List[Document]], torch.Tensor]:
         """
         Retrieves relevant documents for the query (the conversation context).
-
         This method conducts three main steps that are flagged in the main code as well.
-        step 1: generate search queries for the conversation context batch.     This
-        step uses the query generator model (self.query_generator). step 2: use the
-        search client to retrieve documents.     This step uses retrieval API agent
-        (self.search_client) step 3: generate the list of Document objects from the
-        retrieved content.     Here if the documents too long, the code splits them and
-        chooses a chunk     based on the selected `doc_chunks_ranker` in the opt.
+        
+        Step 1: generate search queries for the conversation context batch.This step 
+        uses the query generator model (self.query_generator). 
+        
+        Step 2: use the search client to retrieve documents.This step uses retrieval 
+        API agent (self.search_client) 
+        
+        Step 3: generate the list of Document objects from the
+        retrieved content. Here if the documents too long, the code splits them and
+        chooses a chunk based on the selected `doc_chunks_ranker` in the opt.
         """
         # step 1
         search_queries = self.generate_search_query(query)
 
         # step 2
-        search_results_batach = self.search_client.retrieve(search_queries, self.n_docs)
+        search_results_batch = self.search_client.retrieve(search_queries, self.n_docs)
 
         # step 3
         top_docs = []
         top_doc_scores = []
-        for sq, search_results in zip(search_queries, search_results_batach):
+        for sq, search_results in zip(search_queries, search_results_batch):
             if not search_results:
                 search_results = self._empty_docs(self.n_docs)
             elif len(search_results) < self.n_docs:
