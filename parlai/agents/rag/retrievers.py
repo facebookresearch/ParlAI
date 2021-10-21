@@ -1177,13 +1177,13 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
         """
         Retrieves relevant documents for the query (the conversation context).
         This method conducts three main steps that are flagged in the main code as well.
-        
-        Step 1: generate search queries for the conversation context batch.This step 
-        uses the query generator model (self.query_generator). 
-        
-        Step 2: use the search client to retrieve documents.This step uses retrieval 
-        API agent (self.search_client) 
-        
+
+        Step 1: generate search queries for the conversation context batch.This step
+        uses the query generator model (self.query_generator).
+
+        Step 2: use the search client to retrieve documents.This step uses retrieval
+        API agent (self.search_client)
+
         Step 3: generate the list of Document objects from the
         retrieved content. Here if the documents too long, the code splits them and
         chooses a chunk based on the selected `doc_chunks_ranker` in the opt.
