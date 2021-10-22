@@ -1175,8 +1175,8 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
         self, query: torch.LongTensor
     ) -> Tuple[List[List[Document]], torch.Tensor]:
         """
-        Retrieves relevant documents for the query (the conversation context).
-        This method conducts three main steps that are flagged in the main code as well.
+        Retrieves relevant documents for the query (the conversation context). This
+        method conducts three main steps that are flagged in the main code as well.
 
         Step 1: generate search queries for the conversation context batch.This step
         uses the query generator model (self.query_generator).
