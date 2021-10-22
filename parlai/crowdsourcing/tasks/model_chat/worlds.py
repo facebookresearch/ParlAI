@@ -514,9 +514,9 @@ class ModelChatWorld(BaseModelChatWorld):
         elif self.opt['conversation_start_mode'] == 'hi':
             print('[Displaying "Hi!" only as per Meena task.]')
             if self.personas is not None:
-                human_persona_strings = (s.strip() for s in self.personas[0])
+                human_persona_strings = [s.strip() for s in self.personas[0]]
             else:
-                human_persona_strings = ('', '')
+                human_persona_strings = ['', '']
             human_first_msg = {
                 'episode_done': False,
                 'id': self.agent.id,
