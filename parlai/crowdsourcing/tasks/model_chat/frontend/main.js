@@ -31,7 +31,13 @@ function MainApp() {
       renderSidePane={({ mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
         <DefaultTaskDescription
           chatTitle={taskConfig.chat_title}
-          taskDescriptionHtml={taskConfig.left_pane_text}
+          taskDescriptionHtml={
+              taskConfig.left_pane_text.replace(
+                  "[persona_string_1]", taskContext.human_persona_string_1,
+              ).replace(
+                  "[persona_string_2]", taskContext.human_persona_string_2,
+              )
+          }
         >
           {(taskContext.hasOwnProperty('image_src') && taskContext['image_src']) ? (
             <div>
