@@ -30,6 +30,8 @@ The following args are useful to tweak to fit your specific needs;
 
 """
 
+_ = BLUEPRINT_TYPE
+
 defaults = ["_self_", {"conf": "example"}]
 
 

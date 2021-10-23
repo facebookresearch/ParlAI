@@ -43,6 +43,8 @@ from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_ar
 from parlai.utils.strings import normalize_reply
 from parlai.utils.testing import capture_output
 
+_ = FAST_ACUTE_BLUEPRINT_TYPE
+
 ########################
 # ACUTE EVAL CONSTANTS #
 ########################
