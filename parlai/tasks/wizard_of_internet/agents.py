@@ -679,9 +679,6 @@ class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
                     s = sent.lstrip(' ').rstrip(' ')
                     if s not in docs:
                         found = False
-                    # print(found)
-                    # if not found:
-                    #    import pdb; pdb.set_trace()
                 if not found:
                     pass
                 out_episodes.append([e])
