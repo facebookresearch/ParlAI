@@ -139,11 +139,11 @@ try:
 
             # Set up the config and database
             overrides += [
-                '+mephisto.blueprint.annotation_last_only=False',
-                '+mephisto.blueprint.conversation_count=null',
-                'mephisto.blueprint.onboarding_qualification=test_turn_annotations',
-                '+mephisto.blueprint.random_seed=42',
-                'mephisto.task.assignment_duration_in_seconds=1800',
+                '++mephisto.blueprint.annotation_last_only=False',
+                '++mephisto.blueprint.conversation_count=null',
+                '++mephisto.blueprint.onboarding_qualification=test_turn_annotations',
+                '++mephisto.blueprint.random_seed=42',
+                '++mephisto.task.assignment_duration_in_seconds=1800',
             ]
             # TODO: remove all of these params once Hydra 1.1 is released with support
             #  for recursive defaults

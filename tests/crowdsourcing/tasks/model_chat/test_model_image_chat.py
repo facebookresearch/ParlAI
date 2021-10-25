@@ -119,7 +119,7 @@ try:
                 num_convos = 1
                 args = ModelImageChatBlueprintArgs()
                 overrides = [
-                    f'+mephisto.blueprint.{key}={val}'
+                    f'++mephisto.blueprint.{key}={val}'
                     for key, val in args.__dict__.items()
                     if key
                     in [
@@ -133,12 +133,12 @@ try:
                     'mephisto.blueprint.annotations_config_path=""',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     f'+mephisto.blueprint.image_context_path={image_context_path}',
-                    '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
-                    '+mephisto.blueprint.max_concurrent_responses=1',
+                    '++mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
+                    '++mephisto.blueprint.max_concurrent_responses=1',
                     'mephisto.blueprint.model_opt_path=${task_dir}/task_config/image_model_opts.yaml',
                     f'+mephisto.blueprint.num_conversations={num_convos:d}',
                     f'+mephisto.blueprint.stack_folder={stack_folder}',
-                    '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
+                    '++mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
                     'mephisto.blueprint.task_model_parallel=False',
                 ]
                 # TODO: remove all of these params once Hydra 1.1 is released with

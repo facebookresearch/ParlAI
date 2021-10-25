@@ -1,4 +1,8 @@
 #@package _global_
+defaults:
+  - /mephisto/blueprint: fast_acute
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   task:
     allowed_concurrent: 1

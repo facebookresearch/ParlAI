@@ -89,10 +89,10 @@ class AbstractCrowdsourcingTest:
             self.config = compose(
                 config_name="example",
                 overrides=[
-                    f'+mephisto.blueprint._blueprint_type={blueprint_type}',
-                    f'+mephisto.blueprint.link_task_source=False',
-                    f'+mephisto/architect=mock',
-                    f'+mephisto/provider=mock',
+                    f'mephisto.blueprint._blueprint_type={blueprint_type}',
+                    f'++mephisto.blueprint.link_task_source=False',
+                    f'mephisto/architect=mock',
+                    f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
                     f'+current_time={int(time.time())}',
                 ]
@@ -136,8 +136,8 @@ class AbstractCrowdsourcingTest:
         self, num_agents: int = 1, assume_onboarding: bool = False
     ) -> List[str]:
         """
-        Register mock agents for testing and onboard them if needed, 
-        taking the place of crowdsourcing workers.
+        Register mock agents for testing and onboard them if needed, taking the place of
+        crowdsourcing workers.
 
         Specify the number of agents to register. Return the agents' IDs after creation.
         """
