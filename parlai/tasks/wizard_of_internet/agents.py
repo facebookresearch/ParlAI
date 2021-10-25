@@ -20,10 +20,10 @@ import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
 from parlai.core.mutators import register_mutator, ManyEpisodeMutator
 from parlai.tasks.wizard_of_wikipedia.agents import (
-    AddLabel as AddLabelWizWiki,
-    AddLabelLM as AddLabelLMWizWiki,
-    CheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
-    AddCheckedSentence as AddCheckedSentenceWizWiki,
+    WowAddLabel as AddLabelWizWiki,
+    WowAddLabelLM as AddLabelLMWizWiki,
+    WowCheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
+    WowAddCheckedSentence as AddCheckedSentenceWizWiki,
 )
 
 import random
@@ -581,8 +581,8 @@ class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
         return CONST.SELECTED_DOCS_TITLES
 
 
-@register_mutator("add_checked_sentence_to_input")
-class AddCheckedSentence(AddCheckedSentenceWizWiki):
+@register_mutator("woi_add_checked_sentence_to_input")
+class WoiAddCheckedSentence(AddCheckedSentenceWizWiki):
     """
     Adds the checked sentence to the end of the text.
 
@@ -595,8 +595,8 @@ class AddCheckedSentence(AddCheckedSentenceWizWiki):
         return CONST.SELECTED_SENTENCES
 
 
-@register_mutator("checked_sentence_as_label")
-class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
+@register_mutator("woi_checked_sentence_as_label")
+class WoiCheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
     """
     Uses the checked sentence (knowledge) as label.
 
@@ -609,8 +609,8 @@ class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
         return CONST.SELECTED_SENTENCES
 
 
-@register_mutator("add_label_to_input")
-class AddLabel(AddLabelWizWiki):
+@register_mutator("woi_add_label_to_input")
+class WoiAddLabel(AddLabelWizWiki):
     """
     Adds the dialogue sentence to the input.
 
@@ -621,8 +621,8 @@ class AddLabel(AddLabelWizWiki):
     pass
 
 
-@register_mutator("add_label_to_input_lm")
-class AddLabelLM(AddLabelLMWizWiki):
+@register_mutator("woi_add_label_to_input_lm")
+class WoiAddLabelLM(AddLabelLMWizWiki):
     """
     Adds the dialogue sentence to the input (language modeling version).
 
@@ -640,8 +640,8 @@ class AddLabelLM(AddLabelLMWizWiki):
     pass
 
 
-@register_mutator("filter_no_passage_used")
-class FilterNoPassageUsed(ManyEpisodeMutator):
+@register_mutator("woi_filter_no_passage_used")
+class WoiFilterNoPassageUsed(ManyEpisodeMutator):
     """
     Allows to filter any examples where no passage was selected to base the wizard reply on.
     This works best in flattened mode.

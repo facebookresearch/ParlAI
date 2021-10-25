@@ -1279,8 +1279,8 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     pass
 
 
-@register_mutator("add_checked_sentence_to_input")
-class AddCheckedSentence(MessageMutator):
+@register_mutator("wow_add_checked_sentence_to_input")
+class WowAddCheckedSentence(MessageMutator):
     """
     Adds the checked sentence to the end of the text.
 
@@ -1306,8 +1306,8 @@ class AddCheckedSentence(MessageMutator):
         return new_message
 
 
-@register_mutator("checked_sentence_as_label")
-class CheckedSentenceAsLabel(MessageMutator):
+@register_mutator("wow_checked_sentence_as_label")
+class WowCheckedSentenceAsLabel(MessageMutator):
     """
     Uses the checked sentence (knowledge) as label.
     """
@@ -1330,8 +1330,8 @@ class CheckedSentenceAsLabel(MessageMutator):
         return new_message
 
 
-@register_mutator("add_label_to_input")
-class AddLabel(MessageMutator):
+@register_mutator("wow_add_label_to_input")
+class WowAddLabelToInput(MessageMutator):
     """
     Adds the dialogue sentence to the input.
 
@@ -1356,8 +1356,8 @@ class AddLabel(MessageMutator):
         return new_message
 
 
-@register_mutator("add_label_to_input_lm")
-class AddLabelLM(MessageMutator):
+@register_mutator("wow_add_label_to_input_lm")
+class WowAddLabelLM(MessageMutator):
     """
     Adds the dialogue sentence to the input (language modeling version).
 
@@ -1385,9 +1385,13 @@ class AddLabelLM(MessageMutator):
         text = new_message.pop('text')
 
         ls = dialogue_response.split()
-        ind = random.randint(0, len(ls) - 1)
-        label1 = ' '.join(ls[0:ind])
-        label2 = ' '.join(ls[ind : len(ls)])
+        if len(ls) > 0:
+            ind = random.randint(0, len(ls) - 1)
+            label1 = ' '.join(ls[0:ind])
+            label2 = ' '.join(ls[ind : len(ls)])
+        else:
+            label1 = dialogue_response
+            label2 = dialogue_response
 
         text += f'\n{label1}\n{TOKEN_LABEL} {label2} {TOKEN_END_LABEL}'
         new_message['text'] = text
@@ -1395,8 +1399,8 @@ class AddLabelLM(MessageMutator):
         return new_message
 
 
-@register_mutator("filter_no_passage_used")
-class FilterNoPassageUsed(ManyEpisodeMutator):
+@register_mutator("wow_filter_no_passage_used")
+class WowFilterNoPassageUsed(ManyEpisodeMutator):
     """
     Allows to filter any examples where no passage was selected to base the wizard reply on.
     This works best in flattened mode.
