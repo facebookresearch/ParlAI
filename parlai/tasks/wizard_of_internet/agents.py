@@ -26,7 +26,6 @@ from parlai.tasks.wizard_of_wikipedia.agents import (
     AddCheckedSentence as AddCheckedSentenceWizWiki,
 )
 
-import random
 from .build import build
 
 
@@ -643,10 +642,11 @@ class AddLabelLM(AddLabelLMWizWiki):
 @register_mutator("woi_filter_no_passage_used")
 class WoiFilterNoPassageUsed(ManyEpisodeMutator):
     """
-    Allows to filter any examples where no passage was selected to base the wizard reply on.
-    This works best in flattened mode.
-    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten+filter_no_passage_used
+    Allows to filter any examples where no passage was selected to base the wizard reply
+    on.
+
+    This works best in flattened mode. E.g. run with: parlai display_data -t
+    wizard_of_internet -n 100 -dt valid --mutators flatten+filter_no_passage_used
     """
 
     def many_episode_mutation(self, episode):
@@ -664,8 +664,8 @@ class WoiFilterNoPassageUsed(ManyEpisodeMutator):
 @register_mutator("woi_filter_selected_knowledge_in_retrieved_docs")
 class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
     """
-    Allows to filter any examples where '__retrieved-docs__' field does contain
-    the '__selected-sentences__'.
+    Allows to filter any examples where '__retrieved-docs__' field does contain the
+    '__selected-sentences__'.
     """
 
     def many_episode_mutation(self, episode):
@@ -679,9 +679,8 @@ class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
                     s = sent.lstrip(' ').rstrip(' ')
                     if s not in docs:
                         found = False
-                if not found:
-                    pass
-                out_episodes.append([e])
+                if found:
+                    out_episodes.append([e])
             else:
                 pass
         return out_episodes
