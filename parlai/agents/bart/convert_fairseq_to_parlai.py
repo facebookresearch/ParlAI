@@ -131,6 +131,9 @@ class ConversionScript(ParlaiScript):
         # 3. create agent and convert model weights
         self.agent = create_agent(opt)
         converted = self.convert_model_weight(opt)
+
+        converted.pop("decoder.output_projection.weight", None)
+
         self.agent.model.load_state_dict(converted, True)
         self.agent.opt.pop('converting', None)
         self.agent.save(self.opt['output'])
