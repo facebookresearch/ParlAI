@@ -60,6 +60,11 @@ ACUTE_EVAL_TYPES = {
         's1_choice': 'I would prefer to talk to <Speaker 1>',
         's2_choice': 'I would prefer to talk to <Speaker 2>',
     },
+    'interesting': {
+        'question': 'If you had to say one of these speakers is interesting and one is boring, who would you say is more interesting?',
+        's1_choice': '<Speaker 1> is more interesting',
+        's2_choice': '<Speaker 2> is more interesting',
+    },
     'roleplay': {
         'question': 'How well does the speaker play their role in the conversation?',
         's1_choice': '<Speaker 1> plays their role better.',
