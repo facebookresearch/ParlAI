@@ -14,6 +14,7 @@ from typing import Tuple, Union, Optional, List, Dict, Any
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
+from parlai.core.message import Message
 from parlai.agents.transformer.transformer import TransformerGeneratorModel
 
 from parlai.agents.rag.args import RetrieverType
@@ -25,6 +26,7 @@ from parlai.agents.rag.model_types import (
     fix_incremental_state,
 )
 from parlai.utils.typing import TShared
+from parlai.tasks.wizard_of_internet import constants as consts
 
 
 class Fid(RagToken):
@@ -316,6 +318,27 @@ class SearchQueryFAISSIndexFiDAgent(SearchQueryFiDAgent):
         opt = deepcopy(opt)
         opt['rag_retriever_type'] = RetrieverType.SEARCH_TERM_FAISS.value
         super().__init__(opt, shared=shared)
+
+
+class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
+    """
+    Uses the gold retrived docs (documents shown to crowdsourcing agents).
+
+    This FiD agents has a mock retriever that picks the retrieved docs from the observed example.
+    """
+
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.OBSERVATION_ECHO_RETRIEVER.value
+        super().__init__(opt, shared=shared)
+
+    def observe(self, observation: Union[Dict, Message]) -> Message:
+        self.model.retriever.set_retrieve_doc(
+            retrieved_docs=observation.get(consts.RETRIEVED_DOCS, ['']),
+            selected_docs=observation.get(consts.SELECTED_DOCS, ['']),
+            selected_sentences=observation.get(consts.SELECTED_SENTENCES, ['']),
+        )
+        return super().observe(observation)
 
 
 def concat_enc_outs(

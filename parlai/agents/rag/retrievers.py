@@ -1267,6 +1267,55 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
         return top_docs, top_doc_scores
 
 
+class ObservationEchoRetriever(RagRetriever):
+    """
+    This retriever returns (echos) documents that are already passed to it to return.
+
+    Use this only with GoldFiD agents.
+    It relies on the retrieved docs being included in the observed example of the agent.
+    """
+
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
+        self._retrieved_docs = None
+        self._selected_docs = None
+        self._selected_sentences = None
+        self._delimiter = '\n'
+        super().__init__(opt, dictionary, shared=shared)
+
+    def set_retrieve_doc(
+        self,
+        retrieved_docs: List[str],
+        selected_docs: List[str],
+        selected_sentences: List[str],
+    ):
+        self._retrieved_docs = retrieved_docs
+        self._selected_docs = selected_docs
+        self._selected_sentences = selected_sentences
+
+    def tokenize_query(self, query: str) -> List[int]:
+        # A dummy method: no tokenization required for this retriever.
+        return [-1]
+
+    def get_delimiter(self) -> str:
+        return self._delimiter
+
+    def retrieve_and_score(
+        self, query: torch.LongTensor
+    ) -> Tuple[List[List[Document]], torch.Tensor]:
+        # Some arbitrary scoring of docs
+        assert query.size(1) == 1, 'This retriever only handles a single example batch.'
+        retrieved_docs, retrieved_doc_scores = [], []
+        for idx in range(len(self._retrieved_docs)):
+            retrieved_docs.append(
+                Document(
+                    docid=f'id_{idx}',
+                    text=self._retrieved_docs[idx],
+                    title=f'title_{idx}',
+                )
+            )
+        return [retrieved_docs], torch.Tensor(retrieved_doc_scores).reshape(1, -1)
+
+
 class DocumentChunkRanker:
     """
     Base class for controlling splitting long documents and selecting relevant chunks.
@@ -1344,3 +1393,5 @@ def retriever_factory(
         return SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.SEARCH_TERM_FAISS:
         return SearchQueryFAISSIndexRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.OBSERVATION_ECHO_RETRIEVER:
+        return ObservationEchoRetriever(opt, dictionary, shared=shared)

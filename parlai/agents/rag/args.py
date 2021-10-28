@@ -88,6 +88,7 @@ class RetrieverType(Enum):
     POLY_FAISS = 'poly_faiss'
     SEARCH_ENGINE = 'search_engine'
     SEARCH_TERM_FAISS = 'search_term_faiss'
+    OBSERVATION_ECHO_RETRIEVER = 'observation_echo_retriever'
 
 
 def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
