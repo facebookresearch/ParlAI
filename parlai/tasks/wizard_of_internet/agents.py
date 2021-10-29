@@ -727,7 +727,7 @@ class WoiChunkRetrievedDocs(MessageMutator):
 
 
 @register_mutator("woi_dropout_retrieved_docs")
-class WoiChunkRetrievedDocs(MessageMutator):
+class WoiDropoutRetrievedDocs(MessageMutator):
     """
     Drops out '__retrieved-docs__' to only keep a maximum number in each example.
     """
