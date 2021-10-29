@@ -697,21 +697,19 @@ class WoiChunkRetrievedDocs(MessageMutator):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         parser.add_argument(
-            '--chunk-size',
+            '--woi-doc-chunk-size',
             default=500,
             type=int,
             help='Document chunk size (in characters).',
         )
 
     def message_mutation(self, message: Message) -> Message:
-
-        new_message = message.copy()
-        if '__retrieved-docs__' not in message:
+        if CONST.RETRIEVED_DOCS not in message:
             return message
-        del new_message['__retrieved-docs__']
-        docs = message.get('__retrieved-docs__')
+        new_message = message.copy()
+        docs = message.get(CONST.RETRIEVED_DOCS)
         new_docs = []
-        chunk_sz = self.opt.get('chunk_size')
+        chunk_sz = self.opt.get('woi_doc_chunk_size')
         for doc in docs:
             d = doc
             while True:
@@ -723,5 +721,5 @@ class WoiChunkRetrievedDocs(MessageMutator):
                 else:
                     new_docs.append(d[0:end_chunk])
                     d = d[end_chunk + 1 : -1]
-        new_message['__retrieved-docs__'] = new_docs
+        new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
         return new_message
