@@ -702,8 +702,8 @@ def chunk_docs_in_message(message, chunk_sz):
         checked_sentences[i] = checked_sentences[i].lstrip(' ').rstrip(' ')
     if ' '.join(checked_sentences) == CONST.NO_SELECTED_SENTENCES_TOKEN:
         checked_sentences = []
-    for i in range(len(docs)):
-        d = docs[i]
+    for ind in range(len(docs)):
+        d = docs[ind]
         # Guarantees that checked sentences are not split in half (as we split by space).
         for i in range(len(checked_sentences)):
             d = d.replace(checked_sentences[i], "||CHECKED_SENTENCE_" + str(i) + "||")
@@ -716,8 +716,8 @@ def chunk_docs_in_message(message, chunk_sz):
                         "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
                     )
                 new_docs.append(d)
-                new_titles.append(titles[i])
-                new_urls.append(urls[i])
+                new_titles.append(titles[ind])
+                new_urls.append(urls[ind])
                 break
             else:
                 new_d = d[0:end_chunk]
@@ -726,8 +726,8 @@ def chunk_docs_in_message(message, chunk_sz):
                         "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
                     )
                 new_docs.append(new_d)
-                new_titles.append(titles[i])
-                new_urls.append(urls[i])
+                new_titles.append(titles[ind])
+                new_urls.append(urls[ind])
                 d = d[end_chunk + 1 : -1]
     new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
     new_message.force_set(CONST.RETRIEVED_DOCS_TITLES, new_titles)
