@@ -10,6 +10,7 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 import jsonlines
 import os
+import torch
 from parlai.core.message import Message
 from tqdm import tqdm
 from parlai.core.metrics import F1Metric
@@ -721,5 +722,54 @@ class WoiChunkRetrievedDocs(MessageMutator):
                 else:
                     new_docs.append(d[0:end_chunk])
                     d = d[end_chunk + 1 : -1]
+        new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
+        return new_message
+
+
+@register_mutator("woi_dropout_retrieved_docs")
+class WoiChunkRetrievedDocs(MessageMutator):
+    """
+    Drops out '__retrieved-docs__' to only keep a maximum number in each example.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.add_argument(
+            '--woi-doc-max-chunks',
+            default=-1,
+            type=int,
+            help='Largest number of chunks to use, others will be dropped out at random. Chunks containing gold checked sentences will not be removed.',
+        )
+
+    def message_mutation(self, message: Message) -> Message:
+        if CONST.RETRIEVED_DOCS not in message:
+            return message
+        new_message = message.copy()
+        docs = message.get(CONST.RETRIEVED_DOCS)
+        new_docs = []
+        max_chunks = self.opt.get('woi_doc_max_chunks')
+
+        keep = torch.randperm(len(docs))[0:max_chunks]
+        remove = torch.ones(len(docs))
+        remove[keep] = 0
+
+        for i in range(len(docs)):
+            if remove[i] == 0:
+                new_docs.append(docs[i])
+            else:
+                # We may still keep the doc if it contains the gold checked sentence(s).
+                checked_sentences = message.get(CONST.SELECTED_SENTENCES)
+                d = docs[i]
+                found = False
+                if ' '.join(checked_sentences) != CONST.NO_SELECTED_SENTENCES_TOKEN:
+                    for sent in checked_sentences:
+                        s = sent.lstrip(' ').rstrip(' ')
+                        if s in d:
+                            found = True
+                if found:
+                    new_docs.append(docs[i])
+
         new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
         return new_message
