@@ -338,17 +338,17 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
             return observation
 
         if not observation.get(consts.RETRIEVED_DOCS):
-            self.model.retriever.set_retrieve_doc(
+            self.model_api.retriever.set_retrieve_doc(
                 retrieved_docs=None, selected_docs=None, selected_sentences=None
             )
         else:
-            rertrieved_docs = []
+            retrieved_docs = []
             for doc_id, doc_title, doc_txt in zip(
                 observation[consts.RETRIEVED_DOCS_URLS],
                 observation[consts.RETRIEVED_DOCS_TITLES],
                 observation[consts.RETRIEVED_DOCS],
             ):
-                rertrieved_docs.append(
+                retrieved_docs.append(
                     Document(docid=doc_id, title=doc_title, text=doc_txt)
                 )
 
@@ -362,8 +362,8 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
                     Document(docid=doc_id, title=doc_title, text=doc_txt)
                 )
 
-        self.model.retriever.set_retrieve_doc(
-            retrieved_docs=rertrieved_docs,
+        self.model_api.retriever.set_retrieve_doc(
+            retrieved_docs=retrieved_docs,
             selected_docs=selected_docs,
             selected_sentences=observation.get(consts.SELECTED_SENTENCES, ['']),
         )
