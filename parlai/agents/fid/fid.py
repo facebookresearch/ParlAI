@@ -334,6 +334,8 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         super().__init__(opt, shared=shared)
 
     def observe(self, observation: Union[Dict, Message]) -> Message:
+        if observation.is_padding():
+            return observation
         self.model.retriever.set_retrieve_doc(
             retrieved_docs=observation.get(consts.RETRIEVED_DOCS, ['']),
             selected_docs=observation.get(consts.SELECTED_DOCS, ['']),
