@@ -711,16 +711,35 @@ class WoiChunkRetrievedDocs(MessageMutator):
         docs = message.get(CONST.RETRIEVED_DOCS)
         new_docs = []
         chunk_sz = self.opt.get('woi_doc_chunk_size')
+        checked_sentences = message.get(CONST.SELECTED_SENTENCES)
+        for i in range(len(checked_sentences)):
+            checked_sentences[i] = checked_sentences[i].lstrip(' ').rstrip(' ')
+        if ' '.join(checked_sentences) == CONST.NO_SELECTED_SENTENCES_TOKEN:
+            checked_sentences = []
         for doc in docs:
             d = doc
+            # Guarantees that checked sentences are not split in half (as we split by space).
+            for i in range(len(checked_sentences)):
+                d = d.replace(
+                    checked_sentences[i], "||CHECKED_SENTENCE_" + str(i) + "||"
+                )
             while True:
                 end_chunk = d.find(' ', chunk_sz)
                 if end_chunk == -1:
                     # last chunk
+                    for i in range(len(checked_sentences)):
+                        d = d.replace(
+                            "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
+                        )
                     new_docs.append(d)
                     break
                 else:
-                    new_docs.append(d[0:end_chunk])
+                    new_d = d[0:end_chunk]
+                    for i in range(len(checked_sentences)):
+                        new_d = new_d.replace(
+                            "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
+                        )
+                    new_docs.append(new_d)
                     d = d[end_chunk + 1 : -1]
         new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
         return new_message
