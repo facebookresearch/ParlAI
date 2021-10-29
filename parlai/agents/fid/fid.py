@@ -336,9 +336,35 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
     def observe(self, observation: Union[Dict, Message]) -> Message:
         if observation.is_padding():
             return observation
+
+        if not observation.get(consts.RETRIEVED_DOCS):
+            self.model.retriever.set_retrieve_doc(
+                retrieved_docs=None, selected_docs=None, selected_sentences=None
+            )
+        else:
+            rertrieved_docs = []
+            for doc_id, doc_title, doc_txt in zip(
+                observation[consts.RETRIEVED_DOCS_URLS],
+                observation[consts.RETRIEVED_DOCS_TITLES],
+                observation[consts.RETRIEVED_DOCS],
+            ):
+                rertrieved_docs.append(
+                    Document(docid=doc_id, title=doc_title, text=doc_txt)
+                )
+
+            selected_docs = []
+            for doc_id, doc_title, doc_txt in zip(
+                observation[consts.SELECTED_DOCS_URLS],
+                observation[consts.SELECTED_DOCS_TITLES],
+                observation[consts.SELECTED_DOCS],
+            ):
+                selected_docs.append(
+                    Document(docid=doc_id, title=doc_title, text=doc_txt)
+                )
+
         self.model.retriever.set_retrieve_doc(
-            retrieved_docs=observation.get(consts.RETRIEVED_DOCS, ['']),
-            selected_docs=observation.get(consts.SELECTED_DOCS, ['']),
+            retrieved_docs=rertrieved_docs,
+            selected_docs=selected_docs,
             selected_sentences=observation.get(consts.SELECTED_SENTENCES, ['']),
         )
         return super().observe(observation)

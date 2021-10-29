@@ -71,6 +71,7 @@ def parse_wizard_message(message_dict, doc_lines_delim):
         knowledge = {
             CONST.RETRIEVED_DOCS: [],
             CONST.SELECTED_DOCS: [],
+            CONST.SELECTED_DOCS_URLS: [],
             CONST.SELECTED_DOCS_TITLES: [],
             CONST.SELECTED_SENTENCES: [],
             CONST.RETRIEVED_DOCS_URLS: [],
@@ -98,6 +99,7 @@ def parse_wizard_message(message_dict, doc_lines_delim):
             if doc_selected:
                 knowledge[CONST.SELECTED_DOCS_TITLES].append(doc['title'])
                 knowledge[CONST.SELECTED_DOCS].append(full_doc)
+                knowledge[CONST.SELECTED_DOCS_URLS].append(doc['url'])
 
         if not knowledge[CONST.RETRIEVED_DOCS]:
             knowledge[CONST.RETRIEVED_DOCS] = [CONST.NO_RETRIEVED_DOCS_TOKEN]
@@ -397,8 +399,9 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             CONST.RETRIEVED_DOCS_URLS,
             CONST.RETRIEVED_DOCS_TITLES,
             CONST.SELECTED_DOCS,
-            CONST.SELECTED_SENTENCES,
+            CONST.SELECTED_DOCS_URLS,
             CONST.SELECTED_DOCS_TITLES,
+            CONST.SELECTED_SENTENCES,
             CONST.SEARCH_QUERY,
         ):
             parlai_message[item_key] = action[item_key]

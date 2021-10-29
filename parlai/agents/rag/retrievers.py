@@ -1290,13 +1290,13 @@ class ObservationEchoRetriever(RagRetriever):
 
     def set_retrieve_doc(
         self,
-        retrieved_docs: List[str],
-        selected_docs: List[str],
+        retrieved_docs: List[Document],
+        selected_docs: List[Document],
         selected_sentences: List[str],
     ):
-        self._retrieved_docs = retrieved_docs
-        self._selected_docs = selected_docs
-        self._selected_sentences = selected_sentences
+        self._retrieved_docs = retrieved_docs or [BLANK_DOC]
+        self._selected_docs = selected_docs or [BLANK_DOC]
+        self._selected_sentences = selected_sentences or ''
 
     def get_delimiter(self) -> str:
         return self._delimiter
@@ -1304,20 +1304,11 @@ class ObservationEchoRetriever(RagRetriever):
     def retrieve_and_score(
         self, query: torch.LongTensor
     ) -> Tuple[List[List[Document]], torch.Tensor]:
-        # Some arbitrary scoring of docs
-        # breakpoint()
         assert query.size(0) == 1, 'This retriever only handles a single example batch.'
-        retrieved_docs, retrieved_doc_scores = [], []
-        for idx in range(len(self._retrieved_docs)):
-            retrieved_docs.append(
-                Document(
-                    docid=f'id_{idx}',
-                    text=self._retrieved_docs[idx],
-                    title=f'title_{idx}',
-                )
-            )
+        # Some arbitrary scoring of docs
+        retrieved_doc_scores = [1 / (1 + i) for i in range(len(self._retrieved_docs))]
         return (
-            [retrieved_docs],
+            [self._retrieved_docs],
             torch.Tensor(retrieved_doc_scores).reshape(1, -1).to(query.device),
         )
 
