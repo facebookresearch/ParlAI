@@ -18,7 +18,7 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
-from parlai.core.mutators import register_mutator, ManyEpisodeMutator
+from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
 from parlai.tasks.wizard_of_wikipedia.agents import (
     AddLabel as AddLabelWizWiki,
     AddLabelLM as AddLabelLMWizWiki,
@@ -684,3 +684,42 @@ class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
             else:
                 pass
         return out_episodes
+
+
+@register_mutator("woi_chunk_retrieved_docs")
+class WoiChunkRetrievedDocs(MessageMutator):
+    """
+    Chunks '__retrieved-docs__' into smaller docs (max 100 words each).
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.add_argument(
+            '--woi-doc-chunk-size',
+            default=500,
+            type=int,
+            help='Document chunk size (in characters).',
+        )
+
+    def message_mutation(self, message: Message) -> Message:
+        if CONST.RETRIEVED_DOCS not in message:
+            return message
+        new_message = message.copy()
+        docs = message.get(CONST.RETRIEVED_DOCS)
+        new_docs = []
+        chunk_sz = self.opt.get('woi_doc_chunk_size')
+        for doc in docs:
+            d = doc
+            while True:
+                end_chunk = d.find(' ', chunk_sz)
+                if end_chunk == -1:
+                    # last chunk
+                    new_docs.append(d)
+                    break
+                else:
+                    new_docs.append(d[0:end_chunk])
+                    d = d[end_chunk + 1 : -1]
+        new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
+        return new_message
