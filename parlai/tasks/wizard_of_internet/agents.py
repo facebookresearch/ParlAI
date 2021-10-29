@@ -738,7 +738,7 @@ class WoiDropoutRetrievedDocs(MessageMutator):
     ) -> ParlaiParser:
         parser.add_argument(
             '--woi-doc-max-chunks',
-            default=-1,
+            default=100,
             type=int,
             help='Largest number of chunks to use, others will be dropped out at random. Chunks containing gold checked sentences will not be removed.',
         )
