@@ -169,7 +169,7 @@ class AcuteAnalyzer(object):
         response: Dict[str, Any] = {
             'run_id': self.run_id,
             'worker': unit_details['worker_id'],
-            'mturk_worker_id': Worker.get(
+            'worker_name': Worker.get(
                 self.mephisto_db, unit_details['worker_id']
             ).worker_name,
             'time_taken': unit_details['task_end'] - unit_details['task_start'],
