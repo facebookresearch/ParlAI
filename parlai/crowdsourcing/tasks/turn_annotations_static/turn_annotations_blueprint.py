@@ -84,10 +84,11 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             "help": "Path to data and answers for onboarding task in JSON format"
         },
     )
-    annotation_buckets: Optional[str] = field(
-        default=None,
+    annotations_config_path: str = field(
+        default="",
         metadata={
-            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance. If none provided, no checkboxes."
+            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance. Set to "
+            " to disable checkboxes."
         },
     )
     response_field: bool = field(
@@ -188,9 +189,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             onboarding_data = json.loads(f.read())
 
         annotation_buckets = None
-        if self.args.blueprint.annotation_buckets:
+        if self.args.blueprint.get('annotations_config_path', ''):
             with open(
-                self.args.blueprint.annotation_buckets, "r", encoding="utf-8-sig"
+                self.args.blueprint.annotations_config_path, "r", encoding="utf-8-sig"
             ) as f:
                 annotation_buckets = json.loads(f.read())
 
