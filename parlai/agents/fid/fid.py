@@ -94,8 +94,8 @@ class FidModel(RagModel):
         self, incremental_state: Dict[int, dict], inds: torch.Tensor
     ) -> Dict[int, dict]:
         """
-        Override RagModel.reorder_decoder_incremental_state to resort back
-        to normal reordering.
+        Override RagModel.reorder_decoder_incremental_state to resort back to normal
+        reordering.
 
         See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
         """
@@ -324,7 +324,8 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
     """
     Uses the gold retrived docs (documents shown to crowdsourcing agents).
 
-    This FiD agents has a mock retriever that picks the retrieved docs from the observed example.
+    This FiD agents has a mock retriever that picks the retrieved docs from the observed
+    example.
     """
 
     def __init__(self, opt: Opt, shared: TShared = None):

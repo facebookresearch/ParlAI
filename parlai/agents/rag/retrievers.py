@@ -369,7 +369,13 @@ class RagRetriever(torch.nn.Module, ABC):
         super().__init__()
         self.retriever_type = RetrieverType(opt['rag_retriever_type'])
         if not (
-            (self.retriever_type == RetrieverType.SEARCH_ENGINE)
+            (
+                self.retriever_type
+                in (
+                    RetrieverType.SEARCH_ENGINE,
+                    RetrieverType.OBSERVATION_ECHO_RETRIEVER,
+                )
+            )
             or (opt.get('retriever_debug_index') in [None, 'none'])
         ):
             if opt.get('retriever_debug_index') == 'exact':
@@ -1271,8 +1277,8 @@ class ObservationEchoRetriever(RagRetriever):
     """
     This retriever returns (echos) documents that are already passed to it to return.
 
-    Use this only with GoldFiD agents.
-    It relies on the retrieved docs being included in the observed example of the agent.
+    Use this only with GoldFiD agents. It relies on the retrieved docs being included in
+    the observed example of the agent.
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
@@ -1292,28 +1298,34 @@ class ObservationEchoRetriever(RagRetriever):
         self._selected_docs = selected_docs
         self._selected_sentences = selected_sentences
 
-    def tokenize_query(self, query: str) -> List[int]:
-        # A dummy method: no tokenization required for this retriever.
-        return [-1]
-
     def get_delimiter(self) -> str:
         return self._delimiter
+
+    def pick_chunk(self, doc_text: str, selected_sentences: List[str]):
+        # TODO replace with a better doc chunk selector.
+        return doc_text[:256]
 
     def retrieve_and_score(
         self, query: torch.LongTensor
     ) -> Tuple[List[List[Document]], torch.Tensor]:
         # Some arbitrary scoring of docs
-        assert query.size(1) == 1, 'This retriever only handles a single example batch.'
+        # breakpoint()
+        assert query.size(0) == 1, 'This retriever only handles a single example batch.'
         retrieved_docs, retrieved_doc_scores = [], []
         for idx in range(len(self._retrieved_docs)):
             retrieved_docs.append(
                 Document(
                     docid=f'id_{idx}',
-                    text=self._retrieved_docs[idx],
+                    text=self.pick_chunk(
+                        self._retrieved_docs[idx], self._selected_sentences
+                    ),
                     title=f'title_{idx}',
                 )
             )
-        return [retrieved_docs], torch.Tensor(retrieved_doc_scores).reshape(1, -1)
+        return (
+            [retrieved_docs],
+            torch.Tensor(retrieved_doc_scores).reshape(1, -1).to(query.device),
+        )
 
 
 class DocumentChunkRanker:
