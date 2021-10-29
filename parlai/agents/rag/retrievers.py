@@ -1301,10 +1301,6 @@ class ObservationEchoRetriever(RagRetriever):
     def get_delimiter(self) -> str:
         return self._delimiter
 
-    def pick_chunk(self, doc_text: str, selected_sentences: List[str]):
-        # TODO replace with a better doc chunk selector.
-        return doc_text[:256]
-
     def retrieve_and_score(
         self, query: torch.LongTensor
     ) -> Tuple[List[List[Document]], torch.Tensor]:
@@ -1316,9 +1312,7 @@ class ObservationEchoRetriever(RagRetriever):
             retrieved_docs.append(
                 Document(
                     docid=f'id_{idx}',
-                    text=self.pick_chunk(
-                        self._retrieved_docs[idx], self._selected_sentences
-                    ),
+                    text=self._retrieved_docs[idx],
                     title=f'title_{idx}',
                 )
             )
