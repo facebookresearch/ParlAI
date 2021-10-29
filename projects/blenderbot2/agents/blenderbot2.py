@@ -48,7 +48,6 @@ from .modules import (
 )
 from .sub_modules import RetrievalType, KnowledgeAccessMethod
 from parlai.agents.fid.fid import SearchQuerySearchEngineFiDAgent
-from parlai.utils.fsdp import is_fsdp
 
 
 ZOO_QUERY_GENERATOR = 'zoo:blenderbot2/query_generator/model'
@@ -390,13 +389,6 @@ class BlenderBot2RagAgent(RagAgent):
     def rag_model_type(self, model: str):
         self._rag_model_type = model
         self._rag_model_interface = RAG_MODELS[model](self.opt, self.NULL_IDX)
-
-    @property
-    def model_api(self) -> BlenderBot2RagModel:
-        if hasattr(self.model, 'module') and not is_fsdp(self.model):
-            return self.model.module
-        else:
-            return self.model
 
     def build_model(self) -> BlenderBot2RagModel:
         """

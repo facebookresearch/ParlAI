@@ -333,16 +333,10 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         opt['rag_retriever_type'] = RetrieverType.OBSERVATION_ECHO_RETRIEVER.value
         super().__init__(opt, shared=shared)
 
-    def observe(self, observation: Union[Dict, Message]) -> Message:
-        if observation.is_padding():
-            return observation
+    def _set_query_vec(self, observation: Message) -> Message:
+        retrieved_docs = []
 
-        if not observation.get(consts.RETRIEVED_DOCS):
-            self.model_api.retriever.set_retrieve_doc(
-                retrieved_docs=None, selected_docs=None, selected_sentences=None
-            )
-        else:
-            retrieved_docs = []
+        if observation.get(consts.RETRIEVED_DOCS):
             for doc_id, doc_title, doc_txt in zip(
                 observation[consts.RETRIEVED_DOCS_URLS],
                 observation[consts.RETRIEVED_DOCS_TITLES],
@@ -352,22 +346,10 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
                     Document(docid=doc_id, title=doc_title, text=doc_txt)
                 )
 
-            selected_docs = []
-            for doc_id, doc_title, doc_txt in zip(
-                observation[consts.SELECTED_DOCS_URLS],
-                observation[consts.SELECTED_DOCS_TITLES],
-                observation[consts.SELECTED_DOCS],
-            ):
-                selected_docs.append(
-                    Document(docid=doc_id, title=doc_title, text=doc_txt)
-                )
-
-        self.model_api.retriever.set_retrieve_doc(
-            retrieved_docs=retrieved_docs,
-            selected_docs=selected_docs,
-            selected_sentences=observation.get(consts.SELECTED_SENTENCES, ['']),
+        self.model_api.retriever.add_retrieve_doc(
+            observation[self._query_key], retrieved_docs
         )
-        return super().observe(observation)
+        super()._set_query_vec(observation)
 
 
 def concat_enc_outs(

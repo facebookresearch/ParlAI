@@ -1282,21 +1282,18 @@ class ObservationEchoRetriever(RagRetriever):
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
-        self._retrieved_docs = None
-        self._selected_docs = None
-        self._selected_sentences = None
         self._delimiter = '\n'
+        self._querie_ids = dict()
+        self._saved_docs = dict()
         super().__init__(opt, dictionary, shared=shared)
 
-    def set_retrieve_doc(
-        self,
-        retrieved_docs: List[Document],
-        selected_docs: List[Document],
-        selected_sentences: List[str],
-    ):
-        self._retrieved_docs = retrieved_docs or [BLANK_DOC]
-        self._selected_docs = selected_docs or [BLANK_DOC]
-        self._selected_sentences = selected_sentences or ''
+    def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
+        new_idx = len(self._querie_ids)
+        self._querie_ids[query] = new_idx
+        self._saved_docs[new_idx] = retrieved_docs or [BLANK_DOC]
+
+    def tokenize_query(self, query: str) -> List[int]:
+        return [self._querie_ids[query]]
 
     def get_delimiter(self) -> str:
         return self._delimiter
@@ -1304,13 +1301,20 @@ class ObservationEchoRetriever(RagRetriever):
     def retrieve_and_score(
         self, query: torch.LongTensor
     ) -> Tuple[List[List[Document]], torch.Tensor]:
-        assert query.size(0) == 1, 'This retriever only handles a single example batch.'
+        batch_szie = query.size(0)
+
+        retrieved_docs = []
+        for endoded_query in query.tolist():
+            docs_retrieve_idx = endoded_query[0]
+            retrieved_docs.append(self._saved_docs[docs_retrieve_idx])
+
         # Some arbitrary scoring of docs
-        retrieved_doc_scores = [1 / (1 + i) for i in range(len(self._retrieved_docs))]
-        return (
-            [self._retrieved_docs],
-            torch.Tensor(retrieved_doc_scores).reshape(1, -1).to(query.device),
+        max_num_docs = max([len(rtds) for rtds in retrieved_docs])
+        retrieved_doc_scores = torch.Tensor([1 / (1 + i) for i in range(max_num_docs)])
+        retrieved_doc_scores = retrieved_doc_scores.repeat(batch_szie, 1).to(
+            query.device
         )
+        return retrieved_docs, retrieved_doc_scores
 
 
 class DocumentChunkRanker:
