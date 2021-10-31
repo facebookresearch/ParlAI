@@ -1,5 +1,9 @@
 
 #@package _global_
+defaults:
+  - /mephisto/blueprint: wizard_internet_parlaichat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
     onboarding_qualification: wizard-onboarding-dev

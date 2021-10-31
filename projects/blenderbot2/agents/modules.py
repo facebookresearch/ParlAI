@@ -11,7 +11,7 @@ import torch
 import torch.nn
 from typing import List, Tuple, Dict, Optional
 
-from parlai.agents.fid.fid import FidModel, T5FidModel, concat_enc_outs
+from parlai.agents.fid.fid import FidModel, T5FidModel, concat_enc_outs, Fid
 from parlai.agents.rag.args import RetrieverType
 from parlai.agents.rag.rag import RagModel, T5RagModel
 from parlai.agents.rag.dpr import DprQueryEncoder, DprDocumentEncoder
@@ -76,6 +76,8 @@ class BlenderBot2RagModel(RagModel):
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
+        from .blenderbot2 import RAG_MODELS
+
         # TODO: Get rid of this hack
         opt['converting'] = True
         super().__init__(opt, dictionary, retriever_shared)
@@ -97,6 +99,7 @@ class BlenderBot2RagModel(RagModel):
         self.memory_decoder = MemoryDecoder(opt)
 
         # attrs
+        self._rag_model_interface = RAG_MODELS[self.rag_model_type](opt, self.pad_idx)
         self.knowledge_access_method = KnowledgeAccessMethod(
             opt['knowledge_access_method']
         )
@@ -306,7 +309,7 @@ class BlenderBot2RagModel(RagModel):
     ) -> Tuple[torch.LongTensor, List[List[Document]], torch.Tensor]:
         """
         Override RagModel.retrieve_and_concat to perform different retrieval, depending
-        on the.
+        on the RetrieverType.
         """
         start = time.time()
         logging.debug(f'Begin encoder: {time.time() - start:.2f}')
@@ -321,6 +324,14 @@ class BlenderBot2RagModel(RagModel):
                 )  # type: ignore
             if num_memories is not None:
                 num_memories = num_memories.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
+            if memory_decoder_vec is not None:
+                memory_decoder_vec = memory_decoder_vec.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
+            if num_memory_decoder_vecs is not None:
+                num_memory_decoder_vecs = num_memory_decoder_vecs.repeat_interleave(
                     input_turns_cnt, dim=0
                 )  # type: ignore
         n_input = (
@@ -777,9 +788,33 @@ class LongTermMemory(RagRetriever):
         return top_docs, torch.stack(top_doc_scores)
 
 
+class BlenderBot2Fid(Fid):
+    """
+    FiD Interface for BB2.
+    """
+
+    def __init__(self, opt: Opt, null_idx: int):
+        super().__init__(opt, null_idx)
+        if (
+            KnowledgeAccessMethod(opt['knowledge_access_method'])
+            is KnowledgeAccessMethod.ALL
+        ):
+            # Need to account for memories + search results
+            self.n_docs *= 2
+
+
 class BlenderBot2FidModelMixin:
     embedding_size: int
     pad_idx: int
+
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
+        super().__init__(
+            opt, dictionary, retriever_shared=retriever_shared
+        )  # type: ignore
+        self._rag_model_interface = BlenderBot2Fid(
+            opt, dictionary[dictionary.null_token]
+        )
+        self.embedding_size = opt['embedding_size']
 
     def encoder(
         self,

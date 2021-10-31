@@ -15,6 +15,7 @@ extended to any other tool like visdom.
 """
 
 import os
+import re
 from typing import Optional
 from parlai.core.params import ParlaiParser
 import json
@@ -24,6 +25,9 @@ from parlai.core.opt import Opt
 from parlai.core.metrics import Metric, dict_report, get_metric_display_data
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
+
+
+_TB_SUMMARY_INVALID_TAG_CHARACTERS = re.compile(r'[^-/\w\.]')
 
 
 class TensorboardLogger(object):
@@ -92,9 +96,12 @@ class TensorboardLogger(object):
                 logging.error(f'k {k} v {v} is not a number')
                 continue
             display = get_metric_display_data(metric=k)
+            # Remove invalid characters for TensborboardX Summary beforehand
+            # so that the logs aren't cluttered with warnings.
+            tag = _TB_SUMMARY_INVALID_TAG_CHARACTERS.sub('_', f'{k}/{setting}')
             try:
                 self.writer.add_scalar(
-                    f'{k}/{setting}',
+                    tag,
                     v,
                     global_step=step,
                     display_name=f"{display.title}",
@@ -102,7 +109,7 @@ class TensorboardLogger(object):
                 )
             except TypeError:
                 # internal tensorboard doesn't support custom display titles etc
-                self.writer.add_scalar(f'{k}/{setting}', v, global_step=step)
+                self.writer.add_scalar(tag, v, global_step=step)
 
     def flush(self):
         self.writer.flush()

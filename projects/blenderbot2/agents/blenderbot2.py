@@ -36,6 +36,7 @@ from parlai.tasks.wizard_of_internet.constants import (
     SELECTED_DOCS,
     SELECTED_DOCS_TITLES,
     SELECTED_SENTENCES,
+    NO_SELECTED_DOCS_TOKEN,
 )
 from parlai.utils.torch import padded_3d
 
@@ -47,6 +48,7 @@ from .modules import (
 )
 from .sub_modules import RetrievalType, KnowledgeAccessMethod
 from parlai.agents.fid.fid import SearchQuerySearchEngineFiDAgent
+from parlai.utils.fsdp import is_fsdp
 
 
 ZOO_QUERY_GENERATOR = 'zoo:blenderbot2/query_generator/model'
@@ -389,6 +391,13 @@ class BlenderBot2RagAgent(RagAgent):
         self._rag_model_type = model
         self._rag_model_interface = RAG_MODELS[model](self.opt, self.NULL_IDX)
 
+    @property
+    def model_api(self) -> BlenderBot2RagModel:
+        if hasattr(self.model, 'module') and not is_fsdp(self.model):
+            return self.model.module
+        else:
+            return self.model
+
     def build_model(self) -> BlenderBot2RagModel:
         """
         Build and return BlenderBot2RagModel.
@@ -507,7 +516,7 @@ class BlenderBot2RagAgent(RagAgent):
             )
         if self.add_person_tokens:
             query_str = self._remove_person_tokens(query_str)
-        observation['query_vec'] = self.model.tokenize_query(query_str)
+        observation['query_vec'] = self.model_api.tokenize_query(query_str)
         return observation
 
     def _set_memory_vec(self, observation: Message) -> Message:
@@ -541,7 +550,7 @@ class BlenderBot2RagAgent(RagAgent):
                     m for m in memories if self.opt['memory_extractor_phrase'] in m
                 ]
             if memories:
-                mem_vecs = [self.model.tokenize_memory(mem) for mem in memories]
+                mem_vecs = [self.model_api.tokenize_memory(mem) for mem in memories]
 
         observation['memory_vec'] = mem_vecs
         return observation
@@ -565,7 +574,7 @@ class BlenderBot2RagAgent(RagAgent):
                 KnowledgeAccessMethod.CLASSIFY,
                 KnowledgeAccessMethod.SEARCH_ONLY,
             ]
-            and self.model.has_query_generator()
+            and self.model_api.has_query_generator()
         ):
             query_generator_input = observation[self.opt['query_generator_key']]
             if self.opt['query_generator_ignore_phrase']:
@@ -578,7 +587,7 @@ class BlenderBot2RagAgent(RagAgent):
                 query_generator_input = self._remove_person_tokens(
                     query_generator_input
                 )
-            query_generator_vec = self.model.tokenize_query_generator_input(
+            query_generator_vec = self.model_api.tokenize_query_generator_input(
                 query_generator_input
             )
 
@@ -599,7 +608,8 @@ class BlenderBot2RagAgent(RagAgent):
         :return observation:
             return observation with gold doc vec.
         """
-        if not observation[self.opt['gold_document_key']]:
+        gold_docs = observation[self.opt['gold_document_key']]
+        if not gold_docs or gold_docs == [NO_SELECTED_DOCS_TOKEN]:
             return observation
         doc_vecs = None
         doc_title_vecs = None
@@ -614,7 +624,7 @@ class BlenderBot2RagAgent(RagAgent):
             sentences = observation[self.opt['gold_sentence_key']]
             document_titles = observation[self.opt['gold_document_titles_key']]
             if isinstance(selected_documents, str):
-                documents = [selected_documents]
+                selected_documents = [selected_documents]
             assert isinstance(selected_documents, list)
 
             documents = []
@@ -661,7 +671,7 @@ class BlenderBot2RagAgent(RagAgent):
                 KnowledgeAccessMethod.CLASSIFY,
                 KnowledgeAccessMethod.MEMORY_ONLY,
             ]
-            and self.model.has_memory_decoder()
+            and self.model_api.has_memory_decoder()
         ):
             memory_decoder_input = observation[self.opt['memory_decoder_key']]
             if self.opt['memory_decoder_ignore_phrase']:
@@ -678,7 +688,7 @@ class BlenderBot2RagAgent(RagAgent):
                 for t in tt.split('\n')
             ]
             memory_decoder_vec = [
-                self.model.tokenize_memory_decoder_input(i) for i in conv_lines
+                self.model_api.tokenize_memory_decoder_input(i) for i in conv_lines
             ]
 
         observation['memory_decoder_vec'] = memory_decoder_vec
@@ -782,10 +792,12 @@ class BlenderBot2RagAgent(RagAgent):
         output = super().eval_step(batch)
         if output is None or not hasattr(self.model, 'retriever'):
             return output
-        if hasattr(self.model.retriever, 'top_docs'):
-            output.top_docs = self.model.retriever.top_docs
-        if hasattr(self.model.retriever, 'search_queries'):
-            output.search_queries = self.model.retriever.search_queries
+        if hasattr(self.model_api.retriever, 'top_docs'):
+            output.top_docs = self.model_api.retriever.top_docs
+        if hasattr(self.model_api.retriever, 'search_queries'):
+            output.search_queries = self.model_api.retriever.search_queries
+        if hasattr(self.model_api.memory_decoder, 'memories_full_list'):
+            output.memories = self.model_api.memory_decoder.memories_full_list
         return output
 
     def _model_input(
@@ -835,11 +847,11 @@ class BlenderBot2RagAgent(RagAgent):
         if (
             KnowledgeAccessMethod(self.opt['knowledge_access_method'])
             is KnowledgeAccessMethod.CLASSIFY
-            and self.model.has_query_generator()
+            and self.model_api.has_query_generator()
         ):
             _scores, _preds, enc_state, *_ = output
             _, _, input_turns_cnt, _, _ = enc_state
-            retrieval_type = self.model.get_retrieval_type()
+            retrieval_type = self.model_api.get_retrieval_type()
             assert isinstance(retrieval_type, torch.Tensor)
             if input_turns_cnt is not None:
                 new_ret_type = torch.zeros(input_turns_cnt.size(0))

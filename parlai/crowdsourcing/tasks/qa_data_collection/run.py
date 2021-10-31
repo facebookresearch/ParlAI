@@ -12,7 +12,6 @@ from typing import List, Any
 import hydra
 from omegaconf import DictConfig
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
-    BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
 from mephisto.operations.hydra_config import register_script_config
@@ -26,12 +25,7 @@ from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-defaults = [
-    {"mephisto/blueprint": BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": "example"}]
 
 
 @dataclass
@@ -63,7 +57,7 @@ class ScriptConfig(MTurkRunScriptConfig):
 register_script_config(name="scriptconfig", module=ScriptConfig)
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 

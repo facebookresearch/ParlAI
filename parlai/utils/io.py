@@ -23,8 +23,7 @@ try:
     # register any internal file handlers
     import parlai_fb  # noqa: F401
 
-    parlai_fb.finalize_registration(PathManager)
     # internal file handlers can't handle atomic saving. see T71772714
-    USE_ATOMIC_TORCH_SAVE = False
+    USE_ATOMIC_TORCH_SAVE = not parlai_fb.finalize_registration(PathManager)
 except ModuleNotFoundError:
-    pass
+    USE_ATOMIC_TORCH_SAVE = True

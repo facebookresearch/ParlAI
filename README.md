@@ -63,6 +63,8 @@ Dependencies of the core modules are listed in [`requirements.txt`](https://gith
 models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents)) have additional requirements.
 We *strongly* recommend you install ParlAI in a [venv](https://docs.python.org/3/library/venv.html) or [conda](https://www.anaconda.com/) environment.
 
+We do not support Windows at this time, but many users [report success on Windows using Python 3.8](https://github.com/facebookresearch/ParlAI/issues/3989) and issues with Python 3.9. We are happy to accept patches that improve Windows support.
+
 **Standard Installation**
 
 If you want to use ParlAI without modifications, you can install it with:

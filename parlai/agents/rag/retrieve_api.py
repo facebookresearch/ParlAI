@@ -75,7 +75,7 @@ class SearchEngineRetriever(RetrieverAPI):
     Queries a server (eg, search engine) for a set of documents.
 
     This module relies on a running HTTP server. For each retrieval it sends the query
-    to this server and receives a JSON; it parses the JSON to create the the response.
+    to this server and receives a JSON; it parses the JSON to create the response.
     """
 
     def __init__(self, opt: Opt):
@@ -100,7 +100,7 @@ class SearchEngineRetriever(RetrieverAPI):
         if address.startswith('http://') or address.startswith('https://'):
             return address
         PROTOCOL = 'http://'
-        logging.warning(f'No portocol provided, using "{PROTOCOL}"')
+        logging.warning(f'No protocol provided, using "{PROTOCOL}"')
         return f'{PROTOCOL}{address}'
 
     def _retrieve_single(self, search_query: str, num_ret: int):
