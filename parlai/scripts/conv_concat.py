@@ -4,14 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
-from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
-from parlai.core.worlds import create_task
-from parlai.core.script import ParlaiScript, register_script
 import jsonlines
 from tqdm import tqdm
-
-import random
+from parlai.core.params import ParlaiParser
+from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
+from parlai.core.script import ParlaiScript
+from parlai.core.worlds import create_task
 
 
 def setup_args(parser=None):
