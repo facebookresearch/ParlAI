@@ -1283,17 +1283,17 @@ class ObservationEchoRetriever(RagRetriever):
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
         self._delimiter = '\n'
-        self._querie_ids = dict()
+        self._query_ids = dict()
         self._saved_docs = dict()
         super().__init__(opt, dictionary, shared=shared)
 
     def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
-        new_idx = len(self._querie_ids)
-        self._querie_ids[query] = new_idx
+        new_idx = len(self._query_ids)
+        self._query_ids[query] = new_idx
         self._saved_docs[new_idx] = retrieved_docs or [BLANK_DOC]
 
     def tokenize_query(self, query: str) -> List[int]:
-        return [self._querie_ids[query]]
+        return [self._query_ids[query]]
 
     def get_delimiter(self) -> str:
         return self._delimiter
@@ -1301,7 +1301,7 @@ class ObservationEchoRetriever(RagRetriever):
     def retrieve_and_score(
         self, query: torch.LongTensor
     ) -> Tuple[List[List[Document]], torch.Tensor]:
-        batch_szie = query.size(0)
+        batch_size = query.size(0)
 
         retrieved_docs = []
         for endoded_query in query.tolist():
@@ -1311,7 +1311,7 @@ class ObservationEchoRetriever(RagRetriever):
         # Some arbitrary scoring of docs
         max_num_docs = max([len(rtds) for rtds in retrieved_docs])
         retrieved_doc_scores = torch.Tensor([1 / (1 + i) for i in range(max_num_docs)])
-        retrieved_doc_scores = retrieved_doc_scores.repeat(batch_szie, 1).to(
+        retrieved_doc_scores = retrieved_doc_scores.repeat(batch_size, 1).to(
             query.device
         )
         return retrieved_docs, retrieved_doc_scores

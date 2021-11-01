@@ -8,7 +8,9 @@ Leveraging Passage Retrieval with Generative Models for Open Domain Question Ans
 
 See https://arxiv.org/abs/2007.01282
 """
+from abc import abstractmethod
 from copy import deepcopy
+from enum import unique
 import torch
 from typing import Tuple, Union, Optional, List, Dict, Any
 
@@ -322,7 +324,7 @@ class SearchQueryFAISSIndexFiDAgent(SearchQueryFiDAgent):
 
 class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
     """
-    Uses the gold retrived docs (documents shown to crowdsourcing agents).
+    Uses the gold retrieved docs (documents shown to crowdsourcing agents).
 
     This FiD agents has a mock retriever that picks the retrieved docs from the observed
     example.
@@ -333,8 +335,14 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         opt['rag_retriever_type'] = RetrieverType.OBSERVATION_ECHO_RETRIEVER.value
         super().__init__(opt, shared=shared)
 
+    @abstractmethod
+    def get_retrieved_knowledge(self, message):
+        """
+        Extracts the retrieved knowledge from the message.
+        """
+
     def _set_query_vec(self, observation: Message) -> Message:
-        retrieved_docs = []
+        retrieved_docs = self.get_retrieved_knowledge(observation)
 
         if observation.get(consts.RETRIEVED_DOCS):
             for doc_id, doc_title, doc_txt in zip(
@@ -350,6 +358,25 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
             observation[self._query_key], retrieved_docs
         )
         super()._set_query_vec(observation)
+
+
+class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
+    """
+    Gold knowledge FiD agent for the Wizard of Internet task.
+    """
+
+    def get_retrieved_knowledge(self, message):
+        retrieved_docs = []
+        if message.get(consts.RETRIEVED_DOCS):
+            for doc_id, doc_title, doc_txt in zip(
+                message[consts.RETRIEVED_DOCS_URLS],
+                message[consts.RETRIEVED_DOCS_TITLES],
+                message[consts.RETRIEVED_DOCS],
+            ):
+                retrieved_docs.append(
+                    Document(docid=doc_id, title=doc_title, text=doc_txt)
+                )
+        return retrieved_docs
 
 
 def concat_enc_outs(
