@@ -8,7 +8,7 @@ from parlai.core.params import ParlaiParser
 from parlai.agents.fixed_response.fixed_response import FixedResponseAgent
 from parlai.core.worlds import create_task
 from parlai.core.script import ParlaiScript, register_script
-import json
+import jsonlines
 from tqdm import tqdm
 
 import random
@@ -41,14 +41,21 @@ def concat_conv_data(opt):
     world = create_task(opt, agent)
 
     all_examples = []
+    this_episode = []
     for _ in tqdm(range(world.num_examples())):
         world.parley()
-        all_examples.extend(example_strs(opt, world))
+        this_episode.extend(example_strs(opt, world))
+        if world.get_acts()[0]['episode_done']:
+            all_examples.append(
+                {'text': '\n'.join(this_episode), 'task_name': opt['task']}
+            )
+            this_episode = []
         if world.epoch_done():
             break
 
-    with open(opt['export_fpath'], 'w') as fout:
-        json.dump({'text': '\n'.join(all_examples), 'task_name': opt['task']}, fout)
+    with jsonlines.open(opt['export_fpath'], 'w') as fout:
+        for episode in all_examples:
+            fout.write(episode)
 
 
 class ConcatData(ParlaiScript):
@@ -61,5 +68,4 @@ class ConcatData(ParlaiScript):
 
 
 if __name__ == '__main__':
-    random.seed(42)
     ConcatData.main()
