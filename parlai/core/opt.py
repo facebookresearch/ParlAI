@@ -18,7 +18,7 @@ import os
 import pkg_resources
 import parlai.utils.logging as logging
 
-from typing import List
+from typing import List, Optional
 
 from parlai.utils.io import PathManager
 
@@ -35,7 +35,7 @@ __AUTOCLEAN_KEYS__: List[str] = [
     "load_from_checkpoint",
     # added 2021-10-07
     # internal discussion: https://fb.workplace.com/groups/770643789812374/permalink/1780621008814642/
-    "datatype",  
+    "datatype",
 ]
 
 
@@ -126,9 +126,12 @@ class Opt(dict):
             f.write('\n')
 
     @classmethod
-    def load(cls, optfile: str) -> Opt:
+    def load(cls, optfile: str, always_load_opts: Optional[List] = None) -> Opt:
         """
         Load an Opt from disk.
+
+        Set 'always_load_opts' in relevant code if there are opts that should always be
+        loaded (ex. for running evals defined in opt files)
         """
         try:
             # try json first
@@ -138,13 +141,16 @@ class Opt(dict):
             # oops it's pickled
             with PathManager.open(optfile, 'rb') as b_handle:
                 dct = pickle.load(b_handle)
+
+        if always_load_opts is None:
+            always_load_opts = []
         for key in __AUTOCLEAN_KEYS__:
-            if key in dct:
+            if key in dct and key not in always_load_opts:
                 del dct[key]
         return cls(dct)
 
     @classmethod
-    def load_init(cls, optfile: str) -> Opt:
+    def load_init(cls, optfile: str, always_load_opts: Optional[List] = None) -> Opt:
         """
         Like load, but also looks in opt_presets folders.
 
@@ -160,17 +166,18 @@ class Opt(dict):
         oa_filename = os.path.join("opt_presets", optfile + ".opt")
         user_filename = os.path.join(os.path.expanduser(f"~/.parlai"), oa_filename)
         if PathManager.exists(optfile):
-            return cls.load(optfile)
+            return cls.load(optfile, always_load_opts)
         elif PathManager.exists(user_filename):
             # use a user's custom opt preset
-            return cls.load(user_filename)
+            return cls.load(user_filename, always_load_opts)
         else:
             # Maybe a bundled opt preset
             for root in ['parlai', 'parlai_internal', 'parlai_fb']:
                 try:
                     if pkg_resources.resource_exists(root, oa_filename):
                         return cls.load(
-                            pkg_resources.resource_filename(root, oa_filename)
+                            pkg_resources.resource_filename(root, oa_filename),
+                            always_load_opts,
                         )
                 except ModuleNotFoundError:
                     continue

@@ -30,15 +30,15 @@ class TestTrainModel(unittest.TestCase):
         import parlai.scripts.train_model as tms
 
         def get_tl(tmpdir):
-            final_opt = Opt(
-                {
-                    'task': 'integration_tests',
-                    'datatype': 'valid',
-                    'validation_max_exs': 30,
-                    'short_final_eval': True,
-                }
-            )
-            final_opt.save(os.path.join(tmpdir, "final_opt.opt"))
+            final_opt = {
+                'task': 'integration_tests',
+                'datatype': 'valid',
+                'validation_max_exs': 30,
+                'short_final_eval': True,
+            }
+            opt_file = os.path.join(tmpdir, "final_opt.opt")
+            with open(opt_file, "w+") as f:
+                json.dump(final_opt, f)
 
             opt = Opt(
                 {
@@ -48,7 +48,7 @@ class TestTrainModel(unittest.TestCase):
                     'model_file': os.path.join(tmpdir, 'model'),
                     'short_final_eval': True,
                     'num_epochs': 1.0,
-                    'final_extra_opt': str(os.path.join(tmpdir, "final_opt.opt")),
+                    'final_extra_opt': str(opt_file),
                 }
             )
             parser = tms.setup_args()

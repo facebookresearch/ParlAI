@@ -675,7 +675,9 @@ class TrainLoop:
 
     def _run_final_extra_eval(self, opt):
         final_valid_opt = copy.deepcopy(opt)
-        final_valid_opt_raw = Opt.load_init(opt['final_extra_opt'])
+        final_valid_opt_raw = Opt.load_init(
+            opt['final_extra_opt'], always_load_opts=["datatype"]
+        )
         final_datatype = final_valid_opt_raw["datatype"]
         for k, v in final_valid_opt_raw.items():
             final_valid_opt[k] = v
