@@ -11,7 +11,7 @@ mephisto:
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 5
     onboarding_qualification: turn_annotations_static
-    annotations_config_path: ${task_dir}/task_config/annotation_buckets.json
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
     response_field: False
   task:
     allowed_concurrent: 1
