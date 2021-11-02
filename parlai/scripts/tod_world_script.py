@@ -88,7 +88,6 @@ class TodWorldParser(ParlaiParser):
             key = model_file_prefix + "_model_file"
             if key in partial and partial[key] and len(partial[key]) > 0:
                 model_name = self._get_model_name_from_model_file(key, partial)
-                print(model_name, partial[key])
                 self.add_model_subargs(model_name, partial)
 
     def _get_model_name_from_model_file(self, key, opt):
@@ -220,7 +219,6 @@ class TodWorldScript(ParlaiScript):
         elif len(opt.get(f"{prefix}_model", "")) > 0:
             model = self._make_agent(opt, f"{prefix}_model", "")
         else:
-            print(opt)
             raise KeyError(
                 f"Both `--{prefix}-model-file` and `--{prefix}-model` specified. Neither currently set."
             )
@@ -249,8 +247,9 @@ class TodWorldScript(ParlaiScript):
         )
 
         if "api_schema_grounding_model" not in opt and "api_schemas" in opt:
-            opt["api_schema_grounding_model"] = opt.get("goal_grounding_model", "").replace("Goal", "ApiSchema")
-            print["api_schema_grounding_model"] 
+            opt["api_schema_grounding_model"] = opt.get(
+                "goal_grounding_model", ""
+            ).replace("Goal", "ApiSchema")
 
         agents[tod_world.API_SCHEMA_GROUNDING_IDX] = self._get_model_or_default_agent(
             opt,
@@ -270,6 +269,7 @@ class TodWorldScript(ParlaiScript):
         """
         opt = deepcopy(opt_raw)
         opt[opt_key] = opt[name]
+        print(opt_key, name)
         return create_agent(opt, requireModelExists)
 
     def _run_episode(self, opt, world, world_logger):
@@ -300,20 +300,18 @@ class TodWorldScript(ParlaiScript):
             world_report = world.report()
         logging.report("Final report:\n" + nice_report(world_report))
 
+        report = dict_report(world_report)
+
+        def get_episode_report(goal, episode_metric):
+            metrics_dict = dict_report(episode_metric.report())
+            metrics_dict["goal"] = goal
+            return metrics_dict
+
+        report["tod_metrics"] = [get_episode_report(g, e) for g, e in episode_metrics]
+
         if "report_filename" in opt and opt["report_filename"] is not None:
             if len(world_report) == 0:
                 logging.warning("Report is empty; not saving report")
-
-            report = dict_report(world_report)
-
-            def get_episode_report(goal, episode_metric):
-                metrics_dict = dict_report(episode_metric.report())
-                metrics_dict["goal"] = goal
-                return metrics_dict
-
-            report["tod_metrics"] = [
-                get_episode_report(g, e) for g, e in episode_metrics
-            ]
 
             report_fname = f"{opt['report_filename']}.json"
             # Save report
