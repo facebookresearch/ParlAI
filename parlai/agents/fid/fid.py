@@ -343,17 +343,6 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
 
     def _set_query_vec(self, observation: Message) -> Message:
         retrieved_docs = self.get_retrieved_knowledge(observation)
-
-        if observation.get(consts.RETRIEVED_DOCS):
-            for doc_id, doc_title, doc_txt in zip(
-                observation[consts.RETRIEVED_DOCS_URLS],
-                observation[consts.RETRIEVED_DOCS_TITLES],
-                observation[consts.RETRIEVED_DOCS],
-            ):
-                retrieved_docs.append(
-                    Document(docid=doc_id, title=doc_title, text=doc_txt)
-                )
-
         self.model_api.retriever.add_retrieve_doc(
             observation[self._query_key], retrieved_docs
         )
