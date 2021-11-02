@@ -28,6 +28,7 @@ from parlai.agents.rag.model_types import (
     fix_incremental_state,
 )
 from parlai.utils.typing import TShared
+import parlai.utils.logging as logging
 from parlai.tasks.wizard_of_internet import constants as consts
 
 
@@ -333,6 +334,14 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
     def __init__(self, opt: Opt, shared: TShared = None):
         opt = deepcopy(opt)
         opt['rag_retriever_type'] = RetrieverType.OBSERVATION_ECHO_RETRIEVER.value
+        if opt['rag_retriever_query'] != 'full_history':
+            prev_sel = opt['rag_retriever_query']
+            opt['rag_retriever_query'] = 'full_history'
+            logging.warning(
+                'GoldDocRetrieverFiDAgent only works with `rag_retriever_query` being `"full_history"`. '
+                f'Changing opt value for `rag_retriever_query`: `"{prev_sel}"` -> `"full_history"`'
+            )
+
         super().__init__(opt, shared=shared)
 
     @abstractmethod
