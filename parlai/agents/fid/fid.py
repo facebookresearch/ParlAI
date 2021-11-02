@@ -8,12 +8,15 @@ Leveraging Passage Retrieval with Generative Models for Open Domain Question Ans
 
 See https://arxiv.org/abs/2007.01282
 """
+from abc import abstractmethod
 from copy import deepcopy
+from enum import unique
 import torch
 from typing import Tuple, Union, Optional, List, Dict, Any
 
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
+from parlai.core.message import Message
 from parlai.agents.transformer.transformer import TransformerGeneratorModel
 
 from parlai.agents.rag.args import RetrieverType
@@ -25,6 +28,8 @@ from parlai.agents.rag.model_types import (
     fix_incremental_state,
 )
 from parlai.utils.typing import TShared
+import parlai.utils.logging as logging
+from parlai.tasks.wizard_of_internet import constants as consts
 
 
 class Fid(RagToken):
@@ -92,8 +97,8 @@ class FidModel(RagModel):
         self, incremental_state: Dict[int, dict], inds: torch.Tensor
     ) -> Dict[int, dict]:
         """
-        Override RagModel.reorder_decoder_incremental_state to resort back
-        to normal reordering.
+        Override RagModel.reorder_decoder_incremental_state to resort back to normal
+        reordering.
 
         See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
         """
@@ -316,6 +321,60 @@ class SearchQueryFAISSIndexFiDAgent(SearchQueryFiDAgent):
         opt = deepcopy(opt)
         opt['rag_retriever_type'] = RetrieverType.SEARCH_TERM_FAISS.value
         super().__init__(opt, shared=shared)
+
+
+class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
+    """
+    Uses the gold retrieved docs (documents shown to crowdsourcing agents).
+
+    This FiD agents has a mock retriever that picks the retrieved docs from the observed
+    example.
+    """
+
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.OBSERVATION_ECHO_RETRIEVER.value
+        if opt['rag_retriever_query'] != 'full_history':
+            prev_sel = opt['rag_retriever_query']
+            opt['rag_retriever_query'] = 'full_history'
+            logging.warning(
+                'GoldDocRetrieverFiDAgent only works with `rag_retriever_query` being `"full_history"`. '
+                f'Changing opt value for `rag_retriever_query`: `"{prev_sel}"` -> `"full_history"`'
+            )
+
+        super().__init__(opt, shared=shared)
+
+    @abstractmethod
+    def get_retrieved_knowledge(self, message):
+        """
+        Extracts the retrieved knowledge from the message.
+        """
+
+    def _set_query_vec(self, observation: Message) -> Message:
+        retrieved_docs = self.get_retrieved_knowledge(observation)
+        self.model_api.retriever.add_retrieve_doc(
+            observation[self._query_key], retrieved_docs
+        )
+        super()._set_query_vec(observation)
+
+
+class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
+    """
+    Gold knowledge FiD agent for the Wizard of Internet task.
+    """
+
+    def get_retrieved_knowledge(self, message):
+        retrieved_docs = []
+        if message.get(consts.RETRIEVED_DOCS):
+            for doc_id, doc_title, doc_txt in zip(
+                message[consts.RETRIEVED_DOCS_URLS],
+                message[consts.RETRIEVED_DOCS_TITLES],
+                message[consts.RETRIEVED_DOCS],
+            ):
+                retrieved_docs.append(
+                    Document(docid=doc_id, title=doc_title, text=doc_txt)
+                )
+        return retrieved_docs
 
 
 def concat_enc_outs(
