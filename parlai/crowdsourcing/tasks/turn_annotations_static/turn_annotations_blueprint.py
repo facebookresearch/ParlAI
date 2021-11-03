@@ -97,6 +97,10 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             "help": "If we want a freeform textbox input for the crowdworker to respond to the message."
         },
     )
+    task_description_file: str = field(
+        default=os.path.join(get_task_path(), 'task_config/task_description.html'),
+        metadata={"help": "Path to file of HTML to show on the task-description page"},
+    )
 
 
 @register_mephisto_abstraction()
@@ -185,6 +189,19 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         for use by the task's frontend.
         """
 
+        # Load task description from file
+        MISSING_TASK_DESCRIPTION_TEXT = (
+            "<h1>" "You didn't specify a task_description_file" "</h1>"
+        )
+        task_description = MISSING_TASK_DESCRIPTION_TEXT
+        if self.args.blueprint.get("task_description_file", None) is not None:
+            full_path = os.path.expanduser(self.args.blueprint.task_description_file)
+            assert os.path.exists(
+                full_path
+            ), f"Target task description path {full_path} doesn't exist"
+            with open(full_path, "r") as description_fp:
+                task_description = description_fp.read()
+
         with open(self.args.blueprint.onboarding_data, "r", encoding="utf-8-sig") as f:
             onboarding_data = json.loads(f.read())
 
@@ -196,7 +213,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 annotation_buckets = json.loads(f.read())
 
         return {
-            "task_description": self.args.task.get('task_description', None),
+            "task_description": task_description,
             "task_title": self.args.task.get('task_title', None),
             "annotation_question": self.args.blueprint.annotation_question,
             "onboarding_data": onboarding_data,
