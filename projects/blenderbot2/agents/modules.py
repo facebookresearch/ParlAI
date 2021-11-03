@@ -309,7 +309,7 @@ class BlenderBot2RagModel(RagModel):
     ) -> Tuple[torch.LongTensor, List[List[Document]], torch.Tensor]:
         """
         Override RagModel.retrieve_and_concat to perform different retrieval, depending
-        on the.
+        on the RetrieverType.
         """
         start = time.time()
         logging.debug(f'Begin encoder: {time.time() - start:.2f}')

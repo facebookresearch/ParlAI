@@ -12,9 +12,6 @@ import hydra
 from mephisto.operations.hydra_config import register_script_config
 from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
-    STATIC_BLUEPRINT_TYPE,
-)
 from parlai.crowdsourcing.tasks.turn_annotations_static.util import run_static_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
@@ -26,12 +23,7 @@ TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 # check the README in parlai/crowdsourcing/
 # python turn_annotations_static/run.py conf=<conf name sans yaml> --config-dir <path to directory with a conf/ folder>
 
-defaults = [
-    {'mephisto/blueprint': STATIC_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": 'example'},
-]
+defaults = ["_self_", {"conf": 'example'}]
 
 
 @dataclass
