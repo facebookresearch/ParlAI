@@ -209,6 +209,9 @@ class Seq2seqAgent(TorchGeneratorAgent):
         Override batchify options for seq2seq.
         """
         kwargs['sort'] = True  # need sorted for pack_padded
+        # TODO: Sorting the batch will result in various local metrics being broadcasted
+        # back to individual examples in the wrong order, such as the lengths of
+        # the context and labels. Aggregate metric reports will still be accurate.
         return super().batchify(*args, **kwargs)
 
     def state_dict(self):

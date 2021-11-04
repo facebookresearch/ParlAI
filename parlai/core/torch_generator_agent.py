@@ -639,7 +639,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         kwargs['add_end'] = True  # we do want this
         return super().vectorize(*args, **kwargs)
 
-    def batchify(self, obs_batch, sort=True):
+    def batchify(self, obs_batch, sort=False):
         batch = super().batchify(obs_batch, sort=sort)
         if (
             self.beam_block_full_context
