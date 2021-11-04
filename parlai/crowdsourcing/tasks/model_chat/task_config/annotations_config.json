@@ -19,6 +19,10 @@
         "bucket_4": {
             "name": "Bucket 4",
             "description": "this response implies something...4"
+        },
+        "none_all_good": {
+            "name": "None, all good",
+            "description": "This response implies that there are no problems with the data"
         }
     }
 }
