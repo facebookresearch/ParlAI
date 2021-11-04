@@ -5,6 +5,7 @@ acts:
     __retrieved-docs__:
     - __noretrieved-docs__
     __select-docs-titles__: []
+    __selected-docs-urls__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -22,6 +23,7 @@ acts:
     __retrieved-docs__:
     - __noretrieved-docs__
     __select-docs-titles__: []
+    __selected-docs-urls__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -785,6 +787,7 @@ acts:
 
       Tags:Auditing, Role of Auditor'
     __select-docs-titles__: []
+    __selected-docs-urls__: []
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -2095,6 +2098,8 @@ acts:
       Seton Hall basketball: Inside Sandro Mamukelashvili s remarkable rebound'
     __select-docs-titles__:
     - Super Bowl LV Wikipedia
+    __selected-docs-urls__:
+    - https://en.wikipedia.org/wiki/Super_Bowl_LV
     __selected-docs__:
     - 'Raymond James Stadium in 2007
 
@@ -7002,6 +7007,8 @@ acts:
       More of: New England PatriotsNFLtom brady'
     __select-docs-titles__:
     - Tom Brady Wikipedia
+    __selected-docs-urls__:
+    - https://en.wikipedia.org/wiki/Tom_Brady
     __selected-docs__:
     - 'For other people named Tom Brady, see Tom Brady (disambiguation).
 

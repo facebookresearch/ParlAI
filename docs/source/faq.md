@@ -13,6 +13,19 @@ correctly set. When loading a pretrained checkpoint, all of the parameters for
 the model itself will be loaded from the model's `.opt` file, but all
 task-specific parameters will need to be re-specified.
 
+If results differ by a few small decimal places, this can often be attributed
+to differences in hardware or software environment.
+
+## I want to generate a lot of responses to fixed utterances
+
+The easiest way to do this is to [create a
+teacher](tutorial_task) in ParlAI Dialog Format. Then, use
+`eval_model` with world logging to store all the responses:
+
+```
+parlai eval_model -t fromfile:parlaiformat --fromfile-datapath yourtextfile.txt \
+    -mf some_model_file --world-logs outputfile
+```
 
 ## Why is my generative model's perplexity so high (>1000) when evaluating?
 
