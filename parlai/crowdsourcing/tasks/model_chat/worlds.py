@@ -180,6 +180,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.task_turn_idx = 0
         self.num_turns = num_turns
 
+        self.agent.agent_id = 'Speaker 1'
+        self.bot.agent_id = 'Speaker 2'
+
         self.dialog = []
         self.tag = f'conversation_id {agent.mephisto_agent.db_id}'
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -678,8 +681,6 @@ def make_world(opt, agents):
     # Extract important components from opt
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
-
-    agents[0].agent_id = "Worker"
 
     # Get context: personas, previous utterances, etc.
     if context_generator is not None:

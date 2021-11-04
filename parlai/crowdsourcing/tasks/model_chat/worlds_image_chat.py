@@ -134,8 +134,6 @@ Be sure to talk about this image a little bit before discussing other things!
 
 def make_world(opt, agents):
 
-    agents[0].agent_id = "Worker"
-
     # We are showing an image to the worker and bot, so grab the image path and other
     # context info
     image_idx, model_name, no_more_work = opt['image_stack'].get_next_image(
