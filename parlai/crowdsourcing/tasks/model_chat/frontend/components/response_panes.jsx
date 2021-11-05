@@ -48,6 +48,34 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
     }
   }, [active, sending, rating, onMessageSend]);
 
+  return (
+    <div className="response-type-module">
+      <div>
+        You've completed the conversation. Please annotate the final turn, fill out
+        the following, and hit Done.
+      </div>
+      <br />
+      <div className="response-bar">
+        <RatingSelector
+          taskConfig={taskConfig}
+          setRating={setRating}
+          rating={rating}
+        >
+        </RatingSelector>
+        <Button
+          className="btn btn-submit submit-response"
+          id="id_send_msg_button"
+          disabled={rating === 0 || !active || sending}
+          onClick={() => tryMessageSend()}
+        >
+          Done
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function RatingSelector({ taskConfig, setRating, rating }) {
   const ratingOptions = [<option key="empty_option" />].concat(
     ["1", "2", "3", "4", "5"].map((option_label, index) => {
       return (
@@ -56,7 +84,7 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
     })
   );
 
-  const ratingSelector = (
+  return (
     <FormGroup key={"final_survey"}>
       <Col
         componentClass={ControlLabel}
@@ -80,27 +108,6 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
         </FormControl>
       </Col>
     </FormGroup>
-  );
-
-  return (
-    <div className="response-type-module">
-      <div>
-        You've completed the conversation. Please annotate the final turn, fill out
-        the following, and hit Done.
-      </div>
-      <br />
-      <div className="response-bar">
-        {ratingSelector}
-        <Button
-          className="btn btn-submit submit-response"
-          id="id_send_msg_button"
-          disabled={rating === 0 || !active || sending}
-          onClick={() => tryMessageSend()}
-        >
-          Done
-        </Button>
-      </div>
-    </div>
   );
 }
 
