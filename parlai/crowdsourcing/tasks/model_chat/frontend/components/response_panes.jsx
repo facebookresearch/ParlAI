@@ -8,7 +8,7 @@
 
 import React from "react";
 
-import { Button, Col, ControlLabel, FormControl, FormGroup } from "react-bootstrap";
+import { Button, Col, ControlLabel, Form, FormControl, FormGroup } from "react-bootstrap";
 
 
 function hasAnyAnnotations(annotations) {
@@ -49,18 +49,18 @@ function RatingSelector({ active, ratings, sending, ratingQuestion, ratingIndex,
   }
 
   return (
-    <FormGroup key={"final_survey"}>
+    <FormGroup key={"final_survey_" + ratingIndex.toString()}>
       <Col
         componentClass={ControlLabel}
         sm={6}
-        style={{ fontSize: "16px" }}
+        style={{ fontSize: "14px" }}
       >
         {ratingQuestion}
       </Col>
       <Col sm={5}>
         <FormControl
           componentClass="select"
-          style={{ fontSize: "16px" }}
+          style={{ fontSize: "14px" }}
           value={ratings[ratingIndex]}
           onChange={(e) => handleRatingSelection(e.target.value)}
           disabled={!active || sending}
@@ -134,15 +134,20 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
       </div>
       <br />
       <div className="response-bar">
-        {listRatingSelectors}
-        <Button
-          className="btn btn-submit submit-response"
-          id="id_send_msg_button"
-          disabled={!active || sending}
-          onClick={() => tryMessageSend()}
+        <Form 
+          horizontal
+          style={{ backgroundColor: "#eeeeee", paddingBottom: "10px" }}
         >
-          Done
-        </Button>
+          {listRatingSelectors}
+          <Button
+            className="btn btn-submit submit-response"
+            id="id_send_msg_button"
+            disabled={!active || sending}
+            onClick={() => tryMessageSend()}
+          >
+            Done
+          </Button>
+        </Form>
       </div>
     </div>
   );

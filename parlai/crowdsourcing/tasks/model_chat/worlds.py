@@ -443,7 +443,7 @@ class ModelChatWorld(BaseModelChatWorld):
             # Display the previous two utterances
             human_first_msg = {
                 'episode_done': False,
-                'id': self.agent.id,
+                'id': self.agent.agent_id,
                 'text': self.context_info['person1_seed_utterance'],
                 'fake_start': True,
                 'agent_idx': 0,
@@ -452,7 +452,7 @@ class ModelChatWorld(BaseModelChatWorld):
                 human_first_msg[k] = v
             bot_first_msg = {
                 'episode_done': False,
-                'id': self.bot.id,
+                'id': self.bot.agent_id,
                 'text': self.context_info['person2_seed_utterance'],
                 'fake_start': True,
                 'agent_idx': 1,
@@ -474,7 +474,7 @@ class ModelChatWorld(BaseModelChatWorld):
                 human_persona_strings = ['', '']
             human_first_msg = {
                 'episode_done': False,
-                'id': self.agent.id,
+                'id': self.agent.agent_id,
                 'text': 'Hi!',
                 'fake_start': True,
                 'agent_idx': 0,
@@ -491,7 +491,9 @@ class ModelChatWorld(BaseModelChatWorld):
             self.bot.observe(validate(human_first_msg))
 
             first_bot_act = self.bot.act()
-            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act = Compatibility.backward_compatible_force_set(
+                first_bot_act, 'id', self.bot.agent_id
+            )
 
             self.agent.observe(validate(first_bot_act))
 
