@@ -10,8 +10,8 @@ See https://arxiv.org/abs/2007.01282
 """
 from abc import abstractmethod
 from copy import deepcopy
-from enum import unique
 import torch
+import random
 from typing import Tuple, Union, Optional, List, Dict, Any
 
 from parlai.core.dict import DictionaryAgent
@@ -416,7 +416,7 @@ class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
             logging.debug(
                 f'Trimmed retrieved docs from {n_docs_in_message} to {len(retrieved_docs)}'
             )
-
+        random.shuffle(retrieved_docs)
         return retrieved_docs
 
 
