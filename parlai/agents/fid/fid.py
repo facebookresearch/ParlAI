@@ -412,6 +412,11 @@ class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
             if len(retrieved_docs) == self._n_docs:
                 break
 
+        if n_docs_in_message > len(retrieved_docs):
+            logging.debug(
+                f'Trimmed retrieved docs from {n_docs_in_message} to {len(retrieved_docs)}'
+            )
+
         return retrieved_docs
 
 
