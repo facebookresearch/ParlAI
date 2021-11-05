@@ -8,13 +8,7 @@
 
 import React from "react";
 
-import { 
-  FormControl, 
-  Button,
-  Col,
-  FormGroup,
-  ControlLabel,
-} from "react-bootstrap";
+import {Button, Col, ControlLabel, FormControl, FormGroup} from "react-bootstrap";
 
 
 function hasAnyAnnotations(annotations) {
@@ -29,7 +23,7 @@ function hasAnyAnnotations(annotations) {
   return false;
 }
 
-function RatingSelector({ taskConfig, setRating, active, rating, sending }) {
+function RatingSelector({ active, ratings, sending, ratingQuestion, ratingIndex }) {
   const ratingOptions = [<option key="empty_option" />].concat(
     ["1", "2", "3", "4", "5"].map((option_label, index) => {
       return (
@@ -45,16 +39,15 @@ function RatingSelector({ taskConfig, setRating, active, rating, sending }) {
         sm={6}
         style={{ fontSize: "16px" }}
       >
-        {taskConfig.final_rating_question}
+        {ratingQuestion}
       </Col>
       <Col sm={5}>
         <FormControl
           componentClass="select"
           style={{ fontSize: "16px" }}
-          value={rating}
+          value={ratings[ratingIndex]}
           onChange={(e) => {
-            var val = e.target.value;
-            setRating(val);
+            ratings[ratingIndex] = e.target.value;
           }}
           disabled={!active || sending}
         >
@@ -66,11 +59,31 @@ function RatingSelector({ taskConfig, setRating, active, rating, sending }) {
 }
 
 function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
-  const [rating, setRating] = React.useState(0);
   const [sending, setSending] = React.useState(false);
 
+  // Set up multiple response questions
+  let rating_questions = taskConfig.final_rating_question.split("|");
+  let ratings = [];
+  for (let _ of rating_questions) {
+    ratings.push("");
+  }
+
   const tryMessageSend = React.useCallback(() => {
-    if (active && !sending) {
+
+    let all_ratings_filled = true;
+    let rating = "";
+    for (let ind in ratings) {
+      if (ratings[ind] === "") {
+        all_ratings_filled = false;
+      }
+      if (ind === 0) {
+        rating += ratings[ind];
+      } else {
+        rating += "|" + ratings[ind];
+      }
+    }
+
+    if (all_ratings_filled && active && !sending) {
       setSending(true);
       onMessageSend({
         text: "",
@@ -82,7 +95,20 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
         setSending(false);
       });
     }
-  }, [active, sending, rating, onMessageSend]);
+  }, [active, sending, ratings, onMessageSend]);
+
+  const listRatingSelectors = rating_questions.map((ratingQuestion, ratingIndex) => {
+    return (
+        <RatingSelector
+          active={active}
+          ratings={ratings}
+          sending={sending}
+          ratingQuestion={ratingQuestion}
+          ratingIndex={ratingIndex}
+        >
+        </RatingSelector>
+    );
+  });
 
   return (
     <div className="response-type-module">
@@ -92,18 +118,11 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
       </div>
       <br />
       <div className="response-bar">
-        <RatingSelector
-          taskConfig={taskConfig}
-          setRating={setRating}
-          active={active}
-          rating={rating}
-          sending={sending}
-        >
-        </RatingSelector>
+        {listRatingSelectors}
         <Button
           className="btn btn-submit submit-response"
           id="id_send_msg_button"
-          disabled={rating === 0 || !active || sending}
+          disabled={ !active || sending }
           onClick={() => tryMessageSend()}
         >
           Done
