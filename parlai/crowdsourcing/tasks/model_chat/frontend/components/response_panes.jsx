@@ -29,7 +29,7 @@ function hasAnyAnnotations(annotations) {
   return false;
 }
 
-function RatingSelector({ taskConfig, setRating, rating, sending }) {
+function RatingSelector({ taskConfig, setRating, active, rating, sending }) {
   const ratingOptions = [<option key="empty_option" />].concat(
     ["1", "2", "3", "4", "5"].map((option_label, index) => {
       return (
@@ -95,6 +95,7 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
         <RatingSelector
           taskConfig={taskConfig}
           setRating={setRating}
+          active={active}
           rating={rating}
           sending={sending}
         >
