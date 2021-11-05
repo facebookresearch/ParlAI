@@ -9,6 +9,9 @@
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
+const DEFAULT_MIN_CORRECT = 4;
+const DEFAULT_MAX_INCORRECT = 3;
+const DEFAULT_MAX_FAILURES_ALLOWED = 1;
 var onboardingFailuresCount = 0;
 
 var renderOnboardingFail = function () {
@@ -56,10 +59,13 @@ var handleOnboardingSubmit = function ({ onboardingData, currentTurnAnnotations,
         }
     }
     console.log('correct: ' + countCorrect + ', incorrect: ' + countIncorrect);
-    if (countCorrect >= onboardingData.min_correct && countIncorrect <= onboardingData.max_incorrect) {
+    const min_correct = onboardingData.hasOwnProperty("min_correct") ? onboardingData.min_correct : DEFAULT_MIN_CORRECT;
+    const max_incorrect = onboardingData.hasOwnProperty("max_incorrect") ? onboardingData.max_incorrect : DEFAULT_MAX_INCORRECT;
+    const max_failures_allowed = onboardingData.hasOwnProperty("max_failures_allowed") ? onboardingData.max_failures_allowed : DEFAULT_MAX_FAILURES_ALLOWED;
+    if (countCorrect >= min_correct && countIncorrect <= max_incorrect) {
         onSubmit({ annotations: currentTurnAnnotations, success: true });
     } else {
-        if (onboardingFailuresCount < onboardingData.max_failures_allowed) {
+        if (onboardingFailuresCount < max_failures_allowed) {
             onboardingFailuresCount += 1;
             alert('You did not label the sample conversation well enough. Please try one more time!');
         } else {
