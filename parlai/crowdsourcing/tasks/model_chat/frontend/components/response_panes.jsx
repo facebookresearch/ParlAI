@@ -28,54 +28,8 @@ function hasAnyAnnotations(annotations) {
   }
   return false;
 }
-  
-function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
-  const [rating, setRating] = React.useState(0);
-  const [sending, setSending] = React.useState(false);
 
-  const tryMessageSend = React.useCallback(() => {
-    if (active && !sending) {
-      setSending(true);
-      onMessageSend({ 
-        text: "", 
-        task_data: {
-          problem_data_for_prior_message: currentCheckboxes,
-          final_rating: rating,
-        },
-      }).then(() => {
-        setSending(false);
-      });
-    }
-  }, [active, sending, rating, onMessageSend]);
-
-  return (
-    <div className="response-type-module">
-      <div>
-        You've completed the conversation. Please annotate the final turn, fill out
-        the following, and hit Done.
-      </div>
-      <br />
-      <div className="response-bar">
-        <RatingSelector
-          taskConfig={taskConfig}
-          setRating={setRating}
-          rating={rating}
-        >
-        </RatingSelector>
-        <Button
-          className="btn btn-submit submit-response"
-          id="id_send_msg_button"
-          disabled={rating === 0 || !active || sending}
-          onClick={() => tryMessageSend()}
-        >
-          Done
-        </Button>
-      </div>
-    </div>
-  );
-}
-
-function RatingSelector({ taskConfig, setRating, rating }) {
+function RatingSelector({ taskConfig, setRating, rating, sending }) {
   const ratingOptions = [<option key="empty_option" />].concat(
     ["1", "2", "3", "4", "5"].map((option_label, index) => {
       return (
@@ -108,6 +62,53 @@ function RatingSelector({ taskConfig, setRating, rating }) {
         </FormControl>
       </Col>
     </FormGroup>
+  );
+}
+
+function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
+  const [rating, setRating] = React.useState(0);
+  const [sending, setSending] = React.useState(false);
+
+  const tryMessageSend = React.useCallback(() => {
+    if (active && !sending) {
+      setSending(true);
+      onMessageSend({
+        text: "",
+        task_data: {
+          problem_data_for_prior_message: currentCheckboxes,
+          final_rating: rating,
+        },
+      }).then(() => {
+        setSending(false);
+      });
+    }
+  }, [active, sending, rating, onMessageSend]);
+
+  return (
+    <div className="response-type-module">
+      <div>
+        You've completed the conversation. Please annotate the final turn, fill out
+        the following, and hit Done.
+      </div>
+      <br />
+      <div className="response-bar">
+        <RatingSelector
+          taskConfig={taskConfig}
+          setRating={setRating}
+          rating={rating}
+          sending={sending}
+        >
+        </RatingSelector>
+        <Button
+          className="btn btn-submit submit-response"
+          id="id_send_msg_button"
+          disabled={rating === 0 || !active || sending}
+          onClick={() => tryMessageSend()}
+        >
+          Done
+        </Button>
+      </div>
+    </div>
   );
 }
 
