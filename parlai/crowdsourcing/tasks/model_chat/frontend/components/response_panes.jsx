@@ -133,22 +133,19 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
         the following, and hit Done.
       </div>
       <br />
-      <div className="response-bar">
-        <Form 
-          horizontal
-          style={{ backgroundColor: "#eeeeee", paddingBottom: "10px" }}
+      <Form
+        horizontal
+      >
+        {listRatingSelectors}
+        <Button
+          className="btn btn-submit submit-response"
+          id="id_send_msg_button"
+          disabled={!active || sending}
+          onClick={() => tryMessageSend()}
         >
-          {listRatingSelectors}
-          <Button
-            className="btn btn-submit submit-response"
-            id="id_send_msg_button"
-            disabled={!active || sending}
-            onClick={() => tryMessageSend()}
-          >
-            Done
-          </Button>
-        </Form>
-      </div>
+          Done
+        </Button>
+      </Form>
     </div>
   );
 }
