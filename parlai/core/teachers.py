@@ -426,7 +426,13 @@ class FixedDialogTeacher(Teacher):
         else:
             self.index.value += 1
             if loop:
-                self.index.value %= num_eps
+                try:
+                    self.index.value %= num_eps
+                except ZeroDivisionError:
+                    raise ZeroDivisionError(
+                        "Your setup_data is providing zero items. Teachers can not "
+                        "be empty."
+                    )
             new_idx = self.index.value
         return new_idx
 
