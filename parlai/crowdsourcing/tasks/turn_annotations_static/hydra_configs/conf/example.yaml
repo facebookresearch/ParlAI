@@ -7,7 +7,7 @@ mephisto:
   blueprint:
     subtasks_per_unit: 6
     task_source: ${task_dir}/webapp/build/bundle.js
-    data_jsonl: ${task_dir}/task_config/onboarding_in_flight.jsonl
+    data_jsonl: FIXME_TASK_DATA_PATH
     extra_source_dir: ${task_dir}/webapp/src/static
     units_per_assignment: 5
     onboarding_qualification: turn_annotations_static
