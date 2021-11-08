@@ -430,8 +430,9 @@ class FixedDialogTeacher(Teacher):
                     self.index.value %= num_eps
                 except ZeroDivisionError:
                     raise ZeroDivisionError(
-                        "Your setup_data is providing zero items. Teachers can not "
-                        "be empty."
+                        "The teacher has either empty data (e.g. setup_data yielded "
+                        "no items, or self.num_episodes() == 0). We do not support "
+                        "empty datasets (or folds) at this time."
                     )
             new_idx = self.index.value
         return new_idx
