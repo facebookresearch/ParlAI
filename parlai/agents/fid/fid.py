@@ -353,6 +353,14 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
 
     def _set_query_vec(self, observation: Message) -> Message:
         retrieved_docs = self.get_retrieved_knowledge(observation)
+        if len(retrieved_docs) > self._n_docs:
+            logging.warning(
+                f'Your `get_retrieved_knowledge` method returned {len(retrieved_docs)} Documents, '
+                f'instead of the expected {self._n_docs}. '
+                f'This agent will only use the first {self._n_docs} Documents. '
+                'Consider modifying your implementation of `get_retrieved_knowledge` to avoid unexpected results.'
+            )
+            retrieved_docs = retrieved_docs[: self._n_docs]
         self.model_api.retriever.add_retrieve_doc(
             observation[self._query_key], retrieved_docs
         )
@@ -405,12 +413,13 @@ class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
         # We add them by iterating forward in the __retrieved-docs__ list for repeatability,
         # but we shuffle the order of the final retruned docs, to make sure model doesn't cheat.
         for doc_idx in range(n_docs_in_message):
+            if len(retrieved_docs) == self._n_docs:
+                break
+
             if doc_idx in already_added_doc_idx:
                 continue
 
             retrieved_docs.append(self._extract_doc_from_message(message, doc_idx))
-            if len(retrieved_docs) == self._n_docs:
-                break
 
         if n_docs_in_message > len(retrieved_docs):
             logging.debug(
