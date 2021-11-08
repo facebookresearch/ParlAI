@@ -356,9 +356,10 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         if len(retrieved_docs) > self._n_docs:
             logging.warning(
                 f'Your `get_retrieved_knowledge` method returned {len(retrieved_docs)} Documents, '
-                f'instead of the expected {self._n_docs}. '
+                f'instead of the expected {self._n_docs} (set by `--n-docs`). '
                 f'This agent will only use the first {self._n_docs} Documents. '
-                'Consider modifying your implementation of `get_retrieved_knowledge` to avoid unexpected results.'
+                'Consider modifying your implementation of `get_retrieved_knowledge` to avoid unexpected results. '
+                '(or alternatively you may increase `--n-docs` parameter)'
             )
             retrieved_docs = retrieved_docs[: self._n_docs]
         self.model_api.retriever.add_retrieve_doc(
