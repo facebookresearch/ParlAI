@@ -101,10 +101,6 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     max_resp_time: int = field(
         default=180, metadata={"help": "time limit for entering a dialog message"}
     )
-    chat_data_folder: str = field(
-        default=MISSING,
-        metadata={"help": "Folder in which to save collected conversation data"},
-    )
     check_acceptability: bool = field(
         default=False,
         metadata={
@@ -193,16 +189,6 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             full_path
         ), f"Target left pane text path {full_path} doesn't exist"
 
-        if args.blueprint.get("chat_data_folder") == '':
-            raise ValueError('Must provide a valid chat data folder')
-        assert '~' not in args.blueprint.chat_data_folder, (
-            f'"~" can\'t currently be parsed in the chat data folder path '
-            f'{args.blueprint.chat_data_folder}'
-        )
-        # Currently Hydra overrides the tilde key at lower levels as described here: https://hydra.cc/docs/next/advanced/override_grammar/basic/#grammar
-        # Thus the TILDE key cannot be used in replacement for $HOME variable
-        # Some hacky solution can probably be achieved but won't be good code so for now this assert is written as a placeholder
-
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)
             assert os.path.exists(
@@ -255,7 +241,6 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
                 'max_resp_time': args.blueprint.max_resp_time,
                 'is_sandbox': args.provider.requester_name == 'MOCK_REQUESTER',
                 'check_acceptability': args.blueprint.check_acceptability,
-                'chat_data_folder': args.blueprint.chat_data_folder,
             }
         )
 
