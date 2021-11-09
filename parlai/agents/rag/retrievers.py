@@ -201,7 +201,12 @@ def argsort_scores_and_docs(
         (docs, scores) --> sorted documents, according to scores.
     """
     scores_sorter = scores.sort(descending=True)
-    ranked_docs = [docs[idx] for idx in scores_sorter.indices[:n_docs]]
+
+    ranked_docs = []
+    for idx in range(len(scores_sorter.indices[:n_docs])):
+        doc_i = docs[idx] if idx < docs.size(0) else torch.zeros(docs.size(1))
+        ranked_docs.append(doc_i.to(docs))
+
     ranked_scores = scores_sorter.values[:n_docs]
     return ranked_docs, ranked_scores
 
