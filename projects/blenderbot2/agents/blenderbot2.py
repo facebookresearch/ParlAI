@@ -18,7 +18,7 @@ import torch.nn
 import torch.nn.functional as F
 from typing import Union, Dict, List, Tuple, Optional, Any
 
-from parlai.agents.fid.fid import FidAgent
+from parlai.agents.fid.fid import FidAgent, WizIntGoldDocRetrieverFiDAgent
 from parlai.agents.rag.args import DPR_ZOO_MODEL, QUERY_MODEL_TYPES
 from parlai.agents.rag.rag import RagAgent
 from parlai.agents.rag.model_types import (
@@ -892,3 +892,11 @@ class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+
+class BlenderBot2WizIntGoldDocRetrieverFiDAgent(
+    WizIntGoldDocRetrieverFiDAgent, BlenderBot2FidAgent
+):
+    def _set_query_vec(self, observation: Message) -> Message:
+        self.show_observation_to_echo_retriever(observation)
+        super()._set_query_vec(observation)

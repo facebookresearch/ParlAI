@@ -105,10 +105,12 @@ def parse_wizard_message(message_dict, doc_lines_delim):
         if not knowledge[CONST.RETRIEVED_DOCS]:
             knowledge[CONST.RETRIEVED_DOCS] = [CONST.NO_RETRIEVED_DOCS_TOKEN]
             knowledge[CONST.RETRIEVED_DOCS_URLS] = [CONST.NO_URLS]
+            knowledge[CONST.RETRIEVED_DOCS_TITLES] = [CONST.NO_TITLE]
 
         if not knowledge[CONST.SELECTED_DOCS]:
             knowledge[CONST.SELECTED_DOCS] = [CONST.NO_SELECTED_DOCS_TOKEN]
             knowledge[CONST.SELECTED_SENTENCES] = [CONST.NO_SELECTED_SENTENCES_TOKEN]
+            knowledge[CONST.SELECTED_DOCS_TITLES] = [CONST.NO_TITLE]
 
         return knowledge
 

@@ -24,6 +24,7 @@ from parlai.agents.rag.retrievers import (
     RagRetrieverTokenizer,
     SearchQuerySearchEngineRetriever,
     SearchQueryFAISSIndexRetriever,
+    ObservationEchoRetriever,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -64,6 +65,8 @@ def retriever_factory(
         return BB2SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.SEARCH_TERM_FAISS:
         return BB2SearchQueryFaissIndexRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.OBSERVATION_ECHO_RETRIEVER:
+        return BB2ObservationEchoRetriever(opt, dictionary, shared=shared)
     else:
         return rag_retriever_factory(opt, dictionary, shared=shared)
 
@@ -907,4 +910,10 @@ class BB2SearchQueryFaissIndexRetriever(
 ):
     """
     Override Search Engine Retriever to accommodate SQ Generator from BB2 Setup.
+    """
+
+
+class BB2ObservationEchoRetriever(BB2SearchRetrieverMixin, ObservationEchoRetriever):
+    """
+    A retriever that reads retrieved docs as part of the observed example message.
     """
