@@ -365,7 +365,7 @@ class TestTransformerGenerator(TestTransformerBase):
         response = agent.act()
         self.assertTrue("beam_texts" in response)
         self.assertGreaterEqual(len(response["beam_texts"]), size)
-        hyp, score = response["beam_texts"][0]
+        hyp, score, token_scores = response["beam_texts"][0]
         self.assertTrue(isinstance(hyp, str))
         self.assertTrue(isinstance(score, float))
 

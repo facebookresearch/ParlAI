@@ -1607,7 +1607,7 @@ class GreedySearch(TreeSearch):
         tok_scores, tok_ids = logprobs.max(1)
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
-        return (hyp_ids, tok_ids, best_scores, tok_scores)
+        return (hyp_ids, tok_ids, best_scores, tok_scores.view(-1)[:,None])
 
 
 class BeamSearch(TreeSearch):
@@ -1688,7 +1688,7 @@ class TopKSampling(TreeSearch):
         tok_ids = indices[hyp_ids, choices]
         scores = values[hyp_ids, choices]
         best_scores = prior_scores.expand_as(scores) + scores
-        return (hyp_ids, tok_ids, best_scores, scores)
+        return (hyp_ids, tok_ids, best_scores, scores.view(-1)[:,None])
 
 
 class NucleusSampling(TreeSearch):
@@ -1723,4 +1723,4 @@ class NucleusSampling(TreeSearch):
         # Convert back to logspace.
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
-        return (hyp_ids, tok_ids, best_scores, scores)
+        return (hyp_ids, tok_ids, best_scores, scores.view(-1)[:,None])
