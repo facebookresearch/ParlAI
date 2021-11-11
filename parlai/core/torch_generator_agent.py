@@ -19,7 +19,7 @@ Contains the following utilities:
 
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
-from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
+from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable, Union
 import math
 from operator import attrgetter
 
@@ -857,6 +857,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.model.eval()
         cand_scores = None
         token_losses = None
+        generated_text_token_losses = None
 
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
@@ -866,7 +867,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     batch.label_vec, model_output
                 )
 
-        preds = None
+        beam_preds_scores, preds = None, None
         if self.skip_generation:
             warn_once("--skip-generation true produces limited metrics")
         else:
@@ -875,16 +876,21 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beam_preds_scores, beams = self._generate(
                 batch, self.beam_size, maxlen, prefix_tokens=prefix_tokens
             )
-            preds, scores = zip(*beam_preds_scores)
+            preds, _, _= zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
 
             # bsz x beamsize
-            beam_texts: List[List[Tuple[str, float]]] = []
+            beam_texts: List[List[Tuple[str, float, Union[List[Tuple[str, float]], None] ]]] = []
             for beam in beams:
                 beam_texts.append([])
-                for tokens, score in beam.get_rescored_finished():
+                for tokens, score, token_scores in beam.get_rescored_finished():
                     try:
-                        beam_texts[-1].append((self._v2t(tokens), score.item()))
+                        token_scores_pretty = None
+                        if self.output_token_losses:
+                            tokens_as_txt = [self._v2t(torch.tensor([token])) for token in tokens]
+                            token_scores_pretty = list(zip(tokens_as_txt, token_scores.tolist()))
+                        
+                        beam_texts[-1].append((self._v2t(tokens), score.item(), token_scores_pretty))
                     except KeyError:
                         logging.error("Decoding error: %s", tokens)
                         continue
@@ -894,13 +900,18 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if self.rank_candidates:
             cand_choices, cand_scores = self.rank_eval_label_candidates(batch, bsz)
 
-        text = [self._v2t(p) for p in preds] if preds is not None else None
+        text = [self._v2t(pred_data[0]) for pred_data in beam_preds_scores] if beam_preds_scores is not None else None
+
+        if self.output_token_losses:
+            generated_text_token_losses = [list(zip([self.dict[int(token)] for token in pred_data[0]],pred_data[2].tolist())) for pred_data in beam_preds_scores] if beam_preds_scores is not None else None
+
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
         retval = Output(
-            text, cand_choices, token_losses=token_losses, cand_scores=cand_scores
+            text, cand_choices, token_losses=token_losses, cand_scores=cand_scores, generated_text_token_losses=generated_text_token_losses
         )
+
         if not self.skip_generation:
             retval.beam_texts = beam_texts
         return retval
@@ -1164,6 +1175,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         # get all finalized candidates for each sample (and validate them)
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
 
+
         if hasattr(self, '_rerank_beams'):
             n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
                 batch, n_best_beam_preds_scores
@@ -1202,13 +1214,14 @@ class _HypothesisTail(object):
     """
 
     # use slots because we don't want dynamic attributes here
-    __slots__ = ['timestep', 'hypid', 'score', 'tokenid']
+    __slots__ = ['timestep', 'hypid', 'score', 'tokenid', 'token_scores']
 
-    def __init__(self, timestep, hypid, score, tokenid):
+    def __init__(self, timestep, hypid, score, tokenid, token_scores):
         self.timestep = timestep
         self.hypid = hypid
         self.score = score
         self.tokenid = tokenid
+        self.token_scores = token_scores
 
 
 class TreeSearch(object):
@@ -1273,6 +1286,8 @@ class TreeSearch(object):
         self.outputs = [
             torch.Tensor(self.beam_size).long().fill_(self.bos).to(self.device)
         ]
+        # beam token scores 
+        self.token_scores = torch.ones((self.beam_size, 1)).to(self.device) # prob of bos token is 1
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
         self.eos_top = False
@@ -1345,6 +1360,8 @@ class TreeSearch(object):
               each of the hypotheses.
             - scores is a (beamsize) Tensor with the updated cumulative log-probs
               of each beam.
+            - token_scores is a (beamsize) Tensor wit the log-probs of the next-token choices for
+              each of the hypotheses.
         """
         pass
 
@@ -1420,7 +1437,7 @@ class TreeSearch(object):
                 self.context_block_ngram, logprobs, self.context
             )
 
-        hyp_ids, tok_ids, self.scores = self.select_paths(
+        hyp_ids, tok_ids, self.scores, next_choice_token_scores = self.select_paths(
             logprobs, self.scores, current_length
         )
         # use clone() here to ensure that self.all_scores will not be changed
@@ -1434,6 +1451,7 @@ class TreeSearch(object):
             self.partial_hyps[hyp_ids[i]] + [tok_id_list[i]]
             for i in range(self.beam_size)
         ]
+        self.token_scores = torch.cat((self.token_scores, next_choice_token_scores), dim=1)
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
@@ -1446,6 +1464,7 @@ class TreeSearch(object):
                     hypid=hypid,
                     score=self.all_scores[-1][hypid],
                     tokenid=self.eos,
+                    token_scores=self.token_scores[hypid].view(-1),
                 )
                 self.finished.append(eostail)
                 self.n_best_counter += 1
@@ -1482,6 +1501,7 @@ class TreeSearch(object):
         """
         hyp_idx = []
         endback = hypothesis_tail.hypid
+
         for i in range(hypothesis_tail.timestep, -1, -1):
             hyp_idx.append(
                 _HypothesisTail(
@@ -1489,6 +1509,7 @@ class TreeSearch(object):
                     hypid=endback,
                     score=self.all_scores[i][endback],
                     tokenid=self.outputs[i][endback],
+                    token_scores=self.token_scores[endback,:i] if self.token_scores is not None and endback in range(self.token_scores.size()[0]) else None,
                 )
             )
             endback = self.bookkeep[i - 1][endback]
@@ -1525,6 +1546,7 @@ class TreeSearch(object):
                     hypid=0,
                     score=self.all_scores[-1][0],
                     tokenid=self.outputs[-1][0],
+                    token_scores=self.token_scores[0].view(-1) if self.token_scores is not None else None,
                 )
             )
 
@@ -1539,6 +1561,7 @@ class TreeSearch(object):
                     hypid=finished_item.hypid,
                     score=finished_item.score / length_penalty,
                     tokenid=finished_item.tokenid,
+                    token_scores=finished_item.token_scores,
                 )
             )
 
@@ -1549,7 +1572,7 @@ class TreeSearch(object):
             srted = srted[:n_best]
 
         n_best_list = [
-            (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score)
+            (self._get_pretty_hypothesis(self._get_hyp_from_finished(hyp)), hyp.score, hyp.token_scores)
             for hyp in srted
         ]
 
@@ -1558,7 +1581,7 @@ class TreeSearch(object):
         assert (
             len(n_best_list) >= 1
         ), f'TreeSearch returned {len(n_best_list)} candidates, must be >= 1'
-        for (pred, score) in n_best_list:
+        for (pred, score, _) in n_best_list:
             assert (pred == self.eos).sum() == 1, (
                 f'TreeSearch returned a finalized hypo with multiple end tokens '
                 f'with score {score.item():.2f}'
@@ -1584,7 +1607,7 @@ class GreedySearch(TreeSearch):
         tok_scores, tok_ids = logprobs.max(1)
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
-        return (hyp_ids, tok_ids, best_scores)
+        return (hyp_ids, tok_ids, best_scores, tok_scores)
 
 
 class BeamSearch(TreeSearch):
@@ -1611,7 +1634,9 @@ class BeamSearch(TreeSearch):
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
 
-        return (hyp_ids, tok_ids, best_scores)
+        tok_scores = torch.gather(logprobs, 1, tok_ids[None, :]).view(-1)[:,None]
+
+        return (hyp_ids, tok_ids, best_scores, tok_scores)
 
 
 class DelayedBeamSearch(TreeSearch):
@@ -1663,7 +1688,7 @@ class TopKSampling(TreeSearch):
         tok_ids = indices[hyp_ids, choices]
         scores = values[hyp_ids, choices]
         best_scores = prior_scores.expand_as(scores) + scores
-        return (hyp_ids, tok_ids, best_scores)
+        return (hyp_ids, tok_ids, best_scores, scores)
 
 
 class NucleusSampling(TreeSearch):
@@ -1698,4 +1723,4 @@ class NucleusSampling(TreeSearch):
         # Convert back to logspace.
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
-        return (hyp_ids, tok_ids, best_scores)
+        return (hyp_ids, tok_ids, best_scores, scores)
