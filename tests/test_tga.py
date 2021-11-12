@@ -181,11 +181,11 @@ class TestGeneration(unittest.TestCase):
         inference_types = ['beam', 'greedy', 'topk', 'nucleus', 'delayedbeam']
         gold_data = {
             'beam': {
-                'generated_text_token_info': [('__start__', 0.0, 1.0), ('4', -13.613188743591309, 1.0), ('3', -12.225424766540527, 1.0), ('2', -14.487326622009277, 1.0), ('1', -16.001781463623047, 1.0), ('__end__', -1.5020257706055418e-05, 1.0)],
+                'generated_text_token_info': [('__start__', 0.0, 1.0), ('5', -2.5510462364763953e-05, 1.0), ('__end__', -1.1920922133867862e-06, 1.0)],
                 'extra_args': ['--beam-size', '3']
             }, 
             'greedy': {
-                'generated_text_token_info': [('__start__', 0.0, 1.0), ('4', -13.613188743591309, 1.0), ('3', -12.225424766540527, 1.0), ('2', -14.487326622009277, 1.0), ('1', -16.001781463623047, 1.0), ('__end__', -1.5020257706055418e-05, 1.0)],
+                'generated_text_token_info': [('__start__', 0.0, 1.0), ('5', -2.5510462364763953e-05, 1.0), ('__end__', -1.1920922133867862e-06, 1.0)],
                 'extra_args': [],
             }, 
             # sampling based token selection will produce non-deterministic output
@@ -206,8 +206,6 @@ class TestGeneration(unittest.TestCase):
             args = [
                 '--model-file',
                 'zoo:unittest/transformer_generator2/model',
-                '--model',
-                'test_agents/transformer_generator_prefix',
                 '--inference',
                 inference_type,
                 '--truncate',
