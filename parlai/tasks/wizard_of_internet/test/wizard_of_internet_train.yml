@@ -3132,7 +3132,8 @@ acts:
     - __noretrieved-docs__
     __select-docs-titles__:
     - __no_title__
-    __selected-docs-urls__: []
+    __selected-docs-urls__:
+    - __no_urls__
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
