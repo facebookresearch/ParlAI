@@ -188,12 +188,15 @@ class TestGeneration(unittest.TestCase):
                 'generated_text_token_info': [('__start__', 0.0, 1.0), ('4', -13.613188743591309, 1.0), ('3', -12.225424766540527, 1.0), ('2', -14.487326622009277, 1.0), ('1', -16.001781463623047, 1.0), ('__end__', -1.5020257706055418e-05, 1.0)],
                 'extra_args': [],
             }, 
+            # sampling based token selection will produce non-deterministic output
             'topk': {
                 'extra_args': ['--topk', '2']
             }, 
+            # sampling based token selection will produce non-deterministic output
             'nucleus': {
                 'extra_args': ['--topp', '0.3']
             }, 
+            # sampling based token selection will produce non-deterministic output
             'delayedbeam': {
                 'extra_args': ['--topk', '2', '--beam-delay', '2']
             },
@@ -218,7 +221,6 @@ class TestGeneration(unittest.TestCase):
             agent.observe(obs)
             act = agent.act()
             
-            # sampling based token selection will produce non-deterministic output
             if 'generated_text_token_info' in gold_data[inference_type]:
                 for i, tok_data in enumerate(act['generated_text_token_info']):
                     assert gold_data[inference_type]['generated_text_token_info'][i][0] == tok_data[0], f"failed token prediction for inference type {inference_type}"
