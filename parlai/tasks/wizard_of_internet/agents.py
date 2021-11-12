@@ -109,8 +109,9 @@ def parse_wizard_message(message_dict, doc_lines_delim):
 
         if not knowledge[CONST.SELECTED_DOCS]:
             knowledge[CONST.SELECTED_DOCS] = [CONST.NO_SELECTED_DOCS_TOKEN]
-            knowledge[CONST.SELECTED_SENTENCES] = [CONST.NO_SELECTED_SENTENCES_TOKEN]
+            knowledge[CONST.SELECTED_DOCS_URLS] = [CONST.NO_URLS]
             knowledge[CONST.SELECTED_DOCS_TITLES] = [CONST.NO_TITLE]
+            knowledge[CONST.SELECTED_SENTENCES] = [CONST.NO_SELECTED_SENTENCES_TOKEN]
 
         return knowledge
 
@@ -809,3 +810,21 @@ class WoiDropoutRetrievedDocs(MessageMutator):
 
         new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
         return new_message
+
+
+@register_mutator("woi_remove_retrieved_docs")
+class WoiRemoveRetrievedDocs(WoiDropoutRetrievedDocs):
+    def message_mutation(self, message: Message) -> Message:
+        if CONST.RETRIEVED_DOCS not in message:
+            return message
+
+        message.force_set(CONST.RETRIEVED_DOCS, [CONST.NO_RETRIEVED_DOCS_TOKEN])
+        message.force_set(CONST.RETRIEVED_DOCS, [CONST.NO_RETRIEVED_DOCS_TOKEN])
+        message.force_set(CONST.RETRIEVED_DOCS_URLS, [CONST.NO_URLS])
+        message.force_set(CONST.RETRIEVED_DOCS_TITLES, [CONST.NO_TITLE])
+
+        message.force_set(CONST.SELECTED_DOCS, [CONST.NO_SELECTED_DOCS_TOKEN])
+        message.force_set(CONST.SELECTED_SENTENCES, [CONST.NO_SELECTED_SENTENCES_TOKEN])
+        message.force_set(CONST.SELECTED_DOCS_URLS, [CONST.NO_URLS])
+        message.force_set(CONST.SELECTED_DOCS_TITLES, [CONST.NO_TITLE])
+        return message
