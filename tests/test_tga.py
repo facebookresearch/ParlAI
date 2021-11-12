@@ -7,6 +7,7 @@
 Test TorchGeneratorAgent.
 """
 import unittest
+import math
 from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
@@ -170,6 +171,59 @@ class TestGeneration(unittest.TestCase):
             assert beam.startswith(
                 PREFIX_TEXT
             ), f"[{beam}] does not start with [{PREFIX_TEXT}]"
+
+    def test_token_level_loss_logging(self):
+        """
+        Test functionality of token level probability + ranking logging
+
+        Regression for all inference types: 'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'
+        """
+        inference_types = ['beam', 'greedy', 'topk', 'nucleus', 'delayedbeam']
+        gold_data = {
+            'beam': {
+                'generated_text_token_info': [('__start__', 0.0, 1.0), ('4', -13.613188743591309, 1.0), ('3', -12.225424766540527, 1.0), ('2', -14.487326622009277, 1.0), ('1', -16.001781463623047, 1.0), ('__end__', -1.5020257706055418e-05, 1.0)],
+                'extra_args': ['--beam-size', '3']
+            }, 
+            'greedy': {
+                'generated_text_token_info': [('__start__', 0.0, 1.0), ('4', -13.613188743591309, 1.0), ('3', -12.225424766540527, 1.0), ('2', -14.487326622009277, 1.0), ('1', -16.001781463623047, 1.0), ('__end__', -1.5020257706055418e-05, 1.0)],
+                'extra_args': [],
+            }, 
+            'topk': {
+                'extra_args': ['--topk', '2']
+            }, 
+            'nucleus': {
+                'extra_args': ['--topp', '0.3']
+            }, 
+            'delayedbeam': {
+                'extra_args': ['--topk', '2', '--beam-delay', '2']
+            },
+        }
+
+        for inference_type in inference_types:
+            args = [
+                '--model-file',
+                'zoo:unittest/transformer_generator2/model',
+                '--model',
+                'test_agents/transformer_generator_prefix',
+                '--inference',
+                inference_type,
+                '--truncate',
+                '1024',
+                '-v'
+            ] + gold_data[inference_type]['extra_args']
+
+            pp = ParlaiParser(True, True)
+            agent = create_agent(pp.parse_args(args), True)
+            obs = {'text': '5', 'episode_done': False}
+            agent.observe(obs)
+            act = agent.act()
+            
+            # sampling based token selection will produce non-deterministic output
+            if 'generated_text_token_info' in gold_data[inference_type]:
+                for i, tok_data in enumerate(act['generated_text_token_info']):
+                    assert gold_data[inference_type]['generated_text_token_info'][i][0] == tok_data[0], f"failed token prediction for inference type {inference_type}"
+                    assert math.isclose(gold_data[inference_type]['generated_text_token_info'][i][1], tok_data[1]), f"failed token probability prediction for inference type {inference_type}"
+                    assert math.isclose(gold_data[inference_type]['generated_text_token_info'][i][2], tok_data[2]), f"failed token rank prediction for inference type {inference_type}"
 
 
 if __name__ == '__main__':
