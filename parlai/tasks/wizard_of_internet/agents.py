@@ -109,8 +109,9 @@ def parse_wizard_message(message_dict, doc_lines_delim):
 
         if not knowledge[CONST.SELECTED_DOCS]:
             knowledge[CONST.SELECTED_DOCS] = [CONST.NO_SELECTED_DOCS_TOKEN]
-            knowledge[CONST.SELECTED_SENTENCES] = [CONST.NO_SELECTED_SENTENCES_TOKEN]
+            knowledge[CONST.SELECTED_DOCS_URLS] = [CONST.NO_URLS]
             knowledge[CONST.SELECTED_DOCS_TITLES] = [CONST.NO_TITLE]
+            knowledge[CONST.SELECTED_SENTENCES] = [CONST.NO_SELECTED_SENTENCES_TOKEN]
 
         return knowledge
 
@@ -128,6 +129,19 @@ def parse_search_results(message_dict, delim='; '):
     ]
     d[CONST.MESSAGE_TEXT] = delim.join(all_title)
     return d
+
+
+def remove_retrieved_docs_from_message(message: Message):
+    message.force_set(CONST.RETRIEVED_DOCS, [CONST.NO_RETRIEVED_DOCS_TOKEN])
+    message.force_set(CONST.RETRIEVED_DOCS_URLS, [CONST.NO_URLS])
+    message.force_set(CONST.RETRIEVED_DOCS_TITLES, [CONST.NO_TITLE])
+
+
+def remove_selected_docs_from_message(message: Message):
+    message.force_set(CONST.SELECTED_DOCS, [CONST.NO_SELECTED_DOCS_TOKEN])
+    message.force_set(CONST.SELECTED_SENTENCES, [CONST.NO_SELECTED_SENTENCES_TOKEN])
+    message.force_set(CONST.SELECTED_DOCS_URLS, [CONST.NO_URLS])
+    message.force_set(CONST.SELECTED_DOCS_TITLES, [CONST.NO_TITLE])
 
 
 class WizardOfInternetBaseTeacher(DialogTeacher):
@@ -432,6 +446,16 @@ class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
         super().add_cmdline_args(parser, partial_opt)
         parser.set_params(prepend_gold_knowledge=True)
         return parser
+
+
+class WizardDialogGoldKnowledgeNoDocsTeacher(WizardDialogGoldKnowledgeTeacher):
+    """
+    Prepends gold (selected knowledge) to the context, and removes the retrieved docs.
+    """
+
+    def additional_message_content(self, parlai_message: Message, action: Dict):
+        super().additional_message_content(parlai_message, action)
+        remove_retrieved_docs_from_message(parlai_message)
 
 
 class DefaultTeacher(WizardDialogTeacher):
@@ -809,3 +833,13 @@ class WoiDropoutRetrievedDocs(MessageMutator):
 
         new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
         return new_message
+
+
+@register_mutator("woi_remove_knowledge")
+class WoiRemoveKnowledge(MessageMutator):
+    def message_mutation(self, message: Message) -> Message:
+        if CONST.RETRIEVED_DOCS not in message:
+            return message
+        remove_retrieved_docs_from_message(message)
+        remove_selected_docs_from_message(message)
+        return message
