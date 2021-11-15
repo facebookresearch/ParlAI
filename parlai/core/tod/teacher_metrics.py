@@ -17,8 +17,11 @@ class SlotMetrics(Metrics):
     (jga, slot_p, slot_r, etc).
 
     Due to differences in dialogue representations between tasks, the input is pre-
-    parsed ground truth and predicted slot dictionaries. This class will add domain-
-    specific versions of these metrics as well, when appropriate.
+    parsed ground truth and predicted slot dictionaries. 
+    
+    The 'jga+nlg' metric assumes a balanced set of JGA and NLG scores such that 
+        2 * Avg(JGA, NLG_BLEU) = Avg(JGA + NLG_BLEU)
+    The `jga+nlg` metric assumes that `NlgMetrics` is used to calculated the other side.
     """
 
     def __init__(
@@ -29,16 +32,6 @@ class SlotMetrics(Metrics):
         shared: Dict[str, Any] = None,
         avg_jga_nlg_bleu: bool = False,
     ) -> None:
-        """
-        Compute slot metrics.
-
-        Argument `count_empty_teacher` determines if empty/none target actions
-        are included in the computation of JGA and Avg(JGA, NLG_BLEU).
-        Typically Avg(JGA, NLG_BLEU) assumes a balanced set of JGA and NLG
-        scores such that 2*Avg(JGA, NLG_BLEU) = Avg(JGA + NLG_BLEU), i.e. equal
-        weighting of both contributions. This only holds when
-        `count_empty_teacher=True`
-        """
         super().__init__(shared=shared)
         self.prefixes = prefixes if prefixes else []
         # jga and optionally Avg(jga,nlg_bleu)
@@ -76,21 +69,15 @@ class SlotMetrics(Metrics):
 
 class NlgMetrics(Metrics):
     """
-    Helper container for generation version of standard metrics (F1, BLEU,
-
-    ...).
-
-    This class will add domain-specific versions of these classes as
-    well, when appropriate. Will also calculate delexicated statistics if provided.
+    Helper container for generation version of standard metrics (F1, BLEU, ..).
+    
+    
     """
-
     def __init__(
         self,
         guess: str,
         labels: Optional[List[str]],
         prefixes: Optional[List[str]] = None,
-        delex_guess: Optional[str] = None,
-        delex_labels: Optional[List[str]] = None,
         shared: Dict[str, Any] = None,
         avg_jga_nlg_bleu: bool = False,
     ) -> None:
@@ -103,12 +90,6 @@ class NlgMetrics(Metrics):
         if avg_jga_nlg_bleu:
             # add one half of Avg(jga,nlg_bleu), SlotMetrics class (above) adds JGA
             self.add("jga+nlg", bleu)
-
-        if delex_guess is not None:
-            bleu = BleuMetric.compute(delex_guess, delex_labels)
-            f1 = F1Metric.compute(delex_guess, delex_labels)
-            self.add_with_prefixes("nlg_delex_bleu", bleu)
-            self.add_with_prefixes("nlg_delex_f1", f1)
 
     def add_with_prefixes(self, name, value):
         self.add(name, value)

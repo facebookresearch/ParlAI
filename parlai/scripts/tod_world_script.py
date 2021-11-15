@@ -14,7 +14,7 @@ import os
 
 import parlai.utils.logging as logging
 import parlai.core.tod.tod_world as tod_world
-import parlai.core.tod.tod_agents_and_teachers as tod_world_agents
+import parlai.core.tod.tod_agents as tod_world_agents
 from parlai.core.agents import create_agent
 from parlai.core.metrics import dict_report, aggregate_unnamed_reports
 from parlai.core.opt import Opt

@@ -14,42 +14,45 @@ import unittest
 from parlai.core.metrics import dict_report
 from parlai.core.opt import Opt
 from parlai.core.tod.tod_core import SerializationHelpers
-import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
-from parlai.core.tod.impl.world_metrics_handlers import (
+import parlai.core.tod.tod_test_utils.test_agents as test_agents
+from parlai.core.tod.world_metrics_handlers import (
     METRICS_HANDLER_CLASSES_TEST_REGISTRY,
 )
 import parlai.scripts.tod_world_script as tod_world_script
 
+# Ignore lint on following line; want to have registered classes show up for tests
+import projects.tod_simulator.world_metrics.extended_world_metrics  # noqa: F401
+
 NUM_EPISODES = 35
 
 TEST_SETUP = {
-    "api_schema_grounding_model": "parlai.core.tod.tod_test_utils.agents_and_teachers:ApiSchemaAgent",
-    "goal_grounding_model": "parlai.core.tod.tod_test_utils.agents_and_teachers:GoalAgent",
-    "user_model": "parlai.core.tod.tod_test_utils.agents_and_teachers:UserUttAgent",
-    "system_model": "parlai.core.tod.tod_test_utils.agents_and_teachers:ApiCallAndSysUttAgent",
+    "api_schema_grounding_model": "parlai.core.tod.tod_test_utils.test_agents:ApiSchemaAgent",
+    "goal_grounding_model": "parlai.core.tod.tod_test_utils.test_agents:GoalAgent",
+    "user_model": "parlai.core.tod.tod_test_utils.test_agents:UserUttAgent",
+    "system_model": "parlai.core.tod.tod_test_utils.test_agents:ApiCallAndSysUttAgent",
     "api_resp_model": "fixed_response",
-    aat.TEST_NUM_EPISODES_OPT_KEY: NUM_EPISODES,
+    test_agents.TEST_NUM_EPISODES_OPT_KEY: NUM_EPISODES,
 }
 TEST_SETUP_BROKEN_USER_SYSTEM = {
-    "api_schema_grounding_model": "parlai.core.tod.tod_test_utils.agents_and_teachers:ApiSchemaAgent",
-    "goal_grounding_model": "parlai.core.tod.tod_test_utils.agents_and_teachers:GoalAgent",
+    "api_schema_grounding_model": "parlai.core.tod.tod_test_utils.test_agents:ApiSchemaAgent",
+    "goal_grounding_model": "parlai.core.tod.tod_test_utils.test_agents:GoalAgent",
     "user_model": "fixed_response",
     "system_model": "fixed_response",
     "api_resp_model": "fixed_response",
-    aat.TEST_NUM_EPISODES_OPT_KEY: NUM_EPISODES,
+    test_agents.TEST_NUM_EPISODES_OPT_KEY: NUM_EPISODES,
 }
 
 TEST_SETUP_EMPTY_APISCHEMA = copy.deepcopy(TEST_SETUP)
 TEST_SETUP_EMPTY_APISCHEMA[
     "api_schema_grounding_model"
-] = "parlai.tasks.google_sgd.agents:ApiSchemaAgent"
+] = "parlai.core.tod.tod_agents:TodEmptyApiSchemaAgent"
 
 TEST_SETUP_BROKEN_USER_SYSTEM_EMPTY_APISCHEMA = copy.deepcopy(
     TEST_SETUP_BROKEN_USER_SYSTEM
 )
 TEST_SETUP_BROKEN_USER_SYSTEM_EMPTY_APISCHEMA[
     "api_schema_grounding_model"
-] = "parlai.tasks.google_sgd.agents:ApiSchemaAgent"
+] = "parlai.core.tod.tod_agents:TodEmptyApiSchemaAgent"
 
 DATATYPE = "valid"
 

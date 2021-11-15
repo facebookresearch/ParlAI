@@ -8,8 +8,7 @@
 Helpers so we don't need to create agents all over.
 """
 
-import parlai.core.tod.tod_agents_and_teachers as tod_agents
-import parlai.core.tod.tod_agents_and_teachers as tod_teachers
+import parlai.core.tod.tod_agents as tod_agents
 import parlai.core.tod.tod_core as tod_core
 
 import os
@@ -138,7 +137,7 @@ EPISODE_SETUP__MULTI_EPISODE_BS = {
 }
 
 
-class TestDataParser(tod_agents.TodStructuredDataParser):
+class TestDataParser(tod_agents._TodStructuredDataParser):
     """
     Assume that when we init, we init w/ num of episodes + rounds as opts.
     """
@@ -179,15 +178,15 @@ class TestDataParser(tod_agents.TodStructuredDataParser):
         return "Test"
 
 
-class SystemTeacher(TestDataParser, tod_teachers.SystemTeacher):
+class SystemTeacher(TestDataParser, tod_agents.SystemTeacher):
     pass
 
 
-class UserSimulatorTeacher(TestDataParser, tod_teachers.UserSimulatorTeacher):
+class UserSimulatorTeacher(TestDataParser, tod_agents.UserSimulatorTeacher):
     pass
 
 
-class StandaloneApiTeacher(TestDataParser, tod_teachers.TodStandaloneApiTeacher):
+class StandaloneApiTeacher(TestDataParser, tod_agents.TodStandaloneApiTeacher):
     pass
 
 

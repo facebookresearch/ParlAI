@@ -11,13 +11,16 @@ Tests tod world, notably for batching.
 import copy
 import unittest
 
-import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
+import parlai.core.tod.tod_test_utils.test_agents as test_agents
 import parlai.scripts.tod_world_script as tod_world_script
-from parlai.core.tod.tod_agents_and_teachers import TodStandaloneApiAgent
-from parlai.core.tod.impl.world_metrics_handlers import (
+from parlai.core.tod.tod_agents import TodStandaloneApiAgent
+from parlai.core.tod.world_metrics_handlers import (
     METRICS_HANDLER_CLASSES_TEST_REGISTRY,
 )
 from parlai.core.metrics import dict_report
+
+# Ignore lint on following line; want to have registered classes show up for tests
+import projects.tod_simulator.world_metrics.extended_world_metrics  # noqa: F401
 
 
 class TestTodWorldScript(tod_world_script.TodWorldScript):
@@ -55,33 +58,33 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         opts = copy.deepcopy(base_opts)
         opts["datatype"] = "DUMMY"
         opts["datafile"] = "DUMMY"
-        opts["standalone_api_file"] = aat.API_DATABASE_FILE
+        opts["standalone_api_file"] = test_agents.API_DATABASE_FILE
         opts["exact_api_call"] = True
         opts["log_keep_fields"] = "all"
         opts["display_examples"] = False
         opts[
             "include_api_schemas"
-        ] = True  # do this to aat.make sure they're done correctly.
+        ] = True  # do this to test_agents.make sure they're done correctly.
         return opts
 
     def setup_agents(self, added_opts):
         full_opts = self.add_tod_world_opts(added_opts)
-        sys = aat.ApiCallAndSysUttAgent(full_opts)
+        sys = test_agents.ApiCallAndSysUttAgent(full_opts)
         agents = [
-            aat.UserUttAgent(full_opts),
+            test_agents.UserUttAgent(full_opts),
             sys,
             TodStandaloneApiAgent(full_opts),
             sys,
-            aat.ApiSchemaAgent(full_opts),
-            aat.GoalAgent(full_opts),
+            test_agents.ApiSchemaAgent(full_opts),
+            test_agents.GoalAgent(full_opts),
         ]
         return agents, full_opts
 
     def _run_test(self):
-        self._run_test_helper(aat.EPISODE_SETUP__SINGLE_API_CALL)
-        self._run_test_helper(aat.EPISODE_SETUP__MULTI_ROUND)
-        self._run_test_helper(aat.EPISODE_SETUP__MULTI_EPISODE)
-        self._run_test_helper(aat.EPISODE_SETUP__MULTI_EPISODE_BS)
+        self._run_test_helper(test_agents.EPISODE_SETUP__SINGLE_API_CALL)
+        self._run_test_helper(test_agents.EPISODE_SETUP__MULTI_ROUND)
+        self._run_test_helper(test_agents.EPISODE_SETUP__MULTI_EPISODE)
+        self._run_test_helper(test_agents.EPISODE_SETUP__MULTI_EPISODE_BS)
 
     def _run_test_helper(self, config_base):
         config = copy.deepcopy(config_base)
@@ -99,22 +102,22 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         """
         Last argument is only relevant for the max_turn test.
         """
-        max_rounds = opt[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        max_episodes = opt[aat.TEST_NUM_EPISODES_OPT_KEY]
+        max_rounds = opt[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        max_episodes = opt[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         episode_metrics = script.episode_metrics
         for episode_idx, episode in enumerate(episode_metrics):
             #        if episode_idx >= max_episodes:
             #            break
-            # See how we make broken mock api calls in the aat.
+            # See how we make broken mock api calls in the test_agents.
             goal, episode_metric = episode
             episode_metric = dict_report(episode_metric.report())
             self.assertAlmostEqual(
                 episode_metric["all_goals_hit"],
-                not aat.episode_has_broken_api_turn(episode_idx, max_rounds),
+                not test_agents.episode_has_broken_api_turn(episode_idx, max_rounds),
             )
         broken_episodes = sum(
             [
-                aat.episode_has_broken_api_turn(i, max_rounds)
+                test_agents.episode_has_broken_api_turn(i, max_rounds)
                 for i in range(max_episodes)
             ]
         )

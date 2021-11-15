@@ -18,11 +18,15 @@ from parlai.core.tod.tod_core import (
     STANDARD_GOAL,
 )
 from typing import Any, Dict
-from parlai.core.tod.impl.world_metrics_handlers import (
-    WORLD_METRIC_HANDLERS,
-    TodMetricsHandler,
-)
+import parlai.core.tod.world_metrics_handlers as world_metrics_handlers 
 
+# Change the following to define which Metrics Handlers are used in TodWorld.  
+# The ones used below are from `world_metrics_handlers.py` only. However, See `parlai/projects/tod_simulator/world_metrics/extended_world_metrics.py` for others. 
+
+WORLD_METRIC_HANDLERS = [
+    world_metrics_handlers.AllGoalApiCallSuccessMetricsHandler,
+    world_metrics_handlers.UserGeneratedDoneMetricHandler,
+]
 
 class TodMetrics(Metrics):
     """
@@ -55,7 +59,7 @@ class TodMetrics(Metrics):
                         self.add(name, metric)
 
     def _handle_message_impl(
-        self, message: Message, agent_type: TodAgentType, handler: TodMetricsHandler
+        self, message: Message, agent_type: TodAgentType, handler: world_metrics_handlers.TodMetricsHandler
     ):
         prefix_stripped_text = message["text"].replace(
             TOD_AGENT_TYPE_TO_PREFIX[agent_type], ""

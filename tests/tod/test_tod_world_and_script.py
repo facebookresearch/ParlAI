@@ -11,10 +11,10 @@ Tests tod world, notably for batching.
 import copy
 import unittest
 
-import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
+import parlai.core.tod.tod_test_utils.test_agents as test_agents
 import parlai.core.tod.tod_core as tod_core
 import parlai.scripts.tod_world_script as tod_world_script
-from parlai.core.tod.tod_agents_and_teachers import TodStandaloneApiAgent
+from parlai.core.tod.tod_agents import TodStandaloneApiAgent
 
 
 class TestTodWorldScript(tod_world_script.TodWorldScript):
@@ -45,33 +45,33 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         opts["datatype"] = "DUMMY"
         opts["datafile"] = "DUMMY"
         opts["episodes_randomization_seed"] = -1
-        opts["standalone_api_file"] = aat.API_DATABASE_FILE
+        opts["standalone_api_file"] = test_agents.API_DATABASE_FILE
         opts["exact_api_call"] = True
         opts["log_keep_fields"] = "all"
         opts["display_examples"] = False
         opts[
             "include_api_schemas"
-        ] = True  # do this to aat.make sure they're done correctly.
+        ] = True  # do this to test_agents.make sure they're done correctly.
         return opts
 
     def setup_agents(self, added_opts):
         full_opts = self.add_tod_world_opts(added_opts)
-        sys = aat.ApiCallAndSysUttAgent(full_opts)
+        sys = test_agents.ApiCallAndSysUttAgent(full_opts)
         agents = [
-            aat.UserUttAgent(full_opts),
+            test_agents.UserUttAgent(full_opts),
             sys,
             TodStandaloneApiAgent(full_opts),
             sys,
-            aat.ApiSchemaAgent(full_opts),
-            aat.GoalAgent(full_opts),
+            test_agents.ApiSchemaAgent(full_opts),
+            test_agents.GoalAgent(full_opts),
         ]
         return agents, full_opts
 
     def _test_roundDataCorrect(self):
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__SINGLE_API_CALL)
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__MULTI_ROUND)
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__MULTI_EPISODE)
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__MULTI_EPISODE_BS)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__SINGLE_API_CALL)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_ROUND)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_EPISODE)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_EPISODE_BS)
 
     def _check_correctness_from_script_logs(
         self, script, opt, process_round_utts=lambda x: x
@@ -79,8 +79,8 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         """
         Last argument is only relevant for the max_turn test.
         """
-        max_rounds = opt[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        max_episodes = opt[aat.TEST_NUM_EPISODES_OPT_KEY]
+        max_rounds = opt[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        max_episodes = opt[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         # there's something funky with logger.get_log() that inserts a space, but not gonna worry about it for now
         logs = [x for x in script.logger.get_logs() if len(x) > 0]
         for episode_idx in range(max_episodes):
@@ -91,14 +91,14 @@ class TodWorldInScriptTestBase(unittest.TestCase):
                 context[0]["text"],
                 "APIS: "
                 + tod_core.SerializationHelpers.list_of_maps_to_str(
-                    aat.make_api_schemas_machine(max_rounds)
+                    test_agents.make_api_schemas_machine(max_rounds)
                 ),
             )
             self.assertEquals(
                 context[3]["text"],
                 "GOAL: "
                 + tod_core.SerializationHelpers.list_of_maps_to_str(
-                    aat.make_goal_calls_machine(max_rounds)
+                    test_agents.make_goal_calls_machine(max_rounds)
                 ),
             )
             # Check the rest
@@ -107,7 +107,9 @@ class TodWorldInScriptTestBase(unittest.TestCase):
 
             self.assertEquals(
                 world_utts[:-1],
-                process_round_utts(aat.get_round_utts(episode_idx, max_rounds)[:-1]),
+                process_round_utts(
+                    test_agents.get_round_utts(episode_idx, max_rounds)[:-1]
+                ),
             )
 
 
@@ -132,8 +134,8 @@ class TodWorldSingleBatchTest(TodWorldInScriptTestBase):
         config = {}
         config["batchsize"] = 1
         config["max_turns"] = max_turns
-        config[aat.TEST_NUM_ROUNDS_OPT_KEY] = 10
-        config[aat.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
+        config[test_agents.TEST_NUM_ROUNDS_OPT_KEY] = 10
+        config[test_agents.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
         agents, opt = self.setup_agents(config)
         script = TestTodWorldScript(opt)
         script.agents = agents
@@ -165,9 +167,9 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
     def setup_agents(self, added_opts, api_agent, goal_agent):
         full_opts = self.add_tod_world_opts(added_opts)
         full_opts["fixed_response"] = "USER: [DONE]"
-        sys = aat.ApiCallAndSysUttAgent(full_opts)
+        sys = test_agents.ApiCallAndSysUttAgent(full_opts)
         agents = [
-            aat.UserUttAgent(full_opts),
+            test_agents.UserUttAgent(full_opts),
             sys,
             TodStandaloneApiAgent(full_opts),
             sys,
@@ -179,17 +181,19 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
     def test_SingleGoalApiResp_noBatching(self):
         config = {}
         config["batchsize"] = 1
-        config[aat.TEST_NUM_ROUNDS_OPT_KEY] = 10
-        config[aat.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
+        config[test_agents.TEST_NUM_ROUNDS_OPT_KEY] = 10
+        config[test_agents.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
         single_agents, opt = self.setup_agents(
-            config, aat.SingleApiSchemaAgent, aat.SingleGoalAgent
+            config, test_agents.SingleApiSchemaAgent, test_agents.SingleGoalAgent
         )
         single_script = TestTodWorldScript(opt)
         single_script.agents = single_agents
         single_script.run()
         single_logs = [x for x in single_script.logger.get_logs() if len(x) > 0]
 
-        multi_agents, opt = self.setup_agents(config, aat.ApiSchemaAgent, aat.GoalAgent)
+        multi_agents, opt = self.setup_agents(
+            config, test_agents.ApiSchemaAgent, test_agents.GoalAgent
+        )
         multi_script = TestTodWorldScript(opt)
         multi_script.agents = multi_agents
         multi_script.run()

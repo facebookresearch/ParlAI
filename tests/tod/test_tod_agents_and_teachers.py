@@ -12,7 +12,7 @@ import unittest
 
 import copy
 import parlai.core.tod.tod_core as tod_core
-import parlai.core.tod.tod_test_utils.agents_and_teachers as aat
+import parlai.core.tod.tod_test_utils.test_agents as test_agents
 
 
 class TestTodAgentsAndTeachersBase(unittest.TestCase):
@@ -48,40 +48,40 @@ class TestTodAgentsAndTeachersBase(unittest.TestCase):
         return data
 
     def _test_roundDataCorrect(self):
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__UTTERANCES_ONLY)
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__SINGLE_API_CALL)
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__MULTI_ROUND)
-        self._test_roundDataCorrect_helper(aat.EPISODE_SETUP__MULTI_EPISODE)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__UTTERANCES_ONLY)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__SINGLE_API_CALL)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_ROUND)
+        self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_EPISODE)
 
 
 class TestSystemTeacher(TestTodAgentsAndTeachersBase):
     def test_apiSchemas_with_yesApiSchemas(self):
         values = self.dump_teacher_text(
-            aat.SystemTeacher,
-            aat.EPISODE_SETUP__SINGLE_API_CALL,
+            test_agents.SystemTeacher,
+            test_agents.EPISODE_SETUP__SINGLE_API_CALL,
             {"api_schemas": True},
         )
         self.assertEqual(
             values[0][0][0],
             "APIS: "
             + tod_core.SerializationHelpers.list_of_maps_to_str(
-                aat.make_api_schemas_machine(2)
+                test_agents.make_api_schemas_machine(2)
             ),
         )
 
     def test_apiSchemas_with_noApiSchemas(self):
         values = self.dump_teacher_text(
-            aat.SystemTeacher,
-            aat.EPISODE_SETUP__SINGLE_API_CALL,
+            test_agents.SystemTeacher,
+            test_agents.EPISODE_SETUP__SINGLE_API_CALL,
             {"api_schemas": False},
         )
         self.assertEqual(values[0][0][0], "APIS: ")
 
     def _test_roundDataCorrect_helper(self, config):
-        max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        values = self.dump_teacher_text(aat.SystemTeacher, config, {})
+        max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        values = self.dump_teacher_text(test_agents.SystemTeacher, config, {})
         for episode_idx, episode in enumerate(values):
-            utts = aat.get_round_utts(episode_idx, max_rounds)
+            utts = test_agents.get_round_utts(episode_idx, max_rounds)
             comp = []
             for utt in utts:
                 comp.append([utt[0], utt[1]])
@@ -95,16 +95,16 @@ class TestSystemTeacher(TestTodAgentsAndTeachersBase):
 
 class TestUserTeacher(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
-        max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        values = self.dump_teacher_text(aat.UserSimulatorTeacher, config, {})
+        max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        values = self.dump_teacher_text(test_agents.UserSimulatorTeacher, config, {})
         for episode_idx, episode in enumerate(values):
-            utts = aat.get_round_utts(episode_idx, max_rounds)
+            utts = test_agents.get_round_utts(episode_idx, max_rounds)
             comp = []
             comp.append(
                 [
                     "GOAL: "
                     + tod_core.SerializationHelpers.list_of_maps_to_str(
-                        aat.make_goal_calls_machine(max_rounds)
+                        test_agents.make_goal_calls_machine(max_rounds)
                     ),
                     utts[0][0],
                 ]
@@ -121,14 +121,16 @@ class TestUserTeacher(TestTodAgentsAndTeachersBase):
 
 class TestGoalAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
-        max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        max_episodes = config[aat.TEST_NUM_EPISODES_OPT_KEY]
-        values = self.dump_single_utt_per_episode_agent_text(aat.GoalAgent, config, {})
+        max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
+        values = self.dump_single_utt_per_episode_agent_text(
+            test_agents.GoalAgent, config, {}
+        )
 
         goal_text = [
             "GOAL: "
             + tod_core.SerializationHelpers.list_of_maps_to_str(
-                aat.make_goal_calls_machine(max_rounds)
+                test_agents.make_goal_calls_machine(max_rounds)
             )
             for _ in range(max_episodes)
         ]
@@ -141,16 +143,16 @@ class TestGoalAgent(TestTodAgentsAndTeachersBase):
 
 class TestApiSchemaAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
-        max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        max_episodes = config[aat.TEST_NUM_EPISODES_OPT_KEY]
+        max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
-            aat.ApiSchemaAgent, config, {}
+            test_agents.ApiSchemaAgent, config, {}
         )
 
         apis_texts = [
             "APIS: "
             + tod_core.SerializationHelpers.list_of_maps_to_str(
-                aat.make_api_schemas_machine(max_rounds)
+                test_agents.make_api_schemas_machine(max_rounds)
             )
             for _ in range(max_episodes)
         ]
@@ -163,15 +165,15 @@ class TestApiSchemaAgent(TestTodAgentsAndTeachersBase):
 
 class TestSingleGoalAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
-        max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        max_episodes = config[aat.TEST_NUM_EPISODES_OPT_KEY]
+        max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
-            aat.SingleGoalAgent, config, {}
+            test_agents.SingleGoalAgent, config, {}
         )
 
         goal_text = []
         for _ in range(max_episodes):
-            goals = aat.make_goal_calls_machine(max_rounds)
+            goals = test_agents.make_goal_calls_machine(max_rounds)
             for x in goals:
                 goal_text.append(
                     "GOAL: " + tod_core.SerializationHelpers.list_of_maps_to_str([x])
@@ -185,15 +187,15 @@ class TestSingleGoalAgent(TestTodAgentsAndTeachersBase):
 
 class TestSingleApiSchemaAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
-        max_rounds = config[aat.TEST_NUM_ROUNDS_OPT_KEY]
-        max_episodes = config[aat.TEST_NUM_EPISODES_OPT_KEY]
+        max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
+        max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
-            aat.SingleApiSchemaAgent, config, {}
+            test_agents.SingleApiSchemaAgent, config, {}
         )
 
         apis_text = []
         for _ in range(max_episodes):
-            apis = aat.make_api_schemas_machine(max_rounds)
+            apis = test_agents.make_api_schemas_machine(max_rounds)
             for x in apis:
                 apis_text.append(
                     "APIS: " + tod_core.SerializationHelpers.list_of_maps_to_str([x])
@@ -211,10 +213,10 @@ class TestSingleGoalWithSingleApiSchemaAgent(TestTodAgentsAndTeachersBase):
 
     def _test_roundDataCorrect_helper(self, config):
         goals = self.dump_single_utt_per_episode_agent_text(
-            aat.SingleGoalAgent, config, {}
+            test_agents.SingleGoalAgent, config, {}
         )
         apis = self.dump_single_utt_per_episode_agent_text(
-            aat.SingleApiSchemaAgent, config, {}
+            test_agents.SingleApiSchemaAgent, config, {}
         )
 
         for i in range(len(goals)):
@@ -243,8 +245,8 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
     def test_few_shot_lengths_correct(self):
         def helper(n_shot):
             values = self.dump_teacher_text(
-                aat.SystemTeacher,
-                aat.EPISODE_SETUP__MULTI_EPISODE_BS,
+                test_agents.SystemTeacher,
+                test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,
                 {
                     "episodes_randomization_seed": 0,
                     "n_shot": n_shot,
@@ -265,8 +267,8 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
     def test_few_shot_subset(self):
         def helper(n_shot, seed):
             return self.dump_teacher_text(
-                aat.SystemTeacher,
-                aat.EPISODE_SETUP__MULTI_EPISODE,
+                test_agents.SystemTeacher,
+                test_agents.EPISODE_SETUP__MULTI_EPISODE,
                 {
                     "episodes_randomization_seed": seed,
                     "n_shot": n_shot,
@@ -282,8 +284,8 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
     def test_percent_shot_lengths_correct(self):
         def helper(percent_shot, correct):
             values = self.dump_teacher_text(
-                aat.SystemTeacher,
-                aat.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
+                test_agents.SystemTeacher,
+                test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
                 {
                     "episodes_randomization_seed": 0,
                     "percent_shot": percent_shot,
@@ -298,8 +300,8 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
     def test_percent_shot_subset(self):
         def helper(percent_shot, seed):
             return self.dump_teacher_text(
-                aat.SystemTeacher,
-                aat.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
+                test_agents.SystemTeacher,
+                test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
                 {
                     "episodes_randomization_seed": seed,
                     "percent_shot": percent_shot,
@@ -315,8 +317,8 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
         self.assertRaises(
             RuntimeError,
             self.dump_teacher_text,
-            aat.SystemTeacher,
-            aat.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
+            test_agents.SystemTeacher,
+            test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
             {"episodes_randomization_seed": 0, "percent_shot": 0.3, "n_shot": 3},
         )
 

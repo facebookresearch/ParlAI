@@ -17,7 +17,7 @@ from parlai.utils.distributed import is_distributed, get_rank, num_workers
 
 import parlai.core.tod.tod_core as tod
 from parlai.core.tod.tod_core import SerializationHelpers
-from parlai.core.tod.impl.teacher_metrics import SlotMetrics, NlgMetrics
+from parlai.core.tod.teacher_metrics import SlotMetrics, NlgMetrics
 
 from typing import Optional, List
 import json
@@ -27,11 +27,9 @@ import random
 from math import ceil
 
 ######### Agents that dump information from a dataset; base classes
-
-
-class TodStructuredDataParser(Agent):
+class _TodStructuredDataParser(Agent):
     """
-    Base class that specifies intermediate generation representations.
+    Base class that specifies intermediate representations for Tod conversations.
     """
 
     @classmethod
@@ -107,7 +105,7 @@ class TodStructuredDataParser(Agent):
 
 
 ######### Agents that dump information from a dataset as gold (explicitly should *not* be used with teachers)
-class _TodDataDumpAgent(TodStructuredDataParser):
+class _TodDataDumpAgent(_TodStructuredDataParser):
     """
     For agents which dump data from some dataset, without training/other modifications.
 
@@ -165,7 +163,7 @@ class _TodDataDumpAgent(TodStructuredDataParser):
 
 class TodGoalAgent(_TodDataDumpAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+    Use as a mixin with classes that also extend + implement _TodStructuredDataParser.
     """
 
     def act(self):
@@ -229,7 +227,7 @@ class _EpisodeToSingleGoalProcessor(_TodDataDumpAgent):
         prior.
 
         Based on the `__init__` order of this class, it should be done in
-        `TodStructuredDataParser` by this point.
+        `_TodStructuredDataParser` by this point.
         """
         raw_episodes = self.episodes
         result = []
@@ -263,7 +261,7 @@ class _EpisodeToSingleGoalProcessor(_TodDataDumpAgent):
 
 class TodSingleGoalAgent(_EpisodeToSingleGoalProcessor, TodGoalAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+    Use as a mixin with classes that also extend + implement _TodStructuredDataParser.
 
     NOTE: If an API schema agent is used, this *must* be used with `TodSingleApiSchemaAgent` since it will be nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
     """
@@ -274,7 +272,7 @@ class TodSingleGoalAgent(_EpisodeToSingleGoalProcessor, TodGoalAgent):
 
 class TodSingleApiSchemaAgent(_EpisodeToSingleGoalProcessor, TodApiSchemaAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+    Use as a mixin with classes that also extend + implement _TodStructuredDataParser.
 
     NOTE: Must be used with TodSingleGoalAgent since nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
     """
@@ -283,18 +281,13 @@ class TodSingleApiSchemaAgent(_EpisodeToSingleGoalProcessor, TodApiSchemaAgent):
         return "SingleApiSchema"
 
 
-###### User + System  agents
-
-
+###### Agents used for calculating TOD World Metrics based on a dataset. See `tod_world_script` or `parlai/projects/tod_simulator/` for examples.  
 class TodUserUttAgent(_TodDataDumpAgent):
     """
-    Hack for getting TOD Metrics in a model-teacher chat (or to get TOD Metrics on a
-    ground-truth TOD dataset)
+    Agent used to calculate TOD World Metrics on a dataset. Represents the "User" agent.  
 
     This class should only ever be used with the model-model chat world which will stop
-    upon seeing the '[DONE]' utterance.
-
-    May go out of bounds elsewhere.
+    upon seeing the '[DONE]' utterance; may go out of bounds otherwise.
     """
 
     def act(self):
@@ -317,13 +310,10 @@ class TodUserUttAgent(_TodDataDumpAgent):
 
 class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
     """
-    Hack for getting TOD Metrics in a model-teacher chat (or to get TOD Metrics on a
-    ground-truth TOD dataset)
+    Agent used to calculate TOD World Metrics on a dataset. Represents the "System" agent.  
 
     This class should only ever be used with the model-model chat world which will stop
-    upon seeing the '[DONE]' utterance from a user agent.
-
-    May go out of bounds elsewhere.
+    upon seeing the '[DONE]' utterance; may go out of bounds otherwise.
     """
 
     def __init__(self, opt: Opt, shared=None):
@@ -373,13 +363,10 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
 
 class TodApiResponseAgent(_TodDataDumpAgent):
     """
-    Hack for getting TOD Metrics in a model-teacher chat (or to get TOD Metrics on a
-    ground-truth TOD dataset)
+    Agent used to calculate TOD World Metrics on a dataset. Represents the API Simulator.  
 
     This class should only ever be used with the model-model chat world which will stop
-    upon seeing the '[DONE]' utterance.
-
-    May go out of bounds elsewhere.
+    upon seeing the '[DONE]' utterance; may go out of bounds otherwise.
     """
 
     def act(self):
@@ -405,7 +392,11 @@ class TodStandaloneApiAgent(Agent):
     """
     Trainable agent that saves API calls and responses.
 
-    Use `TodStandaloneApiTeacher` to train this class.
+    Use `TodStandaloneApiTeacher` to train this class. For example for a MultiWoz V2.2 standalone API, use
+    ```
+    parlai train -t multiwoz_v22:StandaloneApiTeacher -m parlai_fb.agents.tod.agents:TodStandaloneApiAgent -eps 4 -mf output
+    ```
+    to generate the `.pickle` file to use. 
     """
 
     EMPTY_RESP = {
@@ -430,14 +421,14 @@ class TodStandaloneApiAgent(Agent):
             "--fail-hard",
             type=bool,
             default=False,
-            help="Aids in deugging. Will fail hard if API call not found and '--exact-api-call' is set.",
+            help="Aids in deugging. Will throw exception if API call not found and '--exact-api-call' is set.",
         )
 
         group.add_argument(
             "--standalone-api-file",
             type=str,
             default=None,
-            help="Path to file holding .pickle of standalone api for validation (will intelligently strip if suffix included, but do not need)",
+            help="Path to file holding `.pickle` of standalone api for validation (will intelligently strip if suffix included). If not set, assumes the `model_file` argument will contain the `.pickle` file. ",
         )
         return parser
 
@@ -453,11 +444,15 @@ class TodStandaloneApiAgent(Agent):
         try:
             with (open(self.db_path, "rb")) as openfile:
                 self.data = pickle.load(openfile)
+                self.training = True
                 print("Loaded Standalone API data successfully")
+            if self.exact_api_call != self.data.get("exact_api_call", True):
+                raise RuntimeException(f"Standalone API .pickle file generated with `exact_api_call` of {self.data.get('exact_api_call', False)} but currently set to {self.exact_api_call}")
         except Exception:
             print(f"No file at {self.db_path}; ASSUMING WE ARE TRAINING")
             self.data = {}
-        self.training = False
+            self.data["exact_api_call"] = self.exact_api_call 
+            self.training = True
 
     def _maybe_filter_prefix(self, text, prefix):
         if prefix in text:
@@ -479,7 +474,7 @@ class TodStandaloneApiAgent(Agent):
         return self._do_fetch(call_text)
 
     def _do_train(self, call_text):
-        self.training = True
+        assert(self.training == True)
         self.data[call_text] = self.observation["labels"][0]
         return self.EMPTY_RESP
 
@@ -515,8 +510,6 @@ class TodStandaloneApiAgent(Agent):
 
 
 ######### Default dummy agents
-
-
 class TodEmptyApiSchemaAgent(Agent):
     def __init__(self, opt, shared=None):
         super().__init__(opt)
@@ -542,9 +535,14 @@ class TodEmptyGoalAgent(Agent):
 
 
 ############# Teachers
-class SystemTeacher(TodStructuredDataParser, DialogTeacher):
+class SystemTeacher(_TodStructuredDataParser, DialogTeacher):
     """
     TOD agent teacher which produces both API calls and NLG responses.
+
+    First turn is API Schema grounding, which may be a an empty schema.
+    Subsequent turns alternate between 
+        1. User utterance -> API Call
+        2. API Response -> System Utterance
     """
 
     @classmethod
@@ -557,12 +555,6 @@ class SystemTeacher(TodStructuredDataParser, DialogTeacher):
             type="bool",
             default=False,
             help="Preempt first turn with intents + required/optional parameters as key/value for given domain",
-        )
-        parser.add_argument(
-            "--standalone-api",
-            type="bool",
-            default=True,
-            help="Noop for this agent. Included to make sweeps easier.",
         )
         parser.add_argument(
             "--api-jga-record",
@@ -665,10 +657,9 @@ class SystemTeacher(TodStructuredDataParser, DialogTeacher):
         return "SystemTeacher"
 
 
-class UserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
+class UserSimulatorTeacher(_TodStructuredDataParser, DialogTeacher):
     """
-    Teacher that tries to simulate user actions (ie, switches text/labels between USER
-    and SYSTEM)
+    Teacher that has `Goal->User Utterance` for its first turn, then `System Utterance->User Utterance` for all subsequent turns.  
     """
 
     def setup_data(self, fold):
@@ -716,11 +707,14 @@ class UserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
         return "UserSimulatorTeacher"
 
 
-class TodStandaloneApiTeacher(TodStructuredDataParser, DialogTeacher):
+class TodStandaloneApiTeacher(_TodStructuredDataParser, DialogTeacher):
     """
     Use this to generate a database for `TodStandaloneApiAgent`.
 
-    (Set this as the teacher with `TodStandaloneApiAgent` as the agent.)
+    Set this as the teacher with `TodStandaloneApiAgent` as the agent. Ex for a MultiWoz V2.2 standalone API, use
+    ```
+    parlai train -t multiwoz_v22:StandaloneApiTeacher -m parlai_fb.agents.tod.agents:TodStandaloneApiAgent -eps 4 -mf output
+    ```
     """
 
     def setup_data(self, fold):

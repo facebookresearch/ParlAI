@@ -19,12 +19,15 @@ from parlai.core.tod.tod_core import (
     TodAgentType,
     TOD_AGENT_TYPE_TO_PREFIX,
 )
-from parlai.core.tod.impl.world_metrics import (
+from parlai.core.tod.world_metrics import (
     TodMetrics,
 )
-from parlai.core.tod.impl.world_metrics_handlers import (
+from parlai.core.tod.world_metrics_handlers import (
     METRICS_HANDLER_CLASSES_TEST_REGISTRY,
 )
+
+# Ignore lint on following line; want to have registered classes show up for tests
+import projects.tod_simulator.world_metrics.extended_world_metrics  # noqa: F401
 
 GOAL__SINGLE_ONE_KEY = [{STANDARD_API_NAME_SLOT: "name", "a": "1"}]
 GOAL__SINGLE_THREE_KEYS = [
