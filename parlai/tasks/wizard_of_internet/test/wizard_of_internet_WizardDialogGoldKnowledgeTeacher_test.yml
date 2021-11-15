@@ -677,7 +677,10 @@ acts:
       Throwback video! When Salman Khan teased Katrina Kaif for missi...
 
       Pulwama terror attack: Ram Gopal Varma taunts Pakistan Prime Mi...'
-    __select-docs-titles__: []
+    __select-docs-titles__:
+    - __no_title__
+    __selected-docs-urls__:
+    - __no_urls__
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -2616,6 +2619,8 @@ acts:
       Films about dolls'
     __select-docs-titles__:
     - Toy Story 1995 IMDb
+    __selected-docs-urls__:
+    - https://www.imdb.com/title/tt0114709/
     __selected-docs__:
     - 'G | 1h 21min | Animation, Adventure, Comedy | 22 November 1995 (USA)
 
@@ -5005,6 +5010,8 @@ acts:
       Empire Inspiration Award winners'
     __select-docs-titles__:
     - Pixar Animation Studios Creative Kaizen Technology and
+    __selected-docs-urls__:
+    - https://digital.hbs.edu/platform-rctom/submission/pixar-animation-studios-creative-kaizen/
     __selected-docs__:
     - "Pixar Animation Studios: Creative Kaizen\nBy HBSstudent11\nIliad S.A.: the\
       \ story behind France’s telecommunications maverick\nHow Pixar’s innovative\
@@ -5813,6 +5820,8 @@ acts:
       18 Unluckiest People In History Who Had It Worse Than You'
     __select-docs-titles__:
     - Toy Story 2 Was Accidentally Deleted During Development
+    __selected-docs-urls__:
+    - https://funfactz.com/tv-facts/toy-story-2-deleted/
     __selected-docs__:
     - 'Fun Facts › TV and Film Facts › Toy Story 2 Was Accidentally Deleted During
       Development and Almost Lost← NextRandomPrevious →
@@ -6566,6 +6575,8 @@ acts:
       who poses a threat to their stinky stash.'
     __select-docs-titles__:
     - The Cast of Pixar s Onward Cinemark Movie News
+    __selected-docs-urls__:
+    - https://www.cinemark.com/movie-news/pixar-onward-cast
     __selected-docs__:
     - 'Meet the Cast of Pixar s Onward
 

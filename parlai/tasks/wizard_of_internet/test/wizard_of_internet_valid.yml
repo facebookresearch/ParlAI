@@ -1,10 +1,14 @@
 acts:
-- - __retrieved-docs-titles__: []
+- - __retrieved-docs-titles__:
+    - __no_title__
     __retrieved-docs-urls__:
     - __no_urls__
     __retrieved-docs__:
     - __noretrieved-docs__
-    __select-docs-titles__: []
+    __select-docs-titles__:
+    - __no_title__
+    __selected-docs-urls__:
+    - __no_urls__
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -17,12 +21,16 @@ acts:
     text: 'I work as a freelance accountant.
 
       I enjoy reading books.   '
-- - __retrieved-docs-titles__: []
+- - __retrieved-docs-titles__:
+    - __no_title__
     __retrieved-docs-urls__:
     - __no_urls__
     __retrieved-docs__:
     - __noretrieved-docs__
-    __select-docs-titles__: []
+    __select-docs-titles__:
+    - __no_title__
+    __selected-docs-urls__:
+    - __no_urls__
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -784,7 +792,10 @@ acts:
       Verification of Debentures | Guidelines for Auditors
 
       Tags:Auditing, Role of Auditor'
-    __select-docs-titles__: []
+    __select-docs-titles__:
+    - __no_title__
+    __selected-docs-urls__:
+    - __no_urls__
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:
@@ -2095,6 +2106,8 @@ acts:
       Seton Hall basketball: Inside Sandro Mamukelashvili s remarkable rebound'
     __select-docs-titles__:
     - Super Bowl LV Wikipedia
+    __selected-docs-urls__:
+    - https://en.wikipedia.org/wiki/Super_Bowl_LV
     __selected-docs__:
     - 'Raymond James Stadium in 2007
 
@@ -6993,6 +7006,8 @@ acts:
       More of: New England PatriotsNFLtom brady'
     __select-docs-titles__:
     - Tom Brady Wikipedia
+    __selected-docs-urls__:
+    - https://en.wikipedia.org/wiki/Tom_Brady
     __selected-docs__:
     - 'For other people named Tom Brady, see Tom Brady (disambiguation).
 

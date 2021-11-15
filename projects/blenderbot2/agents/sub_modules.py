@@ -326,6 +326,8 @@ class MemoryDecoder(BB2SubmoduleMixin):
             mem_string = '\n'.join(memories_i)
             logging.verbose(f'Writing memories: {mem_string}')
             memories.append(memories_i)
+
+        self.memories_full_list = memories
         return memories
 
     def _extract_from_raw_memories(self, raw_memories: List[str]) -> List[str]:

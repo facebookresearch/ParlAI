@@ -367,6 +367,8 @@ acts:
       cooking, Melissa Villaseñor'
     __select-docs-titles__:
     - Chopped Episode Guide TV Schedule Food Network Canada
+    __selected-docs-urls__:
+    - https://www.foodnetwork.ca/shows/chopped/
     __selected-docs__:
     - 'Chopped is a cooking competition show that is all about skill, speed and ingenuity.
       Each week, four chefs compete before a panel of expert judges and turn baskets
@@ -916,6 +918,8 @@ acts:
       Emmy-winning series Queer Eye, which had a 100-episode run.'
     __select-docs-titles__:
     - Food Network Official Site
+    __selected-docs-urls__:
+    - https://watch.foodnetwork.com/
     __selected-docs__:
     - 'Aloha, Recruits!
 
@@ -2103,6 +2107,8 @@ acts:
       The Best of Carolina Coastal Cuisine: Myrtle Beach'
     __select-docs-titles__:
     - Types of Cuisine From Around the World With Their Popular
+    __selected-docs-urls__:
+    - https://leafyplace.com/types-of-cuisine/
     __selected-docs__:
     - 'Types of Cuisine From Around the World With Their Popular Foods
 
@@ -2944,6 +2950,8 @@ acts:
       Food and drink appreciation'
     __select-docs-titles__:
     - Stop calling yourself a foodie The Washington Post
+    __selected-docs-urls__:
+    - https://www.washingtonpost.com/news/wonk/wp/2016/03/01/why-the-word-foodie-is-terrible-and-needs-to-go-away/
     __selected-docs__:
     - 'Stop calling yourself a ‘foodie’
 
@@ -3116,12 +3124,16 @@ acts:
     text: 'Yes, i forgot to mention there is also only a 20 or thirty minute time
       limit, depending on the round. The cuisine is from around the world. Fine dining
       to street style. '
-- - __retrieved-docs-titles__: []
+- - __retrieved-docs-titles__:
+    - __no_title__
     __retrieved-docs-urls__:
     - __no_urls__
     __retrieved-docs__:
     - __noretrieved-docs__
-    __select-docs-titles__: []
+    __select-docs-titles__:
+    - __no_title__
+    __selected-docs-urls__:
+    - __no_urls__
     __selected-docs__:
     - __noselected-docs__
     __selected-sentences__:

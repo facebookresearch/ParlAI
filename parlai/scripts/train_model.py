@@ -212,7 +212,7 @@ def setup_args(parser=None) -> ParlaiParser:
         '--validation-metric-mode',
         type=str,
         choices=['max', 'min'],
-        help='how to optimize validation metric (max or min)',
+        help='the direction in which to optimize the validation metric, i.e. maximize or minimize',
     )
     train.add_argument(
         '-vcut',
