@@ -56,6 +56,7 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
         self.max_onboard_time = opt['max_onboard_time']
         self.onboarding_qualification = opt['onboarding_qualification']
         self.worker_id = get_mturk_id_from_mephisto_wrapper(self.agent)
+        self.annotations = None
 
     def parley(self):
 
@@ -94,6 +95,9 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
             print(f'{self.__class__.__name__}: {self.worker_id} had no data submitted')
             return ONBOARD_FAIL
 
+        self.annotations = act['task_data'].get('annotations')
+        print('Onboarding annotation results: ', self.annotations)
+
         if act['task_data']['success']:
             print(f'Worker {self.worker_id} successfully passed the onboarding task.')
 
@@ -115,6 +119,9 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
                 if self.status not in self.onboard_statistics:
                     self.onboard_statistics[self.status] = 0
                 self.onboard_statistics[self.status] += 1
+
+    def get_custom_task_data(self):
+        return self.annotations
 
 
 class BaseModelChatWorld(CrowdTaskWorld, ABC):
