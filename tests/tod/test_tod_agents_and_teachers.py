@@ -247,10 +247,7 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
             values = self.dump_teacher_text(
                 test_agents.SystemTeacher,
                 test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,
-                {
-                    "episodes_randomization_seed": 0,
-                    "n_shot": n_shot,
-                },
+                {"episodes_randomization_seed": 0, "n_shot": n_shot},
             )
             self.assertEqual(len(values), n_shot)
 
@@ -269,10 +266,7 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
             return self.dump_teacher_text(
                 test_agents.SystemTeacher,
                 test_agents.EPISODE_SETUP__MULTI_EPISODE,
-                {
-                    "episodes_randomization_seed": seed,
-                    "n_shot": n_shot,
-                },
+                {"episodes_randomization_seed": seed, "n_shot": n_shot},
             )
 
         data_dumps_seed_zero = [helper(i, 0) for i in self.FEW_SHOT_SAMPLES]
@@ -286,10 +280,7 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
             values = self.dump_teacher_text(
                 test_agents.SystemTeacher,
                 test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
-                {
-                    "episodes_randomization_seed": 0,
-                    "percent_shot": percent_shot,
-                },
+                {"episodes_randomization_seed": 0, "percent_shot": percent_shot},
             )
             self.assertEqual(len(values), correct)
 
@@ -302,10 +293,7 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
             return self.dump_teacher_text(
                 test_agents.SystemTeacher,
                 test_agents.EPISODE_SETUP__MULTI_EPISODE_BS,  # 35 episodes
-                {
-                    "episodes_randomization_seed": seed,
-                    "percent_shot": percent_shot,
-                },
+                {"episodes_randomization_seed": seed, "percent_shot": percent_shot},
             )
 
         data_dumps_seed_zero = [helper(i, 0) for i in self.PERCENTAGES]
