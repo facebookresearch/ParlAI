@@ -185,7 +185,6 @@ class WandbLogger(object):
         # suppress wandb's output
         logging.getLogger("wandb").setLevel(logging.ERROR)
 
-        print("RESUMED?", self.run.resumed)
         if not self.run.resumed:
             for key, value in opt.items():
                 if value is None or isinstance(value, (str, numbers.Number, tuple)):
