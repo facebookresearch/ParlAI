@@ -5,6 +5,12 @@
 # LICENSE file in the root directory of this source tree.
 """
 Base script for running TOD model-model chats.
+
+For example, to extract gold ground truth data from Google SGD, run
+
+```
+python -u -m parlai.scripts.tod_world_script --api-schema-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiSchemaAgent --goal-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainGoalAgent --user-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainUserUttAgent --system-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiCallAndSysUttAgent --api-resp-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiResponseAgent -dt valid --num-episodes -1 --episodes-randomization-seed 42 --world-logs gold-valid
+```
 """
 
 import json
@@ -37,7 +43,8 @@ class TodWorldLogger(WorldLogger):
     """
     WorldLogger has most of what we need.
 
-    We could extend it, but since this is custom logic, let's keep it in one place.
+    We could if-class this logic in it directly, but inheritence + override here is
+    neater.
     """
 
     def _is_batch_world(self, world):
@@ -106,7 +113,9 @@ class TodWorldParser(ParlaiParser):
 class TodWorldScript(ParlaiScript):
     @classmethod
     def setup_tod_args(cls, parser: ParlaiParser):
-        tod_args = parser.add_argument_group("TOD Agent arguments")
+        tod_args = parser.add_argument_group(
+            "TOD World Script Agent arguments. NOTE: If there are issues with invoking downstream opts of agents specified here sometimes you will have more luck with `python -u -m parlai.scripts.tod_world_script` than `parlai tod_world_script`."
+        )
         tod_args.add_argument(
             "--system-model-file",
             default="",
@@ -152,7 +161,7 @@ class TodWorldScript(ParlaiScript):
         tod_args.add_argument(
             "--api-schemas",
             default=None,
-            help="If set, will infer `--api-schema-grounding-model` based on this and a regex on `--goal-grounding-model`.",
+            help="If set and `--api-schema-grounding-model` is empty, will infer `--api-schema-grounding-model` based on this and a regex on `--goal-grounding-model`. If you run into issues with parsing order of opts using this flag, just switch to `--api-schema-grounding-model`.",
         )
 
     @classmethod
@@ -161,7 +170,7 @@ class TodWorldScript(ParlaiScript):
         parser = TodWorldParser(
             True,
             False,
-            "World for chatting with the TOD conversation structure (see TODWorld comments)",
+            "World for chatting with the TOD conversation structure",
         )
         # Following params are same as the `eval_model` script
         parser.add_argument(

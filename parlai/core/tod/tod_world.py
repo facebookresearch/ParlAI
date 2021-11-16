@@ -4,7 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Class for running task-oriented dialogue chats.
+Class for running task-oriented dialogue chats. See long comment on TodWorld for
+functionality descriptions.
+
+Metrics calculated from these simulations are documented in `world_metrics.py` (for
+general usage) and `world_metrics_handlers.py` (for specific metric calculations)
 """
 from parlai.core.metrics import Metric, LegacyMetric
 from parlai.core.message import Message

@@ -29,9 +29,25 @@ def register_metrics_handler(cls):
 
 class TodMetricsHandler:
     """
-    Base for Tod Metrics handlers class. The `TodMetrics` class will call the following.
+    Base class for Tod Metrics handlers. Extend this class then add them to
+    `WORLD_METRIC_HANDLERS` to use. If you would like the class to be exposed to tests,
+    add the Metrics Handler to `METRICS_HANDLER_CLASSES_TEST_REGISTRY` via annotating
+    with `@register_metrics_handler`.
 
-    Override as necessary.
+    The `TodMetrics` class will, on this class
+       1. call `__init__` (which internally calls `episode_reset()`) to begin with.
+       2. call each of the `handle..()` functions as the appropriate turns occur
+       3. call `get_episode_metrics()` then `episode_reset()` at the end of the episode
+
+    The `handle..()` should be used to set intermediate state within the class and `episode_reset()` should be used to clear this state.
+
+    The output of the `handle..()` and `get_episode_metrics()` functions are both `Optional[Dict[str, Metric]]`s. Metrics from both of these paths will be aggregated and reported to `TodMetrics`, so which one to use is mostly a matter of preference, though
+        1. one should take care to only use one or the other and not both, to avoid double-counting
+        2. those from `get_episode_metrics()` will be recorded per-episode and saved to `tod_world_script`'s report as well
+
+    `UserGeneratedDoneMetricHandler` in this file, which collects metrics about frequency of seeing the "[DONE]" token on User utterances and also records conversation length, is a fairly straightforward example of usage.
+
+    Other tried (but not in current active use) Metrics Handers are in `projects/tod_simulator/world_metrics/extended_world_metrics.py`.
     """
 
     def __init__(self):

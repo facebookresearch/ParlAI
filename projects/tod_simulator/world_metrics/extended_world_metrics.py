@@ -409,6 +409,3 @@ class PseudoInformMetricsHandler(TodMetricsHandler):
         if len(self.api_resp_slots) > 0:
             result["pseudo_inform_postApiRespSysTurns"] = AverageMetric(count)
         return result
-
-    def get_episode_metrics(self):
-        self.api_resp_slots = {}
