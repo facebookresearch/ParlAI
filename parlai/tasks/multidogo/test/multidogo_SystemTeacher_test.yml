@@ -1,0 +1,47 @@
+acts:
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = airline'
+    id: Multidogo_SystemTeacher
+    slots:
+      api_name: airline
+    text: 'USER: HELLO ROBIN'
+    type: 'APICALL: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Hello! Good morning. You''ve reached LMT Airways. How may I assist
+      you today?'
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = airline'
+    id: Multidogo_SystemTeacher
+    slots:
+      api_name: airline
+    text: 'USER: I NEED BOARDING PASS '
+    type: 'APICALL: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Awesome! I''d be glad to help you with that. May I know your last name
+      please?'
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 2316
+num_examples: 43104
