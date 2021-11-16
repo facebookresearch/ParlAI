@@ -160,7 +160,10 @@ class SerializationHelpers:
 
     @classmethod
     def inner_list_split(cls, s):
-        return s.split(", ")
+        split = s.split(", ")
+        if len(split) == 1:
+            return split[0]
+        return set(split)
 
     @classmethod
     def maybe_inner_list_join(cls, values):
@@ -193,7 +196,7 @@ class SerializationHelpers:
                 continue
             name, value = slot_str.split(" = ", 1)
             name = name.strip()
-            value = value.strip()
+            value = SerializationHelpers.inner_list_split(value.strip())
             result[name] = value
         return result
 
