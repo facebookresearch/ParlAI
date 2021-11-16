@@ -171,7 +171,6 @@ class TestDataParser(tod_agents.TodStructuredDataParser):
                     ),
                 )
             )
-        #        print(result, self.opt)
         return result
 
     def get_id_task_prefix(self):
