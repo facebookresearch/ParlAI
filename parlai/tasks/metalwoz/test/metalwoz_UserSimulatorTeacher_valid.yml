@@ -4,10 +4,12 @@ acts:
     domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Hello how may I help you?
-    id: metalwoz
+    - Hey, I'd like to compare two cities
+    id: metalwoz:UserSimulatorTeacher
     task_id: 284cf7ff
-    text: You are a bot that provides facts about different cities
+    text: 'You are interacting with a bot that provides facts about different cities
+
+      Hello how may I help you?'
     user_prompt: Ask the bot to compare LA and New York City
     user_role: You are interacting with a bot that provides facts about different
       cities
@@ -17,10 +19,10 @@ acts:
     domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Sure, which cities?
-    id: metalwoz
+    - Please compare Los Angeles with New York City
+    id: metalwoz:UserSimulatorTeacher
     task_id: 284cf7ff
-    text: Hey, I'd like to compare two cities
+    text: Sure, which cities?
     user_prompt: Ask the bot to compare LA and New York City
     user_role: You are interacting with a bot that provides facts about different
       cities
@@ -30,10 +32,10 @@ acts:
     domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Can you narrow down what you want to compare?
-    id: metalwoz
+    - Sure. What's the difference in population?
+    id: metalwoz:UserSimulatorTeacher
     task_id: 284cf7ff
-    text: Please compare Los Angeles with New York City
+    text: Can you narrow down what you want to compare?
     user_prompt: Ask the bot to compare LA and New York City
     user_role: You are interacting with a bot that provides facts about different
       cities
@@ -43,11 +45,11 @@ acts:
     domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Los Angeles has a population of 3.976 million, NYC has a population of 8.538
+    - Oh wow, that's a huge difference. How big is New York?
+    id: metalwoz:UserSimulatorTeacher
+    task_id: 284cf7ff
+    text: Los Angeles has a population of 3.976 million, NYC has a population of 8.538
       million
-    id: metalwoz
-    task_id: 284cf7ff
-    text: Sure. What's the difference in population?
     user_prompt: Ask the bot to compare LA and New York City
     user_role: You are interacting with a bot that provides facts about different
       cities
@@ -57,10 +59,10 @@ acts:
     domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - 304.6 mi
-    id: metalwoz
+    - And how big is LA?
+    id: metalwoz:UserSimulatorTeacher
     task_id: 284cf7ff
-    text: Oh wow, that's a huge difference. How big is New York?
+    text: 304.6 mi
     user_prompt: Ask the bot to compare LA and New York City
     user_role: You are interacting with a bot that provides facts about different
       cities
