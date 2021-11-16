@@ -6,12 +6,11 @@
 """
 Base script for running TOD model-model chats.
 
-For example, to extract gold ground truth data from Google SGD, run 
+For example, to extract gold ground truth data from Google SGD, run
 
 ```
 python -u -m parlai.scripts.tod_world_script --api-schema-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiSchemaAgent --goal-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainGoalAgent --user-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainUserUttAgent --system-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiCallAndSysUttAgent --api-resp-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiResponseAgent -dt valid --num-episodes -1 --episodes-randomization-seed 42 --world-logs gold-valid
 ```
-
 """
 
 import json
