@@ -190,10 +190,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         """
 
         # Load task description from file
-        MISSING_TASK_DESCRIPTION_TEXT = (
-            "<h1>" "You didn't specify a task_description_file" "</h1>"
-        )
-        task_description = MISSING_TASK_DESCRIPTION_TEXT
+        task_description = "<h1>" "You didn't specify a task_description_file" "</h1>"
         if self.args.blueprint.get("task_description_file", None) is not None:
             full_path = os.path.expanduser(self.args.blueprint.task_description_file)
             assert os.path.exists(
