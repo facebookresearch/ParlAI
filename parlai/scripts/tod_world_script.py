@@ -5,6 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 """
 Base script for running TOD model-model chats.
+
+For example, to extract gold ground truth data from Google SGD, run 
+
+```
+python -u -m parlai.scripts.tod_world_script --api-schema-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiSchemaAgent --goal-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainGoalAgent --user-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainUserUttAgent --system-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiCallAndSysUttAgent --api-resp-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiResponseAgent -dt valid --num-episodes -1 --episodes-randomization-seed 42 --world-logs gold-valid
+```
+
 """
 
 import json
@@ -108,7 +115,7 @@ class TodWorldScript(ParlaiScript):
     @classmethod
     def setup_tod_args(cls, parser: ParlaiParser):
         tod_args = parser.add_argument_group(
-            "TOD World Script Agent arguments. NOTE: Agents setup with this path will be able to take command line arguments, whereas those set from `-o` or `--init-opt` will not."
+            "TOD World Script Agent arguments. NOTE: If there are issues with invoking downstream opts of agents specified here sometimes you will have more luck with `python -u -m parlai.scripts.tod_world_script` than `parlai tod_world_script`."
         )
         tod_args.add_argument(
             "--system-model-file",
