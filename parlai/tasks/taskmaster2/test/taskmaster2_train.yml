@@ -1,0 +1,48 @@
+acts:
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_SystemTeacher
+    labels:
+    - 'APICALL: api_name = nba ; name.team = Denver Nuggets'
+    slots:
+      api_name: nba
+      name.player: Nikola Jokic
+      name.team: Denver Nuggets
+    text: 'USER: Hey. How are the Denver Nuggets doing this year?'
+    type: 'APICALL: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_SystemTeacher
+    labels:
+    - 'SYSTEM: Hello, They''re currently six place in the Western Conference.'
+    slots:
+      api_name: nba
+      place.team: six place
+    text: 'APIRESP: api_name = nba ; place.team = six place'
+    type: 'SYSTEM: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_SystemTeacher
+    labels:
+    - 'APICALL: '
+    slots: {}
+    text: 'USER: Okay. And what division are they in?'
+    type: 'APICALL: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_SystemTeacher
+    labels:
+    - 'SYSTEM: There in the Northwest division.'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 13840
+num_examples: 291032
