@@ -1,0 +1,51 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Taskmaster3_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = find_movies ; description.other = new'
+    id: Taskmaster3_SystemTeacher
+    slots:
+      api_name: find_movies
+      description.other: new
+    text: 'USER: What new movies are popular with friends on my contact list?'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: __SILENCE__'
+    id: Taskmaster3_SystemTeacher
+    slots:
+      api_name: find_movies
+      name.movie_1: Galaxy Man
+    text: 'APIRESP: api_name = find_movies ; name.movie_1 = Galaxy Man'
+    type: 'SYSTEM: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = find_movies ; description.other = popular with friends'
+    id: Taskmaster3_SystemTeacher
+    slots:
+      api_name: find_movies
+      description.other: popular with friends
+    text: 'USER: __SILENCE__'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: __SILENCE__'
+    id: Taskmaster3_SystemTeacher
+    slots:
+      api_name: find_movies
+      name.movie_1: Galaxy Man
+    text: 'APIRESP: api_name = find_movies ; name.movie_1 = Galaxy Man'
+    type: 'SYSTEM: '
+num_episodes: 2375
+num_examples: 62657
