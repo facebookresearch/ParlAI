@@ -180,7 +180,7 @@ class WandbLogger(object):
             notes=f"{opt['model_file']}",
             entity=opt.get('wandb_entity'),
             reinit=True,  # in case of preemption
-            resume=True, # requeued runs should be treated as single run
+            resume=True,  # requeued runs should be treated as single run
         )
         # suppress wandb's output
         logging.getLogger("wandb").setLevel(logging.ERROR)
