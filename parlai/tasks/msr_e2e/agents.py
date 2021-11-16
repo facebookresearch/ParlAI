@@ -322,5 +322,6 @@ class SystemTeacher(MsrE2EParser, tod_agents.TodSystemTeacher):
 class UserSimulatorTeacher(MsrE2EParser, tod_agents.TodUserSimulatorTeacher):
     pass
 
+
 class DefaultTeacher(SystemTeacher):
     pass
