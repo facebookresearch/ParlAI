@@ -1,0 +1,59 @@
+acts:
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: MultiwozV22_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = find_restaurant ; area = centre ; food = chinese'
+    id: MultiwozV22_SystemTeacher
+    slots:
+      api_name: find_restaurant
+      area: centre
+      food: chinese
+    text: 'USER: I''m looking for a local place to dine in the centre that serves
+      chinese food.'
+    type: 'APICALL: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: I have restaurants matching your criteria in all price ranges. Do you
+      have a preference on price?'
+    id: MultiwozV22_SystemTeacher
+    slots:
+      COUNT: 10
+      OPTIONS: '[{"address": "Regent Street City Centre", "area": "centre", "food":
+        "chinese", "id": "19212", "introduction": "charlie chan serves a variety of
+        popular chinese dishes at their restaurant", "location": [52.201743, 0.124843],
+        "name": "charlie chan", "phone": "01223361763", "postcode": "cb21db", "pricerange":
+        "cheap", "type": "restaurant", "signature": NaN}]'
+    text: 'APIRESP: COUNT = 10 ; OPTIONS = [{"address": "Regent Street City Centre",
+      "area": "centre", "food": "chinese", "id": "19212", "introduction": "charlie
+      chan serves a variety of popular chinese dishes at their restaurant", "location":
+      [52.201743, 0.124843], "name": "charlie chan", "phone": "01223361763", "postcode":
+      "cb21db", "pricerange": "cheap", "type": "restaurant", "signature": NaN}]'
+    type: 'SYSTEM: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: MultiwozV22_SystemTeacher
+    slots: {}
+    text: 'USER: I need the address, postcode and the price range.'
+    type: 'APICALL: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Ok how about Charlie Chan, located at Regent Street City Centre. Postcode
+      is cb21db with a cheap price. Can I help you further today?'
+    id: MultiwozV22_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 999
+num_examples: 17731

@@ -1,0 +1,66 @@
+acts:
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: MultiwozV22_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = find_train ; departure = norwich ; destination = cambridge'
+    id: MultiwozV22_SystemTeacher
+    slots:
+      api_name: find_train
+      departure: norwich
+      destination: cambridge
+    text: 'USER: I need train reservations from norwich to cambridge'
+    type: 'APICALL: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: I have 133 trains matching your request. Is there a specific day and
+      time you would like to travel?'
+    id: MultiwozV22_SystemTeacher
+    slots:
+      COUNT: 133
+      OPTIONS: '[{"arriveby": "06:35", "day": "monday", "departure": "norwich", "destination":
+        "cambridge", "duration": "79 minutes", "leaveat": "05:16", "price": "17.60
+        pounds", "trainid": "TR9020"}]'
+    text: 'APIRESP: COUNT = 133 ; OPTIONS = [{"arriveby": "06:35", "day": "monday",
+      "departure": "norwich", "destination": "cambridge", "duration": "79 minutes",
+      "leaveat": "05:16", "price": "17.60 pounds", "trainid": "TR9020"}]'
+    type: 'SYSTEM: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = find_train ; arriveby = 18:00 ; day = monday ; departure
+      = norwich ; destination = cambridge'
+    id: MultiwozV22_SystemTeacher
+    slots:
+      api_name: find_train
+      arriveby: '18:00'
+      day: monday
+      departure: norwich
+      destination: cambridge
+    text: 'USER: I''d like to leave on Monday and arrive by 18:00.'
+    type: 'APICALL: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: There are 12 trains for the day and time you request. Would you like
+      to book it now?'
+    id: MultiwozV22_SystemTeacher
+    slots:
+      COUNT: 12
+      OPTIONS: '[{"arriveby": "06:35", "day": "monday", "departure": "norwich", "destination":
+        "cambridge", "duration": "79 minutes", "leaveat": "05:16", "price": "17.60
+        pounds", "trainid": "TR9020"}]'
+    text: 'APIRESP: COUNT = 12 ; OPTIONS = [{"arriveby": "06:35", "day": "monday",
+      "departure": "norwich", "destination": "cambridge", "duration": "79 minutes",
+      "leaveat": "05:16", "price": "17.60 pounds", "trainid": "TR9020"}]'
+    type: 'SYSTEM: '
+num_episodes: 1000
+num_examples: 17744
