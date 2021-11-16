@@ -1,70 +1,45 @@
 acts:
-- - episode_done: false
+- - domain: Restaurants
+    episode_done: false
     eval_labels:
-    - What city do you want to dine in? Do you have a preferred restaurant?
-    id: google_sgd
-    slots:
-      location: []
-      restaurant_name: []
-    text: 'I want to make a restaurant reservation for 2 people at half past 11 in
-      the morning. api_resp: restaurant_name = [] ; location = []'
-    type: apiresp
-- - episode_done: false
+    - 'APIS: '
+    id: GoogleSGD_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: Restaurants
+    episode_done: false
     eval_labels:
-    - 'Confirming: I will reserve a table for 2 people at Sino in San Jose. The reservation
-      time is 11:30 am today.'
-    id: google_sgd
-    slots:
-      date:
-      - '2019-03-01'
-      location:
-      - San Jose
-      number_of_seats:
-      - '2'
-      restaurant_name:
-      - Sino
-      time:
-      - '11:30'
-    text: 'Please find restaurants in San Jose. Can you try Sino? api_resp: restaurant_name
-      = [''Sino''] ; location = [''San Jose''] ; time = [''11:30''] ; number_of_seats
-      = [''2''] ; date = [''2019-03-01'']'
-    type: apiresp
-- - episode_done: false
+    - 'APICALL: '
+    id: GoogleSGD_SystemTeacher
+    slots: {}
+    text: 'USER: I want to make a restaurant reservation for 2 people at half past
+      11 in the morning.'
+    type: 'APICALL: '
+- - domain: Restaurants
+    episode_done: false
     eval_labels:
-    - 'apicall: ReserveRestaurant.date = 2019-03-01 ; ReserveRestaurant.location =
-      San Jose ; ReserveRestaurant.number_of_seats = 2 ; ReserveRestaurant.restaurant_name
-      = Sino ; ReserveRestaurant.time = 11:30'
-    id: google_sgd
-    slots:
-      ReserveRestaurant.date: '2019-03-01'
-      ReserveRestaurant.location: San Jose
-      ReserveRestaurant.number_of_seats: '2'
-      ReserveRestaurant.restaurant_name: Sino
-      ReserveRestaurant.time: '11:30'
-    text: Yes, thanks. What's their phone number?
-    type: apicall
-- - episode_done: false
+    - 'SYSTEM: What city do you want to dine in? Do you have a preferred restaurant?'
+    id: GoogleSGD_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: Restaurants
+    episode_done: false
     eval_labels:
-    - Your reservation has been made. Their phone number is 408-247-8880.
-    id: google_sgd
-    slots:
-      ? ''
-      : []
-      phone_number:
-      - 408-247-8880
-    text: 'api_resp: phone_number = [''408-247-8880''] ;  = []'
-    type: apiresp
-- - episode_done: false
+    - 'APICALL: '
+    id: GoogleSGD_SystemTeacher
+    slots: {}
+    text: 'USER: Please find restaurants in San Jose. Can you try Sino?'
+    type: 'APICALL: '
+- - domain: Restaurants
+    episode_done: false
     eval_labels:
-    - 'The street address is 377 Santana Row #1000. They have good vegetarian options.'
-    id: google_sgd
-    slots:
-      address:
-      - '377 Santana Row #1000'
-      has_vegetarian_options:
-      - 'True'
-    text: 'What''s their address? Do they have vegetarian options on their menu? api_resp:
-      has_vegetarian_options = [''True''] ; address = [''377 Santana Row #1000'']'
-    type: apiresp
+    - 'SYSTEM: Confirming: I will reserve a table for 2 people at Sino in San Jose.
+      The reservation time is 11:30 am today.'
+    id: GoogleSGD_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
 num_episodes: 2482
-num_examples: 31825
+num_examples: 56172
