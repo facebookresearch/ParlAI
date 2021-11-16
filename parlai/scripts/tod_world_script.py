@@ -168,9 +168,7 @@ class TodWorldScript(ParlaiScript):
     def setup_args(cls):
         # Use default parlai args for logging + the like, but don't need model args since we specify those manually via command-line
         parser = TodWorldParser(
-            True,
-            False,
-            "World for chatting with the TOD conversation structure",
+            True, False, "World for chatting with the TOD conversation structure"
         )
         # Following params are same as the `eval_model` script
         parser.add_argument(
@@ -261,9 +259,7 @@ class TodWorldScript(ParlaiScript):
             ).replace("Goal", "ApiSchema")
 
         agents[tod_world.API_SCHEMA_GROUNDING_IDX] = self._get_model_or_default_agent(
-            opt,
-            "api_schema_grounding_model",
-            tod_world_agents.EmptyApiSchemaAgent,
+            opt, "api_schema_grounding_model", tod_world_agents.EmptyApiSchemaAgent
         )
 
         return agents
