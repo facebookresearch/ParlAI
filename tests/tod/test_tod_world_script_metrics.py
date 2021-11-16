@@ -14,9 +14,7 @@ import unittest
 import parlai.core.tod.tod_test_utils.test_agents as test_agents
 import parlai.scripts.tod_world_script as tod_world_script
 from parlai.core.tod.tod_agents import StandaloneApiAgent
-from parlai.core.tod.world_metrics_handlers import (
-    METRICS_HANDLER_CLASSES_TEST_REGISTRY,
-)
+from parlai.core.tod.world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
 from parlai.core.metrics import dict_report
 
 # Ignore lint on following line; want to have registered classes show up for tests
