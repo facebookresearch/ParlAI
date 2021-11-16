@@ -184,9 +184,12 @@ class WandbLogger(object):
         )
         # suppress wandb's output
         logging.getLogger("wandb").setLevel(logging.ERROR)
-        for key, value in opt.items():
-            if value is None or isinstance(value, (str, numbers.Number, tuple)):
-                setattr(self.run.config, key, value)
+
+        print("RESUMED?", self.run.resumed)
+        if not self.run.resumed:
+            for key, value in opt.items():
+                if value is None or isinstance(value, (str, numbers.Number, tuple)):
+                    setattr(self.run.config, key, value)
         if model is not None:
             self.run.watch(model)
 
