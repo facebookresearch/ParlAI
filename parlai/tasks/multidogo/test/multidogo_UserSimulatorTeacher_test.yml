@@ -1,0 +1,46 @@
+acts:
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'USER: HELLO ROBIN'
+    id: Multidogo_UserSimulatorTeacher
+    text: 'GOAL: api_name = airline ; booking_confirmation_number = 523 ; email_address
+      = gmailcom ; name = mohan'
+    type: 'USER: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'USER: I NEED BOARDING PASS '
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Hello! Good morning. You''ve reached LMT Airways. How may I assist
+      you today?'
+    type: 'USER: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'USER: MOHAN'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Awesome! I''d be glad to help you with that. May I know your last
+      name please?'
+    type: 'USER: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'USER: CONFIRMATION NUMBER : moh523'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Alright Mohan! Could you please share the booking confirmation
+      number?'
+    type: 'USER: '
+- - domain: airline
+    episode_done: false
+    eval_labels:
+    - 'USER: Mohan283@gmail.com'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Great! May I have your email address please?'
+    type: 'USER: '
+num_episodes: 2316
+num_examples: 43104
