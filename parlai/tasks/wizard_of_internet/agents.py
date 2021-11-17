@@ -71,12 +71,13 @@ def parse_wizard_message(message_dict, doc_lines_delim):
     def get_knowledge(msg_d):
         knowledge = {
             CONST.RETRIEVED_DOCS: [],
+            CONST.RETRIEVED_SENTENCES: [],
+            CONST.RETRIEVED_DOCS_URLS: [],
+            CONST.RETRIEVED_DOCS_TITLES: [],
             CONST.SELECTED_DOCS: [],
             CONST.SELECTED_DOCS_URLS: [],
             CONST.SELECTED_DOCS_TITLES: [],
             CONST.SELECTED_SENTENCES: [],
-            CONST.RETRIEVED_DOCS_URLS: [],
-            CONST.RETRIEVED_DOCS_TITLES: [],
         }
         docs = msg_d[CONST.CONTEXT][CONST.CONTENTS]
         selections = msg_d[CONST.CONTEXT][CONST.SELECTED_CONTENTS]
@@ -94,6 +95,7 @@ def parse_wizard_message(message_dict, doc_lines_delim):
                     doc_selected = True
                     knowledge[CONST.SELECTED_SENTENCES].append(line)
             full_doc = doc_lines_delim.join(doc_lines)
+            knowledge[CONST.RETRIEVED_SENTENCES].extend(doc_lines)
             knowledge[CONST.RETRIEVED_DOCS].append(full_doc)
             knowledge[CONST.RETRIEVED_DOCS_TITLES].append(doc['title'])
             knowledge[CONST.RETRIEVED_DOCS_URLS].append(doc['url'])
@@ -388,6 +390,7 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             # Has NOT selected knowledge or a is batch padding message
             return
 
+        # F1 metric over the *selected* knowledge.
         resp = model_response['text']
         self.metrics.add(
             'knowledge_f1_docs',
@@ -407,12 +410,23 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             F1Metric.compute(resp, CONST.SELECTED_SENTENCES),
         )
 
+        # F1 Metrics over the *retrieved* docs.
+        self.metrics.add(
+            'knowledge_f1_max_retrieved_sentences',
+            F1Metric.compute(resp, teacher_action[CONST.RETRIEVED_SENTENCES]),
+        )
+        self.metrics.add(
+            'knowledge_f1_max_retrieved_docs',
+            F1Metric.compute(resp, teacher_action[CONST.RETRIEVED_DOCS]),
+        )
+
     def _teacher_action_type(self) -> str:
         return CONST.ACTION_WIZARD_TO_APPRENTICE
 
     def additional_message_content(self, parlai_message: Message, action: Dict):
         for item_key in (
             CONST.RETRIEVED_DOCS,
+            CONST.RETRIEVED_SENTENCES,
             CONST.RETRIEVED_DOCS_URLS,
             CONST.RETRIEVED_DOCS_TITLES,
             CONST.SELECTED_DOCS,
