@@ -45,7 +45,13 @@ You'll need to do two things:
 1. Set `--knowledge-access-method search_only`
 2. Set `--query-generator-model-file zoo:sea/bart_sq_gen/model`
 
-### How can I train with gold documents provided?
+### How can I manually provide documents for my model to use?
+
+You may want to provide the model with "Gold" documents, or documents on which the generator *should condition*. We offer two ways of doing this:
+1. **Only Gold**: Providing the model with **only** the documents you want, bypassing search.
+2. **Insert Gold**: Mixing retrieved documents with gold documents.
+
+This may be useful both for ensuring reproducibility between experiments for retrievers with stochastic responses (e.g., the internet). For example, see the [`WizIntGoldDocRetrieverFiDAgent`](https://github.com/facebookresearch/ParlAI/blob/f1a46aad3dbae55f8a7f8aaa70b2330135c23e35/parlai/agents/fid/fid.py#L374) model with wizard of internet dataset).
 
 **ONLY GOLD DOCS**
 
