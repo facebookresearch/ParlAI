@@ -28,7 +28,9 @@ These files aid in consistency between Teachers and Agents for simulation. Rathe
 ## Agents for Grounding
 For goal grounding for the User for simulation:
     * TodGoalAgent
+        * Dumps goals as is from the dataset, possibly multiple per episode
     * TodSingleGoalAgent
+        * Flattens goals such that a single one is used to seed a conversation. For datasets that include multiple goals per conversation, each individual goal is used as a seed.
 
 For (optional) API schema grounding for the System:
     * TodApiSchemaAgent (must be used with `TodGoalAgent` only)
@@ -38,7 +40,7 @@ For (optional) API schema grounding for the System:
 
 ## Agents for mocking APIs:
     * StandaloneApiAgent
-         * Assumed to be provided a .pickle file 'trained' by `TodStandaloneApiTeacher`
+         * Assumed to be provided a .pickle file 'trained' by `TodStandaloneApiTeacher` (See comments in-line for train command example)
 
 # Agents for dumping data from a ground truth dataset
 The following are for extracting TOD World metrics from a ground truth dataset. These are generally used sparingly and only for calculating baselines.
@@ -451,7 +453,7 @@ class StandaloneApiAgent(Agent):
 
     Use `TodStandaloneApiTeacher` to train this class. For example for a MultiWoz V2.2
     standalone API, use ``` parlai train -t multiwoz_v22:StandaloneApiTeacher -m
-    parlai_fb.agents.tod.agents:StandaloneApiAgent -eps 4 -mf output ``` to generate the
+    parlai.core.tod.tod_agents:StandaloneApiAgent -eps 4 -mf output ``` to generate the
     `.pickle` file to use.
     """
 
@@ -765,7 +767,7 @@ class TodStandaloneApiTeacher(TodStructuredDataParser, DialogTeacher):
 
     Set this as the teacher with `StandaloneApiAgent` as the agent. Ex for a MultiWoz
     V2.2 standalone API, use ``` parlai train -t multiwoz_v22:StandaloneApiTeacher -m
-    parlai_fb.agents.tod.agents:StandaloneApiAgent -eps 4 -mf output ```
+    parlai.core.tod.tod_agents:StandaloneApiAgent -eps 4 -mf output ```
     """
 
     def setup_data(self, fold):
