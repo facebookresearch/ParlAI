@@ -49,6 +49,7 @@ class ParlAILRScheduler(object):
         self.warmup_updates = max(0, warmup_updates)
         self.warmup_rate = warmup_rate
         self.hard_reset = hard_reset
+        self.warmup_scheduler = None
 
     def _init_warmup_scheduler(self, optimizer, states):
         """
@@ -66,8 +67,6 @@ class ParlAILRScheduler(object):
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
             )
-        else:
-            self.warmup_scheduler = None
 
     def get_last_lr(self):
         s = self.warmup_scheduler if self._is_lr_warming_up() else self.scheduler
@@ -84,8 +83,7 @@ class ParlAILRScheduler(object):
         Check if we're warming up the learning rate.
         """
         return (
-            hasattr(self, 'warmup_scheduler')
-            and self.warmup_scheduler is not None
+            self.warmup_scheduler is not None
             and self.warmup_scheduler.get_last_lr()[0] < 1.0
         )
 
