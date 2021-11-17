@@ -66,8 +66,6 @@ class ParlAILRScheduler(object):
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
             )
-            if states.get('warmup_scheduler'):
-                self.warmup_scheduler.load_state_dict(states['warmup_scheduler'])
         else:
             self.warmup_scheduler = None
 
