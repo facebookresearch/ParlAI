@@ -542,11 +542,7 @@ class StandaloneApiAgent(Agent):
                 resp = self.data[call_text]
             else:
                 resp = self.data.get(call_text, tod.STANDARD_RESP)
-            return {
-                "text": resp,
-                "id": self.id,
-                "episode_done": False,
-            }
+            return {"text": resp, "id": self.id, "episode_done": False}
 
         # Not exact case
         best_key = difflib.get_close_matches(call_text, self.data.keys(), 1)
@@ -674,10 +670,7 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
                 [teacher_action["domain"]] if self.opt["domain_nlg_record"] else []
             )
             metrics = NlgMetrics(
-                guess=resp,
-                labels=labels,
-                prefixes=domains,
-                avg_jga_nlg_bleu=True,
+                guess=resp, labels=labels, prefixes=domains, avg_jga_nlg_bleu=True
             ).report()
             for key, value in metrics.items():
                 self.metrics.add(key, value)
