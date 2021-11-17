@@ -9,9 +9,7 @@ Distributed script for running TOD model-model chats.
 Not to be called directly; should be called from SLURM
 """
 
-from parlai.scripts.tod_world_script import (
-    TodWorldScript,
-)
+from parlai.scripts.tod_world_script import TodWorldScript
 from parlai.core.script import ParlaiScript
 import parlai.utils.distributed as distributed_utils
 
