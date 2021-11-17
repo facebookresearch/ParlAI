@@ -34,14 +34,7 @@ DOMAINS = [
     "train",
 ]
 
-WELL_FORMATTED_DOMAINS = [
-    "attraction",
-    "bus",
-    "hotel",
-    "restaurant",
-    "train",
-    "taxi",
-]
+WELL_FORMATTED_DOMAINS = ["attraction", "bus", "hotel", "restaurant", "train", "taxi"]
 
 
 class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
@@ -93,9 +86,7 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
 
             for intent in service["intents"]:
                 call_name = intent["name"]
-                result[call_name] = {
-                    tod.STANDARD_API_NAME_SLOT: call_name,
-                }
+                result[call_name] = {tod.STANDARD_API_NAME_SLOT: call_name}
                 req_slots = set([x[prefix_end_idx:] for x in intent["required_slots"]])
                 if len(req_slots) > 0:
                     result[call_name][tod.STANDARD_REQUIRED_KEY] = list(req_slots)
@@ -286,11 +277,14 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
             resp = {}
         if len(call) > 0:
             self.last_call = call
-        return call, tod.TodStructuredRound(
-            user_utt=user_turn["utterance"],
-            api_call_machine=call,
-            api_resp_machine=resp,
-            sys_utt=sys_turn["utterance"],
+        return (
+            call,
+            tod.TodStructuredRound(
+                user_utt=user_turn["utterance"],
+                api_call_machine=call,
+                api_resp_machine=resp,
+                sys_utt=sys_turn["utterance"],
+            ),
         )
 
     def _get_schemas_for_goal_calls(self, goals):
@@ -322,7 +316,9 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                 if raw_episode["dialogue_id"] != self.opt["dialogue_id"]:
                     continue
 
-            skip = False  # need to skip outer for loop while in `for domains` inner for loop
+            skip = (
+                False
+            )  # need to skip outer for loop while in `for domains` inner for loop
             if self.opt.get("well_formatted_domains_only", True):
                 if len(domains) == 0:
                     skip = True

@@ -10,13 +10,8 @@ Note that only metrics handler classes in `WORLD_METRIC_HANDLERS` (of `world_met
 """
 
 from parlai.core.message import Message
-from parlai.core.metrics import (
-    Metric,
-    AverageMetric,
-)
-from parlai.core.tod.tod_core import (
-    STANDARD_DONE,
-)
+from parlai.core.metrics import Metric, AverageMetric
+from parlai.core.tod.tod_core import STANDARD_DONE
 from typing import Dict, List, Optional
 
 METRICS_HANDLER_CLASSES_TEST_REGISTRY = set()  # for tests
