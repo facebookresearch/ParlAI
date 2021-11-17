@@ -877,6 +877,18 @@ task_list = [
         "links": {"website": "https://ai.google/tools/datasets/taskmaster-1"},
     },
     {
+        "id": "MSR-E2E",
+        "display_name": "MSR End-to-End",
+        "task": "msr_e2e",
+        "tags": ["ChitChat"],
+        "description": (
+            "MSR-E2E is a dataset of human-human conversations in which one "
+            "human plays the role of an Agent and the other one plays the role"
+            "of a User. Data is collected from Amazon Mechanical Turk. "
+        ),
+        "links": {"website": "https://github.com/xiul-msr/e2e_dialog_challenge"},
+    },
+    {
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
