@@ -200,7 +200,7 @@ class Taskmaster1Parser(tod_agents.TodStructuredDataParser):
             rounds = []
             goal_calls = []
             if len(utterances) > 0 and utterances[0]["speaker"] == "ASSISTANT":
-                (idx, sys_utt, _,) = self._get_utterance_and_slots_for_speaker(
+                (idx, sys_utt, _) = self._get_utterance_and_slots_for_speaker(
                     "ASSISTANT", utterances, idx
                 )
 
@@ -209,11 +209,9 @@ class Taskmaster1Parser(tod_agents.TodStructuredDataParser):
                     rounds.append(t)
 
             while idx < len(utterances):
-                (
-                    idx,
-                    user_utt,
-                    user_slots,
-                ) = self._get_utterance_and_slots_for_speaker("USER", utterances, idx)
+                (idx, user_utt, user_slots) = self._get_utterance_and_slots_for_speaker(
+                    "USER", utterances, idx
+                )
                 (
                     idx,
                     sys_utt,

@@ -22,9 +22,7 @@ class MetalWozTeacherBase(DialogTeacher):
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
         parser.add_argument(
-            "--metalwoz-domains",
-            nargs="+",
-            help="Use only a subset of the domains",
+            "--metalwoz-domains", nargs="+", help="Use only a subset of the domains"
         )
         return parser
 
@@ -104,9 +102,10 @@ class UserSimulatorTeacher(MetalWozTeacherBase):
         data = self.load_data(datapath)
         for row in data:
             texts = list(row["turns"])
-            prompts, labels = [f"{row['user_role']}\n{texts[0]}"] + texts[2::2], texts[
-                1::2
-            ]
+            prompts, labels = (
+                [f"{row['user_role']}\n{texts[0]}"] + texts[2::2],
+                texts[1::2],
+            )
             for i, (prompt, label) in enumerate(zip(prompts, labels)):
                 yield {
                     "text": prompt,

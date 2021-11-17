@@ -28,11 +28,7 @@ import parlai.tasks.msr_e2e.build as build_
 import parlai.core.tod.tod_agents as tod_agents
 
 
-DOMAINS = [
-    "movie",
-    "restaurant",
-    "taxi",
-]
+DOMAINS = ["movie", "restaurant", "taxi"]
 
 # Just going to copy/paste these since it's faster than parsing 3 separate files
 # They are in `system/src/deep_dialog/data_<domain>/<domain>_slots.txt` in the original data
