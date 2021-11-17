@@ -73,10 +73,7 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
             help="Use all data or split into 8:1:1 fold",
         )
         agent.add_argument(
-            "--split-folds-seed",
-            type=int,
-            default=42,
-            help="Seed for the fold split",
+            "--split-folds-seed", type=int, default=42, help="Seed for the fold split"
         )
         return parser
 

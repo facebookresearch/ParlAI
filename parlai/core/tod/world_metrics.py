@@ -10,9 +10,7 @@ This class is in its own file to prevent circular dependencies + monolithic file
 """
 
 from parlai.core.message import Message
-from parlai.core.metrics import (
-    Metrics,
-)
+from parlai.core.metrics import Metrics
 from parlai.core.tod.tod_core import (
     TodAgentType,
     TOD_AGENT_TYPE_TO_PREFIX,
@@ -73,8 +71,7 @@ class TodMetrics(Metrics):
         )
         if agent_type is TodAgentType.API_SCHEMA_GROUNDING_AGENT:
             return handler.handle_api_schemas(
-                message,
-                SerializationHelpers.str_to_api_schemas(prefix_stripped_text),
+                message, SerializationHelpers.str_to_api_schemas(prefix_stripped_text)
             )
         if agent_type is TodAgentType.GOAL_GROUNDING_AGENT:
             return handler.handle_goals(
