@@ -15,9 +15,7 @@ from parlai.core.metrics import dict_report
 from parlai.core.opt import Opt
 from parlai.core.tod.tod_core import SerializationHelpers
 import parlai.core.tod.tod_test_utils.test_agents as test_agents
-from parlai.core.tod.world_metrics_handlers import (
-    METRICS_HANDLER_CLASSES_TEST_REGISTRY,
-)
+from parlai.core.tod.world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
 import parlai.scripts.tod_world_script as tod_world_script
 
 # Ignore lint on following line; want to have registered classes show up for tests
@@ -233,9 +231,10 @@ class TodMetricsInScriptTests(unittest.TestCase):
             metrics_dict["goal"] = goal
             return metrics_dict
 
-        return dict_report(script.world.report()), [
-            get_episode_report(g, e) for g, e in script.episode_metrics
-        ]
+        return (
+            dict_report(script.world.report()),
+            [get_episode_report(g, e) for g, e in script.episode_metrics],
+        )
 
     def test_apiCallAttempts_usingGold(self):
         opt = copy.deepcopy(TEST_SETUP)

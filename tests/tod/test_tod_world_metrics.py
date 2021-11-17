@@ -19,12 +19,8 @@ from parlai.core.tod.tod_core import (
     TodAgentType,
     TOD_AGENT_TYPE_TO_PREFIX,
 )
-from parlai.core.tod.world_metrics import (
-    TodMetrics,
-)
-from parlai.core.tod.world_metrics_handlers import (
-    METRICS_HANDLER_CLASSES_TEST_REGISTRY,
-)
+from parlai.core.tod.world_metrics import TodMetrics
+from parlai.core.tod.world_metrics_handlers import METRICS_HANDLER_CLASSES_TEST_REGISTRY
 
 # Ignore lint on following line; want to have registered classes show up for tests
 import projects.tod_simulator.world_metrics.extended_world_metrics  # noqa: F401
