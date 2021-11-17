@@ -877,6 +877,18 @@ task_list = [
         "links": {"website": "https://ai.google/tools/datasets/taskmaster-1"},
     },
     {
+        "id": "MSR-E2E",
+        "display_name": "MSR End-to-End",
+        "task": "msr_e2e",
+        "tags": ["ChitChat"],
+        "description": (
+            "MSR-E2E is a dataset of human-human conversations in which one "
+            "human plays the role of an Agent and the other one plays the role"
+            "of a User. Data is collected from Amazon Mechanical Turk. "
+        ),
+        "links": {"website": "https://github.com/xiul-msr/e2e_dialog_challenge"},
+    },
+    {
         "id": "Twitter",
         "display_name": "Twitter",
         "task": "twitter",
@@ -1164,6 +1176,20 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1908.06083"},
     },
     {
+        "id": "MultiDoGo",
+        "display_name": "MultiDoGo",
+        "task": "multidogo",
+        "tags": ["TOD"],
+        "description": (
+            "MultiDoGo is a large task-oriented dataset from Amazon collected "
+            "in a Wizard of Oz fashion, using both crowd and expert annotators "
+            "with annotations at varying levels of granularity."
+        ),
+        "links": {
+            "website": "https://github.com/awslabs/multi-domain-goal-oriented-dialogues-dataset"
+        },
+    },
+    {
         "id": "MultiWOZv2.0",
         "display_name": "MultiWOZ 2.0",
         "task": "multiwoz_v20",
@@ -1184,6 +1210,19 @@ task_list = [
             "over multiple domains and topics."
         ),
         "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
+    },
+    {
+        "id": "MultiWOZv2.2",
+        "display_name": "MultiWOZ 2.2",
+        "task": "multiwoz_v22",
+        "tags": ["Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics. Schemas are included."
+        ),
+        "links": {
+            "website": "https://github.com/budzianowski/multiwoz/tree/master/data/MultiWOZ_2.2"
+        },
     },
     {
         "id": "SelfChat",
@@ -1352,6 +1391,17 @@ task_list = [
             "The Schema-Guided Dialogue (SGD) dataset consists of over 20k "
             "annotated multi-domain, task-oriented conversations between a "
             "human and a virtual assistant."
+        ),
+    },
+    {
+        "id": "GoogleSGDSimulationSplits",
+        "display_name": "GoogleSGD Simulation Splits",
+        "task": "google_sgd_simulation_splits",
+        "tags": ["Goal"],
+        "description": (
+            "Custom processing of the Google SGD dataset into In-Domain and "
+            "Out-of-Domain splits for the use of zero and few-shotting with "
+            "other task-oriented data."
         ),
     },
     {
