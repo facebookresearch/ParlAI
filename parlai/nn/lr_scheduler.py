@@ -38,12 +38,6 @@ class ParlAILRScheduler(object):
         Initialize warmup scheduler. Specific main schedulers should be initialized in
         the subclasses. Do not invoke this method diretly.
 
-        :param optimizer optimizer:
-            Optimizer being used for training. May be wrapped in
-            fp16_optimizer_wrapper depending on whether fp16 is used.
-        :param state_dict states:
-            Possible state_dict provided by model checkpoint, for restoring
-            LR state.
         :param bool hard_reset:
             If true, the LR scheduler should ignore the state dictionary.
         :param int warmup_updates:
@@ -57,6 +51,14 @@ class ParlAILRScheduler(object):
         self.hard_reset = hard_reset
 
     def _init_warmup_scheduler(self, optimizer, states):
+        """
+        :param optimizer optimizer:
+            Optimizer being used for training. May be wrapped in
+            fp16_optimizer_wrapper depending on whether fp16 is used.
+        :param state_dict states:
+            Possible state_dict provided by model checkpoint, for restoring
+            LR state.
+        """
         updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0 and (
             updates_so_far < self.warmup_updates or self.hard_reset
