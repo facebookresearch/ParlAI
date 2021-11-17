@@ -1415,6 +1415,15 @@ task_list = [
         ),
     },
     {
+        "id": "TaskMaster3",
+        "display_name": "TicketTalk (Taskmaster3)",
+        "task": "taskmaster3",
+        "tags": ["Goal"],
+        "description": (
+            "Taskmaster3 is a dataset of movie ticket dialogues collected in a self-chat manner. To induce conversational variety, crowd workers were asked to generate conversations given dozens of different instructions of different level of specificity, some purposefully including conversational  errors."
+        ),
+    },
+    {
         "id": "GenderationBiasControlTask",
         "display_name": "GenderationBiasControlTask",
         "task": "genderation_bias:controllable_task",
