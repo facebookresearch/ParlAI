@@ -169,6 +169,10 @@ class TodDistributedUberScript(ParlaiScript):
         return parser
 
     def run(self):
+        ######
+        # This is a gigantic function that sets necessary a priori state (notably, if we are in a distributed setting), then generates a bunch of opts, then runs those opts.
+        #####
+
         # Do this manually since we are not yet in a distributed context yet at this piece of code and cannot use distributed.py
         if "SLURM_PROCID" in os.environ:
             self.rank = int(os.environ["SLURM_PROCID"])
