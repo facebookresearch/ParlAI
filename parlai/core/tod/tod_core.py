@@ -7,7 +7,7 @@
 """
 Task Oriented Dialogue (TOD) enums and base classes.
 
-This file defines standard tokens, classes for round and conversation structure, and a serialization class to aid in converting between these.
+This file defines standard tokens, classes for conversation structure, and a serialization class to aid in converting between these.
 
 See `tod_agents.py` for usage of these classes to generate training data and `tod_world_script.py` for usage of these classes in simulated conversations.
 """
@@ -56,6 +56,14 @@ TOD_AGENT_TYPE_TO_PREFIX = {
 class TodStructuredRound:
     """
     Dataclass for rounds.
+
+    After the first (grounding) turn, conversations in the TOD structure are rounds of
+       1. User Utterance
+       2. System API Call
+       3. API Implementation API Response
+       4. System Utterance
+
+    This class hold that data.
     """
 
     # Variables set by those using this class
@@ -89,6 +97,10 @@ class TodStructuredRound:
 class TodStructuredEpisode:
     """
     Dataclass for episode-level data.
+
+    This holds the information for grounding turns (Goal calls, API Schemas), the rounds
+    of User/System/API Implementation communications, as well as any extra metadata that
+    is useful for the episode.
     """
 
     # Variables set by those using this class
