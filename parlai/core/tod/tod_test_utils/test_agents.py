@@ -91,14 +91,7 @@ def get_round_utts(episode_idx, max_rounds, filter_utts=None):
                 f"SYSTEM: sys_utt_{episode_idx}_{i}",
             ]
         )
-    utts.append(
-        [
-            "USER: [DONE]",
-            "APICALL: ",
-            "APIRESP: ",
-            "SYSTEM: ",
-        ]
-    )
+    utts.append(["USER: [DONE]", "APICALL: ", "APIRESP: ", "SYSTEM: "])
     if filter_utts is not None:
         utts = [
             [turn for i, turn in enumerate(round_data) if filter_utts[i]]
