@@ -1212,6 +1212,19 @@ task_list = [
         "links": {"website": "http://dialogue.mi.eng.cam.ac.uk/index.php/corpus/"},
     },
     {
+        "id": "MultiWOZv2.2",
+        "display_name": "MultiWOZ 2.2",
+        "task": "multiwoz_v22",
+        "tags": ["Goal"],
+        "description": (
+            "A fully labeled collection of human-written conversations spanning"
+            "over multiple domains and topics. Schemas are included."
+        ),
+        "links": {
+            "website": "https://github.com/budzianowski/multiwoz/tree/master/data/MultiWOZ_2.2"
+        },
+    },
+    {
         "id": "SelfChat",
         "display_name": "SelfChat",
         "task": "self_chat",
