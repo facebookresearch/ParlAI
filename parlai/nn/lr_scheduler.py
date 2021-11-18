@@ -60,10 +60,7 @@ class ParlAILRScheduler(object):
             Possible state_dict provided by model checkpoint, for restoring
             LR state.
         """
-        updates_so_far = states.get('number_training_updates', 0)
-        if self.warmup_updates > 0 and (
-            updates_so_far < self.warmup_updates or self.hard_reset
-        ):
+        if self.warmup_updates > 0:
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr
             )
