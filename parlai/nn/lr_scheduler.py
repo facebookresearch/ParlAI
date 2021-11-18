@@ -51,14 +51,11 @@ class ParlAILRScheduler(object):
         self.hard_reset = hard_reset
         self.warmup_scheduler = None
 
-    def _init_warmup_scheduler(self, optimizer, states):
+    def _init_warmup_scheduler(self, optimizer):
         """
         :param optimizer optimizer:
             Optimizer being used for training. May be wrapped in
             fp16_optimizer_wrapper depending on whether fp16 is used.
-        :param state_dict states:
-            Possible state_dict provided by model checkpoint, for restoring
-            LR state.
         """
         if self.warmup_updates > 0:
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
