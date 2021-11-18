@@ -33,13 +33,11 @@ class ParlAILRScheduler(object):
     __init__() should not be called directly.
     """
 
-    def __init__(self, hard_reset, warmup_updates, warmup_rate):
+    def __init__(self, warmup_updates, warmup_rate):
         """
         Initialize warmup scheduler. Specific main schedulers should be initialized in
         the subclasses. Do not invoke this method diretly.
 
-        :param bool hard_reset:
-            If true, the LR scheduler should ignore the state dictionary.
         :param int warmup_updates:
             Number of training step updates warmup scheduler should take.
         :param float warmup_rate:
@@ -48,7 +46,6 @@ class ParlAILRScheduler(object):
         self._number_training_updates = 0
         self.warmup_updates = max(0, warmup_updates)
         self.warmup_rate = warmup_rate
-        self.hard_reset = hard_reset
         self.warmup_scheduler = None
 
     def _init_warmup_scheduler(self, optimizer):
@@ -228,16 +225,15 @@ class ParlAILRScheduler(object):
             return None
         elif opt.get('lr_scheduler') == 'reduceonplateau':
             scheduler = ReduceOnPlateauLRScheduler(
-                optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
+                optimizer, patience, decay, warmup_updates, warmup_rate
             )
         elif opt.get('lr_scheduler') == 'fixed':
             scheduler = FixedLRScheduler(
-                optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
+                optimizer, patience, decay, warmup_updates, warmup_rate
             )
         elif opt.get('lr_scheduler') == 'invsqrt':
             scheduler = InvSqrtLRScheduler(
                 optimizer,
-                hard_reset,
                 patience,
                 decay,
                 warmup_updates,
@@ -248,7 +244,6 @@ class ParlAILRScheduler(object):
         elif opt.get('lr_scheduler') == 'cosine':
             scheduler = CosineLRScheduler(
                 optimizer,
-                hard_reset,
                 patience,
                 decay,
                 warmup_updates,
@@ -258,7 +253,6 @@ class ParlAILRScheduler(object):
         elif opt.get('lr_scheduler') == 'linear':
             scheduler = LinearLRScheduler(
                 optimizer,
-                hard_reset,
                 patience,
                 decay,
                 warmup_updates,
@@ -342,9 +336,9 @@ class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
     """
 
     def __init__(
-        self, optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
+        self, optimizer, patience, decay, warmup_updates, warmup_rate
     ):
-        super().__init__(hard_reset, warmup_updates, warmup_rate)
+        super().__init__(warmup_updates, warmup_rate)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', factor=decay, patience=patience, verbose=True
         )
@@ -370,9 +364,9 @@ class FixedLRScheduler(ParlAILRScheduler):
     """
 
     def __init__(
-        self, optimizer, hard_reset, patience, decay, warmup_updates, warmup_rate
+        self, optimizer, patience, decay, warmup_updates, warmup_rate
     ):
-        super().__init__(hard_reset, warmup_updates, warmup_rate)
+        super().__init__(warmup_updates, warmup_rate)
         self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
 
     def train_step(self, scheduler_steps):
@@ -394,7 +388,6 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
     def __init__(
         self,
         optimizer,
-        hard_reset,
         patience,
         decay,
         warmup_updates,
@@ -408,7 +401,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
 
         When steps taken == invsqrt_lr_decay_gamma, the lr multiplier is 1
         """
-        super().__init__(hard_reset, warmup_updates, warmup_rate)
+        super().__init__(warmup_updates, warmup_rate)
         assert self.warmup_updates >= 0
         self.max_lr_steps = max_lr_steps - self.warmup_updates
         self.invsqrt_lr_decay_gamma = invsqrt_lr_decay_gamma
@@ -444,7 +437,6 @@ class CosineLRScheduler(ParlAILRScheduler):
     def __init__(
         self,
         optimizer,
-        hard_reset,
         patience,
         decay,
         warmup_updates,
@@ -457,7 +449,7 @@ class CosineLRScheduler(ParlAILRScheduler):
         It indicates the number of steps from 1.0 multiplier to 0.0, which corresponds
         to going from cos(0) to cos(pi)
         """
-        super().__init__(hard_reset, warmup_updates, warmup_rate)
+        super().__init__(warmup_updates, warmup_rate)
         if max_lr_steps <= 0:
             raise ValueError('--lr-scheduler cosine requires setting --max-train-steps')
         assert self.warmup_updates >= 0
@@ -484,7 +476,6 @@ class LinearLRScheduler(ParlAILRScheduler):
     def __init__(
         self,
         optimizer,
-        hard_reset,
         patience,
         decay,
         warmup_updates,
@@ -496,7 +487,7 @@ class LinearLRScheduler(ParlAILRScheduler):
 
         It indicates the number of steps from 1.0 multiplier to 0.0
         """
-        super().__init__(hard_reset, warmup_updates, warmup_rate)
+        super().__init__(warmup_updates, warmup_rate)
         if max_lr_steps <= 0:
             raise ValueError('--lr-scheduler linear requires setting --max-train-steps')
         assert self.warmup_updates >= 0
