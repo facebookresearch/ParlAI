@@ -284,12 +284,12 @@ class ParlAILRScheduler(object):
             )
             hard_reset = True
 
+        # setup warmup scheduler after loading saved scheduler
+        scheduler._init_warmup_scheduler(optimizer)
+
         if not hard_reset:
             # do the actual loading (if possible)
             scheduler.load_state(states)
-
-        # setup warmup scheduler after loading saved scheduler
-        scheduler._init_warmup_scheduler(optimizer, states)
 
         return scheduler
 
