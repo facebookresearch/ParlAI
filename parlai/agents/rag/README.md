@@ -106,6 +106,8 @@ To utilize the PolyFAISS method, you can train your own [`DropoutPolyencoder`](h
 
 ### 2. Generate Dense Embeddings (~1-2 hours minutes if sharded appropriately - 50 x 1 GPU).
 
+**WARNING**: If you generated passage embeddings prior to 11/19/2021, you *may* have corrupted embeddings, especially if you were using a relatively small set of passages (anything under ~50k), and found that indexing took excessively long (anything over a couple minutes); see [#4199](https://github.com/facebookresearch/ParlAI/pull/4199) for more details.
+
 After obtaining a DPR model, you'll need to generate dense embeddings on a dataset. The data should be in a tab-separated (tsv) file with the following format:
 
       integer document id starting at zero<tab>document text<tab>document title
