@@ -75,7 +75,7 @@ Uses `get_passing_only.py` internaly to run on a directory
 Gets active learning samples out of Google SGD's OutDomainSystemTeacher train set based on worst-performing API calls as extracted from `get_passing_only.py`. 
 
 **get\_api\_data.py**
-For models trained with `tod_distributed_uber_script.py` that have `--api-jga-record` set to `True`, this will automatically pull per-api Google SGD JGA and simulation success statistics.
+For models trained with `tod_distributed_uber_script.py` that have `--api-jga-record` set to `True`, this will automatically pull per-api Google SGD Out-of-Domain JGA and simulation success statistics.
 
 **get\_interdistinct\_on\_conversations.py**
 Deprecated script to calculate interdistinct metrics for simulation conversations. (Included for completeness.)
@@ -87,10 +87,10 @@ Given a conversation generated from `tod_world_script`, outputs statistics about
 For models trained with `tod_distributed_uber_script.py`, this quickly grabs evaluation and model-model simulation data into a comma-separated format.
 
 **tod\_distributed\_uber\_multiwoz\_script.py**
-Version of `tod_distributed_uber_script.py` but with MultiWoz v2.2 as the primary task rather than Google SGD. (Included for completeness.)
+Version of `tod_distributed_uber_script.py` but with MultiWoz v2.2 as the primary task rather than Google SGD Out-of-Domain. (Included for completeness.)
 
 **tod\_distributed\_uber\_script.py**
-Multi-step train, evaluation, and data generation script used in Simulations paper. Uses Google SGD as primary dataset; note "STANDALONE\_API\_FILE\_PATH" that needs to be set in file. Makes use of `do_get_passing_only_on_dir.py` and `get_al_samples_for_gsgd.py`; use `get_passing_only.py` and `get_api_data.py` after the fact for analysis. 
+Multi-step train, evaluation, and data generation script used in Simulations paper. Uses Google SGD Out-of-Domain as primary dataset; note "STANDALONE\_API\_FILE\_PATH" that needs to be set in file. Makes use of `do_get_passing_only_on_dir.py` and `get_al_samples_for_gsgd.py`; use `get_passing_only.py` and `get_api_data.py` after the fact for analysis. 
 
 Note that this script is intended to be run in a SLURM environment matching that of the Simulations paper authors. It is unknown how the script performs in other settings but is included as a reference.
 
@@ -98,7 +98,7 @@ Note that this script is intended to be run in a SLURM environment matching that
 
 See the appendix of [the paper](https://arxiv.org/abs/2110.06905) (or the description of the task in ParlAI Task List) for explanations of these datasets. Below, we include the dataset name, the command to run the `SystemTeacher` relevant for each of the datasets, and any other notable details. Other agents and teachers for the dataset are specified in the relevant task `agent.py` files. 
 
-### Pretraining
+### Pretraining Tasks
 
 * Google SGD In-Domain 
     * `parlai dd -t google_sgd_simulation_splits:InDomainSystemTeacher`
@@ -118,13 +118,15 @@ See the appendix of [the paper](https://arxiv.org/abs/2110.06905) (or the descri
 * Taskmaster3 (TicketTalk)
     * `parlai dd -t taskmaster3:SystemTeacher`
 
-### Experimentation
+### Experimentation Tasks
 
 * Google SGD Out-of-Domain
    * `parlai dd -t google_sgd_simulation_splits:OutDomainSystemTeacher`
 * MultiWoz (not currently included in paper) 
    * `parlai dd -t multiwoz_v22:SystemTeacher`
    * This is a preprocessing of the dataset based on MultiWoz v2.2. Though utterances are the same as used for pre-training, API Call and API Response structures aer different. 
+
+See "scripts in project directory" for scripts associated with training, evaluation, and data generation. 
 
 ## Pretrained models
 
@@ -144,4 +146,4 @@ for the Schema-Agnostic version.
 
 Note the path names of the model files; they are `zoo:tod/tod_base_{yes,no}_api/mode` where "yes" corresponds to Schema-Aware and "no" corresponding to Schema-Agnostic. Care must be taken to specify `--api-schemas` correctly since task-setting flags are parsed from teacher-specific flags and not from model files. 
 
-
+These models are both based on a BART-large (400 million paramater) base model. Hyperparameters for training can be found in the paper; tasks are listed in "Pretraining Tasks" above. 

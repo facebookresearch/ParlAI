@@ -2163,4 +2163,133 @@ Which level are you at?
     labels: I received on-the-job training when i first started
      model: I am a journeyman electrician. I work in the construction industry. How about you?""",
     },
-]
+    {
+        "title": "Task-Oriented Dialog (TOD) pretrained model, Schema-Aware",
+        "id": "tod",
+        "path": "zoo:tod/tod_base_yes_api/model",
+        "agent": "bart",
+        "task": "8 different task-oriented dataset (see project page)",
+        "project": "https://parl.ai/projects/tod_simulator/",
+        "description": (
+            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pretraining in these cases done with *non-empty* API Schema prompting turns." 
+        ),
+        "example": (
+            "parlai display_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_yes_api/model  --skip-generation false --api-schemas true"
+        ),
+        "result": (
+"""...
+- - - NEW EPISODE: GoogleSgdOutDomain_SystemTeacher- - -
+APIS: api_name = FindHomeByArea ; optArg = has_garage, in_unit_laundry ; reqArg = area, intent, number_of_baths, number_of_beds | api_name = ScheduleVisit ; reqArg = property_name, visit_date | api_name = GetRide ; reqArg = destination, number_of_seats, ride_type | api_name = ShareLocation ; reqArg = contact_name, location
+    labels: APIS:
+     model: APIS:
+USER: i'm looking to move house so i'm after some options
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: Are you looking to rent or buy? How many room will you need?
+     model: SYSTEM: where are you looking to move?
+USER: Umm three bedrooms would be good and i want to buy
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: What are are you interested in?
+     model: SYSTEM: What area are you looking to stay in?
+USER: can you look for me in sunnyvale
+    labels: APICALL:
+     model: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; number_of_beds = 3
+APIRESP:
+    labels: SYSTEM: How many bathrooms do you need
+     model: SYSTEM: what is your location?
+USER: can you find places with two bathrooms
+    labels: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3
+     model: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; number_of_baths = 2 ; number_of_beds = 3
+APIRESP: address = 400 East Remington Drive ; area = Sunnyvale ; has_garage = False ; in_unit_laundry = True ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3 ; phone_number = 408-738-4862 ; price = 3650000 ; property_name = Apricot Pit Apartments
+    labels: SYSTEM: I have 10 properties that might suit, including Apricot pit apartments 400 east remington drive. The listing price is $3,650,000
+     model: SYSTEM: i found 10 options for you. How about apricot pit apartments? it's located in sunnyvale
+USER: Does this place have a garage?
+    labels: APICALL:
+     model: APICALL:
+"""
+        ),
+        "example2": (
+            "parlai eval_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_yes_api/model  --skip-generation false --api-schemas true --api-jga-record false -ne 100"
+        ),
+        "result2": (""" ...
+ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'] using datatype valid
+                      accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem   jga  jga+nlg  \
+   OutDomainOnlyApis                                                                                  .7500
+   all                   .5200   .1430 631.5 438.3  1142   .6600      193.9 2.605  100 .7517   .05251 .9167    .5057
+                      jga_empty  jga_noempty  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  nlg_bleu  nlg_f1   ppl  \
+   OutDomainOnlyApis
+   all                    .9459        .8182 14.52 .7146 1e-08 14.52 37.82       0          0     .0948   .5373 2.043
+                      slot_f1  slot_p  slot_r  token_acc  token_em   tpb  tps
+   OutDomainOnlyApis
+   all                  .8602   .8696   .8511      .8278     .5100 452.8 1179
+"""
+        ),
+    },
+    {
+        "title": "Task-Oriented Dialog (TOD) pretrained model, Schema-Agnostic",
+        "id": "tod",
+        "path": "zoo:tod/tod_base_no_api/model",
+        "agent": "bart",
+        "task": "8 different task-oriented dataset (see project page)",
+        "project": "https://parl.ai/projects/tod_simulator/",
+        "description": (
+            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pre-training in these cases done with *empty* API grounding turns." 
+        ),
+        "example": (
+            "parlai display_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_no_api/model  --skip-generation false --api-schemas false"
+        ),
+        "result": ( 
+"""
+- - - NEW EPISODE: GoogleSgdOutDomain_SystemTeacher- - -
+APIS:
+    labels: APIS:
+     model: APIS:
+USER: i'm looking to move house so i'm after some options
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: Are you looking to rent or buy? How many room will you need?
+     model: SYSTEM: where are you looking to move to?
+USER: Umm three bedrooms would be good and i want to buy
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: What are are you interested in?
+     model: SYSTEM: What city are you looking to stay in?
+USER: can you look for me in sunnyvale
+    labels: APICALL:
+     model: APICALL: api_name = SearchHouse ; where_to = Sunnyvale ; number_of_adults = 3 ; where_to = Sunnyvale
+APIRESP:
+    labels: SYSTEM: How many bathrooms do you need
+     model: SYSTEM: When are you planning to move?
+USER: can you find places with two bathrooms
+    labels: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3
+     model: APICALL: api_name = SearchHouse ; has_birch = True ; number_of_adults = 2 ; where_to = Sunnyvale
+APIRESP: address = 400 East Remington Drive ; area = Sunnyvale ; has_garage = False ; in_unit_laundry = True ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3 ; phone_number = 408-738-4862 ; price = 3650000 ; property_name = Apricot Pit Apartments
+    labels: SYSTEM: I have 10 properties that might suit, including Apricot pit apartments 400 east remington drive. The listing price is $3,650,000
+     model: SYSTEM: i found 10 houses for you. There is a nice place at apricot pit apartments located at 400 east remington drive
+USER: Does this place have a garage?
+    labels: APICALL:
+     model: APICALL:
+"""
+        ),
+        "example2": (
+            "parlai eval_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_no_api/model  --skip-generation false --api-schemas false --api-jga-record false -ne 100"
+        ),
+        "result2": (""" ...
+Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'] using datatype valid
+                      accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem   jga  jga+nlg  \
+   OutDomainOnlyApis                                                                                      0
+   all                   .4700  .08715 426.8   335 951.2   .3700      93.03 2.839  100 .7132   .05245 .7708    .4348
+                      jga_empty  jga_noempty  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  nlg_bleu  nlg_f1   ppl  \
+   OutDomainOnlyApis
+   all                    .9459        .1818 14.52 1.046 1e-08 14.52 41.22       0          0    .09885   .5216 2.845
+                      slot_f1  slot_p  slot_r  token_acc  token_em   tpb   tps
+   OutDomainOnlyApis
+   all                  .2500   .2449   .2553      .7865     .4600 349.6 992.4
+"""
+        ),
+    },]
