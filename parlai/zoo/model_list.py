@@ -2171,13 +2171,13 @@ Which level are you at?
         "task": "8 different task-oriented dataset (see project page)",
         "project": "https://parl.ai/projects/tod_simulator/",
         "description": (
-            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pretraining in these cases done with *non-empty* API Schema prompting turns." 
+            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pretraining in these cases done with *non-empty* API Schema prompting turns."
         ),
         "example": (
             "parlai display_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_yes_api/model  --skip-generation false --api-schemas true"
         ),
         "result": (
-"""...
+            """...
 - - - NEW EPISODE: GoogleSgdOutDomain_SystemTeacher- - -
 APIS: api_name = FindHomeByArea ; optArg = has_garage, in_unit_laundry ; reqArg = area, intent, number_of_baths, number_of_beds | api_name = ScheduleVisit ; reqArg = property_name, visit_date | api_name = GetRide ; reqArg = destination, number_of_seats, ride_type | api_name = ShareLocation ; reqArg = contact_name, location
     labels: APIS:
@@ -2214,7 +2214,8 @@ USER: Does this place have a garage?
         "example2": (
             "parlai eval_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_yes_api/model  --skip-generation false --api-schemas true --api-jga-record false -ne 100"
         ),
-        "result2": (""" ...
+        "result2": (
+            """ ...
  Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'] using datatype valid
                       accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem   jga  jga+nlg  \
    OutDomainOnlyApis                                                                                  .7500
@@ -2236,13 +2237,13 @@ USER: Does this place have a garage?
         "task": "8 different task-oriented dataset (see project page)",
         "project": "https://parl.ai/projects/tod_simulator/",
         "description": (
-            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pre-training in these cases done with *empty* API grounding turns." 
+            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pre-training in these cases done with *empty* API grounding turns."
         ),
         "example": (
             "parlai display_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_no_api/model  --skip-generation false --api-schemas false"
         ),
-        "result": ( 
-"""
+        "result": (
+            """
 - - - NEW EPISODE: GoogleSgdOutDomain_SystemTeacher- - -
 APIS:
     labels: APIS:
@@ -2279,7 +2280,8 @@ USER: Does this place have a garage?
         "example2": (
             "parlai eval_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_no_api/model  --skip-generation false --api-schemas false --api-jga-record false -ne 100"
         ),
-        "result2": (""" ...
+        "result2": (
+            """ ...
 Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'] using datatype valid
                       accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem   jga  jga+nlg  \
    OutDomainOnlyApis                                                                                      0
@@ -2292,4 +2294,5 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
    all                  .2500   .2449   .2553      .7865     .4600 349.6 992.4
 """
         ),
-    },]
+    },
+]
