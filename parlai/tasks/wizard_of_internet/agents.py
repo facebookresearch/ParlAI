@@ -740,7 +740,12 @@ def chunk_docs_in_message(message, chunk_sz):
     new_docs = []
     new_titles = []
     new_urls = []
-    checked_sentences = message.get(CONST.SELECTED_SENTENCES)
+    checked_sentences = list(
+        message.get(
+            CONST.SELECTED_SENTENCES,
+            message.get('labels', [CONST.NO_SELECTED_SENTENCES_TOKEN]),
+        )
+    )
     for i in range(len(checked_sentences)):
         checked_sentences[i] = checked_sentences[i].lstrip(' ').rstrip(' ')
     if ' '.join(checked_sentences) == CONST.NO_SELECTED_SENTENCES_TOKEN:
@@ -796,7 +801,7 @@ class WoiChunkRetrievedDocs(MessageMutator):
         )
 
     def message_mutation(self, message: Message) -> Message:
-        chunk_sz = self.opt.get('woi_doc_chunk_size')
+        chunk_sz = self.opt.get('woi_doc_chunk_size', 500)
         return chunk_docs_in_message(message, chunk_sz)
 
 
@@ -823,7 +828,7 @@ class WoiDropoutRetrievedDocs(MessageMutator):
         new_message = message.copy()
         docs = message.get(CONST.RETRIEVED_DOCS)
         new_docs = []
-        max_chunks = self.opt.get('woi_doc_max_chunks')
+        max_chunks = self.opt.get('woi_doc_max_chunks', 100)
 
         keep = torch.randperm(len(docs))[0:max_chunks]
         remove = torch.ones(len(docs))
@@ -834,7 +839,10 @@ class WoiDropoutRetrievedDocs(MessageMutator):
                 new_docs.append(docs[i])
             else:
                 # We may still keep the doc if it contains the gold checked sentence(s).
-                checked_sentences = message.get(CONST.SELECTED_SENTENCES)
+                checked_sentences = message.get(
+                    CONST.SELECTED_SENTENCES,
+                    message.get('labels', [CONST.NO_SELECTED_SENTENCES_TOKEN]),
+                )
                 d = docs[i]
                 found = False
                 if ' '.join(checked_sentences) != CONST.NO_SELECTED_SENTENCES_TOKEN:
