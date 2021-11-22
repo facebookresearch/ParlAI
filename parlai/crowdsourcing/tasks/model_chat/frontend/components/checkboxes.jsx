@@ -28,7 +28,8 @@ function Checkboxes({
   if (!askReason) {
     reasonComponent = '';
   }
-  let input_type = annotationBuckets.type !== undefined ? annotationBuckets.type : "checkbox";
+  // TODO: add support for radio input type
+  let input_type = "checkbox";
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
