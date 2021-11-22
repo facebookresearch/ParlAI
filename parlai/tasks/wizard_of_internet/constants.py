@@ -65,6 +65,8 @@ SKIP_ON_EMPTY_TEXT_DEFAULT = True
 ONLY_LAST_QUERY_DEFAULT = False
 
 # Tokens used in the teacher's action text filed
+LABEL_TOKEN = '__label__'
+END_LABEL_TOKEN = '__endlabel__'
 KNOWLEDGE_TOKEN = '__knowledge__'
 END_KNOWLEDGE_TOKEN = '__endknowledge__'
 AVAILABLE_KNOWLEDGE_TOKEN = '__available-knowledge__'
