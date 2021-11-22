@@ -83,7 +83,7 @@ class AddLabel(MessageMutator):
         dialogue_response = labels[0]
         text = new_message.pop('text')
 
-        text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
+        text += f'\n{CONST.TOKEN_LABEL} {dialogue_response} {CONST.TOKEN_END_LABEL}'
         new_message['text'] = text
 
         return new_message
@@ -122,7 +122,7 @@ class AddLabelLM(MessageMutator):
         label1 = ' '.join(ls[0:ind])
         label2 = ' '.join(ls[ind : len(ls)])
 
-        text += f'\n{label1}\n{TOKEN_LABEL} {label2} {TOKEN_END_LABEL}'
+        text += f'\n{label1}\n{CONST.TOKEN_LABEL} {label2} {CONST.TOKEN_END_LABEL}'
         new_message['text'] = text
 
         return new_message
