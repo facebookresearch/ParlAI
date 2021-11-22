@@ -351,7 +351,7 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         Extracts the retrieved knowledge from the message.
         """
 
-    def _set_query_vec(self, observation: Message) -> Message:
+    def show_observation_to_echo_retriever(self, observation: Message):
         retrieved_docs = self.get_retrieved_knowledge(observation)
         if len(retrieved_docs) > self._n_docs:
             logging.warning(
@@ -365,6 +365,9 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         self.model_api.retriever.add_retrieve_doc(
             observation[self._query_key], retrieved_docs
         )
+
+    def _set_query_vec(self, observation: Message) -> Message:
+        self.show_observation_to_echo_retriever(observation)
         super()._set_query_vec(observation)
 
 
@@ -394,21 +397,23 @@ class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
         n_docs_in_message = len(message[consts.RETRIEVED_DOCS])
         already_added_doc_idx = []
 
-        if ' '.join(selected_sentences) != consts.NO_SELECTED_SENTENCES_TOKEN:
-            for doc_idx in range(n_docs_in_message):
-                doc_content = message[consts.RETRIEVED_DOCS][doc_idx]
-                for sel_sentc in selected_sentences:
-                    if sel_sentc in doc_content:
-                        retrieved_docs.append(
-                            self._extract_doc_from_message(message, doc_idx)
-                        )
-                        already_added_doc_idx.append(doc_idx)
-                        break
-                if len(retrieved_docs) == self._n_docs:
-                    logging.warning(
-                        f'More than {self._n_docs} documents have selected sentences. Trimming them to the first {self._n_docs}'
+        if ' '.join(selected_sentences) == consts.NO_SELECTED_SENTENCES_TOKEN:
+            return retrieved_docs  # `retrieved_docs` is empty at this point
+
+        for doc_idx in range(n_docs_in_message):
+            doc_content = message[consts.RETRIEVED_DOCS][doc_idx]
+            for sel_sentc in selected_sentences:
+                if sel_sentc in doc_content:
+                    retrieved_docs.append(
+                        self._extract_doc_from_message(message, doc_idx)
                     )
+                    already_added_doc_idx.append(doc_idx)
                     break
+            if len(retrieved_docs) == self._n_docs and doc_idx != (self._n_docs - 1):
+                logging.warning(
+                    f'More than {self._n_docs} documents have selected sentences. Trimming them to the first {self._n_docs}'
+                )
+                break
 
         # Then adding other (filler) docs.
         # We add them by iterating forward in the __retrieved-docs__ list for repeatability,

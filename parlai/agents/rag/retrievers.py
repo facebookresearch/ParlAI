@@ -109,9 +109,9 @@ def load_passage_reader(
                     assert line[0] == 'id'
                 if line[0] != 'id':
                     if return_dict:
-                        passages[row[0]] = (row[1], row[2])  # type: ignore
+                        passages[line[0]] = (line[1], line[2])  # type: ignore
                     else:
-                        passages.append((row[0], row[1], row[2]))  # type: ignore
+                        passages.append((line[0], line[1], line[2]))  # type: ignore
     return passages
 
 
@@ -1283,6 +1283,7 @@ class ObservationEchoRetriever(RagRetriever):
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
         self._delimiter = '\n'
+        self.n_docs = opt['n_docs']
         self._query_ids = dict()
         self._saved_docs = dict()
         super().__init__(opt, dictionary, shared=shared)
@@ -1290,7 +1291,9 @@ class ObservationEchoRetriever(RagRetriever):
     def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
         new_idx = len(self._query_ids)
         self._query_ids[query] = new_idx
-        self._saved_docs[new_idx] = retrieved_docs or [BLANK_DOC]
+        self._saved_docs[new_idx] = retrieved_docs or [
+            BLANK_DOC for _ in range(self.n_docs)
+        ]
 
     def tokenize_query(self, query: str) -> List[int]:
         return [self._query_ids[query]]
