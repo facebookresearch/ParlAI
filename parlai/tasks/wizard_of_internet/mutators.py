@@ -6,7 +6,7 @@
 
 import torch
 from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
-from typing import Iterable, Optional, Tuple
+from typing import Optional
 from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
@@ -132,7 +132,7 @@ def chunk_docs_in_message(message, chunk_sz):
     if CONST.RETRIEVED_DOCS not in message:
         return message
     new_message = message.copy()
-    docs = message.get(CONST.RETRIEVED_DOCS)
+    docs = message[CONST.RETRIEVED_DOCS]
     titles = message.get(CONST.RETRIEVED_DOCS_TITLES)
     urls = message.get(CONST.RETRIEVED_DOCS_URLS)
     new_docs = []
@@ -152,15 +152,13 @@ def chunk_docs_in_message(message, chunk_sz):
         d = docs[ind]
         # Guarantees that checked sentences are not split in half (as we split by space).
         for i in range(len(checked_sentences)):
-            d = d.replace(checked_sentences[i], "||CHECKED_SENTENCE_" + str(i) + "||")
+            d = d.replace(checked_sentences[i], "||CHECKED_SENTENCE_{i}||")
         while True:
             end_chunk = d.find(' ', chunk_sz)
             if end_chunk == -1:
                 # last chunk
                 for i in range(len(checked_sentences)):
-                    d = d.replace(
-                        "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
-                    )
+                    d = d.replace("||CHECKED_SENTENCE_{i}||", checked_sentences[i])
                 new_docs.append(d)
                 new_titles.append(titles[ind])
                 new_urls.append(urls[ind])
@@ -169,7 +167,7 @@ def chunk_docs_in_message(message, chunk_sz):
                 new_d = d[0:end_chunk]
                 for i in range(len(checked_sentences)):
                     new_d = new_d.replace(
-                        "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
+                        "||CHECKED_SENTENCE_{i}||", checked_sentences[i]
                     )
                 new_docs.append(new_d)
                 new_titles.append(titles[ind])

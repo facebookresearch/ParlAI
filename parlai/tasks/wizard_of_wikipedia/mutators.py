@@ -5,11 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
-from typing import Iterable, Optional, Tuple
-from parlai.core.opt import Opt
 from parlai.core.message import Message
-from parlai.core.params import ParlaiParser
 import parlai.tasks.wizard_of_internet.constants as CONST
+import random
 
 
 @register_mutator("wow_add_checked_sentence_to_input")
@@ -85,7 +83,7 @@ class AddLabel(MessageMutator):
         dialogue_response = labels[0]
         text = new_message.pop('text')
 
-        text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
+        text += f'\n{LABEL_TOKEN} {dialogue_response} {END_LABEL_TOKEN}'
         new_message['text'] = text
 
         return new_message
@@ -124,7 +122,7 @@ class AddLabelLM(MessageMutator):
         label1 = ' '.join(ls[0:ind])
         label2 = ' '.join(ls[ind : len(ls)])
 
-        text += f'\n{label1}\n{TOKEN_LABEL} {label2} {TOKEN_END_LABEL}'
+        text += f'\n{label1}\n{LABEL_TOKEN} {label2} {END_LABEL_TOKEN}'
         new_message['text'] = text
 
         return new_message
