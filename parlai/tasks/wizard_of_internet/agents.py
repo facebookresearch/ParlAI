@@ -20,7 +20,7 @@ from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
 from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
-from parlai.tasks.wizard_of_wikipedia.agents import (
+from parlai.tasks.wizard_of_wikipedia.mutators import (
     AddLabel as AddLabelWizWiki,
     AddLabelLM as AddLabelLMWizWiki,
     CheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
@@ -665,14 +665,17 @@ class WoiFilterNoPassageUsed(ManyEpisodeMutator):
 @register_mutator("woi_filter_selected_knowledge_in_retrieved_docs")
 class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
     """
-    Allows to filter any examples where '__retrieved-docs__' field does contain the
+    Allows to filter any examples where '__retrieved-docs__' field doesn't contain the
     '__selected-sentences__'.
     """
 
     def many_episode_mutation(self, episode):
         out_episodes = []
         for e in episode:
-            checked_sentences = e.get(CONST.SELECTED_SENTENCES)
+            checked_sentences = e.get(
+                CONST.SELECTED_SENTENCES,
+                e.get('labels', [CONST.NO_SELECTED_SENTENCES_TOKEN]),
+            )
             docs = ' '.join(e.get('__retrieved-docs__'))
             if ' '.join(checked_sentences) != CONST.NO_SELECTED_SENTENCES_TOKEN:
                 found = True
