@@ -202,7 +202,9 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 labels.append(candidate_labels[label_ind])
             return labels
 
-        fname = f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
+        convert = {'train': 'train', 'valid': 'dev', 'test': 'dev'}
+
+        fname = f'nq-{convert[self.dtype]}-{str(chunk_idx).zfill(2)}.jsonl'
         fpath = os.path.join(self.dpath, fname)
         output = []
         with jsonlines.open(fpath, 'r') as fi:
