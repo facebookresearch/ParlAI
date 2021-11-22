@@ -10,12 +10,9 @@
 
 import copy
 import os
-import json
 import jsonlines
-from tqdm import tqdm
 from typing import List, Optional, Tuple
 
-import parlai.utils.logging as logging
 from parlai.core.teachers import ChunkTeacher
 from .build import build, DATASET_NAME_LOCAL
 from .utils.text_utils import simplify_nq_example
