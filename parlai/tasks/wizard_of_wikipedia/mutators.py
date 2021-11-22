@@ -5,16 +5,14 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
+from typing import Iterable, Optional, Tuple
+from parlai.core.opt import Opt
 from parlai.core.message import Message
+from parlai.core.params import ParlaiParser
 import parlai.tasks.wizard_of_internet.constants as CONST
 
-TOKEN_KNOWLEDGE = '__knowledge__'
-TOKEN_END_KNOWLEDGE = '__endknowledge__'
-TOKEN_LABEL = '__label__'
-TOKEN_END_LABEL = '__endlabel__'
 
-
-@register_mutator("add_checked_sentence_to_input_wow")
+@register_mutator("wow_add_checked_sentence_to_input")
 class AddCheckedSentence(MessageMutator):
     """
     Adds the checked sentence to the end of the text.
@@ -35,13 +33,15 @@ class AddCheckedSentence(MessageMutator):
         if isinstance(checked_sentence, list):
             checked_sentence = ' '.join(checked_sentence)
 
-        text += f'\n{TOKEN_KNOWLEDGE} {checked_sentence} {TOKEN_END_KNOWLEDGE}'
+        text += (
+            f'\n{CONST.KNOWLEDGE_TOKEN} {checked_sentence} {CONST.END_KNOWLEDGE_TOKEN}'
+        )
         new_message['text'] = text
 
         return new_message
 
 
-@register_mutator("checked_sentence_as_label_wow")
+@register_mutator("wow_checked_sentence_as_label")
 class CheckedSentenceAsLabel(MessageMutator):
     """
     Uses the checked sentence (knowledge) as label.
@@ -65,7 +65,7 @@ class CheckedSentenceAsLabel(MessageMutator):
         return new_message
 
 
-@register_mutator("add_label_to_input_wow")
+@register_mutator("wow_add_label_to_input")
 class AddLabel(MessageMutator):
     """
     Adds the dialogue sentence to the input.
@@ -91,7 +91,7 @@ class AddLabel(MessageMutator):
         return new_message
 
 
-@register_mutator("add_label_to_input_lm_wow")
+@register_mutator("wow_add_label_to_input_lm")
 class AddLabelLM(MessageMutator):
     """
     Adds the dialogue sentence to the input (language modeling version).
@@ -130,7 +130,7 @@ class AddLabelLM(MessageMutator):
         return new_message
 
 
-@register_mutator("filter_no_passage_used_wow")
+@register_mutator("wow_filter_no_passage_used")
 class WowFilterNoPassageUsed(ManyEpisodeMutator):
     """
     Allows to filter any examples where no passage was selected to base the wizard reply
@@ -149,8 +149,8 @@ class WowFilterNoPassageUsed(ManyEpisodeMutator):
         return out_episodes
 
 
-@register_mutator("knowledge_to_retrieved_docs_wow")
-class WowKnowledgeToRetrievedDocs(MessageMutator):
+@register_mutator("wow_to_woi")
+class WowToWoi(MessageMutator):
     def message_mutation(self, message: Message) -> Message:
         new_message = message.copy()
         new_message.pop('knowledge')

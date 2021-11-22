@@ -27,7 +27,6 @@ from parlai.utils.io import PathManager
 from parlai.utils import logging
 from parlai.utils.misc import warn_once
 from .build import build
-
 from .mutators import (
     AddCheckedSentence,
     CheckedSentenceAsLabel,
@@ -35,11 +34,13 @@ from .mutators import (
     AddLabelLM,
     WowFilterNoPassageUsed,
 )
-from parlai.tasks.wizard_of_internet.agents import (
-    WoiDropoutRetrievedDocs,
-    WoiChunkRetrievedDocs,
-    WoiFilterSelectedKnowledgeInRetrievedDocs,
-)
+import parlai.tasks.wizard_of_internet.mutators
+
+# agents import (
+#    WoiDropoutRetrievedDocs,
+#    WoiChunkRetrievedDocs,
+#    WoiFilterSelectedKnowledgeInRetrievedDocs,
+# )
 
 import json
 import os
