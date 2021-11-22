@@ -6,7 +6,6 @@
 
 import torch
 from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
-from typing import Optional
 from parlai.core.opt import Opt
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
