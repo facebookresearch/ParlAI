@@ -18,7 +18,7 @@ import torch.nn
 import torch.nn.functional as F
 from typing import Union, Dict, List, Tuple, Optional, Any
 
-from parlai.agents.fid.fid import FidAgent
+from parlai.agents.fid.fid import FidAgent, WizIntGoldDocRetrieverFiDAgent
 from parlai.agents.rag.args import DPR_ZOO_MODEL, QUERY_MODEL_TYPES
 from parlai.agents.rag.rag import RagAgent
 from parlai.agents.rag.model_types import (
@@ -48,7 +48,6 @@ from .modules import (
 )
 from .sub_modules import RetrievalType, KnowledgeAccessMethod
 from parlai.agents.fid.fid import SearchQuerySearchEngineFiDAgent
-from parlai.utils.fsdp import is_fsdp
 
 
 ZOO_QUERY_GENERATOR = 'zoo:blenderbot2/query_generator/model'
@@ -390,13 +389,6 @@ class BlenderBot2RagAgent(RagAgent):
     def rag_model_type(self, model: str):
         self._rag_model_type = model
         self._rag_model_interface = RAG_MODELS[model](self.opt, self.NULL_IDX)
-
-    @property
-    def model_api(self) -> BlenderBot2RagModel:
-        if hasattr(self.model, 'module') and not is_fsdp(self.model):
-            return self.model.module
-        else:
-            return self.model
 
     def build_model(self) -> BlenderBot2RagModel:
         """
@@ -900,3 +892,11 @@ class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+
+class BlenderBot2WizIntGoldDocRetrieverFiDAgent(
+    WizIntGoldDocRetrieverFiDAgent, BlenderBot2FidAgent
+):
+    def _set_query_vec(self, observation: Message) -> Message:
+        self.show_observation_to_echo_retriever(observation)
+        super()._set_query_vec(observation)

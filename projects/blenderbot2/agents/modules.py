@@ -24,6 +24,7 @@ from parlai.agents.rag.retrievers import (
     RagRetrieverTokenizer,
     SearchQuerySearchEngineRetriever,
     SearchQueryFAISSIndexRetriever,
+    ObservationEchoRetriever,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -64,6 +65,8 @@ def retriever_factory(
         return BB2SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.SEARCH_TERM_FAISS:
         return BB2SearchQueryFaissIndexRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.OBSERVATION_ECHO_RETRIEVER:
+        return BB2ObservationEchoRetriever(opt, dictionary, shared=shared)
     else:
         return rag_retriever_factory(opt, dictionary, shared=shared)
 
@@ -566,9 +569,11 @@ class BlenderBot2RagModel(RagModel):
         indices = memory_indices.tolist()
 
         if memory_vec is not None:
+            # Only look in memory_vec for batch elements with memories
+            memory_ids = [m for m in indices if num_memories[m] > 0]
             memory_dict = {
                 batch_id: memory_vec[batch_id, : num_memories[mem_id]]
-                for batch_id, mem_id in enumerate(indices)
+                for batch_id, mem_id in enumerate(memory_ids)
             }
         if memory_decoder_vec is not None:
             for batch_id in indices:
@@ -905,4 +910,10 @@ class BB2SearchQueryFaissIndexRetriever(
 ):
     """
     Override Search Engine Retriever to accommodate SQ Generator from BB2 Setup.
+    """
+
+
+class BB2ObservationEchoRetriever(BB2SearchRetrieverMixin, ObservationEchoRetriever):
+    """
+    A retriever that reads retrieved docs as part of the observed example message.
     """
