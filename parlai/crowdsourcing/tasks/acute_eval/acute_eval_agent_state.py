@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import List, Dict, Any, TYPE_CHECKING
+from typing import List, Dict, Any, Optional, TYPE_CHECKING
 from mephisto.abstractions.blueprints.abstract.static_task.static_agent_state import (
     StaticAgentState,
 )
@@ -49,3 +49,15 @@ class AcuteEvalAgentState(StaticAgentState):
         self.state["times"]["task_end"] = time.time()
         self.state["outputs"] = packet.data["task_data"]
         self.save_data()
+
+    def get_task_start(self) -> Optional[float]:
+        """
+        Extract out the start time recorded for this task.
+        """
+        return self.state['times']['task_start']
+
+    def get_task_end(self) -> Optional[float]:
+        """
+        Extract out the end recorded for this task.
+        """
+        return self.state['times']['task_end']
