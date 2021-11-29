@@ -1720,7 +1720,7 @@ class BeamSearch(TreeSearch):
 
         tok_scores = torch.gather(logprobs, 1, tok_ids.unsqueeze(0)).view(-1)
 
-        tok_ranks = best_idxs.argsort(descending=True) + 1
+        tok_ranks = torch.arange(self.beam_size).to(logprobs.device) + 1
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
