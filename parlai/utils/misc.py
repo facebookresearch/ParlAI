@@ -523,7 +523,7 @@ def display_messages(
         )
         return _pretty_lines(space, key, formatted_tl, 'text2')
 
-    def _generated_text_token_info_line(
+    def _text_token_info_line(
         msg: Dict[str, Any], fields_to_show: List[str], space: str
     ) -> Optional[str]:
         """
@@ -532,18 +532,19 @@ def display_messages(
 
         See TorchGeneratorAgent._generate for an example implementation.
         """
-        key = 'generated_text_token_info'
-        generated_text_token_info = msg.get(key, None)
+        key = 'text_token_info'
+        text_token_info = msg.get(key, None)
 
-        if key not in fields_to_show or not generated_text_token_info:
+        if key not in fields_to_show or not text_token_info:
             return None
         # Reduce losses to 4 significant figures
         formatted_tl = ' | '.join(
-            [f"{tl[0]} {float('{:.4g}'.format(tl[1]))} {tl[2]}" for tl in generated_text_token_info]
+            [
+                f"{tl[0]} {float('{:.4g}'.format(tl[1]))} {tl[2]}"
+                for tl in text_token_info
+            ]
         )
         return _pretty_lines(space, key, formatted_tl, 'text2')
-
-        
 
     def _pretty_lines(indent_space, field, value, style):
         line = '{}{} {}'.format(
@@ -638,11 +639,10 @@ def display_messages(
         token_loss_line = _token_losses_line(msg, fields_to_show, space)
         if token_loss_line:
             lines.append(token_loss_line)
-        
-        generated_text_token_info_line = _generated_text_token_info_line(msg, fields_to_show, space)
-        if generated_text_token_info_line:
-            lines.append(generated_text_token_info_line)
-        
+
+        text_token_info_line = _text_token_info_line(msg, fields_to_show, space)
+        if text_token_info_line:
+            lines.append(text_token_info_line)
 
     if episode_done:
         lines.append(

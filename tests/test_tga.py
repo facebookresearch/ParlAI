@@ -181,25 +181,27 @@ class TestGeneration(unittest.TestCase):
         inference_types = ['beam', 'greedy', 'topk', 'nucleus', 'delayedbeam']
         gold_data = {
             'beam': {
-                'generated_text_token_info': [('__start__', 0.0, 1.0), ('5', -2.5510462364763953e-05, 1.0), ('__end__', -1.1920922133867862e-06, 1.0)],
-                'extra_args': ['--beam-size', '3']
-            }, 
-            'greedy': {
-                'generated_text_token_info': [('__start__', 0.0, 1.0), ('5', -2.5510462364763953e-05, 1.0), ('__end__', -1.1920922133867862e-06, 1.0)],
-                'extra_args': [],
-            }, 
-            # sampling based token selection will produce non-deterministic output
-            'topk': {
-                'extra_args': ['--topk', '2']
-            }, 
-            # sampling based token selection will produce non-deterministic output
-            'nucleus': {
-                'extra_args': ['--topp', '0.3']
-            }, 
-            # sampling based token selection will produce non-deterministic output
-            'delayedbeam': {
-                'extra_args': ['--topk', '2', '--beam-delay', '2']
+                'text_token_info': [
+                    ('__start__', 0.0, 1.0),
+                    ('5', -2.5510462364763953e-05, 3.0),
+                    ('__end__', -1.1920922133867862e-06, 1.0),
+                ],
+                'extra_args': ['--beam-size', '3'],
             },
+            'greedy': {
+                'text_token_info': [
+                    ('__start__', 0.0, 1.0),
+                    ('5', -2.5510462364763953e-05, 1.0),
+                    ('__end__', -1.1920922133867862e-06, 1.0),
+                ],
+                'extra_args': [],
+            },
+            # sampling based token selection will produce non-deterministic output
+            'topk': {'extra_args': ['--topk', '2']},
+            # sampling based token selection will produce non-deterministic output
+            'nucleus': {'extra_args': ['--topp', '0.3']},
+            # sampling based token selection will produce non-deterministic output
+            'delayedbeam': {'extra_args': ['--topk', '2', '--beam-delay', '2']},
         }
 
         for inference_type in inference_types:
@@ -210,7 +212,7 @@ class TestGeneration(unittest.TestCase):
                 inference_type,
                 '--truncate',
                 '1024',
-                '-v'
+                '-v',
             ] + gold_data[inference_type]['extra_args']
 
             pp = ParlaiParser(True, True)
@@ -218,12 +220,19 @@ class TestGeneration(unittest.TestCase):
             obs = {'text': '5', 'episode_done': False}
             agent.observe(obs)
             act = agent.act()
-            
-            if 'generated_text_token_info' in gold_data[inference_type]:
-                for i, tok_data in enumerate(act['generated_text_token_info']):
-                    assert gold_data[inference_type]['generated_text_token_info'][i][0] == tok_data[0], f"failed token prediction for inference type {inference_type}"
-                    assert math.isclose(gold_data[inference_type]['generated_text_token_info'][i][1], tok_data[1]), f"failed token probability prediction for inference type {inference_type}"
-                    assert math.isclose(gold_data[inference_type]['generated_text_token_info'][i][2], tok_data[2]), f"failed token rank prediction for inference type {inference_type}"
+
+            if 'text_token_info' in gold_data[inference_type]:
+                for i, tok_data in enumerate(act['text_token_info']):
+                    assert (
+                        gold_data[inference_type]['text_token_info'][i][0]
+                        == tok_data[0]
+                    ), f"failed token prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
+                    assert math.isclose(
+                        gold_data[inference_type]['text_token_info'][i][1], tok_data[1]
+                    ), f"failed token probability prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
+                    assert math.isclose(
+                        gold_data[inference_type]['text_token_info'][i][2], tok_data[2]
+                    ), f"failed token rank prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
 
 
 if __name__ == '__main__':
