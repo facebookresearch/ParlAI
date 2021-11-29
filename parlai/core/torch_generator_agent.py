@@ -1720,7 +1720,7 @@ class BeamSearch(TreeSearch):
 
         tok_scores = torch.gather(logprobs, 1, tok_ids.unsqueeze(0)).view(-1)
 
-        tok_ranks = best_idxs.argsort() + 1
+        tok_ranks = best_idxs.argsort(descending=True) + 1
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
@@ -1824,7 +1824,12 @@ class NucleusSampling(TreeSearch):
         best_scores = prior_scores.expand_as(scores) + scores
 
         # need to resort because masking out of part of distribution can affect ranks
-        tok_ranks = (sprobs.view(-1).argsort().argsort()[choices] + 1).view(-1)
+        tok_ranks = (
+            sprobs.view(-1)
+            .argsort(descending=True)
+            .argsort(descending=True)[choices.view(-1)]
+            + 1
+        )
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
