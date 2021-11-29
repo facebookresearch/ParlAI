@@ -10,7 +10,6 @@ from collections import defaultdict
 from typing import Dict, List, Optional, Tuple
 import jsonlines
 import os
-import torch
 from parlai.core.message import Message
 from tqdm import tqdm
 from parlai.core.metrics import F1Metric
@@ -19,15 +18,8 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
-from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
-from parlai.tasks.wizard_of_wikipedia.agents import (
-    AddLabel as AddLabelWizWiki,
-    AddLabelLM as AddLabelLMWizWiki,
-    CheckedSentenceAsLabel as CheckedSentenceAsLabelWizWiki,
-    AddCheckedSentence as AddCheckedSentenceWizWiki,
-)
-
 from .build import build
+import parlai.tasks.wizard_of_internet.mutators
 
 
 def get_dtype(opt):
@@ -71,12 +63,13 @@ def parse_wizard_message(message_dict, doc_lines_delim):
     def get_knowledge(msg_d):
         knowledge = {
             CONST.RETRIEVED_DOCS: [],
+            CONST.RETRIEVED_SENTENCES: [],
+            CONST.RETRIEVED_DOCS_URLS: [],
+            CONST.RETRIEVED_DOCS_TITLES: [],
             CONST.SELECTED_DOCS: [],
             CONST.SELECTED_DOCS_URLS: [],
             CONST.SELECTED_DOCS_TITLES: [],
             CONST.SELECTED_SENTENCES: [],
-            CONST.RETRIEVED_DOCS_URLS: [],
-            CONST.RETRIEVED_DOCS_TITLES: [],
         }
         docs = msg_d[CONST.CONTEXT][CONST.CONTENTS]
         selections = msg_d[CONST.CONTEXT][CONST.SELECTED_CONTENTS]
@@ -94,6 +87,7 @@ def parse_wizard_message(message_dict, doc_lines_delim):
                     doc_selected = True
                     knowledge[CONST.SELECTED_SENTENCES].append(line)
             full_doc = doc_lines_delim.join(doc_lines)
+            knowledge[CONST.RETRIEVED_SENTENCES].extend(doc_lines)
             knowledge[CONST.RETRIEVED_DOCS].append(full_doc)
             knowledge[CONST.RETRIEVED_DOCS_TITLES].append(doc['title'])
             knowledge[CONST.RETRIEVED_DOCS_URLS].append(doc['url'])
@@ -388,6 +382,7 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             # Has NOT selected knowledge or a is batch padding message
             return
 
+        # F1 metric over the *selected* knowledge.
         resp = model_response['text']
         self.metrics.add(
             'knowledge_f1_docs',
@@ -407,12 +402,23 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             F1Metric.compute(resp, CONST.SELECTED_SENTENCES),
         )
 
+        # F1 Metrics over the *retrieved* docs.
+        self.metrics.add(
+            'knowledge_f1_max_retrieved_sentences',
+            F1Metric.compute(resp, teacher_action[CONST.RETRIEVED_SENTENCES]),
+        )
+        self.metrics.add(
+            'knowledge_f1_max_retrieved_docs',
+            F1Metric.compute(resp, teacher_action[CONST.RETRIEVED_DOCS]),
+        )
+
     def _teacher_action_type(self) -> str:
         return CONST.ACTION_WIZARD_TO_APPRENTICE
 
     def additional_message_content(self, parlai_message: Message, action: Dict):
         for item_key in (
             CONST.RETRIEVED_DOCS,
+            CONST.RETRIEVED_SENTENCES,
             CONST.RETRIEVED_DOCS_URLS,
             CONST.RETRIEVED_DOCS_TITLES,
             CONST.SELECTED_DOCS,
@@ -608,238 +614,3 @@ class GoldDocsTeacher(BaseKnowledgeTeacher):
 class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
     def _knowledge_piece(self):
         return CONST.SELECTED_DOCS_TITLES
-
-
-@register_mutator("add_checked_sentence_to_input_woi")
-class AddCheckedSentence(AddCheckedSentenceWizWiki):
-    """
-    Adds the checked sentence to the end of the text.
-
-    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,add_checked_sentence_to_input_woi
-    """
-
-    @property
-    def checked_sentence_kword(self):
-        return CONST.SELECTED_SENTENCES
-
-
-@register_mutator("checked_sentence_as_label_woi")
-class CheckedSentenceAsLabel(CheckedSentenceAsLabelWizWiki):
-    """
-    Uses the checked sentence (knowledge) as label.
-
-    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label_woi
-    """
-
-    @property
-    def checked_sentence_kword(self):
-        return CONST.SELECTED_SENTENCES
-
-
-@register_mutator("add_label_to_input_woi")
-class AddLabel(AddLabelWizWiki):
-    """
-    Adds the dialogue sentence to the input.
-
-    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,checked_sentence_as_label_woi,add_label_to_input_woi
-    """
-
-    pass
-
-
-@register_mutator("add_label_to_input_lm_woi")
-class AddLabelLM(AddLabelLMWizWiki):
-    """
-    Adds the dialogue sentence to the input (language modeling version).
-
-    Language modeling version where a random piece of the label is sampled in
-    the input. The rest is placed inside special tokens.
-
-    E.g. run with: parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-    flatten,add_label_to_input_lm_woi
-
-    To add the checked sentence as the label, use:
-        parlai display_data -t wizard_of_internet -n 100 -dt valid --mutators
-        flatten,add_label_to_input_lm_woi,checked_sentence_as_label_woi
-    """
-
-    pass
-
-
-@register_mutator("woi_filter_no_passage_used")
-class WoiFilterNoPassageUsed(ManyEpisodeMutator):
-    """
-    Allows to filter any examples where no passage was selected to base the wizard reply
-    on.
-
-    This works best in flattened mode. E.g. run with: parlai display_data -t
-    wizard_of_internet -n 100 -dt valid --mutators flatten+filter_no_passage_used
-    """
-
-    def many_episode_mutation(self, episode):
-        out_episodes = []
-        for e in episode:
-            checked_sentences = e.get(CONST.SELECTED_SENTENCES)
-            checked_sentences = ' '.join(checked_sentences)
-            if checked_sentences == CONST.NO_SELECTED_SENTENCES_TOKEN:
-                pass
-            else:
-                out_episodes.append([e])
-        return out_episodes
-
-
-@register_mutator("woi_filter_selected_knowledge_in_retrieved_docs")
-class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
-    """
-    Allows to filter any examples where '__retrieved-docs__' field does contain the
-    '__selected-sentences__'.
-    """
-
-    def many_episode_mutation(self, episode):
-        out_episodes = []
-        for e in episode:
-            checked_sentences = e.get(CONST.SELECTED_SENTENCES)
-            docs = ' '.join(e.get('__retrieved-docs__'))
-            if ' '.join(checked_sentences) != CONST.NO_SELECTED_SENTENCES_TOKEN:
-                found = True
-                for sent in checked_sentences:
-                    s = sent.lstrip(' ').rstrip(' ')
-                    if s not in docs:
-                        found = False
-                if found:
-                    out_episodes.append([e])
-            else:
-                pass
-        return out_episodes
-
-
-def chunk_docs_in_message(message, chunk_sz):
-    if CONST.RETRIEVED_DOCS not in message:
-        return message
-    new_message = message.copy()
-    docs = message.get(CONST.RETRIEVED_DOCS)
-    titles = message.get(CONST.RETRIEVED_DOCS_TITLES)
-    urls = message.get(CONST.RETRIEVED_DOCS_URLS)
-    new_docs = []
-    new_titles = []
-    new_urls = []
-    checked_sentences = message.get(CONST.SELECTED_SENTENCES)
-    for i in range(len(checked_sentences)):
-        checked_sentences[i] = checked_sentences[i].lstrip(' ').rstrip(' ')
-    if ' '.join(checked_sentences) == CONST.NO_SELECTED_SENTENCES_TOKEN:
-        checked_sentences = []
-    for ind in range(len(docs)):
-        d = docs[ind]
-        # Guarantees that checked sentences are not split in half (as we split by space).
-        for i in range(len(checked_sentences)):
-            d = d.replace(checked_sentences[i], "||CHECKED_SENTENCE_" + str(i) + "||")
-        while True:
-            end_chunk = d.find(' ', chunk_sz)
-            if end_chunk == -1:
-                # last chunk
-                for i in range(len(checked_sentences)):
-                    d = d.replace(
-                        "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
-                    )
-                new_docs.append(d)
-                new_titles.append(titles[ind])
-                new_urls.append(urls[ind])
-                break
-            else:
-                new_d = d[0:end_chunk]
-                for i in range(len(checked_sentences)):
-                    new_d = new_d.replace(
-                        "||CHECKED_SENTENCE_" + str(i) + "||", checked_sentences[i]
-                    )
-                new_docs.append(new_d)
-                new_titles.append(titles[ind])
-                new_urls.append(urls[ind])
-                d = d[end_chunk + 1 : -1]
-    new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
-    new_message.force_set(CONST.RETRIEVED_DOCS_TITLES, new_titles)
-    new_message.force_set(CONST.RETRIEVED_DOCS_URLS, new_urls)
-    return new_message
-
-
-@register_mutator("woi_chunk_retrieved_docs")
-class WoiChunkRetrievedDocs(MessageMutator):
-    """
-    Chunks '__retrieved-docs__' into smaller docs (max 100 words each).
-    """
-
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        parser.add_argument(
-            '--woi-doc-chunk-size',
-            default=500,
-            type=int,
-            help='Document chunk size (in characters).',
-        )
-
-    def message_mutation(self, message: Message) -> Message:
-        chunk_sz = self.opt.get('woi_doc_chunk_size')
-        return chunk_docs_in_message(message, chunk_sz)
-
-
-@register_mutator("woi_dropout_retrieved_docs")
-class WoiDropoutRetrievedDocs(MessageMutator):
-    """
-    Drops out '__retrieved-docs__' to only keep a maximum number in each example.
-    """
-
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        parser.add_argument(
-            '--woi-doc-max-chunks',
-            default=100,
-            type=int,
-            help='Largest number of chunks to use, others will be dropped out at random. Chunks containing gold checked sentences will not be removed.',
-        )
-
-    def message_mutation(self, message: Message) -> Message:
-        if CONST.RETRIEVED_DOCS not in message:
-            return message
-        new_message = message.copy()
-        docs = message.get(CONST.RETRIEVED_DOCS)
-        new_docs = []
-        max_chunks = self.opt.get('woi_doc_max_chunks')
-
-        keep = torch.randperm(len(docs))[0:max_chunks]
-        remove = torch.ones(len(docs))
-        remove[keep] = 0
-
-        for i in range(len(docs)):
-            if remove[i] == 0:
-                new_docs.append(docs[i])
-            else:
-                # We may still keep the doc if it contains the gold checked sentence(s).
-                checked_sentences = message.get(CONST.SELECTED_SENTENCES)
-                d = docs[i]
-                found = False
-                if ' '.join(checked_sentences) != CONST.NO_SELECTED_SENTENCES_TOKEN:
-                    for sent in checked_sentences:
-                        s = sent.lstrip(' ').rstrip(' ')
-                        if s in d:
-                            found = True
-                if found:
-                    new_docs.append(docs[i])
-
-        new_message.force_set(CONST.RETRIEVED_DOCS, new_docs)
-        return new_message
-
-
-@register_mutator("woi_remove_knowledge")
-class WoiRemoveKnowledge(MessageMutator):
-    def message_mutation(self, message: Message) -> Message:
-        if CONST.RETRIEVED_DOCS not in message:
-            return message
-        remove_retrieved_docs_from_message(message)
-        remove_selected_docs_from_message(message)
-        return message
