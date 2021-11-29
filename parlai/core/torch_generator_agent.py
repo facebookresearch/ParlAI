@@ -19,10 +19,9 @@ Contains the following utilities:
 
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
-from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable, Union
+from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
 import math
 from operator import attrgetter
-from collections import namedtuple
 
 import torch
 import torch.nn as nn
@@ -1253,7 +1252,9 @@ class _HypothesisTail(object):
 
 class _PathSelection(object):
     """
-    Output of TreeSearch:select_paths. Represents output of path selection process.
+    Output of TreeSearch:select_paths.
+
+    Represents output of path selection process.
     """
 
     __slots__ = ['hypothesis_ids', 'token_ids', 'scores', 'token_scores', 'token_ranks']
@@ -1581,7 +1582,7 @@ class TreeSearch(object):
 
     def _get_pretty_token_metadata(self, list_of_hypotails):
         """
-        Return token probabilities and ranks as two tensors
+        Return token probabilities and ranks as two tensors.
         """
 
         return {

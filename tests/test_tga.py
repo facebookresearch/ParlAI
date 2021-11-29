@@ -174,9 +174,10 @@ class TestGeneration(unittest.TestCase):
 
     def test_token_level_loss_logging(self):
         """
-        Test functionality of token level probability + ranking logging
+        Test functionality of token level probability + ranking logging.
 
-        Regression for all inference types: 'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'
+        Regression for all inference types: 'beam', 'greedy', 'topk', 'nucleus',
+        'delayedbeam'
         """
         inference_types = ['beam', 'greedy', 'topk', 'nucleus', 'delayedbeam']
         gold_data = {
