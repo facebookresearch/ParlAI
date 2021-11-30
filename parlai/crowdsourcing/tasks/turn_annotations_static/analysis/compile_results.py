@@ -20,7 +20,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     """
     Class to compile results from static turn annotations.
 
-    Change PROBLEM_BUCKETS in task_config/annotation_buckets.json to be the buckets that
+    Change PROBLEM_BUCKETS in task_config/annotations_config.json to be the buckets that
     you are asking crowdsource workers to annotate with.
     """
 
