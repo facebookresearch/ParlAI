@@ -28,11 +28,12 @@ function Checkboxes({
   if (!askReason) {
     reasonComponent = '';
   }
-  let input_type = annotationBuckets.type !== undefined ? annotationBuckets.type : "checkbox";
+  // TODO: add support for radio input type
+  let input_type = "checkbox";
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
-        Object.keys(annotationBuckets).map(c => (
+        Object.keys(annotationBuckets.config).map(c => (
           <span key={'span_' + c + '_' + turnIdx}>
             <input 
               type={input_type}
@@ -41,13 +42,13 @@ function Checkboxes({
               onChange={(evt) => {
                 let newVal = evt.target.checked;
                 let oldAnnotations = Object.assign({}, annotations);
-                oldAnnotations[annotationBuckets[c].value] = newVal;
+                oldAnnotations[c] = newVal;
                 onUpdateAnnotations(oldAnnotations);
               }} 
               disabled={!enabled}
             />
             <span style={{ marginRight: '15px' }}>
-              {annotationBuckets[c].name}
+              {annotationBuckets.config[c].name}
             </span>
           </span>
         ))

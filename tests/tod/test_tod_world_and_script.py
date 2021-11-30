@@ -5,7 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Tests tod world, notably for batching.
+Tests tod world + script, notably for batching, by comparing saved script logs to the
+data that should have been generated.
+
+Metrics are handled in separate files.
 """
 
 import copy
@@ -114,6 +117,10 @@ class TodWorldInScriptTestBase(unittest.TestCase):
 
 
 class TodWorldSingleBatchTest(TodWorldInScriptTestBase):
+    """
+    Checks that saved data is correct with a single batch.
+    """
+
     def _test_roundDataCorrect_helper(self, config):
         config["batchsize"] = 1
         config["max_turns"] = 10
@@ -135,7 +142,7 @@ class TodWorldSingleBatchTest(TodWorldInScriptTestBase):
         config["batchsize"] = 1
         config["max_turns"] = max_turns
         config[test_agents.TEST_NUM_ROUNDS_OPT_KEY] = 10
-        config[test_agents.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
+        config[test_agents.TEST_NUM_EPISODES_OPT_KEY] = 5  # cause why not
         agents, opt = self.setup_agents(config)
         script = TestTodWorldScript(opt)
         script.agents = agents
@@ -150,6 +157,10 @@ class TodWorldSingleBatchTest(TodWorldInScriptTestBase):
 
 
 class TodWorldNonSingleBatchTest(TodWorldInScriptTestBase):
+    """
+    Checks saved data is correct with larger batchsizes.
+    """
+
     def _test_roundDataCorrect_helper(self, config):
         config["batchsize"] = 4
         config["max_turns"] = 10
@@ -164,6 +175,13 @@ class TodWorldNonSingleBatchTest(TodWorldInScriptTestBase):
 
 
 class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
+    """
+    Just to be safe, make sure that the agents with "single" versions (ex goal + api
+    schema) are correctly aligned.
+
+    (Already tested in the agents test file as well, but to be safe.)
+    """
+
     def setup_agents(self, added_opts, api_agent, goal_agent):
         full_opts = self.add_tod_world_opts(added_opts)
         full_opts["fixed_response"] = "USER: [DONE]"
@@ -178,11 +196,11 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
         ]
         return agents, full_opts
 
-    def test_SingleGoalApiResp_noBatching(self):
+    def _test_SingleGoalApiResp_helper(self, batchsize, num_episodes):
         config = {}
-        config["batchsize"] = 1
+        config["batchsize"] = batchsize
         config[test_agents.TEST_NUM_ROUNDS_OPT_KEY] = 10
-        config[test_agents.TEST_NUM_EPISODES_OPT_KEY] = 2  # cause why not
+        config[test_agents.TEST_NUM_EPISODES_OPT_KEY] = num_episodes
         single_agents, opt = self.setup_agents(
             config, test_agents.SingleApiSchemaAgent, test_agents.SingleGoalAgent
         )
@@ -219,6 +237,14 @@ class TodWorldTestSingleDumpAgents(TodWorldInScriptTestBase):
                 self.assertEqual(single_goal[0]["api_name"], single_des[0]["api_name"])
 
                 single_idx += 1
+
+    def test_SingleGoalApiResp_helper_singleBatch(self):
+        self._test_SingleGoalApiResp_helper(1, 2)
+        self._test_SingleGoalApiResp_helper(1, 5)
+
+    def test_SingleGoalApiResp_helper_multiBatch(self):
+        self._test_SingleGoalApiResp_helper(4, 8)
+        self._test_SingleGoalApiResp_helper(4, 11)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-sTests tod world, notably for batching.
+Tests tod world metrics in the full script, *including* making the script properly set
+up the agents on its own.
+
+Use a few of the API Call + goal hit metrics as the metric handlers to test proper
+functionality.
 """
 
 import copy
@@ -85,6 +89,9 @@ class TestTodWorldScript(tod_world_script.TodWorldScript):
 
 class TodMetricsInScriptTests(unittest.TestCase):
     def test_all_goals_hit_all_success(self):
+        """
+        For a setup where all the goals should be successfully hit, is it?
+        """
         self._check_all_goals_hit_by_opt_and_batchsize(
             TEST_SETUP, batchsize=1, num_episodes=1, target_all_goals_hit=1
         )
@@ -106,6 +113,9 @@ class TodMetricsInScriptTests(unittest.TestCase):
         )
 
     def test_all_goals_hit_all_fail(self):
+        """
+        For a setup where all the goals should *not* be successfully hit, do they fail?
+        """
         self._check_all_goals_hit_by_opt_and_batchsize(
             TEST_SETUP_BROKEN_USER_SYSTEM,
             batchsize=1,
@@ -139,6 +149,12 @@ class TodMetricsInScriptTests(unittest.TestCase):
         )
 
     def test_all_goals_hit_all_success_emptySchema(self):
+        """
+        Check to make sure empty API schema doesn't have any impact on goal (Necessary
+        cause original, more exhaustive implementation of goal success would separate
+        between required + optional opts using the schema; make sure it doesn't impact
+        anything broader)
+        """
         self._check_all_goals_hit_by_opt_and_batchsize(
             TEST_SETUP_EMPTY_APISCHEMA,
             batchsize=1,
@@ -172,6 +188,13 @@ class TodMetricsInScriptTests(unittest.TestCase):
         )
 
     def test_all_goals_hit_all_fail_emptySchema(self):
+        """
+        Make sure empty schema has no impact on goal success.
+
+        (Necessary cause original, more exhaustive implementation of goal success would
+        separate between required + optional opts using the schema; make sure it doesn't
+        impact anything broader)
+        """
         self._check_all_goals_hit_by_opt_and_batchsize(
             TEST_SETUP_BROKEN_USER_SYSTEM_EMPTY_APISCHEMA,
             batchsize=1,
