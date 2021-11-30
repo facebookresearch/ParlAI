@@ -295,6 +295,14 @@ class BlenderBot2RagModel(RagModel):
             assert self.knowledge_access_method is KnowledgeAccessMethod.CLASSIFY
             return type_indices
 
+    def flush_previous_retriever_search_results(self):
+        if not hasattr(self, 'retriever'):
+            return
+        if hasattr(self.retriever, 'top_docs'):
+            delattr(self.retriever, 'top_docs')
+        if hasattr(self.retriever, 'search_queries'):
+            delattr(self.retriever, 'search_queries')
+
     def retrieve_and_concat(
         self,
         input: torch.LongTensor,
@@ -314,6 +322,7 @@ class BlenderBot2RagModel(RagModel):
         Override RagModel.retrieve_and_concat to perform different retrieval, depending
         on the RetrieverType.
         """
+        self.flush_previous_retriever_search_results()
         start = time.time()
         logging.debug(f'Begin encoder: {time.time() - start:.2f}')
         if input_turns_cnt is not None:

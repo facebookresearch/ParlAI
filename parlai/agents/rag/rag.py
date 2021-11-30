@@ -288,9 +288,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         observation = self._generation_agent.observe(self, observation)
         if observation.is_padding():
             return observation
-        if 'query_vec' not in observation:
+        if 'query_vec' not in observation and self._query_key in observation:
             self._set_query_vec(observation)
-        if 'input_turn_cnt_vec' not in observation:
+        if 'input_turn_cnt_vec' not in observation and self._query_key in observation:
             self._set_input_turn_cnt_vec(observation)
         return observation
 

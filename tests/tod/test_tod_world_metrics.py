@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Tests different (more complicated) slot metrics.
+Test world metrics + world metrics handlers against dummy conversations.
 """
 
 import unittest
@@ -83,6 +83,11 @@ API_SCHEMA__ONE_CALL_HARD = [
 
 
 class TodMetricsTestHelper:
+    """
+    Given a synthetic intermediate converesation, calculates the metrics for said
+    conversation.
+    """
+
     def __init__(self, e: TodStructuredEpisode):
         self.m = TodMetrics()
         self.m.handlers = [
