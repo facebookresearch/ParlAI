@@ -11,10 +11,8 @@
 import copy
 import os
 import jsonlines
-from tqdm import tqdm
 from typing import List, Optional, Tuple
 
-import parlai.utils.logging as logging
 from parlai.core.teachers import ChunkTeacher
 from .build import build, DATASET_NAME_LOCAL
 from .utils.text_utils import simplify_nq_example
@@ -146,17 +144,10 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         raise ValueError(f'Invalid data type: "{self.dtype}"')
 
     def get_num_samples(self, opt) -> Tuple[int, int]:
-        if self.n_samples:
-            return self.n_samples
-        logging.log(f'Counting the number of samples in {self.dtype}')
-        files = os.listdir(self.dpath)
-        n_samples = 0
-        for fname in tqdm(files):
-            if fname.startswith('.'):  # some of the OS specific files
-                continue
-            n_samples += _count_lines_in_file(os.path.join(self.dpath, fname))
-        logging.info(f'{n_samples} examples found in {self.dtype} dataset.')
-        self.n_samples = (n_samples, n_samples)
+        if self.dtype == 'train':
+            self.n_samples = (307373, 307373)
+        else:
+            self.n_samples = (7830, 7830)
         return self.n_samples
 
     def _get_candidate_long_answers(self, example):
