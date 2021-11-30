@@ -559,18 +559,6 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1808.07036"},
     },
     {
-        "id": "SaFeRDialogues",
-        "display_name": "",
-        "task": "saferdialogues",
-        "tags": [],
-        "description": (
-            "A dataset of 8k dialogues demonstrating safety failures, feedback "
-            "signaling them, and a response acknowledging the feedback. "
-            "Dataset has been released under the CC BY-NC license."
-        ),
-        "links": {"arXiv": "https://arxiv.org/abs/2110.07518"},
-    },
-    {
         "id": "SimpleQuestions",
         "display_name": "Simple Questions",
         "task": "simplequestions",
@@ -1476,5 +1464,17 @@ task_list = [
             "paper": "https://aclanthology.org/2021.naacl-main.254.pdf",
             "website": "https://github.com/kushalchawla/CaSiNo",
         },
+    },
+    {
+        "id": "SaFeRDialogues",
+        "display_name": "SaFeRDialogues",
+        "task": "saferdialogues",
+        "tags": [],
+        "description": (
+            "A dataset of 8k dialogues demonstrating safety failures, feedback "
+            "signaling them, and a response acknowledging the feedback. "
+            "Dataset has been released under the CC BY-NC license."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2110.07518"},
     },
 ]
