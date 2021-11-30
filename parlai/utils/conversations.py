@@ -276,6 +276,14 @@ class Conversations:
         fle, _ = os.path.splitext(datapath)
         return fle + '.jsonl'
 
+    @staticmethod
+    def _check_parent_dir_exits(datapath):
+        parent_dir = os.path.dirname(datapath)
+        if os.path.exists(parent_dir) and os.path.isdir(parent_dir):
+            return
+        logging.info(f'Parent directory ({parent_dir}) did not exist and was created.')
+        os.makedirs(parent_dir)
+
     @classmethod
     def save_conversations(
         cls,
@@ -294,6 +302,7 @@ class Conversations:
         each of which is comprised of a list of act pairs (i.e. a list dictionaries
         returned from one parley)
         """
+        cls._check_parent_dir_exits(datapath)
         to_save = cls._get_path(datapath)
 
         context_ids = context_ids.strip().split(',')
