@@ -1,6 +1,6 @@
-# Tod Core README
+# Task-Oriented Dialog (TOD) Core README
 
-For the quickest getting-to-use of core classes, start with the "Teachers + Agents Usage" section below (for understanding how to setup agents such that they work with new datasets) and `parlai/scripts/tod_world_script.py` (for understanding how to run simulations with the TOD conversations format). 
+For the quickest getting-to-use of TOD classes, start with the "Teachers + Agents Usage" section below (for understanding how to setup agents such that they work with new datasets) and `parlai/scripts/tod_world_script.py` (for understanding how to run simulations with the TOD conversations format). 
 
 See `projects/tod_simulator/README` for a higher-level usage-focused README. This document also describes the structure of the contents of this directory. 
 
