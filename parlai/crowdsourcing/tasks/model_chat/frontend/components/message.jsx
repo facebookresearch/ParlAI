@@ -44,7 +44,7 @@ function RenderChatMessage({ message, mephistoContext, appContext, idx }) {
     let thisBoxAnnotations = checkboxValues[idx];
     if (!thisBoxAnnotations) {
       thisBoxAnnotations = Object.fromEntries(
-        annotationBuckets.map(bucket => [bucket.value, false])
+        Object.keys(annotationBuckets.config).map(bucket => [bucket, false])
       )
     }
     checkboxes = <div style={{"fontStyle": "italic"}}>

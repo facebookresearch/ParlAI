@@ -84,10 +84,11 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
             "help": "Path to data and answers for onboarding task in JSON format"
         },
     )
-    annotation_buckets: Optional[str] = field(
-        default=None,
+    annotations_config_path: str = field(
+        default="",
         metadata={
-            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance. If none provided, no checkboxes."
+            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance. Set to "
+            " to disable checkboxes."
         },
     )
     response_field: bool = field(
@@ -95,6 +96,10 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
         metadata={
             "help": "If we want a freeform textbox input for the crowdworker to respond to the message."
         },
+    )
+    task_description_file: str = field(
+        default=os.path.join(get_task_path(), 'task_config/task_description.html'),
+        metadata={"help": "Path to file of HTML to show on the task-description page"},
     )
 
 
@@ -184,18 +189,28 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         for use by the task's frontend.
         """
 
+        # Load task description from file
+        task_description = "<h1>" "You didn't specify a task_description_file" "</h1>"
+        if self.args.blueprint.get("task_description_file", None) is not None:
+            full_path = os.path.expanduser(self.args.blueprint.task_description_file)
+            assert os.path.exists(
+                full_path
+            ), f"Target task description path {full_path} doesn't exist"
+            with open(full_path, "r") as description_fp:
+                task_description = description_fp.read()
+
         with open(self.args.blueprint.onboarding_data, "r", encoding="utf-8-sig") as f:
             onboarding_data = json.loads(f.read())
 
         annotation_buckets = None
-        if self.args.blueprint.annotation_buckets:
+        if self.args.blueprint.get('annotations_config_path', ''):
             with open(
-                self.args.blueprint.annotation_buckets, "r", encoding="utf-8-sig"
+                self.args.blueprint.annotations_config_path, "r", encoding="utf-8-sig"
             ) as f:
                 annotation_buckets = json.loads(f.read())
 
         return {
-            "task_description": self.args.task.get('task_description', None),
+            "task_description": task_description,
             "task_title": self.args.task.get('task_title', None),
             "annotation_question": self.args.blueprint.annotation_question,
             "onboarding_data": onboarding_data,
