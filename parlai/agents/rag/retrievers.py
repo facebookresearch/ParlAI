@@ -109,9 +109,9 @@ def load_passage_reader(
                     assert line[0] == 'id'
                 if line[0] != 'id':
                     if return_dict:
-                        passages[row[0]] = (row[1], row[2])  # type: ignore
+                        passages[line[0]] = (line[1], line[2])  # type: ignore
                     else:
-                        passages.append((row[0], row[1], row[2]))  # type: ignore
+                        passages.append((line[0], line[1], line[2]))  # type: ignore
     return passages
 
 
