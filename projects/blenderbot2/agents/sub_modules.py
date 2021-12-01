@@ -181,7 +181,7 @@ class QueryGenerator(BB2SubmoduleMixin):
             )
             assert isinstance(base_agent, TorchAgent)
             self.agents = [base_agent]
-            bsz = opt.get('batchsize', 1)
+            bsz = max(opt.get('batchsize', 1), opt.get('eval_batchsize', 1))
             rag_turn_n_turns = opt.get('rag_turn_n_turns', 1)
             if bsz > 1 or rag_turn_n_turns > 1:
                 self.agents += [
