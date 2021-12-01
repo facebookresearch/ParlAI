@@ -5,7 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Tests tod world, notably for batching.
+Tests tod world metrics in the full script, *without* making the script properly set up
+the agents on its own.
+
+Use a few of the API Call + goal hit metrics as the metric handlers to test proper
+functionality.
 """
 
 import copy
@@ -104,9 +108,6 @@ class TodWorldInScriptTestBase(unittest.TestCase):
         max_episodes = opt[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         episode_metrics = script.episode_metrics
         for episode_idx, episode in enumerate(episode_metrics):
-            #        if episode_idx >= max_episodes:
-            #            break
-            # See how we make broken mock api calls in the test_agents.
             goal, episode_metric = episode
             episode_metric = dict_report(episode_metric.report())
             self.assertAlmostEqual(
