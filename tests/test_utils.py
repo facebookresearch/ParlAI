@@ -12,6 +12,7 @@ import random
 import time
 import unittest
 from parlai.utils.data import DatatypeHelper
+from parlai.utils.curated_response import generate_init_prompot, generate_safe_response
 
 
 class TestUtils(unittest.TestCase):
@@ -238,6 +239,21 @@ class TestDatatypeHelper(unittest.TestCase):
 
         assert len(TRAIN_C_B_A) + len(VALID_C_B_A) + len(TEST_C_B_A) is TOTAL_LEN
         assert len(set(TRAIN_C_B_A + VALID_C_B_A + TEST_C_B_A)) is TOTAL_LEN
+
+
+class TestCuratedResponseGenerator(unittest.TestCase):
+    def test_init_dialogue(self):
+        init_prompt_txt = generate_init_prompot()
+        self.assertIsNotNone(init_prompt_txt)
+        self.assertIsInstance(init_prompt_txt, str)
+        self.assertGreater(len(init_prompt_txt), 5)
+
+    def test_safe_response(self):
+        safe_txt = generate_safe_response()
+        self.assertIsNotNone(safe_txt)
+        self.assertIsInstance(safe_txt, str)
+        self.assertGreater(len(safe_txt), 10)
+        self.assertGreater(len(safe_txt.split(' ')), 3)
 
 
 if __name__ == '__main__':
