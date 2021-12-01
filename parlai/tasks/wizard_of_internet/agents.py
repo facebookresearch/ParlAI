@@ -350,6 +350,7 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
     def __init__(self, opt, shared=None):
         self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
         self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
+        self.add_skip_search = opt.get('add_skip_search')
         super().__init__(opt, shared=shared)
         self.id = 'WizInternetWizardTeacher'
 
@@ -362,6 +363,12 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             type='bool',
             default=False,
             help='If true, prepend text with checked sentences',
+        )
+        arg_group.add_argument(
+            '--add-skip-search',
+            type='bool',
+            default=False,
+            help='If true, add skip search field when prepending text with checked sentences',
         )
         return parser
 
@@ -443,6 +450,8 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
                         f' {self.gold_knowledge_delimiter} {text}'
                     ),
                 )
+                if self.add_skip_search:
+                    message[CONST.SKIP_SEARCH] = True
             yield message, episode_started
 
 

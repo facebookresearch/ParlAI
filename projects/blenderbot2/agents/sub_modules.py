@@ -196,6 +196,7 @@ class QueryGenerator(BB2SubmoduleMixin):
         input: torch.LongTensor,
         num_memories: torch.LongTensor,
         generated_memories: Optional[List[List[str]]],
+        skip_search: Optional[torch.BoolTensor],
     ) -> Tuple[torch.LongTensor, List[str]]:
         """
         Classify input and get retrieval type.
@@ -241,6 +242,8 @@ class QueryGenerator(BB2SubmoduleMixin):
             ):
                 self.retrieval_type[i] = RetrievalType.MEMORY.value
             elif strip_punc(s) in NONE_STRINGS + MEMORY_STRINGS:
+                self.retrieval_type[i] = RetrievalType.NONE.value
+            elif skip_search is not None and skip_search[i]:
                 self.retrieval_type[i] = RetrievalType.NONE.value
             else:
                 self.retrieval_type[i] = RetrievalType.SEARCH.value
