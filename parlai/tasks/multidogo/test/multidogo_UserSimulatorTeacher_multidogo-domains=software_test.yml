@@ -1,0 +1,51 @@
+acts:
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: HELLO RORY'
+    id: Multidogo_UserSimulatorTeacher
+    text: 'GOAL: api_name = software ; cost = 65 ; name = david ; password = 44685'
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: I WANT REIMBURSE.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Hello! Welcome to Prodesk financial department. How may I help
+      you?
+
+      '
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: OKAY.MY NAME IS JOHN DAVID AND THE PASSWORD IS 44685'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Sure! I''ll help you with that. Could you please help me with your
+      name and the password?
+
+      '
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: MAY I ATTACH THE BILLS OF MY EXPENSES.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Thank you for sharing the details. Could you please let me know
+      the cost of the expenses, so that I can update that for you?
+
+      '
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: OKAY THE TOTAL COST IS $355.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: You should do that. But, please let me know the cost of the expenses.'
+    type: 'USER: '
+num_episodes: 155
+num_examples: 1302
