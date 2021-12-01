@@ -13,13 +13,14 @@ its memory or access the internet.
 The Memory Decoder examines the context and generates memories to write to
 the long-term memory module.
 """
+import copy
 import torch
 import torch.nn
 import torch.nn.functional as F
 from typing import Union, Dict, List, Tuple, Optional, Any
 
 from parlai.agents.fid.fid import FidAgent, WizIntGoldDocRetrieverFiDAgent
-from parlai.agents.rag.args import DPR_ZOO_MODEL, QUERY_MODEL_TYPES
+from parlai.agents.rag.args import DPR_ZOO_MODEL, QUERY_MODEL_TYPES, RetrieverType
 from parlai.agents.rag.rag import RagAgent
 from parlai.agents.rag.model_types import (
     RagTurn,
@@ -40,6 +41,7 @@ from parlai.tasks.wizard_of_internet.constants import (
     SKIP_SEARCH,
 )
 from parlai.utils.torch import padded_3d
+from parlai.utils.typing import TShared
 
 from .modules import (
     BlenderBot2RagModel,
@@ -910,6 +912,13 @@ class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+
+class BlenderBot2SearchQueryFiDAgent(BlenderBot2FidAgent):
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = copy.deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE.value
+        super().__init__(opt, shared=shared)
 
 
 class BlenderBot2WizIntGoldDocRetrieverFiDAgent(
