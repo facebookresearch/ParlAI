@@ -62,6 +62,8 @@ class MultidogoParser(tod_agents.TodStructuredDataParser):
     def setup_episodes(self, fold):
         result = []
         domains = self.opt.get("multidogo_domains", DOMAINS)
+        if type(domains) is str:
+            domains = [domains]
         intent_type = self.opt.get("intent-type", TURN_INTENT)
         for _conv_id, domain, conversation in self._iterate_over_conversations(
             domains, intent_type
