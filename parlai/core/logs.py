@@ -180,12 +180,15 @@ class WandbLogger(object):
             notes=f"{opt['model_file']}",
             entity=opt.get('wandb_entity'),
             reinit=True,  # in case of preemption
+            resume=True,  # requeued runs should be treated as single run
         )
         # suppress wandb's output
         logging.getLogger("wandb").setLevel(logging.ERROR)
-        for key, value in opt.items():
-            if value is None or isinstance(value, (str, numbers.Number, tuple)):
-                setattr(self.run.config, key, value)
+
+        if not self.run.resumed:
+            for key, value in opt.items():
+                if value is None or isinstance(value, (str, numbers.Number, tuple)):
+                    setattr(self.run.config, key, value)
         if model is not None:
             self.run.watch(model)
 

@@ -45,5 +45,5 @@ acts:
     slots: {}
     text: 'APIRESP: '
     type: 'SYSTEM: '
-num_episodes: 15616
-num_examples: 290050
+num_episodes: 8180
+num_examples: 151916

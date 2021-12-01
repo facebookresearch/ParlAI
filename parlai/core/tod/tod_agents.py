@@ -7,49 +7,9 @@
 Agents (used for dumping data) and Teachers (for training models) related to the TOD
 conversation setup.
 
-# Usage
-
-For a given dataset, extend `TodStructuredDataParser` and implement `generate_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
-
-For example, given a `class XX_DataParser(TodStructuredDataParser)`, `class XX_UserSimulatorTeacher(XX_DataParser, TodUserSimulatorTeacher)` would be how one would define a teacher that generates training data for a User Simulator model.
-
-Once the relevant agents have been created (or relevant models have been fine-tuned), see `parlai.scripts.tod_world_script` for usage in generating simulations.
-
-As a convention, agents and teachers that are inheritable are prefixed with "Tod" whereas those that can be used as-is are not. Similarly, classes and functions that do not need to be exposed outside of this file are prefixed with a single underscore ('_').
-
-## Why we do this
-These files aid in consistency between Teachers and Agents for simulation. Rather than having to align multiple different agents to be consistent about assuptions about data formatting, tokens, spacing, etc, we do this once (via converting everything to `TodStructuredEpisode`) and let the code handle the rest.
-
-# Description of Agents + Teachers useful for Simulation
-## Teachers for training (generative) models
-    * TodSystemTeacher
-    * TodUserSimulatorTeacher
-
-## Agents for Grounding
-For goal grounding for the User for simulation:
-    * TodGoalAgent
-    * TodSingleGoalAgent
-
-For (optional) API schema grounding for the System:
-    * TodApiSchemaAgent (must be used with `TodGoalAgent` only)
-    * TodSingleApiSchemaAgent (must be used with `TodSingleGoalAgent` only)
-    * EmptyApiSchemaAgent
-        * Used for simulations where the expectation is `no schema`, ie, evaluation simulations.
-
-## Agents for mocking APIs:
-    * StandaloneApiAgent
-         * Assumed to be provided a .pickle file 'trained' by `TodStandaloneApiTeacher`
-
-# Agents for dumping data from a ground truth dataset
-The following are for extracting TOD World metrics from a ground truth dataset. These are generally used sparingly and only for calculating baselines.
-    * TodApiCallAndSysUttAgent
-    * TodApiResponseAgent
-    * TodUserUttAgent
-
-For this metrics extraction, `TodGoalAgent` and `TodApiSchemaAgent` should be used.
-
-# Other agents
-There is a `EmptyGoalAgent` for use in human-human conversations where a goal is unnecessary.
+As a convention, agents and teachers that are inheritable are prefixed with "Tod"
+whereas those that can be used as-is are not. Similarly, classes and functions that do
+not need to be exposed outside of this file are prefixed with a single underscore ('_')
 """
 
 from parlai.core.agents import Agent
@@ -451,7 +411,7 @@ class StandaloneApiAgent(Agent):
 
     Use `TodStandaloneApiTeacher` to train this class. For example for a MultiWoz V2.2
     standalone API, use ``` parlai train -t multiwoz_v22:StandaloneApiTeacher -m
-    parlai_fb.agents.tod.agents:StandaloneApiAgent -eps 4 -mf output ``` to generate the
+    parlai.core.tod.tod_agents:StandaloneApiAgent -eps 4 -mf output ``` to generate the
     `.pickle` file to use.
     """
 
@@ -647,7 +607,6 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
             metrics = SlotMetrics(
                 teacher_slots=teacher_action["slots"],
                 predicted_slots=predicted,
-                avg_jga_nlg_bleu=True,
                 prefixes=domains,
             ).report()
             for key, value in metrics.items():
@@ -669,9 +628,7 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
             domains = (
                 [teacher_action["domain"]] if self.opt["domain_nlg_record"] else []
             )
-            metrics = NlgMetrics(
-                guess=resp, labels=labels, prefixes=domains, avg_jga_nlg_bleu=True
-            ).report()
+            metrics = NlgMetrics(guess=resp, labels=labels, prefixes=domains).report()
             for key, value in metrics.items():
                 self.metrics.add(key, value)
 
@@ -765,7 +722,7 @@ class TodStandaloneApiTeacher(TodStructuredDataParser, DialogTeacher):
 
     Set this as the teacher with `StandaloneApiAgent` as the agent. Ex for a MultiWoz
     V2.2 standalone API, use ``` parlai train -t multiwoz_v22:StandaloneApiTeacher -m
-    parlai_fb.agents.tod.agents:StandaloneApiAgent -eps 4 -mf output ```
+    parlai.core.tod.tod_agents:StandaloneApiAgent -eps 4 -mf output ```
     """
 
     def setup_data(self, fold):
