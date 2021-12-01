@@ -13,6 +13,7 @@ from pathlib import Path
 import os
 import json
 import re
+import tqdm
 
 DEBUG_MISSING_RAW_CONVERSATIONS = False  # Unnecessary once Amazon fixes multidogo
 
@@ -51,7 +52,7 @@ DATATYPE_TO_RAW_DATA_FILE_NAME = {
 PROCESSED = "processed/"
 
 
-def _preprocess(opt, datapath, datatype):
+def _preprocess(opt, datapath, datatype, version):
     """
     MultiDoGo conversations take place between an "agent" and a customer". Labeled
     customer data is stored in one set of files while the agent data is in another.
@@ -67,19 +68,15 @@ def _preprocess(opt, datapath, datatype):
     intent_type = opt.get("intent_type", TURN_INTENT)
 
     for domain in domains:
-        # to see which domain/datatype combo we've built, use a dummy file to mark
-        built_file = _get_processed_multidogo_built_file(
+        out_dir = get_processed_multidogo_folder(
             datapath, domain, datatype, intent_type
         )
-        if os.path.isfile(built_file):
+        if build_data.built(out_dir, version):
             continue
         print(
             f"    Preprocessing '{domain}' data for '{datatype}' with '{intent_type}' intent labels."
         )
 
-        out_dir = get_processed_multidogo_folder(
-            datapath, domain, datatype, intent_type
-        )
         Path(out_dir).mkdir(parents=True, exist_ok=True)
 
         # The agent responses for *all* datatypes are in one file.
@@ -124,18 +121,11 @@ def _preprocess(opt, datapath, datatype):
             )
 
         # mark that we've built this combinations
-        open(built_file, "a").close()
+        build_data.mark_done(out_dir, version_string=version)
 
 
 def get_processed_multidogo_folder(datapath, domain, datatype, intent_type):
     return os.path.join(datapath, PROCESSED, domain, intent_type, datatype)
-
-
-def _get_processed_multidogo_built_file(datapath, domain, datatype, intent_type):
-    return os.path.join(
-        get_processed_multidogo_folder(datapath, domain, datatype, intent_type),
-        ".build",
-    )
 
 
 # unannotated data is UNANNOTATED_DATA_PROFIX + <domain> + '.tsv'
@@ -157,6 +147,18 @@ def _get_annotated_tsv_data(datapath, domain, datatype, annotation_type):
         DATATYPE_TO_RAW_DATA_FILE_NAME[datatype],
     )
     return csv.reader(open(file_name, "r"), delimiter="\t")
+
+
+def _get_annotated_tsv_data_size(datapath, domain, datatype, annotation_type):
+    file_name = os.path.join(
+        datapath,
+        RAW_DATA_PREFIX,
+        RAW_DATA_ANNOTATED_DATA_PATH,
+        RAW_DATA_INTENT_BY_TYPE_PATH[annotation_type],
+        domain,
+        DATATYPE_TO_RAW_DATA_FILE_NAME[datatype],
+    )
+    return sum(1 for line in open(file_name, 'r'))
 
 
 def _build_conversation_span_map(unannotated_tsv_object):
@@ -207,7 +209,14 @@ def _aggregate_and_write_conversations(
     file_idx = start_file_idx
     intent_tsv = _get_annotated_tsv_data(datapath, domain, datatype, fetch_intent_type)
     next(intent_tsv)  # don't need the header in the first line
-    for labeled_line in intent_tsv:
+    print(f"Processing for {domain}, {fetch_intent_type}, {datatype}")
+    for labeled_line in tqdm.tqdm(
+        intent_tsv,
+        total=_get_annotated_tsv_data_size(
+            datapath, domain, datatype, fetch_intent_type
+        )
+        - 1,
+    ):
         conversation_id = labeled_line[0]
         if conversation_id in skip_ids:
             continue
@@ -318,6 +327,6 @@ def build(opt):
         # mark the data as built
         build_data.mark_done(datapath, version_string=version)
 
-        # do preprocessing on the data to put it into FBDialogueData format
-        for fold in ["train", "valid", "test"]:
-            _preprocess(opt, datapath, fold)
+    # do preprocessing on the data to put it into FBDialogueData format. There's a lot so check to make sure it's okay
+    for fold in ["train", "valid", "test"]:
+        _preprocess(opt, datapath, fold, version)
