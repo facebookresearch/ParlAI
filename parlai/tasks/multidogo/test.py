@@ -8,8 +8,8 @@ from parlai.utils.testing import AutoTeacherTest
 
 
 class TestSystemTeacher(AutoTeacherTest):
-    task = "multidogo:SystemTeacher"
+    task = "multidogo:SystemTeacher:multidogo-domains=software"
 
 
 class TestUserSimulatorTeacher(AutoTeacherTest):
-    task = "multidogo:UserSimulatorTeacher"
+    task = "multidogo:UserSimulatorTeacher:multidogo-domains=software"
