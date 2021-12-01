@@ -184,24 +184,26 @@ class TestGeneration(unittest.TestCase):
             'beam': {
                 'text_token_info': [
                     ('__start__', 0.0, 1.0),
-                    ('5', -2.5510462364763953e-05, 1.0),
-                    ('__end__', -1.1920922133867862e-06, 3.0),
+                    ('5', -2.5510462364763953e-05, 6.0),
+                    ('__end__', -1.1920922133867862e-06, 9.0),
                 ],
                 'extra_args': ['--beam-size', '3'],
             },
             'greedy': {
                 'text_token_info': [
                     ('__start__', 0.0, 1.0),
-                    ('5', -2.5510462364763953e-05, 1.0),
-                    ('__end__', -1.1920922133867862e-06, 1.0),
+                    ('5', -2.5510462364763953e-05, 0.0),
+                    ('__end__', -1.1920922133867862e-06, 0.0),
                 ],
                 'extra_args': [],
             },
-            # sampling based token selection will produce non-deterministic output
+            # sampling based token selection will produce non-deterministic output, so we can't do data regression
             'topk': {'extra_args': ['--topk', '2']},
-            # sampling based token selection will produce non-deterministic output
+            'topk': {'extra_args': ['--topk', '2', '--beam-size', '5']},
+            # sampling based token selection will produce non-deterministic output, so we can't do data regression
             'nucleus': {'extra_args': ['--topp', '0.3']},
-            # sampling based token selection will produce non-deterministic output
+            'nucleus': {'extra_args': ['--topp', '0.3', '--beam-size', '5']},
+            # sampling based token selection will produce non-deterministic output, so we can't do data regression
             'delayedbeam': {'extra_args': ['--topk', '2', '--beam-delay', '2']},
         }
 

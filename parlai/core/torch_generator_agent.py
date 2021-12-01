@@ -922,12 +922,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         if self.output_token_losses and beam_preds_scores is not None:
             text_token_info = []
-            for raw_pred_data in beam_preds_scores:
-                text_token_info.append(
-                    self._construct_generated_token_details(
-                        raw_pred_data[0], raw_pred_data[2]
-                    )
-                )
+            for beam_text_token_info in beam_texts_token_info:
+                text_token_info.append(beam_text_token_info[0])
 
         if text and self.compute_tokenized_bleu:
             # compute additional bleu scores
@@ -1690,7 +1686,7 @@ class GreedySearch(TreeSearch):
             token_ids=tok_ids,
             scores=best_scores,
             token_scores=tok_scores.view(-1),
-            token_ranks=torch.Tensor([1]).to(logprobs.device),
+            token_ranks=torch.Tensor([0]).to(logprobs.device),
         )
 
 
@@ -1720,7 +1716,12 @@ class BeamSearch(TreeSearch):
 
         tok_scores = torch.gather(logprobs, 1, tok_ids.unsqueeze(0)).view(-1)
 
-        tok_ranks = torch.arange(self.beam_size).to(logprobs.device) + 1
+        tok_ranks = (
+            logprobs.argsort(1, descending=True)
+            .argsort(1, descending=True)
+            .view(-1)
+            .gather(0, best_idxs)
+        )
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
@@ -1786,7 +1787,7 @@ class TopKSampling(TreeSearch):
             token_ids=tok_ids,
             scores=best_scores,
             token_scores=scores.view(-1),
-            token_ranks=choices.view(-1) + 1,
+            token_ranks=choices.view(-1),
         )
 
 
@@ -1823,18 +1824,10 @@ class NucleusSampling(TreeSearch):
         scores = sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
 
-        # need to resort because masking out of part of distribution can affect ranks
-        tok_ranks = (
-            sprobs.view(-1)
-            .argsort(descending=True)
-            .argsort(descending=True)[choices.view(-1)]
-            + 1
-        )
-
         return _PathSelection(
             hypothesis_ids=hyp_ids,
             token_ids=tok_ids,
             scores=best_scores,
             token_scores=scores.view(-1),
-            token_ranks=tok_ranks,
+            token_ranks=choices.view(-1),
         )
