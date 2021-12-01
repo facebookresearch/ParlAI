@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import copy
+import os
 import torch
 import torch.cuda
 from typing import Optional
@@ -12,6 +13,7 @@ import unittest
 from parlai.core.build_data import modelzoo_path
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser, Opt
+from parlai.scripts.self_chat import SelfChat
 import parlai.utils.testing as testing_utils
 
 try:
@@ -499,6 +501,34 @@ class TestLoadDPRModel(unittest.TestCase):
             default_query_encoder.embeddings.weight.float().cpu(),
             rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
         )
+
+
+@testing_utils.skipUnlessGPU
+class TestRagSelfChat(unittest.TestCase):
+    """
+    Test Self-Chat with RAG-based model.
+    """
+
+    def test_self_chat(self):
+        with testing_utils.tempdir() as td:
+            gen_model = 'bart'
+            model_type = 'token'
+            opt = copy.deepcopy(common_opt)
+            seed_utt_file = os.path.join(td, 'seed.txt')
+            opt.update(
+                {
+                    'generation_model': gen_model,
+                    'rag_model_type': model_type,
+                    'no_cuda': True,
+                    **GENERATION_OPTS[gen_model],
+                    'task': 'empathetic_dialogues',
+                    'seed_messages_from_file': seed_utt_file,
+                }
+            )
+            opt.pop('num_examples', '')
+            with open(seed_utt_file, 'w') as f:
+                f.writelines(["Hi, my name is Bob", "Hi, my name is Alice"])
+            SelfChat.main(**opt)
 
 
 if __name__ == '__main__':

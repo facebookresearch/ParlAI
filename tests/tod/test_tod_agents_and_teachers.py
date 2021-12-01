@@ -5,7 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Tests different (more complicated) slot metrics.
+Tests teachers + agent implementations, assuming parser to conversations format has
+already been done and teachers/agents already created.
+
+`test_agents.py` includes functions for generating the raw data used in this file as
+well as the data parser.
 """
 
 import unittest
@@ -16,6 +20,10 @@ import parlai.core.tod.tod_test_utils.test_agents as test_agents
 
 
 class TestTodAgentsAndTeachersBase(unittest.TestCase):
+    """
+    Base class with convenience functions for setting up agents, dumping text, etc.
+    """
+
     def setup_agent_or_teacher(self, class_type, round_opt, opt):
         full_opts = {**round_opt, **opt}
         full_opts["datatype"] = "DUMMY"
@@ -24,6 +32,9 @@ class TestTodAgentsAndTeachersBase(unittest.TestCase):
         return class_type(full_opts)
 
     def dump_single_utt_per_episode_agent_text(self, class_type, round_opt, opt):
+        """
+        Continuously dumps data from an agent until it's done.
+        """
         agent = self.setup_agent_or_teacher(class_type, round_opt, opt)
         result = []
         while not agent.epoch_done():
@@ -48,14 +59,30 @@ class TestTodAgentsAndTeachersBase(unittest.TestCase):
         return data
 
     def _test_roundDataCorrect(self):
+        """
+        Convenience function that runs on different episode setups.
+
+        Prefix with `_` since not all tests necessarily need this
+        """
         self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__UTTERANCES_ONLY)
         self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__SINGLE_API_CALL)
         self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_ROUND)
         self._test_roundDataCorrect_helper(test_agents.EPISODE_SETUP__MULTI_EPISODE)
 
+    def _test_roundDataCorrect_helper(self, config):
+        """
+        Implement this in downstream classes to define what is "correct" for a round (Ie
+        checking serialization data for a given class vs only checking utterances)
+        """
+        raise RuntimeError("Not implemented")
+
 
 class TestSystemTeacher(TestTodAgentsAndTeachersBase):
     def test_apiSchemas_with_yesApiSchemas(self):
+        """
+        Tests to make sure that data from first turn is correct when we include API
+        Schemas.
+        """
         values = self.dump_teacher_text(
             test_agents.SystemTeacher,
             test_agents.EPISODE_SETUP__SINGLE_API_CALL,
@@ -70,6 +97,10 @@ class TestSystemTeacher(TestTodAgentsAndTeachersBase):
         )
 
     def test_apiSchemas_with_noApiSchemas(self):
+        """
+        Tests to make sure that data from first turn is correct when we do not include
+        API Schemas.
+        """
         values = self.dump_teacher_text(
             test_agents.SystemTeacher,
             test_agents.EPISODE_SETUP__SINGLE_API_CALL,
@@ -86,7 +117,7 @@ class TestSystemTeacher(TestTodAgentsAndTeachersBase):
             for utt in utts:
                 comp.append([utt[0], utt[1]])
                 comp.append([utt[2], utt[3]])
-            # Skip context turn cause we check it above
+            # Skip grounding turn cause we check it in the other teachers
             self.assertEqual(episode[1:], comp)
 
     def test_roundDataCorrect(self):
@@ -95,6 +126,10 @@ class TestSystemTeacher(TestTodAgentsAndTeachersBase):
 
 class TestUserTeacher(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
+        """
+        Make sure that all of the User teacher data is correct relative to ground truth,
+        including grounding turn.
+        """
         max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
         values = self.dump_teacher_text(test_agents.UserSimulatorTeacher, config, {})
         for episode_idx, episode in enumerate(values):
@@ -121,6 +156,9 @@ class TestUserTeacher(TestTodAgentsAndTeachersBase):
 
 class TestGoalAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
+        """
+        Make sure goal agent data is correct with (possibly) multiple goals.
+        """
         max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
         max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
@@ -143,6 +181,9 @@ class TestGoalAgent(TestTodAgentsAndTeachersBase):
 
 class TestApiSchemaAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
+        """
+        Make sure api schema information is correct with (possibly) multiple goals.
+        """
         max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
         max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
@@ -165,6 +206,10 @@ class TestApiSchemaAgent(TestTodAgentsAndTeachersBase):
 
 class TestSingleGoalAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
+        """
+        Make sure single goal agent correctly splits conversations with multiple goals
+        into single goals for the agent.
+        """
         max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
         max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
@@ -187,6 +232,10 @@ class TestSingleGoalAgent(TestTodAgentsAndTeachersBase):
 
 class TestSingleApiSchemaAgent(TestTodAgentsAndTeachersBase):
     def _test_roundDataCorrect_helper(self, config):
+        """
+        Make sure single api schema agent correctly splits conversations with multiple
+        goals into single goals for the agent.
+        """
         max_rounds = config[test_agents.TEST_NUM_ROUNDS_OPT_KEY]
         max_episodes = config[test_agents.TEST_NUM_EPISODES_OPT_KEY]
         values = self.dump_single_utt_per_episode_agent_text(
@@ -262,6 +311,10 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
                 self.assertEqual(episode, larger[i])
 
     def test_few_shot_subset(self):
+        """
+        Make sure specifying few-shot by n-shot works correctly.
+        """
+
         def helper(n_shot, seed):
             return self.dump_teacher_text(
                 test_agents.SystemTeacher,
@@ -276,6 +329,10 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
         self.assertNotEqual(data_dumps_seed_zero[-1], data_dumps_seed_three[-1])
 
     def test_percent_shot_lengths_correct(self):
+        """
+        Make sure specifying few-shot by percentages works correctly.
+        """
+
         def helper(percent_shot, correct):
             values = self.dump_teacher_text(
                 test_agents.SystemTeacher,
@@ -289,6 +346,10 @@ class TestLowShot(TestTodAgentsAndTeachersBase):
         helper(0.3, 10)
 
     def test_percent_shot_subset(self):
+        """
+        Make sure specifying few-shot by percentages works correctly.
+        """
+
         def helper(percent_shot, seed):
             return self.dump_teacher_text(
                 test_agents.SystemTeacher,

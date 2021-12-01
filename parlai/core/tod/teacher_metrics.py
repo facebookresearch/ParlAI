@@ -18,10 +18,6 @@ class SlotMetrics(Metrics):
 
     Due to differences in dialogue representations between tasks, the input is pre-
     parsed ground truth and predicted slot dictionaries.
-
-    The 'jga+nlg' metric assumes a balanced set of JGA and NLG scores such that
-        2 * Avg(JGA, NLG_BLEU) = Avg(JGA + NLG_BLEU)
-    The `jga+nlg` metric assumes that `NlgMetrics` is used to calculated the other side.
     """
 
     def __init__(
@@ -30,7 +26,6 @@ class SlotMetrics(Metrics):
         predicted_slots: Dict[str, str],
         prefixes: Optional[List] = None,
         shared: Dict[str, Any] = None,
-        avg_jga_nlg_bleu: bool = False,
     ) -> None:
         super().__init__(shared=shared)
         self.prefixes = prefixes if prefixes else []
@@ -45,9 +40,6 @@ class SlotMetrics(Metrics):
                 "jga_empty", AverageMetric(teacher_slots == predicted_slots)
             )
 
-        if avg_jga_nlg_bleu:
-            # add one half of Avg(jga,nlg_bleu), NlgMetrics class (below) adds NLG-BLEU
-            self.add("jga+nlg", AverageMetric(teacher_slots == predicted_slots))
         # precision
         for pred_slot_name, pred_value in predicted_slots.items():
             slot_p = AverageMetric(teacher_slots.get(pred_slot_name) == pred_value)
@@ -86,9 +78,6 @@ class NlgMetrics(Metrics):
         f1 = F1Metric.compute(guess, labels)
         self.add_with_prefixes("nlg_bleu", bleu)
         self.add_with_prefixes("nlg_f1", f1)
-        if avg_jga_nlg_bleu:
-            # add one half of Avg(jga,nlg_bleu), SlotMetrics class (above) adds JGA
-            self.add("jga+nlg", bleu)
 
     def add_with_prefixes(self, name, value):
         self.add(name, value)

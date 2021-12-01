@@ -47,5 +47,5 @@ acts:
       here, there is one flight of Jet airways operating on 09/20/2018, The timings
       are, 6:00 Am to 8:00 Am and it is costing you $170 per head. '
     type: 'USER: '
-num_episodes: 15616
-num_examples: 290050
+num_episodes: 8180
+num_examples: 151916
