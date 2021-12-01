@@ -216,7 +216,7 @@ class BlenderBot2RagModel(RagModel):
         :param num_memory_decoder_vecs:
             1D [bsz] # of memory decoder vectors for each batch item
         :param skip_search:
-            1D [bsz] whether to skip search 
+            1D [bsz] whether to skip search
         """
         # Retrieve, get expanded input
         if all([tensor is not None for tensor in [input_lengths, query_vec]]):
