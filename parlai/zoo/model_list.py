@@ -1988,7 +1988,7 @@ model_list = [
         ),
         "example": (
             "parlai interactive -mf zoo:sea/bart_fid_sqse/model \\ \n"
-            "--search-query-generator-model-file zoo:sea/bart_fid_sqse/model \\ \n"
+            "--search-query-generator-model-file zoo:sea/bart_sq_gen/model \\ \n"
             "--search-server <your search server API address>"
         ),
         "result": (
