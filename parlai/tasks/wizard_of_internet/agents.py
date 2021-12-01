@@ -350,7 +350,9 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
     def __init__(self, opt, shared=None):
         self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
         self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
-        self.add_skip_search = opt.get('add_skip_search')
+        self.add_skip_search_if_gold_prepended = opt.get(
+            'add_skip_search_if_gold_prepended'
+        )
         super().__init__(opt, shared=shared)
         self.id = 'WizInternetWizardTeacher'
 
@@ -365,7 +367,7 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             help='If true, prepend text with checked sentences',
         )
         arg_group.add_argument(
-            '--add-skip-search',
+            '--add-skip-search-if-gold-prepended',
             type='bool',
             default=False,
             help='If true, add skip search field when prepending text with checked sentences',
@@ -450,12 +452,16 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
                         f' {self.gold_knowledge_delimiter} {text}'
                     ),
                 )
-                if self.add_skip_search:
+                if self.add_skip_search_if_gold_prepended:
                     message[CONST.SKIP_SEARCH] = True
             yield message, episode_started
 
 
 class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared=shared)
+        self.id = 'WizardDialogGoldKnowledgeTeacher'
+
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
@@ -463,26 +469,14 @@ class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
         return parser
 
 
-class WizardDialogNoSearchGoldKnowledgeTeacher(WizardDialogGoldKnowledgeTeacher):
-    """
-    WizardDialogGoldKnowledgeTeacher with `add_skip_search` set True in its opt.
-
-    Setting `add_skip_search` to true adds a field to the message that tells some agents
-    (models) to skip search (Internet or DPR) for this example and just use the provided
-    Gold Knowledge.
-    """
-
-    @classmethod
-    def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt)
-        parser.set_params(add_skip_search=True)
-        return parser
-
-
 class WizardDialogGoldKnowledgeNoDocsTeacher(WizardDialogGoldKnowledgeTeacher):
     """
     Prepends gold (selected knowledge) to the context, and removes the retrieved docs.
     """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared=shared)
+        self.id = 'WizardDialogGoldKnowledgeNoDocsTeacher'
 
     def additional_message_content(self, parlai_message: Message, action: Dict):
         super().additional_message_content(parlai_message, action)
