@@ -279,10 +279,10 @@ class Conversations:
     @staticmethod
     def _check_parent_dir_exits(datapath):
         parent_dir = os.path.dirname(datapath)
-        if os.path.exists(parent_dir) and os.path.isdir(parent_dir):
+        if PathManager.exists(parent_dir) and PathManager.isdir(parent_dir):
             return
         logging.info(f'Parent directory ({parent_dir}) did not exist and was created.')
-        os.makedirs(parent_dir)
+        PathManager.mkdirs(parent_dir)
 
     @classmethod
     def save_conversations(
