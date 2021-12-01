@@ -148,7 +148,7 @@ class ConversionScript(ParlaiScript):
         """
         # assume encoder/decoder symmetrical except for number of layers
         state = self.state
-        fairseq_args = state['args'].__dict__
+        fairseq_args = state['cfg']['model'].__dict__
 
         transformer_common_config = {}
 
@@ -206,6 +206,7 @@ class ConversionScript(ParlaiScript):
         parser = ParlaiParser()
         parser.set_params(**transformer_common_config)
         opt = parser.parse_args([])
+        opt.update(**transformer_common_config)
 
         # 6. Augment opt with additional ParlAI options
         opt['fp16'] = self.opt['fp16']
@@ -326,6 +327,11 @@ class ConversionScript(ParlaiScript):
         for each_key in state_dict.keys():
             mapped_key = each_key
             if mapped_key == 'encoder.version' or mapped_key == 'decoder.version':
+                continue
+
+            if mapped_key == 'decoder.output_projection.weight':
+                # we don't need this key, its value should be equal to
+                # token_embs.weight for the variants we are using
                 continue
 
             # 1. replace if embedding
