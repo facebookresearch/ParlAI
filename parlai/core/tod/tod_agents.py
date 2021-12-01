@@ -590,6 +590,11 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
         )
         return parser
 
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self._num_examples_cache = sum([len(x.rounds) * 2 for x in self.episodes])
+        self._num_episodes_cache = len(self.episodes)
+
     def custom_evaluation(
         self, teacher_action: Message, labels, model_response: Message
     ):
@@ -670,6 +675,12 @@ class TodUserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
     Teacher that has `Goal->User Utterance` for its first turn, then `System
     Utterance->User Utterance` for all subsequent turns.
     """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        # Manually set number of examples + number of episodes
+        self._num_examples_cache = sum([len(x.rounds) for x in self.episodes])
+        self._num_episodes_cache = len(self.episodes)
 
     def setup_data(self, fold):
         for episode in self.generate_episodes():
