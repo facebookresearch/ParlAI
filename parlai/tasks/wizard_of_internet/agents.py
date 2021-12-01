@@ -463,6 +463,21 @@ class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
         return parser
 
 
+class WizardDialogNoSearchGoldKnowledgeTeacher(WizardDialogGoldKnowledgeTeacher):
+    """
+    WizardDialogGoldKnowledgeTeacher with `add_skip_search` set True in its opt.
+    
+    Setting `add_skip_search` to true adds a field to the message that tells some agents (models)
+    to skip search (Internet or DPR) for this example and just use the provided Gold Knowledge.
+    """
+
+    @classmethod
+    def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        parser.set_params(add_skip_search=True)
+        return parser
+
+
 class WizardDialogGoldKnowledgeNoDocsTeacher(WizardDialogGoldKnowledgeTeacher):
     """
     Prepends gold (selected knowledge) to the context, and removes the retrieved docs.
