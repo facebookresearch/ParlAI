@@ -1,0 +1,48 @@
+acts:
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: __SILENCE__'
+    id: Multidogo_UserSimulatorTeacher
+    text: 'GOAL: api_name = software ; cost = 42 ; expense_type = flight ; name =
+      hagam ; password = 8167'
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: Good morning.
+
+      I like to report my travel expenses.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Hello! Good morning, You''re connected to finance department of
+      ATA. How may I help you today?'
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: Name: Hagam and Password:8167.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Definitely! I''ll make a record of your expenses, May I know your
+      name and password? '
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: My total expenses over $197.. Hotel: 65, Food: 90 and Flight:$42.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Thank you for helping me with your details. Could you please share
+      the total sum of money that you want to be reimbursed? '
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'USER: I have attached the attachment.'
+    id: Multidogo_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Okay. Could you please share the snap shot of the receipts here? '
+    type: 'USER: '
+num_episodes: 67
+num_examples: 568
