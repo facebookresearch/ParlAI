@@ -19,7 +19,7 @@ from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
 from .build import build
-import parlai.tasks.wizard_of_internet.mutators
+import parlai.tasks.wizard_of_internet.mutators  # noqa: F401
 
 
 def get_dtype(opt):
@@ -466,9 +466,10 @@ class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
 class WizardDialogNoSearchGoldKnowledgeTeacher(WizardDialogGoldKnowledgeTeacher):
     """
     WizardDialogGoldKnowledgeTeacher with `add_skip_search` set True in its opt.
-    
-    Setting `add_skip_search` to true adds a field to the message that tells some agents (models)
-    to skip search (Internet or DPR) for this example and just use the provided Gold Knowledge.
+
+    Setting `add_skip_search` to true adds a field to the message that tells some agents
+    (models) to skip search (Internet or DPR) for this example and just use the provided
+    Gold Knowledge.
     """
 
     @classmethod
