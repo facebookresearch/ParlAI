@@ -726,6 +726,8 @@ class DialogTeacher(FixedDialogTeacher):
         """
         Return the number of episodes in the data.
         """
+        if hasattr(self, "_num_episodes_cache"):
+            return self._num_episodes_cache
         try:
             return self.data.num_episodes()
         except AttributeError:
