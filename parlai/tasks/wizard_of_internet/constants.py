@@ -34,6 +34,7 @@ ACTION_ALL = 'All Actions'
 TOTAL_CONVERSATION_INDEX = 'total_index'
 SEARCH_QUERY = 'search_query'
 RETRIEVED_DOCS = '__retrieved-docs__'
+RETRIEVED_SENTENCES = '__retrieved-doc-sentences__'
 RETRIEVED_DOCS_TITLES = '__retrieved-docs-titles__'
 RETRIEVED_DOCS_URLS = '__retrieved-docs-urls__'
 SELECTED_DOCS = '__selected-docs__'
@@ -66,6 +67,8 @@ SKIP_ON_EMPTY_TEXT_DEFAULT = True
 ONLY_LAST_QUERY_DEFAULT = False
 
 # Tokens used in the teacher's action text filed
+LABEL_TOKEN = '__label__'
+END_LABEL_TOKEN = '__endlabel__'
 KNOWLEDGE_TOKEN = '__knowledge__'
 END_KNOWLEDGE_TOKEN = '__endknowledge__'
 AVAILABLE_KNOWLEDGE_TOKEN = '__available-knowledge__'

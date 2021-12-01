@@ -111,10 +111,10 @@ class MultidogoParser(tod_agents.TodStructuredDataParser):
 
             rounds.append(
                 tod.TodStructuredRound(
-                    user_utt=user_utt,
+                    user_utt="".join(user_utt),
                     api_call_machine=api_call,
                     api_resp_machine=api_resp,
-                    sys_utt=sys_utt,
+                    sys_utt="".join(sys_utt),
                 )
             )
             goal_calls = copy.deepcopy(all_calls)

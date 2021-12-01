@@ -40,27 +40,7 @@ class GetQuickEvalStatsDirScript(ParlaiScript):
             with open(base_path + "run.sh") as run_file:
                 for line in run_file:
                     if "zoo:bart" in line:
-                        base = "BartOnlyNoApi"
-                    if "8a7" in line:
-                        base = "GsgdOnlyNoApiLvl0"
-                    if "8ca" in line:
-                        base = "GoodNoApiLvl0"
-                    if "1fe" in line:
-                        base = "AllNoApi0"
-                    if "e28" in line:
-                        base = "AllHasApi0"
-                    if "840" in line:
-                        base = "GsgdOnlyNoApiRL1"
-                    if "1eb" in line:
-                        base = "AllNoApiRL1"
-                    if "076" in line:
-                        base = "AllYesApiRL1"
-                    if "79a" in line:
-                        base = "SysGsgdOnly"
-                    if "c31" in line:
-                        base = "SysGood"
-                    if "ba9" in line:
-                        base = "SysAll"
+                        base = "BartOnly"
 
             with open(base_path + "model.opt") as opt_file:
                 print(base_path)
@@ -92,25 +72,8 @@ class GetQuickEvalStatsDirScript(ParlaiScript):
             ):
                 maybe_nshot = eval_file[0][len(root + "mm_eval_") : -len(".json")]
 
-            base = (
-                str(len(opt.get("task").split(",")))
-                + str(yes_api)
-                + "-APIS__"
-                + maybe_nshot
-                + base
-                + "_"
-                + str(lr)
-                + multitask
-            )
-            metrics = [
-                orig_path,
-                base,
-                str(ppl),
-                str(token_em),
-                str(jga),
-                str(jga_n),
-                str(jga_e),
-            ]
+            base += f"{len(opt.get('task').split(','))}-{yes_api}-APIS__{maybe_nshot}{base}_{lr}{multitask}"
+            metrics = [orig_path, base, ppl, token_em, jga, jga_n, jga_e]
 
             if os.path.isfile(eval_stats.replace("eval_stats", "user_eval_stats")):
                 with open(eval_stats.replace("eval_stats", "user_eval_stats")) as f:
@@ -128,7 +91,14 @@ class GetQuickEvalStatsDirScript(ParlaiScript):
                 maybe_mm_stats = glob.glob(f"{root}/*Mult*.json")
             if len(maybe_mm_stats) > 0:
                 with open(maybe_mm_stats[0]) as f:
-                    metrics.append(json.load(f)["report"]["synthetic_task_success"])
+                    report = json.load(f)["report"]
+                    if "synthetic_task_success" in report:
+                        tsr = report["synthetic_task_success"]
+                    elif "all_goals_hit" in report:
+                        tsr = report["all_goals_hit"]
+                    else:
+                        tsr = "DNE"
+                    metrics.append(tsr)
             else:
                 metrics.append("DNE")
 

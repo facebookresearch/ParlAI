@@ -44,7 +44,16 @@ function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate, askReason }
     <div key={'checkboxes_' + turnIdx}>
       {
         Object.keys(annotationBuckets.config).map(c => (
-          <span key={'span_' + c + '_' + turnIdx}><input type={input_type} id={c + '_' + turnIdx} name={'checkbox_group_' + turnIdx} onChange={(evt) => handleCheckboxChange(evt, annotationBuckets, onUserInputUpdate)} /><span style={{ marginRight: '15px' }}>{annotationBuckets.config[c].name}</span>
+          <span key={'span_' + c + '_' + turnIdx}>
+            <input
+              type={input_type}
+              id={c + '_' + turnIdx}
+              name={'checkbox_group_' + turnIdx}
+              onChange={(evt) => handleCheckboxChange(evt, annotationBuckets, onUserInputUpdate)}
+            />
+            <span style={{ marginRight: '15px' }}>
+              {annotationBuckets.config[c].name}
+            </span>
           </span>
         ))
       }
