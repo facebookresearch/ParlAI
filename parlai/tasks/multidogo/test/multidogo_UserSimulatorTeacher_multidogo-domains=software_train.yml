@@ -1,0 +1,49 @@
+acts:
+- - domain: software
+    episode_done: false
+    id: Multidogo_UserSimulatorTeacher
+    labels:
+    - 'USER: HI'
+    text: 'GOAL: api_name = software ; company_name = yamaha ; password = 56234 ;
+      quantity = 1'
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_UserSimulatorTeacher
+    labels:
+    - 'USER: I can set up new recurring orders'
+    slots: {}
+    text: 'SYSTEM: Hello! Welcome to Music World! How may I help you today?'
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_UserSimulatorTeacher
+    labels:
+    - 'USER: YAMAHA
+
+      56234'
+    slots: {}
+    text: 'SYSTEM: Sure! Could you please help me with your company name and one time
+      password?'
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_UserSimulatorTeacher
+    labels:
+    - 'USER: YAMAHA
+
+      PSR-E453'
+    slots: {}
+    text: 'SYSTEM: Thank you! Could you please let me know the model name of the keyboard
+      you would like to purchase? '
+    type: 'USER: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_UserSimulatorTeacher
+    labels:
+    - 'USER: 1'
+    slots: {}
+    text: 'SYSTEM: Perfect! How many sets would you want to order?'
+    type: 'USER: '
+num_episodes: 560
+num_examples: 4753
