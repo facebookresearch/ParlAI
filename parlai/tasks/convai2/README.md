@@ -6,3 +6,5 @@ Link: http://convai.io/.
 
 Tags: #ConvAI2, #All, #ChitChat
 
+
+License: CC 4.0 BY
