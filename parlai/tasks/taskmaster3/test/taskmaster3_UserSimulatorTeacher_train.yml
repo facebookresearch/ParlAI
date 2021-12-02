@@ -51,4 +51,4 @@ acts:
     text: 'SYSTEM: Great let me check theaters.'
     type: 'USER: '
 num_episodes: 19000
-num_examples: 496484
+num_examples: 238742

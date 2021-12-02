@@ -43,4 +43,4 @@ acts:
       to 0.'
     type: 'USER: '
 num_episodes: 1734
-num_examples: 36584
+num_examples: 17425

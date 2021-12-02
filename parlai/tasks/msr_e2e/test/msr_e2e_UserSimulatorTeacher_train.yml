@@ -45,4 +45,4 @@ acts:
       state = California ; theater = any theater'
     type: 'USER: '
 num_episodes: 8068
-num_examples: 84524
+num_examples: 38228

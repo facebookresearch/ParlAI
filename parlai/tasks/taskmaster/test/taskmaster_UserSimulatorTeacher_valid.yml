@@ -43,4 +43,4 @@ acts:
     text: 'SYSTEM: sure. would you like whipped cream?'
     type: 'USER: '
 num_episodes: 1321
-num_examples: 32641
+num_examples: 15660

@@ -47,4 +47,4 @@ acts:
     text: 'APIRESP: api_name = coffee_ordering ; location.store = hilton knoxville'
     type: 'SYSTEM: '
 num_episodes: 1321
-num_examples: 32641
+num_examples: 31320

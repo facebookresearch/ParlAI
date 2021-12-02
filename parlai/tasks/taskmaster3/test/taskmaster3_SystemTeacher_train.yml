@@ -56,4 +56,4 @@ acts:
       name.theater_2 = Cinemark Plaza 24'
     type: 'SYSTEM: '
 num_episodes: 19000
-num_examples: 496484
+num_examples: 477484

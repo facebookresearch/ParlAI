@@ -43,5 +43,5 @@ acts:
     text: 'SYSTEM: I have 10 properties that might suit, including Apricot pit apartments
       400 east remington drive. The listing price is $3,650,000'
     type: 'USER: '
-num_episodes: 1966
-num_examples: 42808
+num_episodes: 768
+num_examples: 9778
