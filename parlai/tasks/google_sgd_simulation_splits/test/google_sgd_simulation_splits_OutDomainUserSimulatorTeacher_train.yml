@@ -45,5 +45,5 @@ acts:
       Station ; pickup_time = 16:30 ; type = Standard | api_name = FindAttractions
       ; location = Fresno'
     type: 'USER: '
-num_episodes: 13888
-num_examples: 320622
+num_episodes: 2303
+num_examples: 29143
