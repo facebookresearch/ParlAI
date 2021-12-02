@@ -47,4 +47,4 @@ acts:
     text: 'SYSTEM: I have train TR1840 leaving at 16:36 is that okay?'
     type: 'USER: '
 num_episodes: 999
-num_examples: 17731
+num_examples: 8366
