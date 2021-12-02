@@ -50,4 +50,4 @@ acts:
     text: 'SYSTEM: __SILENCE__'
     type: 'USER: '
 num_episodes: 2375
-num_examples: 62657
+num_examples: 30141
