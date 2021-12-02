@@ -48,5 +48,5 @@ acts:
     slots: {}
     text: 'SYSTEM: Alright, will you be picking it up in London?'
     type: 'USER: '
-num_episodes: 3132
-num_examples: 67286
+num_episodes: 768
+num_examples: 9681

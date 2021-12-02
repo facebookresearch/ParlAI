@@ -40,4 +40,4 @@ acts:
     text: 'SYSTEM: Starting point guard is Gary Harris.'
     type: 'USER: '
 num_episodes: 13840
-num_examples: 291032
+num_examples: 138596

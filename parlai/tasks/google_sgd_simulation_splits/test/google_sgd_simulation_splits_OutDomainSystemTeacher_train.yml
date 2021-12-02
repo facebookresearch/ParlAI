@@ -59,5 +59,5 @@ acts:
       ; end_date = 2019-03-07 ; pickup_location = Downtown Station ; pickup_time =
       11:00 ; price_per_day = 38.00 ; start_date = 2019-03-04'
     type: 'SYSTEM: '
-num_episodes: 13888
-num_examples: 320622
+num_episodes: 2303
+num_examples: 58286
