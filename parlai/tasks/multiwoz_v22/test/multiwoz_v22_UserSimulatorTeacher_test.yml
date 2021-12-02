@@ -47,4 +47,4 @@ acts:
       would you like on it?'
     type: 'USER: '
 num_episodes: 1000
-num_examples: 17744
+num_examples: 8372

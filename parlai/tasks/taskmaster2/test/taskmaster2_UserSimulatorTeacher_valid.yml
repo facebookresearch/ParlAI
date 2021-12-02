@@ -42,4 +42,4 @@ acts:
     text: 'SYSTEM: No, they''re not scheduled to play today.'
     type: 'USER: '
 num_episodes: 1730
-num_examples: 36404
+num_examples: 17337

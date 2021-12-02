@@ -48,4 +48,4 @@ acts:
     text: 'SYSTEM: Sure, when would you like that reservation?'
     type: 'USER: '
 num_episodes: 7913
-num_examples: 133963
+num_examples: 63025
