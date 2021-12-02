@@ -43,4 +43,4 @@ acts:
       options.'
     type: 'USER: '
 num_episodes: 1966
-num_examples: 42808
+num_examples: 20421
