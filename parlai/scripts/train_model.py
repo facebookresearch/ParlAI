@@ -40,7 +40,7 @@ from parlai.core.metrics import (
 )
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, print_announcements
-from parlai.core.worlds import create_task, World
+from parlai.core.worlds import create_task, MultiWorld, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.utils.distributed import (
     sync_object,
@@ -536,9 +536,15 @@ class TrainLoop:
             valid_report['total_exs'] = self._total_exs
             self.wb_logger.log_metrics('valid', self.parleys, valid_report)
 
-        # send valid metrics to agent if the agent wants them
-        if hasattr(self.agent, 'receive_metrics'):
-            self.agent.receive_metrics(valid_report)
+        # send valid metrics to the agent(s) and teacher(s) if they want them
+        if isinstance(self.world, MultiWorld):
+            worlds = self.world.worlds
+        else:
+            worlds = [self.world]
+        for world in worlds:
+            for agent in world.agents:
+                if hasattr(agent, 'receive_metrics'):
+                    self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
         new_valid = valid_report[opt['validation_metric']]
