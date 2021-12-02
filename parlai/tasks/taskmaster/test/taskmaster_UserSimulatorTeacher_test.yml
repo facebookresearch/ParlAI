@@ -54,4 +54,4 @@ acts:
       would you like to book this right now?'
     type: 'USER: '
 num_episodes: 1326
-num_examples: 33198
+num_examples: 15936

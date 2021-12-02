@@ -42,4 +42,4 @@ acts:
     text: 'APIRESP: '
     type: 'SYSTEM: '
 num_episodes: 1326
-num_examples: 33198
+num_examples: 31872
