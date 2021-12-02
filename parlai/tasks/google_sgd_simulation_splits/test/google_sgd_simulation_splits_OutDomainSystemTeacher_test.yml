@@ -50,5 +50,5 @@ acts:
       Landmark ; free_entry = False ; good_for_kids = True ; location = London ; phone_number
       = 20 7071 5029'
     type: 'SYSTEM: '
-num_episodes: 3132
-num_examples: 67286
+num_episodes: 768
+num_examples: 19362
