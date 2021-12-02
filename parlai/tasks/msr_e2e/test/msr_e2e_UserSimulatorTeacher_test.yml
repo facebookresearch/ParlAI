@@ -47,4 +47,4 @@ acts:
       Can I help you with something else?'
     type: 'USER: '
 num_episodes: 1011
-num_examples: 10705
+num_examples: 4847
