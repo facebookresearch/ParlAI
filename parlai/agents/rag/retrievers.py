@@ -1052,7 +1052,9 @@ class SearchQueryRetriever(RagRetriever):
         elif chunk_ranker_type == 'head':
             self.chunk_reranker = HeadChunkRanker(n_doc_chunks)
         else:
-            self.chunk_reranker = RetrievedChunkRanker(n_doc_chunks)
+            self.chunk_reranker = RetrievedChunkRanker(
+                n_doc_chunks, opt['woi_doc_chunk_size']
+            )
 
         if not shared:
             self.query_generator = self.init_search_query_generator(opt)
@@ -1381,6 +1383,10 @@ class RetrievedChunkRanker(DocumentChunkRanker):
     Utilize retrieved doc chunk mutator.
     """
 
+    def __init__(self, n_retrieved_chunks, chunk_size: int = 500):
+        super().__init__(n_retrieved_chunks)
+        self.chunk_size = chunk_size
+
     def get_top_chunks(
         self,
         query: str,
@@ -1401,7 +1407,7 @@ class RetrievedChunkRanker(DocumentChunkRanker):
                     CONST.SELECTED_SENTENCES: [CONST.NO_SELECTED_SENTENCES_TOKEN],
                 }
             ),
-            500,
+            self.chunk_size,
         )[CONST.RETRIEVED_DOCS]
         return [(c,) for c in chunks[: self.n_ret_chunks]]
 

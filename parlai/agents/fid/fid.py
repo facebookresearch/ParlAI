@@ -298,6 +298,12 @@ class SearchQueryFiDAgent(FidAgent):
             default='head',
             help='How to rank doc chunks.',
         )
+        parser.add_argument(
+            '--woi-doc-chunk-size',
+            default=500,
+            type=int,
+            help='Document chunk size (in characters).',
+        )
 
         return parser
 
