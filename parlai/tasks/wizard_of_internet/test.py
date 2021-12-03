@@ -27,10 +27,6 @@ class TestGoldKnowledgeTeacher(AutoTeacherTest):
     task = 'wizard_of_internet:GoldKnowledgeTeacher'
 
 
-class TestGoldKnowledgeNoDocsTeacher(AutoTeacherTest):
-    task = 'wizard_of_internet:WizardDialogGoldKnowledgeNoDocsTeacher'
-
-
 class TestGoldDocsTeacher(AutoTeacherTest):
     task = 'wizard_of_internet:GoldDocsTeacher'
 
