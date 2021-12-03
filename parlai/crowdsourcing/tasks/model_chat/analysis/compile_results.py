@@ -300,6 +300,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
 
                 if self.use_problem_buckets:
                     dialog_has_problems = False
+                    dialog_has_mistaken_identity = False
                 for utterance_idx, utt in enumerate(data['dialog']):
 
                     d = {
@@ -335,6 +336,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                                 stat_counts[model_nickname][k] += d[k]
                                 if k != 'none_all_good' and d[k]:
                                     dialog_has_problems = True
+                                if k == 'mistaken_identity' and d[k]:
+                                    dialog_has_mistaken_identity = True
 
                         if 'total' not in stat_counts[model_nickname]:
                             stat_counts[model_nickname]['total'] = 0
@@ -401,6 +404,10 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     if 'convo_clean' not in stat_counts[model_nickname]:
                         stat_counts[model_nickname]['convo_clean'] = 0
                     stat_counts[model_nickname]['convo_clean'] += 1
+                if self.use_problem_buckets and not dialog_has_mistaken_identity:
+                    if 'convo_clean_identity' not in stat_counts[model_nickname]:
+                        stat_counts[model_nickname]['convo_clean_identity'] = 0
+                    stat_counts[model_nickname]['convo_clean_identity'] += 1
 
                 # Adding the full conversation to the list of conversations
                 conversation_dfs.append(df)
@@ -433,6 +440,8 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                 elif p == 'count_convos':
                     print(f'{p}: {v}')
                 elif self.use_problem_buckets and p == 'convo_clean':
+                    print(f'{p}: {v} ({v/model_stats_dict["count_convos"]:.2%})')
+                elif self.use_problem_buckets and p == 'convo_clean_identity':
                     print(f'{p}: {v} ({v/model_stats_dict["count_convos"]:.2%})')
                 else:
                     print(f'{p}: {v} ({v/model_stats_dict["total"]:.2%})')
