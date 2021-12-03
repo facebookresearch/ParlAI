@@ -294,7 +294,7 @@ class SearchQueryFiDAgent(FidAgent):
         group.add_argument(
             '--doc-chunks-ranker',
             type=str,
-            choices=['tfidf', 'head'],
+            choices=['tfidf', 'head', 'woi_chunk_retrieved_docs'],
             default='head',
             help='How to rank doc chunks.',
         )
