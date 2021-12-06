@@ -2170,7 +2170,7 @@ Which level are you at?
         "agent": "transformer/generator",
         "task": "saferdialogues",
         "description": (
-            "Blender 2.7B model fine-tuned on the SaFeRDialogues and BST (without persona) tasks to respond to feedback after a safety failure more gracefully"
+            "Blender 2.7B model fine-tuned on the SaFeRDialogues and BST (without persona) tasks to respond to feedback more gracefully after a safety failure"
         ),
         "example": (
             "parlai display_model -mf zoo:saferdialogues/model -t saferdialogues --interactive-mode True"
