@@ -2169,6 +2169,7 @@ Which level are you at?
         "path": "zoo:saferdialogues/model",
         "agent": "transformer/generator",
         "task": "saferdialogues",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/saferdialogues",
         "description": (
             "Blender 2.7B model fine-tuned on the SaFeRDialogues and BST (without persona) tasks to respond to feedback more gracefully after a safety failure"
         ),
