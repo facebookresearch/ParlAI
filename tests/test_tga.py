@@ -191,8 +191,8 @@ class TestGeneration(unittest.TestCase):
             'beam': {
                 'text_token_info': [
                     ('__start__', 0.0, 1.0),
-                    ('5', -2.5510462364763953e-05, 6.0),
-                    ('__end__', -1.1920922133867862e-06, 9.0),
+                    ('5', -2.5510462364763953e-05, 0.0),
+                    ('__end__', -1.1920922133867862e-06, 0.0),
                 ],
                 'extra_args': ['--beam-size', '3'],
             },
@@ -206,10 +206,12 @@ class TestGeneration(unittest.TestCase):
             },
             # sampling based token selection will produce non-deterministic output, so we can't do data regression
             'topk': {'extra_args': ['--topk', '2']},
-            'topk': {'extra_args': ['--topk', '2', '--beam-size', '5']},
+            'topk_multiple_beams': {'extra_args': ['--topk', '2', '--beam-size', '5']},
             # sampling based token selection will produce non-deterministic output, so we can't do data regression
             'nucleus': {'extra_args': ['--topp', '0.3']},
-            'nucleus': {'extra_args': ['--topp', '0.3', '--beam-size', '5']},
+            'nucleus_multiple_beams': {
+                'extra_args': ['--topp', '0.3', '--beam-size', '5']
+            },
             # sampling based token selection will produce non-deterministic output, so we can't do data regression
             'delayedbeam': {'extra_args': ['--topk', '2', '--beam-delay', '2']},
         }
@@ -246,29 +248,8 @@ class TestGeneration(unittest.TestCase):
 
     def test_tree_search(self):
         """
-        :param logprobs:
-            a (beamsize x vocab) tensor of log probabilities. If this is the first
-            turn in the dialogue, it will be a (1 x vocab) tensor.
-        :param prior_scores:
-            a (beamsize) tensor of weights with the cumulative running
-            log-probability of each beam. If the first turn, it will be a (1) tensor.
-        :param current_length:
-            the current length in tokens
-        :return:
-            a {hypothesis_ids, token_ids, scores, token_scores, token_ranks} , where:
-
-            - hypothesis_ids is a LongTensor of hypotheses we're extending. May have
-              repeats, but should always be (beamsize) long.
-            - token_ids is a (beamsize) LongTensor of next-token choices for
-              each of the hypotheses.
-            - scores is a (beamsize) Tensor with the updated cumulative log-probs
-              of each beam.
-            - token_scores is a (beamsize) Tensor with the log-probs of the next-token choices for
-              each of the hypotheses.
-            - token_ranks is a (beamsize) Tensor with the ranks of the next-token choices for
-              each of the hypotheses.
+        Unit test `select_paths` for different decoding schemes
         """
-
         tests = {
             "greedy": {
                 "obj": GreedySearch(beam_size=1),
