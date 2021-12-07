@@ -1714,7 +1714,11 @@ class BeamSearch(TreeSearch):
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
 
-        tok_scores = torch.gather(logprobs, 1, tok_ids.unsqueeze(0)).view(-1)
+        tok_scores = (
+            torch.index_select(logprobs, 0, hyp_ids)
+            .gather(1, tok_ids.unsqueeze(1))
+            .view(-1)
+        )
 
         tok_ranks = (
             logprobs.argsort(1, descending=True)

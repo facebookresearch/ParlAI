@@ -297,12 +297,12 @@ class TestGeneration(unittest.TestCase):
             "beam_with_multiple_beams": {
                 "obj": BeamSearch(beam_size=2),
                 "logprobs": torch.Tensor(
-                    [[-1.0, -1.0, -0.2, -0.3], [-0.1, -2.0, -3.0, -3.0]]
+                    [[-0.1, -2.0, -3.0, -3.0], [-1.0, -1.0, -0.2, -0.3]]
                 ),
-                "prior_scores": torch.Tensor([-0.5, -1.0]),
-                # logprobs + prior_scores = [[-1.5,-1.5,-0.7,-0.8],[-1.1,-3.,-4.,-4.]]
+                "prior_scores": torch.Tensor([-1.0, -0.5]),
+                # logprobs + prior_scores = [[-1.1,-3.,-4.,-4.],[-1.5,-1.5,-0.7,-0.8]]
                 "expected_result": {
-                    "hypothesis_ids": torch.LongTensor([0, 0]),
+                    "hypothesis_ids": torch.LongTensor([1, 1]),
                     "token_ids": torch.LongTensor([2, 3]),
                     "scores": torch.Tensor([-0.7, -0.8]),
                     "token_scores": torch.Tensor([-0.2, -0.3]),
