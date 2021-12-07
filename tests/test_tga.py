@@ -8,10 +8,17 @@ Test TorchGeneratorAgent.
 """
 import unittest
 import math
+import torch
 from parlai.core.agents import create_agent
 import parlai.utils.testing as testing_utils
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_generator_agent import TorchGeneratorAgent
+from parlai.core.torch_generator_agent import (
+    BeamSearch,
+    GreedySearch,
+    NucleusSampling,
+    TopKSampling,
+    TorchGeneratorAgent,
+)
 from parlai.agents.test_agents.transformer_generator_prefix import PREFIX_TEXT
 
 
@@ -236,6 +243,157 @@ class TestGeneration(unittest.TestCase):
                     assert math.isclose(
                         gold_data[inference_type]['text_token_info'][i][2], tok_data[2]
                     ), f"failed token rank prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
+
+    def test_tree_search(self):
+        """
+        :param logprobs:
+            a (beamsize x vocab) tensor of log probabilities. If this is the first
+            turn in the dialogue, it will be a (1 x vocab) tensor.
+        :param prior_scores:
+            a (beamsize) tensor of weights with the cumulative running
+            log-probability of each beam. If the first turn, it will be a (1) tensor.
+        :param current_length:
+            the current length in tokens
+        :return:
+            a {hypothesis_ids, token_ids, scores, token_scores, token_ranks} , where:
+
+            - hypothesis_ids is a LongTensor of hypotheses we're extending. May have
+              repeats, but should always be (beamsize) long.
+            - token_ids is a (beamsize) LongTensor of next-token choices for
+              each of the hypotheses.
+            - scores is a (beamsize) Tensor with the updated cumulative log-probs
+              of each beam.
+            - token_scores is a (beamsize) Tensor with the log-probs of the next-token choices for
+              each of the hypotheses.
+            - token_ranks is a (beamsize) Tensor with the ranks of the next-token choices for
+              each of the hypotheses.
+        """
+
+        tests = {
+            "greedy": {
+                "obj": GreedySearch(beam_size=1),
+                "logprobs": torch.Tensor([[-1.0, -1.0, -0.1, -0.3]]),
+                "prior_scores": torch.Tensor([-0.5]),
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0]),
+                    "token_ids": torch.LongTensor([2]),
+                    "scores": torch.Tensor([-0.6]),
+                    "token_scores": torch.Tensor([-0.1]),
+                    "token_ranks": torch.LongTensor([0]),
+                },
+            },
+            "beam_with_one_beam": {
+                "obj": BeamSearch(beam_size=1),
+                "logprobs": torch.Tensor([[-1.0, -1.0, -0.1, -0.3]]),
+                "prior_scores": torch.Tensor([-0.5]),
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0]),
+                    "token_ids": torch.LongTensor([2]),
+                    "scores": torch.Tensor([-0.6]),
+                    "token_scores": torch.Tensor([-0.1]),
+                    "token_ranks": torch.LongTensor([0]),
+                },
+            },
+            "beam_with_multiple_beams": {
+                "obj": BeamSearch(beam_size=2),
+                "logprobs": torch.Tensor(
+                    [[-1.0, -1.0, -0.2, -0.3], [-0.1, -2.0, -3.0, -3.0]]
+                ),
+                "prior_scores": torch.Tensor([-0.5, -1.0]),
+                # logprobs + prior_scores = [[-1.5,-1.5,-0.7,-0.8],[-1.1,-3.,-4.,-4.]]
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0, 0]),
+                    "token_ids": torch.LongTensor([2, 3]),
+                    "scores": torch.Tensor([-0.7, -0.8]),
+                    "token_scores": torch.Tensor([-0.2, -0.3]),
+                    "token_ranks": torch.LongTensor([0, 1]),
+                },
+            },
+            "topk_with_one_beam": {
+                "obj": TopKSampling(beam_size=1, k=3),
+                "logprobs": torch.Tensor([[-torch.inf, -0.5, -torch.inf, -torch.inf]]),
+                "prior_scores": torch.Tensor([-3.0]),
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0]),
+                    "token_ids": torch.LongTensor([1]),
+                    "scores": torch.Tensor([-3.5]),
+                    "token_scores": torch.Tensor([-0.5]),
+                    "token_ranks": torch.LongTensor([0]),
+                },
+            },
+            "topk_with_multiple_beams": {
+                "obj": TopKSampling(beam_size=2, k=3),
+                "logprobs": torch.Tensor(
+                    [
+                        [-torch.inf, -0.5, -torch.inf, -torch.inf],
+                        [-torch.inf, -torch.inf, -0.6, -torch.inf],
+                    ]
+                ),
+                "prior_scores": torch.Tensor([-3.0, -2.0]),
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0, 1]),
+                    "token_ids": torch.LongTensor([1, 2]),
+                    "scores": torch.Tensor([-3.5, -2.6]),
+                    "token_scores": torch.Tensor([-0.5, -0.6]),
+                    "token_ranks": torch.LongTensor([0, 0]),
+                },
+            },
+            "nucleus_with_one_beam": {
+                "obj": NucleusSampling(beam_size=1, p=0.9),
+                "logprobs": torch.Tensor([[-torch.inf, -0.5, -torch.inf, -torch.inf]]),
+                "prior_scores": torch.Tensor([-3.0]),
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0]),
+                    "token_ids": torch.LongTensor([1]),
+                    "scores": torch.Tensor(
+                        [-3.0]
+                    ),  # the -0.5 logprob normalizes to 0 in truncated distribution
+                    "token_scores": torch.Tensor([-0.0]),  # same as above
+                    "token_ranks": torch.LongTensor([0]),
+                },
+            },
+            "nucleus_with_multiple_beams": {
+                "obj": NucleusSampling(beam_size=2, p=0.9),
+                "logprobs": torch.Tensor(
+                    [
+                        [-torch.inf, -0.5, -torch.inf, -torch.inf],
+                        [-torch.inf, -torch.inf, -0.6, -torch.inf],
+                    ]
+                ),
+                "prior_scores": torch.Tensor([-3.0, -2.0]),
+                "expected_result": {
+                    "hypothesis_ids": torch.LongTensor([0, 1]),
+                    "token_ids": torch.LongTensor([1, 2]),
+                    "scores": torch.Tensor(
+                        [-3.0, -2.0]
+                    ),  # the -0.5, -0.6 logprobs normalize to 0 in truncated distributions
+                    "token_scores": torch.Tensor([-0.0, -0.0]),  # same as above
+                    "token_ranks": torch.LongTensor([0, 0]),
+                },
+            },
+        }
+
+        for test_name, test_data in tests.items():
+            path_selection = test_data["obj"].select_paths(
+                test_data["logprobs"], test_data["prior_scores"], None
+            )
+            expected_result = test_data["expected_result"]
+
+            assert torch.equal(
+                path_selection.hypothesis_ids, expected_result["hypothesis_ids"]
+            ), f"failed test_tree_search for test {test_name} on field hypothesis_ids"
+            assert torch.equal(
+                path_selection.token_ids, expected_result["token_ids"]
+            ), f"failed test_tree_search for test {test_name} on field token_ids"
+            assert torch.allclose(
+                path_selection.scores, expected_result["scores"]
+            ), f"failed test_tree_search for test {test_name} on field scores"
+            assert torch.allclose(
+                path_selection.token_scores, expected_result["token_scores"]
+            ), f"failed test_tree_search for test {test_name} on field token_scores"
+            assert torch.equal(
+                path_selection.token_ranks, expected_result["token_ranks"]
+            ), f"failed test_tree_search for test {test_name} on field token_ranks"
 
 
 if __name__ == '__main__':

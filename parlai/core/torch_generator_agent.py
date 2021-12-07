@@ -1686,7 +1686,7 @@ class GreedySearch(TreeSearch):
             token_ids=tok_ids,
             scores=best_scores,
             token_scores=tok_scores.view(-1),
-            token_ranks=torch.Tensor([0]).to(logprobs.device),
+            token_ranks=torch.LongTensor([0]).to(logprobs.device),
         )
 
 
@@ -1718,7 +1718,7 @@ class BeamSearch(TreeSearch):
 
         tok_ranks = (
             logprobs.argsort(1, descending=True)
-            .argsort(1, descending=True)
+            .argsort(1)
             .view(-1)
             .gather(0, best_idxs)
         )
