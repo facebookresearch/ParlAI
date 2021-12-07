@@ -1046,10 +1046,10 @@ class SearchQueryRetriever(RagRetriever):
         self.len_chunk = opt['splitted_chunk_length']
         self.doc_chunk_split_mode = opt['doc_chunk_split_mode']
         n_doc_chunks = opt['n_ranked_doc_chunks']
-        chunk_ranker_type = opt['doc_chunks_ranker']
-        if chunk_ranker_type == 'tfidf':
+        self.chunk_ranker_type = opt['doc_chunks_ranker']
+        if self.chunk_ranker_type == 'tfidf':
             self.chunk_reranker = TfidfChunkRanker(n_doc_chunks)
-        elif chunk_ranker_type == 'head':
+        elif self.chunk_ranker_type == 'head':
             self.chunk_reranker = HeadChunkRanker(n_doc_chunks)
         else:
             self.chunk_reranker = RetrievedChunkRanker(
@@ -1131,7 +1131,7 @@ class SearchQueryRetriever(RagRetriever):
             # When there is no search query for the context
             return [("", 0)]
         tokens = self.text2tokens(doc_text)
-        if self.chunk_reranker != 'woi_chunk_retrieved_docs':
+        if self.chunk_reranker_type != 'woi_chunk_retrieved_docs':
             doc_chunks = [
                 self.tokens2text(tokens[i : i + self.len_chunk])
                 for i in range(0, len(tokens), self.len_chunk)
