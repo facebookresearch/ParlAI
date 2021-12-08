@@ -7,7 +7,7 @@
 """
 Task Oriented Dialogue (TOD) enums and base classes.
 
-This file defines standard tokens, classes for conversation structure, and a serialization class to aid in converting between these.
+This file defines standard tokens, classes for round and conversation structure, and a serialization class to aid in converting between these.
 
 See `tod_agents.py` for usage of these classes to generate training data and `tod_world_script.py` for usage of these classes in simulated conversations.
 """

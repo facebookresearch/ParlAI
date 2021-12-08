@@ -726,6 +726,8 @@ class DialogTeacher(FixedDialogTeacher):
         """
         Return the number of episodes in the data.
         """
+        if hasattr(self, "_num_episodes_cache"):
+            return self._num_episodes_cache
         try:
             return self.data.num_episodes()
         except AttributeError:
@@ -1923,9 +1925,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
         """
         Image features for the dataset images are stored here.
 
-        Can be overridden in subclass to use custom paths. Image features can be manually
-        copied into this directory or in the case of ImageLoader eligible models, they
-        will be built and stored here if not already there.
+        Can be overridden in subclass to use custom paths. Image features can be
+        manually copied into this directory or in the case of ImageLoader eligible
+        models, they will be built and stored here if not already there.
         """
         # In default implementation, self.data_path already has task name added
         image_features_path = os.path.join(self.data_path, 'image_features')
