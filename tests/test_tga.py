@@ -252,7 +252,7 @@ class TestGeneration(unittest.TestCase):
         """
         tests = {
             "greedy": {
-                "obj": GreedySearch(beam_size=1),
+                "obj": GreedySearch(beam_size=1, verbose=True),
                 "logprobs": torch.Tensor([[-1.0, -1.0, -0.1, -0.3]]),
                 "prior_scores": torch.Tensor([-0.5]),
                 "expected_result": {
@@ -264,7 +264,7 @@ class TestGeneration(unittest.TestCase):
                 },
             },
             "beam_with_one_beam": {
-                "obj": BeamSearch(beam_size=1),
+                "obj": BeamSearch(beam_size=1, verbose=True),
                 "logprobs": torch.Tensor([[-1.0, -1.0, -0.1, -0.3]]),
                 "prior_scores": torch.Tensor([-0.5]),
                 "expected_result": {
@@ -276,7 +276,7 @@ class TestGeneration(unittest.TestCase):
                 },
             },
             "beam_with_multiple_beams": {
-                "obj": BeamSearch(beam_size=2),
+                "obj": BeamSearch(beam_size=2, verbose=True),
                 "logprobs": torch.Tensor(
                     [[-0.1, -2.0, -3.0, -3.0], [-1.0, -1.0, -0.2, -0.3]]
                 ),
@@ -291,7 +291,7 @@ class TestGeneration(unittest.TestCase):
                 },
             },
             "topk_with_one_beam": {
-                "obj": TopKSampling(beam_size=1, k=3),
+                "obj": TopKSampling(beam_size=1, k=3, verbose=True),
                 "logprobs": torch.Tensor([[-torch.inf, -0.5, -torch.inf, -torch.inf]]),
                 "prior_scores": torch.Tensor([-3.0]),
                 "expected_result": {
@@ -303,7 +303,7 @@ class TestGeneration(unittest.TestCase):
                 },
             },
             "topk_with_multiple_beams": {
-                "obj": TopKSampling(beam_size=2, k=3),
+                "obj": TopKSampling(beam_size=2, k=3, verbose=True),
                 "logprobs": torch.Tensor(
                     [
                         [-torch.inf, -0.5, -torch.inf, -torch.inf],
@@ -320,7 +320,7 @@ class TestGeneration(unittest.TestCase):
                 },
             },
             "nucleus_with_one_beam": {
-                "obj": NucleusSampling(beam_size=1, p=0.9),
+                "obj": NucleusSampling(beam_size=1, p=0.9, verbose=True),
                 "logprobs": torch.Tensor([[-torch.inf, -0.5, -torch.inf, -torch.inf]]),
                 "prior_scores": torch.Tensor([-3.0]),
                 "expected_result": {
@@ -334,7 +334,7 @@ class TestGeneration(unittest.TestCase):
                 },
             },
             "nucleus_with_multiple_beams": {
-                "obj": NucleusSampling(beam_size=2, p=0.9),
+                "obj": NucleusSampling(beam_size=2, p=0.9, verbose=True),
                 "logprobs": torch.Tensor(
                     [
                         [-torch.inf, -0.5, -torch.inf, -torch.inf],
