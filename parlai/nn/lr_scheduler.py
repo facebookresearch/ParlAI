@@ -60,8 +60,9 @@ class ParlAILRScheduler(object):
         if self.warmup_updates > 0 and (
             updates_so_far < self.warmup_updates or hard_reset
         ):
+            last_epoch = -1 if updates_so_far == 0 else updates_so_far
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                optimizer, self._warmup_lr, last_epoch=updates_so_far
+                optimizer, self._warmup_lr, last_epoch=last_epoch
             )
 
     def get_last_lr(self):
