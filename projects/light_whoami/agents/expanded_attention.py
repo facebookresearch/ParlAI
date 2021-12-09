@@ -46,10 +46,6 @@ from projects.light_whoami.task.utils import WHO_AM_I, CONTEXT_KEYS, extract_cha
 from projects.msc.agents.long_tga import TransformerVariantAgent, ShiftInvariantEncoder
 
 
-###########################################
-# Transformer With Encoder Swapped        #
-###########################################
-
 MaskOut = Union[torch.BoolTensor, torch.Tensor]
 Encoding = torch.Tensor
 AttnWeights = torch.Tensor
@@ -110,7 +106,6 @@ class ExpandedDecoderAttentionAgent(TransformerGeneratorAgent):
         )  # add transformer args
         expanded_attn = parser.add_argument_group('Expanded Attention Arguments')
         expanded_attn.add_argument(
-            # '--ted-init-separate-attention',
             '--expanded-attention-init-weights',
             type=str,
             default='random',
