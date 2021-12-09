@@ -96,13 +96,6 @@ class AbstractCrowdsourcingTest:
                 ]
                 + overrides,
             )
-            # TODO: when Hydra 1.1 is released with support for recursive defaults,
-            #  don't manually specify all missing blueprint args anymore, but
-            #  instead define the blueprint in the defaults list directly.
-            #  Currently, the blueprint can't be set in the defaults list without
-            #  overriding params in the YAML file, as documented at
-            #  https://github.com/facebookresearch/hydra/issues/326 and as fixed in
-            #  https://github.com/facebookresearch/hydra/pull/1044.
 
         self.data_dir = tempfile.mkdtemp()
         self.database_path = os.path.join(self.data_dir, "mephisto.db")
