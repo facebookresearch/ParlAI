@@ -14,7 +14,7 @@ We collect a dataset of 8k dialogues demonstrating safety failures, feedback sig
 ## Data
 
 ```
-parlai display_data -t light_genderation_bias
+parlai display_data -t saferdialogues
 ```
 
 ## Models
