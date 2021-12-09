@@ -123,7 +123,6 @@ try:
                     f'mephisto.blueprint.image_context_path={image_context_path}',
                     f'mephisto.blueprint.num_conversations={num_convos:d}',
                     f'mephisto.blueprint.stack_folder={stack_folder}',
-                    'mephisto.blueprint.task_model_parallel=False',
                 ]
 
                 self._set_up_config(
