@@ -248,7 +248,7 @@ class TestGeneration(unittest.TestCase):
 
     def test_tree_search(self):
         """
-        Unit test `select_paths` for different decoding schemes
+        Unit test `select_paths` for different decoding schemes.
         """
         tests = {
             "greedy": {

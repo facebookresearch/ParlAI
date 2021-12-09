@@ -1716,7 +1716,7 @@ class GreedySearch(TreeSearch):
         tok_ranks = None
         if self.verbose:
             tok_scores = tok_scores.view(-1)
-            tok_ranks = torch.LongTensor([0], device=logprobs.device)
+            tok_ranks = torch.tensor([0], device=logprobs.device, dtype=torch.long)
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
