@@ -44,8 +44,6 @@ try:
     from parlai.crowdsourcing.tasks.model_chat.run_image_chat import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
         SharedModelImageChatTaskState,
-        ModelImageChatBlueprintArgs,
-        IMAGE_CHAT_BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.model_chat.utils import AbstractModelChatTest
 

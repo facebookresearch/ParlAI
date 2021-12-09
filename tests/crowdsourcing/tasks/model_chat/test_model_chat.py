@@ -63,8 +63,6 @@ try:
     from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
         SharedModelChatTaskState,
-        ModelChatBlueprintArgs,
-        BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.model_chat.utils import AbstractModelChatTest
 

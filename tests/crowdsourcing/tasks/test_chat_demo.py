@@ -347,7 +347,6 @@ try:
     import mephisto
     from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
-        BLUEPRINT_TYPE,
     )
 
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
