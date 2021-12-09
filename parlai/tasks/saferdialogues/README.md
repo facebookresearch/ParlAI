@@ -12,7 +12,7 @@ Returns examples like so:
 - [text]:  flattened context with the feedback signaling message as the last line in the context 
 - [labels]: recovery response acknowledging the feedback 
 
-Note: The dataset is flattened, so there is one episode per example. 
+Note: The dataset is flattened, so there is one example per episode. 
 
 If the `--recovery` flag is set to `false` (`true` by default) then the recovery response is omitted and the labels contains the signaling message and the text contains the context lines before that.
 
