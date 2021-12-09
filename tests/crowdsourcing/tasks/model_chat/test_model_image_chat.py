@@ -118,19 +118,7 @@ try:
 
                 # Set up the config and database
                 num_convos = 1
-                args = ModelImageChatBlueprintArgs()
                 overrides = [
-                    f'++mephisto.blueprint.{key}={val}'
-                    for key, val in args.__dict__.items()
-                    if key
-                    in [
-                        'evals_per_image_model_combo',
-                        'max_resp_time',
-                        'override_opt',
-                        'random_seed',
-                        'world_file',
-                    ]
-                ] + [
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     f'mephisto.blueprint.image_context_path={image_context_path}',
                     f'mephisto.blueprint.num_conversations={num_convos:d}',
