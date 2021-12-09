@@ -60,6 +60,8 @@ class ParlAILRScheduler(object):
         if self.warmup_updates > 0 and (
             updates_so_far < self.warmup_updates or hard_reset
         ):
+            # initializing LambdaLR scheduler can mess up learning rates,
+            # so try to avoid it, when warmup is already done
             last_epoch = -1 if updates_so_far == 0 else updates_so_far
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
                 optimizer, self._warmup_lr, last_epoch=last_epoch
