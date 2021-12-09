@@ -46,6 +46,7 @@ PARTNER_PREVIOUS_MESSAGE = 'partner_previous_msg'
 IS_SEARCH_QUERY = 'is_search_query'
 IS_LAST_SEARCH_QUERY = 'is_last_search_query'
 LABELS = 'labels'
+SKIP_SEARCH = 'skip_search'
 
 # Message values
 NO_SEARCH_QUERY_USED = '__no_search_used__'
