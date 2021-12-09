@@ -48,15 +48,18 @@ class ParlAILRScheduler(object):
         self.warmup_rate = warmup_rate
         self.warmup_scheduler = None
 
-    def _init_warmup_scheduler(self, optimizer):
+    def _init_warmup_scheduler(self, optimizer, states):
         """
         :param optimizer optimizer:
             Optimizer being used for training. May be wrapped in
             fp16_optimizer_wrapper depending on whether fp16 is used.
+        :param states:
+            A dict containing loaded states
         """
+        updates_so_far = states.get('number_training_updates', 0)
         if self.warmup_updates > 0:
             self.warmup_scheduler = optim.lr_scheduler.LambdaLR(
-                optimizer, self._warmup_lr
+                optimizer, self._warmup_lr, last_epoch=updates_so_far
             )
 
     def get_last_lr(self):
@@ -285,7 +288,7 @@ class ParlAILRScheduler(object):
             hard_reset = True
 
         # setup warmup scheduler after loading saved scheduler
-        scheduler._init_warmup_scheduler(optimizer)
+        scheduler._init_warmup_scheduler(optimizer, states)
 
         if not hard_reset:
             # do the actual loading (if possible)
