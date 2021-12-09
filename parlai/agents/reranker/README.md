@@ -34,7 +34,7 @@ For the LIGHT RPA Re-ranking task, the goal is to train a classifier than can pr
 
 ### 2. Subclass `AbstractReranker`.
 
-In [this file](todo_link_to_rpa_rerank), we implement the `RPAReranker` object, subclassing `AbstractReranker`.
+In [this file](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/reranker/reranker.py), we implement the `RPAReranker` object, subclassing `AbstractReranker`.
 
 - `get_class_to_rerank_for` --> this extracts the self character from the context.
 - `is_context` --> returns `True` for any line starting with `_` (indicating LIGHT context)
