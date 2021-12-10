@@ -536,7 +536,7 @@ class AbstractGeneratorRerankAgentMixin:
 
 
 class AbstractGeneratorRerankAgent(
-    AbstractGeneratorRerankAgentMixin, TransformerGeneratorAgent
+    AbstractGeneratorRerankAgentMixin, TransformerGeneratorAgent, ABC
 ):
     @classmethod
     def add_cmdline_args(
@@ -547,13 +547,13 @@ class AbstractGeneratorRerankAgent(
         """
         TransformerGeneratorAgent.add_cmdline_args(parser, partial_opt=partial_opt)
         AbstractGeneratorRerankAgentMixin.add_cmdline_args(parser, partial_opt)
-        reranker_class = cls.get_reranker_class()
+        reranker_class = cls.get_reranker_class() or AbstractReranker
         reranker_class.add_cmdline_args(parser, partial_opt=partial_opt)
         return parser
 
 
 class LongAbstractGeneratorRerankAgent(
-    AbstractGeneratorRerankAgentMixin, TransformerVariantAgent
+    AbstractGeneratorRerankAgentMixin, TransformerVariantAgent, ABC
 ):
     @classmethod
     def add_cmdline_args(
@@ -564,6 +564,6 @@ class LongAbstractGeneratorRerankAgent(
         """
         TransformerVariantAgent.add_cmdline_args(parser, partial_opt=partial_opt)
         AbstractGeneratorRerankAgentMixin.add_cmdline_args(parser, partial_opt)
-        reranker_class = cls.get_reranker_class()
+        reranker_class = cls.get_reranker_class() or AbstractReranker
         reranker_class.add_cmdline_args(parser, partial_opt=partial_opt)
         return parser
