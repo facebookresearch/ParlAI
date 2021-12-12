@@ -86,7 +86,7 @@ class ParlAILRScheduler(object):
         return (
             hasattr(self, 'warmup_scheduler')
             and self.warmup_scheduler is not None
-            and self._number_training_updates < self.warmup_updates
+            and self._number_training_updates <= self.warmup_updates
         )
 
     def _warmup_lr(self, step):
