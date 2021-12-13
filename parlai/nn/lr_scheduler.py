@@ -251,21 +251,11 @@ class ParlAILRScheduler(object):
             )
         elif opt.get('lr_scheduler') == 'cosine':
             scheduler = CosineLRScheduler(
-                optimizer,
-                patience,
-                decay,
-                warmup_updates,
-                warmup_rate,
-                max_lr_steps,
+                optimizer, patience, decay, warmup_updates, warmup_rate, max_lr_steps
             )
         elif opt.get('lr_scheduler') == 'linear':
             scheduler = LinearLRScheduler(
-                optimizer,
-                patience,
-                decay,
-                warmup_updates,
-                warmup_rate,
-                max_lr_steps,
+                optimizer, patience, decay, warmup_updates, warmup_rate, max_lr_steps
             )
         else:
             raise ValueError(
@@ -343,9 +333,7 @@ class ReduceOnPlateauLRScheduler(ParlAILRScheduler):
     Scheduler that decays by a multiplicative rate when valid loss plateaus.
     """
 
-    def __init__(
-        self, optimizer, patience, decay, warmup_updates, warmup_rate
-    ):
+    def __init__(self, optimizer, patience, decay, warmup_updates, warmup_rate):
         super().__init__(warmup_updates, warmup_rate)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, 'min', factor=decay, patience=patience, verbose=True
@@ -371,9 +359,7 @@ class FixedLRScheduler(ParlAILRScheduler):
     Scheduler that decays by a fixed multiplicative rate at each valid step.
     """
 
-    def __init__(
-        self, optimizer, patience, decay, warmup_updates, warmup_rate
-    ):
+    def __init__(self, optimizer, patience, decay, warmup_updates, warmup_rate):
         super().__init__(warmup_updates, warmup_rate)
         self.scheduler = optim.lr_scheduler.StepLR(optimizer, patience, gamma=decay)
 
@@ -443,13 +429,7 @@ class CosineLRScheduler(ParlAILRScheduler):
     """
 
     def __init__(
-        self,
-        optimizer,
-        patience,
-        decay,
-        warmup_updates,
-        warmup_rate,
-        max_lr_steps,
+        self, optimizer, patience, decay, warmup_updates, warmup_rate, max_lr_steps
     ):
         """
         max_lr_steps determines the cycle length of the cosine annealing.
@@ -482,13 +462,7 @@ class LinearLRScheduler(ParlAILRScheduler):
     """
 
     def __init__(
-        self,
-        optimizer,
-        patience,
-        decay,
-        warmup_updates,
-        warmup_rate,
-        max_lr_steps,
+        self, optimizer, patience, decay, warmup_updates, warmup_rate, max_lr_steps
     ):
         """
         max_lr_steps determines the cycle length of the linear annealing.
