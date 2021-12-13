@@ -10,11 +10,11 @@ As a convention, files referenced externally to this directory are prefixed with
 
 # Teachers + Agents Usage
 
-tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement `generate_episode()` that converts the dataset into a list of episodes (`List[TodStructuredEpisode]`). Use multiple inheritence to generate teachers for training models. See files like `parlai/tasks/multiwoz_v22/agents.py` for an example. 
+tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement `setup_episodes()` that converts the dataset into a list of episodes (`List[TodStructuredEpisode]`). Use multiple inheritence to generate teachers for training models. See files like `parlai/tasks/multiwoz_v22/agents.py` for an example. 
 
 ## Overview of usage
 
-For a given dataset, extend `TodStructuredDataParser` and implement `generate_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
+For a given dataset, extend `TodStructuredDataParser` and implement `setup_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
 
 For example, given a `class XX_DataParser(TodStructuredDataParser)`, `class XX_UserSimulatorTeacher(XX_DataParser, TodUserSimulatorTeacher)` would be how one would define a teacher that generates training data for a User Simulator model. Other agents necessary for exposing Goals and API Schemas of a dataset can be exposed in a similar manner. 
 
@@ -35,7 +35,7 @@ For goal grounding for the User for simulation:
     * TodGoalAgent
         * Dumps goals as is from the dataset, possibly multiple per episode
     * TodSingleGoalAgent
-        * Flattens goals such that a single one is used to seed a conversation. For datasets that include multiple goals per conversation, each individual goal is used as a seed.
+        * Flattens goals such that only one is used to ground a conversation. (So for example, if there are 3 goals in the source dataset, rather than grounding 1 conversation, these now ground 3 separate conversations.)
 
 For (optional) API schema grounding for the System:
     * TodApiSchemaAgent (must be used with `TodGoalAgent` only)
