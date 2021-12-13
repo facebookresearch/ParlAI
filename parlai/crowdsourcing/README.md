@@ -6,7 +6,7 @@ Code for crowdsourcing tasks that use Mephisto. See the [Mephisto quick start gu
 
 ## Running tasks
 
-Tasks are launched by calling the appropriate run script: for instance, an ACUTE-Eval run can be launched with `python parlai/crowdsourcing/tasks/acute_eval/run.py`, followed by any appropriate flags. All run parameters are set using [Hydra](https://github.com/facebookresearch/hydra): append the flag `-c job` to your run command to see a list of all available parameters, grouped by their package name (`mephisto.blueprint`, `mephisto.task`, etc.), which determines how they are called. Each run script has a YAML file of default parameters that will be loaded, found in the `hydra_configs/conf/` subfolder of each task.
+Tasks are launched by calling the appropriate run script: for instance, an ACUTE-Eval run can be launched with `python parlai/crowdsourcing/tasks/acute_eval/run.py`, followed by any appropriate flags. All run parameters are set using [Hydra](https://github.com/facebookresearch/hydra): append the flag `-c job` to your run command to see a list of all available parameters, grouped by their package name (`mephisto.blueprint`, `mephisto.task`, etc.), which determines how they are called. Each run script points to a YAML file of default parameters (including the blueprints) that will be loaded, found in the `hydra_configs/conf/` subfolder of each task. You can specify a different blueprint in a YAML file and use that YAML file to run your task (see below).
 
 ### Specifying your own YAML file
 
