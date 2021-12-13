@@ -292,7 +292,9 @@ class TestGeneration(unittest.TestCase):
             },
             "topk_with_one_beam": {
                 "obj": TopKSampling(beam_size=1, k=3, verbose=True),
-                "logprobs": torch.Tensor([[-torch.inf, -0.5, -torch.inf, -torch.inf]]),
+                "logprobs": torch.Tensor(
+                    [[-float('inf'), -0.5, -float('inf'), -float('inf')]]
+                ),
                 "prior_scores": torch.Tensor([-3.0]),
                 "expected_result": {
                     "hypothesis_ids": torch.LongTensor([0]),
@@ -306,8 +308,8 @@ class TestGeneration(unittest.TestCase):
                 "obj": TopKSampling(beam_size=2, k=3, verbose=True),
                 "logprobs": torch.Tensor(
                     [
-                        [-torch.inf, -0.5, -torch.inf, -torch.inf],
-                        [-torch.inf, -torch.inf, -0.6, -torch.inf],
+                        [-float('inf'), -0.5, -float('inf'), -float('inf')],
+                        [-float('inf'), -float('inf'), -0.6, -float('inf')],
                     ]
                 ),
                 "prior_scores": torch.Tensor([-3.0, -2.0]),
@@ -321,7 +323,9 @@ class TestGeneration(unittest.TestCase):
             },
             "nucleus_with_one_beam": {
                 "obj": NucleusSampling(beam_size=1, p=0.9, verbose=True),
-                "logprobs": torch.Tensor([[-torch.inf, -0.5, -torch.inf, -torch.inf]]),
+                "logprobs": torch.Tensor(
+                    [[-float('inf'), -0.5, -float('inf'), -float('inf')]]
+                ),
                 "prior_scores": torch.Tensor([-3.0]),
                 "expected_result": {
                     "hypothesis_ids": torch.LongTensor([0]),
@@ -337,8 +341,8 @@ class TestGeneration(unittest.TestCase):
                 "obj": NucleusSampling(beam_size=2, p=0.9, verbose=True),
                 "logprobs": torch.Tensor(
                     [
-                        [-torch.inf, -0.5, -torch.inf, -torch.inf],
-                        [-torch.inf, -torch.inf, -0.6, -torch.inf],
+                        [-float('inf'), -0.5, -float('inf'), -float('inf')],
+                        [-float('inf'), -float('inf'), -0.6, -float('inf')],
                     ]
                 ),
                 "prior_scores": torch.Tensor([-3.0, -2.0]),
