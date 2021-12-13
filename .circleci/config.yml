@@ -40,7 +40,7 @@ executors:
       PYTHONUNBUFFERED: 1
     machine:
       image: ubuntu-1604:201903-01
-    resource_class: gpu.medium # tesla m60
+    resource_class: gpu.nvidia.small.multi
 
 # -------------------------------------------------------------------------------------
 # reusable commands
