@@ -83,7 +83,6 @@ class TodStructuredRound:
 
     def __post_init__(self):
         self.api_call_utt = SerializationHelpers.api_dict_to_str(self.api_call_machine)
-        print(self.api_resp_machine)
         self.api_resp_utt = SerializationHelpers.api_dict_to_str(self.api_resp_machine)
         if (
             len(self.api_call_machine) > 0
