@@ -6,7 +6,7 @@ This agent provides an abstract implementation of a "re-ranker" object, as well 
 
 ### 1. Train a classifier or ranker model.
 
-The first step is to train a model -- e.g. `transformer/biencoder`, `transformer/polyencoder`, or 'transformer/classifier` -- on a desired classification or ranking task.
+The first step is to train a model -- e.g. `transformer/biencoder`, `transformer/polyencoder`, or `transformer/classifier` -- on a desired classification or ranking task.
 
 ### 2. Subclass `AbstractReranker`
 
