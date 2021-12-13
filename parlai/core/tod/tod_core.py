@@ -83,6 +83,7 @@ class TodStructuredRound:
 
     def __post_init__(self):
         self.api_call_utt = SerializationHelpers.api_dict_to_str(self.api_call_machine)
+        print(self.api_resp_machine)
         self.api_resp_utt = SerializationHelpers.api_dict_to_str(self.api_resp_machine)
         if (
             len(self.api_call_machine) > 0
@@ -179,6 +180,8 @@ class SerializationHelpers:
 
     @classmethod
     def maybe_inner_list_join(cls, values):
+        if type(values) is dict:
+            return str(values)
         if isinstance(values, str) or isinstance(values, int):
             return values
         elif isinstance(values, Iterable):
@@ -191,6 +194,7 @@ class SerializationHelpers:
         """
         Used for API Calls and Responses -> Utterance.
         """
+
         return " ; ".join(
             f"{k} = {SerializationHelpers.maybe_inner_list_join(v)}"
             for k, v in sorted(apidict.items())

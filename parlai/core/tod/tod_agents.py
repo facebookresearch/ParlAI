@@ -142,19 +142,19 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
             "--api-jga-record",
             type=bool,
             default=True,
-            help="Should we save jga information per api schema?",
+            help="Breaks out jga into individual api schemas",
         )
         parser.add_argument(
             "--domain-jga-record",
             type=bool,
             default=False,
-            help="Should we save jga information per domain?",
+            help="Breaks out jga into individual domains",
         )
         parser.add_argument(
             "--domain-nlg-record",
             type=bool,
             default=False,
-            help="Should we save nlg information per domain?",
+            help="Breaks out nlg into individual domains",
         )
         return parser
 
