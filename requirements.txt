@@ -17,7 +17,6 @@ ipython==7.19.0
 torch>=1.4.0
 joblib==0.14.1
 nltk==3.6.4
-numpy==1.17.5
 omegaconf~=2.1.1
 pandas==1.1.1
 pytest_regressions==2.1.1
@@ -46,9 +45,11 @@ tokenizers>=0.8.0
 torchtext>=0.5.0
 tornado==6.0.4
 tqdm~=4.62.1
-typing-extensions==3.7.4.1
+typing-extensions==3.7.4.3
 Unidecode==1.1.1
 urllib3>=1.26.5
 websocket-client==0.56.0
 websocket-server==0.4
 jsonlines==1.2.0
+numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
+markdown<=3.3.2 # Pin to something that works so tests are happy

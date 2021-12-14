@@ -177,6 +177,7 @@ class BlenderBot2RagModel(RagModel):
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[
@@ -214,6 +215,8 @@ class BlenderBot2RagModel(RagModel):
             3D [bsz, num_lines, seqlen] text to convert to memories with memory decoder
         :param num_memory_decoder_vecs:
             1D [bsz] # of memory decoder vectors for each batch item
+        :param skip_search:
+            1D [bsz] whether to skip search
         """
         # Retrieve, get expanded input
         if all([tensor is not None for tensor in [input_lengths, query_vec]]):
@@ -230,6 +233,7 @@ class BlenderBot2RagModel(RagModel):
                 num_gold_docs,
                 memory_decoder_vec,
                 num_memory_decoder_vecs,
+                skip_search,
             )
         else:
             expanded_input = input
@@ -295,6 +299,14 @@ class BlenderBot2RagModel(RagModel):
             assert self.knowledge_access_method is KnowledgeAccessMethod.CLASSIFY
             return type_indices
 
+    def flush_previous_retriever_search_results(self):
+        if not hasattr(self, 'retriever'):
+            return
+        if hasattr(self.retriever, 'top_docs'):
+            delattr(self.retriever, 'top_docs')
+        if hasattr(self.retriever, 'search_queries'):
+            delattr(self.retriever, 'search_queries')
+
     def retrieve_and_concat(
         self,
         input: torch.LongTensor,
@@ -309,11 +321,13 @@ class BlenderBot2RagModel(RagModel):
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
     ) -> Tuple[torch.LongTensor, List[List[Document]], torch.Tensor]:
         """
         Override RagModel.retrieve_and_concat to perform different retrieval, depending
         on the RetrieverType.
         """
+        self.flush_previous_retriever_search_results()
         start = time.time()
         logging.debug(f'Begin encoder: {time.time() - start:.2f}')
         if input_turns_cnt is not None:
@@ -351,7 +365,7 @@ class BlenderBot2RagModel(RagModel):
         if self.should_generate_query:
             assert self.has_query_generator()
             retrieval_type, search_queries = self.query_generator.classify_retrieval(
-                query_generator_vec, num_memories, generated_memories
+                query_generator_vec, num_memories, generated_memories, skip_search
             )
             logging.debug(f'Classify Retrieval: {time.time() - start:.2f}')
         else:
@@ -835,6 +849,7 @@ class BlenderBot2FidModelMixin:
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[
@@ -857,6 +872,7 @@ class BlenderBot2FidModelMixin:
             num_gold_docs,
             memory_decoder_vec,
             num_memory_decoder_vecs,
+            skip_search,
             positions,
             segments,
         )  # type: ignore

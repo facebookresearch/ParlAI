@@ -1988,7 +1988,7 @@ model_list = [
         ),
         "example": (
             "parlai interactive -mf zoo:sea/bart_fid_sqse/model \\ \n"
-            "--search-query-generator-model-file zoo:sea/bart_fid_sqse/model \\ \n"
+            "--search-query-generator-model-file zoo:sea/bart_sq_gen/model \\ \n"
             "--search-server <your search server API address>"
         ),
         "result": (
@@ -2162,5 +2162,425 @@ Wekk it is okay is you are well trained.  There are three levels: Apprentice, jo
 Which level are you at?
     labels: I received on-the-job training when i first started
      model: I am a journeyman electrician. I work in the construction industry. How about you?""",
+    },
+    {
+        "title": "SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures",
+        "id": "saferdialogues",
+        "path": "zoo:saferdialogues/model",
+        "agent": "transformer/generator",
+        "task": "saferdialogues",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/saferdialogues",
+        "description": (
+            "Blender 2.7B model fine-tuned on the SaFeRDialogues and BST (without persona) tasks to respond to feedback more gracefully after a safety failure"
+        ),
+        "example": (
+            "parlai display_model -mf zoo:saferdialogues/model -t saferdialogues --interactive-mode True"
+        ),
+        "result": (
+            "I don't know if he's the best, but he's definitely the best at being the worst.\n"
+            "I am not disagreeing with you, but you really should try to be open minded about people.\n"
+            "labels: I think we disagree on this point, which is okay. Everyone has their own opinion. Want to talk about something else? \n"
+            "model: I'm sorry, I see it now-thanks for letting me know, I will be more open-minded."
+        ),
+    },
+    {
+        "title": "LIGHT RPA Re-Ranker",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_reranker/model",
+        "agent": "transformer/polyencoder",
+        "task": "projects.light_whoami.task:WhoIsSpeakingLeftToRightTeacher",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Re-ranker from the Am I Me or You project. "
+            "This model was trained (left-to-right) to predict who is speaking "
+            "given a context history and candidate utterance."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:WhoIsSpeakingLeftToRightTeacher \\ \n"
+            "-ne 100 "
+        ),
+        "result": (
+            """
+            accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   mrr  \
+                .6100 3.802e-07 562.6 511.8 373.6   .9400       52.8 .7300  100 .6100    .1922   .6100        1         1       1  4.88 1.238 1e-09  4.88 3.562       0          0 .8050
+                rank   tpb   tps
+                1.39 516.7 377.2
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model repeat_label -ne 100"
+        ),
+        "result2": (
+            """
+            accuracy  bleu-4  character_accuracy  exs  f1
+                 1   .9100               .9600  100   1
+            """
+        ),
+    },
+    {
+        "title": "[TEST] LIGHT RPA Re-Ranker",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/test_rpa_reranker/model",
+        "agent": "transformer/polyencoder",
+        "task": "projects.light_whoami.task:WhoIsSpeakingTeacher",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": ("Test RPA Re-ranker from the Am I Me or You project. "),
+        "example": (
+            "parlai em -mf zoo:light_whoami/test_rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:WhoIsSpeakingTeacher \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs  f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen     mrr  \
+                        0       0   512 485.1  6421   .6000       28.9 13.23   10   0  .005503       0        0     .5000       0   3.9 7.789 .0001   3.9 51.62       0          0 .008661
+                    rank  total_train_updates  tpb  tps
+                202.6                   10  489 6473
+            """
+        ),
+    },
+    {
+        "title": "LIGHT RPA Re-Ranker (for automated expanded attention)",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_reranker_auto_expanded_attention/model",
+        "agent": "transformer/polyencoder",
+        "task": "projects.light_whoami.task:WhoIsSpeakingLeftToRightTeacher",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Re-ranker from the Am I Me or You project. "
+            "This model was trained (left-to-right) to predict who is speaking "
+            "given a context history and candidate utterance. This model uses the "
+            "same dictionary setup as the model for the automated expanded attention."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_reranker_auto_expanded_attention/model \\ \n"
+            "-t projects.light_whoami.task.agents:WhoIsSpeakingLeftToRightTeacher \\ \n"
+            "-ne 100 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   mrr  \
+                    .6600 1.505e-07 562.6 511.8   374   .9400       52.8 .7308  100 .6600    .1922   .6600    .9400         1   .9300  4.88 1.396 5e-10  4.88 3.566       0          0 .7922
+                rank   tpb   tps
+                2.08 516.7 377.6
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Vanilla 128 Baseline",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/vanilla_128/model",
+        "agent": "transformer/generator",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "Vanilla 128-truncation baseline from the Am I Me or You project. "
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/vanilla_128/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0 1.067e-05 255.1 126.7 15.36   .9000      128.4 .1212   10 .1968    .1830  25.6 2.358 7e-10  25.6 3.104       0          0 10.57      .5078         0 152.3 18.46
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.rpa_rerank:RPARerankAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_128/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.067e-05                   1 126.7 14.52 .1146   10 .2065    .2802 7e-10  25.6 2.934 152.3 17.45
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.pacer:PacerAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_128/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.067e-05                   1 126.7  12.1 .0955   10 .1812    .3320 7e-10  25.6 2.445 152.3 14.55
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Vanilla 1024 Baseline",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/vanilla_1024/model",
+        "agent": "transformer/generator",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "Vanilla 1024-truncation baseline from the Am I Me or You project. "
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/vanilla_1024/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0 1.152e-05 255.1 255.1  32.2       0          0 .1262   10 .1858    .1994  25.6 2.335 1e-09  25.6 3.231       0          0 10.33      .5078         0 280.7 35.43
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.rpa_rerank:LongRPARerankAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_1024/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.231e-05                   1 255.1 30.57 .1198   10 .1619    .2882 1e-09  25.6 3.067 280.7 33.63
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.pacer:LongPacerAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_1024/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.081e-05                   1 255.1 25.78 .1011   10 .1502    .3247 1e-09  25.6 2.587 280.7 28.37
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You RPA Unlikelihood (128-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_ul_128/model",
+        "agent": "projects.light_whoami.agents.rpu_ul:RpaUlAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Unlikelihood-trained model from the Am I Me or You project."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_ul_128/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  right_class  token_acc  token_em  \
+                        0 1.365e-05 255.1 126.7 8.552   .9000      128.4 .0675   10 .1767    .1945  25.6 2.376 7e-10  25.6 1.728       0          0 10.77        .7000      .4961         0
+                    tpb   tps  ul_loss  wrong_class  wrong_class_all
+                152.3 10.28    .4625        .3000            .3000
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You RPA Unlikelihood (1024-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_ul_1024/model",
+        "agent": "projects.light_whoami.agents.rpu_ul:RpaUlAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Unlikelihood-trained model (1024-truncation) from the Am I Me or You project."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_ul_1024/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  right_class  token_acc  token_em  \
+                        0 1.231e-05 255.1 255.1 14.99       0          0 .05876   10 .1897    .1947  25.6 2.327 7e-10  25.6 1.504       0          0 10.24        .9000      .5117         0
+                    tpb   tps  ul_loss  wrong_class  wrong_class_all
+                280.7 16.49    .6992        .1000            .1000
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Multi-Objective Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/multiobjective/model",
+        "agent": "projects.light_whoami.agents.multi_objective:MultiObjectiveGeneratorAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "Multi-Objective-trained model from the Am I Me or You project. "
+            "This model can both generate a response, and identify the correct speaker "
+            "given a conversational context and a candidate utterance"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/multiobjective/model \\ \n"
+            "-t projects.light_whoami.task.agents:MultiObjectiveTeacher \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  full_hits@1  full_mean_character_loss  full_mrr  full_rank  gpu_mem  llen  loss    lr  ltpb  ltps  \
+                        0 1.231e-05 255.1 255.1 29.92       0          0 .1173   10 .1930            1                    .04143         1          1    .2201  25.6 2.361 1e-09  25.6 3.003
+                    ltrunc  ltrunclen  ppl  token_acc  token_em   tpb   tps
+                        0          0 10.6      .5039         0 280.7 32.93
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Profile Expanded Attention (128-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/profile_expanded_attention_128/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context (specifically, character names "
+            "and self persona)"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/profile_expanded_attention_128/model \\ \n"
+            "-t projects.light_whoami.task.agents:BaseSimpleMultiTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                    0  .01958 254.5 126.5 8.154   .9000        128 .06446   10 .2210    .1580  25.6 2.296 7e-10  25.6  1.65       0          0 9.936      .5156         0 152.1 9.804
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndRPARerankerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_128/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy  bleu-4  character_accuracy  ctpb  ctps   exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb  tps
+                        0  .01958                   1 126.5 7.976 .06305   10 .2198    .2309 7e-10  25.6 1.614 152.1 9.59
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_128/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.068e-05                   1 126.5 41.45 .3275   10 .2239    .3248 7e-10  25.6 8.389 152.1 49.84
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Profile Expanded Attention (1024-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/profile_expanded_attention_1024/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context (specifically, character names, "
+            "self persona, and LIGHT setting)"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/profile_expanded_attention_1024/model \\ \n"
+            "-t projects.light_whoami.task.agents:BaseSimpleMultiTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy   bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0 1.08e-05 254.5 254.5 17.32       0          0 .06804   10 .1514    .1583  25.6 2.285 7e-10  25.6 1.742       0          0 9.827      .5273         0 280.1 19.06
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAndRPARerankerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_1024/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy   bleu-4  character_accuracy  ctpb  ctps   exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.08e-05                   1 254.5 17.05 .06701   10 .1441    .2312 7e-10  25.6 1.715 280.1 18.77
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAndPacerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_1024/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy   bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.23e-05                   1 254.5 79.51 .3124   10 .1259    .3786 7e-10  25.6 7.998 280.1 87.51
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Automated Expanded Attention (1024-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/automated_expanded_attention_1024/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context. An RPA classifier is used to "
+            "select which parts of the input to re-attend to"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/automated_expanded_attention_1024/model \\ \n"
+            "-t projects.light_whoami.task.agents:BaseSimpleMultiTeacher \\ \n"
+            "--mutators share_self_character -ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  ppl  token_acc  token_em   tpb   tps
+                        0 1.066e-05 255.1 255.1  22.1       0          0 .08663   10 .1355    .1947  25.6 2.313 7e-10  25.6 2.218       0          0 10.1      .5195         0 280.7 24.32
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Automated Expanded Attention + Multi-Objective Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/expanded_and_multiobjective_1024/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAndMultiObjectiveAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context. An RPA classifier is used to "
+            "select which parts of the input to re-attend to"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/expanded_and_multiobjective_1024/model \\ \n"
+            "-t projects.light_whoami.task.agents:MultiObjectiveTeacher \\ \n"
+            "--mutators share_self_character,clean_context_mutator -ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  full_hits@1  full_mean_character_loss  full_mrr  full_rank  gpu_mem  llen  loss    lr  ltpb  ltps  \
+                        0 1.849e-08 254.5 254.5 22.72       0          0 .08928   10 .1628        .9000                     2.245     .9002       43.6    .1589  25.6 2.347 7e-10  25.6 2.285
+                    ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0          0 10.45      .5078         0 280.1 25.01
+            """
+        ),
     },
 ]
