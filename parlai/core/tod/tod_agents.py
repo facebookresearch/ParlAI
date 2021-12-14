@@ -18,6 +18,7 @@ from parlai.core.metrics import AverageMetric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.distributed import is_distributed, get_rank, num_workers
 
 import parlai.core.tod.tod_core as tod
@@ -122,12 +123,11 @@ class _TodDataDumpAgent(TodStructuredDataParser):
     For agents which dump data from some dataset, without training/other modifications.
 
     Implements an "epoch done"
-
-    Member variables assumed to be set in init downstream:
-        self.fold
     """
 
     def __init__(self, opt: Opt, shared=None):
+        if not hasattr(self, "fold"):
+            self.fold = DatatypeHelper.fold(opt["datatype"])
         super().__init__(opt, shared)
         self.epochDone = False
         self.batchsize = opt.get("batchsize", 1)
@@ -144,7 +144,7 @@ class _TodDataDumpAgent(TodStructuredDataParser):
             self.max_episodes = min(self.max_episodes, (rank + 1) * chunk_size)
 
     def _setup_next_episode(self):
-        self.epochDone = not self.episode_idx < self.max_episodes
+        self.epochDone = self.episode_idx >= self.max_episodes
         self.episode = None
         if not self.epochDone:
             self.episode = self.episodes[self.episode_idx]
@@ -156,14 +156,7 @@ class _TodDataDumpAgent(TodStructuredDataParser):
         return self.epochDone
 
     def episode_done(self) -> bool:
-        """
-        This is not actually "episode_done" so much as "we want to signify to the world
-        that we have gone past the batch".
-
-        This class should not control whether or not the episode is actually done since
-        the TodWorld expects that to come from the User agent.
-        """
-        return self.epochDone
+        raise RuntimeError("Must be defined in downstream agent")
 
     def num_episodes(self) -> int:
         return len(self.episodes)
@@ -189,6 +182,10 @@ class TodGoalAgent(_TodDataDumpAgent):
     def _get_agent_type_suffix(self):
         return "Goal"
 
+    def episode_done(self) -> bool:
+        # done if end of batch; should never end conversation otherwise
+        return self.epoch_done()
+
 
 class TodApiSchemaAgent(_TodDataDumpAgent):
     def act(self):
@@ -201,6 +198,10 @@ class TodApiSchemaAgent(_TodDataDumpAgent):
 
     def _get_agent_type_suffix(self):
         return "ApiSchema"
+
+    def episode_done(self) -> bool:
+        # done if end of batch; should never end conversation otherwise
+        return self.epoch_done()
 
 
 ############# Single Goal + Api Schema Agent
@@ -322,6 +323,9 @@ class TodUserUttAgent(_TodDataDumpAgent):
     def _get_agent_type_suffix(self):
         return "User"
 
+    def episode_done(self) -> bool:
+        return self.epoch_done() or self.round_idx >= len(self.episode.rounds)
+
 
 class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
     """
@@ -376,6 +380,9 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
     def _get_agent_type_suffix(self):
         return "System"
 
+    def episode_done(self) -> bool:
+        return self.epoch_done() or self.round_idx >= len(self.episode.rounds)
+
 
 class TodApiResponseAgent(_TodDataDumpAgent):
     """
@@ -402,6 +409,9 @@ class TodApiResponseAgent(_TodDataDumpAgent):
 
     def _get_agent_type_suffix(self):
         return "ApiResponse"
+
+    def episode_done(self) -> bool:
+        return self.epoch_done() or self.round_idx >= len(self.episode.rounds)
 
 
 ###### Standalone API agent
