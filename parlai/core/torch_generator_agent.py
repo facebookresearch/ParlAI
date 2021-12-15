@@ -883,11 +883,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             maxlen = self.label_truncate or 256
             prefix_tokens = self.get_prefix_tokens(batch)
             beam_preds_scores, beams = self._generate(
-                batch,
-                self.beam_size,
-                maxlen,
-                prefix_tokens=prefix_tokens,
-                verbose=self.output_token_losses,
+                batch, self.beam_size, maxlen, prefix_tokens=prefix_tokens
             )
             preds, _, _ = zip(*beam_preds_scores)
             self._add_generation_metrics(batch, preds)
@@ -1107,7 +1103,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-        verbose: bool = False,
     ):
         """
         Generate an output with beam search.
@@ -1122,8 +1117,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             the maximum length of the decoded sequence
         :param prefix_tokens:
             if given, a tensor of tokens that must begin the decoded sequence.
-        :param verbose:
-            if true, additional token level information is computed and returned
 
         :return:
             tuple (beam_pred_scores, beams)
@@ -1148,13 +1141,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             batchsize = batch.batchsize
             batch_context_list = self._get_batch_context(batch).tolist()
             beams = [
-                self._treesearch_factory(dev, verbose=verbose)
+                self._treesearch_factory(dev, verbose=self.output_token_losses)
                 .set_batch_context(batch_context_list, batch_idx)
                 .set_block_list(self.beam_block_list)
                 for batch_idx in range(batchsize)
             ]
         else:
-            beams = [self._treesearch_factory(dev, verbose=verbose) for _ in range(bsz)]
+            beams = [
+                self._treesearch_factory(dev, verbose=self.output_token_losses)
+                for _ in range(bsz)
+            ]
 
         # repeat encoder outputs and decoder inputs
         decoder_input = self._get_initial_decoder_input(bsz, beam_size, dev)
