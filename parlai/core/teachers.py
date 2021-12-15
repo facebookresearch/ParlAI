@@ -1611,12 +1611,12 @@ class YamlTeacher(DialogTeacher):
                 yield act, next_episode_new
 
 
-class ConversationTeacher(FixedDialogTeacher):
+class ConversationTeacher(ParlAIDialogTeacher):
     """
     This module provides access to data in the Conversations format.
 
-    Subclasses ``FixedDialogTeacher`` for functionality and provides an
-    implementation of ``setup_data()`` which iterates over datasets in the
+    Subclasses ``ParlAIDialogTeacher`` for functionality and provides an
+    implementation of ``_setup_data()`` which iterates over datasets in the
     "Conversations" format. If your data is in the format below, use this class to
     handle file parsing for you.
 
