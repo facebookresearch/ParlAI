@@ -24,6 +24,8 @@ mephisto:
 ```
 If you want to quickly modify this parameter to, say, 0.6 without changing the YAML file, you can add a `mephisto.task.task_reward=0.6` string to your launch command.
 
+You can also specify a blueprint on the command line by adding `mephisto/blueprint=my_blueprint_type` (this will override the default blueprint type if defined in the config file).
+
 ### MTurk-specific task configuration
 
 Here is a partial list of MTurk-specific parameters that can be set in YAML files or on the command line:
