@@ -183,11 +183,9 @@ class WizardOfInternetBaseTeacher(DialogTeacher):
 
     def _load_data(self, datafile):
         logging.info(f'Loading data from {datafile} ...')
-        dialogs = []
         with jsonlines.open(datafile, 'r') as fin:
             for dialog_json in tqdm(fin):
-                dialogs.append(self._get_episode_examples(dialog_json))
-        return dialogs
+                yield self._get_episode_examples(dialog_json)
 
     def _get_episode_examples(self, dialog_json):
         data = get_single_val_from_dict(dialog_json)
