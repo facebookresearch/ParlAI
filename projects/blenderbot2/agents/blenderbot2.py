@@ -800,7 +800,10 @@ class BlenderBot2RagAgent(RagAgent):
 
     def eval_step(self, batch):
         output = super().eval_step(batch)
-        if output is None or not hasattr(self.model, 'retriever'):
+        model = self.model
+        if isinstance(self.model, torch.nn.parallel.DistributedDataParallel):
+            model = self.model.module
+        if output is None or not hasattr(model, 'retriever'):
             return output
         if hasattr(self.model_api.retriever, 'top_docs'):
             output.top_docs = self.model_api.retriever.top_docs
@@ -855,7 +858,10 @@ class BlenderBot2RagAgent(RagAgent):
         Override Rag.compute_loss to add some additional metrics.
         """
         loss, output = super().compute_loss(batch, return_output=True)
-        assert isinstance(self.model, BlenderBot2RagModel)
+        model = self.model
+        if isinstance(self.model, torch.nn.parallel.DistributedDataParallel):
+            model = self.model.module
+        assert isinstance(model, BlenderBot2RagModel)
         if (
             KnowledgeAccessMethod(self.opt['knowledge_access_method'])
             is KnowledgeAccessMethod.CLASSIFY
