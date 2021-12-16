@@ -86,7 +86,9 @@ class T5RagAgent(T5Agent, BaseGenerationAgentMixin):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Override since T5 needs to call TGA generate.
         """
@@ -664,7 +666,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Override TGA._generate to potentially call ReGReT.
 
@@ -685,8 +689,10 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def _rerank_beams(
         self,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Optional rerank beams, according to RAG Model type.
 

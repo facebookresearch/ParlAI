@@ -85,7 +85,7 @@ class PacerAgentMixin:
             return batch.text_vec
         return batch.full_text_vec
 
-    def _treesearch_factory(self, device: int) -> TreeSearch:
+    def _treesearch_factory(self, device: int, verbose=False) -> TreeSearch:
         method = self.opt.get('inference', 'greedy')
         beam_size = self.opt.get('beam_size', 1)
         pacer_kwargs = {
@@ -105,6 +105,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'beam':
@@ -118,6 +119,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'delayedbeam':
@@ -133,6 +135,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'topk':
@@ -147,6 +150,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'nucleus':
@@ -161,6 +165,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         else:

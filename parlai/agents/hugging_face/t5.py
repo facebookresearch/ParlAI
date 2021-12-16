@@ -195,7 +195,7 @@ class T5Agent(TorchGeneratorAgent):
             generation_params.update(overrides)
 
         outputs = self.model.t5.generate(**generation_params)
-        outputs = [(outputs[i], 0) for i in range(outputs.size(0))]
+        outputs = [(outputs[i], 0, None) for i in range(outputs.size(0))]
         return outputs, []
 
 

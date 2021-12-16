@@ -6,8 +6,8 @@
 """
 LIGHT RPA Unlikelihood Agent.
 
-Utilizes a left-to-right RPA Classifier to predict tokens that
-yield incorrect character classifications.
+Utilizes a left-to-right RPA Classifier to predict tokens that yield incorrect character
+classifications.
 """
 from typing import Optional, List, Tuple
 from parlai.core.params import ParlaiParser
@@ -36,8 +36,8 @@ class RpaUlAgent(TransformerGeneratorAgent):
     """
     RPA UL Agent.
 
-    Performs unlikelihood such that tokens which lead to misclassification
-    are penalized.
+    Performs unlikelihood such that tokens which lead to misclassification are
+    penalized.
     """
 
     def __init__(self, opt, shared=None):
@@ -144,9 +144,12 @@ class RpaUlAgent(TransformerGeneratorAgent):
 
         # construct mask marking incorrectly classified characters
         label_mask = torch.zeros_like(pred_toks).type_as(logits)
-        label_mask, wrong_class_cnt, wrong_class_all_cnt, right_class_cnt = self.compute_ul_label_mask(
-            label_mask, generations, batch
-        )
+        (
+            label_mask,
+            wrong_class_cnt,
+            wrong_class_all_cnt,
+            right_class_cnt,
+        ) = self.compute_ul_label_mask(label_mask, generations, batch)
         # Compute unlikelihood loss
         ul_loss = self.compute_ul_loss(pred_toks, label_mask, logits)  # type: ignore
         if label_mask.sum() > 0:
