@@ -1679,6 +1679,13 @@ class ConversationTeacher(DialogTeacher):
         super().__init__(opt, shared)
         self.id = opt['task']
 
+    def _return_episode_examples(self, episode):
+        for idx, example in enumerate(episode):
+            episode_begin = idx == 0
+            if 'episode_done' in example:
+                example.pop('episode_done')
+            yield example, episode_begin
+
     def setup_data(self, path):
         logging.info(f"[loading data from json file into task: {path} ]")
         conversations = Conversations(path)
@@ -1697,15 +1704,15 @@ class ConversationTeacher(DialogTeacher):
             if self.label_turns in ['firstspeaker', 'both']:
                 eps = self._get_ep_from_turns(turns[::2], turns[1::2])
                 if eps:
-                    for idx, example in enumerate(eps):
-                        yield example, idx == 0
+                    for example, example_begins in self._return_episode_examples(eps):
+                        yield example, example_begins
 
             # train on even turns as labels (turns w/ second speaker)
             if self.label_turns in ['secondspeaker', 'both']:
                 eps = self._get_ep_from_turns(turns[1::2], turns[2::2])
                 if eps:
-                    for idx, example in enumerate(eps):
-                        yield example, idx == 0
+                    for example, example_begins in self._return_episode_examples(eps):
+                        yield example, example_begins
 
     def _get_ep_from_turns(self, xturns, yturns):
         eps = []
