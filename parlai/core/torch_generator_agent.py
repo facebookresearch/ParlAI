@@ -1121,7 +1121,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         :return:
             tuple (beam_pred_scores, beams)
 
-            - beam_preds_scores: list of (prediction, score) pairs for each sample in
+            - beam_preds_scores: list of (prediction, score, token_metadata) tuples for each sample in
               Batch
             - beams :list of Beam instances defined in Beam class, can be used for any
               following postprocessing, e.g. dot logging.

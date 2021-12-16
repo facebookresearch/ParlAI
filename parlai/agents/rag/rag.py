@@ -674,7 +674,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             beam_preds_scores, _ = self._regret_generate(
                 batch, beam_size, self.regret_intermediate_maxlen, prefix_tokens
             )
-            preds, _ = zip(*beam_preds_scores)
+            preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, preds)  # type: ignore
             gen_outs = self._rag_generate(new_batch, beam_size, max_ts, prefix_tokens)
         else:
@@ -710,7 +710,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Separate from _generate to handle regret.
         """
@@ -887,7 +889,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 beam_preds_scores, beams = self._regret_generate(
                     batch, self.beam_size, self.regret_intermediate_maxlen
                 )
-            regret_preds, _ = zip(*beam_preds_scores)
+            regret_preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, regret_preds)  # type: ignore
             regret_model_output = self.model(
                 *self._model_input(new_batch), ys=batch.label_vec

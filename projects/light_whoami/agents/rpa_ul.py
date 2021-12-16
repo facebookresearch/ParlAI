@@ -137,7 +137,7 @@ class RpaUlAgent(TransformerGeneratorAgent):
             beam_pred_scores, _ = self._generate(batch, self.beam_size, maxlen)
 
         # forward pass to create graph for beam search case
-        generations = [g[1:] for (g, _) in beam_pred_scores]
+        generations = [g[1:] for (g, _, _) in beam_pred_scores]
         pred_toks = torch.nn.utils.rnn.pad_sequence(generations, batch_first=True)
         model_output = self.model(*self._model_input(batch), ys=pred_toks)
         logits, *_ = model_output
@@ -307,7 +307,7 @@ class RpaUlAgent(TransformerGeneratorAgent):
 
         maxlen = self.label_truncate or 256
         beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
-        preds, scores = zip(*beam_preds_scores)
+        preds, scores, _ = zip(*beam_preds_scores)
 
         cand_choices = None
         text = [self._v2t(p) for p in preds] if preds is not None else None
