@@ -1611,12 +1611,12 @@ class YamlTeacher(DialogTeacher):
                 yield act, next_episode_new
 
 
-class ConversationTeacher(ParlAIDialogTeacher):
+class ConversationTeacher(DialogTeacher):
     """
     This module provides access to data in the Conversations format.
 
-    Subclasses ``ParlAIDialogTeacher`` for functionality and provides an
-    implementation of ``_setup_data()`` which iterates over datasets in the
+    Subclasses ``DialogTeacher`` for functionality and provides an
+    implementation of ``setup_data()`` which iterates over datasets in the
     "Conversations" format. If your data is in the format below, use this class to
     handle file parsing for you.
 
@@ -1649,61 +1649,39 @@ class ConversationTeacher(ParlAIDialogTeacher):
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated,
     forming one episode. However, Y1 => X2 and Y2 => X3 are not created as
     separate examples by default.
-    To change this behavior, you can set opt['label_turns']. The default
-    value is 'secondspeaker' (i.e., the second speaker's utterances are
+    To change this behavior, you can set ``opt['label_turns']`` or ``--label-turns flag``.
+    The default value is 'secondspeaker' (i.e., the second speaker's utterances are
     used as labels), but 'firstspeaker' and 'both' are also options. In the
     case of 'both', two episodes are generated for each conversation.
     """
 
-    def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        if not shared:
-            self.episodes = []
-            self.num_exs = 0
-            self.label_turns = opt.get('label_turns')
-            if opt.get('conversationteacher_datafile') is not None:
-                self._setup_data(opt.get('conversationteacher_datafile'))
-        else:
-            self.episodes = shared['episodes']
-            self.num_exs = sum(len(e) for e in self.episodes)
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        agent = super().add_cmdline_args(parser, partial_opt)
+        agent.add_argument(
+            '--label-turns',
+            type=str,
+            help='which speaker to use as label',
+            choices=['firstspeaker', 'secondspeaker', 'both'],
+            default='secondspeaker',
+        )
+        return parser
 
+    def __init__(self, opt, shared=None):
+        if not opt.get('conversationteacher_datafile'):
+            raise RuntimeError('conversationteacher_datafile not specified')
+
+        opt = copy.deepcopy(opt)
+        opt['datafile'] = opt.get('conversationteacher_datafile')
+        self.label_turns = opt.get('label_turns')
+        super().__init__(opt, shared)
         self.id = opt['task']
 
-        self.reset()
-
-    def share(self):
-        """
-        Share the episodes.
-        """
-        shared = super().share()
-        shared['episodes'] = self.episodes
-        return shared
-
-    def num_examples(self):
-        """
-        Return the number of examples from the data.
-        """
-        return self.num_exs
-
-    def num_episodes(self):
-        """
-        Return the number of episodes from the data.
-        """
-        return len(self.episodes)
-
-    def get(self, episode_idx, entry_idx=None):
-        """
-        Get a specific example from the dataset.
-        """
-        return Message(self.episodes[episode_idx][entry_idx])
-
-    def _setup_data(self, path):
-        logging.info("[loading data from json file into task:" + path + "]")
-        self.episodes = []
-        self.num_exs = 0
-        eps = []
+    def setup_data(self, path):
+        logging.info(f"[loading data from json file into task: {path} ]")
         conversations = Conversations(path)
-        self.num_exs = 0
         for conv in conversations:
             if conv.context:
                 warn_once(
@@ -1719,15 +1697,15 @@ class ConversationTeacher(ParlAIDialogTeacher):
             if self.label_turns in ['firstspeaker', 'both']:
                 eps = self._get_ep_from_turns(turns[::2], turns[1::2])
                 if eps:
-                    self.episodes.append(eps)
-                    self.num_exs += len(eps)
+                    for idx, example in enumerate(eps):
+                        yield example, idx == 0
 
             # train on even turns as labels (turns w/ second speaker)
             if self.label_turns in ['secondspeaker', 'both']:
                 eps = self._get_ep_from_turns(turns[1::2], turns[2::2])
                 if eps:
-                    self.episodes.append(eps)
-                    self.num_exs += len(eps)
+                    for idx, example in enumerate(eps):
+                        yield example, idx == 0
 
     def _get_ep_from_turns(self, xturns, yturns):
         eps = []
@@ -1735,11 +1713,8 @@ class ConversationTeacher(ParlAIDialogTeacher):
             turn = {}
             turn['text'] = xturn.get('text').strip()
             turn['labels'] = [yturn.get('text').strip()]
-            turn['episode_done'] = False
             eps.append(turn)
-        if eps:
-            eps[-1]['episode_done'] = True
-            return eps
+        return eps
 
 
 class AbstractImageTeacher(FixedDialogTeacher):
