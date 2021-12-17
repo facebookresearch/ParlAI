@@ -553,8 +553,10 @@ class RagSequence(RagModelInterface):
                 hypo_tokens = str(hypo.tolist())
                 if hypo_tokens in marginalized_hypos:
                     marginalised_hypo = marginalized_hypos[hypo_tokens]
-                    marginalised_hypo[1] = torch.log(
-                        marginalised_hypo[1].exp() + score.exp()
+                    marginalised_hypo = (
+                        marginalised_hypo[0],
+                        torch.log(marginalised_hypo[1].exp() + score.exp()),
+                        marginalised_hypo[2],
                     )
                 else:
                     marginalized_hypos[hypo_tokens] = (hypo, score, token_metadata)
