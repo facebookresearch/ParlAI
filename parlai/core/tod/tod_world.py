@@ -4,8 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Class for running task-oriented dialogue chats. See long comment on TodWorld for
-functionality descriptions.
+Class for running task-oriented dialogue chats. 
+
+Specifically this class handles:
+1. Setting up and running the different conversational agents to fit the TOD Conversational structure (see `tod_core.py`; also retiterated in TodWorld below)
+2. Doing the above to handle logic for batching
+3. Recording various metrics associated with running the world.
+
+See long comment on TodWorld for description of the conversation format and more functionality descriptions.
 
 Metrics calculated from these simulations are documented in `world_metrics.py` (for
 general usage) and `world_metrics_handlers.py` (for specific metric calculations)
@@ -59,6 +65,7 @@ class TodWorld(World):
     As is standard for ParlAI, these agents may be models or may be standalone classes that extend the "Agent" class. The models for these *are* expected to have their utterances in a standard format.
 
     Note that we expect these to be passed in via the opt manually, since some assumptions of regular ParlAI Worlds (ex. task = agent[0], model = agent[1]) are broken here since there is no "task agent" and one agent can be two "roles" (ex. system agent also making API calls)
+
     """
 
     def __init__(self, opt: Opt, agents=None, shared=None):
