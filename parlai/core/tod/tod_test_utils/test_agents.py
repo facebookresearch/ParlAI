@@ -82,22 +82,29 @@ def get_round_utts(episode_idx, max_rounds, filter_utts=None):
         return []
     utts = [
         [
-            f"USER: user_utt_{episode_idx}_0",
-            "APICALL: ",
-            "APIRESP: ",
-            f"SYSTEM: sys_utt_{episode_idx}_0",
+            f"{tod_core.STANDARD_USER_UTTERANCE}user_utt_{episode_idx}_0",
+            tod_core.STANDARD_CALL,
+            tod_core.STANDARD_RESP,
+            f"{tod_core.STANDARD_SYSTEM_UTTERANCE}sys_utt_{episode_idx}_0",
         ]
     ]
     for i in range(1, max_rounds):
         utts.append(
             [
-                f"USER: user_utt_{episode_idx}_{i}",
-                f"APICALL: api_name = name_{i} ; in = {i}",
-                f"APIRESP: out = {i}",
-                f"SYSTEM: sys_utt_{episode_idx}_{i}",
+                f"{tod_core.STANDARD_USER_UTTERANCE}user_utt_{episode_idx}_{i}",
+                f"{tod_core.STANDARD_CALL}api_name = name_{i} ; in = {i}",
+                f"{tod_core.STANDARD_RESP}out = {i}",
+                f"{tod_core.STANDARD_SYSTEM_UTTERANCE}sys_utt_{episode_idx}_{i}",
             ]
         )
-    utts.append(["USER: [DONE]", "APICALL: ", "APIRESP: ", "SYSTEM: "])
+    utts.append(
+        [
+            f"{tod_core.STANDARD_USER_UTTERANCE}{tod_core.STANDARD_DONE}",
+            tod_core.STANDARD_CALL,
+            tod_core.STANDARD_RESP,
+            tod_core.STANDARD_SYSTEM_UTTERANCE,
+        ]
+    )
     if filter_utts is not None:
         utts = [
             [turn for i, turn in enumerate(round_data) if filter_utts[i]]
