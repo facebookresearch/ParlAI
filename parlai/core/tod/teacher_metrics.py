@@ -29,7 +29,6 @@ class SlotMetrics(Metrics):
     ) -> None:
         super().__init__(shared=shared)
         self.prefixes = prefixes if prefixes else []
-        # jga and optionally Avg(jga,nlg_bleu)
         self.add_with_prefixes("jga", AverageMetric(teacher_slots == predicted_slots))
         if len(teacher_slots) > 0:
             self.add_with_prefixes(
@@ -70,7 +69,6 @@ class NlgMetrics(Metrics):
         labels: Optional[List[str]],
         prefixes: Optional[List[str]] = None,
         shared: Dict[str, Any] = None,
-        avg_jga_nlg_bleu: bool = False,
     ) -> None:
         super().__init__(shared=shared)
         self.prefixes = prefixes if prefixes else []
