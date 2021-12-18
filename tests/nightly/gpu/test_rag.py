@@ -18,6 +18,7 @@ import parlai.utils.testing as testing_utils
 
 try:
     from parlai.agents.rag.dpr import DprQueryEncoder
+    from parlai.agents.rag.retrievers import RetrievedChunkRanker
 except ImportError:
     pass
 
@@ -529,6 +530,28 @@ class TestRagSelfChat(unittest.TestCase):
             with open(seed_utt_file, 'w') as f:
                 f.writelines(["Hi, my name is Bob", "Hi, my name is Alice"])
             SelfChat.main(**opt)
+
+
+class TestWOIChunking(unittest.TestCase):
+    """
+    Test that the woi_chunk_retrieved_docs Chunker works as intended.
+    """
+
+    DOC_TITLE = 'I AM FAKE'
+    DOC_CONTENT = ['hello there old friend ' * 100]
+
+    def test_chunker(self):
+        n_chunks = 1
+        chunk_sz = 500
+        chunker = RetrievedChunkRanker(n_chunks, chunk_sz)
+        chunks = chunker.get_top_chunks(
+            query='', doc_title=self.DOC_TITLE, doc_chunks=self.DOC_CONTENT, doc_url=''
+        )
+        assert len(chunks) == 1 and len(chunks[0]) == 1
+        assert (
+            chunks[0][0]
+            == self.DOC_CONTENT[0][: self.DOC_CONTENT[0].find(' ', chunk_sz)]
+        )
 
 
 if __name__ == '__main__':
