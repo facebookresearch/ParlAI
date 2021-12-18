@@ -47,19 +47,18 @@ class JsonTeacher(ConversationTeacher):
         return parser
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
         opt = copy.deepcopy(opt)
         if not opt.get('jsonfile_datapath'):
             raise RuntimeError('jsonfile_datapath not specified')
         datafile = opt['jsonfile_datapath']
-        if self.opt['jsonfile_datatype_extension']:
-            datafile += "_" + self.opt['datatype'].split(':')[0] + '.jsonl'
-        if shared is None:
-            self._setup_data(datafile)
+        if opt['jsonfile_datatype_extension']:
+            datafile += "_" + opt['datatype'].split(':')[0] + '.jsonl'
+        opt['conversationteacher_datafile'] = datafile
+        super().__init__(opt, shared)
+
         # Truncate datafile to just the immediate enclosing folder name and file name
         dirname, basename = os.path.split(datafile)
         self.id = os.path.join(os.path.split(dirname)[1], basename)
-        self.reset()
 
 
 class DefaultTeacher(JsonTeacher):

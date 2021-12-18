@@ -18,6 +18,7 @@ from parlai.core.metrics import AverageMetric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.distributed import is_distributed, get_rank, num_workers
 
 import parlai.core.tod.tod_core as tod
@@ -36,6 +37,10 @@ from math import ceil
 class TodStructuredDataParser(Agent):
     """
     Base class that specifies intermediate representations for Tod conversations.
+
+    Inherit from this class and implement `generate_episodes()` to implement the intermediate representation for a specific dataset. Use multiple inheritence with classes that implement an `act()` below to use.
+
+    For example, if we have a `MyDataset_DataParser(TodStructuredDataParser)` and wanted to make a teacher to train a model togenerate User Utterances based on a goal prompt, we would do so by defining `class MyDatasetUserSimulatorTeacher(MyDataset_DataParser, TodUserSimulatorTeacher)`.
     """
 
     @classmethod
@@ -121,13 +126,14 @@ class _TodDataDumpAgent(TodStructuredDataParser):
     """
     For agents which dump data from some dataset, without training/other modifications.
 
-    Implements an "epoch done"
-
-    Member variables assumed to be set in init downstream:
-        self.fold
+    Since we have to deal with batching inside of agents (as per ParlAI convention for
+    non-generative agents), this does so while also implementing an "epoch done" to
+    denote elements in a batch that are past the end of the epoch.
     """
 
     def __init__(self, opt: Opt, shared=None):
+        if not hasattr(self, "fold"):
+            self.fold = DatatypeHelper.fold(opt["datatype"])
         super().__init__(opt, shared)
         self.epochDone = False
         self.batchsize = opt.get("batchsize", 1)
@@ -144,7 +150,7 @@ class _TodDataDumpAgent(TodStructuredDataParser):
             self.max_episodes = min(self.max_episodes, (rank + 1) * chunk_size)
 
     def _setup_next_episode(self):
-        self.epochDone = not self.episode_idx < self.max_episodes
+        self.epochDone = self.episode_idx >= self.max_episodes
         self.episode = None
         if not self.epochDone:
             self.episode = self.episodes[self.episode_idx]
@@ -156,14 +162,7 @@ class _TodDataDumpAgent(TodStructuredDataParser):
         return self.epochDone
 
     def episode_done(self) -> bool:
-        """
-        This is not actually "episode_done" so much as "we want to signify to the world
-        that we have gone past the batch".
-
-        This class should not control whether or not the episode is actually done since
-        the TodWorld expects that to come from the User agent.
-        """
-        return self.epochDone
+        raise RuntimeError("Must be defined in downstream agent")
 
     def num_episodes(self) -> int:
         return len(self.episodes)
@@ -175,7 +174,10 @@ class _TodDataDumpAgent(TodStructuredDataParser):
 
 class TodGoalAgent(_TodDataDumpAgent):
     """
-    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+    Use as a mixin with a dataset parser class that includes `generate_episodes()` of
+    TodStructuredDataParser.
+
+    Dumps out all goal calls from an episode.
     """
 
     def act(self):
@@ -189,8 +191,20 @@ class TodGoalAgent(_TodDataDumpAgent):
     def _get_agent_type_suffix(self):
         return "Goal"
 
+    def episode_done(self) -> bool:
+        # done if end of batch; should never end conversation otherwise
+        return self.epoch_done()
+
 
 class TodApiSchemaAgent(_TodDataDumpAgent):
+    """
+    Use as a mixin with a dataset parser class that includes `generate_episodes()` of
+    TodStructuredDataParser.
+
+    Dumps out api schemas associated with an episode, based on what is manually set in
+    the dataset parser.
+    """
+
     def act(self):
         return {
             "text": f"{tod.STANDARD_API_SCHEMAS}{self.episode.api_schemas_utt}",
@@ -201,6 +215,10 @@ class TodApiSchemaAgent(_TodDataDumpAgent):
 
     def _get_agent_type_suffix(self):
         return "ApiSchema"
+
+    def episode_done(self) -> bool:
+        # done if end of batch; should never end conversation otherwise
+        return self.epoch_done()
 
 
 ############# Single Goal + Api Schema Agent
@@ -278,6 +296,8 @@ class TodSingleGoalAgent(_EpisodeToSingleGoalProcessor, TodGoalAgent):
     """
     Use as a mixin with classes that also extend + implement TodStructuredDataParser.
 
+    Takes goals of an episode and splits them into single versions. (That is, if an episode has 3 goal API calls, this makes it such that those 3 goal API calls become the grounding for 3 separate episodes.)
+
     NOTE: If an API schema agent is used, this *must* be used with `TodSingleApiSchemaAgent` since it will be nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
     """
 
@@ -289,6 +309,8 @@ class TodSingleApiSchemaAgent(_EpisodeToSingleGoalProcessor, TodApiSchemaAgent):
     """
     Use as a mixin with classes that also extend + implement TodStructuredDataParser.
 
+    Takes the schema provided for an episode and filters these to match the single Goal provided by TodSingelGoalAgent.
+
     NOTE: Must be used with TodSingleGoalAgent since nonsensicle otherwise. Additionally, this agent will not function properly with UserUtt + SystemUttAndApiCall agent, since episodes will not align.
     """
 
@@ -299,7 +321,11 @@ class TodSingleApiSchemaAgent(_EpisodeToSingleGoalProcessor, TodApiSchemaAgent):
 ###### Agents used for calculating TOD World Metrics based on a dataset. See `tod_world_script` or `parlai/projects/tod_simulator/` for examples.
 class TodUserUttAgent(_TodDataDumpAgent):
     """
-    Agent used to calculate TOD World Metrics on a dataset. Represents the "User" agent.
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+
+    Agent provided as a convenience to run TOD World script code on a dataset without having to write too much code to do so. (Ex. for a quick way to dump data to a `.jsonl` file for generating data for ACUTE or to generate a report file of metrics from TodWorld script.)
+
+    This represents the "User" agent.
 
     This class should only ever be used with the model-model chat world which will stop
     upon seeing the '[DONE]' utterance; may go out of bounds otherwise.
@@ -322,18 +348,24 @@ class TodUserUttAgent(_TodDataDumpAgent):
     def _get_agent_type_suffix(self):
         return "User"
 
+    def episode_done(self) -> bool:
+        return self.epoch_done() or self.round_idx >= len(self.episode.rounds)
+
 
 class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
     """
-    Agent used to calculate TOD World Metrics on a dataset. Represents the "System"
-    agent.
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+
+    Agent provided as a convenience to run TOD World script code on a dataset without having to write too much code to do so. (Ex. for a quick way to dump data to a `.jsonl` file for generating data for ACUTE or to generate a report file of metrics from TodWorld script.)
+
+    This class represents the System and will generate both API Calls and System Utterances.
 
     This class should only ever be used with the model-model chat world which will stop
     upon seeing the '[DONE]' utterance; may go out of bounds otherwise.
     """
 
     def __init__(self, opt: Opt, shared=None):
-        # This class represents two "agents" so need to make sure we don't increment episode number (reset) twice
+        # This class will have `act()` called on it twice per round — once for API call and once for NLG — so need to make sure we don't increment episode number (reset) prematurely; use the `already_reset` flag for this.
         self.already_reset = False
         self.api_call_turn = True
         super().__init__(opt, shared)
@@ -342,10 +374,10 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
         self.already_reset = False
         if tod.STANDARD_API_SCHEMAS in self.observation.get("text", ""):
             return {
-                "text": tod.STANDARD_API_SCHEMAS,
+                "text": tod.STANDARD_API_SCHEMAS,  # Default convention for the first turn
                 "id": self.id,
                 "domain": self.episode.domain,
-                "episode_down": False,
+                "episode_done": False,
             }
 
         if self.api_call_turn:  # comes first, don't iterate round #
@@ -355,6 +387,7 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
                 "domain": self.episode.domain,
                 "episode_done": False,
             }
+            self.api_call_turn = False
         else:
             result = {
                 "text": f"{tod.STANDARD_SYSTEM_UTTERANCE}{self.episode.rounds[self.round_idx].sys_utt}",
@@ -363,8 +396,8 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
                 "episode_done": False,
             }
             self.round_idx += 1
+            self.api_call_turn = True
 
-        self.api_call_turn ^= True
         return result
 
     def reset(self):
@@ -376,11 +409,17 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
     def _get_agent_type_suffix(self):
         return "System"
 
+    def episode_done(self) -> bool:
+        return self.epoch_done() or self.round_idx >= len(self.episode.rounds)
+
 
 class TodApiResponseAgent(_TodDataDumpAgent):
     """
-    Agent used to calculate TOD World Metrics on a dataset. Represents the API
-    Simulator.
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+
+    Agent provided as a convenience to run TOD World script code on a dataset without having to write too much code to do so. (Ex. for a quick way to dump data to a `.jsonl` file for generating data for ACUTE or to generate a report file of metrics from TodWorld script.)
+
+    This class represents the Api Response mechanism.
 
     This class should only ever be used with the model-model chat world which will stop
     upon seeing the '[DONE]' utterance; may go out of bounds otherwise.
@@ -402,6 +441,9 @@ class TodApiResponseAgent(_TodDataDumpAgent):
 
     def _get_agent_type_suffix(self):
         return "ApiResponse"
+
+    def episode_done(self) -> bool:
+        return self.epoch_done() or self.round_idx >= len(self.episode.rounds)
 
 
 ###### Standalone API agent
@@ -551,6 +593,8 @@ class EmptyGoalAgent(Agent):
 ############# Teachers
 class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
     """
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+
     TOD agent teacher which produces both API calls and NLG responses.
 
     First turn is API Schema grounding, which may be a an empty schema.
@@ -574,19 +618,19 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
             "--api-jga-record",
             type=bool,
             default=True,
-            help="Should we save jga information per api schema?",
+            help="Breaks out jga into individual api schemas",
         )
         parser.add_argument(
             "--domain-jga-record",
             type=bool,
             default=False,
-            help="Should we save jga information per domain?",
+            help="Breaks out jga into individual domains",
         )
         parser.add_argument(
             "--domain-nlg-record",
             type=bool,
             default=False,
-            help="Should we save nlg information per domain?",
+            help="Breaks out nlg into individual domains",
         )
         return parser
 
@@ -672,6 +716,8 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
 
 class TodUserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
     """
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+
     Teacher that has `Goal->User Utterance` for its first turn, then `System
     Utterance->User Utterance` for all subsequent turns.
     """
@@ -729,6 +775,8 @@ class TodUserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
 
 class TodStandaloneApiTeacher(TodStructuredDataParser, DialogTeacher):
     """
+    Use as a mixin with classes that also extend + implement TodStructuredDataParser.
+
     Use this to generate a database for `StandaloneApiAgent`.
 
     Set this as the teacher with `StandaloneApiAgent` as the agent. Ex for a MultiWoz

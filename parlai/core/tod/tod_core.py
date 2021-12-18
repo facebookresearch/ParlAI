@@ -179,6 +179,8 @@ class SerializationHelpers:
 
     @classmethod
     def maybe_inner_list_join(cls, values):
+        if type(values) is dict:
+            return str(values)
         if isinstance(values, str) or isinstance(values, int):
             return values
         elif isinstance(values, Iterable):
@@ -191,6 +193,7 @@ class SerializationHelpers:
         """
         Used for API Calls and Responses -> Utterance.
         """
+
         return " ; ".join(
             f"{k} = {SerializationHelpers.maybe_inner_list_join(v)}"
             for k, v in sorted(apidict.items())

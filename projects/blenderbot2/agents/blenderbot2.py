@@ -13,13 +13,14 @@ its memory or access the internet.
 The Memory Decoder examines the context and generates memories to write to
 the long-term memory module.
 """
+import copy
 import torch
 import torch.nn
 import torch.nn.functional as F
 from typing import Union, Dict, List, Tuple, Optional, Any
 
 from parlai.agents.fid.fid import FidAgent, WizIntGoldDocRetrieverFiDAgent
-from parlai.agents.rag.args import DPR_ZOO_MODEL, QUERY_MODEL_TYPES
+from parlai.agents.rag.args import DPR_ZOO_MODEL, QUERY_MODEL_TYPES, RetrieverType
 from parlai.agents.rag.rag import RagAgent
 from parlai.agents.rag.model_types import (
     RagTurn,
@@ -37,8 +38,10 @@ from parlai.tasks.wizard_of_internet.constants import (
     SELECTED_DOCS_TITLES,
     SELECTED_SENTENCES,
     NO_SELECTED_DOCS_TOKEN,
+    SKIP_SEARCH,
 )
 from parlai.utils.torch import padded_3d
+from parlai.utils.typing import TShared
 
 from .modules import (
     BlenderBot2RagModel,
@@ -99,6 +102,7 @@ class BlenderBot2RagSequence(BlenderBot2ModelTypeMixin, RagSequence):
             batch.num_gold_docs,
             batch.memory_decoder_vec,
             batch.num_memory_decoder_vecs,
+            batch.skip_search,
         )
         doc_log_probs = F.log_softmax(doc_scores, dim=1)
         batch.src_text_vec = batch.text_vec
@@ -221,6 +225,12 @@ class BlenderBot2RagAgent(RagAgent):
             type=str,
             default=SELECTED_DOCS_TITLES,
             help='Field for selected docs titles.',
+        )
+        bb2_group.add_argument(
+            '--skip-search-key',
+            type=str,
+            default=SKIP_SEARCH,
+            help='Field for whether to skip search or not.',
         )
         bb2_group.add_argument(
             '--insert-gold-docs',
@@ -700,6 +710,7 @@ class BlenderBot2RagAgent(RagAgent):
         batch.num_gold_docs = None
         batch.memory_decoder_vec = None
         batch.num_memory_decoder_vecs = None
+        batch.skip_search = None
         if any(ex.get('memory_vec') is not None for ex in valid_exs):
             batch = self._set_batch_memory_vec(valid_exs, batch)
         if any(ex.get('query_generator_vec') is not None for ex in valid_exs):
@@ -708,6 +719,8 @@ class BlenderBot2RagAgent(RagAgent):
             batch = self._set_batch_gold_doc_vec(valid_exs, batch)
         if any(ex.get('memory_decoder_vec') is not None for ex in valid_exs):
             batch = self._set_batch_memory_decoder_vec(valid_exs, batch)
+        if any(ex.get(self.opt['skip_search_key']) is not None for ex in valid_exs):
+            batch = self._set_batch_skip_search(valid_exs, batch)
         return batch
 
     def _set_batch_memory_vec(self, valid_exs: List[Message], batch: Batch) -> Batch:
@@ -780,6 +793,11 @@ class BlenderBot2RagAgent(RagAgent):
         batch.num_memory_decoder_vecs = torch.LongTensor(num_memory_dec_toks)
         return batch
 
+    def _set_batch_skip_search(self, valid_exs: List[Message], batch: Batch) -> Batch:
+        skip_search = [ex.get(self.opt['skip_search_key'], False) for ex in valid_exs]
+        batch.skip_search = torch.BoolTensor(skip_search)
+        return batch
+
     def eval_step(self, batch):
         output = super().eval_step(batch)
         if output is None or not hasattr(self.model, 'retriever'):
@@ -807,6 +825,7 @@ class BlenderBot2RagAgent(RagAgent):
         torch.LongTensor,
         torch.LongTensor,
         torch.LongTensor,
+        torch.BoolTensor,
     ]:
         """
         Override RagAgent._model_input to include several more input vectors.
@@ -826,6 +845,7 @@ class BlenderBot2RagAgent(RagAgent):
             batch.num_gold_docs,
             batch.memory_decoder_vec,
             batch.num_memory_decoder_vecs,
+            batch.skip_search,
         )
 
     def compute_loss(
@@ -892,6 +912,13 @@ class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
+
+
+class BlenderBot2SearchQueryFiDAgent(BlenderBot2FidAgent):
+    def __init__(self, opt: Opt, shared: TShared = None):
+        opt = copy.deepcopy(opt)
+        opt['rag_retriever_type'] = RetrieverType.SEARCH_ENGINE.value
+        super().__init__(opt, shared=shared)
 
 
 class BlenderBot2WizIntGoldDocRetrieverFiDAgent(

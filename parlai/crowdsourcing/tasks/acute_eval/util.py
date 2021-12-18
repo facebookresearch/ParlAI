@@ -76,16 +76,11 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
         """
         Return overrides for all subclassed Fast ACUTE test code.
         """
-        # TODO: clean this up when Hydra has support for recursive defaults
+
         return [
-            '+mephisto.blueprint.acute_eval_type=engaging',
             'mephisto.blueprint.block_on_onboarding_fail=False',
-            '+mephisto.blueprint.matchups_per_pair=60',
-            '+mephisto.blueprint.num_self_chats=5',
-            f'+mephisto.blueprint.onboarding_path={self.TASK_DIRECTORY}/task_config/onboarding.json',
-            f'+mephisto.blueprint.root_dir={root_dir}',
-            '+mephisto.blueprint.sufficient_matchups_multiplier=2',
-            '+mephisto.blueprint.task=blended_skill_talk',
+            f'mephisto.blueprint.onboarding_path={self.TASK_DIRECTORY}/task_config/onboarding.json',
+            f'mephisto.blueprint.root_dir={root_dir}',
             'mephisto.task.task_name=acute_eval_test',
         ]
 
