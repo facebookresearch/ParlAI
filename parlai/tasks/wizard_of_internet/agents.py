@@ -19,7 +19,7 @@ from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
 from .build import build
-import parlai.tasks.wizard_of_internet.mutators
+import parlai.tasks.wizard_of_internet.mutators  # noqa: F401
 
 
 def get_dtype(opt):
@@ -183,11 +183,9 @@ class WizardOfInternetBaseTeacher(DialogTeacher):
 
     def _load_data(self, datafile):
         logging.info(f'Loading data from {datafile} ...')
-        dialogs = []
         with jsonlines.open(datafile, 'r') as fin:
             for dialog_json in tqdm(fin):
-                dialogs.append(self._get_episode_examples(dialog_json))
-        return dialogs
+                yield self._get_episode_examples(dialog_json)
 
     def _get_episode_examples(self, dialog_json):
         data = get_single_val_from_dict(dialog_json)
@@ -350,6 +348,9 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
     def __init__(self, opt, shared=None):
         self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
         self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
+        self.add_skip_search_if_gold_prepended = opt.get(
+            'add_skip_search_if_gold_prepended'
+        )
         super().__init__(opt, shared=shared)
         self.id = 'WizInternetWizardTeacher'
 
@@ -362,6 +363,12 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             type='bool',
             default=False,
             help='If true, prepend text with checked sentences',
+        )
+        arg_group.add_argument(
+            '--add-skip-search-if-gold-prepended',
+            type='bool',
+            default=False,
+            help='If true, add skip search field when prepending text with checked sentences',
         )
         return parser
 
@@ -443,10 +450,16 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
                         f' {self.gold_knowledge_delimiter} {text}'
                     ),
                 )
+                if self.add_skip_search_if_gold_prepended:
+                    message[CONST.SKIP_SEARCH] = True
             yield message, episode_started
 
 
 class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared=shared)
+        self.id = 'WizardDialogGoldKnowledgeTeacher'
+
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
@@ -458,6 +471,10 @@ class WizardDialogGoldKnowledgeNoDocsTeacher(WizardDialogGoldKnowledgeTeacher):
     """
     Prepends gold (selected knowledge) to the context, and removes the retrieved docs.
     """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared=shared)
+        self.id = 'WizardDialogGoldKnowledgeNoDocsTeacher'
 
     def additional_message_content(self, parlai_message: Message, action: Dict):
         super().additional_message_content(parlai_message, action)
