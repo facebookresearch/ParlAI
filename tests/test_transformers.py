@@ -534,8 +534,8 @@ class TestTransformerGenerator(TestTransformerBase):
             adam_eps=1e-6,  # just to test another flag simultaneously
         )
 
-        self.assertLessEqual(valid['ppl'], 1.30)
-        self.assertLessEqual(test['ppl'], 1.30)
+        self.assertLessEqual(valid['ppl'], 1.02)
+        self.assertLessEqual(test['ppl'], 1.02)
 
     @testing_utils.retry(ntries=3)
     def test_prelayernorm(self):
