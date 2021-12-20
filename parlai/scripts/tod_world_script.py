@@ -12,11 +12,10 @@ For example, to extract gold ground truth data from the holdout version of Googl
 python -u -m parlai.scripts.tod_world_script --api-schema-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiSchemaAgent --goal-grounding-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainGoalAgent --user-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainUserUttAgent --system-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiCallAndSysUttAgent --api-resp-model parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiResponseAgent -dt valid --num-episodes -1 --episodes-randomization-seed 42 --world-logs gold-valid
 ```
 
-This file handles 
+This file handles
 1. Script param setup, including that used for loading agents which may have their own parameters
-2. Running the world (including handling batching, until num episodes or length of epoch has been met). 
+2. Running the world (including handling batching, until num episodes or length of epoch has been met).
 3. File I/O for both reports (for metrics) and conversation logs + logic for displaying prints
-
 """
 
 import json
