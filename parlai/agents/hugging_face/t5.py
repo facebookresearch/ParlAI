@@ -31,7 +31,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGenerato
 
 def check_hf_version(v: Tuple[int, int]) -> bool:
     """
-    Check that HF version is greater than 4.3
+    Check that HF version is greater than 4.3.
     """
     main, sub = v
     return main > 4 or (main == 4 and sub >= 3)

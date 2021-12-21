@@ -844,8 +844,8 @@ class RagToken(RagModelInterface):
         """
         For RAG Token, we send each decoder input through n_docs times.
 
-        Similarly to reordering the encoder states, we need to reorder according
-        to the documents dimensions.
+        Similarly to reordering the encoder states, we need to reorder according to the
+        documents dimensions.
         """
         assert incremental_state is not None
         incremental_state = fix_incremental_state(
