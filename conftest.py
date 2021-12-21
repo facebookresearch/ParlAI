@@ -67,6 +67,7 @@ MARKER_RULES = [
     ('datatests/', 'data'),
     ('parlai/tasks/', 'teacher'),
     ('tasks/', 'tasks'),
+    ('tod/', 'tod'),
 ]
 
 

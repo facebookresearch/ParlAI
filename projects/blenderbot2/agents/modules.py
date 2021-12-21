@@ -437,6 +437,9 @@ class BlenderBot2RagModel(RagModel):
             input_lengths = input_lengths.repeat_interleave(
                 input_turns_cnt, dim=0
             )  # type: ignore
+
+        # Filtering empty doc_scores added due to dynamic batching (if used)
+        doc_scores = [[s for s in ds if s is not None] for ds in doc_scores if ds]
         top_doc_scores = torch.stack(
             [torch.cat([s_i for s_i in scores_i]) for scores_i in doc_scores]
         )

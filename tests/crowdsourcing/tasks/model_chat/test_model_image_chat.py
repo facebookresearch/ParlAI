@@ -41,7 +41,7 @@ MODEL_IMAGE_CHAT_CONFIG_NAME = "example_image_chat"
 try:
 
     import parlai.crowdsourcing.tasks.model_chat.worlds_image_chat as world_module
-    from parlai.crowdsourcing.tasks.model_chat.run_image_chat import TASK_DIRECTORY
+    from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
         SharedModelImageChatTaskState,
     )
