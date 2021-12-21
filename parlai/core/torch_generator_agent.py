@@ -42,7 +42,6 @@ from parlai.utils.torch import (
     trainable_parameters,
     PipelineHelper,
 )
-import copy
 
 
 class SearchBlocklist(object):
@@ -1086,11 +1085,15 @@ class TorchGeneratorAgent(TorchAgent, ABC):
     def get_all_prefix(self, batch: Batch) -> Optional[torch.LongTensor]:
         opt_prefix_toks = self.get_opt_prefix(batch)
         subclass_prefix_toks = self.get_prefix_tokens(batch)
-        if opt_prefix_toks is None:
+        if opt_prefix_toks is None or len(opt_prefix_toks) == 0:
             return subclass_prefix_toks
-        elif subclass_prefix_toks is None:
+        elif subclass_prefix_toks is None or len(subclass_prefix_toks) == 0:
             return opt_prefix_toks
-        return torch.cat((opt_prefix_toks, subclass_prefix_toks), 0)
+        # both methods use
+        logging.warning(
+            "Both opt and subclass prefixes are set, defaulting to opt-based prefix tokens"
+        )
+        return opt_prefix_toks
 
     def _generate(
         self,
