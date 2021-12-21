@@ -436,16 +436,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             '--beam-delay', type=int, default=30, help='used in delayedbeam search'
         )
         agent.add_argument(
-            '--force-start-list',
+            '--opt-prefix-tokens',
             type=list,
             default=[],
-            help='List of tokens to force at the beginning of generation, should not include the bos token',
-        )
-        agent.add_argument(
-            '--beam-block-list-strings',
-            type=list,
-            default=[],
-            help='List of strings to block out of beam search',
+            help='List of tokens to force at the beginning of generation, works in conjunction with agent-based prefix tokens',
         )
         agent.add_argument(
             '--beam-block-list-filename',
@@ -581,13 +575,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         new_vec = []
         if hasattr(vec, 'cpu'):
             vec = vec.cpu()
-        start = True
         for i in vec:
-            if not start and i == self.END_IDX:
+            if i == self.END_IDX:
                 break
             elif i != self.START_IDX:
                 new_vec.append(i)
-            start = False
         return self.dict.vec2txt(new_vec)
 
     def set_interactive_mode(self, mode, shared=False):
@@ -887,7 +879,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             warn_once("--skip-generation true produces limited metrics")
         else:
             maxlen = self.label_truncate or 256
-            prefix_tokens = self.get_prefix_tokens(batch)
+            prefix_tokens = self.get_all_prefix(batch)
             beam_preds_scores, beams = self._generate(
                 batch, self.beam_size, maxlen, prefix_tokens=prefix_tokens
             )
@@ -923,12 +915,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         method = self.opt.get('inference', 'greedy')
         beam_size = self.opt.get('beam_size', 1)
 
-        # create extra searchable blocklist with opt's current beam_block_list
-        extra_block_list = SearchBlocklist(self.dict)
-        beam_block_list_strings = self.opt.get("beam_block_list_strings", [])
-        for string in beam_block_list_strings:
-            extra_block_list.add(string)
-
         if method == 'greedy':
             return GreedySearch(
                 beam_size,
@@ -940,8 +926,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
-                force_start_list=self.opt.get("force_start_list", []),
-                extra_block_list=extra_block_list,
             )
         elif method == 'beam':
             return BeamSearch(
@@ -954,8 +938,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
-                force_start_list=self.opt.get("force_start_list", []),
-                extra_block_list=extra_block_list,
             )
         elif method == 'delayedbeam':
             return DelayedBeamSearch(
@@ -970,8 +952,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
-                force_start_list=self.opt.get("force_start_list", []),
-                extra_block_list=extra_block_list,
             )
         elif method == 'topk':
             return TopKSampling(
@@ -985,8 +965,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
-                force_start_list=self.opt.get("force_start_list", []),
-                extra_block_list=extra_block_list,
             )
         elif method == 'nucleus':
             return NucleusSampling(
@@ -1000,8 +978,6 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
-                force_start_list=self.opt.get("force_start_list", []),
-                extra_block_list=extra_block_list,
             )
         else:
             raise ValueError(f"Can't use inference method {method}")
@@ -1089,6 +1065,32 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Returned tensor should be of dimension bsz x len(prefix)
         """
         return None
+
+    def get_opt_prefix(self, batch: Batch) -> Optional[torch.LongTensor]:
+        """
+        Set prefix tokens to seed decoding at generation time.
+
+        By default, we do not utilize prefix tokens, but this is
+        left overridable by child classes.
+
+        Returned tensor should be of dimension bsz x len(prefix)
+        """
+        prefix_toks = self.opt.get("opt_prefix_tokens", [])
+        if len(prefix_toks) == 0:
+            return None
+        bsz = batch.batchsize
+        dev = batch.text_vec.device
+        prefix_toks_batch = [prefix_toks for _ in range(bsz)]
+        return torch.LongTensor(prefix_toks_batch).to(dev)
+
+    def get_all_prefix(self, batch: Batch) -> Optional[torch.LongTensor]:
+        opt_prefix_toks = self.get_opt_prefix(batch)
+        subclass_prefix_toks = self.get_prefix_tokens(batch)
+        if opt_prefix_toks is None:
+            return subclass_prefix_toks
+        elif subclass_prefix_toks is None:
+            return opt_prefix_toks
+        return torch.cat((opt_prefix_toks, subclass_prefix_toks), 0)
 
     def _generate(
         self,
@@ -1262,8 +1264,6 @@ class TreeSearch(object):
         min_length=3,
         device='cpu',
         length_penalty=0.65,
-        force_start_list=[],
-        extra_block_list=None,
     ):
         """
         Instantiate Beam object.
@@ -1291,8 +1291,6 @@ class TreeSearch(object):
         self.min_length = min_length
         self.eos = eos_token
         self.bos = bos_token
-        self.force_start_list = force_start_list
-        self.extra_block_list = extra_block_list
         self.dict = dict
         self.pad = padding_token
         self.context = None
@@ -1411,23 +1409,15 @@ class TreeSearch(object):
         return logprobs
 
     def _block_block_list(self, logprobs: torch.Tensor) -> torch.Tensor:
-        if self.block_list is not None:
-            for beam_id, hyp in enumerate(self.partial_hyps):
-                for ngram_size, bad_ngrams in self.block_list.items():
-                    prefix = hyp[-(ngram_size - 1) :]
-                    for ngram in bad_ngrams:
-                        if (ngram_size == 1) or prefix == list(ngram[:-1]):
-                            logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+        if self.block_list is None:
+            return logprobs
 
-        # handle extra "real-time" block list
-        if self.extra_block_list is not None:
-            for beam_id, hyp in enumerate(self.partial_hyps):
-                for ngram_size, bad_ngrams in self.extra_block_list.items():
-                    prefix = hyp[-(ngram_size - 1) :]
-                    for ngram in bad_ngrams:
-                        if (ngram_size == 1) or prefix == list(ngram[:-1]):
-                            logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
-
+        for beam_id, hyp in enumerate(self.partial_hyps):
+            for ngram_size, bad_ngrams in self.block_list.items():
+                prefix = hyp[-(ngram_size - 1) :]
+                for ngram in bad_ngrams:
+                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
+                        logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
     def advance(self, logprobs):
@@ -1435,15 +1425,6 @@ class TreeSearch(object):
         Advance the beam one step.
         """
         current_length = len(self.all_scores) - 1
-
-        # force tokens we want at start of beam
-        if current_length < len(self.force_start_list):
-            # if we're still within the bounds of the tokens we would like to force at the beginning
-            for hyp_id in range(logprobs.size(0)):
-                # iterate over and force probability of token (for each beam) to infinity (-(-inf))
-                logprobs[hyp_id][self.force_start_list[current_length]] = -neginf(
-                    logprobs.dtype
-                )
 
         if current_length < self.min_length:
             # penalize all eos probs to make it decode longer
