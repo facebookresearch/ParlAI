@@ -14,7 +14,7 @@ function Checkboxes({
   askReason,
   annotations,
   onUpdateAnnotations,
-  enabled = true,
+  enabled=true,
 }) {
   var reasonComponent = (
     <div>
@@ -28,13 +28,14 @@ function Checkboxes({
   if (!askReason) {
     reasonComponent = '';
   }
-  let input_type = annotationBuckets.type !== undefined ? annotationBuckets.type : "checkbox";
+  // TODO: add support for radio input type
+  let input_type = "checkbox";
   const showLineBreaks = true;
   // TODO: pass showLineBreaks in from a flag specified in the annotation buckets JSON, after Megan has refactored that JSON to allow for metadata
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
-        Object.keys(annotationBuckets).map((c, checkboxIdx) => (
+        Object.keys(annotationBuckets.config).map((c, checkboxIdx) => (
           <>
             <span key={'span_' + c + '_' + turnIdx}>
               <input
@@ -44,16 +45,16 @@ function Checkboxes({
                 onChange={(evt) => {
                   let newVal = evt.target.checked;
                   let oldAnnotations = Object.assign({}, annotations);
-                  oldAnnotations[annotationBuckets[c].value] = newVal;
+                  oldAnnotations[c] = newVal;
                   onUpdateAnnotations(oldAnnotations);
                 }}
                 disabled={!enabled}
               />
               <span style={{ marginRight: '15px' }}>
-                {annotationBuckets[c].name}
+                {annotationBuckets.config[c].name}
               </span>
             </span>
-            {(showLineBreaks && checkboxIdx < annotationBuckets.length - 1) ? <br></br> : ''}
+            {(showLineBreaks && checkboxIdx < annotationBuckets.config.length - 1) ? <br></br> : ''}
           </>
         ))
       }
