@@ -101,7 +101,6 @@ commands:
             python -m pip install --progress-bar off torch==1.7.1+cu101 torchvision==0.8.2+cu101 -f https://download.pytorch.org/whl/torch_stable.html
             python -m pip install --progress-bar off 'fairscale~=0.3.0'
             python -m pip install --progress-bar off 'torchtext==0.7.0'
-            python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
@@ -169,7 +168,6 @@ commands:
       - run:
             name: Install Mephisto
             command: |
-              pip uninstall dataclasses -y
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
               cd Mephisto; git checkout v0.4.1 -b stable
