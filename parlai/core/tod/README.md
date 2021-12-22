@@ -12,6 +12,8 @@ As a convention, files referenced externally to this directory are prefixed with
 
 tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement `setup_episodes()` that converts the dataset into a list of episodes (`List[TodStructuredEpisode]`). Use multiple inheritence to generate teachers for training models. See files like `parlai/tasks/multiwoz_v22/agents.py` for an example. 
 
+See `tod_agents.py` for the classes.  
+
 ## Overview of usage
 
 For a given dataset, extend `TodStructuredDataParser` and implement `setup_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
@@ -79,7 +81,4 @@ Description of usage of the simulation world is primarily stored in the script r
 The world itself is stored in `tod_world.py`. The world follows the same intermediate dataformats for episodes as described in `tod_core.py` and does the correct calling of different agents to support this. It is generally recommended that this file not be touched. 
 
 A general class for collecting metrics out of `TODWorld` is stored within `world_metrics.py` with individual 'metric handlers' responsible for calculating a given metric stored in `world_metric_handlers.py`. 
-
-
-
 
