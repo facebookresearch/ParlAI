@@ -34,16 +34,19 @@ ACTION_ALL = 'All Actions'
 TOTAL_CONVERSATION_INDEX = 'total_index'
 SEARCH_QUERY = 'search_query'
 RETRIEVED_DOCS = '__retrieved-docs__'
+RETRIEVED_SENTENCES = '__retrieved-doc-sentences__'
 RETRIEVED_DOCS_TITLES = '__retrieved-docs-titles__'
 RETRIEVED_DOCS_URLS = '__retrieved-docs-urls__'
 SELECTED_DOCS = '__selected-docs__'
 SELECTED_DOCS_TITLES = '__select-docs-titles__'
+SELECTED_DOCS_URLS = '__selected-docs-urls__'
 SELECTED_SENTENCES = '__selected-sentences__'
 SEARCH_RESULTS = 'search_results'
 PARTNER_PREVIOUS_MESSAGE = 'partner_previous_msg'
 IS_SEARCH_QUERY = 'is_search_query'
 IS_LAST_SEARCH_QUERY = 'is_last_search_query'
 LABELS = 'labels'
+SKIP_SEARCH = 'skip_search'
 
 # Message values
 NO_SEARCH_QUERY_USED = '__no_search_used__'
@@ -65,6 +68,8 @@ SKIP_ON_EMPTY_TEXT_DEFAULT = True
 ONLY_LAST_QUERY_DEFAULT = False
 
 # Tokens used in the teacher's action text filed
+LABEL_TOKEN = '__label__'
+END_LABEL_TOKEN = '__endlabel__'
 KNOWLEDGE_TOKEN = '__knowledge__'
 END_KNOWLEDGE_TOKEN = '__endknowledge__'
 AVAILABLE_KNOWLEDGE_TOKEN = '__available-knowledge__'

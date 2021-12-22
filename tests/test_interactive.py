@@ -85,7 +85,7 @@ class TestInteractiveLogging(unittest.TestCase):
 
 
 class TestInteractiveWeb(unittest.TestCase):
-    def test_iweb(self):
+    def test_iweb(self, task: str = None):
         import threading
         import random
         import requests
@@ -93,10 +93,11 @@ class TestInteractiveWeb(unittest.TestCase):
         import parlai.scripts.interactive_web as iweb
 
         port = random.randint(30000, 40000)
+        kwargs = {'model': 'repeat_query', 'port': port}
+        if task:
+            kwargs['task'] = task
         thread = threading.Thread(
-            target=iweb.InteractiveWeb.main,
-            kwargs={'model': 'repeat_query', 'port': port},
-            daemon=True,
+            target=iweb.InteractiveWeb.main, kwargs=kwargs, daemon=True
         )
         thread.start()
         iweb.wait()
@@ -122,6 +123,9 @@ class TestInteractiveWeb(unittest.TestCase):
         assert r.status_code == 500
 
         iweb.shutdown()
+
+    def test_iweb_task(self):
+        self.test_iweb(task='convai2')
 
 
 class TestProfileInteractive(unittest.TestCase):

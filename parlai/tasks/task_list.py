@@ -1452,4 +1452,29 @@ task_list = [
             "or the set of valid actions from the text descriptions of the world."
         ),
     },
+    {
+        "id": "CaSiNo",
+        "display_name": "CaSiNo (CampSite Negotiation Dialogues)",
+        "task": "casino",
+        "tags": ["Negotiation"],
+        "description": (
+            "A dataset of 1030 negotiation dialogues. Two participants take the role of campsite neighbors and negotiate for Food, Water, and Firewood packages, based on their individual preferences and requirements."
+        ),
+        "links": {
+            "paper": "https://aclanthology.org/2021.naacl-main.254.pdf",
+            "website": "https://github.com/kushalchawla/CaSiNo",
+        },
+    },
+    {
+        "id": "SaFeRDialogues",
+        "display_name": "SaFeRDialogues",
+        "task": "saferdialogues",
+        "tags": [],
+        "description": (
+            "A dataset of 8k dialogues demonstrating safety failures, feedback "
+            "signaling them, and a response acknowledging the feedback. "
+            "Dataset has been released under the CC BY-NC license."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2110.07518"},
+    },
 ]

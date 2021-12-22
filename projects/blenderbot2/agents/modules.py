@@ -24,6 +24,7 @@ from parlai.agents.rag.retrievers import (
     RagRetrieverTokenizer,
     SearchQuerySearchEngineRetriever,
     SearchQueryFAISSIndexRetriever,
+    ObservationEchoRetriever,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -64,6 +65,8 @@ def retriever_factory(
         return BB2SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.SEARCH_TERM_FAISS:
         return BB2SearchQueryFaissIndexRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.OBSERVATION_ECHO_RETRIEVER:
+        return BB2ObservationEchoRetriever(opt, dictionary, shared=shared)
     else:
         return rag_retriever_factory(opt, dictionary, shared=shared)
 
@@ -174,6 +177,7 @@ class BlenderBot2RagModel(RagModel):
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[
@@ -211,6 +215,8 @@ class BlenderBot2RagModel(RagModel):
             3D [bsz, num_lines, seqlen] text to convert to memories with memory decoder
         :param num_memory_decoder_vecs:
             1D [bsz] # of memory decoder vectors for each batch item
+        :param skip_search:
+            1D [bsz] whether to skip search
         """
         # Retrieve, get expanded input
         if all([tensor is not None for tensor in [input_lengths, query_vec]]):
@@ -227,6 +233,7 @@ class BlenderBot2RagModel(RagModel):
                 num_gold_docs,
                 memory_decoder_vec,
                 num_memory_decoder_vecs,
+                skip_search,
             )
         else:
             expanded_input = input
@@ -292,6 +299,14 @@ class BlenderBot2RagModel(RagModel):
             assert self.knowledge_access_method is KnowledgeAccessMethod.CLASSIFY
             return type_indices
 
+    def flush_previous_retriever_search_results(self):
+        if not hasattr(self, 'retriever'):
+            return
+        if hasattr(self.retriever, 'top_docs'):
+            delattr(self.retriever, 'top_docs')
+        if hasattr(self.retriever, 'search_queries'):
+            delattr(self.retriever, 'search_queries')
+
     def retrieve_and_concat(
         self,
         input: torch.LongTensor,
@@ -306,11 +321,13 @@ class BlenderBot2RagModel(RagModel):
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
     ) -> Tuple[torch.LongTensor, List[List[Document]], torch.Tensor]:
         """
         Override RagModel.retrieve_and_concat to perform different retrieval, depending
         on the RetrieverType.
         """
+        self.flush_previous_retriever_search_results()
         start = time.time()
         logging.debug(f'Begin encoder: {time.time() - start:.2f}')
         if input_turns_cnt is not None:
@@ -348,7 +365,7 @@ class BlenderBot2RagModel(RagModel):
         if self.should_generate_query:
             assert self.has_query_generator()
             retrieval_type, search_queries = self.query_generator.classify_retrieval(
-                query_generator_vec, num_memories, generated_memories
+                query_generator_vec, num_memories, generated_memories, skip_search
             )
             logging.debug(f'Classify Retrieval: {time.time() - start:.2f}')
         else:
@@ -420,6 +437,9 @@ class BlenderBot2RagModel(RagModel):
             input_lengths = input_lengths.repeat_interleave(
                 input_turns_cnt, dim=0
             )  # type: ignore
+
+        # Filtering empty doc_scores added due to dynamic batching (if used)
+        doc_scores = [[s for s in ds if s is not None] for ds in doc_scores if ds]
         top_doc_scores = torch.stack(
             [torch.cat([s_i for s_i in scores_i]) for scores_i in doc_scores]
         )
@@ -566,9 +586,11 @@ class BlenderBot2RagModel(RagModel):
         indices = memory_indices.tolist()
 
         if memory_vec is not None:
+            # Only look in memory_vec for batch elements with memories
+            memory_ids = [m for m in indices if num_memories[m] > 0]
             memory_dict = {
                 batch_id: memory_vec[batch_id, : num_memories[mem_id]]
-                for batch_id, mem_id in enumerate(indices)
+                for batch_id, mem_id in enumerate(memory_ids)
             }
         if memory_decoder_vec is not None:
             for batch_id in indices:
@@ -830,6 +852,7 @@ class BlenderBot2FidModelMixin:
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[
@@ -852,6 +875,7 @@ class BlenderBot2FidModelMixin:
             num_gold_docs,
             memory_decoder_vec,
             num_memory_decoder_vecs,
+            skip_search,
             positions,
             segments,
         )  # type: ignore
@@ -905,4 +929,10 @@ class BB2SearchQueryFaissIndexRetriever(
 ):
     """
     Override Search Engine Retriever to accommodate SQ Generator from BB2 Setup.
+    """
+
+
+class BB2ObservationEchoRetriever(BB2SearchRetrieverMixin, ObservationEchoRetriever):
+    """
+    A retriever that reads retrieved docs as part of the observed example message.
     """

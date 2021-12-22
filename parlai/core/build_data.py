@@ -88,7 +88,7 @@ class DownloadableFile:
                     f"Checksum for {self.file_name} from \n{self.url}\n"
                     f"does not match the expected checksum:\n"
                     f"{sha256_hash.hexdigest()} (received) != {self.hashcode} (expected)\n"
-                    f"\nPlease try again. You may need to manually delete {self.filename}."
+                    f"\nPlease try again. You may need to manually delete {self.file_name}."
                 )
             else:
                 logging.debug("Checksum Successful")

@@ -29,8 +29,16 @@ from parlai.core.torch_agent import Batch, TorchAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 
 
+def check_hf_version(v: Tuple[int, int]) -> bool:
+    """
+    Check that HF version is greater than 4.3
+    """
+    main, sub = v
+    return main > 4 or (main == 4 and sub >= 3)
+
+
 def build_t5(opt: Opt) -> T5ForConditionalGeneration:
-    if not HF_VERSION >= 4.3:
+    if not check_hf_version(HF_VERSION):
         raise RuntimeError('Must use transformers package >= 4.3 to use t5')
     return T5ForConditionalGeneration.from_pretrained(
         opt['t5_model_arch'], dropout_rate=opt['t5_dropout']

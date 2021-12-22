@@ -159,7 +159,7 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
         gotten = super().get(episode_idx, entry_idx=entry_idx)
         if entry_idx == 0:
             modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
-            gotten['text'] = modified_text
+            gotten.force_set('text', modified_text)
         return gotten
 
 

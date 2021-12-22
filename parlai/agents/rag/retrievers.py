@@ -34,6 +34,8 @@ from parlai.core.loader import register_agent
 from parlai.core.opt import Opt
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
+from parlai.tasks.wizard_of_internet.mutators import chunk_docs_in_message
+import parlai.tasks.wizard_of_internet.constants as CONST
 import parlai.utils.logging as logging
 from parlai.utils.torch import padded_tensor
 from parlai.utils.typing import TShared
@@ -109,9 +111,9 @@ def load_passage_reader(
                     assert line[0] == 'id'
                 if line[0] != 'id':
                     if return_dict:
-                        passages[row[0]] = (row[1], row[2])  # type: ignore
+                        passages[line[0]] = (line[1], line[2])  # type: ignore
                     else:
-                        passages.append((row[0], row[1], row[2]))  # type: ignore
+                        passages.append((line[0], line[1], line[2]))  # type: ignore
     return passages
 
 
@@ -369,7 +371,13 @@ class RagRetriever(torch.nn.Module, ABC):
         super().__init__()
         self.retriever_type = RetrieverType(opt['rag_retriever_type'])
         if not (
-            (self.retriever_type == RetrieverType.SEARCH_ENGINE)
+            (
+                self.retriever_type
+                in (
+                    RetrieverType.SEARCH_ENGINE,
+                    RetrieverType.OBSERVATION_ECHO_RETRIEVER,
+                )
+            )
             or (opt.get('retriever_debug_index') in [None, 'none'])
         ):
             if opt.get('retriever_debug_index') == 'exact':
@@ -1041,8 +1049,12 @@ class SearchQueryRetriever(RagRetriever):
         chunk_ranker_type = opt['doc_chunks_ranker']
         if chunk_ranker_type == 'tfidf':
             self.chunk_reranker = TfidfChunkRanker(n_doc_chunks)
-        else:
+        elif chunk_ranker_type == 'head':
             self.chunk_reranker = HeadChunkRanker(n_doc_chunks)
+        else:
+            self.chunk_reranker = RetrievedChunkRanker(
+                n_doc_chunks, opt['woi_doc_chunk_size']
+            )
 
         if not shared:
             self.query_generator = self.init_search_query_generator(opt)
@@ -1096,19 +1108,19 @@ class SearchQueryRetriever(RagRetriever):
             opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
         )
 
-    def text2tokens(self, txt: str):
+    def text2tokens(self, txt: str) -> Union[List[str], List[int]]:
         if self.doc_chunk_split_mode == 'word':
             return txt.split(' ')
         else:
             return self.dict.txt2vec(txt)
 
-    def tokens2text(self, tokens: List[int]):
+    def tokens2text(self, tokens: Union[List[int], List[str]]) -> str:
         if self.doc_chunk_split_mode == 'word':
             return ' '.join(tokens)
         else:
             return self.dict.vec2txt(tokens)
 
-    def pick_chunk(self, query, doc_text):
+    def pick_chunk(self, query: str, doc_title: str, doc_text: str, doc_url: str):
         """
         Splits the document and returns the selected chunks.
 
@@ -1119,11 +1131,14 @@ class SearchQueryRetriever(RagRetriever):
             # When there is no search query for the context
             return [("", 0)]
         tokens = self.text2tokens(doc_text)
-        doc_chunks = [
-            self.tokens2text(tokens[i : i + self.len_chunk])
-            for i in range(0, len(tokens), self.len_chunk)
-        ]
-        return self.chunk_reranker.get_top_chunks(query, doc_chunks)
+        if self.opt['doc_chunks_ranker'] != 'woi_chunk_retrieved_docs':
+            doc_chunks = [
+                self.tokens2text(tokens[i : i + self.len_chunk])
+                for i in range(0, len(tokens), self.len_chunk)
+            ]
+        else:
+            doc_chunks = self.tokens2text(tokens)
+        return self.chunk_reranker.get_top_chunks(query, doc_title, doc_chunks, doc_url)
 
 
 class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
@@ -1197,6 +1212,7 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
         # step 3
         top_docs = []
         top_doc_scores = []
+        max_n_docs: int = self.n_docs
         for sq, search_results in zip(search_queries, search_results_batch):
             if not search_results:
                 search_results = self._empty_docs(self.n_docs)
@@ -1218,7 +1234,9 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
                 full_text = (
                     dcontent if isinstance(dcontent, str) else '\n'.join(doc['content'])
                 )
-                doc_chunks = [dc[0] for dc in self.pick_chunk(sq, full_text)]
+                doc_chunks = [
+                    dc[0] for dc in self.pick_chunk(sq, title, full_text, url)
+                ]
                 for splt_id, splt_content in enumerate(doc_chunks):
                     docs_i.append(
                         Document(
@@ -1226,8 +1244,15 @@ class SearchQuerySearchEngineRetriever(SearchQueryRetriever):
                         )
                     )
                     scors_i.append(self.rank_score(i))
+            max_n_docs = max(max_n_docs, len(docs_i))
             top_docs.append(docs_i)
             top_doc_scores.append(scors_i)
+        # Pad with empty docs
+        for i in range(len(top_docs)):
+            n_empty = max_n_docs - len(top_docs[i])
+            if n_empty:
+                top_docs[i] = top_docs[i] + [BLANK_DOC] * n_empty
+                top_doc_scores[i] = top_doc_scores[i] + [0] * n_empty
         self.top_docs = top_docs
         return top_docs, torch.Tensor(top_doc_scores).to(query.device)
 
@@ -1267,6 +1292,53 @@ class SearchQueryFAISSIndexRetriever(SearchQueryRetriever, DPRRetriever):
         return top_docs, top_doc_scores
 
 
+class ObservationEchoRetriever(RagRetriever):
+    """
+    This retriever returns (echos) documents that are already passed to it to return.
+
+    Use this only with GoldFiD agents. It relies on the retrieved docs being included in
+    the observed example of the agent.
+    """
+
+    def __init__(self, opt: Opt, dictionary: DictionaryAgent, shared: TShared = None):
+        self._delimiter = '\n'
+        self.n_docs = opt['n_docs']
+        self._query_ids = dict()
+        self._saved_docs = dict()
+        super().__init__(opt, dictionary, shared=shared)
+
+    def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
+        new_idx = len(self._query_ids)
+        self._query_ids[query] = new_idx
+        self._saved_docs[new_idx] = retrieved_docs or [
+            BLANK_DOC for _ in range(self.n_docs)
+        ]
+
+    def tokenize_query(self, query: str) -> List[int]:
+        return [self._query_ids[query]]
+
+    def get_delimiter(self) -> str:
+        return self._delimiter
+
+    def retrieve_and_score(
+        self, query: torch.LongTensor
+    ) -> Tuple[List[List[Document]], torch.Tensor]:
+        batch_size = query.size(0)
+
+        retrieved_docs = []
+        for endoded_query in query.tolist():
+            docs_retrieve_idx = endoded_query[0]
+            retrieved_docs.append(self._saved_docs[docs_retrieve_idx])
+
+        # Some arbitrary scoring of docs
+        max_num_docs = max([len(rtds) for rtds in retrieved_docs])
+        retrieved_doc_scores = torch.Tensor([1 / (1 + i) for i in range(max_num_docs)])
+        retrieved_doc_scores = retrieved_doc_scores.repeat(batch_size, 1).to(
+            query.device
+        )
+        return retrieved_docs, retrieved_doc_scores
+
+
 class DocumentChunkRanker:
     """
     Base class for controlling splitting long documents and selecting relevant chunks.
@@ -1276,7 +1348,13 @@ class DocumentChunkRanker:
         self.n_ret_chunks = n_retrieved_chunks
 
     @abstractmethod
-    def get_top_chunks(self, query, doc_chunks):
+    def get_top_chunks(
+        self,
+        query: str,
+        doc_title: str,
+        doc_chunks: Union[List[str], str],
+        doc_url: str,
+    ):
         """
         Ranks documents (chunk) based on their relevance to `query`
         """
@@ -1287,11 +1365,51 @@ class HeadChunkRanker(DocumentChunkRanker):
     Returns the head chunks only.
     """
 
-    def get_top_chunks(self, query, doc_chunks):
+    def get_top_chunks(
+        self,
+        query: str,
+        doc_title: str,
+        doc_chunks: Union[List[str], str],
+        doc_url: str,
+    ):
         """
         Return chunks in doc-present order.
         """
         return [(c,) for c in doc_chunks[: self.n_ret_chunks]]
+
+
+class RetrievedChunkRanker(DocumentChunkRanker):
+    """
+    Utilize retrieved doc chunk mutator.
+    """
+
+    def __init__(self, n_retrieved_chunks, chunk_size: int = 500):
+        super().__init__(n_retrieved_chunks)
+        self.chunk_size = chunk_size
+
+    def get_top_chunks(
+        self,
+        query: str,
+        doc_title: str,
+        doc_chunks: Union[List[str], str],
+        doc_url: str,
+    ):
+        """
+        Return chunks according to the woi_chunk_retrieved_docs_mutator
+        """
+        assert isinstance(doc_chunks, list)
+        chunks = chunk_docs_in_message(
+            Message(
+                {
+                    CONST.RETRIEVED_DOCS: [''.join(doc_chunks)],
+                    CONST.RETRIEVED_DOCS_TITLES: [doc_title],
+                    CONST.RETRIEVED_DOCS_URLS: [doc_url],
+                    CONST.SELECTED_SENTENCES: [CONST.NO_SELECTED_SENTENCES_TOKEN],
+                }
+            ),
+            self.chunk_size,
+        )[CONST.RETRIEVED_DOCS]
+        return [(c,) for c in chunks[: self.n_ret_chunks]]
 
 
 class TfidfChunkRanker(DocumentChunkRanker):
@@ -1303,7 +1421,14 @@ class TfidfChunkRanker(DocumentChunkRanker):
         super().__init__(n_retrieved_chunks)
         self._vectorizer = TfidfVectorizer()
 
-    def get_top_chunks(self, query, doc_chunks):
+    def get_top_chunks(
+        self,
+        query: str,
+        doc_title: str,
+        doc_chunks: Union[List[str], str],
+        doc_url: str,
+    ):
+        assert isinstance(doc_chunks, list)
         vectorized_corpus = self._vectorizer.fit_transform(doc_chunks + [query])
         docs_vec = vectorized_corpus[:-1, :]
         q_vec = vectorized_corpus[-1, :]
@@ -1344,3 +1469,5 @@ def retriever_factory(
         return SearchQuerySearchEngineRetriever(opt, dictionary, shared=shared)
     elif retriever is RetrieverType.SEARCH_TERM_FAISS:
         return SearchQueryFAISSIndexRetriever(opt, dictionary, shared=shared)
+    elif retriever is RetrieverType.OBSERVATION_ECHO_RETRIEVER:
+        return ObservationEchoRetriever(opt, dictionary, shared=shared)

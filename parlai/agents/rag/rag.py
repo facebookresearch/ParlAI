@@ -48,6 +48,7 @@ from parlai.agents.rag.model_types import (
 )
 from parlai.agents.rag.modules import RagModel, T5RagModel
 from parlai.agents.rag.retrievers import Document
+from parlai.utils.fsdp import is_fsdp
 
 
 class BaseGenerationAgentMixin(ABC):
@@ -136,6 +137,13 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     @property
     def generation_model(self) -> str:
         return self._generation_model
+
+    @property
+    def model_api(self) -> RagModel:
+        if hasattr(self.model, 'module') and not is_fsdp(self.model):
+            return self.model.module
+        else:
+            return self.model
 
     @generation_model.setter
     def generation_model(self, model: str):
@@ -280,9 +288,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         observation = self._generation_agent.observe(self, observation)
         if observation.is_padding():
             return observation
-        if 'query_vec' not in observation:
+        if 'query_vec' not in observation and self._query_key in observation:
             self._set_query_vec(observation)
-        if 'input_turn_cnt_vec' not in observation:
+        if 'input_turn_cnt_vec' not in observation and self._query_key in observation:
             self._set_input_turn_cnt_vec(observation)
         return observation
 
