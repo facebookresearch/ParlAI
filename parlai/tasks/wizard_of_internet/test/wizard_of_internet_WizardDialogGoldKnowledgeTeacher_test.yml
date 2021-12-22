@@ -1057,7 +1057,7 @@ acts:
     episode_done: false
     eval_labels:
     - Have you seen any good movies lately?
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: upcomming movies
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n I live in New York,\
       \ New York.\nI like going to the moives.\nI love to get the overpriced snacks."
@@ -4617,7 +4617,7 @@ acts:
     - All four movies in the Toy Story series are great. Tom Hanks, Tim Allen, and
       Don Rickles are all truly great actors and the creativity of the Pixar Animation
       Studios team is really top notch.
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: movie toy story
     text: "__knowledge__ Tom Hanks, Tim Allen, Don Rickles | See full cast & crew\
       \ »\nPixar Animation Studios - 1200 Park Avenue, Emeryville, California, USA\
@@ -8678,7 +8678,7 @@ acts:
       work together on multiple projects. Further, Pixar, as a company, cares more
       about creating high quality movies than they do making the most money possible.
       This is their company's culture and the reason for their continuing success.
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: pixar animation studios technology
     text: "__knowledge__ Pixar makes money by unifying art and technology to produce\
       \ original animated films that motivate audiences to buy movie tickets, DVDs,\
@@ -9831,7 +9831,7 @@ acts:
       files on their server). But, the project was saved because a woman, who was
       on maternit6y leave, had saved the movie onto her laptop.  I am sure thy have
       fixed their back up systems after this.
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: laptop lost files pixar
     text: "__knowledge__ Fun Facts › TV and Film Facts › Toy Story 2 Was Accidentally\
       \ Deleted During Development and Almost Lost← NextRandomPrevious →\nDuring development\
@@ -11196,7 +11196,7 @@ acts:
     - Pixar has produced 20 movies since its founding and all of the big names have
       worked with them. Julia Louis-Dreyfus, Tom Holland, Jon Batiste, Phylicia Rashad,
       Questlove, Tina Fey.  Have you seen their newest movie Onward with Chris Pratt?
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: pixar onward
     text: "__knowledge__ ONWARD introduces young (and young-at-heart) viewers to a\
       \ wonderful land where mythical creatures like elves and unicorns aren t merely\

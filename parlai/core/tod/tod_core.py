@@ -172,6 +172,10 @@ class SerializationHelpers:
 
     @classmethod
     def inner_list_split(cls, s):
+        if len(s) < 1:
+            return s
+        if s[0] == "{":  # for case when we're json serializing a dict
+            return s
         split = s.split(", ")
         if len(split) == 1:
             return split[0]
@@ -179,6 +183,8 @@ class SerializationHelpers:
 
     @classmethod
     def maybe_inner_list_join(cls, values):
+        if type(values) is dict:
+            return str(values)
         if isinstance(values, str) or isinstance(values, int):
             return values
         elif isinstance(values, Iterable):
@@ -191,6 +197,7 @@ class SerializationHelpers:
         """
         Used for API Calls and Responses -> Utterance.
         """
+
         return " ; ".join(
             f"{k} = {SerializationHelpers.maybe_inner_list_join(v)}"
             for k, v in sorted(apidict.items())

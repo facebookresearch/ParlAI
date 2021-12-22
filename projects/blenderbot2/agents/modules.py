@@ -177,6 +177,7 @@ class BlenderBot2RagModel(RagModel):
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[
@@ -214,6 +215,8 @@ class BlenderBot2RagModel(RagModel):
             3D [bsz, num_lines, seqlen] text to convert to memories with memory decoder
         :param num_memory_decoder_vecs:
             1D [bsz] # of memory decoder vectors for each batch item
+        :param skip_search:
+            1D [bsz] whether to skip search
         """
         # Retrieve, get expanded input
         if all([tensor is not None for tensor in [input_lengths, query_vec]]):
@@ -230,6 +233,7 @@ class BlenderBot2RagModel(RagModel):
                 num_gold_docs,
                 memory_decoder_vec,
                 num_memory_decoder_vecs,
+                skip_search,
             )
         else:
             expanded_input = input
@@ -317,6 +321,7 @@ class BlenderBot2RagModel(RagModel):
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
     ) -> Tuple[torch.LongTensor, List[List[Document]], torch.Tensor]:
         """
         Override RagModel.retrieve_and_concat to perform different retrieval, depending
@@ -360,7 +365,7 @@ class BlenderBot2RagModel(RagModel):
         if self.should_generate_query:
             assert self.has_query_generator()
             retrieval_type, search_queries = self.query_generator.classify_retrieval(
-                query_generator_vec, num_memories, generated_memories
+                query_generator_vec, num_memories, generated_memories, skip_search
             )
             logging.debug(f'Classify Retrieval: {time.time() - start:.2f}')
         else:
@@ -432,6 +437,9 @@ class BlenderBot2RagModel(RagModel):
             input_lengths = input_lengths.repeat_interleave(
                 input_turns_cnt, dim=0
             )  # type: ignore
+
+        # Filtering empty doc_scores added due to dynamic batching (if used)
+        doc_scores = [[s for s in ds if s is not None] for ds in doc_scores if ds]
         top_doc_scores = torch.stack(
             [torch.cat([s_i for s_i in scores_i]) for scores_i in doc_scores]
         )
@@ -844,6 +852,7 @@ class BlenderBot2FidModelMixin:
         num_gold_docs: torch.LongTensor,
         memory_decoder_vec: torch.LongTensor,
         num_memory_decoder_vecs: torch.LongTensor,
+        skip_search: torch.BoolTensor,
         positions: Optional[torch.LongTensor] = None,
         segments: Optional[torch.LongTensor] = None,
     ) -> Tuple[
@@ -866,6 +875,7 @@ class BlenderBot2FidModelMixin:
             num_gold_docs,
             memory_decoder_vec,
             num_memory_decoder_vecs,
+            skip_search,
             positions,
             segments,
         )  # type: ignore
