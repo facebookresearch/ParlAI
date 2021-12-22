@@ -17,6 +17,10 @@ from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 import json
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 _ = BLUEPRINT_TYPE
 

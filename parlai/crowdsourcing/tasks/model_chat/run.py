@@ -16,6 +16,10 @@ from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 

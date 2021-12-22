@@ -19,6 +19,9 @@ from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 
 """
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+
 Script for running ACUTE-Evals.
 The only argument that *must* be set for this to be run is:
 ``pairings_filepath``:  Path to pairings file in the format specified in the README.md
