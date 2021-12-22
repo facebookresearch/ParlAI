@@ -6,7 +6,7 @@
 """
 Metrics handlers - ie, classes that handle generations from Tod World and calculates metrics from them.
 
-Note that only metrics handler classes in `WORLD_METRIC_HANDLERS` are actively being recorded as metrics.
+Note that only metrics handler classes in `WORLD_METRIC_HANDLERS` of ` parlai/core/tod/world_metrics_handlers.py` are actively being recorded as metrics. These "extended" metrics were ones we experimented with at one point in the past, found to be inconclusive, and are including primarily to not delete already done work. (Or for testing purposes.)
 """
 
 from parlai.core.message import Message

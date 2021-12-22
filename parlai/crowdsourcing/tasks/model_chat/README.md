@@ -6,7 +6,7 @@ This task will collect conversations between a human and a model. After each res
 
 ## Launching
 
-Call `run.py` to run this task with the default parameters, as set by `conf/example.yaml`. Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc.
+Call `run.py` to run this task with the default parameters, as set by `hydra_configs/conf/example.yaml`. Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc.
 
 Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing all models to be chatted with, as well as the ParlAI flags for running each one. See `task_config/model_opts.yaml` for an example.
 
@@ -26,7 +26,7 @@ In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to cha
 
 ## Human+model image chat
 
-`run_image_chat.py` can be run to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it.
+Call `run.py conf=example_image_chat` to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it. This task is run with the parameters defined in `hydra_configs/conf/example_image_chat.yaml`.
 
 This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/tasks/personality_captions/` tasks, which are deprecated and can be accessed with `git checkout v0.10.0`. Those tasks also featured the ability to compare two possible captions to an image and rate which one is more engaging: this functionality has now been replaced by the [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) task.
 
