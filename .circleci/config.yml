@@ -165,6 +165,7 @@ commands:
       - run:
             name: Install Mephisto
             command: |
+              pip uninstall dataclasses -y
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
               cd Mephisto; git checkout v0.4.1 -b stable
