@@ -24,7 +24,6 @@ try:
 
     from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
-        BLUEPRINT_TYPE,
     )
 
     from parlai.crowdsourcing.tasks.qa_data_collection.run import TASK_DIRECTORY
@@ -61,18 +60,9 @@ try:
             build_task(task_directory=TASK_DIRECTORY)
 
             # Set up the config and database
-            overrides = [
-                'mephisto.blueprint.num_conversations=1',
-                'mephisto.task.allowed_concurrent=0',
-                '+turn_timeout=300',
-            ]
-            # TODO: remove all of these params once Hydra 1.1 is released with
-            #  support for recursive defaults
-            self._set_up_config(
-                blueprint_type=BLUEPRINT_TYPE,
-                task_directory=TASK_DIRECTORY,
-                overrides=overrides,
-            )
+            overrides = ['+turn_timeout=300']
+
+            self._set_up_config(task_directory=TASK_DIRECTORY, overrides=overrides)
 
             # Set up the operator and server
             teacher = get_teacher(self.config)

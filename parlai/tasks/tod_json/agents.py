@@ -97,6 +97,10 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
         for raw_round in blob["dialog"][1:]:
             if "prefix_stripped_text" not in raw_round[0]:
                 for i in range(len(raw_round)):
+                    if PREFIXES[i] not in raw_round[i]['text']:
+                        raise RuntimeError(
+                            f"Missing prefix `{PREFIXES[i]}` before turn of text: `{raw_round[i]}`"
+                        )
                     raw_round[i]["prefix_stripped_text"] = raw_round[i].get(
                         "text", PREFIXES[i]
                     )[len(PREFIXES[i]) :]
@@ -104,11 +108,19 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
                 if raw_round[0]["prefix_stripped_text"] != tod.STANDARD_DONE:
                     return None  # misformatted convo, don't learn this.
                 break  # TodStructuredEpisode will add in [DONE]
+            api_call_machine = tod.SerializationHelpers.str_to_api_dict(
+                raw_round[1]["prefix_stripped_text"]
+            )
+            if (
+                len(api_call_machine) > 0
+                and tod.STANDARD_API_NAME_SLOT not in api_call_machine
+            ):
+                raise RuntimeError(
+                    f"Trying to make API call without `{tod.STANDARD_API_NAME_SLOT}`. Call is: `{raw_round[1]['text']}`"
+                )
             r = tod.TodStructuredRound(
                 user_utt=raw_round[0]["prefix_stripped_text"],
-                api_call_machine=tod.SerializationHelpers.str_to_api_dict(
-                    raw_round[1]["prefix_stripped_text"]
-                ),
+                api_call_machine=api_call_machine,
                 api_resp_machine=tod.SerializationHelpers.str_to_api_dict(
                     raw_round[2]["prefix_stripped_text"]
                 ),
@@ -136,14 +148,33 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
         )
         return episode
 
+    def _get_right_file(self, filepath):
+        """
+        Part of the code for loading worlds or scripts does a regex of "_" to "-" when
+        loading agents.
+
+        Not a great hack but suffices
+        """
+        try:
+            with open(filepath) as _:
+                pass
+            return filepath
+        except FileNotFoundError:
+            with open(filepath.replace("-", "_")) as _:
+                return filepath.replace("-", "_")
+        raise FileNotFoundError(
+            f"Note: tod_json breaks if path contains mixed '-' and '_' in path, due to opt + agent loading wonkiness. Please try renaming the file. Filename: {filepath}"
+        )
+
     def setup_episodes(self, fold):
         result = []
         if self.opt["tod_metrics_datapath"] is not None:
-            with open(self.opt["tod_metrics_datapath"]) as f:
+            with open(self._get_right_file(self.opt["tod_metrics_datapath"])) as f:
                 report_data = json.load(f)
                 tod_metrics = report_data["report"]["tod_metrics"]
+
         lines_to_process = []
-        with open(self.opt["datafile"], "r") as f:
+        with open(self._get_right_file(self.opt["datafile"]), "r") as f:
             result = []
             for i, line in enumerate(f.readlines()):
                 if (
@@ -182,4 +213,29 @@ class DefaultTeacher(SystemTeacher):
 
 
 class UserSimulatorTeacher(JsonTodParser, tod_agents.TodUserSimulatorTeacher):
+    pass
+
+
+## We define the following as a quick way to spot-check a file using TodWorldScript.
+# Use
+#     python ~/ParlAI/parlai/scripts/tod_world_script.py --system-model parlai.tasks.tod_json.agents:ApiCallAndSysUttAgent --user-model parlai.tasks.tod_json.agents:UserUttAgent --api-resp-model parlai.tasks.tod_json.agents:ApiResponseAgent --goal-grounding-model parlai.tasks.tod_json.agents:GoalAgent --api-schema-grounding-model parlai.tasks.tod_json.agents:ApiSchemaAgent --display-examples true --jsonfile-datapath=<INSERT PATH HERE>
+#
+# Note: may be relevant to set `split_to_folds`to `False` depending on usage
+class GoalAgent(JsonTodParser, tod_agents.TodGoalAgent):
+    pass
+
+
+class ApiSchemaAgent(JsonTodParser, tod_agents.TodApiSchemaAgent):
+    pass
+
+
+class UserUttAgent(JsonTodParser, tod_agents.TodUserUttAgent):
+    pass
+
+
+class ApiCallAndSysUttAgent(JsonTodParser, tod_agents.TodApiCallAndSysUttAgent):
+    pass
+
+
+class ApiResponseAgent(JsonTodParser, tod_agents.TodApiResponseAgent):
     pass
