@@ -1,0 +1,49 @@
+acts:
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    labels:
+    - 'USER: I would like to find a SUV till 7th of March.'
+    text: 'GOAL: api_name = GetCarsAvailable ; car_type = SUV ; city = Long Beach
+      ; end_date = 2019-03-07 ; pickup_time = 11:00 ; start_date = 2019-03-04'
+    type: 'USER: '
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    labels:
+    - 'USER: I am looking for cars in Long Beach, CA and want to pick it up at 11
+      o"clock in the morning from 4th of this month.'
+    slots: {}
+    text: 'SYSTEM: From where do you want to rent the car from? Also at which time
+      do you want to pick up the car and start the car rental?'
+    type: 'USER: '
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    labels:
+    - 'USER: This sounds good. That''s all I needed.'
+    slots: {}
+    text: 'SYSTEM: There is a 1 car available at Downtown Station and it is a SUV
+      of Alfa Romeo Stelvio.'
+    type: 'USER: '
+- - domain: RentalCars
+    episode_done: true
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    labels:
+    - 'USER: [DONE]'
+    slots: {}
+    text: 'SYSTEM: Have a nice day.'
+    type: 'USER: '
+- - domain: RentalCars, Travel
+    episode_done: false
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    labels:
+    - 'USER: I need a rental car in Fresno'
+    text: 'GOAL: api_name = GetCarsAvailable ; dropoff_date = 2019-03-08 ; pickup_city
+      = Fresno ; pickup_date = 2019-03-07 ; pickup_time = 16:30 | api_name = ReserveCar
+      ; dropoff_date = 2019-03-08 ; pickup_date = 2019-03-07 ; pickup_location = Fresno
+      Station ; pickup_time = 16:30 ; type = Standard | api_name = FindAttractions
+      ; location = Fresno'
+    type: 'USER: '
+num_episodes: 2303
+num_examples: 29143

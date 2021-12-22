@@ -1,7 +1,7 @@
 acts:
 - - domain: Restaurants
     episode_done: false
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     labels:
     - 'APIS: '
     slots: {}
@@ -9,7 +9,7 @@ acts:
     type: 'APIS: '
 - - domain: Restaurants
     episode_done: false
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     labels:
     - 'APICALL: '
     slots: {}
@@ -17,7 +17,7 @@ acts:
     type: 'APICALL: '
 - - domain: Restaurants
     episode_done: false
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     labels:
     - 'SYSTEM: Do you have a specific which you want the eating place to be located
       at?'
@@ -26,7 +26,7 @@ acts:
     type: 'SYSTEM: '
 - - domain: Restaurants
     episode_done: false
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     labels:
     - 'APICALL: '
     slots: {}
@@ -34,12 +34,12 @@ acts:
     type: 'APICALL: '
 - - domain: Restaurants
     episode_done: false
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     labels:
     - 'SYSTEM: Is there a specific cuisine type you enjoy, such as Mexican, Italian
       or something else?'
     slots: {}
     text: 'APIRESP: '
     type: 'SYSTEM: '
-num_episodes: 16142
-num_examples: 378390
+num_episodes: 13888
+num_examples: 320622

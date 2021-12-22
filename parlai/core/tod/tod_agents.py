@@ -38,7 +38,7 @@ class TodStructuredDataParser(Agent):
     """
     Base class that specifies intermediate representations for Tod conversations.
 
-    Inherit from this class and implement `generate_episodes()` to implement the intermediate representation for a specific dataset. Use multiple inheritence with classes that implement an `act()` below to use.
+    Inherit from this class and implement `setup_episodes()` to implement the intermediate representation for a specific dataset. Use multiple inheritence with classes that implement an `act()` below to use.
 
     For example, if we have a `MyDataset_DataParser(TodStructuredDataParser)` and wanted to make a teacher to train a model togenerate User Utterances based on a goal prompt, we would do so by defining `class MyDatasetUserSimulatorTeacher(MyDataset_DataParser, TodUserSimulatorTeacher)`.
     """
@@ -374,7 +374,7 @@ class TodApiCallAndSysUttAgent(_TodDataDumpAgent):
         self.already_reset = False
         if tod.STANDARD_API_SCHEMAS in self.observation.get("text", ""):
             return {
-                "text": tod.STANDARD_API_SCHEMAS,  # Default convention for the first turn for NO SCHEMA models, which is fine for evaluation
+                "text": tod.STANDARD_API_SCHEMAS,  # Default convention for the first turn
                 "id": self.id,
                 "domain": self.episode.domain,
                 "episode_done": False,
@@ -426,6 +426,14 @@ class TodApiResponseAgent(_TodDataDumpAgent):
     """
 
     def act(self):
+        if tod.STANDARD_API_SCHEMAS in self.observation.get("text", ""):
+            return {
+                "text": tod.STANDARD_API_SCHEMAS,  # Default convention
+                "id": self.id,
+                "domain": self.episode.domain,
+                "episode_done": False,
+            }
+
         result = {
             "text": f"{tod.STANDARD_RESP}{self.episode.rounds[self.round_idx].api_resp_utt}",
             "id": self.id,
@@ -636,7 +644,7 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self._num_examples_cache = sum([len(x.rounds) * 2 for x in self.episodes])
+        self._num_examples_cache = sum([len(x.rounds) * 2 + 1 for x in self.episodes])
         self._num_episodes_cache = len(self.episodes)
 
     def custom_evaluation(
