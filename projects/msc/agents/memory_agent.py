@@ -205,6 +205,10 @@ class MemoryLongFidModel(BlenderBot2FidModelMixin, MemoryLongRagModel, LongFidMo
         if opt.get('fid_ddp_compatible', True):
             for param in self.long_term_memory.query_encoder.parameters():
                 param.requires_grad = False
+            for param in self.long_term_memory.memory_encoder.parameters():
+                param.requires_grad = False
+            for param in self.retriever.parameters():
+                param.requires_grad = False
 
 
 class MemoryLongFidAgent(LongFidAgent, MemoryRagAgent):
