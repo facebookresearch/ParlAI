@@ -33,7 +33,7 @@ except ModuleNotFoundError:
 
 
 parser_ = AbstractResultsCompiler.setup_args()
-opt_string = '--task_name mock_task_name --output_folder /dummy/tmp'
+opt_string = '--task-name mock_task_name --output-folder /dummy/tmp'
 args_ = parser_.parse_args(opt_string.split())
 DUMMY_OPT = vars(args_)
 LEN_MOCK_DATA = 5
