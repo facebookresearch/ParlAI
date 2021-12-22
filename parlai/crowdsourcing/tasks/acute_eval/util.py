@@ -114,7 +114,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             results_folder=outputs['results_folder'],
             file_suffix='full.csv',
             dataframe_regression=dataframe_regression,
-            drop_columns=['time_taken'],
+            drop_columns=['task_start', 'time_taken'],
         )
 
     def test_grid_csv(
