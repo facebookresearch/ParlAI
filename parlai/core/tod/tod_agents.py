@@ -426,6 +426,14 @@ class TodApiResponseAgent(_TodDataDumpAgent):
     """
 
     def act(self):
+        if tod.STANDARD_API_SCHEMAS in self.observation.get("text", ""):
+            return {
+                "text": tod.STANDARD_API_SCHEMAS,  # Default convention
+                "id": self.id,
+                "domain": self.episode.domain,
+                "episode_done": False,
+            }
+
         result = {
             "text": f"{tod.STANDARD_RESP}{self.episode.rounds[self.round_idx].api_resp_utt}",
             "id": self.id,
