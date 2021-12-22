@@ -14,8 +14,6 @@ tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement
 
 See `tod_agents.py` for the classes.  
 
-See `tod_agents.py` for the classes.  
-
 ## Overview of usage
 
 For a given dataset, extend `TodStructuredDataParser` and implement `setup_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
