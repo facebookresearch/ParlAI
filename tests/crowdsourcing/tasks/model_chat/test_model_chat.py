@@ -63,8 +63,6 @@ try:
     from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
         SharedModelChatTaskState,
-        ModelChatBlueprintArgs,
-        BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.model_chat.utils import AbstractModelChatTest
 
@@ -110,36 +108,12 @@ fixed_response: >
 
                 # Set up the config and database
                 num_convos = 10
-                args = ModelChatBlueprintArgs()
                 overrides = [
-                    f'++mephisto.blueprint.{key}={val}'
-                    for key, val in args.__dict__.items()
-                    if key
-                    in [
-                        'max_onboard_time',
-                        'max_resp_time',
-                        'override_opt',
-                        'random_seed',
-                        'world_file',
-                    ]
-                ] + [
-                    'mephisto.blueprint.annotations_config_path=${task_dir}/task_config/annotations_config.json',
                     f'mephisto.blueprint.conversations_needed_string=\"fixed_response:{num_convos:d}\"',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
-                    '++mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
-                    '++mephisto.blueprint.max_concurrent_responses=1',
                     f'mephisto.blueprint.model_opt_path={model_opt_path}',
-                    f'+mephisto.blueprint.num_conversations={num_convos:d}',
-                    '++mephisto.blueprint.onboard_task_data_path=${task_dir}/task_config/onboard_task_data.json',
-                    '++mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
                 ]
-                # TODO: remove all of these params once Hydra 1.1 is released with
-                #  support for recursive defaults
-                self._set_up_config(
-                    blueprint_type=BLUEPRINT_TYPE,
-                    task_directory=TASK_DIRECTORY,
-                    overrides=overrides,
-                )
+                self._set_up_config(task_directory=TASK_DIRECTORY, overrides=overrides)
 
                 # Set up the operator and server
                 shared_state = SharedModelChatTaskState(world_module=world_module)

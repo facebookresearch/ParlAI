@@ -49,6 +49,8 @@ _ = FAST_ACUTE_BLUEPRINT_TYPE
 # ACUTE EVAL CONSTANTS #
 ########################
 
+FAST_ACUTE_CONFIG_NAME = "example_fast_acute"
+
 ACUTE_EVAL_TYPES = {
     'human': {
         'question': 'Which speaker sounds more human?',
@@ -554,7 +556,7 @@ class FastAcuteExecutor(object):
         self._print_progress(f'ACUTE results saved to {self.results_path}')
 
 
-defaults = ['_self_', {"conf": "example_fast_acute"}]
+defaults = ['_self_', {"conf": FAST_ACUTE_CONFIG_NAME}]
 
 
 @dataclass
