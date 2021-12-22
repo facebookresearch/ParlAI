@@ -10,11 +10,17 @@ As a convention, files referenced externally to this directory are prefixed with
 
 # Teachers + Agents Usage
 
+tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement `setup_episodes()` that converts the dataset into a list of episodes (`List[TodStructuredEpisode]`). Use multiple inheritence to generate teachers for training models. See files like `parlai/tasks/multiwoz_v22/agents.py` for an example. 
+
 See `tod_agents.py` for the classes.  
 
-For a given dataset, extend `TodStructuredDataParser` and implement `generate_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
+## Overview of usage
 
-For example, given a `class XX_DataParser(TodStructuredDataParser)`, `class XX_UserSimulatorTeacher(XX_DataParser, TodUserSimulatorTeacher)` would be how one would define a teacher that generates training data for a User Simulator model.
+For a given dataset, extend `TodStructuredDataParser` and implement `setup_episodes()` and `get_id_task_prefix()`. The former of these is expected to do the data processing to convert a dataset to `List[TodStructuredEpisode]`. From here, multiple inheritance can be used to define Agents and Teachers that utilize the data.
+
+For example, given a `class XX_DataParser(TodStructuredDataParser)`, `class XX_UserSimulatorTeacher(XX_DataParser, TodUserSimulatorTeacher)` would be how one would define a teacher that generates training data for a User Simulator model. Other agents necessary for exposing Goals and API Schemas of a dataset can be exposed in a similar manner. 
+
+See `tod_agents.py` for the classes.  
 
 Once the relevant agents have been created (or relevant models have been fine-tuned), see `parlai.scripts.tod_world_script` for generating the simulations themselves.
 
@@ -31,7 +37,7 @@ For goal grounding for the User for simulation:
     * TodGoalAgent
         * Dumps goals as is from the dataset, possibly multiple per episode
     * TodSingleGoalAgent
-        * Flattens goals such that a single one is used to seed a conversation. For datasets that include multiple goals per conversation, each individual goal is used as a seed.
+        * Flattens goals such that only one is used to ground a conversation. (So for example, if there are 3 goals in the source dataset, rather than grounding 1 conversation, these now ground 3 separate conversations.)
 
 For (optional) API schema grounding for the System:
     * TodApiSchemaAgent (must be used with `TodGoalAgent` only)
@@ -75,5 +81,4 @@ Description of usage of the simulation world is primarily stored in the script r
 The world itself is stored in `tod_world.py`. The world follows the same intermediate dataformats for episodes as described in `tod_core.py` and does the correct calling of different agents to support this. It is generally recommended that this file not be touched. 
 
 A general class for collecting metrics out of `TODWorld` is stored within `world_metrics.py` with individual 'metric handlers' responsible for calculating a given metric stored in `world_metric_handlers.py`. 
-
 
