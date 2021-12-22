@@ -202,9 +202,9 @@ class TestLRIntegration(unittest.TestCase):
             )
             assert logs_first[20]['lr'] == logs_second[0]['lr']
 
-            if 'warump_updates' in kwargs:
+            if 'warmup_updates' in kwargs:
                 full_logs = logs_first[:20] + logs_second
-                assert full_logs[kwargs['warmup_updates']]['lr'] == 1.0
+                assert full_logs[kwargs['warmup_updates'] - 1]['lr'] == 1.0
 
             return logs_first, logs_second
 

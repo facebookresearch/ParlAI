@@ -18,9 +18,9 @@ import pytest
 
 try:
 
-    from parlai.crowdsourcing.tasks.acute_eval.fast_eval import FastAcuteExecutor
-    from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
-        FAST_ACUTE_BLUEPRINT_TYPE,
+    from parlai.crowdsourcing.tasks.acute_eval.fast_eval import (
+        FastAcuteExecutor,
+        FAST_ACUTE_CONFIG_NAME,
     )
     from parlai.crowdsourcing.tasks.acute_eval.util import AbstractFastAcuteTest
 
@@ -60,19 +60,14 @@ try:
             # Set up config
             assert len(self.MODELS) == 2
             test_overrides = [
-                f'+mephisto.blueprint.config_path={config_path}',
-                '+mephisto.blueprint.models=""',
-                f'+mephisto.blueprint.model_pairs={self.MODELS[0]}:{self.MODELS[1]}',
+                f'mephisto.blueprint.config_path={config_path}',
+                f'mephisto.blueprint.model_pairs={self.MODELS[0]}:{self.MODELS[1]}',
             ]
-            # TODO: clean this up when Hydra has support for recursive defaults
             self._set_up_config(
-                blueprint_type=FAST_ACUTE_BLUEPRINT_TYPE,
                 task_directory=self.TASK_DIRECTORY,
                 overrides=self._get_common_overrides(root_dir) + test_overrides,
+                config_name=FAST_ACUTE_CONFIG_NAME,
             )
-            self.config.mephisto.blueprint.models = None
-            # TODO: hack to manually set mephisto.blueprint.models to None. Remove when
-            #  Hydra releases support for recursive defaults
 
             # Save the config file
             config = {}

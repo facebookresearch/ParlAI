@@ -16,9 +16,9 @@ import pytest
 
 try:
 
-    from parlai.crowdsourcing.tasks.acute_eval.fast_eval import FastAcuteExecutor
-    from parlai.crowdsourcing.tasks.acute_eval.fast_acute_blueprint import (
-        FAST_ACUTE_BLUEPRINT_TYPE,
+    from parlai.crowdsourcing.tasks.acute_eval.fast_eval import (
+        FastAcuteExecutor,
+        FAST_ACUTE_CONFIG_NAME,
     )
     from parlai.crowdsourcing.tasks.acute_eval.util import AbstractFastAcuteTest
 
@@ -58,21 +58,14 @@ try:
 
             # Set up config
             test_overrides = [
-                f'+mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config_dataset.json',
-                f'+mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
-                '+mephisto.blueprint.model_pairs=""',
-                '+mephisto.blueprint.num_task_data_episodes=500',
-                '+mephisto.blueprint.selfchat_max_turns=6',
+                f'mephisto.blueprint.config_path={self.TASK_DIRECTORY}/task_config/model_config_dataset.json',
+                f'mephisto.blueprint.models=\"{self.MODEL_STRING}\"',
             ]
-            # TODO: clean this up when Hydra has support for recursive defaults
             self._set_up_config(
-                blueprint_type=FAST_ACUTE_BLUEPRINT_TYPE,
                 task_directory=self.TASK_DIRECTORY,
                 overrides=self._get_common_overrides(root_dir) + test_overrides,
+                config_name=FAST_ACUTE_CONFIG_NAME,
             )
-            self.config.mephisto.blueprint.model_pairs = None
-            # TODO: hack to manually set mephisto.blueprint.model_pairs to None. Remove
-            #  when Hydra releases support for recursive defaults
 
             # Run Fast ACUTEs
             runner = FastAcuteExecutor(self.config)

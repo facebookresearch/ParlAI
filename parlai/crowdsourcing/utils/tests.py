@@ -61,9 +61,9 @@ class AbstractCrowdsourcingTest:
 
     def _set_up_config(
         self,
-        blueprint_type: str,
         task_directory: str,
         overrides: Optional[List[str]] = None,
+        config_name: str = "example",
     ):
         """
         Set up the config and database.
@@ -87,10 +87,8 @@ class AbstractCrowdsourcingTest:
             overrides = []
         with initialize(config_path=relative_config_path):
             self.config = compose(
-                config_name="example",
+                config_name=config_name,
                 overrides=[
-                    f'mephisto.blueprint._blueprint_type={blueprint_type}',
-                    f'++mephisto.blueprint.link_task_source=False',
                     f'mephisto/architect=mock',
                     f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
@@ -98,13 +96,6 @@ class AbstractCrowdsourcingTest:
                 ]
                 + overrides,
             )
-            # TODO: when Hydra 1.1 is released with support for recursive defaults,
-            #  don't manually specify all missing blueprint args anymore, but
-            #  instead define the blueprint in the defaults list directly.
-            #  Currently, the blueprint can't be set in the defaults list without
-            #  overriding params in the YAML file, as documented at
-            #  https://github.com/facebookresearch/hydra/issues/326 and as fixed in
-            #  https://github.com/facebookresearch/hydra/pull/1044.
 
         self.data_dir = tempfile.mkdtemp()
         self.database_path = os.path.join(self.data_dir, "mephisto.db")
