@@ -60,4 +60,4 @@ acts:
       11:00 ; price_per_day = 38.00 ; start_date = 2019-03-04'
     type: 'SYSTEM: '
 num_episodes: 2303
-num_examples: 58286
+num_examples: 60589
