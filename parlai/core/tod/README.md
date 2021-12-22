@@ -10,7 +10,7 @@ As a convention, files referenced externally to this directory are prefixed with
 
 # Teachers + Agents Usage
 
-tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement `generate_episodes()` that converts the dataset into a list of episodes (`List[TodStructuredEpisode]`). Use multiple inheritence to generate teachers for training models. See files like `parlai/tasks/multiwoz_v22/agents.py` for an example. 
+tl;dr Extend `TodStructuredDataParser` for your particular dataset and implement `setup_episodes()` that converts the dataset into a list of episodes (`List[TodStructuredEpisode]`). Use multiple inheritence to generate teachers for training models. See files like `parlai/tasks/multiwoz_v22/agents.py` for an example. 
 
 See `tod_agents.py` for the classes.  
 
