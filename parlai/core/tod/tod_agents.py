@@ -644,7 +644,7 @@ class TodSystemTeacher(TodStructuredDataParser, DialogTeacher):
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self._num_examples_cache = sum([len(x.rounds) * 2 for x in self.episodes])
+        self._num_examples_cache = sum([len(x.rounds) * 2 + 1 for x in self.episodes])
         self._num_episodes_cache = len(self.episodes)
 
     def custom_evaluation(
