@@ -5,9 +5,11 @@ Two variants of the blueprint are supported:
 - `TurnAnnotationStaticBlueprint`
     - The base static turn-annotations task
     - Called with `python parlai/crowdsourcing/tasks/turn_annotations_static/run.py`
+        - (the task runs with the default parameters set in `hydra_configs/conf/example.yaml`)
 - `TurnAnnotationStaticInFlightQABlueprint`
     - Includes the ability to add an additional in-flight (i.e. mid-HIT) quality assurance check
-    - Called with `python parlai/crowdsourcing/tasks/turn_annotations_static/run_in_flight_qa.py`
+    - Called with `python parlai/crowdsourcing/tasks/turn_annotations_static/run.py conf=example_in_flight_qa`
+        - (the task runs with the parameters set in `hydra_configs/conf/example_in_flight.yaml`)
 
 For both variants of the blueprint, it is required to pass in your own file of conversations with `mephisto.blueprint.data_jsonl=${PATH_TO_CONVERSATIONS}`.
 
