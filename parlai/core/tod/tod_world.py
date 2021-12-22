@@ -8,7 +8,7 @@ Class for running task-oriented dialogue chats.
 
 Specifically this class handles:
 1. Setting up and running the different conversational agents to fit the TOD Conversational structure (see `tod_core.py`; also retiterated in TodWorld below)
-2. Doing the above to handle logic for batching
+2. Handle logic for batching when running dialogues
 3. Recording various metrics associated with running the world.
 
 See long comment on TodWorld for description of the conversation format and more functionality descriptions.
@@ -52,11 +52,11 @@ NAME_TO_IDX = {v: k for k, v in SPEAKER_TO_NAME.items()}
 
 class TodWorld(World):
     """
-    Base world for running TOD model-model chats. Following agents.
+    Base world for running TOD model-model chats. Includes the following agents:
 
     * User utt agent
     * API call agent
-        * Currently assumed to be same as system utt agent in script code, though used as if separate in this world.
+        * Currently assumed to be same as system utt agent in script code, though used as if separate in this world for clarity
     * API responder agent
     * System utt agent
     * API schema groundinger agent (given to api call + response agent)
@@ -64,7 +64,7 @@ class TodWorld(World):
 
     As is standard for ParlAI, these agents may be models or may be standalone classes that extend the "Agent" class. The models for these *are* expected to have their utterances in a standard format.
 
-    Note that we expect these to be passed in via the opt manually, since some assumptions of regular ParlAI Worlds (ex. task = agent[0], model = agent[1]) are broken here since there is no "task agent" and one agent can be two "roles" (ex. system agent also making API calls)
+    We do expect these agents to be passed in with a set order (see above), since some assumptions of regular ParlAI Worlds (ex. task = agent[0], model = agent[1]) are broken here since there is no "task agent" and one agent can be two "roles" (ex. system agent also making API calls)
     """
 
     def __init__(self, opt: Opt, agents=None, shared=None):
