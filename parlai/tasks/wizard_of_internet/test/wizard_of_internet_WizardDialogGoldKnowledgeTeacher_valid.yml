@@ -17,7 +17,7 @@ acts:
     episode_done: false
     eval_labels:
     - Same here! What kind of books do you read?
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: __no_search_used__
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n I work as a freelance\
       \ accountant.\nI enjoy reading books.   "
@@ -39,7 +39,7 @@ acts:
     episode_done: false
     eval_labels:
     - I am a big Harry Potter nerd! What do you do for work?
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: __no_search_used__
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n All fiction!   With\
       \ COVID this past summer, I read 16 books in 3 months.  You?"
@@ -1386,7 +1386,7 @@ acts:
     episode_done: false
     eval_labels:
     - I do taxes actually!
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: bank audit
     text: "__knowledge__ __no_passages_used__ __endknowledge__ \n Audit banks.  You?"
 - - __retrieved-doc-sentences__:
@@ -3748,7 +3748,7 @@ acts:
     episode_done: false
     eval_labels:
     - I will! It is on the 7th right ?
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: Superbowl 2021
     text: "__knowledge__ Super Bowl LV, the 55th Super Bowl and the 51st modern-era\
       \ National Football League (NFL) championship game, will decide the league champion\
@@ -15953,7 +15953,7 @@ acts:
     eval_labels:
     - Some where in the middle. That guy is good, he has most games won by a quarterback/.
       He seems huble
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     search_query: Tom Brady records
     text: "__knowledge__ Most games won by a quarterback: 237[2] __endknowledge__\
       \ \n It is.   Are you a Brady fan or foe?"

@@ -418,6 +418,7 @@ jobs:
       - runtests:
           cachename: teacher
           marker: teacher
+          pytest_flags: -v -s
 
   build_website:
     executor: small_cpu37
