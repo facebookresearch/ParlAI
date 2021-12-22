@@ -2,7 +2,10 @@ Task: Blended Skill Talk
 ===========================
 Description: A dataset of 7k conversations explicitly designed to exhibit multiple conversation modes: displaying personality, having empathy, and demonstrating knowledge.
 =========================== 
-Dataset has been released under the CC BY-NC license.
+
+LICENSE: This dataset has been released under the CC-BY-4.0 License. Please
+refer to the LICENSE_DOCUMENTATION file in this repository for more
+information.
 
 ## BlendedSkillTalkTeacher
 Conversation is between a "free" Amazon Mechanical Turk worker who can speak freely and a "guided" worker who is given 3 suggestions of what to say for each turn. This dataset presents the half of the conversation in which the label is the guided worker's utterance. Examples include the following special fields:

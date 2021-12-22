@@ -600,7 +600,7 @@ acts:
       of mystery ingredients into an extraordinary three-course meal. Course by course,
       the chefs will be  chopped  from the competition until only one winner remains.
     episode_done: false
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     labels:
     - ' Baskets? I don''t know anything about this show. Is it something about cooking?'
     search_query: Chopped
@@ -1612,7 +1612,7 @@ acts:
     - New Episodes Mondays 9|8c
     - Watch a New Episode Now
     episode_done: false
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     labels:
     - It sounds like quite a challenge! Do you watch every episode? Have you tried
       to make the dishes yourself?
@@ -3692,7 +3692,7 @@ acts:
     __selected-sentences__:
     - Types of Cuisine From Around the World With Their Popular Foods
     episode_done: false
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     labels:
     - 'I think it would be a big challenge to do what Chefs on the program do. Is
       there a type of cuisine that they normally feature? Or it it cuisine from around
@@ -4688,7 +4688,7 @@ acts:
     __selected-sentences__:
     - Stop calling yourself a ‘foodie’
     episode_done: false
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     labels:
     - That sounds interesting! I bet the show is pretty popular with foodies! Do you
       consider yourself a foodie?
@@ -4713,7 +4713,7 @@ acts:
     __selected-sentences__:
     - __no_passages_used__
     episode_done: true
-    id: WizInternetWizardTeacher
+    id: WizardDialogGoldKnowledgeTeacher
     labels:
     - All true foodies are picky. Do you like to cook in general, or do you prefer
       to go to restaurants?

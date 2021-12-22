@@ -56,6 +56,10 @@ _Knowledgeable LIGHT agents_:
 - **[Reason first, then respond: Modular Generation for Knowledge-infused Dialogue](https://arxiv.org/pdf/2111.05204.pdf)**
 Leonard Adolphs, Kurt Shuster, Jack Urbanek, Arthur Szlam, Jason Weston
 
+_Agents that maintain Identity (Role-play accurately)_:
+- **[Am I Me or You? State-of-the-Art Dialogue Models Cannot Maintain an Identity](https://arxiv.org/abs/2112.05843)**
+Kurt Shuster, Jack Urbanek, Arthur Szlam, Jason Weston
+
 ## Datasets
 
 The original LIGHT dataset features 663 locations, 3462 objects and 1755 character types,
