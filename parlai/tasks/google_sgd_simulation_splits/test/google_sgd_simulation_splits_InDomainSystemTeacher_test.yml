@@ -3,7 +3,7 @@ acts:
     episode_done: false
     eval_labels:
     - 'APIS: '
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     slots: {}
     text: 'APIS: '
     type: 'APIS: '
@@ -11,16 +11,15 @@ acts:
     episode_done: false
     eval_labels:
     - 'APICALL: '
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     slots: {}
-    text: 'USER: I want to make a restaurant reservation for 2 people at half past
-      11 in the morning.'
+    text: 'USER: Hi, could you get me a restaurant booking on the 8th please?'
     type: 'APICALL: '
 - - domain: Restaurants
     episode_done: false
     eval_labels:
-    - 'SYSTEM: What city do you want to dine in? Do you have a preferred restaurant?'
-    id: GoogleSGD_SystemTeacher
+    - 'SYSTEM: Any preference on the restaurant, location and time?'
+    id: GoogleSgdInDomain_SystemTeacher
     slots: {}
     text: 'APIRESP: '
     type: 'SYSTEM: '
@@ -28,18 +27,19 @@ acts:
     episode_done: false
     eval_labels:
     - 'APICALL: '
-    id: GoogleSGD_SystemTeacher
+    id: GoogleSgdInDomain_SystemTeacher
     slots: {}
-    text: 'USER: Please find restaurants in San Jose. Can you try Sino?'
+    text: 'USER: Could you get me a reservation at P.f. Chang''s in Corte Madera at
+      afternoon 12?'
     type: 'APICALL: '
 - - domain: Restaurants
     episode_done: false
     eval_labels:
-    - 'SYSTEM: Confirming: I will reserve a table for 2 people at Sino in San Jose.
-      The reservation time is 11:30 am today.'
-    id: GoogleSGD_SystemTeacher
+    - 'SYSTEM: Please confirm your reservation at P.f. Chang''s in Corte Madera at
+      12 pm for 2 on March 8th.'
+    id: GoogleSgdInDomain_SystemTeacher
     slots: {}
     text: 'APIRESP: '
     type: 'SYSTEM: '
-num_episodes: 2482
-num_examples: 56172
+num_episodes: 3132
+num_examples: 67286

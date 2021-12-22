@@ -1,0 +1,52 @@
+acts:
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'USER: I''m looking for some attractions to visit while I''m vacationing.'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    text: 'GOAL: api_name = FindAttractions ; location = London | api_name = GetCarsAvailable
+      ; city = London ; end_date = 2019-03-05 ; pickup_time = 09:30 ; start_date =
+      2019-03-01 | api_name = GetCarsAvailable ; car_type = SUV ; city = London ;
+      end_date = 2019-03-05 ; pickup_time = 09:30 ; start_date = 2019-03-01 | add_insurance
+      = False ; api_name = ReserveCar ; car_type = SUV ; end_date = 2019-03-05 ; pickup_location
+      = Heathrow International Airport ; pickup_time = 09:30 ; start_date = 2019-03-01
+      | api_name = ShareLocation ; contact_name = Emma ; location = Heathrow International
+      Airport'
+    type: 'USER: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'USER: I''m looking for things to do in London.'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Sure, where will you be visiting?'
+    type: 'USER: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'USER: That sounds perfect. Can you help me find a rental car there?'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Alright, one of the top attractions is 30 St Mary Axe (The Gherkin).
+      It''s a historical landmark.'
+    type: 'USER: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'USER: I''ll pick it up in the morning 9:30 and I''ll need it until Tuesday
+      next week.'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Sure, what time would you like to get the car? Also, when will
+      you be dropping it off?'
+    type: 'USER: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'USER: Yes, that''s right.'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Alright, will you be picking it up in London?'
+    type: 'USER: '
+num_episodes: 768
+num_examples: 9681

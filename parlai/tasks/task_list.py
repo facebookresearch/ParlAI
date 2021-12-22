@@ -1355,6 +1355,17 @@ task_list = [
         ),
     },
     {
+        "id": "GoogleSGDSimulationSplits",
+        "display_name": "GoogleSGD Simulation Splits",
+        "task": "google_sgd_simulation_splits",
+        "tags": ["Goal"],
+        "description": (
+            "Custom processing of the Google SGD dataset into In-Domain and "
+            "Out-of-Domain splits for the use of zero and few-shotting with "
+            "other task-oriented data."
+        ),
+    },
+    {
         "id": "TaskMaster2",
         "display_name": "TaskMaster2",
         "task": "taskmaster2",
