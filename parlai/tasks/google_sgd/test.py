@@ -7,13 +7,9 @@
 from parlai.utils.testing import AutoTeacherTest
 
 
-class DisabledTestDefaultTeacher(AutoTeacherTest):
+class TestDefaultTeacher(AutoTeacherTest):
     task = "google_sgd"
 
 
-class DisabledTestText2API2TextTeacher(AutoTeacherTest):
-    task = "google_sgd:text2_a_p_i2_text"
-
-
-class DisabledTestText2TextTeacher(AutoTeacherTest):
-    task = "google_sgd:text2_text"
+class TestUserSimulatorTeacher(AutoTeacherTest):
+    task = "google_sgd:UserSimulatorTeacher"
