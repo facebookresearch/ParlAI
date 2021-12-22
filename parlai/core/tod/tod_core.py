@@ -172,6 +172,10 @@ class SerializationHelpers:
 
     @classmethod
     def inner_list_split(cls, s):
+        if len(s) < 1:
+            return s
+        if s[0] == "{":  # for case when we're json serializing a dict
+            return s
         split = s.split(", ")
         if len(split) == 1:
             return split[0]
