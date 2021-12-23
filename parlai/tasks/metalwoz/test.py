@@ -9,3 +9,7 @@ from parlai.utils.testing import AutoTeacherTest
 
 class TestDefaultTeacher(AutoTeacherTest):
     task = "metalwoz"
+
+
+class TestUserSimulatorTeacher(AutoTeacherTest):
+    task = "metalwoz:UserSimulatorTeacher"

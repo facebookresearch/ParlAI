@@ -3,11 +3,13 @@ acts:
     bot_role: You are a bot designed to fetch information from the internet
     domain: LOOK_UP_INFO
     episode_done: false
-    id: metalwoz
+    id: metalwoz:UserSimulatorTeacher
     labels:
-    - Hello how may I help you?
+    - I would like to ask a question Can you provide general information?
     task_id: 4fdf58c3
-    text: You are a bot designed to fetch information from the internet
+    text: 'You are interacting with a bot designed to fetch information from the internet
+
+      Hello how may I help you?'
     user_prompt: Ask the bot a question about common world knowledge
     user_role: You are interacting with a bot designed to fetch information from the
       internet
@@ -16,11 +18,11 @@ acts:
     bot_role: You are a bot designed to fetch information from the internet
     domain: LOOK_UP_INFO
     episode_done: false
-    id: metalwoz
+    id: metalwoz:UserSimulatorTeacher
     labels:
-    - 'yes'
+    - What is the meaning of life?
     task_id: 4fdf58c3
-    text: I would like to ask a question Can you provide general information?
+    text: 'yes'
     user_prompt: Ask the bot a question about common world knowledge
     user_role: You are interacting with a bot designed to fetch information from the
       internet
@@ -29,11 +31,11 @@ acts:
     bot_role: You are a bot designed to fetch information from the internet
     domain: LOOK_UP_INFO
     episode_done: false
-    id: metalwoz
+    id: metalwoz:UserSimulatorTeacher
     labels:
-    - Sorry, I don't have the information that you are asking.
+    - Does life have meaning?
     task_id: 4fdf58c3
-    text: What is the meaning of life?
+    text: Sorry, I don't have the information that you are asking.
     user_prompt: Ask the bot a question about common world knowledge
     user_role: You are interacting with a bot designed to fetch information from the
       internet
@@ -42,11 +44,11 @@ acts:
     bot_role: You are a bot designed to fetch information from the internet
     domain: LOOK_UP_INFO
     episode_done: false
-    id: metalwoz
+    id: metalwoz:UserSimulatorTeacher
     labels:
-    - Sorry, I don't have the information that you are asking.
+    - How many Oreos can a gorilla eat?
     task_id: 4fdf58c3
-    text: Does life have meaning?
+    text: Sorry, I don't have the information that you are asking.
     user_prompt: Ask the bot a question about common world knowledge
     user_role: You are interacting with a bot designed to fetch information from the
       internet
@@ -54,12 +56,12 @@ acts:
 - - bot_prompt: Tell the user you don't have the information they are asking for
     bot_role: You are a bot designed to fetch information from the internet
     domain: LOOK_UP_INFO
-    episode_done: false
-    id: metalwoz
+    episode_done: true
+    id: metalwoz:UserSimulatorTeacher
     labels:
-    - Sorry, I don't have the information that you are asking.
+    - Does my butt look big?
     task_id: 4fdf58c3
-    text: How many Oreos can a gorilla eat?
+    text: Sorry, I don't have the information that you are asking.
     user_prompt: Ask the bot a question about common world knowledge
     user_role: You are interacting with a bot designed to fetch information from the
       internet
