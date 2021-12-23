@@ -22,7 +22,9 @@ The following flags can be passed in to specify filepaths for overriding the tex
 
 ## Onboarding
 
-In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to change the worker selection criteria.
+TODO: discuss the "min_correct", "max_incorrect", "max_failures_allowed" fields!
+
+In `frontend/components/onboarding_components.jsx`, modify `handleOnboardingSubmit` to further change the worker selection criteria.
 
 ## Human+model image chat
 
