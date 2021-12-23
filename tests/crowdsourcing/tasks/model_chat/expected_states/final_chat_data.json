@@ -7,7 +7,7 @@
     "dialog": [
         {
             "episode_done": false,
-            "id": "Worker",
+            "id": "Speaker 1",
             "text": "Hi!",
             "fake_start": true,
             "agent_idx": 0,
@@ -16,7 +16,7 @@
         {
             "agent_idx": 1,
             "text": "I don't know.",
-            "id": "FixedResponseAgent",
+            "id": "Speaker 2",
             "problem_data": {
                 "bucket_0": false,
                 "bucket_1": false,
@@ -29,12 +29,12 @@
         {
             "agent_idx": 0,
             "text": "What are you nervous about?",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "I don't know.",
-            "id": "FixedResponseAgent",
+            "id": "Speaker 2",
             "problem_data": {
                 "bucket_0": false,
                 "bucket_1": false,
@@ -47,12 +47,12 @@
         {
             "agent_idx": 0,
             "text": "Do you have any plans for the weekend?",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "I don't know.",
-            "id": "FixedResponseAgent",
+            "id": "Speaker 2",
             "problem_data": {
                 "bucket_0": false,
                 "bucket_1": false,
@@ -65,12 +65,12 @@
         {
             "agent_idx": 0,
             "text": "Yeah that sounds great! I like to bike and try new restaurants.",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "I don't know.",
-            "id": "FixedResponseAgent",
+            "id": "Speaker 2",
             "problem_data": {
                 "bucket_0": false,
                 "bucket_1": false,
@@ -83,12 +83,12 @@
         {
             "agent_idx": 0,
             "text": "Oh, Italian food is great. I also love Thai and Indian.",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "I don't know.",
-            "id": "FixedResponseAgent",
+            "id": "Speaker 2",
             "problem_data": {
                 "bucket_0": false,
                 "bucket_1": false,
@@ -101,12 +101,12 @@
         {
             "agent_idx": 0,
             "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "I don't know.",
-            "id": "FixedResponseAgent",
+            "id": "Speaker 2",
             "problem_data": {
                 "bucket_0": false,
                 "bucket_1": false,

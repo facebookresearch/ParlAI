@@ -16,7 +16,7 @@ import parlai.utils.testing as testing_utils
 
 
 # Inputs
-AGENT_DISPLAY_IDS = ('Worker',)
+AGENT_DISPLAY_IDS = ('Speaker 1',)
 AGENT_MESSAGES = [
     ("What are you nervous about?",),
     ("Do you have any plans for the weekend?",),
