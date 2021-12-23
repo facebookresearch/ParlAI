@@ -1,0 +1,45 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'USER: __SILENCE__'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: hey there, how can i help you?'
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'USER: Hi. I want to ride Uber in car.'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: sure, where are you heading to?
+
+      where is your destination?'
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 1326
+num_examples: 33198

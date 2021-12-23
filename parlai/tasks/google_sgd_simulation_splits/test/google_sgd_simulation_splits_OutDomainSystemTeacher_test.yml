@@ -1,0 +1,54 @@
+acts:
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'USER: I''m looking for some attractions to visit while I''m vacationing.'
+    type: 'APICALL: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Sure, where will you be visiting?'
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = FindAttractions ; location = London'
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots:
+      api_name: FindAttractions
+      location: London
+    text: 'USER: I''m looking for things to do in London.'
+    type: 'APICALL: '
+- - domain: Messaging, RentalCars, Travel
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Alright, one of the top attractions is 30 St Mary Axe (The Gherkin).
+      It''s a historical landmark.'
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots:
+      attraction_name: 30 St Mary Axe (The Gherkin)
+      category: Historical Landmark
+      free_entry: 'False'
+      good_for_kids: 'True'
+      location: London
+      phone_number: 20 7071 5029
+    text: 'APIRESP: attraction_name = 30 St Mary Axe (The Gherkin) ; category = Historical
+      Landmark ; free_entry = False ; good_for_kids = True ; location = London ; phone_number
+      = 20 7071 5029'
+    type: 'SYSTEM: '
+num_episodes: 768
+num_examples: 20130

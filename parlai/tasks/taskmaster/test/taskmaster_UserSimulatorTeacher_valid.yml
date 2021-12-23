@@ -1,0 +1,46 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: __SILENCE__'
+    id: Taskmaster1_UserSimulatorTeacher
+    text: 'GOAL: '
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Hi. I''m trying to order a cinnamon shortbread latte from the Hilton
+      Knoxville Starbucks in Knoxville, Tennessee.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: hello, how can i assist you?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Yes, at The Hill Starbucks at The Hill, Knoxville.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: did you say hilton knoxville?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: I think just a tall with whole milk.
+
+      And Can you have they do add a little bit more than normal amount of cinnamon
+      on top or the cinnamon and nutmeg that they put on top of it?'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: what size would you like your coffee?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: (s) Just a dab.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: sure. would you like whipped cream?'
+    type: 'USER: '
+num_episodes: 1321
+num_examples: 15660

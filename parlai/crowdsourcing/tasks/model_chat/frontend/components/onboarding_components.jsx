@@ -129,7 +129,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
     } else {
         const [currentTurnAnnotations, setCurrentAnnotations] = React.useState(
             Array.from(Array(onboardingData.dialog.length), () => Object.fromEntries(
-                annotationBuckets.map(bucket => [bucket.value, false]))
+                Object.keys(annotationBuckets.config).map(bucket => [bucket, false]))
             )
         );
         return (

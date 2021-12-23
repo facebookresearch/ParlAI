@@ -1,0 +1,59 @@
+acts:
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_SystemTeacher
+    labels:
+    - 'APICALL: api_name = resolve_movie ; name.movie = that live action asian disney
+      movie'
+    slots:
+      api_name: resolve_movie
+      name.movie: that live action asian disney movie
+    text: 'USER: im looking for a place playing that new live action Asian disney
+      movie'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_SystemTeacher
+    labels:
+    - 'SYSTEM: Happy to help! Let me just confirm that the movie you''re talking about
+      is mulan. Is that right?'
+    slots:
+      api_name: resolve_movie
+      name.movie: mulan
+    text: 'APIRESP: api_name = resolve_movie ; name.movie = mulan'
+    type: 'SYSTEM: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_SystemTeacher
+    labels:
+    - 'APICALL: api_name = find_theaters ; location = taylor, michigan ; name.movie
+      = mulan'
+    slots:
+      api_name: find_theaters
+      location: taylor, michigan
+      name.movie: mulan
+    text: 'USER: That’s right.'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_SystemTeacher
+    labels:
+    - 'SYSTEM: OK. mulan is playing at both AMC Mountain 16 and Cinemark Plaza 24
+      in taylor, michigan.'
+    slots:
+      api_name: find_theaters
+      name.theater_1: AMC Mountain 16
+      name.theater_2: Cinemark Plaza 24
+    text: 'APIRESP: api_name = find_theaters ; name.theater_1 = AMC Mountain 16 ;
+      name.theater_2 = Cinemark Plaza 24'
+    type: 'SYSTEM: '
+num_episodes: 19000
+num_examples: 496484

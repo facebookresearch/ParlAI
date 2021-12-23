@@ -1,0 +1,51 @@
+acts:
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - 'USER: i need a place to dine in the center thats expensive'
+    text: 'GOAL: api_name = find_hotel | api_name = find_restaurant ; area = centre
+      ; pricerange = expensive | api_name = find_hotel ; pricerange = expensive ;
+      type = hotel | api_name = book_hotel ; bookday = saturday ; bookpeople = 2 ;
+      bookstay = 2 ; name = university arms hotel ; pricerange = expensive ; type
+      = hotel'
+    type: 'USER: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - 'USER: Any sort of food would be fine, as long as it is a bit expensive. Could
+      I get the phone number for your recommendation?'
+    slots: {}
+    text: 'SYSTEM: I have several options for you; do you prefer African, Asian, or
+      British food?'
+    type: 'USER: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - 'USER: Sounds good, could I get that phone number? Also, could you recommend
+      me an expensive hotel?'
+    slots: {}
+    text: 'SYSTEM: There is an Afrian place named Bedouin in the centre. How does
+      that sound?'
+    type: 'USER: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - 'USER: Yes. Can you book it for me?'
+    slots: {}
+    text: 'SYSTEM: Bedouin''s phone is 01223367660. As far as hotels go, I recommend
+      the University Arms Hotel in the center of town.'
+    type: 'USER: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - 'USER: i want to book it for 2 people and 2 nights starting from saturday.'
+    slots: {}
+    text: 'SYSTEM: Sure, when would you like that reservation?'
+    type: 'USER: '
+num_episodes: 7913
+num_examples: 63025

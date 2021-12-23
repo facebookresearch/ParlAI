@@ -76,7 +76,7 @@ class TestZooAndTasks(unittest.TestCase):
             task_list,
             "parlai/tasks",
             "task",
-            ignore=['fromfile', 'interactive', 'jsonfile', 'wrapper'],
+            ignore=['fromfile', 'interactive', 'jsonfile', 'tod_json', 'wrapper'],
         )
 
     @pytest.mark.nofbcode

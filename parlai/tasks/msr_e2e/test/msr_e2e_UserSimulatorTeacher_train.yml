@@ -1,0 +1,48 @@
+acts:
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_UserSimulatorTeacher
+    labels:
+    - 'USER: i want to eat sushi in dallas. Where should I go?'
+    text: 'GOAL: api_name = taxi ; dropoff_location = in dallas | api_name = taxi
+      ; dropoff_location = mckinney ; numberofpeople = 1 ; pickup_location = dallas
+      airport ; pickup_location_city = dallas ; pickup_time = right now ; state =
+      texas | api_name = taxi ; name = tom thumb'
+    type: 'USER: '
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_UserSimulatorTeacher
+    labels:
+    - 'USER: yeah. Can I get a ride from the dallas airport to mckinney, texas? Just
+      me, right now!'
+    slots: {}
+    text: 'SYSTEM: I''m here to help you book a taxi. Can I help with that?'
+    type: 'USER: '
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_UserSimulatorTeacher
+    labels:
+    - 'USER: yes. my name is tom thumb'
+    slots: {}
+    text: 'SYSTEM: Sure. That''s $37-48 for uberX. Shall I book that?'
+    type: 'USER: '
+- - domain: taxi
+    episode_done: true
+    id: MsrE2E_UserSimulatorTeacher
+    labels:
+    - 'USER: [DONE]'
+    slots: {}
+    text: 'SYSTEM: You''re all set, Tom. Thanks for using our service!'
+    type: 'USER: '
+- - domain: movie
+    episode_done: false
+    id: MsrE2E_UserSimulatorTeacher
+    labels:
+    - 'USER: Hey there. I want to go watch Deadpool tomorrow. Can you help me find
+      tickets?'
+    text: 'GOAL: api_name = movie ; date = tomorrow ; moviename = Deadpool | api_name
+      = movie ; city = Glendale ; numberofpeople = 2 ; starttime = 12PM to 11PM ;
+      state = California ; theater = any theater'
+    type: 'USER: '
+num_episodes: 8068
+num_examples: 38228

@@ -1,0 +1,48 @@
+acts:
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'USER: On Tuesday I''m hopefully going to see The Brothers Grimsby in Los Angeles.
+      I think Baldwin Hills Crenshaw is the theater closest to me'
+    id: MsrE2E_UserSimulatorTeacher
+    text: 'GOAL: api_name = movie ; city = Los Angeles ; date = Tuesday ; distanceconstraints
+      = closest ; moviename = The Brothers Grimsby ; theater = Baldwin Hills Crenshaw
+      | api_name = movie ; numberofpeople = 3 ; starttime = 8:10'
+    type: 'USER: '
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'USER: I think the 8:10 would work best, can you book that one for me? I need
+      two tickets'
+    id: MsrE2E_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: It has a 2:30pm and 8:10pm show on Tue. Which one would you prefer?'
+    type: 'USER: '
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'USER: I know you can. Next agent please report this'
+    id: MsrE2E_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Great I can book those for you.'
+    type: 'USER: '
+- - domain: movie
+    episode_done: true
+    eval_labels:
+    - 'USER: [DONE]'
+    id: MsrE2E_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: You are welcome.  Enjoy the show.'
+    type: 'USER: '
+- - domain: taxi
+    episode_done: false
+    eval_labels:
+    - 'USER: Can you look for a ride from Philadelphia airport (PHL) to Independence
+      hall Today at 8pm?'
+    id: MsrE2E_UserSimulatorTeacher
+    text: 'GOAL: api_name = taxi ; date = Today ; dropoff_location = Independence
+      hall ; pickup_location = Philadelphia airport ; pickup_time = 8pm | api_name
+      = taxi ; numberofpeople = 4 | api_name = taxi ; car_type = UberX'
+    type: 'USER: '
+num_episodes: 1008
+num_examples: 4782

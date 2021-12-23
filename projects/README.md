@@ -6,6 +6,8 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
+- **Maintaining Identity** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/light_whoami/) _State-of-the-art dialogue models cannot maintain identity -- we study measurements & methods for this open problem._
+
 - **More Parameters or More Compute?** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/params_vs_compute) _Answer: Both! Two new methods that explore this question: Hash Layers for more parameters, and Staircase Attention for more power per parameter._
 
 - **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token._
@@ -89,6 +91,8 @@ _Task & models for chitchat with a given persona._
 
 
 ## Knowledge Grounded
+
+- **Reason first, then respond:** [[paper]](https://arxiv.org/abs/2111.05204) _A modular Generation method for Knowledge-infused Dialogue._
 
 - **Internet-Augmented Dialogue Generation** [[project]](http://parl.ai/projects/sea) [[paper]](https://arxiv.org/abs/2107.07566).
   _Utilizing a search-engine for open domain chitchat task & models._

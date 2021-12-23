@@ -1,0 +1,43 @@
+acts:
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_UserSimulatorTeacher
+    labels:
+    - 'USER: Hey. How are the Denver Nuggets doing this year?'
+    text: 'GOAL: api_name = nba ; name.team = Denver Nuggets | api_name = nba ; name.player
+      = Nikola Jokic'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_UserSimulatorTeacher
+    labels:
+    - 'USER: Okay. And what division are they in?'
+    slots: {}
+    text: 'SYSTEM: Hello, They''re currently six place in the Western Conference.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_UserSimulatorTeacher
+    labels:
+    - 'USER: Okay. And how they did last game?'
+    slots: {}
+    text: 'SYSTEM: There in the Northwest division.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_UserSimulatorTeacher
+    labels:
+    - 'USER: Okay. And I need to start report that.'
+    slots: {}
+    text: 'SYSTEM: They lost the last game against the 76ers.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    id: Taskmaster2_UserSimulatorTeacher
+    labels:
+    - 'USER: Okay, And how many points is the college York average in?'
+    slots: {}
+    text: 'SYSTEM: Starting point guard is Gary Harris.'
+    type: 'USER: '
+num_episodes: 13840
+num_examples: 138596

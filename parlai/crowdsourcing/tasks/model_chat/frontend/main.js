@@ -30,7 +30,7 @@ function MainApp() {
       )}
       renderSidePane={({ mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
         <DefaultTaskDescription
-          chatTitle={taskConfig.chat_title}
+          chatTitle={taskConfig.task_title}
           taskDescriptionHtml={
               taskConfig.left_pane_text.replace(
                   "[persona_string_1]", taskContext.human_persona_string_1,
@@ -51,24 +51,23 @@ function MainApp() {
         </DefaultTaskDescription>
       )}
       renderTextResponse={
-        ({ 
-          mephistoContext: { taskConfig }, 
+        ({
+          mephistoContext: { taskConfig },
           appContext: { appSettings },
           onMessageSend,
           active,
 
         }) => (
-          <ResponseComponent 
+          <ResponseComponent
             appSettings={appSettings}
             taskConfig={taskConfig}
             active={active}
             onMessageSend={onMessageSend}
           />
-        )  
+        )
       }
     />
   );
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
-

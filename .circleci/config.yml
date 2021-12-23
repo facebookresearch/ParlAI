@@ -105,6 +105,8 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            # This pre-Python-3.7 package will break use of Python-3.7-style dataclasses
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -120,6 +122,8 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            # This pre-Python-3.7 package will break use of Python-3.7-style dataclasses
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
             python -c 'import torch; print("Torch version:", torch.__version__)'
@@ -418,6 +422,7 @@ jobs:
       - runtests:
           cachename: teacher
           marker: teacher
+          pytest_flags: -v -s
 
   build_website:
     executor: small_cpu37

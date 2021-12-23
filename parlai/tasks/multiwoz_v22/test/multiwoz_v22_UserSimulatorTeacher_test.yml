@@ -1,0 +1,50 @@
+acts:
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'USER: I need train reservations from norwich to cambridge'
+    id: MultiwozV22_UserSimulatorTeacher
+    text: 'GOAL: api_name = find_train ; departure = norwich ; destination = cambridge
+      | api_name = find_train ; arriveby = 18:00 ; day = monday ; departure = norwich
+      ; destination = cambridge | api_name = find_attraction ; name = cineworld cinema'
+    type: 'USER: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'USER: I''d like to leave on Monday and arrive by 18:00.'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: I have 133 trains matching your request. Is there a specific day
+      and time you would like to travel?'
+    type: 'USER: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'USER: Before booking, I would also like to know the travel time, price, and
+      departure time please.'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: There are 12 trains for the day and time you request. Would you
+      like to book it now?'
+    type: 'USER: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'USER: No hold off on booking for now. Can you help me find an attraction called
+      cineworld cinema?'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: There are 12 trains meeting your needs with the first leaving at
+      05:16 and the last one leaving at 16:16. Do you want to book one of these?'
+    type: 'USER: '
+- - domain: attraction, train
+    episode_done: false
+    eval_labels:
+    - 'USER: Yes, that was all I needed. Thank you very much!'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Yes it is a cinema located in the south part of town what information
+      would you like on it?'
+    type: 'USER: '
+num_episodes: 1000
+num_examples: 8372

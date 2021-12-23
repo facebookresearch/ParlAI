@@ -1,69 +1,75 @@
 acts:
-- - bot_prompt: Fulfil the user's request
-    bot_role: You are a bot that provides tourism related advice
-    domain: TOURISM
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
     episode_done: false
     eval_labels:
     - Hello how may I help you?
     id: metalwoz
-    task_id: 290f924c
-    text: You are a bot that provides tourism related advice
-    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
-      ask if there are any good festivals around that time
-    user_role: You are interacting with a bot that gives tourism related advice
-    utterance_id: b942824c
-- - bot_prompt: Fulfil the user's request
-    bot_role: You are a bot that provides tourism related advice
-    domain: TOURISM
+    task_id: b5ca362f
+    text: You are a bot designed to book flights
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
     episode_done: false
     eval_labels:
-    - I can assist you with your upcoming Montreal trip. What do you need?
+    - Can I help you book a flight to greece?
     id: metalwoz
-    task_id: 290f924c
-    text: I have some questions about my upcoming travel to Montreal.
-    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
-      ask if there are any good festivals around that time
-    user_role: You are interacting with a bot that gives tourism related advice
-    utterance_id: b942824c
-- - bot_prompt: Fulfil the user's request
-    bot_role: You are a bot that provides tourism related advice
-    domain: TOURISM
+    task_id: b5ca362f
+    text: Hello, I want to book a flight.
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
     episode_done: false
     eval_labels:
-    - 'Here are a few festivals: BarnFest Steakfest Musicfest'
+    - Perfect, and when would you like to leave?
     id: metalwoz
-    task_id: 290f924c
-    text: I'm heading there shortly during what is there summer months and was wondering
-      if there are good festivals going on then.
-    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
-      ask if there are any good festivals around that time
-    user_role: You are interacting with a bot that gives tourism related advice
-    utterance_id: b942824c
-- - bot_prompt: Fulfil the user's request
-    bot_role: You are a bot that provides tourism related advice
-    domain: TOURISM
+    task_id: b5ca362f
+    text: Yes that's where I want to go.
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
     episode_done: false
     eval_labels:
-    - They are all occuring in July.
+    - Alright, i have your flight leaving from dallas and landing in athens. When
+      would you like to fly there?
     id: metalwoz
-    task_id: 290f924c
-    text: Those sound good. Do you have the dates they are happening?
-    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
-      ask if there are any good festivals around that time
-    user_role: You are interacting with a bot that gives tourism related advice
-    utterance_id: b942824c
-- - bot_prompt: Fulfil the user's request
-    bot_role: You are a bot that provides tourism related advice
-    domain: TOURISM
+    task_id: b5ca362f
+    text: I want to leave from Dallas.
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
     episode_done: false
     eval_labels:
-    - Sounds fun! Can I help you with anything else today?
+    - Alright booking your flight between now and next friday. You will be alerted
+      when your flight is book and vased on the lowest available price.
     id: metalwoz
-    task_id: 290f924c
-    text: That is when I plan on going. They all sound good to me.
-    user_prompt: Tell the Bot that you are heading to Montreal in the summer, and
-      ask if there are any good festivals around that time
-    user_role: You are interacting with a bot that gives tourism related advice
-    utterance_id: b942824c
+    task_id: b5ca362f
+    text: I want to leave by next Friday.
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
 num_episodes: 2319
 num_examples: 14067

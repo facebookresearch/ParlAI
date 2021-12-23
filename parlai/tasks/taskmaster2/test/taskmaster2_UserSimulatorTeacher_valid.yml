@@ -1,0 +1,45 @@
+acts:
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: '
+    id: Taskmaster2_UserSimulatorTeacher
+    text: 'GOAL: api_name = mls ; name.team = Vancouver Whitecaps FC? | api_name =
+      mls ; day.match = last Saturday | api_name = mls ; position.player = goalkeeper'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: Hi Assistant. How are you?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Hello.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: I''m great. I''m a big fan of Major League Soccer, And my favorite team
+      is Vancouver Whitecaps FC. And I would love to know what place they are in,
+      the Vancouver Whitecaps FC?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: I''m good and yourself?'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: Thank you. And are they playing right now?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Currently in 7th place in the Western Conference.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: Okay, thank you. And who did they play last Saturday?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: No, they''re not scheduled to play today.'
+    type: 'USER: '
+num_episodes: 1730
+num_examples: 17337
