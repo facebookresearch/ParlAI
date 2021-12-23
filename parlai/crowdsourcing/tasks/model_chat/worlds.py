@@ -260,8 +260,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     'final_rating'
                 ]
 
-                # Soft-block the worker if there were acceptability violations
                 self.final_chat_data = self.get_final_chat_data()
+
+                # Soft-block the worker if there were acceptability violations
                 acceptability_violations = self.final_chat_data[
                     'acceptability_violations'
                 ][0]
