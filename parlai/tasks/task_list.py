@@ -1176,6 +1176,20 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1908.06083"},
     },
     {
+        "id": "MultiDoGo",
+        "display_name": "MultiDoGo",
+        "task": "multidogo",
+        "tags": ["TOD"],
+        "description": (
+            "MultiDoGo is a large task-oriented dataset from Amazon collected "
+            "in a Wizard of Oz fashion, using both crowd and expert annotators "
+            "with annotations at varying levels of granularity."
+        ),
+        "links": {
+            "website": "https://github.com/awslabs/multi-domain-goal-oriented-dialogues-dataset"
+        },
+    },
+    {
         "id": "MultiWOZv2.0",
         "display_name": "MultiWOZ 2.0",
         "task": "multiwoz_v20",
