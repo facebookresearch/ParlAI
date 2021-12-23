@@ -7,7 +7,6 @@
 End-to-end testing for the model image chat crowdsourcing task.
 """
 
-import glob
 import json
 import os
 import pickle
@@ -72,14 +71,10 @@ try:
                 expected_states_folder = os.path.join(
                     os.path.dirname(os.path.abspath(__file__)), 'expected_states'
                 )
-                expected_chat_data_path = os.path.join(
-                    expected_states_folder, 'final_chat_data__image_chat.json'
-                )
                 expected_state_path = os.path.join(
                     expected_states_folder, 'state__image_chat.json'
                 )
                 parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
-                chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
                 sample_image_path = os.path.join(
                     os.path.dirname(os.path.abspath(__file__)),
                     'test_image_stack',
@@ -117,7 +112,6 @@ try:
                 # Set up the config and database
                 num_convos = 1
                 overrides = [
-                    f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
                     f'mephisto.blueprint.image_context_path={image_context_path}',
                     f'mephisto.blueprint.num_conversations={num_convos:d}',
                     f'mephisto.blueprint.stack_folder={stack_folder}',
@@ -147,18 +141,6 @@ try:
                     form_messages=FORM_MESSAGES,
                     form_task_data=FORM_TASK_DATA,
                     expected_states=(expected_state,),
-                )
-
-                # Check that the contents of the chat data file are as expected
-                with open(expected_chat_data_path) as f:
-                    expected_chat_data = json.load(f)
-                results_path = list(
-                    glob.glob(os.path.join(chat_data_folder, '*/*_*_*_sandbox.json'))
-                )[0]
-                with open(results_path) as f:
-                    actual_chat_data = json.load(f)
-                self._check_final_chat_data(
-                    actual_value=actual_chat_data, expected_value=expected_chat_data
                 )
 
 
