@@ -30,8 +30,7 @@ function Checkboxes({
   }
   // TODO: add support for radio input type
   let input_type = "checkbox";
-  const showLineBreaks = true;
-  // TODO: pass showLineBreaks in from a flag specified in the annotation buckets JSON, after Megan has refactored that JSON to allow for metadata
+  const showLineBreaks = annotationBuckets.hasOwnProperty("show_line_breaks") ? annotationBuckets.show_line_breaks : false;
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
@@ -63,6 +62,6 @@ function Checkboxes({
     </div>
   )
 }
-// Show a line break after every checkbox other than the final one
+// showLineBreaks: show a line break after every checkbox other than the final one
 
 export { Checkboxes };
