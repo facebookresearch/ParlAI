@@ -121,13 +121,9 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
     );
   });
 
-  return (
-    <div className="response-type-module">
-      <div>
-        You've completed the conversation. Please annotate the final turn, fill out
-        the following, and hit Done.
-      </div>
-      <br />
+  if (listRatingSelectors.length > 1) {
+    // Show ratings to the right of the questions
+    const form = (
       <Form
         horizontal
       >
@@ -141,6 +137,32 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
           Done
         </Button>
       </Form>
+    );
+  } else {
+    // Show the single rating below the single question
+    const form = (
+      <div className="response-bar">
+        {listRatingSelectors}
+        <Button
+          className="btn btn-submit submit-response"
+          id="id_send_msg_button"
+          disabled={!active || sending}
+          onClick={() => tryMessageSend()}
+        >
+          Done
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="response-type-module">
+      <div>
+        You've completed the conversation. Please annotate the final turn, fill out
+        the following, and hit Done.
+      </div>
+      <br />
+      {form}
     </div>
   );
 }
