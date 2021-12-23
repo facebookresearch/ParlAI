@@ -8,13 +8,7 @@
 
 import React from "react";
 
-import { 
-  FormControl, 
-  Button,
-  Col,
-  FormGroup,
-  ControlLabel,
-} from "react-bootstrap";
+import { Button, Col, ControlLabel, Form, FormControl, FormGroup } from "react-bootstrap";
 
 
 function hasAnyAnnotations(annotations) {
@@ -28,26 +22,8 @@ function hasAnyAnnotations(annotations) {
   }
   return false;
 }
-  
-function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
-  const [rating, setRating] = React.useState(0);
-  const [sending, setSending] = React.useState(false);
 
-  const tryMessageSend = React.useCallback(() => {
-    if (active && !sending) {
-      setSending(true);
-      onMessageSend({ 
-        text: "", 
-        task_data: {
-          problem_data_for_prior_message: currentCheckboxes,
-          final_rating: rating,
-        },
-      }).then(() => {
-        setSending(false);
-      });
-    }
-  }, [active, sending, rating, onMessageSend]);
-
+function RatingSelector({ active, ratings, sending, ratingQuestion, ratingIndex, setRatings }) {
   const ratingOptions = [<option key="empty_option" />].concat(
     ["1", "2", "3", "4", "5"].map((option_label, index) => {
       return (
@@ -56,24 +32,37 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
     })
   );
 
-  const ratingSelector = (
-    <FormGroup key={"final_survey"}>
+  function handleRatingSelection(val) {
+    console.log('Old ratings: ')
+    console.log(ratings)
+    const newRatings = ratings.map((item, index) => {
+      if (index === ratingIndex) {
+        return val;
+      } else {
+        return item;
+      }
+    });
+    console.log('New ratings: ')
+    console.log(newRatings)
+    // TODO: remove all logging
+    setRatings(newRatings);
+  }
+
+  return (
+    <FormGroup key={"final_survey_" + ratingIndex.toString()}>
       <Col
         componentClass={ControlLabel}
         sm={6}
-        style={{ fontSize: "16px" }}
+        style={{ fontSize: "14px" }}
       >
-        {taskConfig.final_rating_question}
+        {ratingQuestion}
       </Col>
       <Col sm={5}>
         <FormControl
           componentClass="select"
-          style={{ fontSize: "16px" }}
-          value={rating}
-          onChange={(e) => {
-            var val = e.target.value;
-            setRating(val);
-          }}
+          style={{ fontSize: "14px" }}
+          value={ratings[ratingIndex]}
+          onChange={(e) => handleRatingSelection(e.target.value)}
           disabled={!active || sending}
         >
           {ratingOptions}
@@ -81,6 +70,61 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
       </Col>
     </FormGroup>
   );
+}
+
+function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
+  const [sending, setSending] = React.useState(false);
+
+  // Set up multiple response questions
+  let ratingQuestions = taskConfig.final_rating_question.split("|");
+  let initialRatings = [];
+  for (let _ of ratingQuestions) {
+    initialRatings.push("");
+  }
+  const [ratings, setRatings] = React.useState(initialRatings)
+
+  const tryMessageSend = React.useCallback(() => {
+
+    let all_ratings_filled = true;
+    let rating = "";
+    for (let i = 0; i < ratings.length; i++) {
+      if (ratings[i] === "") {
+        all_ratings_filled = false;
+      }
+      if (i === 0) {
+        rating += ratings[i];
+      } else {
+        rating += "|" + ratings[i];
+      }
+    }
+
+    if (all_ratings_filled && active && !sending) {
+      setSending(true);
+      onMessageSend({
+        text: "",
+        task_data: {
+          problem_data_for_prior_message: currentCheckboxes,
+          final_rating: rating,
+        },
+      }).then(() => {
+        setSending(false);
+      });
+    }
+  }, [active, sending, ratings, onMessageSend]);
+
+  const listRatingSelectors = ratingQuestions.map((ratingQuestion, ratingIndex) => {
+    return (
+      <RatingSelector
+        active={active}
+        ratings={ratings}
+        sending={sending}
+        ratingQuestion={ratingQuestion}
+        ratingIndex={ratingIndex}
+        setRatings={setRatings}
+      >
+      </RatingSelector>
+    );
+  });
 
   return (
     <div className="response-type-module">
@@ -89,22 +133,24 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes}) {
         the following, and hit Done.
       </div>
       <br />
-      <div className="response-bar">
-        {ratingSelector}
+      <Form
+        horizontal
+      >
+        {listRatingSelectors}
         <Button
           className="btn btn-submit submit-response"
           id="id_send_msg_button"
-          disabled={rating === 0 || !active || sending}
+          disabled={!active || sending}
           onClick={() => tryMessageSend()}
         >
           Done
         </Button>
-      </div>
+      </Form>
     </div>
   );
 }
 
-function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes}) {
+function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes }) {
   const [textValue, setTextValue] = React.useState("");
   const [sending, setSending] = React.useState(false);
 
@@ -119,9 +165,9 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes}) {
   const tryMessageSend = React.useCallback(() => {
     if (textValue !== "" && active && !sending) {
       setSending(true);
-      onMessageSend({ 
-        text: textValue, 
-        task_data: {problem_data_for_prior_message: currentCheckboxes} 
+      onMessageSend({
+        text: textValue,
+        task_data: { problem_data_for_prior_message: currentCheckboxes }
       }).then(() => {
         setTextValue("");
         setSending(false);
@@ -169,15 +215,15 @@ function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes}) {
 }
 
 function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
-  
+
   const lastMessageIdx = appSettings.numMessages - 1;
   const lastMessageAnnotations = appSettings.checkboxValues[lastMessageIdx];
-  
+
   const computedActive = (
-    taskConfig.annotation_buckets === null || 
+    taskConfig.annotation_buckets === null ||
     hasAnyAnnotations(lastMessageAnnotations) & active
   );
-  
+
   if (lastMessageIdx >= taskConfig.min_num_turns * 2) {
     return (
       <FinalSurvey
@@ -189,7 +235,7 @@ function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
     );
   } else {
     return (
-      <CheckboxTextResponse 
+      <CheckboxTextResponse
         onMessageSend={onMessageSend}
         active={computedActive}
         currentCheckboxes={lastMessageAnnotations}
