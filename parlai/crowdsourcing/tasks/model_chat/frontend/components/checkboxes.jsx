@@ -31,6 +31,7 @@ function Checkboxes({
   // TODO: add support for radio input type
   let input_type = "checkbox";
   const showLineBreaks = annotationBuckets.hasOwnProperty("show_line_breaks") ? annotationBuckets.show_line_breaks : false;
+  const numBuckets = Object.keys(annotationBuckets.config).length;
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
@@ -53,7 +54,7 @@ function Checkboxes({
                 {annotationBuckets.config[c].name}
               </span>
             </span>
-            {(showLineBreaks && checkboxIdx < annotationBuckets.config.length - 1) ? <br></br> : ''}
+            {(showLineBreaks && checkboxIdx < numBuckets - 1) ? <br></br> : ''}
           </>
         ))
       }
