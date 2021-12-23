@@ -180,6 +180,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.task_turn_idx = 0
         self.num_turns = num_turns
 
+        self.agent.agent_id = 'Speaker 1'
+        self.bot.agent_id = 'Speaker 2'
+
         self.dialog = []
         self.tag = f'conversation_id {agent.mephisto_agent.db_id}'
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -488,7 +491,7 @@ class ModelChatWorld(BaseModelChatWorld):
             # Display the previous two utterances
             human_first_msg = {
                 'episode_done': False,
-                'id': self.agent.id,
+                'id': self.agent.agent_id,
                 'text': self.context_info['person1_seed_utterance'],
                 'fake_start': True,
                 'agent_idx': 0,
@@ -497,7 +500,7 @@ class ModelChatWorld(BaseModelChatWorld):
                 human_first_msg[k] = v
             bot_first_msg = {
                 'episode_done': False,
-                'id': self.bot.id,
+                'id': self.bot.agent_id,
                 'text': self.context_info['person2_seed_utterance'],
                 'fake_start': True,
                 'agent_idx': 1,
@@ -513,12 +516,20 @@ class ModelChatWorld(BaseModelChatWorld):
 
         elif self.opt['conversation_start_mode'] == 'hi':
             print('[Displaying "Hi!" only as per Meena task.]')
+            if self.personas is not None:
+                human_persona_strings = [s.strip() for s in self.personas[0]]
+            else:
+                human_persona_strings = ['', '']
             human_first_msg = {
                 'episode_done': False,
-                'id': self.agent.id,
+                'id': self.agent.agent_id,
                 'text': 'Hi!',
                 'fake_start': True,
                 'agent_idx': 0,
+                'task_data': {
+                    'human_persona_string_1': human_persona_strings[0],
+                    'human_persona_string_2': human_persona_strings[1],
+                },
             }
             for k, v in control_msg.items():
                 human_first_msg[k] = v
@@ -528,7 +539,9 @@ class ModelChatWorld(BaseModelChatWorld):
             self.bot.observe(validate(human_first_msg))
 
             first_bot_act = self.bot.act()
-            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act = Compatibility.backward_compatible_force_set(
+                first_bot_act, 'id', self.bot.agent_id
+            )
 
             self.agent.observe(validate(first_bot_act))
 
@@ -670,8 +683,6 @@ def make_world(opt, agents):
     # Extract important components from opt
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
-
-    agents[0].agent_id = "Worker"
 
     # Get context: personas, previous utterances, etc.
     if context_generator is not None:
