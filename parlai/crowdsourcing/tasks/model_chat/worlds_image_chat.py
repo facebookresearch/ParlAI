@@ -78,6 +78,7 @@ Be sure to talk about this image a little bit before discussing other things!
         bot_first_act_raw = Message(
             Compatibility.maybe_fix_act(bot_first_act_raw)
         ).json_safe_payload()
+        bot_first_act_raw['id'] = self.bot.agent_id
         self.agent.observe(validate(bot_first_act_raw))
         bot_first_act = {
             'episode_done': False,
