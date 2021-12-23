@@ -1,0 +1,56 @@
+acts:
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_SystemTeacher
+    labels:
+    - 'APICALL: '
+    slots: {}
+    text: 'USER: i want to eat sushi in dallas. Where should I go?'
+    type: 'APICALL: '
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_SystemTeacher
+    labels:
+    - 'SYSTEM: I''m here to help you book a taxi. Can I help with that?'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_SystemTeacher
+    labels:
+    - 'APICALL: api_name = taxi ; dropoff_location = mckinney ; numberofpeople = 1
+      ; pickup_location = dallas airport ; pickup_location_city = dallas ; pickup_time
+      = right now ; state = texas'
+    slots:
+      api_name: taxi
+      dropoff_location: mckinney
+      numberofpeople: '1'
+      pickup_location: dallas airport
+      pickup_location_city: dallas
+      pickup_time: right now
+      state: texas
+    text: 'USER: yeah. Can I get a ride from the dallas airport to mckinney, texas?
+      Just me, right now!'
+    type: 'APICALL: '
+- - domain: taxi
+    episode_done: false
+    id: MsrE2E_SystemTeacher
+    labels:
+    - 'SYSTEM: Sure. That''s $37-48 for uberX. Shall I book that?'
+    slots:
+      api_name: taxi
+      car_type: uberX
+      cost: $37-48
+    text: 'APIRESP: api_name = taxi ; car_type = uberX ; cost = $37-48'
+    type: 'SYSTEM: '
+num_episodes: 8068
+num_examples: 84524
