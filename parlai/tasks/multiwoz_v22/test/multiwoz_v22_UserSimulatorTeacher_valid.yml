@@ -1,0 +1,50 @@
+acts:
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'USER: I''m looking for a local place to dine in the centre that serves chinese
+      food.'
+    id: MultiwozV22_UserSimulatorTeacher
+    text: 'GOAL: api_name = find_restaurant ; area = centre ; food = chinese | api_name
+      = find_train ; day = sunday ; departure = cambridge ; destination = norwich
+      ; leaveat = 16:15 | api_name = book_train ; bookpeople = 5 ; day = sunday ;
+      departure = cambridge ; destination = norwich ; leaveat = 16:15'
+    type: 'USER: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'USER: I need the address, postcode and the price range.'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: I have restaurants matching your criteria in all price ranges.
+      Do you have a preference on price?'
+    type: 'USER: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'USER: I also need a train. The train should leave after 16:15 and should leave
+      on sunday.'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Ok how about Charlie Chan, located at Regent Street City Centre.
+      Postcode is cb21db with a cheap price. Can I help you further today?'
+    type: 'USER: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'USER: I am leaving from Cambridge and going to Norwich.'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Can I have more information for the train you''re needing? Where
+      are you departing from and arriving to?'
+    type: 'USER: '
+- - domain: restaurant, train
+    episode_done: false
+    eval_labels:
+    - 'USER: book for 5 people and get me the reference number'
+    id: MultiwozV22_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: I have train TR1840 leaving at 16:36 is that okay?'
+    type: 'USER: '
+num_episodes: 999
+num_examples: 8366
