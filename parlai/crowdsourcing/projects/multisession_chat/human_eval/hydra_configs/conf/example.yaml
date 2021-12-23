@@ -10,7 +10,6 @@ mephisto:
     custom_source_dir: ${task_dir}/frontend
     task_config_path: ${task_dir}/task_config
     block_qualification: bq-test
-    chat_data_folder: ${task_dir}/model_chat/BST90M/
     model_opt_path: ${task_dir}/task_config/model_opts.yaml
     num_turns: 6
     task_model_parallel: true
