@@ -189,9 +189,6 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.block_qualification = opt['block_qualification']
 
         self.final_chat_data = None
-        # TODO: remove this attribute once chat data is only stored in the Mephisto
-        #  TaskRun for this HIT (see .get_custom_task_data() docstring for more
-        #  information)
 
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
@@ -263,32 +260,8 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     'final_rating'
                 ]
 
-                # Save the final chat data
-                date_folder = time.strftime('%Y_%m_%d')
-                time_string = time.strftime('%Y%m%d_%H%M%S')
-                chat_data_subfolder = os.path.join(
-                    self.opt['chat_data_folder'], date_folder
-                )
-                os.makedirs(chat_data_subfolder, exist_ok=True)
-                chat_data_path = os.path.join(
-                    chat_data_subfolder,
-                    f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
-                )
-                self.final_chat_data = self.get_final_chat_data()
-                self.agent.mephisto_agent.state.messages.append(
-                    {'final_chat_data': self.final_chat_data}
-                )
-                # Append the chat data directly to the agent state's message list in
-                # order to prevent the worker from seeing a new text response in the UI
-                with open(chat_data_path, 'w+') as f_json:
-                    data_str = json.dumps(self.final_chat_data)
-                    f_json.write(data_str)
-                print(
-                    f'{self.__class__.__name__}:{self.tag}: Data saved at '
-                    f'{chat_data_path} for model: {self.bot.worker_id}.'
-                )
-
                 # Soft-block the worker if there were acceptability violations
+                self.final_chat_data = self.get_final_chat_data()
                 acceptability_violations = self.final_chat_data[
                     'acceptability_violations'
                 ][0]
@@ -412,12 +385,6 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
     def get_custom_task_data(self):
         """
         Retrieves the final chat data for storage in the Mephisto database.
-
-        TODO: the final chat data is currently stored both in
-         mephisto.blueprint.chat_data_folder and in the Mephisto database. It'd be best
-         to remove the chat_data_folder arg completely, and to move the current logic in
-         self.get_final_chat_data() into this method, in order to have a single storage
-         location.
         """
         return self.final_chat_data
 
