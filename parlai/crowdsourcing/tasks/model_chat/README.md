@@ -22,9 +22,9 @@ The following flags can be passed in to specify filepaths for overriding the tex
 
 ## Onboarding
 
-TODO: discuss the "min_correct", "max_incorrect", "max_failures_allowed" fields!
+Set the `"min_correct"`, `"max_incorrect"`, and `"max_failures_allowed"` fields in the JSON file passed to `mephisto.blueprint.onboard_task_data_path` in order to specify how many onboarding questions workers can pass/fail on while still passing onboarding, as well as how many times they are allowed to re-take the onboarding before being soft-blocked. (See `task_config/onboard_task_data.json` for an example.)
 
-In `frontend/components/onboarding_components.jsx`, modify `handleOnboardingSubmit` to further change the worker selection criteria.
+You can further modify the worker selection criteria in `handleOnboardingSubmit` in `frontend/components/onboarding_components.jsx`.
 
 ## Human+model image chat
 
