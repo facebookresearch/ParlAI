@@ -33,8 +33,6 @@ function RatingSelector({ active, ratings, sending, ratingQuestion, ratingIndex,
   );
 
   function handleRatingSelection(val) {
-    console.log('Old ratings: ')
-    console.log(ratings)
     const newRatings = ratings.map((item, index) => {
       if (index === ratingIndex) {
         return val;
@@ -42,9 +40,6 @@ function RatingSelector({ active, ratings, sending, ratingQuestion, ratingIndex,
         return item;
       }
     });
-    console.log('New ratings: ')
-    console.log(newRatings)
-    // TODO: remove all logging
     setRatings(newRatings);
   }
 

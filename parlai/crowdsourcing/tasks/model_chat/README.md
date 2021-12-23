@@ -12,6 +12,8 @@ Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing
 
 Set `mephisto.blueprint.chat_data_folder` to the root folder that you want all results of HITs to be saved in: all results will be saved to a date folder (of format `2021_01_15`) within that root folder.
 
+Set `mephisto.blueprint.final_rating_question` to specify the question to ask the worker at the end of the task, for which the worker will respond with a 1-to-5 Likert score. Separate multiple questions with a `|`.
+
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
