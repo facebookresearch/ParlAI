@@ -13,14 +13,16 @@ Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
-- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to `""` to disable annotation of model responses. TODO: say what the `"show_line_breaks"` key does!
+- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to `""` to disable annotation of model responses. TODO: say what the `"show_line_breaks"` field does!
 - `mephisto.blueprint.left_pane_text_path`: HTML to show on the left-hand pane of the chat window.
 - `mephisto.blueprint.onboard_task_data_path`: JSON specifying parameters for testing workers during onboarding. Onboarding is only run if model responses will be annotated.
 - `mephisto.blueprint.task_description_file`: HTML to show on the initial task-description page shown to the worker.
 
 ## Onboarding
 
-In `frontend/components/onboarding_components.jsx`, modify `handleOnboardingSubmit` to change the worker selection criteria.
+TODO: discuss the "min_correct", "max_incorrect", "max_failures_allowed" fields!
+
+In `frontend/components/onboarding_components.jsx`, modify `handleOnboardingSubmit` to further change the worker selection criteria.
 
 ## Human+model image chat
 
