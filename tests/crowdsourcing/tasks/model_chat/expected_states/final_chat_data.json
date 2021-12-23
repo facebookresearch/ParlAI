@@ -11,7 +11,11 @@
             "text": "Hi!",
             "fake_start": true,
             "agent_idx": 0,
-            "message_id": "4f72800c-e1ff-4411-8ee5-286336c27859"
+            "message_id": "4f72800c-e1ff-4411-8ee5-286336c27859",
+            "task_data": {
+                "human_persona_string_1": "",
+                "human_persona_string_2": ""
+            }
         },
         {
             "agent_idx": 1,

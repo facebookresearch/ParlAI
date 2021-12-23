@@ -389,7 +389,7 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
                     }
                     self.assertDictEqual(
                         clean_actual_message,
-                        clean_actual_message,
+                        clean_expected_message,
                         f'The following dictionaries are different: {clean_actual_message} and {clean_expected_message}',
                     )
             elif key_inner == 'task_description':
