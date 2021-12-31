@@ -654,7 +654,7 @@ class TorchClassifierAgent(TorchAgent):
         loss = self.criterion(scores, labels)
         self.record_local_metric('loss', AverageMetric.many(loss))
         loss = loss.mean()
-        loss.backward()
+        self.backward(loss)
         self.update_params()
 
         # get predictions
