@@ -110,7 +110,7 @@ RAG_MODEL_TYPE_OPTIONS = {
 }
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRagDpr(unittest.TestCase):
     """
     Test all RAG DPR Model Types with Base Generators.
@@ -168,7 +168,7 @@ class TestRagDpr(unittest.TestCase):
         self._test_rag_type('turn:thorough=True', 'transformer/generator', no_cuda=True)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestFidDpr(unittest.TestCase):
     """
     Test FiD DPR Model.
@@ -192,7 +192,7 @@ class TestFidDpr(unittest.TestCase):
         self._test_fid('transformer/generator')
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRagDprPoly(unittest.TestCase):
     """
     Test RAG DPR Poly model.
@@ -218,7 +218,7 @@ class TestRagDprPoly(unittest.TestCase):
         self._test_rag_type('turn', no_cuda=True)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRagTfidf(unittest.TestCase):
     """
     Test RAG TFIDF model.
@@ -231,7 +231,7 @@ class TestRagTfidf(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestFidRag(unittest.TestCase):
     """
     Test Fid Rag.
@@ -257,7 +257,7 @@ class TestFidRag(unittest.TestCase):
         self._test_fid('transformer/generator')
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRagPolyfaiss(unittest.TestCase):
     """
     Test Rag PolyFAISS.
@@ -272,7 +272,7 @@ class TestRagPolyfaiss(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRegret(unittest.TestCase):
     """
     Test ReGReT.
@@ -296,7 +296,7 @@ class TestRegret(unittest.TestCase):
         self._test_regret()
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestOtherOptions(unittest.TestCase):
     """
     Test other RAG Options.
@@ -315,7 +315,7 @@ class TestOtherOptions(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestQueryModels(unittest.TestCase):
     """
     Test other RAG Options.
@@ -368,7 +368,7 @@ def _test_zoo_file(mf: str, fid: bool = False, fid_rag: bool = False):
     torch.cuda.empty_cache()
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRagZooModels(unittest.TestCase):
     """
     Test ZOO Models.
@@ -390,7 +390,7 @@ class TestRagZooModels(unittest.TestCase):
         _test_zoo_file(RAG_TURN_DO_ZOO_MODEL)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestFidZooModels(unittest.TestCase):
     """
     Test FiD zoo models.
@@ -406,7 +406,7 @@ class TestFidZooModels(unittest.TestCase):
         _test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestLoadDPRModel(unittest.TestCase):
     """
     Test loading different DPR models for RAG.
@@ -505,7 +505,7 @@ class TestLoadDPRModel(unittest.TestCase):
         )
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestRagSelfChat(unittest.TestCase):
     """
     Test Self-Chat with RAG-based model.
@@ -533,7 +533,7 @@ class TestRagSelfChat(unittest.TestCase):
             SelfChat.main(**opt)
 
 
-@unittest.skip("Cache too large")
+@testing_utils.skipIfCircleCI
 class TestWOIChunking(unittest.TestCase):
     """
     Test that the woi_chunk_retrieved_docs Chunker works as intended.
