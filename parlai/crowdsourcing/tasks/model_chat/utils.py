@@ -381,13 +381,16 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
                 for actual_message, expected_message in zip(
                     actual_value[key_inner], expected_value_inner
                 ):
-                    self.assertEqual(
-                        {k: v for k, v in actual_message.items() if k != 'message_id'},
-                        {
-                            k: v
-                            for k, v in expected_message.items()
-                            if k != 'message_id'
-                        },
+                    clean_actual_message = {
+                        k: v for k, v in actual_message.items() if k != 'message_id'
+                    }
+                    clean_expected_message = {
+                        k: v for k, v in expected_message.items() if k != 'message_id'
+                    }
+                    self.assertDictEqual(
+                        clean_actual_message,
+                        clean_expected_message,
+                        f'The following dictionaries are different: {clean_actual_message} and {clean_expected_message}',
                     )
             elif key_inner == 'task_description':
                 for (key_inner2, expected_value_inner2) in expected_value_inner.items():

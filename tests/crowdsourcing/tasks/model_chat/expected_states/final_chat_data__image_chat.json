@@ -16,69 +16,69 @@
         },
         {
             "episode_done": false,
-            "id": "TransresnetAgent",
+            "id": "Speaker 2",
             "text": "I must learn that bird's name!",
             "agent_idx": 1
         },
         {
             "agent_idx": 0,
             "text": "Response 1",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 2",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 3",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 4",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 5",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 6",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent",
+            "id": "Speaker 2",
             "final_rating": 0
         }
     ],
