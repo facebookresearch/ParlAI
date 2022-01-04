@@ -15,7 +15,9 @@ Set `mephisto.blueprint.chat_data_folder` to the root folder that you want all r
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
-- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to `""` to disable annotation of model responses.
+- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories.
+  - Set this flag to `""` to disable annotation of model responses.
+  - If the text of the annotation categories is very long, you can set the `"show_line_breaks"` field (see `task_config/annotations_config.json`) to `true` in order to put a line break between the checkbox and text string of each category.
 - `mephisto.blueprint.left_pane_text_path`: HTML to show on the left-hand pane of the chat window.
 - `mephisto.blueprint.onboard_task_data_path`: JSON specifying parameters for testing workers during onboarding. Onboarding is only run if model responses will be annotated.
 - `mephisto.blueprint.task_description_file`: HTML to show on the initial task-description page shown to the worker.
