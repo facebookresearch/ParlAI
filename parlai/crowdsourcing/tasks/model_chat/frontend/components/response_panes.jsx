@@ -80,18 +80,8 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
 
   const tryMessageSend = React.useCallback(() => {
 
-    let all_ratings_filled = true;
-    let rating = "";
-    for (let i = 0; i < ratings.length; i++) {
-      if (ratings[i] === "") {
-        all_ratings_filled = false;
-      }
-      if (i === 0) {
-        rating += ratings[i];
-      } else {
-        rating += "|" + ratings[i];
-      }
-    }
+    let all_ratings_filled = ratings.every((r) => r !== "");
+    let rating = ratings.join('|');
 
     if (all_ratings_filled && active && !sending) {
       setSending(true);
