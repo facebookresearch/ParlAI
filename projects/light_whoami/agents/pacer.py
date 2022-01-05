@@ -16,7 +16,6 @@ from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import (
-    TorchGeneratorAgent,
     TreeSearch,
     GreedySearch,
     BeamSearch,
@@ -85,7 +84,7 @@ class PacerAgentMixin:
             return batch.text_vec
         return batch.full_text_vec
 
-    def _treesearch_factory(self, device: int) -> TreeSearch:
+    def _treesearch_factory(self, device: int, verbose=False) -> TreeSearch:
         method = self.opt.get('inference', 'greedy')
         beam_size = self.opt.get('beam_size', 1)
         pacer_kwargs = {
@@ -105,6 +104,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'beam':
@@ -118,6 +118,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'delayedbeam':
@@ -133,6 +134,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'topk':
@@ -147,6 +149,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         elif method == 'nucleus':
@@ -161,6 +164,7 @@ class PacerAgentMixin:
                 bos_token=self.START_IDX,
                 eos_token=self.END_IDX,
                 device=device,
+                verbose=verbose,
                 **pacer_kwargs,
             )
         else:
@@ -223,7 +227,7 @@ class PacerTreeSearchMixin(TreeSearch):
 
         1. With frequency r, select a token x_i+1 to re-rank.
         2. Generate word probabilities for token x_i+1.
-        3. Examine top k words {x_j | score(x_j) \in top_k(P(x_i+1 | x_0,...,x_i))}; use classifier to predict P(a|x1, ..., x_i, x_j)
+        3. Examine top k words {x_j | score(x_j) in top_k(P(x_i+1 | x_0,...,x_i))}; use classifier to predict P(a|x1, ..., x_i, x_j)
         4. Rescore top k words via multiplication, re-normalize, and advance the generation.
 
         :param logprobs:
@@ -302,7 +306,7 @@ class PacerTopKSampling(PacerTreeSearchMixin, TopKSampling):
 
 class PacerNucleusSampling(PacerTreeSearchMixin, NucleusSampling):
     """
-    Override Nucleus Sampling to work with PAcer
+    Override Nucleus Sampling to work with PAcer.
     """
 
     pass
@@ -330,7 +334,7 @@ class LongPacerPartialOnlyAgent(PacerAgentMixin, TransformerVariantAgent):
 
 class PacerAgent(PacerPartialOnlyAgent, RPARerankAgent):
     """
-    PACER Agent: Combines Beam and Partial Re-ranking
+    PACER Agent: Combines Beam and Partial Re-ranking.
     """
 
     @classmethod
