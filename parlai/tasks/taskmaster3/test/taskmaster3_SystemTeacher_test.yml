@@ -1,0 +1,44 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Taskmaster3_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster3_SystemTeacher
+    slots: {}
+    text: 'USER: Can you help me order 5 tickets to a movie this Friday?'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: I can help with that, which theater would you like to attend?'
+    id: Taskmaster3_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster3_SystemTeacher
+    slots: {}
+    text: 'USER: Something at the Century 16 theater is fine.'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Alright, checking the Century 16 theater. Did you have a particular
+      film in mind?'
+    id: Taskmaster3_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 2382
+num_examples: 61884

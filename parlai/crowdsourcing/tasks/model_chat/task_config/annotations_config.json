@@ -24,5 +24,6 @@
             "name": "None, all good",
             "description": "This response implies that there are no problems with the data"
         }
-    }
+    },
+    "show_line_breaks": false
 }

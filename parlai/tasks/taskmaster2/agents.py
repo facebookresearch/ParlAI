@@ -14,36 +14,31 @@ splits.
 from parlai.core.params import ParlaiParser
 import os
 import pandas as pd
-import hashlib
 from collections import Counter
 from parlai.core.opt import Opt
-from parlai.core.teachers import DialogTeacher
-from parlai.core.metrics import AverageMetric, F1Metric, BleuMetric
+import parlai.core.tod.tod_core as tod
 from parlai.utils.misc import warn_once
 import json
-import parlai.utils.logging as logging
-from typing import Optional, Tuple
-from parlai.core.message import Message
+from typing import Optional
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
 
 import parlai.tasks.taskmaster2.build as build_
+import parlai.core.tod.tod_agents as tod_agents
+
 
 DOMAINS = [
-    'flights',
-    'food-ordering',
-    'hotels',
-    'movies',
-    'restaurant-search',
-    'sports',
-    'music',
+    "flights",
+    "food-ordering",
+    "hotels",
+    "movies",
+    "restaurant-search",
+    "sports",
+    "music",
 ]
 
-ONTO_TOKEN = "Onto:"
-CALL_TOKEN = "Call:"
-RESP_TOKEN = "Result:"
 
-
-class _Abstract(DialogTeacher):
+class Taskmaster2Parser(tod_agents.TodStructuredDataParser):
     """
     Abstract data loader.
     """
@@ -52,21 +47,26 @@ class _Abstract(DialogTeacher):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt)
-        parser.add_argument('--include-ontology', type=bool, default=False)
         parser.add_argument(
-            '--domains',
-            nargs='+',
+            "--taskmaster2-domains",
+            nargs="+",
             default=DOMAINS,
             choices=DOMAINS,
-            help='Uses last passed in configuration.',
+            help="Uses last passed in configuration.",
         )
-        return parser
+        parser.add_argument(
+            "--use-cumulative-api-calls",
+            type=bool,
+            default=True,
+            help="Have API Call/API response turns only when an API response"
+            "slot exist. Accumulate all API call slots with same API call name",
+        )
+        return super().add_cmdline_args(parser, partial_opt)
 
     def __init__(self, opt: Opt, shared=None):
-        self.fold = opt['datatype'].split(':')[0]
-        opt['datafile'] = self.fold
-        self.dpath = os.path.join(opt['datapath'], 'taskmaster-2')
+        self.fold = DatatypeHelper.fold(opt["datatype"])
+        opt["datafile"] = self.fold
+        self.dpath = os.path.join(opt["datapath"], "taskmaster-2")
         if shared is None:
             warn_once(
                 "Taskmaster2 is a beta dataset, and format may significantly change."
@@ -74,298 +74,157 @@ class _Abstract(DialogTeacher):
             build_.build(opt)
         super().__init__(opt, shared)
 
-    def _h(self, x):
-        """
-        Hash function.
-        """
-        h = int(hashlib.sha1(x.encode('utf-8')).hexdigest(), 16) % 10
-        if h == 0:
-            return 'valid'
-        elif h == 1:
-            return 'test'
-        else:
-            return 'train'
-
-    def _normalize_annotation(self, anno):
-        return anno
-
     def _load_data(self, fold, domains):
         # load up the ontology
-        ontology = {}
+        ontologies = {}
         for section in domains:
-            parts = []
-            fn = os.path.join(self.dpath, section + '.onto.json')
-            with PathManager.open(fn, 'r') as f:
-                o = json.load(f)
-            assert len(o) == 1
-            o = list(o.values())[0]
-            for sub in o:
-                prefix = sub['prefix']
-                parts += [
-                    self._normalize_annotation(f'{prefix}.{a}')
-                    for a in sub['annotations']
-                ]
-            ontology[section] = ' ; '.join(parts)
+            fn = os.path.join(self.dpath, section + ".onto.json")
+            with PathManager.open(fn, "r") as f:
+                ontologies.update(json.load(f))
 
         chunks = []
         for section in domains:
-            with PathManager.open(os.path.join(self.dpath, section + '.json')) as f:
+            with PathManager.open(os.path.join(self.dpath, section + ".json")) as f:
                 subset = pd.read_json(f)
-            subset['domain'] = section
+            subset["domain"] = section
             chunks.append(subset)
         chunks = pd.concat(chunks, axis=0)
-        # shuffle deterministically for randomness in few-shot training
+        # deterministic shuffle data for splits
         chunks = chunks.sample(frac=1.0, random_state=42)
-        chunks['fold'] = self._label_fold(chunks)
-        # only the fold we need here
-        chunks = chunks[chunks.fold == fold].reset_index()
-        chunks['ontology'] = chunks['domain'].apply(ontology.get)
-        return chunks
+        split_size = len(chunks) // 10
+        if fold == "train":
+            chunks = chunks[: split_size * 8]
+        elif fold == "valid":
+            chunks = chunks[split_size * 8 : split_size * 9]
+        elif fold == "test":
+            chunks = chunks[split_size * 9 :]
+        return chunks, ontologies
 
-    def _segments2text(self, segments):
-        output = []
+    def _parse_segment_to_slots(self, segment_list):
+        result = {}
+        for segment in segment_list:
+            slot_name = segment["annotations"][0]["name"]
+            slot_value = segment["text"]
+            prefix_split_idx = slot_name.find(".")
+            api_name = slot_name[:prefix_split_idx]
+            slot_name = slot_name[prefix_split_idx + 1 :]
+            result[slot_name] = slot_value
+            result[tod.STANDARD_API_NAME_SLOT] = api_name
+        return result
+
+    def _get_utterance_and_api_call_for_speaker(self, speaker, utterances, idx):
+        utts = []
         slots = {}
-        for segment in segments:
-            val = segment['text']
-            for anno_ in segment['annotations']:
-                anno = anno_['name']
-                anno = self._normalize_annotation(anno)
-                output.append(f'{anno} = {val}')
-                slots[anno] = val
-        return " ; ".join(output), slots
+        while idx < len(utterances):
+            here = utterances[idx]
+            if here["speaker"] != speaker:
+                break
+            utts.append(here["text"])
+            slots.update(self._parse_segment_to_slots(here.get("segments", [])))
+            idx += 1
+        return idx, "\n".join(utts), slots
 
-    def custom_evaluation(
-        self,
-        teacher_action: Message,
-        labels: Optional[Tuple[str]],
-        model_response: Message,
-    ):
-        if 'metrics' in model_response and 'type' in teacher_action:
-            # keep copies of metrics across both api calls/responses
-            prefix = teacher_action['type']
-            keys = list(model_response['metrics'].keys())
-            for k in keys:
-                self.metrics.add(f'{prefix}_{k}', model_response['metrics'][k])
+    def _get_onto_list(self, onto_map, domain):
+        results = []
+        domain = domain.replace(
+            "-", "_"
+        )  # cause they changed it for restaurant-search >.>
+        for data in onto_map[domain]:
+            call = {}
+            call[tod.STANDARD_API_NAME_SLOT] = data["prefix"]
+            call[tod.STANDARD_OPTIONAL_KEY] = data[
+                "annotations"
+            ]  # make all args optional since not specified
+            results.append(call)
+        return results
 
-        if 'text' not in model_response or not labels or 'type' not in teacher_action:
-            return
+    def setup_episodes(self, fold):
+        """
+        Parses into TodStructuredEpisode.
+        """
+        domains = self.opt.get("taskmaster2_domains", DOMAINS)
+        chunks, ontologies = self._load_data(fold, domains)
+        domains_cnt = Counter()
+        episodes = []
+        for _, row in chunks.iterrows():
+            domains_cnt[row["domain"]] += 1
+            utterances = row["utterances"][:]
 
-        domain = teacher_action['domain']
+            idx = 0
+            rounds = []
+            goal_calls = []
+            if len(utterances) > 0 and utterances[0]["speaker"] == "ASSISTANT":
+                idx, sys_utt, api_resp = self._get_utterance_and_api_call_for_speaker(
+                    "ASSISTANT", utterances, idx
+                )
+                r = tod.TodStructuredRound(api_resp_machine=api_resp, sys_utt=sys_utt)
+                rounds.append(r)
 
-        if teacher_action['type'] == 'apicall':
-            # also count slot accuracy
-            text = model_response['text']
-            slot_guesses = set(
-                text.replace(CALL_TOKEN + " ", "").split(' ; ')
-            )  # prevent cheating via repeated guesses
-            correct = 0
-            for slot_guess in slot_guesses:
-                if ' = ' not in slot_guess:
-                    continue
-                try:
-                    slot, guess = slot_guess.split(' = ')
-                except ValueError:
-                    continue
-                if teacher_action['slots'].get(slot) == guess:
-                    self.metrics.add('slot_p', AverageMetric(1))
-                    self.metrics.add(f'{domain}_slot_p', AverageMetric(1))
-                    correct += 1
-                else:
-                    self.metrics.add('slot_p', AverageMetric(0))
-                    self.metrics.add(f'{domain}_slot_p', AverageMetric(0))
-                    logging.debug(
-                        f"Bad slot guess '{slot_guess}' != {teacher_action['slots']}"
+            cum_api_call = {}
+            while idx < len(utterances):
+                idx, user_utt, api_call = self._get_utterance_and_api_call_for_speaker(
+                    "USER", utterances, idx
+                )
+                idx, sys_utt, api_resp = self._get_utterance_and_api_call_for_speaker(
+                    "ASSISTANT", utterances, idx
+                )
+                if not self.opt["use_cumulative_api_calls"]:
+                    r = tod.TodStructuredRound(
+                        user_utt=user_utt,
+                        api_call_machine=api_call,
+                        api_resp_machine=api_resp,
+                        sys_utt=sys_utt,
                     )
-            if teacher_action['slots']:
-                self.metrics.add(
-                    'slot_r', AverageMetric(correct, len(teacher_action['slots']))
-                )
-                self.metrics.add(
-                    f'{domain}_slot_r',
-                    AverageMetric(correct, len(teacher_action['slots'])),
-                )
-                self.metrics.add(
-                    'jga', AverageMetric(correct == len(teacher_action['slots']))
-                )
-
-        elif teacher_action['type'] == 'apiresp':
-            # keep track of statistics by domain
-            f1_metric = F1Metric.compute(model_response['text'], labels)
-            bleu_metric = BleuMetric.compute(model_response['text'], labels)
-            self.metrics.add(f'{domain}_lex_f1', f1_metric)
-            self.metrics.add(f'{domain}_lex_bleu', bleu_metric)
-
-            delex_text = model_response['text']
-            delex_label = labels[0]
-            # compute delexicalized string metrics
-            for slot, value in teacher_action['slots'].items():
-                delex_text = delex_text.replace(value, slot)
-                delex_label = delex_label.replace(value, slot)
-            f1_metric = F1Metric.compute(delex_text, (delex_label,))
-            self.metrics.add('delex_f1', f1_metric)
-            self.metrics.add(f'{domain}_delex_f1', f1_metric)
-            bleu_metric = BleuMetric.compute(delex_text, [delex_label])
-            self.metrics.add('delex_bleu', bleu_metric)
-            self.metrics.add(f'{domain}_delex_bleu', bleu_metric)
-
-    def setup_data(self, fold):
-        domains = self.opt.get('domains', DOMAINS)
-        chunks = self._load_data(fold, domains)
-        domains_cnt = Counter()
-        for _, row in chunks.iterrows():
-            domains_cnt[row['domain']] += 1
-            first = True
-            utterances = row['utterances'][:]
-            if (
-                len(utterances) >= 3
-                and utterances[0]['speaker'] == 'USER'
-                and utterances[1]['speaker'] == 'ASSISTANT'
-                and utterances[2]['speaker'] == 'ASSISTANT'
-                and "help you?" in utterances[1]['text']
-            ):
-                # skip this one
-                utterances.pop(1)
-            if self.opt['include_ontology']:
-                yield {'text': f"{ONTO_TOKEN} {row['ontology']}", 'label': ''}, True
-                first = False
-            while utterances:
-                utt = utterances.pop(0)
-                segtxt, slots = self._segments2text(utt.get('segments', []))
-                if utt['speaker'] == 'USER':
-                    yield {
-                        'text': utt['text'],
-                        'label': f'{CALL_TOKEN} {segtxt}',
-                        'domain': row['domain'],
-                        'slots': slots,
-                        'type': 'apicall',
-                    }, first
-                    first = False
-                elif utt['speaker'] == 'ASSISTANT':
-                    yield {
-                        'text': f'{RESP_TOKEN} {segtxt}',
-                        'label': utt['text'],
-                        'domain': row['domain'],
-                        'slots': slots,
-                        'type': 'apiresp',
-                    }, first
-                    first = False
-        logging.debug(f"Fold {fold} domains: {domains_cnt}")
-
-
-class DelexTeacher(_Abstract):
-    def _label_fold(self, chunks):
-        return chunks.conversation_id.apply(self._h)
-
-    def _delexicalize(self, text, slots):
-        for key, value in slots.items():
-            text = text.replace(value, key)
-        return text
-
-    def setup_data(self, fold):
-        domains_cnt = Counter()
-        chunks = self._load_data(fold)
-        for _, row in chunks.iterrows():
-            domains_cnt[row['domain']] += 1
-            first = True
-            utterances = row['utterances'][:]
-            if (
-                len(utterances) >= 3
-                and utterances[0]['speaker'] == 'USER'
-                and utterances[1]['speaker'] == 'ASSISTANT'
-                and utterances[2]['speaker'] == 'ASSISTANT'
-                and "help you?" in utterances[1]['text']
-            ):
-                # skip this one
-                utterances.pop(1)
-
-            user_utterances = []
-            asst_utterances = []
-            while utterances:
-                utt = utterances.pop(0)
-                _, slots = self._segments2text(utt.get('segments', []))
-                if utt['speaker'] == 'USER':
-                    if asst_utterances:
-                        yield {
-                            'text': ' __BREAK__ '.join(user_utterances),
-                            'label': ' __BREAK__ '.join(asst_utterances),
-                            'domain': row['domain'],
-                        }, first
-                        first = False
-                        user_utterances = []
-                        asst_utterances = []
-                    user_utterances.append(self._delexicalize(utt['text'], slots))
-                elif utt['speaker'] == 'ASSISTANT':
-                    asst_utterances.append(self._delexicalize(utt['text'], slots))
-                    if not user_utterances:
-                        user_utterances.append('__SILENCE__')
-            if asst_utterances:
-                yield {
-                    'text': ' __BREAK__ '.join(user_utterances),
-                    'label': ' __BREAK__ '.join(asst_utterances),
-                    'domain': row['domain'],
-                }, first
-
-
-class TextOnlyTeacher(DelexTeacher):
-    def _delexicalize(self, text, slots):
-        return text
-
-
-class FullShotTeacher(_Abstract):
-    """
-    The full shot teacher uses a standard 80-10-10 split, without regarding domain.
-    """
-
-    def _label_fold(self, chunks):
-        return chunks.conversation_id.apply(self._h)
-
-
-class FewShotTeacher(_Abstract):
-    """
-    Few shot teacher tests for generalization to new domains.
-    """
-
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt)
-        parser.add_argument(
-            '--holdout',
-            default=DOMAINS[0],
-            choices=DOMAINS,
-            help='Domain which is held out from test',
-        )
-        parser.add_argument(
-            '--n-shot',
-            default=100,
-            type=int,
-            help='Number of few shot examples to provide in training fold.',
-        )
-        return super().add_cmdline_args(parser, partial_opt=partial_opt)
-
-    def _label_fold(self, chunks):
-        folds = []
-        num_shots = 0
-        for _, row in chunks.iterrows():
-            if row['domain'] != self.opt['holdout']:
-                # if it's not in the holdout, always mark it train
-                folds.append('train')
-            else:
-                # keep the same valid/test sets as in fullshot, and only leak
-                # a small number of the training examples (i.e. throw away the
-                # vast majority of our data but keep test sets the same)
-
-                f = self._h(row['conversation_id'])
-                if f != 'train':
-                    folds.append(f)
-                elif num_shots < self.opt['n_shot']:
-                    folds.append('train')
-                    num_shots += 1
                 else:
-                    folds.append('throwaway')
-        return folds
+                    cum_api_call = self.process_call_for_cumlative_standalone_api(
+                        api_call, cum_api_call
+                    )
+                    r = tod.TodStructuredRound(
+                        user_utt=user_utt,
+                        api_call_machine=cum_api_call if len(api_resp) > 0 else {},
+                        api_resp_machine=api_resp if len(api_resp) > 0 else {},
+                        sys_utt=sys_utt,
+                    )
+
+                rounds.append(r)
+                if len(api_call) > 0:
+                    goal_calls.append(api_call)
+
+            episode = tod.TodStructuredEpisode(
+                domain=tod.SerializationHelpers.inner_list_join(row["domain"]),
+                api_schemas_machine=self._get_onto_list(ontologies, row["domain"]),
+                goal_calls_machine=goal_calls,
+                rounds=rounds,
+                delex=self.opt.get("delex", False),
+            )
+            episodes.append(episode)
+        return episodes
+
+    def get_id_task_prefix(self):
+        return "Taskmaster2"
+
+    def _label_fold(self, chunks):
+        return chunks.conversation_id.apply(self._h)
+
+    def process_call_for_cumlative_standalone_api(self, new_call, cum_calls):
+        if (
+            len(new_call) > 0
+            and len(cum_calls) > 0
+            and new_call[tod.STANDARD_API_NAME_SLOT]
+            != cum_calls[tod.STANDARD_API_NAME_SLOT]
+        ):
+            cum_calls = {}
+        cum_calls.update(new_call)
+        return cum_calls
 
 
-class DefaultTeacher(FullShotTeacher):
+class UserSimulatorTeacher(Taskmaster2Parser, tod_agents.TodUserSimulatorTeacher):
+    pass
+
+
+class SystemTeacher(Taskmaster2Parser, tod_agents.TodSystemTeacher):
+    pass
+
+
+class DefaultTeacher(SystemTeacher):
     pass

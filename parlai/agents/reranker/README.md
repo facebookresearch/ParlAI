@@ -22,6 +22,15 @@ Finally, subclass the `AbstractGeneratorRerankAgent` in `reranker.py`, and imple
 
 - `get_reranker_class()` --> This method returns the class for the re-ranker.
 
+
+## Case study: Classifier Re-Ranking.
+
+If you want, you can use a standard classifier for re-ranking, where the classifier takes
+the candidate outputs and chooses based on maximizing the probability of a given provided class.      
+This is already implemented in classifier_reranker.py in this directory,
+which can thus be used via the flags "-m reranker/classifier_reranker --target-label positive_class_name".
+
+
 ## Case study: LIGHT RPA Re-Ranking.
 
 ### 1. Train a classifier or ranker model.

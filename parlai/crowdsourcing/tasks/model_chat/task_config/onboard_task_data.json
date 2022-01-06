@@ -85,5 +85,8 @@
                 ]
             }
         ]
-    ]
+    ],
+    "min_correct": 4,
+    "max_incorrect": 3,
+    "max_failures_allowed": 1
 }

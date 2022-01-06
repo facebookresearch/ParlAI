@@ -21,3 +21,11 @@ class TestWozDialogueTeacher(AutoTeacherTest):
 
 class TestSelfDialogueSegmentTeacher(AutoTeacherTest):
     task = "taskmaster:self_dialogue_segment"
+
+
+class TestSystemTeacher(AutoTeacherTest):
+    task = "taskmaster:SystemTeacher"
+
+
+class TestUserSimulatorTeacher(AutoTeacherTest):
+    task = "taskmaster:UserSimulatorTeacher"

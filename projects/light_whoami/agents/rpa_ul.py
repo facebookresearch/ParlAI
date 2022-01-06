@@ -6,8 +6,8 @@
 """
 LIGHT RPA Unlikelihood Agent.
 
-Utilizes a left-to-right RPA Classifier to predict tokens that
-yield incorrect character classifications.
+Utilizes a left-to-right RPA Classifier to predict tokens that yield incorrect character
+classifications.
 """
 from typing import Optional, List, Tuple
 from parlai.core.params import ParlaiParser
@@ -36,8 +36,8 @@ class RpaUlAgent(TransformerGeneratorAgent):
     """
     RPA UL Agent.
 
-    Performs unlikelihood such that tokens which lead to misclassification
-    are penalized.
+    Performs unlikelihood such that tokens which lead to misclassification are
+    penalized.
     """
 
     def __init__(self, opt, shared=None):
@@ -137,16 +137,19 @@ class RpaUlAgent(TransformerGeneratorAgent):
             beam_pred_scores, _ = self._generate(batch, self.beam_size, maxlen)
 
         # forward pass to create graph for beam search case
-        generations = [g[1:] for (g, _) in beam_pred_scores]
+        generations = [g[1:] for (g, _, _) in beam_pred_scores]
         pred_toks = torch.nn.utils.rnn.pad_sequence(generations, batch_first=True)
         model_output = self.model(*self._model_input(batch), ys=pred_toks)
         logits, *_ = model_output
 
         # construct mask marking incorrectly classified characters
         label_mask = torch.zeros_like(pred_toks).type_as(logits)
-        label_mask, wrong_class_cnt, wrong_class_all_cnt, right_class_cnt = self.compute_ul_label_mask(
-            label_mask, generations, batch
-        )
+        (
+            label_mask,
+            wrong_class_cnt,
+            wrong_class_all_cnt,
+            right_class_cnt,
+        ) = self.compute_ul_label_mask(label_mask, generations, batch)
         # Compute unlikelihood loss
         ul_loss = self.compute_ul_loss(pred_toks, label_mask, logits)  # type: ignore
         if label_mask.sum() > 0:
@@ -307,7 +310,7 @@ class RpaUlAgent(TransformerGeneratorAgent):
 
         maxlen = self.label_truncate or 256
         beam_preds_scores, _ = self._generate(batch, self.beam_size, maxlen)
-        preds, scores = zip(*beam_preds_scores)
+        preds, scores, _ = zip(*beam_preds_scores)
 
         cand_choices = None
         text = [self._v2t(p) for p in preds] if preds is not None else None

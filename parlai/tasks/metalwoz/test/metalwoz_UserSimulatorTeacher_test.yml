@@ -1,0 +1,78 @@
+acts:
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
+    episode_done: false
+    eval_labels:
+    - Hello, I want to book a flight.
+    id: metalwoz:UserSimulatorTeacher
+    task_id: b5ca362f
+    text: 'You are interacting with a bot designed to book flights
+
+      Hello how may I help you?'
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
+    episode_done: false
+    eval_labels:
+    - Yes that's where I want to go.
+    id: metalwoz:UserSimulatorTeacher
+    task_id: b5ca362f
+    text: Can I help you book a flight to greece?
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
+    episode_done: false
+    eval_labels:
+    - I want to leave from Dallas.
+    id: metalwoz:UserSimulatorTeacher
+    task_id: b5ca362f
+    text: Perfect, and when would you like to leave?
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
+    episode_done: false
+    eval_labels:
+    - I want to leave by next Friday.
+    id: metalwoz:UserSimulatorTeacher
+    task_id: b5ca362f
+    text: Alright, i have your flight leaving from dallas and landing in athens. When
+      would you like to fly there?
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+- - bot_prompt: Offer to help the user book a flight to Greece.
+    bot_role: You are a bot designed to book flights
+    domain: BOOKING_FLIGHT
+    episode_done: true
+    eval_labels:
+    - Wait please don't do that, I was only curious. I don't actually want to book
+      a flight
+    id: metalwoz:UserSimulatorTeacher
+    task_id: b5ca362f
+    text: Alright booking your flight between now and next friday. You will be alerted
+      when your flight is book and vased on the lowest available price.
+    user_prompt: You would like to know how to get a flight to Greece. If the bot
+      starts booking you a flight to Greece, tell them you were only curious and that
+      you do not wish to actually book the flight.
+    user_role: You are interacting with a bot designed to book flights
+    utterance_id: e0868745
+num_episodes: 2319
+num_examples: 14067

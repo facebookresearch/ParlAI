@@ -203,8 +203,10 @@ class RagModelInterface(ABC):
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Optionally rerank beams.
         """
@@ -423,8 +425,10 @@ class RagSequence(RagModelInterface):
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[List[torch.LongTensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, Optional[Dict]]]]:
         """
         Rerank beams in RAG-Sequence, accounting for document probabilities as well.
 
@@ -517,7 +521,9 @@ class RagSequence(RagModelInterface):
     def fast_generation(
         cls,
         doc_indices: List[int],
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
         doc_log_probs: torch.Tensor,
         n_docs: int,
     ):
@@ -534,22 +540,26 @@ class RagSequence(RagModelInterface):
             number of docs per example
 
         :return sorted_hyps:
-            return list of (hyp, score) tuples, sorted by their score.
+            return list of (hyp, score, token metadata) tuples, sorted by their score.
         """
-        marginalized_hypos: Dict[str, List[torch.Tensor]] = {}
+        marginalized_hypos: Dict[
+            str, Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]
+        ] = {}
         for doc_idx in doc_indices:
             doc_hypos = n_best_beam_preds_scores[doc_idx]
             doc_score = doc_log_probs[doc_idx % n_docs]
-            for hypo, hypo_score in doc_hypos:
+            for hypo, hypo_score, token_metadata in doc_hypos:
                 score = hypo_score + doc_score
                 hypo_tokens = str(hypo.tolist())
                 if hypo_tokens in marginalized_hypos:
                     marginalised_hypo = marginalized_hypos[hypo_tokens]
-                    marginalised_hypo[1] = torch.log(
-                        marginalised_hypo[1].exp() + score.exp()
+                    marginalised_hypo = (
+                        marginalised_hypo[0],
+                        torch.log(marginalised_hypo[1].exp() + score.exp()),
+                        marginalised_hypo[2],
                     )
                 else:
-                    marginalized_hypos[hypo_tokens] = [hypo, score]
+                    marginalized_hypos[hypo_tokens] = (hypo, score, token_metadata)
         sorted_by_score = sorted(marginalized_hypos.values(), key=lambda h: -h[1])
         return sorted_by_score
 
@@ -560,7 +570,7 @@ class RagSequence(RagModelInterface):
         new_input: torch.LongTensor,
         null_idx: int,
         model: RagModel,
-    ) -> List[Tuple[torch.LongTensor, torch.Tensor]]:
+    ) -> List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]:
         """
         Apply RAG-sequence thorough generation for a single batch item.
 
@@ -572,7 +582,7 @@ class RagSequence(RagModelInterface):
             input for the model
 
         :return sorted_hyps:
-            return list of (hyp, score) tuples, sorted by their score.
+            return list of (hyp, score, token_metadata) tuples, sorted by their score.
         """
         # deduplicate, exclude BOS Token
         hyps = list({str(h.tolist()): h[1:] for h in hyps}.values())  # type: ignore
@@ -586,7 +596,7 @@ class RagSequence(RagModelInterface):
             new_ys.unsqueeze(1).unsqueeze(-1), scores.unsqueeze(1), null_idx
         )  # type: ignore
         sorted_by_score = [
-            (hyps[idx], loss[idx]) for idx in loss.sort()[-1]
+            (hyps[idx], loss[idx], None) for idx in loss.sort()[-1]
         ]  # sort ascending
         return sorted_by_score
 
@@ -834,8 +844,8 @@ class RagToken(RagModelInterface):
         """
         For RAG Token, we send each decoder input through n_docs times.
 
-        Similarly to reordering the encoder states, we need to reorder according
-        to the documents dimensions.
+        Similarly to reordering the encoder states, we need to reorder according to the
+        documents dimensions.
         """
         assert incremental_state is not None
         incremental_state = fix_incremental_state(
@@ -866,8 +876,10 @@ class RagToken(RagModelInterface):
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         We don't re-rank beams for RAG Token.
         """
@@ -1169,8 +1181,10 @@ class RagTurn(RagModelInterface):
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Re-rank beams.
 
@@ -1183,7 +1197,9 @@ class RagTurn(RagModelInterface):
 
         Thorough decoding is identical RAG Sequence.
         """
-        new_n_best: List[List[Tuple[torch.LongTensor, torch.Tensor]]] = []
+        new_n_best: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ] = []
         if self.turn_marginalize == 'doc_only' and not self.thorough:
             # no doc log probs here; just re-sorting beams
             input_turns_cnt = batch.input_turns_cnt
@@ -1197,6 +1213,7 @@ class RagTurn(RagModelInterface):
                         new_beam = (
                             beam[0],
                             beam[1] * self.discount_factor ** (it - i - 1),
+                            beam[2],
                         )
                         n_best_i.append(new_beam)
                 new_n_best.append(sorted(n_best_i, key=lambda x: -x[1]))
