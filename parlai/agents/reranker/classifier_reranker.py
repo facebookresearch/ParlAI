@@ -103,7 +103,7 @@ class ClassifierReranker(AbstractReranker):
         return self.predictor.class_list
 
 
-class ClassifierRerankAgent(AbstractGeneratorRerankAgent):
+class ClassifierRerankerAgent(AbstractGeneratorRerankAgent):
     """
     Generative Re-rank agent for adding a ClassifierReranker.
     """
