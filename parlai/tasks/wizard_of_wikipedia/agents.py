@@ -27,6 +27,20 @@ from parlai.utils.io import PathManager
 from parlai.utils import logging
 from parlai.utils.misc import warn_once
 from .build import build
+from .mutators import (
+    AddCheckedSentence,
+    CheckedSentenceAsLabel,
+    AddLabel,
+    AddLabelLM,
+    WowFilterNoPassageUsed,
+)
+import parlai.tasks.wizard_of_internet.mutators
+
+# agents import (
+#    WoiDropoutRetrievedDocs,
+#    WoiChunkRetrievedDocs,
+#    WoiFilterSelectedKnowledgeInRetrievedDocs,
+# )
 
 import json
 import os
@@ -36,6 +50,8 @@ import random
 TOKEN_NOCHOSEN = 'no_passages_used'
 TOKEN_KNOWLEDGE = '__knowledge__'
 TOKEN_END_KNOWLEDGE = '__endknowledge__'
+TOKEN_LABEL = '__label__'
+TOKEN_END_LABEL = '__endlabel__'
 
 
 def _first_val(dictionary):
@@ -224,17 +240,19 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
         d = self.data[episode_idx]
         dialog_entry = d['dialog'][entry_idx]
         episode_done = entry_idx == len(d['dialog']) - 1
-        action = {
-            'wizard_eval': d['wizard_eval'],
-            'chosen_topic': d['chosen_topic'],
-            'chosen_topic_passage': d['chosen_topic_passage'],
-            'text': dialog_entry['text'],
-            'retrieved_topics': dialog_entry['retrieved_topics'],
-            'retrieved_passages': dialog_entry['retrieved_passages'],
-            'checked_sentence': dialog_entry.get('checked_sentence', None),
-            'checked_passage': dialog_entry.get('checked_passage', None),
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'wizard_eval': d['wizard_eval'],
+                'chosen_topic': d['chosen_topic'],
+                'chosen_topic_passage': d['chosen_topic_passage'],
+                'text': dialog_entry['text'],
+                'retrieved_topics': dialog_entry['retrieved_topics'],
+                'retrieved_passages': dialog_entry['retrieved_passages'],
+                'checked_sentence': dialog_entry.get('checked_sentence', None),
+                'checked_passage': dialog_entry.get('checked_passage', None),
+                'episode_done': episode_done,
+            }
+        )
 
         return action
 
@@ -441,14 +459,16 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             else:
                 label_cands = wizard_entry.get('candidate_responses', [])
 
-        action = {
-            'id': 'WizardDialogKnowledgeTeacher',
-            'text': text,
-            'labels': labels,
-            'chosen_topic': chosen_topic,
-            'episode_done': episode_done,
-            'label_candidates': label_cands,
-        }
+        action = Message(
+            {
+                'id': 'WizardDialogKnowledgeTeacher',
+                'text': text,
+                'labels': labels,
+                'chosen_topic': chosen_topic,
+                'episode_done': episode_done,
+                'label_candidates': label_cands,
+            }
+        )
         if self.include_knowledge:
             action['knowledge'] = knowledge_str
         if self.include_checked_sentence:
@@ -620,12 +640,14 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         if self.add_topic and entry_idx == 0:
             text = d.get('chosen_topic', '') + '\n' + text
 
-        action = {
-            'id': 'WizardBasicDialog',
-            'text': text,
-            'labels': labels,
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'id': 'WizardBasicDialog',
+                'text': text,
+                'labels': labels,
+                'episode_done': episode_done,
+            }
+        )
         if 'label_candidates' in d:
             action['label_candidates'] = d['label_candidates']
 
@@ -725,36 +747,42 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             # just a batch padding item
             return a
         # save some memory, we don't need label_candidates
-        a['label_candidates'] = []
+        a.force_set('label_candidates', [])
         if not a['knowledge'].startswith(TOKEN_NOCHOSEN):
             # make sure the token is appearing
-            a['knowledge'] = (
-                TOKEN_NOCHOSEN
-                + ' '
-                + TOKEN_KNOWLEDGE
-                + ' '
-                + TOKEN_NOCHOSEN
-                + '\n'
-                + a['knowledge']
+            a.force_set(
+                'knowledge',
+                (
+                    TOKEN_NOCHOSEN
+                    + ' '
+                    + TOKEN_KNOWLEDGE
+                    + ' '
+                    + TOKEN_NOCHOSEN
+                    + '\n'
+                    + a['knowledge']
+                ),
             )
         if self.only_checked_knowledge:
             # useful for test time evaluation, where it's only ever trained on true
             # knowledge
-            a['knowledge'] = (
-                a['title'] + ' ' + TOKEN_KNOWLEDGE + ' ' + a['checked_sentence']
+            a.force_set(
+                'knowledge',
+                (a['title'] + ' ' + TOKEN_KNOWLEDGE + ' ' + a['checked_sentence']),
             )
 
         if random.random() < self.dropout:
             # Drop the knowledge with some probability
-            a['title'] = TOKEN_NOCHOSEN
-            a['checked_sentence'] = TOKEN_NOCHOSEN
-            a['knowledge'] = (
-                TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
+            a.force_set('title', TOKEN_NOCHOSEN)
+            a.force_set('checked_sentence', TOKEN_NOCHOSEN)
+            a.force_set(
+                'knowledge',
+                TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN,
             )
         elif self.prepend_gold_knowledge:
-            a[
-                'text'
-            ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
+            a.force_set(
+                'text',
+                f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}",
+            )
         return a
 
 
@@ -762,9 +790,10 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
     """
     Generates the title of Wikipedia page used as source of knowledge.
 
-    The context provided by this teacher (`text`) is the conversation history, with chosen topic removed.
-    The label is the title of the Wikipedia page of the passage that wizard selected for crafting
-    the next utterance; in other words, the source of knowledge for this utterance.
+    The context provided by this teacher (`text`) is the conversation history, with
+    chosen topic removed. The label is the title of the Wikipedia page of the passage
+    that wizard selected for crafting the next utterance; in other words, the source of
+    knowledge for this utterance.
     """
 
     def __init__(self, opt, shared=None):
@@ -1149,11 +1178,13 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
         # get sentence span
         span_label = self.get_span_label(d, idx)
 
-        action = {
-            'id': 'WizardDocReader:{}'.format(self.teacher_type),
-            'labels': [sentence],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'id': 'WizardDocReader:{}'.format(self.teacher_type),
+                'labels': [sentence],
+                'episode_done': episode_done,
+            }
+        )
 
         if self.teacher_type == 'docs':
             action['text'] = '{}\n{}'.format(passage, text)

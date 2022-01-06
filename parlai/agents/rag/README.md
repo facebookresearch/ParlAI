@@ -12,7 +12,7 @@ If you have any questions, please reach out to @klshuster or @spencerp.
 
 ## Installation / Memory Requirements.
 
-Before using RAG, you'll need to make sure that you have installed FAISS; preferably, you should install the `faiss-gpu` library (installation instructions [here](https://github.com/facebookresearch/faiss/blob/master/INSTALL.md)), but RAG will work with `faiss-cpu` as well (`faiss-gpu` will simply speed up index construction).
+Before using RAG, you'll need to make sure that you have installed FAISS; preferably, you should install the `faiss-gpu` library (installation instructions [here](https://github.com/facebookresearch/faiss/blob/main/INSTALL.md)), but RAG will work with `faiss-cpu` as well (`faiss-gpu` will simply speed up index construction).
 
 To train a RAG model with the default options -- RAG-Token with BART-Large generator, and DPR Retrieval over all of Wikipedia -- you'll need the following system requirements:
 
@@ -54,7 +54,7 @@ We support three backbones:
 
 1. **`--generation-model bart`**: The default option uses BART as the backbone generator, which was used in the vast majority of experiments in [this paper](https://arxiv.org/abs/2104.07567).
 2. `--generation-model transformer/generator`: If you want to use/initialize RAG with a standard Transformer model trained in ParlAI, set to `transformer/generator`
-3. `--generation-model t5`: Finally, we provide T5 as a generator backbone as well; see [here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/hugging_face#t5) for additional T5-specific parameters.
+3. `--generation-model t5`: Finally, we provide T5 as a generator backbone as well; see [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/hugging_face#t5) for additional T5-specific parameters.
 
 ### RAG Model Types: `--rag-model-type`
 
@@ -69,9 +69,9 @@ RAG comes in three flavors: RAG-Token, RAG-Sequence, and RAG-Turn. The first two
 We provide a few of the several retrievers considered in [our work](https://parl.ai/projects/hallucination/); we outline them below:
 
 1. **`--rag-retriever-type dpr`**: The canonical retrieval system for RAG uses a [Dense Passage Retriever](https://github.com/facebookresearch/DPR) for retrieval over a FAISS Index. The default options retrieve over all of Wikipedia.
-2. `--rag-retriever-type tfidf`: One can additionally use a [TFIDF retriever](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/tfidf_retriever); the default retrieves over all of Wikipedia.
+2. `--rag-retriever-type tfidf`: One can additionally use a [TFIDF retriever](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/tfidf_retriever); the default retrieves over all of Wikipedia.
 3. `--rag-retriever-type dpr_then_poly`: The RAG DPR-Poly model adds a re-ranking step with a Poly-encoder that re-ranks the retrieved documents from a DPR model.
-4. `--rag-retriever-type poly_faiss`: If you have trained a [Dropout Poly-encoder](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/transformer/dropout_poly) and have built an index with that model, you can use the PolyFAISS method, which uses a Poly-encoder model directly to both query FAISS and re-rank retrieved documents.
+4. `--rag-retriever-type poly_faiss`: If you have trained a [Dropout Poly-encoder](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/transformer/dropout_poly) and have built an index with that model, you can use the PolyFAISS method, which uses a Poly-encoder model directly to both query FAISS and re-rank retrieved documents.
 
 ### Other RAG Options
 
@@ -102,9 +102,11 @@ The RAG model works **really well** with DPR models as the backbone retrievers; 
 
 ### 1b. Train your own Dropout Poly-encoder
 
-To utilize the PolyFAISS method, you can train your own [`DropoutPolyencoder`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/transformer/dropout_poly.py)) as usual in ParlAI.
+To utilize the PolyFAISS method, you can train your own [`DropoutPolyencoder`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/transformer/dropout_poly.py)) as usual in ParlAI.
 
 ### 2. Generate Dense Embeddings (~1-2 hours minutes if sharded appropriately - 50 x 1 GPU).
+
+**WARNING**: If you generated passage embeddings prior to 11/19/2021, you *may* have corrupted embeddings, especially if you were using a relatively small set of passages (anything under ~50k), and found that indexing took excessively long (anything over a couple minutes); see [#4199](https://github.com/facebookresearch/ParlAI/pull/4199) for more details.
 
 After obtaining a DPR model, you'll need to generate dense embeddings on a dataset. The data should be in a tab-separated (tsv) file with the following format:
 
@@ -112,7 +114,7 @@ After obtaining a DPR model, you'll need to generate dense embeddings on a datas
 
 Check `/path/to/ParlAI/data/models/hallucination/wiki_passages/psgs_w100.tsv` for inspiration.
 
-Then, you can use the [`generate_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/generate_dense_embeddings.py) script to run the following command:
+Then, you can use the [`generate_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/rag/scripts/generate_dense_embeddings.py) script to run the following command:
 
 ```bash
 python generate_dense_embeddings.py --model-file /path/to/dpr/model --dpr-model True \
@@ -137,7 +139,7 @@ python generate_dense_embeddings.py -mf zoo:hallucination/multiset_dpr/hf_bert_b
 
 ### 3. Index the Dense Embeddings
 
-The final step is to build the full FAISS index from these dense embeddings. You can use the [`index_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/rag/scripts/index_dense_embeddings.py) script to achieve this. You can choose one of the following options when indexing your embeddings for varying results, depending on the size of your dataset:
+The final step is to build the full FAISS index from these dense embeddings. You can use the [`index_dense_embeddings.py`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/rag/scripts/index_dense_embeddings.py) script to achieve this. You can choose one of the following options when indexing your embeddings for varying results, depending on the size of your dataset:
 
 1. **Recommended for large passage sets** `--indexer-type compressed`: This will build a compressed index using FAISS compression techniques; this usually only takes a couple hours, and results in small index files, but comes at the cost of accuracy. Only use this if your machine would struggle to fit all of your dense embedding vectors in memory.
 2. **Recommended for small passage sets** `--indexer-type exact`: This will build a large HNSW-style index with the flat embeddings. The index that is built is generally as large, if not more so, than the sum of the sizes of the embeddings. Use with caution with large passage sets; however, if you can reasonably fit all of your dense embedding vectors in memory, this is a suitable option.

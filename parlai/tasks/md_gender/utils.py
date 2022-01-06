@@ -209,7 +209,7 @@ def get_explicitly_gendered_words(opt):
     """
     Load list of explicitly gendered words from.
 
-    <https://github.com/uclanlp/gn_glove/blob/master/wordlist/>.
+    <https://github.com/uclanlp/gn_glove/blob/main/wordlist/>.
 
     Examples include brother, girl, actress, husbands, etc.
     """

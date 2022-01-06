@@ -61,9 +61,9 @@ class AbstractCrowdsourcingTest:
 
     def _set_up_config(
         self,
-        blueprint_type: str,
         task_directory: str,
         overrides: Optional[List[str]] = None,
+        config_name: str = "example",
     ):
         """
         Set up the config and database.
@@ -80,28 +80,22 @@ class AbstractCrowdsourcingTest:
         relative_task_directory = os.path.relpath(
             task_directory, os.path.dirname(__file__)
         )
-        relative_config_path = os.path.join(relative_task_directory, 'conf')
+        relative_config_path = os.path.join(
+            relative_task_directory, 'hydra_configs', 'conf'
+        )
         if overrides is None:
             overrides = []
         with initialize(config_path=relative_config_path):
             self.config = compose(
-                config_name="example",
+                config_name=config_name,
                 overrides=[
-                    f'+mephisto.blueprint._blueprint_type={blueprint_type}',
-                    f'+mephisto/architect=mock',
-                    f'+mephisto/provider=mock',
+                    f'mephisto/architect=mock',
+                    f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
                     f'+current_time={int(time.time())}',
                 ]
                 + overrides,
             )
-            # TODO: when Hydra 1.1 is released with support for recursive defaults,
-            #  don't manually specify all missing blueprint args anymore, but
-            #  instead define the blueprint in the defaults list directly.
-            #  Currently, the blueprint can't be set in the defaults list without
-            #  overriding params in the YAML file, as documented at
-            #  https://github.com/facebookresearch/hydra/issues/326 and as fixed in
-            #  https://github.com/facebookresearch/hydra/pull/1044.
 
         self.data_dir = tempfile.mkdtemp()
         self.database_path = os.path.join(self.data_dir, "mephisto.db")
@@ -129,9 +123,12 @@ class AbstractCrowdsourcingTest:
         else:
             raise ValueError('No channel could be detected!')
 
-    def _register_mock_agents(self, num_agents: int = 1) -> List[str]:
+    def _register_mock_agents(
+        self, num_agents: int = 1, assume_onboarding: bool = False
+    ) -> List[str]:
         """
-        Register mock agents for testing, taking the place of crowdsourcing workers.
+        Register mock agents for testing and onboard them if needed, taking the place of
+        crowdsourcing workers.
 
         Specify the number of agents to register. Return the agents' IDs after creation.
         """
@@ -154,6 +151,14 @@ class AbstractCrowdsourcingTest:
                     # Register the agent
                     mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
                     self.server.register_mock_agent(worker_id, mock_agent_details)
+
+                    if assume_onboarding:
+                        # Submit onboarding from the agent
+                        onboard_agents = self.db.find_onboarding_agents()
+                        onboard_data = {"onboarding_data": {"success": True}}
+                        self.server.register_mock_agent_after_onboarding(
+                            worker_id, onboard_agents[0].get_agent_id(), onboard_data
+                        )
                     _ = self.db.find_agents()[idx]
                     # Make sure the agent can be found, or else raise an IndexError
 
@@ -212,7 +217,12 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         """
 
         # Set up the mock human agent
-        agent_id = self._register_mock_agents(num_agents=1)[0]
+        if self.config.mephisto.blueprint.get("onboarding_qualification", None):
+            agent_id = self._register_mock_agents(num_agents=1, assume_onboarding=True)[
+                0
+            ]
+        else:
+            agent_id = self._register_mock_agents(num_agents=1)[0]
 
         # Set initial data
         self.server.request_init_data(agent_id)
@@ -351,9 +361,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # Check the contents of each message
         for actual_state, expected_state in zip(actual_states, expected_states):
-            assert actual_state['inputs'] == expected_state['inputs']
+            clean_actual_state = self._remove_non_deterministic_keys(actual_state)
+            assert clean_actual_state['inputs'] == expected_state['inputs']
             for actual_message, expected_message in zip(
-                actual_state['outputs']['messages'],
+                clean_actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
             ):
                 for key, expected_value in expected_message.items():
@@ -362,6 +373,13 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                         actual_value=actual_message[key],
                         expected_value=expected_value,
                     )
+
+    def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
+        """
+        Allow for subclasses to delete certain keys in the actual state that will change
+        on each run.
+        """
+        return actual_state
 
     def _check_output_key(
         self: Union['AbstractParlAIChatTest', unittest.TestCase],

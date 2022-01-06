@@ -71,9 +71,14 @@ class TurkLikeAgent:
                 self.model_agent.observe(new_ob)
         else:
             self.model_agent.observe(new_ob)
-        logging.info(
-            f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
-        )
+        if 'text' not in new_ob:
+            logging.warning(
+                f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, and observation is missing a "text" field: {new_ob}'
+            )
+        else:
+            logging.info(
+                f'{self.__class__.__name__}: In observe() AFTER semaphore, self.turn_idx: {self.turn_idx}, observation["text"]: {new_ob["text"]}'
+            )
 
         if increment_turn:
             self.turn_idx += 1

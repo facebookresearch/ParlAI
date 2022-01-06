@@ -1,0 +1,16 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: fast_acute
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes 
+    maximum_units_per_worker: 1  # important for replicability and reliability
+    task_description: "Evaluate quality of conversations through comparison."
+    task_name: acute_eval_${current_time}
+    task_reward: 0.5
+    task_tags: "chat,evaluation,comparison,conversation"
+    task_title: "Which Conversational Partner is Better?"

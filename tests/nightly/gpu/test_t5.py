@@ -6,7 +6,7 @@
 """
 Shamelessly copying relevant integration tests from HuggingFace.
 
-https://github.com/huggingface/transformers/blob/master/tests/test_modeling_t5.py
+https://github.com/huggingface/transformers/blob/main/tests/test_modeling_t5.py
 
 Additionally includes some toy fine-tuning in ParlAI (similar to BART)
 """
@@ -18,10 +18,9 @@ import unittest
 try:
     import transformers  # noqa
     from parlai.agents.hugging_face.hugging_face import HF_VERSION
-    from parlai.agents.hugging_face.t5 import TASK_CONFIGS
-    from parlai.agents.hugging_face.t5 import set_device
+    from parlai.agents.hugging_face.t5 import TASK_CONFIGS, check_hf_version, set_device
 
-    HF_AVAILABLE = HF_VERSION >= 4.3
+    HF_AVAILABLE = check_hf_version(HF_VERSION)
 except ImportError:
     TASK_CONFIGS = None
     set_device = unittest.skip

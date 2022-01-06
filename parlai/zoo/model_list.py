@@ -50,7 +50,7 @@ model_list = [
         "path": "zoo:wikipedia_full/tfidf_retriever/model",
         "agent": "tfidf_retriever",
         "task": "wikipedia:full",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/wizard_of_wikipedia",
         "description": ("Retrieval over Wikipedia dump, used for Wizard of Wikipedia."),
         "example": (
             "parlai interactive --model tfidf_retriever -mf "
@@ -76,7 +76,7 @@ model_list = [
         "path": "zoo:wizard_of_wikipedia/end2end_generator/model",
         "description": "End2End Generative model for Wizard of Wikipedia",
         "task": "wizard_of_wikipedia:generator",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/wizard_of_wikipedia",
         "example": (
             "parlai display_model -t wizard_of_wikipedia:generator "
             "-mf zoo:wizard_of_wikipedia/end2end_generator/model -n 1 "
@@ -108,7 +108,7 @@ model_list = [
         "id": "wizard_of_wikipedia",
         "path": "zoo:wizard_of_wikipedia/full_dialogue_retrieval_model/model",
         "description": "Full Dialogue Retrieval Model for Wizard of Wikipedia",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/wizard_of_wikipedia",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/wizard_of_wikipedia",
         "task": "wizard_of_wikipedia",
         "example2": "parlai interactive -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia",
         "result2": (
@@ -153,7 +153,7 @@ model_list = [
         "id": "light",
         "path": "zoo:light/biranker_dialogue/model",
         "agent": "bert_ranker/bi_encoder_ranker",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/light",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/light",
         "task": "light_dialog",
         "description": "LIGHT Dialogue task, replicating the numbers from the paper.",
         "example": (
@@ -169,7 +169,7 @@ model_list = [
         "path": "zoo:personality_captions/transresnet",
         "agent": "projects.personality_captions.transresnet.transresnet:TransresnetAgent",  # noqa: E501
         "task": "personality_captions",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/personality_captions",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/personality_captions",
         "description": (
             "Transresnet Model pretrained on the Personality-Captions task"
         ),
@@ -189,7 +189,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/poly_model_huge_reddit",
         "agent": "transformer/polyencoder",
         "task": "pretrained_transformers",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Poly-Encoder pretrained on Reddit. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
@@ -224,7 +224,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/poly_model_huge_wikito",
         "agent": "transformer/polyencoder",
         "task": "pretrained_transformers",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Poly-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
@@ -259,7 +259,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/poly_model_huge_reddit",
         "agent": "transformer/biencoder",
         "task": "pretrained_transformers",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Bi-Encoder pretrained on Reddit. Use this model as an ``--init-model`` for a bi-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
@@ -296,7 +296,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/bi_model_huge_wikito",
         "agent": "transformer/biencoder",
         "task": "pretrained_transformers",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Bi-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
@@ -333,7 +333,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/cross_model_huge_reddit",
         "agent": "transformer/crossencoder",
         "task": "pretrained_transformers",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Cross-Encoder pretrained on Reddit. Use this model as an ``--init-model`` for a cross-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
@@ -367,7 +367,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/cross_model_huge_wikito",
         "agent": "transformer/crossencoder",
         "task": "pretrained_transformers",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Cross-Encoder pretrained on Wikipedia/Toronto Books. Use this model as an ``--init-model`` for a poly-encoder "
             "when fine-tuning on another task. For more details on how to train, see the project page."
@@ -401,7 +401,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/model_poly",
         "agent": "transformer/polyencoder",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Polyencoder pretrained on Reddit and fine-tuned on ConvAI2 scoring 89+ hits @ 1/20. See the pretrained_transformers directory for a list of other available pretrained transformers"
         ),
@@ -431,7 +431,7 @@ model_list = [
         "path": "zoo:pretrained_transformers/model_bi",
         "agent": "transformer/biencoder",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/polyencoder/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/polyencoder/",
         "description": (
             "Bi-encoder pretrained on Reddit and fine-tuned on ConvAI2 scoring ~87 hits @ 1/20."
         ),
@@ -461,7 +461,7 @@ model_list = [
         "path": "zoo:image_chat/transresnet_multimodal",
         "agent": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",  # noqa: E501
         "task": "image_chat",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/image_chat",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/image_chat",
         "description": (
             "Transresnet Multimodal Model pretrained on the Image-Chat task"
         ),
@@ -481,7 +481,7 @@ model_list = [
         "path": "zoo:dialogue_safety/single_turn/model",
         "agent": "transformer/classifier",
         "task": "dialogue_safety:adversarial,dialogue_safety:standard",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_safety",
         "description": (
             "Classifier trained on both the standard and adversarial safety tasks in addition to Wikipedia Toxic Comments."
         ),
@@ -499,7 +499,7 @@ model_list = [
         "path": "zoo:dialogue_safety/multi_turn/model",
         "agent": "bert_classifier",
         "task": "dialogue_safety:multiturn",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_safety",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_safety",
         "description": (
             "Classifier trained on the multi-turn adversarial safety task in addition to both the single-turn standard and adversarial safety tasks and Wikipedia Toxic Comments."
         ),
@@ -532,7 +532,7 @@ model_list = [
         "path": "zoo:dodecadialogue/all_tasks_mt/model",
         "agent": "image_seq2seq",
         "task": "#Dodeca",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": "Image Seq2Seq model trained on all DodecaDialogue tasks",
         "example": (
             "parlai interactive -mf zoo:dodecadialogue/all_tasks_mt/model "
@@ -570,7 +570,7 @@ model_list = [
         "path": "zoo:dodecadialogue/convai2_ft/model",
         "agent": "image_seq2seq",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on Convai2"
         ),
@@ -603,7 +603,7 @@ model_list = [
         "path": "zoo:dodecadialogue/cornell_movie_ft/model",
         "agent": "image_seq2seq",
         "task": "cornell_movie",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Cornell Movie task"
         ),
@@ -632,7 +632,7 @@ model_list = [
         "path": "zoo:dodecadialogue/daily_dialog_ft/model",
         "agent": "image_seq2seq",
         "task": "dailydialog",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the DailyDialog task"
         ),
@@ -660,7 +660,7 @@ model_list = [
         "id": "dodecadialogue",
         "path": "zoo:dodecadialogue/eli5_ft/model",
         "agent": "image_seq2seq",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "task": "TBD",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the ELI5 task. "
@@ -695,7 +695,7 @@ model_list = [
         "path": "zoo:dodecadialogue/empathetic_dialogues_ft/model",
         "agent": "image_seq2seq",
         "task": "empathetic_dialogues",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Empathetic Dialogue task"
         ),
@@ -724,7 +724,7 @@ model_list = [
         "path": "zoo:dodecadialogue/igc_ft/model",
         "agent": "image_seq2seq",
         "task": "igc",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Grounded Conversations task"
         ),
@@ -743,7 +743,7 @@ model_list = [
         "path": "zoo:dodecadialogue/image_chat_ft/model",
         "agent": "image_seq2seq",
         "task": "image_chat",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Image Chat task"
         ),
@@ -763,7 +763,7 @@ model_list = [
         "path": "zoo:dodecadialogue/light_dialog_ft/model",
         "agent": "image_seq2seq",
         "task": "light_dialog",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the LIGHT Dialogue task"
         ),
@@ -791,7 +791,7 @@ model_list = [
         "id": "dodecadialogue",
         "path": "zoo:dodecadialogue/reddit_ft/model",
         "agent": "image_seq2seq",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "task": "TBD",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the pushshift.io Reddit task"
@@ -813,7 +813,7 @@ model_list = [
         "path": "zoo:dodecadialogue/twitter_ft/model",
         "agent": "image_seq2seq",
         "task": "twitter",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Twitter task"
         ),
@@ -842,7 +842,7 @@ model_list = [
         "path": "zoo:dodecadialogue/ubuntu_ft/model",
         "agent": "image_seq2seq",
         "task": "ubuntu",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Ubuntu V2 task"
         ),
@@ -871,7 +871,7 @@ model_list = [
         "path": "zoo:dodecadialogue/wizard_of_wikipedia_ft/model",
         "agent": "image_seq2seq",
         "task": "wizard_of_wikipedia:Generator",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "description": (
             "Image Seq2Seq model trained on all DodecaDialogue tasks and fine-tuned on the Wizard of Wikipedia task"
         ),
@@ -912,7 +912,7 @@ model_list = [
         "id": "dodecadialogue",
         "path": "zoo:dodecadialogue/base_model/model",
         "agent": "image_seq2seq",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dodecadialogue/",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dodecadialogue/",
         "task": "#Dodeca",
         "description": (
             "Image Seq2Seq base model, from which all DodecaDialogue models were trained"
@@ -928,7 +928,7 @@ model_list = [
         "path": "zoo:blended_skill_talk/bst_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the BlendedSkillTalk dialogue task.",
         "example": "parlai interactive -mf zoo:blended_skill_talk/bst_single_task/model -t blended_skill_talk",
         "result": 'Results vary.',
@@ -944,7 +944,7 @@ model_list = [
         "path": "zoo:blended_skill_talk/convai2_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2 dialogue task.",
         "example": "parlai eval_model -mf zoo:blended_skill_talk/convai2_single_task/model -t blended_skill_talk -dt test",
         "result": """10:23:53 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
@@ -958,7 +958,7 @@ model_list = [
         "path": "zoo:blended_skill_talk/ed_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the EmpatheticDialogues dialogue task.",
         "example": "parlai eval_model -mf zoo:blended_skill_talk/ed_single_task/model -t blended_skill_talk -dt test",
         "result": """10:16:47 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
@@ -972,7 +972,7 @@ model_list = [
         "path": "zoo:blended_skill_talk/wizard_single_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the Wizard of Wikipedia dialogue task.",
         "example": "parlai eval_model -mf zoo:blended_skill_talk/wizard_single_task/model -t blended_skill_talk -dt test",
         "result": """10:34:46 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
@@ -986,7 +986,7 @@ model_list = [
         "path": "zoo:blended_skill_talk/multi_task/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks.",
         "example": "parlai eval_model -mf zoo:blended_skill_talk/multi_task/model -t blended_skill_talk -dt test",
         "result": """10:23:35 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
@@ -1000,7 +1000,7 @@ model_list = [
         "path": "zoo:blended_skill_talk/multi_task_bst_tuned/model",
         "agent": "transformer/polyencoder",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/bst',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/bst',
         "description": "Pretrained polyencoder retrieval model fine-tuned on the ConvAI2, EmpatheticDialogues, and Wizard of Wikipedia dialogue tasks, and then further fine-tuned on the BlendedSkillTalk dialogue task.",
         "example": "parlai eval_model -mf zoo:blended_skill_talk/multi_task_bst_tuned/model -t blended_skill_talk -dt test",
         "result": """10:36:01 | Finished evaluating tasks ['blended_skill_talk'] using datatype test
@@ -1033,7 +1033,7 @@ model_list = [
         "path": "zoo:blender/blender_90M/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "90< parameter generative model finetuned on blended_skill_talk tasks."
         ),
@@ -1051,7 +1051,7 @@ model_list = [
         "path": "zoo:blender/blender_3B/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "2.7B parameter generative model finetuned on blended_skill_talk tasks."
         ),
@@ -1069,7 +1069,7 @@ model_list = [
         "path": "zoo:blender/blender_1Bdistill/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to ~1.4B parameters and roughly 2x the inference speed."
         ),
@@ -1087,7 +1087,7 @@ model_list = [
         "path": "zoo:blender/blender_400Mdistill/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "2.7B parameter generative model finetuned on blended_skill_talk tasks and then distilled to ~360M parameters and roughly 5x the inference speed."
         ),
@@ -1105,7 +1105,7 @@ model_list = [
         "path": "zoo:blender/blender_9B/model",
         "agent": "transformer/generator",
         "task": "blended_skill_talk",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "9.4B parameter generative model finetuned on blended_skill_talk tasks."
         ),
@@ -1123,7 +1123,7 @@ model_list = [
         "path": "zoo:blender/reddit_3B/model",
         "agent": "transformer/generator",
         "task": "pushshift.io",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "2.7B parameter generative model pretrained on Reddit but not finetuned."
         ),
@@ -1138,7 +1138,7 @@ model_list = [
         "path": "zoo:blender/reddit_9B/model",
         "agent": "transformer/generator",
         "task": "pushshift.io",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/blender",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/blender",
         "description": (
             "9.4B parameter generative model pretrained on Reddit but not finetuned."
         ),
@@ -1181,7 +1181,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt_and_label/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on ConvAI2 with context and label repetition unlikelihood"
         ),
@@ -1199,7 +1199,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_convai2_ctxt/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on ConvAI2 with context repetition unlikelihood"
         ),
@@ -1217,7 +1217,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_convai2_label/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on ConvAI2 with label repetition unlikelihood"
         ),
@@ -1235,7 +1235,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_eli5_ctxt_and_label/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "eli5",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on ELI5 with context and label repetition unlikelihood"
         ),
@@ -1250,7 +1250,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_celi5_ctxt/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "eli5",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on ELI5 with context repetition unlikelihood"
         ),
@@ -1265,7 +1265,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_eli5_label/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "eli5",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on ELI5 with label repetition unlikelihood"
         ),
@@ -1280,7 +1280,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt_and_label/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "wizard_of_wikipedia:GeneratorTeacher",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on Wizard of Wikipedia with context and label repetition unlikelihood"
         ),
@@ -1295,7 +1295,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_wiki_ctxt/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "wizard_of_wikipedia:GeneratorTeacher",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on Wizard of Wikipedia with context repetition unlikelihood"
         ),
@@ -1310,7 +1310,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/rep_wiki_label/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "wizard_of_wikipedia:GeneratorTeacher",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on Wizard of Wikipedia with label repetition unlikelihood"
         ),
@@ -1325,7 +1325,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/vocab_alpha1e0/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e0"
         ),
@@ -1343,7 +1343,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/vocab_alpha1e1/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e1"
         ),
@@ -1361,7 +1361,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/vocab_alpha1e2/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e2"
         ),
@@ -1379,7 +1379,7 @@ model_list = [
         "path": "zoo:dialogue_unlikelihood/vocab_alpha1e3/model",
         "agent": "projects.dialogue_unlikelihood.agents:RepetitionUnlikelihoodAgent",
         "task": "convai2",
-        "project": "https://github.com/facebookresearch/ParlAI/tree/master/projects/dialogue_unlikelihood",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_unlikelihood",
         "description": (
             "Dialogue model finetuned on convai2 with vocab unlikelihood, alpha value 1e3"
         ),
@@ -1397,7 +1397,7 @@ model_list = [
         "path": "zoo:style_gen/c75_labeled_dialogue_generator/model",
         "agent": "projects.style_gen.style_gen:StyleGenAgent",
         "task": "style_gen:LabeledBlendedSkillTalk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
         "description": "Generator trained on dialogue datasets, with 75% of train examples appended with Image-Chat personality labels",
         "example": "parlai eval_model --datatype test --model projects.style_gen.style_gen:StyleGenAgent --model-file zoo:style_gen/c75_labeled_dialogue_generator/model --skip-generation True --task style_gen:LabeledBlendedSkillTalk --use-style-frac 1.00",
         "result": """16:56:52 | Finished evaluating tasks ['style_gen:LabeledBlendedSkillTalk'] using datatype test
@@ -1410,7 +1410,7 @@ model_list = [
         "path": "zoo:style_gen/prev_curr_classifier/model",
         "agent": "projects.style_gen.classifier:ClassifierAgent",
         "task": "style_gen:LabeledBlendedSkillTalk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/style_gen',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
         "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance and the previous utterance.",
         "example": "parlai eval_model --task style_gen:PrevCurrUttStyle --wrapper-task style_gen:LabeledBlendedSkillTalk --model-file zoo:style_gen/prev_curr_classifier/model --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file",
         "result": """18:42:33 | Finished evaluating tasks ['style_gen:PrevCurrUttStyle'] using datatype valid
@@ -1445,7 +1445,7 @@ model_list = [
         "path": 'n/a',
         "agent": "projects.multimodal_blenderbot.agents:BiasAgent",
         "task": "blended_skill_talk",
-        "project": 'https://github.com/facebookresearch/ParlAI/tree/master/projects/multimodal_blenderbot',
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/multimodal_blenderbot',
         "description": "Model trained to talk about both images and general chitchat, trained with a degendering teacher and with 75% of Image-Chat styles replaced by a generic polarity string",
         "example": "python parlai/scripts/safe_interactive.py -t blended_skill_talk -mf ${FINETUNED_MODEL_PATH} --model projects.multimodal_blenderbot.agents:BiasAgent --delimiter $'\n' --beam-block-ngram 3 --beam-context-block-ngram 3 --beam-min-length 20 --beam-size 10 --inference beam --model-parallel False",
         "result": "(results will vary)",
@@ -1988,7 +1988,7 @@ model_list = [
         ),
         "example": (
             "parlai interactive -mf zoo:sea/bart_fid_sqse/model \\ \n"
-            "--search-query-generator-model-file zoo:sea/bart_fid_sqse/model \\ \n"
+            "--search-query-generator-model-file zoo:sea/bart_sq_gen/model \\ \n"
             "--search-server <your search server API address>"
         ),
         "result": (
@@ -2073,6 +2073,514 @@ model_list = [
         "result": (
             "Enter Your Message: Do you know which puppy you want to adopt?\nMaybe a corgi."
             "[TransformerGenerator]: I want to adopt a corgi puppy."
+        ),
+    },
+    {
+        "title": "BlenderBot3B with name-scrambling gender-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender__name_scrambling/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the name-scrambling technique to have lower gender bias."
+        ),
+        "example": (
+            "parlai display_model -mf zoo:dialogue_bias/gender__name_scrambling/model -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
+        ),
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I am a journeyman. I have been working in the trade for a long time.""",
+    },
+    {
+        "title": "BlenderBot3B with token-bin control-generation gender-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender__ctrl_gen_tokens/model",
+        "agent": "projects.dialogue_bias.agents:NoBiasStyleGenAgent",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the control-generation technique (based on the amount of gender over-indexing per token bin) to have lower gender bias."
+        ),
+        "example": (
+            "parlai display_model -mf zoo:dialogue_bias/gender__ctrl_gen_tokens/model --model projects.dialogue_bias.agents:NoBiasStyleGenAgent -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
+        ),
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I am a Master Electrician. I work in a power plant. How about you?""",
+    },
+    {
+        "title": "BlenderBot3B with sequence-level unlikelihood-training gender-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender__unlikelihood_sequence_level/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the (sequence-level) unlikelihood training technique to have lower gender bias."
+        ),
+        "example": (
+            "parlai display_model -mf zoo:dialogue_bias/gender__unlikelihood_sequence_level/model --model transformer/generator -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
+        ),
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I'm a journeyman electrician. I work in the construction industry. How about you?""",
+    },
+    {
+        "title": "BlenderBot3B with name-scrambling gender/ethnicity-bias reduction",
+        "id": "dialogue_bias",
+        "path": "zoo:dialogue_bias/gender_ethnicity__name_scrambling/model",
+        "agent": "transformer/generator",
+        "task": "blended_skill_talk",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/dialogue_bias",
+        "description": (
+            "BlenderBot3B model tuned with the name-scrambling technique to have lower gender and race/ethnicity bias."
+        ),
+        "example": (
+            "parlai display_model -mf zoo:dialogue_bias/gender_ethnicity__name_scrambling/model -t blended_skill_talk --beam-block-full-context True --interactive-mode True"
+        ),
+        "result": """your persona: i work as an electrician.
+your persona: i always sleep 8 hours a day.
+Electrician
+That sounds dangerous. Is it worth doing such a dangerous job?
+Wekk it is okay is you are well trained.  There are three levels: Apprentice, journeyman and Master.
+Which level are you at?
+    labels: I received on-the-job training when i first started
+     model: I am a journeyman electrician. I work in the construction industry. How about you?""",
+    },
+    {
+        "title": "SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures",
+        "id": "saferdialogues",
+        "path": "zoo:saferdialogues/model",
+        "agent": "transformer/generator",
+        "task": "saferdialogues",
+        "project": "https://github.com/facebookresearch/ParlAI/tree/main/projects/saferdialogues",
+        "description": (
+            "Blender 2.7B model fine-tuned on the SaFeRDialogues and BST (without persona) tasks to respond to feedback more gracefully after a safety failure"
+        ),
+        "example": (
+            "parlai display_model -mf zoo:saferdialogues/model -t saferdialogues --interactive-mode True"
+        ),
+        "result": (
+            "I don't know if he's the best, but he's definitely the best at being the worst.\n"
+            "I am not disagreeing with you, but you really should try to be open minded about people.\n"
+            "labels: I think we disagree on this point, which is okay. Everyone has their own opinion. Want to talk about something else? \n"
+            "model: I'm sorry, I see it now-thanks for letting me know, I will be more open-minded."
+        ),
+    },
+    {
+        "title": "LIGHT RPA Re-Ranker",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_reranker/model",
+        "agent": "transformer/polyencoder",
+        "task": "projects.light_whoami.task:WhoIsSpeakingLeftToRightTeacher",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Re-ranker from the Am I Me or You project. "
+            "This model was trained (left-to-right) to predict who is speaking "
+            "given a context history and candidate utterance."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:WhoIsSpeakingLeftToRightTeacher \\ \n"
+            "-ne 100 "
+        ),
+        "result": (
+            """
+            accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   mrr  \
+                .6100 3.802e-07 562.6 511.8 373.6   .9400       52.8 .7300  100 .6100    .1922   .6100        1         1       1  4.88 1.238 1e-09  4.88 3.562       0          0 .8050
+                rank   tpb   tps
+                1.39 516.7 377.2
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model repeat_label -ne 100"
+        ),
+        "result2": (
+            """
+            accuracy  bleu-4  character_accuracy  exs  f1
+                 1   .9100               .9600  100   1
+            """
+        ),
+    },
+    {
+        "title": "[TEST] LIGHT RPA Re-Ranker",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/test_rpa_reranker/model",
+        "agent": "transformer/polyencoder",
+        "task": "projects.light_whoami.task:WhoIsSpeakingTeacher",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": ("Test RPA Re-ranker from the Am I Me or You project. "),
+        "example": (
+            "parlai em -mf zoo:light_whoami/test_rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:WhoIsSpeakingTeacher \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs  f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen     mrr  \
+                        0       0   512 485.1  6421   .6000       28.9 13.23   10   0  .005503       0        0     .5000       0   3.9 7.789 .0001   3.9 51.62       0          0 .008661
+                    rank  total_train_updates  tpb  tps
+                202.6                   10  489 6473
+            """
+        ),
+    },
+    {
+        "title": "LIGHT RPA Re-Ranker (for automated expanded attention)",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_reranker_auto_expanded_attention/model",
+        "agent": "transformer/polyencoder",
+        "task": "projects.light_whoami.task:WhoIsSpeakingLeftToRightTeacher",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Re-ranker from the Am I Me or You project. "
+            "This model was trained (left-to-right) to predict who is speaking "
+            "given a context history and candidate utterance. This model uses the "
+            "same dictionary setup as the model for the automated expanded attention."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_reranker_auto_expanded_attention/model \\ \n"
+            "-t projects.light_whoami.task.agents:WhoIsSpeakingLeftToRightTeacher \\ \n"
+            "-ne 100 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  hits@1  hits@10  hits@100  hits@5  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   mrr  \
+                    .6600 1.505e-07 562.6 511.8   374   .9400       52.8 .7308  100 .6600    .1922   .6600    .9400         1   .9300  4.88 1.396 5e-10  4.88 3.566       0          0 .7922
+                rank   tpb   tps
+                2.08 516.7 377.6
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Vanilla 128 Baseline",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/vanilla_128/model",
+        "agent": "transformer/generator",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "Vanilla 128-truncation baseline from the Am I Me or You project. "
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/vanilla_128/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0 1.067e-05 255.1 126.7 15.36   .9000      128.4 .1212   10 .1968    .1830  25.6 2.358 7e-10  25.6 3.104       0          0 10.57      .5078         0 152.3 18.46
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.rpa_rerank:RPARerankAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_128/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.067e-05                   1 126.7 14.52 .1146   10 .2065    .2802 7e-10  25.6 2.934 152.3 17.45
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.pacer:PacerAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_128/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.067e-05                   1 126.7  12.1 .0955   10 .1812    .3320 7e-10  25.6 2.445 152.3 14.55
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Vanilla 1024 Baseline",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/vanilla_1024/model",
+        "agent": "transformer/generator",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "Vanilla 1024-truncation baseline from the Am I Me or You project. "
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/vanilla_1024/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0 1.152e-05 255.1 255.1  32.2       0          0 .1262   10 .1858    .1994  25.6 2.335 1e-09  25.6 3.231       0          0 10.33      .5078         0 280.7 35.43
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.rpa_rerank:LongRPARerankAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_1024/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.231e-05                   1 255.1 30.57 .1198   10 .1619    .2882 1e-09  25.6 3.067 280.7 33.63
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--model projects.light_whoami.agents.pacer:LongPacerAgent \\ \n"
+            "-mf zoo:light_whoami/vanilla_1024/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.081e-05                   1 255.1 25.78 .1011   10 .1502    .3247 1e-09  25.6 2.587 280.7 28.37
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You RPA Unlikelihood (128-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_ul_128/model",
+        "agent": "projects.light_whoami.agents.rpu_ul:RpaUlAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Unlikelihood-trained model from the Am I Me or You project."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_ul_128/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  right_class  token_acc  token_em  \
+                        0 1.365e-05 255.1 126.7 8.552   .9000      128.4 .0675   10 .1767    .1945  25.6 2.376 7e-10  25.6 1.728       0          0 10.77        .7000      .4961         0
+                    tpb   tps  ul_loss  wrong_class  wrong_class_all
+                152.3 10.28    .4625        .3000            .3000
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You RPA Unlikelihood (1024-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/rpa_ul_1024/model",
+        "agent": "projects.light_whoami.agents.rpu_ul:RpaUlAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "RPA Unlikelihood-trained model (1024-truncation) from the Am I Me or You project."
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/rpa_ul_1024/model \\ \n"
+            "-t light_dialog:simple_multi:light_label=speech \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  right_class  token_acc  token_em  \
+                        0 1.231e-05 255.1 255.1 14.99       0          0 .05876   10 .1897    .1947  25.6 2.327 7e-10  25.6 1.504       0          0 10.24        .9000      .5117         0
+                    tpb   tps  ul_loss  wrong_class  wrong_class_all
+                280.7 16.49    .6992        .1000            .1000
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Multi-Objective Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/multiobjective/model",
+        "agent": "projects.light_whoami.agents.multi_objective:MultiObjectiveGeneratorAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "Multi-Objective-trained model from the Am I Me or You project. "
+            "This model can both generate a response, and identify the correct speaker "
+            "given a conversational context and a candidate utterance"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/multiobjective/model \\ \n"
+            "-t projects.light_whoami.task.agents:MultiObjectiveTeacher \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  full_hits@1  full_mean_character_loss  full_mrr  full_rank  gpu_mem  llen  loss    lr  ltpb  ltps  \
+                        0 1.231e-05 255.1 255.1 29.92       0          0 .1173   10 .1930            1                    .04143         1          1    .2201  25.6 2.361 1e-09  25.6 3.003
+                    ltrunc  ltrunclen  ppl  token_acc  token_em   tpb   tps
+                        0          0 10.6      .5039         0 280.7 32.93
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Profile Expanded Attention (128-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/profile_expanded_attention_128/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context (specifically, character names "
+            "and self persona)"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/profile_expanded_attention_128/model \\ \n"
+            "-t projects.light_whoami.task.agents:BaseSimpleMultiTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                    0  .01958 254.5 126.5 8.154   .9000        128 .06446   10 .2210    .1580  25.6 2.296 7e-10  25.6  1.65       0          0 9.936      .5156         0 152.1 9.804
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndRPARerankerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_128/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy  bleu-4  character_accuracy  ctpb  ctps   exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb  tps
+                        0  .01958                   1 126.5 7.976 .06305   10 .2198    .2309 7e-10  25.6 1.614 152.1 9.59
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:ExpandedDecoderAttentionAndPacerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_128/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy    bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.068e-05                   1 126.5 41.45 .3275   10 .2239    .3248 7e-10  25.6 8.389 152.1 49.84
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Profile Expanded Attention (1024-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/profile_expanded_attention_1024/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context (specifically, character names, "
+            "self persona, and LIGHT setting)"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/profile_expanded_attention_1024/model \\ \n"
+            "-t projects.light_whoami.task.agents:BaseSimpleMultiTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "-ne 10 "
+        ),
+        "result": (
+            """
+                accuracy   bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0 1.08e-05 254.5 254.5 17.32       0          0 .06804   10 .1514    .1583  25.6 2.285 7e-10  25.6 1.742       0          0 9.827      .5273         0 280.1 19.06
+            """
+        ),
+        "example2": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAndRPARerankerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_1024/model -ne 10"
+        ),
+        "result2": (
+            """
+                accuracy   bleu-4  character_accuracy  ctpb  ctps   exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.08e-05                   1 254.5 17.05 .06701   10 .1441    .2312 7e-10  25.6 1.715 280.1 18.77
+            """
+        ),
+        "example3": (
+            "parlai em --predictor-model-file zoo:light_whoami/rpa_reranker/model \\ \n"
+            "-t projects.light_whoami.task.agents:ResponseClassifierTeacher \\ \n"
+            "--mutators clean_context_mutator \\ \n"
+            "--model projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAndPacerAgent \\ \n"
+            "-mf zoo:light_whoami/profile_expanded_attention_1024/model -ne 10"
+        ),
+        "result3": (
+            """
+                accuracy   bleu-4  character_accuracy  ctpb  ctps  exps  exs    f1  gpu_mem    lr  ltpb  ltps   tpb   tps
+                        0 1.23e-05                   1 254.5 79.51 .3124   10 .1259    .3786 7e-10  25.6 7.998 280.1 87.51
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Automated Expanded Attention (1024-Truncation) Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/automated_expanded_attention_1024/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context. An RPA classifier is used to "
+            "select which parts of the input to re-attend to"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/automated_expanded_attention_1024/model \\ \n"
+            "-t projects.light_whoami.task.agents:BaseSimpleMultiTeacher \\ \n"
+            "--mutators share_self_character -ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  ppl  token_acc  token_em   tpb   tps
+                        0 1.066e-05 255.1 255.1  22.1       0          0 .08663   10 .1355    .1947  25.6 2.313 7e-10  25.6 2.218       0          0 10.1      .5195         0 280.7 24.32
+            """
+        ),
+    },
+    {
+        "title": "LIGHT Am I Me or You Automated Expanded Attention + Multi-Objective Model",
+        "id": "light_whoami",
+        "path": "zoo:light_whoami/expanded_and_multiobjective_1024/model",
+        "agent": "projects.light_whoami.agents.expanded_attention:LongExpandedDecoderAttentionAndMultiObjectiveAgent",
+        "task": "light_dialog",
+        "project": "https://parl.ai/projects/light_whoami/",
+        "description": (
+            "A model that re-attends to select inputs from the context. An RPA classifier is used to "
+            "select which parts of the input to re-attend to"
+        ),
+        "example": (
+            "parlai em -mf zoo:light_whoami/expanded_and_multiobjective_1024/model \\ \n"
+            "-t projects.light_whoami.task.agents:MultiObjectiveTeacher \\ \n"
+            "--mutators share_self_character,clean_context_mutator -ne 10 "
+        ),
+        "result": (
+            """
+                accuracy    bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen   exps  exs    f1  full_hits@1  full_mean_character_loss  full_mrr  full_rank  gpu_mem  llen  loss    lr  ltpb  ltps  \
+                        0 1.849e-08 254.5 254.5 22.72       0          0 .08928   10 .1628        .9000                     2.245     .9002       43.6    .1589  25.6 2.347 7e-10  25.6 2.285
+                    ltrunc  ltrunclen   ppl  token_acc  token_em   tpb   tps
+                        0          0 10.45      .5078         0 280.1 25.01
+            """
         ),
     },
 ]

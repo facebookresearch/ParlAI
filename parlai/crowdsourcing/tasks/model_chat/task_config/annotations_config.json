@@ -1,32 +1,29 @@
-[
-    {
-        "value": "bucket_0",
-        "name": "Bucket 0",
-        "description": "this response implies something...0"
+{
+    "config": {
+        "bucket_0": {
+            "name": "Bucket 0",
+            "description": "this response implies something...0"
+        },
+        "bucket_1": {
+            "name": "Bucket 1",
+            "description": "this response implies something...1"
+        },
+        "bucket_2": {
+            "name": "Bucket 2",
+            "description": "this response implies something...2"
+        },
+        "bucket_3": {
+            "name": "Bucket 3",
+            "description": "this response implies something...3"
+        },
+        "bucket_4": {
+            "name": "Bucket 4",
+            "description": "this response implies something...4"
+        },
+        "none_all_good": {
+            "name": "None, all good",
+            "description": "This response implies that there are no problems with the data"
+        }
     },
-    {
-        "value": "bucket_1",
-        "name": "Bucket 1",
-        "description": "this response implies something...1"
-    },
-    {
-        "value": "bucket_2",
-        "name": "Bucket 2",
-        "description": "this response implies something...2"
-    },
-    {
-        "value": "bucket_3",
-        "name": "Bucket 3",
-        "description": "this response implies something...3"
-    },
-    {
-        "value": "bucket_4",
-        "name": "Bucket 4",
-        "description": "this response implies something...4"
-    },
-    {
-        "value": "none_all_good",
-        "name": "None, all good",
-        "description": "This response implies that there are no problems with the data"
-    }
-]
+    "show_line_breaks": false
+}

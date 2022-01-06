@@ -128,6 +128,10 @@ class HredAgent(TorchGeneratorAgent):
 
         Store history vec as context_vec.
         """
+        # NOTE: `sort` is set to True here (Default is False in TorchGeneratorAgent)
+        # TODO: Sorting the batch will result in various local metrics being broadcasted
+        # back to individual examples in the wrong order, such as the lengths of
+        # the context and labels. Aggregate metric reports will still be accurate.
         batch = super().batchify(obs_batch, sort)
         # sum here is list concat, not addition
         context_vec, hist_lens_ = self._pad_tensor(

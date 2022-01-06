@@ -19,7 +19,6 @@ from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.worlds import CrowdOnboardWorld, CrowdTaskWorld
 from parlai.crowdsourcing.tasks.model_chat.bot_agent import TurkLikeAgent
 from parlai.crowdsourcing.tasks.model_chat.constants import (
-    ONBOARD_CONFIG,
     ONBOARD_FAIL,
     ONBOARD_SUCCESS,
 )
@@ -50,8 +49,6 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
 
         self.skip_onboarding = opt['skip_onboarding']
 
-        self.min_correct = ONBOARD_CONFIG['min_correct']
-        self.max_incorrect = ONBOARD_CONFIG['max_incorrect']
         self.onboard_task_data = opt['onboard_task_data']
         self.status = 'DISCONNECT'
         self.onboard_statistics = opt['onboard_statistics']
@@ -59,49 +56,7 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
         self.max_onboard_time = opt['max_onboard_time']
         self.onboarding_qualification = opt['onboarding_qualification']
         self.worker_id = get_mturk_id_from_mephisto_wrapper(self.agent)
-
-    def has_same_answer(self, ans1, ans2):
-        if len(ans1) != len(ans2):
-            return False
-
-        ans1_sort = sorted(ans1)
-        ans2_sort = sorted(ans2)
-
-        for x in range(len(ans1_sort)):
-            if ans1_sort[x] != ans2_sort[x]:
-                return False
-        return True
-
-    def check_onboarding_answers(self, worker_answers) -> bool:
-        """
-        Calculate how many correct answers the user gave.
-
-        `worker_answers` is a list of dicts containing mappings between an annotation
-        value and whether it was selected for each bucket. We return a boolean as to
-        whether the worker passed or failed the task.
-        """
-        given_turns = self.onboard_task_data['dialog']
-        correct_answers = [t[1]['answers'] for t in given_turns]
-        number_correct = 0
-        number_incorrect = 0
-        for worker_answer, correct_answer in zip(worker_answers, correct_answers):
-            worker_only_selected = [
-                key for key, selected in worker_answer.items() if selected
-            ]
-            if self.has_same_answer(worker_only_selected, correct_answer):
-                number_correct += 1
-            else:
-                number_incorrect += 1
-
-        print(
-            f'Worker {self.worker_id} got {number_correct} annotations correct and {number_incorrect} incorrect in onboarding.'
-        )
-        if (
-            number_correct >= self.min_correct
-            and number_incorrect <= self.max_incorrect
-        ):
-            return True
-        return False
+        self.annotations = None
 
     def parley(self):
 
@@ -140,10 +95,11 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
             print(f'{self.__class__.__name__}: {self.worker_id} had no data submitted')
             return ONBOARD_FAIL
 
-        worker_answers = act['task_data']['annotations']
+        self.annotations = act['task_data'].get('annotations')
+        print('Onboarding annotation results: ', self.annotations)
 
-        if self.check_onboarding_answers(worker_answers):
-            print(f'Worker {self.worker_id} successfully passed the onboard task.')
+        if act['task_data']['success']:
+            print(f'Worker {self.worker_id} successfully passed the onboarding task.')
 
             # This will end the onboarding and send them directly to the HIT
             self.episodeDone = True
@@ -164,6 +120,9 @@ class ModelChatOnboardWorld(CrowdOnboardWorld):
                     self.onboard_statistics[self.status] = 0
                 self.onboard_statistics[self.status] += 1
 
+    def get_custom_task_data(self):
+        return self.annotations
+
 
 class BaseModelChatWorld(CrowdTaskWorld, ABC):
     def __init__(self, opt, agent, bot):
@@ -180,6 +139,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.task_turn_idx = 0
         self.num_turns = num_turns
 
+        self.agent.agent_id = 'Speaker 1'
+        self.bot.agent_id = 'Speaker 2'
+
         self.dialog = []
         self.tag = f'conversation_id {agent.mephisto_agent.db_id}'
         self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
@@ -187,6 +149,11 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.check_acceptability = opt['check_acceptability']
         self.acceptability_checker = AcceptabilityChecker()
         self.block_qualification = opt['block_qualification']
+
+        self.final_chat_data = None
+        # TODO: remove this attribute once chat data is only stored in the Mephisto
+        #  TaskRun for this HIT (see .get_custom_task_data() docstring for more
+        #  information)
 
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
@@ -269,14 +236,14 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     chat_data_subfolder,
                     f'{time_string}_{np.random.randint(0, 1000)}_{self.task_type}.json',
                 )
-                final_chat_data = self.get_final_chat_data()
+                self.final_chat_data = self.get_final_chat_data()
                 self.agent.mephisto_agent.state.messages.append(
-                    {'final_chat_data': final_chat_data}
+                    {'final_chat_data': self.final_chat_data}
                 )
                 # Append the chat data directly to the agent state's message list in
                 # order to prevent the worker from seeing a new text response in the UI
                 with open(chat_data_path, 'w+') as f_json:
-                    data_str = json.dumps(final_chat_data)
+                    data_str = json.dumps(self.final_chat_data)
                     f_json.write(data_str)
                 print(
                     f'{self.__class__.__name__}:{self.tag}: Data saved at '
@@ -284,9 +251,9 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 )
 
                 # Soft-block the worker if there were acceptability violations
-                acceptability_violations = final_chat_data['acceptability_violations'][
-                    0
-                ]
+                acceptability_violations = self.final_chat_data[
+                    'acceptability_violations'
+                ][0]
                 if (
                     acceptability_violations is not None
                     and acceptability_violations != ''
@@ -391,15 +358,30 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 'model_opt': self.bot.model_agent.opt,
             },
         }
-        # 'bad_workers' is for compatibility. Before, it was only non-empty if a
-        # worker abandoned, returned, etc. a HIT, but now we don't even save chat
-        # data in that case
+        # TODO: once the analysis scripts are fully switched over to DataBrowser, remove
+        #  the 'workers' and 'assignment_ids' keys, which will now be duplicated in the
+        #  returned Unit
+        # TODO: 'bad_workers' is for compatibility. Before, it was only non-empty if a
+        #  worker abandoned, returned, etc. a HIT, but now we don't even save chat
+        #  data in that case. Remove this key once fully once on DataBrowser
         if self.check_acceptability:
             data['acceptability_violations'] = (violations_string,)
             # Make a tuple for compatibility with a human/human conversation in
             # which we check both sides for acceptability
 
         return data
+
+    def get_custom_task_data(self):
+        """
+        Retrieves the final chat data for storage in the Mephisto database.
+
+        TODO: the final chat data is currently stored both in
+         mephisto.blueprint.chat_data_folder and in the Mephisto database. It'd be best
+         to remove the chat_data_folder arg completely, and to move the current logic in
+         self.get_final_chat_data() into this method, in order to have a single storage
+         location.
+        """
+        return self.final_chat_data
 
     def _prepare_acceptability_checking(self) -> Tuple[List[str], List[str]]:
         """
@@ -468,7 +450,7 @@ class ModelChatWorld(BaseModelChatWorld):
             # Display the previous two utterances
             human_first_msg = {
                 'episode_done': False,
-                'id': self.agent.id,
+                'id': self.agent.agent_id,
                 'text': self.context_info['person1_seed_utterance'],
                 'fake_start': True,
                 'agent_idx': 0,
@@ -477,7 +459,7 @@ class ModelChatWorld(BaseModelChatWorld):
                 human_first_msg[k] = v
             bot_first_msg = {
                 'episode_done': False,
-                'id': self.bot.id,
+                'id': self.bot.agent_id,
                 'text': self.context_info['person2_seed_utterance'],
                 'fake_start': True,
                 'agent_idx': 1,
@@ -493,12 +475,20 @@ class ModelChatWorld(BaseModelChatWorld):
 
         elif self.opt['conversation_start_mode'] == 'hi':
             print('[Displaying "Hi!" only as per Meena task.]')
+            if self.personas is not None:
+                human_persona_strings = [s.strip() for s in self.personas[0]]
+            else:
+                human_persona_strings = ['', '']
             human_first_msg = {
                 'episode_done': False,
-                'id': self.agent.id,
+                'id': self.agent.agent_id,
                 'text': 'Hi!',
                 'fake_start': True,
                 'agent_idx': 0,
+                'task_data': {
+                    'human_persona_string_1': human_persona_strings[0],
+                    'human_persona_string_2': human_persona_strings[1],
+                },
             }
             for k, v in control_msg.items():
                 human_first_msg[k] = v
@@ -508,7 +498,9 @@ class ModelChatWorld(BaseModelChatWorld):
             self.bot.observe(validate(human_first_msg))
 
             first_bot_act = self.bot.act()
-            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act = Compatibility.backward_compatible_force_set(
+                first_bot_act, 'id', self.bot.agent_id
+            )
 
             self.agent.observe(validate(first_bot_act))
 
@@ -650,8 +642,6 @@ def make_world(opt, agents):
     # Extract important components from opt
     statistics_condition = opt['statistics_condition']
     context_generator = opt['context_generator']
-
-    agents[0].agent_id = "Worker"
 
     # Get context: personas, previous utterances, etc.
     if context_generator is not None:

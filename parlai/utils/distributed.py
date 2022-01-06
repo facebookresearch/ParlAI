@@ -328,37 +328,36 @@ def slurm_distributed_context(opt):
             'Does not appear to be in a SLURM environment. '
             'You should not call this script directly; see launch_distributed.py'
         )
-
     try:
         # Figure out the main host, and which rank we are.
         hostnames = subprocess.check_output(
             ['scontrol', 'show', 'hostnames', node_list]
         )
-        main_host = hostnames.split()[0].decode('utf-8')
-        distributed_rank = int(os.environ['SLURM_PROCID'])
-        if opt.get('model_parallel'):
-            # -1 signals to multiprocessing_train to use all GPUs available.
-            # (A value of None signals to multiprocessing_train to use the GPU
-            # corresponding to the rank.
-            device_id = -1
-        else:
-            device_id = int(os.environ['SLURM_LOCALID'])
-        port = opt['port']
-        logging.info(
-            f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
-            f'main is {main_host}'
-        )
-        # Begin distributed training
-        with distributed_context(
-            distributed_rank, opt, 0, device_id, init_method=f"tcp://{main_host}:{port}"
-        ) as opt:
-            yield opt
-    except subprocess.CalledProcessError as e:
-        # scontrol failed
-        raise e
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         # Slurm is not installed
-        raise RuntimeError('SLURM does not appear to be installed.')
+        raise RuntimeError(
+            f'SLURM does not appear to be installed. Missing file: {e.filename}'
+        )
+
+    main_host = hostnames.split()[0].decode('utf-8')
+    distributed_rank = int(os.environ['SLURM_PROCID'])
+    if opt.get('model_parallel'):
+        # -1 signals to multiprocessing_train to use all GPUs available.
+        # (A value of None signals to multiprocessing_train to use the GPU
+        # corresponding to the rank.
+        device_id = -1
+    else:
+        device_id = int(os.environ['SLURM_LOCALID'])
+    port = opt['port']
+    logging.info(
+        f'Initializing host {socket.gethostname()} as rank {distributed_rank}, '
+        f'main is {main_host}'
+    )
+    # Begin distributed training
+    with distributed_context(
+        distributed_rank, opt, 0, device_id, init_method=f"tcp://{main_host}:{port}"
+    ) as opt:
+        yield opt
 
 
 def find_free_port() -> int:

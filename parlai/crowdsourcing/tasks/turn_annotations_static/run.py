@@ -19,15 +19,16 @@ from parlai.crowdsourcing.tasks.turn_annotations_static.util import run_static_t
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 
+_ = STATIC_BLUEPRINT_TYPE
+
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+# To run the task with your own config outside this folder (recommended!)
+# Use the command formulation below. For more info,
+# check the README in parlai/crowdsourcing/
+# python turn_annotations_static/run.py conf=<conf name sans yaml> --config-dir <path to directory with a conf/ folder>
 
-defaults = [
-    {'mephisto/blueprint': STATIC_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": 'example'}]
 
 
 @dataclass
@@ -45,7 +46,7 @@ class ScriptConfig(MTurkRunScriptConfig):
 register_script_config(name='scriptconfig', module=ScriptConfig)
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     run_static_task(cfg=cfg, task_directory=TASK_DIRECTORY)
 

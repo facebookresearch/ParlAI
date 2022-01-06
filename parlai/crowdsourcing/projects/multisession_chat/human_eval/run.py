@@ -18,15 +18,12 @@ from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 import json
 
 
+_ = BLUEPRINT_TYPE
+
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-defaults = [
-    {'mephisto/blueprint': BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": "example"}]
 
 
 def check_override_opt(args):
@@ -56,7 +53,7 @@ class ScriptConfig(MTurkRunScriptConfig):
 register_script_config(name='scriptconfig', module=ScriptConfig)
 
 
-@hydra.main(config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     check_override_opt(cfg.mephisto)
     run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=None)

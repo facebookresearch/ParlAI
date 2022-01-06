@@ -1,0 +1,46 @@
+acts:
+- - domain: software
+    episode_done: false
+    id: Multidogo_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_SystemTeacher
+    labels:
+    - 'APICALL: api_name = software'
+    slots:
+      api_name: software
+    text: 'USER: HI'
+    type: 'APICALL: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_SystemTeacher
+    labels:
+    - 'SYSTEM: Hello! Welcome to Music World! How may I help you today?'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_SystemTeacher
+    labels:
+    - 'APICALL: api_name = software'
+    slots:
+      api_name: software
+    text: 'USER: I can set up new recurring orders'
+    type: 'APICALL: '
+- - domain: software
+    episode_done: false
+    id: Multidogo_SystemTeacher
+    labels:
+    - 'SYSTEM: Sure! Could you please help me with your company name and one time
+      password?'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 560
+num_examples: 10066

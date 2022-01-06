@@ -67,6 +67,7 @@ MARKER_RULES = [
     ('datatests/', 'data'),
     ('parlai/tasks/', 'teacher'),
     ('tasks/', 'tasks'),
+    ('tod/', 'tod'),
 ]
 
 
@@ -89,7 +90,7 @@ def pytest_collection_modifyitems(config, items):
         else:
             assert "/" not in rel_path[6:], f"Couldn't categorize '{rel_path}'"
             item.add_marker("unit")
-            if marker_expr != 'unit' and marker_expr != '':
+            if marker_expr not in ['', 'unit']:
                 deselected.append(item)
 
     # kill everything that wasn't grabbed
@@ -104,7 +105,7 @@ def pytest_collection_modifyitems(config, items):
             class_mapping[class_name].append(item)
 
         test_groupings = list(class_mapping.keys())
-        random.Random(1337).shuffle(test_groupings)
+        random.Random(1339).shuffle(test_groupings)
 
         filtered_tests = filter_tests_with_circleci(test_groupings)
         new_items = []

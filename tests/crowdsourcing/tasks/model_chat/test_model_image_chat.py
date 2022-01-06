@@ -23,7 +23,7 @@ from parlai.zoo.image_chat.transresnet_multimodal import (
 
 
 # Inputs
-AGENT_DISPLAY_IDS = ('Worker',)
+AGENT_DISPLAY_IDS = ('Speaker 1',)
 AGENT_MESSAGES = [
     ("Response 1",),
     ("Response 2",),
@@ -36,15 +36,14 @@ FORM_MESSAGES = ("",)
 # No info is sent through the 'text' field when submitting the form
 FORM_TASK_DATA = ({"final_rating": 0},)
 
+MODEL_IMAGE_CHAT_CONFIG_NAME = "example_image_chat"
 
 try:
 
     import parlai.crowdsourcing.tasks.model_chat.worlds_image_chat as world_module
-    from parlai.crowdsourcing.tasks.model_chat.run_image_chat import TASK_DIRECTORY
+    from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
     from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
         SharedModelImageChatTaskState,
-        ModelImageChatBlueprintArgs,
-        IMAGE_CHAT_BLUEPRINT_TYPE,
     )
     from parlai.crowdsourcing.tasks.model_chat.utils import AbstractModelChatTest
 
@@ -117,36 +116,17 @@ try:
 
                 # Set up the config and database
                 num_convos = 1
-                args = ModelImageChatBlueprintArgs()
                 overrides = [
-                    f'+mephisto.blueprint.{key}={val}'
-                    for key, val in args.__dict__.items()
-                    if key
-                    in [
-                        'evals_per_image_model_combo',
-                        'max_resp_time',
-                        'override_opt',
-                        'random_seed',
-                        'world_file',
-                    ]
-                ] + [
-                    'mephisto.blueprint.annotations_config_path=""',
                     f'mephisto.blueprint.chat_data_folder={chat_data_folder}',
-                    f'+mephisto.blueprint.image_context_path={image_context_path}',
-                    '+mephisto.blueprint.left_pane_text_path=${task_dir}/task_config/left_pane_text.html',
-                    '+mephisto.blueprint.max_concurrent_responses=1',
-                    'mephisto.blueprint.model_opt_path=${task_dir}/task_config/image_model_opts.yaml',
-                    f'+mephisto.blueprint.num_conversations={num_convos:d}',
-                    f'+mephisto.blueprint.stack_folder={stack_folder}',
-                    '+mephisto.blueprint.task_description_file=${task_dir}/task_config/task_description.html',
-                    'mephisto.blueprint.task_model_parallel=False',
+                    f'mephisto.blueprint.image_context_path={image_context_path}',
+                    f'mephisto.blueprint.num_conversations={num_convos:d}',
+                    f'mephisto.blueprint.stack_folder={stack_folder}',
                 ]
-                # TODO: remove all of these params once Hydra 1.1 is released with
-                #  support for recursive defaults
+
                 self._set_up_config(
-                    blueprint_type=IMAGE_CHAT_BLUEPRINT_TYPE,
                     task_directory=TASK_DIRECTORY,
                     overrides=overrides,
+                    config_name=MODEL_IMAGE_CHAT_CONFIG_NAME,
                 )
 
                 # Set up the operator and server

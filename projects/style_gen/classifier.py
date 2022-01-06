@@ -220,7 +220,16 @@ class ClassifierAgent(ClassificationMixin, TransformerGeneratorAgent):
                 self._update_confusion_matrix(preds, labels)
 
         if self.opt.get('print_scores', False):
-            return Output(preds, probs=probs.cpu())
+            assert probs.size(1) == len(self.class_list)
+            cpu_probs = probs.cpu()
+            probs_by_class = [
+                {
+                    class_: prob
+                    for class_, prob in zip(self.class_list, prob_row.tolist())
+                }
+                for prob_row in cpu_probs
+            ]
+            return Output(preds, probs=cpu_probs, probs_by_class=probs_by_class)
         else:
             return Output(preds)
 

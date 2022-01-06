@@ -8,26 +8,26 @@ fairscale==0.3.7
 docformatter==1.3.0
 flake8-bugbear==19.8.0
 flake8==3.7.8
+importlib-metadata<4.3
 iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
-hydra-core~=1.0.6
+hydra-core~=1.1.0
 ipython==7.19.0
 torch>=1.4.0
 joblib==0.14.1
-nltk==3.4.5
-numpy==1.17.5
-omegaconf<2.1.0
+nltk==3.6.4
+omegaconf~=2.1.1
 pandas==1.1.1
 pytest_regressions==2.1.1
 pytest==5.3.2
 pexpect==4.7.0
-Pillow==8.2.0
+Pillow==8.3.2
 py-gfm==1.0.2
 py-rouge==1.1
 pyyaml==5.4
 pyzmq==18.1.0
-regex==2020.1.8
+regex>=2021.8.3
 myst-parser~=0.12.2
 attrs~=20.2.0
 requests-mock==1.7.0
@@ -44,10 +44,12 @@ tensorboardX==2.1
 tokenizers>=0.8.0
 torchtext>=0.5.0
 tornado==6.0.4
-tqdm~=4.42.0
-typing-extensions==3.7.4.1
+tqdm~=4.62.1
+typing-extensions==3.7.4.3
 Unidecode==1.1.1
 urllib3>=1.26.5
 websocket-client==0.56.0
 websocket-server==0.4
 jsonlines==1.2.0
+numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
+markdown<=3.3.2 # Pin to something that works so tests are happy

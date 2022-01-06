@@ -21,7 +21,7 @@ import torch
 from mephisto.operations.hydra_config import register_script_config
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from parlai.crowdsourcing.tasks.acute_eval.analysis import (
     AcuteAnalyzer,
@@ -43,9 +43,13 @@ from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_ar
 from parlai.utils.strings import normalize_reply
 from parlai.utils.testing import capture_output
 
+_ = FAST_ACUTE_BLUEPRINT_TYPE
+
 ########################
 # ACUTE EVAL CONSTANTS #
 ########################
+
+FAST_ACUTE_CONFIG_NAME = "example_fast_acute"
 
 ACUTE_EVAL_TYPES = {
     'human': {
@@ -57,6 +61,11 @@ ACUTE_EVAL_TYPES = {
         'question': 'Who would you prefer to talk to for a long conversation?',
         's1_choice': 'I would prefer to talk to <Speaker 1>',
         's2_choice': 'I would prefer to talk to <Speaker 2>',
+    },
+    'interesting': {
+        'question': 'If you had to say one of these speakers is interesting and one is boring, who would you say is more interesting?',
+        's1_choice': '<Speaker 1> is more interesting',
+        's2_choice': '<Speaker 2> is more interesting',
     },
     'roleplay': {
         'question': 'How well does the speaker play their role in the conversation?',
@@ -478,6 +487,7 @@ class FastAcuteExecutor(object):
         self.set_up_acute_eval()
         db, cfg = load_db_and_process_config(self.args)
         print(f'*** RUN ID: {cfg.mephisto.task.task_name} ***')
+        print(f'\nHydra config:\n{OmegaConf.to_yaml(cfg)}')
         operator = Operator(db)
         operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
         operator.wait_for_runs_then_shutdown(
@@ -546,13 +556,7 @@ class FastAcuteExecutor(object):
         self._print_progress(f'ACUTE results saved to {self.results_path}')
 
 
-defaults = [
-    {"mephisto/blueprint": FAST_ACUTE_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    'conf/base_fast_acute',
-    {"conf": "example_fast_acute"},
-]
+defaults = ['_self_', {"conf": FAST_ACUTE_CONFIG_NAME}]
 
 
 @dataclass
@@ -570,7 +574,7 @@ class TestScriptConfig(MTurkRunScriptConfig):
 register_script_config(name='fast_acute_scriptconfig', module=TestScriptConfig)
 
 
-@hydra.main(config_name="fast_acute_scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="fast_acute_scriptconfig")
 def main(cfg: DictConfig) -> None:
 
     runner = FastAcuteExecutor(cfg)

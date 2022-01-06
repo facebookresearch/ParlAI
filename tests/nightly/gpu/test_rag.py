@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import copy
+import os
 import torch
 import torch.cuda
 from typing import Optional
@@ -12,10 +13,12 @@ import unittest
 from parlai.core.build_data import modelzoo_path
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser, Opt
+from parlai.scripts.self_chat import SelfChat
 import parlai.utils.testing as testing_utils
 
 try:
     from parlai.agents.rag.dpr import DprQueryEncoder
+    from parlai.agents.rag.retrievers import RetrievedChunkRanker
 except ImportError:
     pass
 
@@ -107,7 +110,7 @@ RAG_MODEL_TYPE_OPTIONS = {
 }
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagDpr(unittest.TestCase):
     """
     Test all RAG DPR Model Types with Base Generators.
@@ -165,7 +168,7 @@ class TestRagDpr(unittest.TestCase):
         self._test_rag_type('turn:thorough=True', 'transformer/generator', no_cuda=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestFidDpr(unittest.TestCase):
     """
     Test FiD DPR Model.
@@ -189,7 +192,7 @@ class TestFidDpr(unittest.TestCase):
         self._test_fid('transformer/generator')
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagDprPoly(unittest.TestCase):
     """
     Test RAG DPR Poly model.
@@ -215,7 +218,7 @@ class TestRagDprPoly(unittest.TestCase):
         self._test_rag_type('turn', no_cuda=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagTfidf(unittest.TestCase):
     """
     Test RAG TFIDF model.
@@ -228,7 +231,7 @@ class TestRagTfidf(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestFidRag(unittest.TestCase):
     """
     Test Fid Rag.
@@ -254,7 +257,7 @@ class TestFidRag(unittest.TestCase):
         self._test_fid('transformer/generator')
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagPolyfaiss(unittest.TestCase):
     """
     Test Rag PolyFAISS.
@@ -269,7 +272,7 @@ class TestRagPolyfaiss(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRegret(unittest.TestCase):
     """
     Test ReGReT.
@@ -277,7 +280,11 @@ class TestRegret(unittest.TestCase):
 
     def _test_regret(self, regret_mf: Optional[str] = None):
         opt = copy.deepcopy(test_opt)
-        opt['regret_model_file'] = regret_mf
+        opt['regret'] = True
+        if regret_mf:
+            opt['regret_model_file'] = regret_mf
+            opt['regret_override_index'] = True  # to use debug index
+            opt['regret_dict_file'] = f'{regret_mf}.dict'
         opt['rag_model_type'] = 'token'
         opt['no_cuda'] = True
         testing_utils.eval_model(opt, skip_test=True)
@@ -289,7 +296,7 @@ class TestRegret(unittest.TestCase):
         self._test_regret()
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestOtherOptions(unittest.TestCase):
     """
     Test other RAG Options.
@@ -308,7 +315,7 @@ class TestOtherOptions(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestQueryModels(unittest.TestCase):
     """
     Test other RAG Options.
@@ -361,7 +368,7 @@ def _test_zoo_file(mf: str, fid: bool = False, fid_rag: bool = False):
     torch.cuda.empty_cache()
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagZooModels(unittest.TestCase):
     """
     Test ZOO Models.
@@ -383,7 +390,7 @@ class TestRagZooModels(unittest.TestCase):
         _test_zoo_file(RAG_TURN_DO_ZOO_MODEL)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestFidZooModels(unittest.TestCase):
     """
     Test FiD zoo models.
@@ -399,6 +406,7 @@ class TestFidZooModels(unittest.TestCase):
         _test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
 
 
+@testing_utils.skipIfCircleCI
 class TestLoadDPRModel(unittest.TestCase):
     """
     Test loading different DPR models for RAG.
@@ -494,6 +502,57 @@ class TestLoadDPRModel(unittest.TestCase):
         assert torch.allclose(
             default_query_encoder.embeddings.weight.float().cpu(),
             rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
+        )
+
+
+@testing_utils.skipIfCircleCI
+class TestRagSelfChat(unittest.TestCase):
+    """
+    Test Self-Chat with RAG-based model.
+    """
+
+    def test_self_chat(self):
+        with testing_utils.tempdir() as td:
+            gen_model = 'bart'
+            model_type = 'token'
+            opt = copy.deepcopy(common_opt)
+            seed_utt_file = os.path.join(td, 'seed.txt')
+            opt.update(
+                {
+                    'generation_model': gen_model,
+                    'rag_model_type': model_type,
+                    'no_cuda': True,
+                    **GENERATION_OPTS[gen_model],
+                    'task': 'empathetic_dialogues',
+                    'seed_messages_from_file': seed_utt_file,
+                }
+            )
+            opt.pop('num_examples', '')
+            with open(seed_utt_file, 'w') as f:
+                f.writelines(["Hi, my name is Bob", "Hi, my name is Alice"])
+            SelfChat.main(**opt)
+
+
+@testing_utils.skipIfCircleCI
+class TestWOIChunking(unittest.TestCase):
+    """
+    Test that the woi_chunk_retrieved_docs Chunker works as intended.
+    """
+
+    DOC_TITLE = 'I AM FAKE'
+    DOC_CONTENT = ['hello there old friend ' * 100]
+
+    def test_chunker(self):
+        n_chunks = 1
+        chunk_sz = 500
+        chunker = RetrievedChunkRanker(n_chunks, chunk_sz)
+        chunks = chunker.get_top_chunks(
+            query='', doc_title=self.DOC_TITLE, doc_chunks=self.DOC_CONTENT, doc_url=''
+        )
+        assert len(chunks) == 1 and len(chunks[0]) == 1
+        assert (
+            chunks[0][0]
+            == self.DOC_CONTENT[0][: self.DOC_CONTENT[0].find(' ', chunk_sz)]
         )
 
 

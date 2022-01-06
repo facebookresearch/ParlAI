@@ -1,0 +1,49 @@
+acts:
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_SystemTeacher
+    labels:
+    - 'APICALL: '
+    slots: {}
+    text: 'USER: __SILENCE__'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_SystemTeacher
+    labels:
+    - 'SYSTEM: hi, how can i assist you?'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_SystemTeacher
+    labels:
+    - 'APICALL: api_name = uber_lyft ; location.from.accept = the Wichita Dwight D.
+      Eisenhower National Airport ; location.to.accept = the Wichita State University
+      campus'
+    slots:
+      api_name: uber_lyft
+      location.from.accept: the Wichita Dwight D. Eisenhower National Airport
+      location.to.accept: the Wichita State University campus
+    text: 'USER: Hi, I need an Uber pickup from the Wichita Dwight D. Eisenhower National
+      Airport to the Wichita State University campus.'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_SystemTeacher
+    labels:
+    - 'SYSTEM: what kind of ride would you like?'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 10555
+num_examples: 262021

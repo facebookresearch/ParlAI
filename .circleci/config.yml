@@ -47,14 +47,14 @@ executors:
 # -------------------------------------------------------------------------------------
 commands:
   fixgit:
-    # circleci sets master to the tip of the branch, which isn't super useful for us.
-    # better if master looks like it would on our local machines
+    # circleci sets main to the tip of the branch, which isn't super useful for us.
+    # better if main looks like it would on our local machines
     description: Fixes git
     steps:
       - run:
           name: Fixes git
           command: |
-            ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
+            ( [[ "$CIRCLE_BRANCH" != "main" ]] && git branch -f main origin/main ) || true
 
   setup:
     description: Sets up the virtual environment
@@ -105,6 +105,8 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            # This pre-Python-3.7 package will break use of Python-3.7-style dataclasses
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -120,6 +122,8 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            # This pre-Python-3.7 package will break use of Python-3.7-style dataclasses
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
             python -c 'import torch; print("Torch version:", torch.__version__)'
@@ -167,7 +171,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.3.4 -b stable
+              cd Mephisto; git checkout v0.4.1 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -231,26 +235,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-2021222-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-2021222-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-2021222-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-2021222-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -267,12 +271,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
+          key: deps-2021222-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu17
       - save_cache:
-          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
+          key: deps-2021222-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -418,6 +422,7 @@ jobs:
       - runtests:
           cachename: teacher
           marker: teacher
+          pytest_flags: -v -s
 
   build_website:
     executor: small_cpu37
@@ -484,11 +489,11 @@ workflows:
       - build_website:
           filters:
             branches:
-              ignore: master
+              ignore: main
       - deploy_website:
           filters:
             branches:
-              only: master
+              only: main
       - test_website:
           requires:
             - deploy_website

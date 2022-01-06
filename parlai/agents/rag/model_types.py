@@ -15,7 +15,7 @@ import torch
 import torch.nn
 import torch.nn.functional as F
 import torch.cuda
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 from parlai.core.message import Message
@@ -24,7 +24,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch
 from parlai.utils.torch import padded_tensor, FP16_PAD_SIZE
 
-from parlai.agents.rag.modules import RagModel
+from parlai.agents.rag.modules import RagDecoder, RagModel
 from parlai.agents.rag.retrievers import Document
 
 
@@ -93,6 +93,33 @@ def get_forced_decoder_inputs(
         tens = torch.LongTensor([start_idx]).expand(inputs.size(0), 1).to(inputs)
     dec_inputs = torch.cat([tens, inputs], 1)
     return dec_inputs  # type: ignore
+
+
+def fix_incremental_state(
+    generation_model: str, incremental_state: Dict[int, Any]
+) -> Dict[int, Any]:
+    """
+    Fix incremental state. Essentially takes BART into account.
+
+    :param generation_model:
+        generation model
+    :param incremental_state:
+        incremental decoded state
+    """
+    if generation_model == 'bart':
+        for incr_state_l in incremental_state.values():
+            assert 'self_attn' in incr_state_l
+            assert 'prev_mask' in incr_state_l['self_attn']
+            self_attn_mask = incr_state_l['self_attn']['prev_mask']
+            # check this is on the very first run with incremental state
+            if self_attn_mask.ndim == 3 and tuple(self_attn_mask.shape[1:]) == (2, 2):
+                # cut off the inappropriate incremental state
+                incr_state_l['self_attn']['prev_mask'] = self_attn_mask[:, -1:, :]
+    elif generation_model == 't5':
+        # No current solution for t5 exists.
+        incremental_state = {}
+
+    return incremental_state
 
 
 class RagModelInterface(ABC):
@@ -176,8 +203,10 @@ class RagModelInterface(ABC):
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Optionally rerank beams.
         """
@@ -196,6 +225,21 @@ class RagModelInterface(ABC):
         Reorder the encoder states, for beam search.
 
         See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
+        """
+
+    @abstractmethod
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        Reorder the decoder incremental state, for incremental decoding.
+
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+
+        Each RagModelType will require specialized reordering, depending on the method used.
         """
 
     ###########################################
@@ -340,6 +384,28 @@ class RagSequence(RagModelInterface):
         mask = torch.index_select(mask, 0, indices)
         return enc, mask, None, None, None  # type: ignore
 
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        For RAG Sequence, each doc/context pair is it's own batch item.
+
+        So, we can simply reorder normally.
+        """
+        assert incremental_state is not None
+        incremental_state = fix_incremental_state(
+            self.generation_model, incremental_state
+        )
+        if not incremental_state:
+            return incremental_state
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(decoder.layers)
+        }
+
     def get_ctxt_index(self, batch: Batch, batch_idx: int) -> int:
         """
         Map the batch_idx back to the appropriate batch item during generation.
@@ -359,8 +425,10 @@ class RagSequence(RagModelInterface):
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[List[torch.LongTensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, Optional[Dict]]]]:
         """
         Rerank beams in RAG-Sequence, accounting for document probabilities as well.
 
@@ -382,7 +450,7 @@ class RagSequence(RagModelInterface):
                 sort by lowest loss (highest score)
 
         Thorough decoding impl. verified via OSS impl:
-        https://github.com/huggingface/transformers/blob/master/src/transformers/models/rag/modeling_rag.py#L954
+        https://github.com/huggingface/transformers/blob/main/src/transformers/models/rag/modeling_rag.py#L954
 
         :param batch:
             current batch
@@ -453,7 +521,9 @@ class RagSequence(RagModelInterface):
     def fast_generation(
         cls,
         doc_indices: List[int],
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
         doc_log_probs: torch.Tensor,
         n_docs: int,
     ):
@@ -470,22 +540,26 @@ class RagSequence(RagModelInterface):
             number of docs per example
 
         :return sorted_hyps:
-            return list of (hyp, score) tuples, sorted by their score.
+            return list of (hyp, score, token metadata) tuples, sorted by their score.
         """
-        marginalized_hypos: Dict[str, List[torch.Tensor]] = {}
+        marginalized_hypos: Dict[
+            str, Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]
+        ] = {}
         for doc_idx in doc_indices:
             doc_hypos = n_best_beam_preds_scores[doc_idx]
             doc_score = doc_log_probs[doc_idx % n_docs]
-            for hypo, hypo_score in doc_hypos:
+            for hypo, hypo_score, token_metadata in doc_hypos:
                 score = hypo_score + doc_score
                 hypo_tokens = str(hypo.tolist())
                 if hypo_tokens in marginalized_hypos:
                     marginalised_hypo = marginalized_hypos[hypo_tokens]
-                    marginalised_hypo[1] = torch.log(
-                        marginalised_hypo[1].exp() + score.exp()
+                    marginalised_hypo = (
+                        marginalised_hypo[0],
+                        torch.log(marginalised_hypo[1].exp() + score.exp()),
+                        marginalised_hypo[2],
                     )
                 else:
-                    marginalized_hypos[hypo_tokens] = [hypo, score]
+                    marginalized_hypos[hypo_tokens] = (hypo, score, token_metadata)
         sorted_by_score = sorted(marginalized_hypos.values(), key=lambda h: -h[1])
         return sorted_by_score
 
@@ -496,7 +570,7 @@ class RagSequence(RagModelInterface):
         new_input: torch.LongTensor,
         null_idx: int,
         model: RagModel,
-    ) -> List[Tuple[torch.LongTensor, torch.Tensor]]:
+    ) -> List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]:
         """
         Apply RAG-sequence thorough generation for a single batch item.
 
@@ -508,7 +582,7 @@ class RagSequence(RagModelInterface):
             input for the model
 
         :return sorted_hyps:
-            return list of (hyp, score) tuples, sorted by their score.
+            return list of (hyp, score, token_metadata) tuples, sorted by their score.
         """
         # deduplicate, exclude BOS Token
         hyps = list({str(h.tolist()): h[1:] for h in hyps}.values())  # type: ignore
@@ -522,7 +596,7 @@ class RagSequence(RagModelInterface):
             new_ys.unsqueeze(1).unsqueeze(-1), scores.unsqueeze(1), null_idx
         )  # type: ignore
         sorted_by_score = [
-            (hyps[idx], loss[idx]) for idx in loss.sort()[-1]
+            (hyps[idx], loss[idx], None) for idx in loss.sort()[-1]
         ]  # sort ascending
         return sorted_by_score
 
@@ -761,12 +835,51 @@ class RagToken(RagModelInterface):
 
         return enc, mask, input_turns_cnt, docs, doc_probs  # type: ignore
 
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        For RAG Token, we send each decoder input through n_docs times.
+
+        Similarly to reordering the encoder states, we need to reorder according to the
+        documents dimensions.
+        """
+        assert incremental_state is not None
+        incremental_state = fix_incremental_state(
+            self.generation_model, incremental_state
+        )
+        if not incremental_state:
+            return incremental_state
+        for incr_state_l in incremental_state.values():
+            for key in incr_state_l:
+                for sub_key in incr_state_l[key]:
+                    incr_state_l[key][sub_key] = _unstack_ctxt(
+                        incr_state_l[key][sub_key], self.n_docs
+                    )
+
+        new_incr_state = {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(decoder.layers)
+        }
+
+        for incr_state_l in new_incr_state.values():
+            for key in incr_state_l:
+                for sub_key in incr_state_l[key]:
+                    incr_state_l[key][sub_key] = _stack_ctxt(incr_state_l[key][sub_key])
+
+        return new_incr_state
+
     def rerank_beams(
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         We don't re-rank beams for RAG Token.
         """
@@ -1053,12 +1166,25 @@ class RagTurn(RagModelInterface):
 
         return enc, mask, input_turns_cnt, docs, doc_probs  # type: ignore
 
+    def reorder_decoder_incremental_state(
+        self,
+        incremental_state: Dict[int, Any],
+        inds: Union[List[int], torch.LongTensor],
+        decoder: RagDecoder,
+    ) -> Dict[int, dict]:
+        """
+        Unsupported for Rag Turn.
+        """
+        return None  # type: ignore
+
     def rerank_beams(
         self,
         model: RagModel,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Re-rank beams.
 
@@ -1071,7 +1197,9 @@ class RagTurn(RagModelInterface):
 
         Thorough decoding is identical RAG Sequence.
         """
-        new_n_best: List[List[Tuple[torch.LongTensor, torch.Tensor]]] = []
+        new_n_best: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ] = []
         if self.turn_marginalize == 'doc_only' and not self.thorough:
             # no doc log probs here; just re-sorting beams
             input_turns_cnt = batch.input_turns_cnt
@@ -1085,6 +1213,7 @@ class RagTurn(RagModelInterface):
                         new_beam = (
                             beam[0],
                             beam[1] * self.discount_factor ** (it - i - 1),
+                            beam[2],
                         )
                         n_best_i.append(new_beam)
                 new_n_best.append(sorted(n_best_i, key=lambda x: -x[1]))

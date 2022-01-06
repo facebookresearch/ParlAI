@@ -51,7 +51,7 @@ parlai eval_model -mf zoo:sea/bart_base/model -t wizard_of_internet -dt valid -b
 ### WizInt Search engine FiD
 
 This model is a BART FiD model with a search engine API for retrieval of documents that it uses in FiD.
-It first generates a search query, given the conetxt, and then forwards that search query to an API to receive a series of documents that it then uses for generation.
+It first generates a search query, given the context, and then forwards that search query to an API to receive a series of documents that it then uses for generation.
 The model can be evaluated using:
 ```
 parlai eval_model --model-file zoo:sea/bart_fid_sqse/model --task wizard_of_internet \
@@ -60,9 +60,9 @@ parlai eval_model --model-file zoo:sea/bart_fid_sqse/model --task wizard_of_inte
 ```
 
 Here you need to provide two extra modules for this model to work:
-1. `search-server`: a running search server that receives search queries and returns a set of docuemtns.
+1. `search-server`: a running search server that receives search queries and returns a set of documents.
 2. `search-query-generator-model-file`: a model that generates search queries given the conversation context. The one used in the paper is at `zoo:sea/bart_sq_gen/model`.
 
 ## Human Evaluations
 
-Human evaluations were performed using the Mephisto task [given here](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/model_chat).
+Human evaluations were performed using the Mephisto task [given here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/model_chat).

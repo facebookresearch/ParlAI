@@ -1,0 +1,783 @@
+acts:
+- - action: south
+    episode_done: true
+    id: jericho_world:StateToActionTeacher
+    label_candidates:
+    - ask other about graffiti
+    - north
+    - south
+    labels:
+    - south
+    next_state:
+      graph:
+      - - tree
+        - in
+        - Forest
+      - - muddy trail
+        - in
+        - Forest
+      - - machinery
+        - in
+        - Forest
+      - - underbrush
+        - in
+        - Forest
+      - - you
+        - in
+        - Forest
+      - - knock
+        - in
+        - Forest
+      - - Forest
+        - north
+        - Rickety Fence
+      inventory_objs: []
+      location_desc: Forest The sun has disappeared. Only a narrow north-south passage
+        winds through the forest here; trees and gnarled undergrowth barricade all
+        other exits. Chill air seeps up from the ground and coils around your body,
+        reaching down your neck with insistent, clammy fingers.
+      location_name: Forest
+      observation: 'Bravely, the egg calls after you: "My life is in your hands! I
+        trust you will return shortly to rescue me!"  Forest The sun has disappeared.
+        Only a narrow north-south passage winds through the forest here; trees and
+        gnarled undergrowth barricade all other exits. Chill air seeps up from the
+        ground and coils around your body, reaching down your neck with insistent,
+        clammy fingers.'
+      surrounding_objs:
+      - underbrush undergrowth barricade
+      - north
+      - forest trees tree
+      - trail passage ground
+      - south
+      - other
+      valid_acts:
+      - north
+      - south
+    state:
+      graph:
+      - - tree
+        - in
+        - Forest
+      - - muddy trail
+        - in
+        - Forest
+      - - machinery
+        - in
+        - Forest
+      - - underbrush
+        - in
+        - Forest
+      - - you
+        - in
+        - Forest
+      - - knock
+        - in
+        - Forest
+      - - Forest
+        - north
+        - Rickety Fence
+      inventory_objs: []
+      location_desc: Rickety Fence The ramshackle wooden fence in front of you seems
+        to lurch from one horizon to the other. Although it hasn't fallen over yet,
+        it threatens to at any moment, and if that egg isn't careful...  The footpath
+        running along the fence veers sharply north.  The egg removes a handkerchief
+        from his pocket and polishes a pair of spectacles.
+      location_name: Rickety Fence
+      observation: MOTHER LOOSE An Interactive Nursery Rhyme Copyright (c) 1998 by
+        Irene Callaci. Release 2 / Serial number 981128 / Inform v6.15 Library 6/7  Rickety
+        Fence The ramshackle wooden fence in front of you seems to lurch from one
+        horizon to the other. Although it hasn't fallen over yet, it threatens to
+        at any moment, and if that egg isn't careful...  The footpath running along
+        the fence veers sharply north.  The egg hums a little tune your mother used
+        to sing at bedtime.
+      surrounding_objs:
+      - pocket clothing handkerchief spectacles
+      - footpath trail
+      - sunlight
+      - necktie
+      - hand
+      - graffiti
+      - tree
+      - other
+      - fence
+      - egg
+      valid_acts:
+      - ask other about graffiti
+      - north
+      - south
+    text: '__tt__ NextActionTeacher __end-tt__
+
+      __loc-name__ Rickety Fence __end-loc-name__ __loc-desc__ Rickety Fence The ramshackle
+      wooden fence in front of you seems to lurch from one horizon to the other. Although
+      it hasn''t fallen over yet, it threatens to at any moment, and if that egg isn''t
+      careful...  The footpath running along the fence veers sharply north.  The egg
+      removes a handkerchief from his pocket and polishes a pair of spectacles. __end-loc-desc__
+
+      __KG__ < tree , in , Forest > ; < muddy trail , in , Forest > ; < machinery
+      , in , Forest > ; < underbrush , in , Forest > ; < you , in , Forest > ; < knock
+      , in , Forest > ; < Forest , north , Rickety Fence > __end-KG__'
+- - action: ask other about graffiti
+    episode_done: true
+    id: jericho_world:StateToActionTeacher
+    label_candidates:
+    - north
+    - south
+    - ask other about graffiti
+    labels:
+    - ask other about graffiti
+    next_state:
+      graph:
+      - - egg's clothing
+        - in
+        - egg
+      - - graffiti
+        - in
+        - Rickety Fence
+      - - sunlight
+        - in
+        - Rickety Fence
+      - - egg's hand
+        - in
+        - egg
+      - - rickety wooden fence
+        - in
+        - Rickety Fence
+      - - Rickety Fence
+        - south
+        - Forest
+      - - machinery
+        - in
+        - Rickety Fence
+      - - muddy trail
+        - in
+        - Rickety Fence
+      - - tree
+        - in
+        - Rickety Fence
+      - - egg
+        - in
+        - Rickety Fence
+      - - knock
+        - in
+        - Rickety Fence
+      - - you
+        - in
+        - Rickety Fence
+      - - egg's features
+        - in
+        - egg
+      - - egg's necktie
+        - in
+        - egg
+      inventory_objs: []
+      location_desc: Rickety Fence The ramshackle wooden fence in front of you seems
+        to lurch from one horizon to the other. Although it hasn't fallen over yet,
+        it threatens to at any moment, and if that egg isn't careful...  The footpath
+        running along the fence veers sharply north.  The egg hums a little tune your
+        mother used to sing at bedtime.
+      location_name: Rickety Fence
+      observation: Rickety Fence  The egg flicks an invisible piece of lint off his
+        shirt.
+      surrounding_objs:
+      - clothing
+      - footpath trail
+      - sunlight
+      - necktie
+      - hand
+      - graffiti
+      - tree
+      - other
+      - fence
+      - egg
+      valid_acts:
+      - ask other about graffiti
+      - north
+    state:
+      graph:
+      - - tree
+        - in
+        - Forest
+      - - muddy trail
+        - in
+        - Forest
+      - - machinery
+        - in
+        - Forest
+      - - underbrush
+        - in
+        - Forest
+      - - you
+        - in
+        - Forest
+      - - knock
+        - in
+        - Forest
+      - - Forest
+        - north
+        - Rickety Fence
+      inventory_objs: []
+      location_desc: Forest The sun has disappeared. Only a narrow north-south passage
+        winds through the forest here; trees and gnarled undergrowth barricade all
+        other exits. Chill air seeps up from the ground and coils around your body,
+        reaching down your neck with insistent, clammy fingers.
+      location_name: Forest
+      observation: 'Bravely, the egg calls after you: "My life is in your hands! I
+        trust you will return shortly to rescue me!"  Forest The sun has disappeared.
+        Only a narrow north-south passage winds through the forest here; trees and
+        gnarled undergrowth barricade all other exits. Chill air seeps up from the
+        ground and coils around your body, reaching down your neck with insistent,
+        clammy fingers.'
+      surrounding_objs:
+      - underbrush undergrowth barricade
+      - north
+      - forest trees tree
+      - trail passage ground
+      - south
+      - other
+      valid_acts:
+      - north
+      - south
+      - ask other about graffiti
+    text: '__tt__ NextActionTeacher __end-tt__
+
+      __loc-name__ Forest __end-loc-name__ __loc-desc__ Forest The sun has disappeared.
+      Only a narrow north-south passage winds through the forest here; trees and gnarled
+      undergrowth barricade all other exits. Chill air seeps up from the ground and
+      coils around your body, reaching down your neck with insistent, clammy fingers.
+      __end-loc-desc__
+
+      __KG__ < tree , in , Forest > ; < muddy trail , in , Forest > ; < machinery
+      , in , Forest > ; < underbrush , in , Forest > ; < you , in , Forest > ; < knock
+      , in , Forest > ; < Forest , north , Rickety Fence > __end-KG__'
+- - action: 'yes'
+    episode_done: true
+    id: jericho_world:StateToActionTeacher
+    label_candidates:
+    - ask other about graffiti
+    - north
+    - 'yes'
+    labels:
+    - 'yes'
+    next_state:
+      graph:
+      - - egg's clothing
+        - in
+        - egg
+      - - graffiti
+        - in
+        - Rickety Fence
+      - - sunlight
+        - in
+        - Rickety Fence
+      - - egg's hand
+        - in
+        - egg
+      - - rickety wooden fence
+        - in
+        - Rickety Fence
+      - - machinery
+        - in
+        - Rickety Fence
+      - - egg
+        - in
+        - Rickety Fence
+      - - muddy trail
+        - in
+        - Rickety Fence
+      - - tree
+        - in
+        - Rickety Fence
+      - - you
+        - in
+        - Rickety Fence
+      - - knock
+        - in
+        - Rickety Fence
+      - - egg's features
+        - in
+        - egg
+      - - egg's necktie
+        - in
+        - egg
+      inventory_objs: []
+      location_desc: Rickety Fence The ramshackle wooden fence in front of you seems
+        to lurch from one horizon to the other. Although it hasn't fallen over yet,
+        it threatens to at any moment, and if that egg isn't careful...  The footpath
+        running along the fence veers sharply north.  The egg hums a little tune your
+        mother used to sing at bedtime.
+      location_name: Rickety Fence
+      observation: '(the egg about that) The egg scrutinizes you over the top of his
+        spectacles. "You must be new in town; I thought everyone had heard: Mother
+        Loose has disappeared! A most unfortunate incident." He glances furtively
+        all around before motioning you to step closer. "The circumstances were quite
+        baffling; one can''t help but speculate. Can you keep a secret?"'
+      surrounding_objs:
+      - clothing
+      - footpath trail
+      - sunlight
+      - necktie
+      - hand
+      - graffiti
+      - tree
+      - other
+      - fence
+      - egg
+      valid_acts:
+      - 'yes'
+      - ask other about graffiti
+      - north
+    state:
+      graph:
+      - - egg's clothing
+        - in
+        - egg
+      - - graffiti
+        - in
+        - Rickety Fence
+      - - sunlight
+        - in
+        - Rickety Fence
+      - - egg's hand
+        - in
+        - egg
+      - - rickety wooden fence
+        - in
+        - Rickety Fence
+      - - Rickety Fence
+        - south
+        - Forest
+      - - machinery
+        - in
+        - Rickety Fence
+      - - muddy trail
+        - in
+        - Rickety Fence
+      - - tree
+        - in
+        - Rickety Fence
+      - - egg
+        - in
+        - Rickety Fence
+      - - knock
+        - in
+        - Rickety Fence
+      - - you
+        - in
+        - Rickety Fence
+      - - egg's features
+        - in
+        - egg
+      - - egg's necktie
+        - in
+        - egg
+      inventory_objs: []
+      location_desc: Rickety Fence The ramshackle wooden fence in front of you seems
+        to lurch from one horizon to the other. Although it hasn't fallen over yet,
+        it threatens to at any moment, and if that egg isn't careful...  The footpath
+        running along the fence veers sharply north.  The egg hums a little tune your
+        mother used to sing at bedtime.
+      location_name: Rickety Fence
+      observation: Rickety Fence  The egg flicks an invisible piece of lint off his
+        shirt.
+      surrounding_objs:
+      - clothing
+      - footpath trail
+      - sunlight
+      - necktie
+      - hand
+      - graffiti
+      - tree
+      - other
+      - fence
+      - egg
+      valid_acts:
+      - ask other about graffiti
+      - north
+      - 'yes'
+    text: '__tt__ NextActionTeacher __end-tt__
+
+      __loc-name__ Rickety Fence __end-loc-name__ __loc-desc__ Rickety Fence The ramshackle
+      wooden fence in front of you seems to lurch from one horizon to the other. Although
+      it hasn''t fallen over yet, it threatens to at any moment, and if that egg isn''t
+      careful...  The footpath running along the fence veers sharply north.  The egg
+      hums a little tune your mother used to sing at bedtime. __end-loc-desc__
+
+      __KG__ < egg''s clothing , in , egg > ; < graffiti , in , Rickety Fence > ;
+      < sunlight , in , Rickety Fence > ; < egg''s hand , in , egg > ; < rickety wooden
+      fence , in , Rickety Fence > ; < Rickety Fence , south , Forest > ; < machinery
+      , in , Rickety Fence > ; < muddy trail , in , Rickety Fence > ; < tree , in
+      , Rickety Fence > ; < egg , in , Rickety Fence > ; < knock , in , Rickety Fence
+      > ; < you , in , Rickety Fence > ; < egg''s features , in , egg > ; < egg''s
+      necktie , in , egg > __end-KG__'
+- - action: north
+    episode_done: true
+    id: jericho_world:StateToActionTeacher
+    label_candidates:
+    - 'yes'
+    - ask other about graffiti
+    - north
+    - north
+    labels:
+    - north
+    next_state:
+      graph:
+      - - egg's clothing
+        - in
+        - egg
+      - - graffiti
+        - in
+        - Rickety Fence
+      - - sunlight
+        - in
+        - Rickety Fence
+      - - egg's hand
+        - in
+        - egg
+      - - rickety wooden fence
+        - in
+        - Rickety Fence
+      - - machinery
+        - in
+        - Rickety Fence
+      - - egg
+        - in
+        - Rickety Fence
+      - - muddy trail
+        - in
+        - Rickety Fence
+      - - tree
+        - in
+        - Rickety Fence
+      - - you
+        - in
+        - Rickety Fence
+      - - knock
+        - in
+        - Rickety Fence
+      - - egg's features
+        - in
+        - egg
+      - - egg's necktie
+        - in
+        - egg
+      inventory_objs: []
+      location_desc: Rickety Fence The ramshackle wooden fence in front of you seems
+        to lurch from one horizon to the other. Although it hasn't fallen over yet,
+        it threatens to at any moment, and if that egg isn't careful...  The footpath
+        running along the fence veers sharply north.  The egg hums a little tune your
+        mother used to sing at bedtime.
+      location_name: Rickety Fence
+      observation: The egg leans forward and almost tumbles off the fence, but recovers
+        just in time. "Shhh! Don't breathe a word. She's been kidnapped by terrorists.
+        The authorities want to avoid a panic, of course, but rumors are flying."
+      surrounding_objs:
+      - clothing
+      - footpath trail
+      - sunlight
+      - necktie
+      - hand
+      - graffiti
+      - tree
+      - other
+      - fence
+      - egg
+      valid_acts:
+      - north
+    state:
+      graph:
+      - - egg's clothing
+        - in
+        - egg
+      - - graffiti
+        - in
+        - Rickety Fence
+      - - sunlight
+        - in
+        - Rickety Fence
+      - - egg's hand
+        - in
+        - egg
+      - - rickety wooden fence
+        - in
+        - Rickety Fence
+      - - machinery
+        - in
+        - Rickety Fence
+      - - egg
+        - in
+        - Rickety Fence
+      - - muddy trail
+        - in
+        - Rickety Fence
+      - - tree
+        - in
+        - Rickety Fence
+      - - you
+        - in
+        - Rickety Fence
+      - - knock
+        - in
+        - Rickety Fence
+      - - egg's features
+        - in
+        - egg
+      - - egg's necktie
+        - in
+        - egg
+      inventory_objs: []
+      location_desc: Rickety Fence The ramshackle wooden fence in front of you seems
+        to lurch from one horizon to the other. Although it hasn't fallen over yet,
+        it threatens to at any moment, and if that egg isn't careful...  The footpath
+        running along the fence veers sharply north.  The egg hums a little tune your
+        mother used to sing at bedtime.
+      location_name: Rickety Fence
+      observation: '(the egg about that) The egg scrutinizes you over the top of his
+        spectacles. "You must be new in town; I thought everyone had heard: Mother
+        Loose has disappeared! A most unfortunate incident." He glances furtively
+        all around before motioning you to step closer. "The circumstances were quite
+        baffling; one can''t help but speculate. Can you keep a secret?"'
+      surrounding_objs:
+      - clothing
+      - footpath trail
+      - sunlight
+      - necktie
+      - hand
+      - graffiti
+      - tree
+      - other
+      - fence
+      - egg
+      valid_acts:
+      - 'yes'
+      - ask other about graffiti
+      - north
+      - north
+    text: '__tt__ NextActionTeacher __end-tt__
+
+      __loc-name__ Rickety Fence __end-loc-name__ __loc-desc__ Rickety Fence The ramshackle
+      wooden fence in front of you seems to lurch from one horizon to the other. Although
+      it hasn''t fallen over yet, it threatens to at any moment, and if that egg isn''t
+      careful...  The footpath running along the fence veers sharply north.  The egg
+      hums a little tune your mother used to sing at bedtime. __end-loc-desc__
+
+      __KG__ < egg''s clothing , in , egg > ; < graffiti , in , Rickety Fence > ;
+      < sunlight , in , Rickety Fence > ; < egg''s hand , in , egg > ; < rickety wooden
+      fence , in , Rickety Fence > ; < machinery , in , Rickety Fence > ; < egg ,
+      in , Rickety Fence > ; < muddy trail , in , Rickety Fence > ; < tree , in ,
+      Rickety Fence > ; < you , in , Rickety Fence > ; < knock , in , Rickety Fence
+      > ; < egg''s features , in , egg > ; < egg''s necktie , in , egg > __end-KG__'
+- - action: take card
+    episode_done: true
+    id: jericho_world:StateToActionTeacher
+    label_candidates:
+    - take card
+    - take off long
+    - take off floppy
+    - take off jacket
+    - east
+    - put long down
+    - put yo-yo down
+    - put floppy down
+    - put jacket down
+    - put key down
+    - undo drawer
+    - pull red
+    - take card
+    labels:
+    - take card
+    next_state:
+      graph:
+      - - yo-yo
+        - in
+        - Console Room
+      - - main doors
+        - in
+        - Console Room
+      - - red lever
+        - in
+        - Console Room
+      - - green button
+        - in
+        - Console Room
+      - - scanner
+        - in
+        - Console Room
+      - - you
+        - in
+        - Console Room
+      - - TARDIS console
+        - in
+        - Console Room
+      - - you
+        - have
+        - tweed jacket
+      - - tiny drawer
+        - in
+        - Console Room
+      - - you
+        - have
+        - floppy felt hat
+      - - you
+        - have
+        - incredibly long scarf
+      - - time rotor
+        - in
+        - Console Room
+      - - fluid link
+        - in
+        - tiny drawer
+      - - brown card
+        - in
+        - Console Room
+      - - you
+        - have
+        - TARDIS key
+      - - slot
+        - in
+        - Console Room
+      inventory_objs:
+      - jacket tweed
+      - long scarf incredibly
+      - floppy hat felt
+      - key
+      location_desc: Console Room The console room is the heart of operations of the
+        TARDIS. Dominating the room is a six-side console.  Located above the console
+        is the scanner.  A corridor to the east leads further into the TARDIS.  On
+        the west side of the room are the main doors.  You can see your yo-yo here.
+      location_name: Console Room
+      observation: Dropped.
+      surrounding_objs:
+      - button green
+      - yo-yo yo
+      - card brown
+      - west
+      - tiny drawer
+      - lever red
+      - east
+      - doors main
+      - scanner
+      - rotor time
+      - console
+      - slot
+      valid_acts:
+      - take yo-yo
+      - take card
+      - take off long
+      - take off floppy
+      - take off jacket
+      - east
+      - put long down
+      - put floppy down
+      - put jacket down
+      - put key down
+      - undo drawer
+      - pull red
+    state:
+      graph:
+      - - TARDIS console
+        - in
+        - Console Room
+      - - time rotor
+        - in
+        - Console Room
+      - - you
+        - have
+        - tweed jacket
+      - - fluid link
+        - in
+        - tiny drawer
+      - - slot
+        - in
+        - Console Room
+      - - main doors
+        - in
+        - Console Room
+      - - yo-yo
+        - in
+        - Console Room
+      - - red lever
+        - in
+        - Console Room
+      - - green button
+        - in
+        - Console Room
+      - - you
+        - in
+        - Console Room
+      - - tiny drawer
+        - in
+        - Console Room
+      - - brown card
+        - in
+        - Console Room
+      - - you
+        - have
+        - floppy felt hat
+      - - you
+        - have
+        - incredibly long scarf
+      - - you
+        - have
+        - TARDIS key
+      - - scanner
+        - in
+        - Console Room
+      inventory_objs:
+      - jacket tweed
+      - long scarf incredibly
+      - yo yo-yo
+      - floppy hat felt
+      - key
+      location_desc: Console Room The console room is the heart of operations of the
+        TARDIS. Dominating the room is a six-side console.  Located above the console
+        is the scanner.  A corridor to the east leads further into the TARDIS.  On
+        the west side of the room are the main doors.
+      location_name: Console Room
+      observation: Console Room The console room is the heart of operations of the
+        TARDIS. Dominating the room is a six-side console.  Located above the console
+        is the scanner.  A corridor to the east leads further into the TARDIS.  On
+        the west side of the room are the main doors.
+      surrounding_objs:
+      - button green
+      - card brown
+      - west
+      - tiny drawer
+      - lever red
+      - east
+      - doors main
+      - scanner
+      - rotor time
+      - console
+      - slot
+      valid_acts:
+      - take card
+      - take off long
+      - take off floppy
+      - take off jacket
+      - east
+      - put long down
+      - put yo-yo down
+      - put floppy down
+      - put jacket down
+      - put key down
+      - undo drawer
+      - pull red
+      - take card
+    text: '__tt__ NextActionTeacher __end-tt__
+
+      __loc-name__ Console Room __end-loc-name__ __loc-desc__ Console Room The console
+      room is the heart of operations of the TARDIS. Dominating the room is a six-side
+      console.  Located above the console is the scanner.  A corridor to the east
+      leads further into the TARDIS.  On the west side of the room are the main doors.
+      __end-loc-desc__
+
+      __KG__ < TARDIS console , in , Console Room > ; < time rotor , in , Console
+      Room > ; < you , have , tweed jacket > ; < fluid link , in , tiny drawer > ;
+      < slot , in , Console Room > ; < main doors , in , Console Room > ; < yo-yo
+      , in , Console Room > ; < red lever , in , Console Room > ; < green button ,
+      in , Console Room > ; < you , in , Console Room > ; < tiny drawer , in , Console
+      Room > ; < brown card , in , Console Room > ; < you , have , floppy felt hat
+      > ; < you , have , incredibly long scarf > ; < you , have , TARDIS key > ; <
+      scanner , in , Console Room > __end-KG__'
+num_episodes: 11286
+num_examples: 11286

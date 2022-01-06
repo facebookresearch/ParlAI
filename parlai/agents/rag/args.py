@@ -88,6 +88,7 @@ class RetrieverType(Enum):
     POLY_FAISS = 'poly_faiss'
     SEARCH_ENGINE = 'search_engine'
     SEARCH_TERM_FAISS = 'search_term_faiss'
+    OBSERVATION_ECHO_RETRIEVER = 'observation_echo_retriever'
 
 
 def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
@@ -285,6 +286,20 @@ def setup_rag_args(parser: ParlaiParser) -> ParlaiParser:
         type=str,
         default=None,
         help='Path to model for initial round of retrieval. ',
+    )
+    regret_group.add_argument(
+        '--regret-dict-file',
+        type=str,
+        default=None,
+        help='Path to dict file for model for initial round of retrieval. ',
+    )
+    regret_group.add_argument(
+        '--regret-override-index',
+        type='bool',
+        default=False,
+        help='Overrides the index used with the ReGReT model, if using separate models. '
+        'I.e., the initial round of retrieval uses the same index as specified for the '
+        'second round of retrieval',
     )
     indexer_group = parser.add_argument_group("RAG Indexer Args")
     indexer_group.add_argument(

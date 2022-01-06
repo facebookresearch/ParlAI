@@ -1,0 +1,46 @@
+
+#@package _global_
+defaults:
+  - /mephisto/blueprint: wizard_internet_parlaichat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    onboarding_qualification: wizard-onboarding-dev
+    block_qualification: wizard-block-dev
+    role_qualification: wizard-role-trained-dev
+    custom_source_dir: ${task_dir}/webapp
+    world_file: ${task_dir}/worlds.py
+    task_description_file: ${task_dir}/task_description.html
+    num_conversations: 1
+    min_turns: 4
+    wizard_time_out: 180
+    apprentice_time_out: 120
+    search_warning_turn: 2
+    search_warning_threshold: 1
+    select_warning_turn: 3
+    select_warning_threshold: 1
+    personas_file: "${task_dir}/data/sample_personas.txt"
+    persona_counts_file: "${task_dir}/data/persona_use_count.txt"
+    banned_words_file: "${task_dir}/data/bad_words.txt"
+    max_times_persona_use: 1
+    locations_file: "${task_dir}/data/sample_locations.txt"
+    use_personas_with_replacement: true
+    shuffle_persona: false
+    search_server: "http://localhost:3005/search_server"
+
+  task:
+    task_name: wizard-of-internet-dev
+    task_title: "Have a knowledgeable conversation!"
+    task_description: 
+      "In this task, you will have a conversation with a chat partner.
+      One of you will play the role of a given character description,
+      and will discuss your interests.
+      The other of you will use information from the internet
+      to discuss your partner's interests in depth."
+    task_reward: 2.0
+    task_tags: "chat,dialog"
+    assignment_duration_in_seconds: 600
+
+mturk:
+  worker_blocklist_paths: ""

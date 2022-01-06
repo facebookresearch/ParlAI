@@ -227,6 +227,19 @@ class TestSpecificMutators(unittest.TestCase):
         assert set(ex3['text'].split()) == set(EXAMPLE3['text'].split())
         assert set(ex4['text'].split()) == set(EXAMPLE4['text'].split())
 
+    def test_msc_ltm_mutator(self):
+        from parlai.tasks.msc.mutators import LongTermMemoryMutator
+
+        ex1, ex2, ex3, ex4 = self._apply_mutator(LongTermMemoryMutator)
+
+        assert (
+            ex1['labels']
+            == ex2['labels']
+            == ex3['labels']
+            == ex4['labels']
+            == ['personal_knowledge']
+        )
+
 
 class TestMutatorStickiness(unittest.TestCase):
     """
@@ -250,3 +263,26 @@ class TestMutatorStickiness(unittest.TestCase):
             second_epoch.append(teacher.act())
 
         assert all(f == s for f, s in zip(first_epoch, second_epoch))
+
+
+class TestUniqueness(unittest.TestCase):
+    """
+    Test that mutators cannot have duplicate names.
+    """
+
+    def test_uniqueness(self):
+        from parlai.core.mutators import register_mutator, Mutator
+
+        @register_mutator("test_unique_mutator")
+        class Mutator1(Mutator):
+            pass
+
+        # don't freak out if we accidentally register the exact same class twice
+        register_mutator("test_unique_mutator")(Mutator1)
+
+        # but do demand uniqueness
+        with self.assertRaises(NameError):
+
+            @register_mutator("test_unique_mutator")
+            class Mutator2(Mutator):
+                pass

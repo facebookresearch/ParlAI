@@ -181,7 +181,7 @@ class QueryGenerator(BB2SubmoduleMixin):
             )
             assert isinstance(base_agent, TorchAgent)
             self.agents = [base_agent]
-            bsz = opt.get('batchsize', 1)
+            bsz = max(opt.get('batchsize') or 1, opt.get('eval_batchsize') or 1)
             rag_turn_n_turns = opt.get('rag_turn_n_turns', 1)
             if bsz > 1 or rag_turn_n_turns > 1:
                 self.agents += [
@@ -196,6 +196,7 @@ class QueryGenerator(BB2SubmoduleMixin):
         input: torch.LongTensor,
         num_memories: torch.LongTensor,
         generated_memories: Optional[List[List[str]]],
+        skip_search: Optional[torch.BoolTensor],
     ) -> Tuple[torch.LongTensor, List[str]]:
         """
         Classify input and get retrieval type.
@@ -241,6 +242,8 @@ class QueryGenerator(BB2SubmoduleMixin):
             ):
                 self.retrieval_type[i] = RetrievalType.MEMORY.value
             elif strip_punc(s) in NONE_STRINGS + MEMORY_STRINGS:
+                self.retrieval_type[i] = RetrievalType.NONE.value
+            elif skip_search is not None and skip_search[i]:
                 self.retrieval_type[i] = RetrievalType.NONE.value
             else:
                 self.retrieval_type[i] = RetrievalType.SEARCH.value
@@ -326,6 +329,8 @@ class MemoryDecoder(BB2SubmoduleMixin):
             mem_string = '\n'.join(memories_i)
             logging.verbose(f'Writing memories: {mem_string}')
             memories.append(memories_i)
+
+        self.memories_full_list = memories
         return memories
 
     def _extract_from_raw_memories(self, raw_memories: List[str]) -> List[str]:

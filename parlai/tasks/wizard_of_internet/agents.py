@@ -18,8 +18,8 @@ from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 import parlai.tasks.wizard_of_internet.constants as CONST
-
 from .build import build
+import parlai.tasks.wizard_of_internet.mutators  # noqa: F401
 
 
 def get_dtype(opt):
@@ -63,11 +63,13 @@ def parse_wizard_message(message_dict, doc_lines_delim):
     def get_knowledge(msg_d):
         knowledge = {
             CONST.RETRIEVED_DOCS: [],
-            CONST.SELECTED_DOCS: [],
-            CONST.SELECTED_DOCS_TITLES: [],
-            CONST.SELECTED_SENTENCES: [],
+            CONST.RETRIEVED_SENTENCES: [],
             CONST.RETRIEVED_DOCS_URLS: [],
             CONST.RETRIEVED_DOCS_TITLES: [],
+            CONST.SELECTED_DOCS: [],
+            CONST.SELECTED_DOCS_URLS: [],
+            CONST.SELECTED_DOCS_TITLES: [],
+            CONST.SELECTED_SENTENCES: [],
         }
         docs = msg_d[CONST.CONTEXT][CONST.CONTENTS]
         selections = msg_d[CONST.CONTEXT][CONST.SELECTED_CONTENTS]
@@ -85,19 +87,24 @@ def parse_wizard_message(message_dict, doc_lines_delim):
                     doc_selected = True
                     knowledge[CONST.SELECTED_SENTENCES].append(line)
             full_doc = doc_lines_delim.join(doc_lines)
+            knowledge[CONST.RETRIEVED_SENTENCES].extend(doc_lines)
             knowledge[CONST.RETRIEVED_DOCS].append(full_doc)
             knowledge[CONST.RETRIEVED_DOCS_TITLES].append(doc['title'])
             knowledge[CONST.RETRIEVED_DOCS_URLS].append(doc['url'])
             if doc_selected:
                 knowledge[CONST.SELECTED_DOCS_TITLES].append(doc['title'])
                 knowledge[CONST.SELECTED_DOCS].append(full_doc)
+                knowledge[CONST.SELECTED_DOCS_URLS].append(doc['url'])
 
         if not knowledge[CONST.RETRIEVED_DOCS]:
             knowledge[CONST.RETRIEVED_DOCS] = [CONST.NO_RETRIEVED_DOCS_TOKEN]
             knowledge[CONST.RETRIEVED_DOCS_URLS] = [CONST.NO_URLS]
+            knowledge[CONST.RETRIEVED_DOCS_TITLES] = [CONST.NO_TITLE]
 
         if not knowledge[CONST.SELECTED_DOCS]:
             knowledge[CONST.SELECTED_DOCS] = [CONST.NO_SELECTED_DOCS_TOKEN]
+            knowledge[CONST.SELECTED_DOCS_URLS] = [CONST.NO_URLS]
+            knowledge[CONST.SELECTED_DOCS_TITLES] = [CONST.NO_TITLE]
             knowledge[CONST.SELECTED_SENTENCES] = [CONST.NO_SELECTED_SENTENCES_TOKEN]
 
         return knowledge
@@ -116,6 +123,19 @@ def parse_search_results(message_dict, delim='; '):
     ]
     d[CONST.MESSAGE_TEXT] = delim.join(all_title)
     return d
+
+
+def remove_retrieved_docs_from_message(message: Message):
+    message.force_set(CONST.RETRIEVED_DOCS, [CONST.NO_RETRIEVED_DOCS_TOKEN])
+    message.force_set(CONST.RETRIEVED_DOCS_URLS, [CONST.NO_URLS])
+    message.force_set(CONST.RETRIEVED_DOCS_TITLES, [CONST.NO_TITLE])
+
+
+def remove_selected_docs_from_message(message: Message):
+    message.force_set(CONST.SELECTED_DOCS, [CONST.NO_SELECTED_DOCS_TOKEN])
+    message.force_set(CONST.SELECTED_SENTENCES, [CONST.NO_SELECTED_SENTENCES_TOKEN])
+    message.force_set(CONST.SELECTED_DOCS_URLS, [CONST.NO_URLS])
+    message.force_set(CONST.SELECTED_DOCS_TITLES, [CONST.NO_TITLE])
 
 
 class WizardOfInternetBaseTeacher(DialogTeacher):
@@ -163,11 +183,9 @@ class WizardOfInternetBaseTeacher(DialogTeacher):
 
     def _load_data(self, datafile):
         logging.info(f'Loading data from {datafile} ...')
-        dialogs = []
         with jsonlines.open(datafile, 'r') as fin:
             for dialog_json in tqdm(fin):
-                dialogs.append(self._get_episode_examples(dialog_json))
-        return dialogs
+                yield self._get_episode_examples(dialog_json)
 
     def _get_episode_examples(self, dialog_json):
         data = get_single_val_from_dict(dialog_json)
@@ -330,6 +348,9 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
     def __init__(self, opt, shared=None):
         self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
         self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
+        self.add_skip_search_if_gold_prepended = opt.get(
+            'add_skip_search_if_gold_prepended'
+        )
         super().__init__(opt, shared=shared)
         self.id = 'WizInternetWizardTeacher'
 
@@ -342,6 +363,12 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             type='bool',
             default=False,
             help='If true, prepend text with checked sentences',
+        )
+        arg_group.add_argument(
+            '--add-skip-search-if-gold-prepended',
+            type='bool',
+            default=False,
+            help='If true, add skip search field when prepending text with checked sentences',
         )
         return parser
 
@@ -362,6 +389,7 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             # Has NOT selected knowledge or a is batch padding message
             return
 
+        # F1 metric over the *selected* knowledge.
         resp = model_response['text']
         self.metrics.add(
             'knowledge_f1_docs',
@@ -381,17 +409,29 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
             F1Metric.compute(resp, CONST.SELECTED_SENTENCES),
         )
 
+        # F1 Metrics over the *retrieved* docs.
+        self.metrics.add(
+            'knowledge_f1_max_retrieved_sentences',
+            F1Metric.compute(resp, teacher_action[CONST.RETRIEVED_SENTENCES]),
+        )
+        self.metrics.add(
+            'knowledge_f1_max_retrieved_docs',
+            F1Metric.compute(resp, teacher_action[CONST.RETRIEVED_DOCS]),
+        )
+
     def _teacher_action_type(self) -> str:
         return CONST.ACTION_WIZARD_TO_APPRENTICE
 
     def additional_message_content(self, parlai_message: Message, action: Dict):
         for item_key in (
             CONST.RETRIEVED_DOCS,
+            CONST.RETRIEVED_SENTENCES,
             CONST.RETRIEVED_DOCS_URLS,
             CONST.RETRIEVED_DOCS_TITLES,
             CONST.SELECTED_DOCS,
-            CONST.SELECTED_SENTENCES,
+            CONST.SELECTED_DOCS_URLS,
             CONST.SELECTED_DOCS_TITLES,
+            CONST.SELECTED_SENTENCES,
             CONST.SEARCH_QUERY,
         ):
             parlai_message[item_key] = action[item_key]
@@ -410,15 +450,35 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
                         f' {self.gold_knowledge_delimiter} {text}'
                     ),
                 )
+                if self.add_skip_search_if_gold_prepended:
+                    message[CONST.SKIP_SEARCH] = True
             yield message, episode_started
 
 
 class WizardDialogGoldKnowledgeTeacher(WizardDialogTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared=shared)
+        self.id = 'WizardDialogGoldKnowledgeTeacher'
+
     @classmethod
     def add_cmdline_args(cls, parser: ParlaiParser, partial_opt=None) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
         parser.set_params(prepend_gold_knowledge=True)
         return parser
+
+
+class WizardDialogGoldKnowledgeNoDocsTeacher(WizardDialogGoldKnowledgeTeacher):
+    """
+    Prepends gold (selected knowledge) to the context, and removes the retrieved docs.
+    """
+
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared=shared)
+        self.id = 'WizardDialogGoldKnowledgeNoDocsTeacher'
+
+    def additional_message_content(self, parlai_message: Message, action: Dict):
+        super().additional_message_content(parlai_message, action)
+        remove_retrieved_docs_from_message(parlai_message)
 
 
 class DefaultTeacher(WizardDialogTeacher):

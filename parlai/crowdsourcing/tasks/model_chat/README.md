@@ -2,33 +2,39 @@
 
 This task will collect conversations between a human and a model. After each response by the model, the human will optionally be prompted to annotate the model's response by selecting checkboxes that represent customizable attributes of that response.
 
-**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/master/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
+**NOTE**: See [parlai/crowdsourcing/README.md](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/README.md) for general tips on running `parlai.crowdsourcing` tasks, such as how to specify your own YAML file of configuration settings, how to run tasks live, how to set parameters on the command line, etc.
 
 ## Launching
 
-Call `run.py` to run this task with the default parameters, as set by `conf/example.yaml`. Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc.
+Call `run.py` to run this task with the default parameters, as set by `hydra_configs/conf/example.yaml`. Some parameters that you can adjust include where to save data, lists of workers to soft-block, the maximum response time, etc.
 
 Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing all models to be chatted with, as well as the ParlAI flags for running each one. See `task_config/model_opts.yaml` for an example.
 
 Set `mephisto.blueprint.chat_data_folder` to the root folder that you want all results of HITs to be saved in: all results will be saved to a date folder (of format `2021_01_15`) within that root folder.
 
+Set `mephisto.blueprint.final_rating_question` to specify the question to ask the worker at the end of the task, for which the worker will respond with a 1-to-5 Likert score. Separate multiple questions with a `|`.
+
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
-- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to `""` to disable annotation of model responses.
+- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories.
+  - Set this flag to `""` to disable annotation of model responses.
+  - If the text of the annotation categories is very long, you can set the `"show_line_breaks"` field (see `task_config/annotations_config.json`) to `true` in order to put a line break between the checkbox and text string of each category.
 - `mephisto.blueprint.left_pane_text_path`: HTML to show on the left-hand pane of the chat window.
 - `mephisto.blueprint.onboard_task_data_path`: JSON specifying parameters for testing workers during onboarding. Onboarding is only run if model responses will be annotated.
 - `mephisto.blueprint.task_description_file`: HTML to show on the initial task-description page shown to the worker.
 
 ## Onboarding
 
-In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to change the worker selection criteria.
+Set the `"min_correct"`, `"max_incorrect"`, and `"max_failures_allowed"` fields in the JSON file passed to `mephisto.blueprint.onboard_task_data_path` in order to specify how many onboarding questions workers can pass/fail on while still passing onboarding, as well as how many times they are allowed to re-take the onboarding before being soft-blocked. (See `task_config/onboard_task_data.json` for an example.)
+
+You can further modify the worker selection criteria in `handleOnboardingSubmit` in `frontend/components/onboarding_components.jsx`.
 
 ## Human+model image chat
 
-`run_image_chat.py` can be run to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it.
+Call `run.py conf=example_image_chat` to chat with a model about an image: each conversation will begin with a selected image, and then the human and model will chat about it. This task is run with the parameters defined in `hydra_configs/conf/example_image_chat.yaml`.
 
-This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/tasks/personality_captions/` tasks, which are deprecated and can be accessed with `git checkout v0.10.0`. Those tasks also featured the ability to compare two possible captions to an image and rate which one is more engaging: this functionality has now been replaced by the [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/master/parlai/crowdsourcing/tasks/acute_eval) task.
+This code replaces the old `parlai/mturk/tasks/image_chat/` and `parlai/mturk/tasks/personality_captions/` tasks, which are deprecated and can be accessed with `git checkout v0.10.0`. Those tasks also featured the ability to compare two possible captions to an image and rate which one is more engaging: this functionality has now been replaced by the [ACUTE-Eval](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) task.
 
 ### Setup
 

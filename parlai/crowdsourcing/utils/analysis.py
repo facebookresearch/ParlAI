@@ -10,7 +10,8 @@ import argparse
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import Any, Dict, List
+import json
+from typing import Any, Dict, List, Union
 
 import pandas as pd
 
@@ -46,11 +47,37 @@ class AbstractResultsCompiler(ABC):
             default='csv',
             help='Output format for results data',
         )
+        parser.add_argument(
+            '--task-name', type=str, help='Name of the Mephisto task to open'
+        )
+        parser.add_argument(
+            '--database-path',
+            type=str,
+            default=None,
+            help='Path to local Mephisto database. Leave empty for default location.',
+        )
         return parser
 
     def __init__(self, opt: Opt):
-        self.output_folder = opt.get('output_folder')
-        self.results_format = opt['results_format']
+        self.task_name = opt['task_name']
+        self.output_folder = opt['output_folder']
+        self.results_format = opt.get('results_format', 'json')
+        self.database_path = opt['database_path']
+
+        # We lazily load these later, or inject their mock version during testing.
+        self._mephisto_db = None
+        self._mephisto_data_browser = None
+
+    def get_mephisto_data_browser(self) -> MephistoDataBrowser:
+        if not self._mephisto_data_browser:
+            db = self.get_mephisto_db()
+            self._mephisto_data_browser = MephistoDataBrowser(db=db)
+        return self._mephisto_data_browser
+
+    def get_mephisto_db(self) -> LocalMephistoDB:
+        if not self._mephisto_db:
+            self._mephisto_db = LocalMephistoDB(self.database_path)
+        return self._mephisto_db
 
     def get_results_path_base(self) -> str:
         """
@@ -61,6 +88,48 @@ class AbstractResultsCompiler(ABC):
             self.output_folder,
             f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
         )
+
+    def get_worker_name(self, worker_id: str) -> str:
+        """
+        Gets the global id of a worker from their Mephisto worker_id.
+
+        The worker_id is the unique id that the crowdsourcing platforms (eg, Amazon
+        Mechanical Turk) assign to a single human worker in their system.
+        """
+        db = self.get_mephisto_db()
+        return db.get_worker(worker_id)["worker_name"]
+
+    def get_task_units(self) -> List[Unit]:
+        """
+        Retrieves the list of work units from the Mephisto task.
+        """
+        data_browser = self.get_mephisto_data_browser()
+        return data_browser.get_units_for_task_name(self.task_name)
+
+    def get_data_from_unit(self, unit: Unit) -> Dict[str, Any]:
+        """
+        Retrieves task data for a single unit.
+        """
+        try:
+            data_browser = self.get_mephisto_data_browser()
+            return data_browser.get_data_from_unit(unit)
+        except (IndexError, AssertionError) as error:
+            logging.error(error)
+            logging.warning(
+                f'Skipping unit {unit.db_id}. No message found for this unit.'
+            )
+
+    def get_task_data(self) -> List[Dict[str, Any]]:
+        """
+        Retrieves task data for a list of Mephisto task units.
+        """
+        task_data = []
+        for unit in self.get_task_units():
+            unit_data = self.get_data_from_unit(unit)
+            if unit_data and self.is_unit_acceptable(unit_data):
+                task_data.append(unit_data)
+
+        return task_data
 
     def is_unit_acceptable(self, unit_data: Dict[str, Any]) -> bool:
         """
@@ -76,12 +145,24 @@ class AbstractResultsCompiler(ABC):
         return True
 
     @abstractmethod
-    def compile_results(self) -> pd.DataFrame:
+    def compile_results(self) -> Union[pd.DataFrame, Dict[str, Any]]:
         """
-        Method for returning the final results dataframe.
+        Method for returning the final results as a dataframe or a json.
 
-        Each row of the dataframe consists of one utterance of one conversation.
+        For Dict output each key is a unique identifier (eg Assignment ID) for a unit of
+        crowdsourcing work. The data for that unit is stored in the value as dictionary.
+
+        Each row of the dataframe consists of one utterance of one conversation, or crowdsourcing interaction.
+
+        NOTE: Preference for new projects is Dict output (see the TODO below).
+        TODO: Only support Dict. Deprecate ` pd.DataFrame` when no other code is relying on it.
         """
+
+    def _validate_compiled_result_type(self, results):
+        assert isinstance(results, dict) or isinstance(results, pd.DataFrame), (
+            'The output of result compiler needs to be a dictionary or a pandas dataframe. '
+            f'Found ({type(results)})'
+        )
 
     def compile_and_save_results(self):
         """
@@ -89,20 +170,38 @@ class AbstractResultsCompiler(ABC):
 
         Results will be saved in the format given by --results-format.
         """
-        result_df = self.compile_results()
+        compiled_results = self.compile_results()
+        self._validate_compiled_result_type(compiled_results)
         results_path_base = self.get_results_path_base()
         results_path = f'{results_path_base}.{self.results_format}'
         os.makedirs(self.output_folder, exist_ok=True)
         if self.results_format == 'csv':
-            result_df.to_csv(results_path, index=False)
+            if not isinstance(compiled_results, pd.DataFrame):
+                logging.warning(
+                    "The requested data output format was 'csv' while the data was compiled as a 'dict'. "
+                    'Transforming dictionary data into pd.DataFrame using pandas.'
+                )
+                compiled_results = pd.DataFrame.from_dict(
+                    compiled_results, orient='index'
+                )
+            compiled_results.to_csv(results_path, index=False)
         elif self.results_format == 'json':
-            result_df.reset_index().to_json(results_path)
-            # Reset the index to make each row have a unique index value
+            if isinstance(compiled_results, pd.DataFrame):
+                logging.warning(
+                    "The requested data output format was 'json' while the data was compiled as a 'dataframe'. "
+                    'Transforming dataframe into json using pandas.'
+                )
+                # Reset the index to make each row have a unique index value
+                compiled_results.reset_index().to_json(results_path)
+            else:
+                with open(results_path, 'w') as fout:
+                    fout.write(json.dumps(compiled_results))
+
         else:
             raise ValueError(
                 f'Results save format of "{self.results_format}" currently unsupported!'
             )
-        print(f'Wrote results file to {results_path}.')
+        logging.info(f'Wrote results file to {results_path}.')
 
 
 class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
@@ -143,74 +242,3 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
         else:
             self.use_problem_buckets = False
             self.problem_buckets = []
-
-
-class AbstractDataBrowserResultsCompiler(AbstractResultsCompiler):
-    """
-    Provides interface for using Mephisto's DataBrowser, DB, and their methods.
-
-    Uses Mephisto's DataBrowser to retrieve the work units and their data.
-    """
-
-    @classmethod
-    def setup_args(cls):
-        parser = super().setup_args()
-        parser.add_argument(
-            '--task-name', type=str, help='Name of the Mephisto task to open'
-        )
-        return parser
-
-    def __init__(self, opt: Opt):
-        super().__init__(opt)
-        self.task_name = opt['task_name']
-        self._mephisto_db = None
-        self._mephisto_data_browser = None
-
-    def get_mephisto_data_browser(self) -> MephistoDataBrowser:
-        if not self._mephisto_data_browser:
-            db = self.get_mephisto_db()
-            self._mephisto_data_browser = MephistoDataBrowser(db=db)
-        return self._mephisto_data_browser
-
-    def get_mephisto_db(self) -> LocalMephistoDB:
-        if not self._mephisto_db:
-            self._mephisto_db = LocalMephistoDB()
-        return self._mephisto_db
-
-    def get_worker_name(self, worker_id: str) -> str:
-        """
-        Gets the global (AWS) id of a worker from their Mephisto worker_id.
-        """
-        db = self.get_mephisto_db()
-        return db.get_worker(worker_id)["worker_name"]
-
-    def get_task_units(self, task_name: str) -> List[Unit]:
-        """
-        Retrieves the list of work units from the Mephisto task.
-        """
-        data_browser = self.get_mephisto_data_browser()
-        return data_browser.get_units_for_task_name(task_name)
-
-    def get_data_from_unit(self, unit: Unit) -> Dict[str, Any]:
-        """
-        Retrieves task data for a single unit.
-        """
-        try:
-            data_browser = self.get_mephisto_data_browser()
-            return data_browser.get_data_from_unit(unit)
-        except (IndexError, AssertionError):
-            logging.warning(
-                f'Skipping unit {unit.db_id}. No message found for this unit.'
-            )
-
-    def get_units_data(self, task_units: List[Unit]) -> List[Dict[str, Any]]:
-        """
-        Retrieves task data for a list of Mephisto task units.
-        """
-        task_data = []
-        for unit in task_units:
-            unit_data = self.get_data_from_unit(unit)
-            if unit_data and self.is_unit_acceptable(unit_data):
-                task_data.append(unit_data)
-
-        return task_data

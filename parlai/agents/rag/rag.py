@@ -48,6 +48,7 @@ from parlai.agents.rag.model_types import (
 )
 from parlai.agents.rag.modules import RagModel, T5RagModel
 from parlai.agents.rag.retrievers import Document
+from parlai.utils.fsdp import is_fsdp
 
 
 class BaseGenerationAgentMixin(ABC):
@@ -85,7 +86,9 @@ class T5RagAgent(T5Agent, BaseGenerationAgentMixin):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Override since T5 needs to call TGA generate.
         """
@@ -137,6 +140,13 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def generation_model(self) -> str:
         return self._generation_model
 
+    @property
+    def model_api(self) -> RagModel:
+        if hasattr(self.model, 'module') and not is_fsdp(self.model):
+            return self.model.module
+        else:
+            return self.model
+
     @generation_model.setter
     def generation_model(self, model: str):
         self._generation_model = model
@@ -184,14 +194,12 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def build_regret_model(self) -> RagModel:
         """
         Build and return regret RagModel.
-
-        Assume dictionary is the same.
         """
-        model_file = self.opt['regret_model_file']
+        model_file = modelzoo_path(self.opt['datapath'], self.opt['regret_model_file'])
         if model_file:
             assert os.path.exists(
                 model_file
-            ), 'specify correct path for --regret-model-file'
+            ), f'specify correct path for --regret-model-file (currently {model_file})'
             regret_opt = Opt.load(f'{model_file}.opt')
             regret_opt['n_docs'] = self.opt['n_docs']  # Urgent that this is the same
             # add keys that were not in this model when originally trained
@@ -210,10 +218,19 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 ]
             ):
                 logging.warning('Sharing retrievers between model and regret model!')
-                retriever_shared = self.model.encoder.retriever.share()
+                retriever_shared = self.model.retriever.share()
+            elif self.opt['regret_override_index']:
+                # Sharing Index Path & Passages only; not the full retriever
+                logging.warning('Overriding initial ReGReT model index')
+                regret_opt['path_to_index'] = self.opt['path_to_index']
+                regret_opt['path_to_dpr_passages'] = self.opt['path_to_dpr_passages']
 
-            model = RagModel(regret_opt, self.dict, retriever_shared=retriever_shared)
-            with PathManager.open(self.opt['regret_model_file'], 'rb') as f:
+            if self.opt['regret_dict_file']:
+                regret_opt['dict_file'] = self.opt['regret_dict_file']
+
+            regret_dict = self.dictionary_class()(regret_opt)
+            model = RagModel(regret_opt, regret_dict, retriever_shared=retriever_shared)
+            with PathManager.open(model_file, 'rb') as f:
                 states = torch.load(
                     f,
                     map_location=lambda cpu, _: cpu,
@@ -224,15 +241,15 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             if self.model_parallel:
                 ph = PipelineHelper()
                 ph.check_compatibility(self.opt)
-                self.regret_model = ph.make_parallel(self.regret_model)
-            else:
-                self.regret_model.cuda()
+                model = ph.make_parallel(model)
+            elif self.use_cuda:
+                model.cuda()
             if self.fp16:
-                self.regret_model = self.regret_model.half()
+                model = model.half()
 
-            sync_parameters(self.regret_model)
-            train_params = trainable_parameters(self.regret_model)
-            total_params = total_parameters(self.regret_model)
+            sync_parameters(model)
+            train_params = trainable_parameters(model)
+            total_params = total_parameters(model)
             logging.info(
                 f"Total regret parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
@@ -273,9 +290,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         observation = self._generation_agent.observe(self, observation)
         if observation.is_padding():
             return observation
-        if 'query_vec' not in observation:
+        if 'query_vec' not in observation and self._query_key in observation:
             self._set_query_vec(observation)
-        if 'input_turn_cnt_vec' not in observation:
+        if 'input_turn_cnt_vec' not in observation and self._query_key in observation:
             self._set_input_turn_cnt_vec(observation)
         return observation
 
@@ -649,7 +666,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Override TGA._generate to potentially call ReGReT.
 
@@ -659,7 +678,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             beam_preds_scores, _ = self._regret_generate(
                 batch, beam_size, self.regret_intermediate_maxlen, prefix_tokens
             )
-            preds, _ = zip(*beam_preds_scores)
+            preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, preds)  # type: ignore
             gen_outs = self._rag_generate(new_batch, beam_size, max_ts, prefix_tokens)
         else:
@@ -670,8 +689,10 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def _rerank_beams(
         self,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Optional rerank beams, according to RAG Model type.
 
@@ -695,7 +716,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Separate from _generate to handle regret.
         """
@@ -749,7 +772,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         for i in range(batch.batchsize):
             vec_i = pred_vecs[i]
             txt_i = self._v2t(vec_i)
-            query_i = torch.LongTensor(self.model.tokenize_query(txt_i))
+            query_i = torch.LongTensor(self.model.tokenize_query(txt_i)).to(query_vec)
             if self.retriever_query == 'one_turn':
                 new_queries.append(query_i)
             else:
@@ -872,7 +895,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 beam_preds_scores, beams = self._regret_generate(
                     batch, self.beam_size, self.regret_intermediate_maxlen
                 )
-            regret_preds, _ = zip(*beam_preds_scores)
+            regret_preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, regret_preds)  # type: ignore
             regret_model_output = self.model(
                 *self._model_input(new_batch), ys=batch.label_vec

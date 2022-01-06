@@ -137,7 +137,12 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     final_rating_question: str = field(
         default='Please rate your partner on a scale of 1-5.',
-        metadata={"help": "Text to show when asking worker to make their final rating"},
+        metadata={
+            "help": (
+                "Text to show when asking worker to make their final rating. For "
+                "multiple final ratings, separate text strings with a '|'."
+            )
+        },
     )
     max_concurrent_responses: int = field(
         default=1,
@@ -287,7 +292,7 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             "annotation_buckets": annotation_buckets,
             "onboarding_data": getattr(self, 'onboard_task_data', None),
             "left_pane_text": self.left_pane_text,
-            "frame_height": '650px',
+            "frame_height": 650,
             "final_rating_question": self.args.blueprint.final_rating_question,
             "block_mobile": True,
         }
@@ -425,15 +430,22 @@ class ModelChatBlueprint(BaseModelChatBlueprint):
         run_statistics = {r: 0 for (r, v) in self.conversations_needed.items()}
         shared_state.run_statistics = run_statistics
 
-        context_generator: Optional[ContextGenerator] = None
         if (
             args.blueprint.include_persona
-            # 'hi' mode does not use a context generator and instead just displays "Hi!" at the start of the conversation
+            # 'hi' mode does not use a context generator and instead just displays "Hi!"
+            # at the start of the conversation
             or args.blueprint.conversation_start_mode != 'hi'
         ):
+            if args.blueprint.conversation_start_mode == 'hi':
+                # Default to using the context from BlendedSkillTalk
+                task = 'blended_skill_talk'
+            else:
+                task = args.blueprint.conversation_start_mode
             context_generator = get_context_generator(
-                args.blueprint.override_opt, args.blueprint.conversation_start_mode
+                override_opt=args.blueprint.override_opt, task=task
             )
+        else:
+            context_generator: Optional[ContextGenerator] = None
         shared_state.context_generator = context_generator
 
         # Lock for editing run statistics between threads

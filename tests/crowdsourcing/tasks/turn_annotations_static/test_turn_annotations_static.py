@@ -20,15 +20,12 @@ TASK_CONFIG_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'task_config'
 )
 TASK_DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'task_data')
+IN_FLIGHT_CONFIG_NAME = "example_in_flight_qa"
 
 
 try:
 
     from parlai.crowdsourcing.tasks.turn_annotations_static.run import TASK_DIRECTORY
-    from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
-        STATIC_BLUEPRINT_TYPE,
-        STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
-    )
     from parlai.crowdsourcing.utils.frontend import build_task
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
 
@@ -57,11 +54,9 @@ try:
             self.operator = setup_teardown
 
             overrides = [
-                '+mephisto.blueprint.annotation_indices_jsonl=null',
-                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
+                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl'
             ]
             self._test_turn_annotations_static_task(
-                blueprint_type=STATIC_BLUEPRINT_TYPE,
                 task_data_path=os.path.join(TASK_DATA_FOLDER, 'no_in_flight_qa.json'),
                 overrides=overrides,
                 data_regression=data_regression,
@@ -77,15 +72,13 @@ try:
             self.operator = setup_teardown
 
             overrides = [
-                '+mephisto.blueprint.annotation_indices_jsonl=null',
-                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl',
-                f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
+                f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations.jsonl'
             ]
             self._test_turn_annotations_static_task(
-                blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
                 task_data_path=os.path.join(TASK_DATA_FOLDER, 'in_flight_qa.json'),
                 overrides=overrides,
                 data_regression=data_regression,
+                config_name=IN_FLIGHT_CONFIG_NAME,
             )
 
         def test_in_flight_qa_annotation_file(
@@ -103,24 +96,23 @@ try:
             overrides = [
                 f'+mephisto.blueprint.annotation_indices_jsonl={TASK_DIRECTORY}/task_config/annotation_indices_example.jsonl',
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_conversations_annotation_file.jsonl',
-                f'+mephisto.blueprint.onboarding_in_flight_data={TASK_DIRECTORY}/task_config/onboarding_in_flight.jsonl',
                 'mephisto.blueprint.subtasks_per_unit=4',
             ]
             self._test_turn_annotations_static_task(
-                blueprint_type=STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
                 task_data_path=os.path.join(
                     TASK_DATA_FOLDER, 'in_flight_qa_annotation_file.json'
                 ),
                 overrides=overrides,
                 data_regression=data_regression,
+                config_name=IN_FLIGHT_CONFIG_NAME,
             )
 
         def _test_turn_annotations_static_task(
             self,
-            blueprint_type: str,
             task_data_path: str,
             overrides: List[str],
             data_regression: DataRegressionFixture,
+            config_name: str = 'example',
         ):
             """
             Test the static turn annotations task under specific conditions.
@@ -137,21 +129,10 @@ try:
 
             build_task(task_directory=TASK_DIRECTORY)
 
-            # Set up the config and database
-            overrides += [
-                '+mephisto.blueprint.conversation_count=null',
-                'mephisto.blueprint.onboarding_qualification=null',
-                '+mephisto.blueprint.random_seed=42',
-                'mephisto.task.assignment_duration_in_seconds=1800',
-            ]
-            # TODO: remove all of these params once Hydra 1.1 is released with support
-            #  for recursive defaults
-            # TODO: test onboarding as well, and don't nullify the
-            #  onboarding_qualification param
             self._set_up_config(
-                blueprint_type=blueprint_type,
                 task_directory=TASK_DIRECTORY,
                 overrides=overrides,
+                config_name=config_name,
             )
 
             # Set up the operator and server

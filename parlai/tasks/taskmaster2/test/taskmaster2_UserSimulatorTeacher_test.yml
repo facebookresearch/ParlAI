@@ -1,0 +1,46 @@
+acts:
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: Hey, what''s the Denver Broncos record?'
+    id: Taskmaster2_UserSimulatorTeacher
+    text: 'GOAL: api_name = nfl ; name.team = Denver Broncos'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: What Conference are they in?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: The Denver Broncos are in currently fourth in the AFC West with
+      a record of four wins and nine losses.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: Who do they play against next week?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: The Denver Broncos played in the American Football Conference in
+      the west division.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: When did they play last?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: In next week the Denver Broncos will be playing against the Indianapolis
+      Colts.'
+    type: 'USER: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'USER: How many games back from first place are they?'
+    id: Taskmaster2_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Their last game was yesterday, they beat the New York Jets by 23
+      to 0.'
+    type: 'USER: '
+num_episodes: 1734
+num_examples: 17425

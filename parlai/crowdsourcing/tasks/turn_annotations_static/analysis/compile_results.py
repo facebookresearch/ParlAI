@@ -20,7 +20,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     """
     Class to compile results from static turn annotations.
 
-    Change PROBLEM_BUCKETS in task_config/annotation_buckets.json to be the buckets that
+    Change PROBLEM_BUCKETS in task_config/annotations_config.json to be the buckets that
     you are asking crowdsource workers to annotate with.
     """
 
@@ -107,18 +107,18 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
         conversations = self.compile_initial_results(self.results_folders)
-        master_dataframe = self.process_data_into_dataframe(conversations)
-        self.calculate_basic_interannotator_agreement(master_dataframe)
+        main_dataframe = self.process_data_into_dataframe(conversations)
+        self.calculate_basic_interannotator_agreement(main_dataframe)
         if self.gold_annotations_file is not None:
             with open(self.gold_annotations_file, 'r') as gold_f:
                 gold_annotations = json.loads(gold_f.read())
                 self.calculate_agreement_with_gold_annotations(
-                    gold_annotations, master_dataframe
+                    gold_annotations, main_dataframe
                 )
         if self.CALCULATE_STATS_INTERANNOTATOR_AGREEMENT:
-            self.calculate_stats_interannotator_agreement(master_dataframe)
+            self.calculate_stats_interannotator_agreement(main_dataframe)
 
-        return master_dataframe
+        return main_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
         """
@@ -300,7 +300,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     row[k] = utt[k] if utt['agent_idx'] == 1 else ''
                 rows.append(row)
         df = pd.DataFrame(rows)
-        print(f'Returning master dataframe with {len(df)} annotations.')
+        print(f'Returning dataframe with {len(df)} annotations.')
         return df
 
     def _add_additional_columns(self, row: Dict[str, Any], utt: dict) -> Dict[str, Any]:
