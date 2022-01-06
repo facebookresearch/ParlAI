@@ -12,17 +12,23 @@ Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing
 
 Set `mephisto.blueprint.chat_data_folder` to the root folder that you want all results of HITs to be saved in: all results will be saved to a date folder (of format `2021_01_15`) within that root folder.
 
+Set `mephisto.blueprint.final_rating_question` to specify the question to ask the worker at the end of the task, for which the worker will respond with a 1-to-5 Likert score. Separate multiple questions with a `|`.
+
 ## Passing in task config files
 
 The following flags can be passed in to specify filepaths for overriding the text shown to the workers and the settings of the annotation categories. If they are not specified, the defaults in the `task_config/` folder will be used.
-- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories. Set this flag to `""` to disable annotation of model responses.
+- `mephisto.blueprint.annotations_config_path`: JSON file configuring annotation categories.
+  - Set this flag to `""` to disable annotation of model responses.
+  - If the text of the annotation categories is very long, you can set the `"show_line_breaks"` field (see `task_config/annotations_config.json`) to `true` in order to put a line break between the checkbox and text string of each category.
 - `mephisto.blueprint.left_pane_text_path`: HTML to show on the left-hand pane of the chat window.
 - `mephisto.blueprint.onboard_task_data_path`: JSON specifying parameters for testing workers during onboarding. Onboarding is only run if model responses will be annotated.
 - `mephisto.blueprint.task_description_file`: HTML to show on the initial task-description page shown to the worker.
 
 ## Onboarding
 
-In `worlds.py`, modify `ModelChatOnboardWorld.check_onboarding_answers()` to change the worker selection criteria.
+Set the `"min_correct"`, `"max_incorrect"`, and `"max_failures_allowed"` fields in the JSON file passed to `mephisto.blueprint.onboard_task_data_path` in order to specify how many onboarding questions workers can pass/fail on while still passing onboarding, as well as how many times they are allowed to re-take the onboarding before being soft-blocked. (See `task_config/onboard_task_data.json` for an example.)
+
+You can further modify the worker selection criteria in `handleOnboardingSubmit` in `frontend/components/onboarding_components.jsx`.
 
 ## Human+model image chat
 

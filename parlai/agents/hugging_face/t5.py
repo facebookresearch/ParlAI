@@ -31,7 +31,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGenerato
 
 def check_hf_version(v: Tuple[int, int]) -> bool:
     """
-    Check that HF version is greater than 4.3
+    Check that HF version is greater than 4.3.
     """
     main, sub = v
     return main > 4 or (main == 4 and sub >= 3)
@@ -195,7 +195,7 @@ class T5Agent(TorchGeneratorAgent):
             generation_params.update(overrides)
 
         outputs = self.model.t5.generate(**generation_params)
-        outputs = [(outputs[i], 0) for i in range(outputs.size(0))]
+        outputs = [(outputs[i], 0, None) for i in range(outputs.size(0))]
         return outputs, []
 
 
