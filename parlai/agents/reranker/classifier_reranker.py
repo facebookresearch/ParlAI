@@ -6,10 +6,10 @@
 """
 Classifier Re-Ranker Object.
 
-Provided with a classifier model file, the re-ranker provides
-an API for re-ranking candidate outputs based on maximizing the probability of a given provided class.
+Provided with a classifier model file, the re-ranker provides an API for re-ranking
+candidate outputs based on maximizing the probability of a given provided class.
 """
-from typing import Optional, List, Dict
+from typing import Optional, List
 from parlai.core.agents import create_agent_from_model_file
 from parlai.core.message import Message
 from parlai.core.opt import Opt
@@ -69,6 +69,7 @@ class ClassifierReranker(AbstractReranker):
     ) -> Message:
         """
         Use predictor to predict given augmented context.
+
         :param context:
             augmented context with response candidates
         :param predictor_label_candidates:
@@ -104,7 +105,7 @@ class ClassifierReranker(AbstractReranker):
 
 class ClassifierRerankAgent(AbstractGeneratorRerankAgent):
     """
-    Generative Re-rank agent for adding a ClassifierReranker
+    Generative Re-rank agent for adding a ClassifierReranker.
     """
 
     @classmethod
