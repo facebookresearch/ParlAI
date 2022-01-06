@@ -71,6 +71,7 @@ class AbstractReranker(ABC):
         self.normalize_candidates = opt['normalize_candidates']
         self.delimiter = opt.get('delimiter', '\n')
         self.include_context = True
+        self.include_label_cand_only = False
         self.init_predictor(opt, shared)
 
     def init_predictor(self, opt: Opt, shared=None):
@@ -298,13 +299,18 @@ class AbstractReranker(ABC):
             response_cands = [normalize_reply(c) for c in response_cands]
 
         # 1) Augment context with response candidates
-        contexts = [
-            self.augment_context(
-                full_context, cand, include_context=self.include_context
-            )
-            for cand in response_cands
-        ]
-        contexts = [self.delimiter.join(utts) for utts in contexts]
+        if not self.include_label_cand_only:
+            contexts = [
+                self.augment_context(
+                    full_context, cand, include_context=self.include_context
+                )
+                for cand in response_cands
+            ]
+            contexts = [self.delimiter.join(utts) for utts in contexts]
+        else:
+            # This variant only passes in the label candidates (with no dialogue history whatsoever
+            # into the ranker. Can be useful for things like e.g. simple utterance-based safety classifiers.
+            contexts = response_cands
 
         # 2) Predict with augmented context
         label_candidates = self.get_predictor_label_candidates(

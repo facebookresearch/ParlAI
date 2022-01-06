@@ -50,12 +50,19 @@ class AbstractResultsCompiler(ABC):
         parser.add_argument(
             '--task-name', type=str, help='Name of the Mephisto task to open'
         )
+        parser.add_argument(
+            '--database-path',
+            type=str,
+            default=None,
+            help='Path to local Mephisto database. Leave empty for default location.',
+        )
         return parser
 
     def __init__(self, opt: Opt):
         self.task_name = opt['task_name']
         self.output_folder = opt['output_folder']
         self.results_format = opt.get('results_format', 'json')
+        self.database_path = opt['database_path']
 
         # We lazily load these later, or inject their mock version during testing.
         self._mephisto_db = None
@@ -69,7 +76,7 @@ class AbstractResultsCompiler(ABC):
 
     def get_mephisto_db(self) -> LocalMephistoDB:
         if not self._mephisto_db:
-            self._mephisto_db = LocalMephistoDB()
+            self._mephisto_db = LocalMephistoDB(self.database_path)
         return self._mephisto_db
 
     def get_results_path_base(self) -> str:

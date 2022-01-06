@@ -105,7 +105,7 @@ def pytest_collection_modifyitems(config, items):
             class_mapping[class_name].append(item)
 
         test_groupings = list(class_mapping.keys())
-        random.Random(1337).shuffle(test_groupings)
+        random.Random(1339).shuffle(test_groupings)
 
         filtered_tests = filter_tests_with_circleci(test_groupings)
         new_items = []
