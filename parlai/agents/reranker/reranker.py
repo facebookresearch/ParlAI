@@ -514,6 +514,7 @@ class AbstractGeneratorRerankAgentMixin:
             inference_batch_reply = super().batch_act(observations)
             for i, resp in enumerate(inference_batch_reply):
                 beam_texts = batch_reply[i].get('beam_texts', [])
+                batch_reply[i] = resp  # add metrics, other response items
                 new_beam_texts = [(*b, strategy) for b in resp.get('beam_texts', [])]
                 batch_reply[i].force_set('beam_texts', beam_texts + new_beam_texts)
         # 2. Rerank
