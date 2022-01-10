@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-
 import os
 from dataclasses import dataclass, field
 from typing import List, Any
@@ -22,6 +21,10 @@ from parlai.crowdsourcing.tasks.qa_data_collection.util import get_teacher
 from parlai.crowdsourcing.utils.frontend import build_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
