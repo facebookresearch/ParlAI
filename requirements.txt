@@ -42,6 +42,7 @@ subword-nmt==0.3.7
 tensorboard==2.3.0
 tensorboardX==2.1
 tokenizers>=0.8.0
+tomli<2.0.0
 torchtext>=0.5.0
 tornado==6.0.4
 tqdm~=4.62.1
