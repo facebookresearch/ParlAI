@@ -74,7 +74,7 @@ _Task & models for chitchat with a given persona._
 
 ## Well-Behaved
 
-- **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/safer_dialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
+- **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
   _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
 
 - **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
