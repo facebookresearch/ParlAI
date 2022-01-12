@@ -7,6 +7,7 @@
 Contains code for parsing and building a dictionary from text.
 """
 
+import sentencepiece as spm
 from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
@@ -284,8 +285,11 @@ class DictionaryAgent(Agent):
                 self.add_token(self.unk_token)
 
             loaded = False
-            # If data built via pytorch data teacher, we need to load prebuilt dict
-            if opt.get('dict_file'):
+            if self.tokenizer == 'sentencepiece':
+                self.sp = spm.SentencePieceProcessor(model_file=opt['dict_file'])
+                loaded = True
+            elif opt.get('dict_file'):
+                # If data built via pytorch data teacher, we need to load prebuilt dict
                 opt['dict_file'] = modelzoo_path(opt.get('datapath'), opt['dict_file'])
                 if PathManager.exists(opt['dict_file']):
                     # load pre-existing dictionary
@@ -372,7 +376,7 @@ class DictionaryAgent(Agent):
         """
         Indicates whether the dictionary is fixed, and does not require building.
         """
-        return self.tokenizer == 'gpt2'
+        return self.tokenizer in ['gpt2', 'sentencepiece']
 
     def add_token(self, word):
         """
@@ -526,6 +530,9 @@ class DictionaryAgent(Agent):
             curr_idx += len(t)
         return tokens, indices
 
+    def sentencepiece_tokenize(self, text: str):
+        return self.sp.encode(text)
+
     def tokenize(self, text, building=False):
         """
         Return a sequence of tokens from the iterable.
@@ -649,6 +656,8 @@ class DictionaryAgent(Agent):
 
         If ``sort`` (default ``True``), then first sort the dictionary before saving.
         """
+        if os.path.exists(filename):
+            return
         filename = self.opt['dict_file'] if filename is None else filename
         make_dir(os.path.dirname(filename))
 
@@ -747,6 +756,8 @@ class DictionaryAgent(Agent):
             text, str
         ), f'Input to txt2vec must be string, not {type(text)}'
 
+        if self.tokenizer == 'sentencepiece':
+            return self.tokenize(text)
         itr = (self._word_lookup(token) for token in self.tokenize(text))
         if vec_type == list or vec_type == tuple or vec_type == set:
             res = vec_type(itr)
@@ -779,6 +790,8 @@ class DictionaryAgent(Agent):
             ]
             tokens = [self[int(idx)] for idx in vector]
             text = self.bpe.decode(tokens, vector, delimiter)
+        elif self.tokenizer == 'sentencepiece':
+            text = self.sp.decode([int(idx) for idx in vector])
         else:
             text = delimiter.join(self[int(idx)] for idx in vector)
 

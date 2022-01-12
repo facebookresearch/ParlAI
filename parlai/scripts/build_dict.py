@@ -55,6 +55,13 @@ def setup_args(parser=None, hidden=True):
     dict_loop.add_argument(
         '-ltim', '--log-every-n-secs', type=float, default=-1, hidden=hidden
     )
+    dict_loop.add_argument(
+        '--dict-add-special-tokens',
+        type=str,
+        default='',
+        help='Comma separated list of special tokens to add. E.g. "__tkn_1__,__tkn_2__"',
+        hidden=hidden,
+    )
     DictionaryAgent.add_cmdline_args(parser, partial_opt=None)
     return parser
 
@@ -90,6 +97,10 @@ def build_dict(opt, skip_if_built=False):
 
     if is_distributed():
         raise ValueError('Dictionaries should be pre-built before distributed train.')
+
+    if opt.get('dict_add_special_tokens'):
+        special_tokens = str(opt.get('dict_add_special_tokens')).split(',')
+        dictionary.add_additional_special_tokens(special_tokens)
 
     ordered_opt = copy.deepcopy(opt)
     cnt = 0
