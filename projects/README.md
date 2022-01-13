@@ -145,4 +145,4 @@ _QA model for answering questions by retrieving and reading knowledge._
 _ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
 
 - **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [paper coming soon!].
-_Compares how well different techniques for employing human crowdworkers can detect which one of a pair of dialogue models performs better._
+_Compares how well different human crowdworker evaluation techniques can detect relative performance differences among dialogue models._
