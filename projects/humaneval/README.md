@@ -8,4 +8,18 @@ At the heart of improving conversational AI is the open problem of how to evalua
 
 ## Paper
 
-[Link coming soon!]
+[Link](https://arxiv.org/abs/2201.04723)
+
+## Citation
+
+If you use the dataset or models in your own work, please cite with the
+following BibTex entry:
+    
+    @misc{smith2022human,
+      title={Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents}, 
+      author={Eric Michael Smith and Orion Hsu and Rebecca Qian and Stephen Roller and Y-Lan Boureau and Jason Weston},
+      year={2022},
+      eprint={2201.04723},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+    }

@@ -144,5 +144,5 @@ _QA model for answering questions by retrieving and reading knowledge._
 - **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
 _ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
 
-- **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [paper coming soon!].
+- **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
 _Compares how well different human crowdworker evaluation techniques can detect relative performance differences among dialogue models._
