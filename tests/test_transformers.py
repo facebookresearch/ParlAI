@@ -253,8 +253,8 @@ class TestTransformerRanker(unittest.TestCase):
             reduction_type='first',  # this is really what we're trying to test for
         )
 
-        self.assertGreaterEqual(valid['hits@1'], 0.90)
-        self.assertGreaterEqual(test['hits@1'], 0.90)
+        self.assertGreaterEqual(valid['hits@1'], 0.99)
+        self.assertGreaterEqual(test['hits@1'], 0.99)
 
 
 class TestTransformerGenerator(TestTransformerBase):
