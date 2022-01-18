@@ -1,0 +1,41 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - 我很好，我刚下班很累，我有两份工作。
+    id: xpersona:Zh
+    reward: 0
+    text: 'your persona:我一年读二十本书。
+
+      your persona:我的第二份工作是做特技。
+
+      your persona:我只吃犹太洁食。
+
+      your persona:我在单亲家庭中长大。
+
+      你好，今天在做什么？'
+- - episode_done: false
+    eval_labels:
+    - 我更喜欢看书，今年我已经看了20本书。
+    id: xpersona:Zh
+    reward: 0
+    text: 我刚看完一部恐怖电影
+- - episode_done: false
+    eval_labels:
+    - 好看的电影总是好的。
+    id: xpersona:Zh
+    reward: 0
+    text: 哇 ！我确实喜欢看一部恐怖电影。喜欢这种凉爽的天气
+- - episode_done: false
+    eval_labels:
+    - 我也看电影。
+    id: xpersona:Zh
+    reward: 0
+    text: 是的！我儿子在初中，我也开始让他看他们
+- - episode_done: false
+    eval_labels:
+    - 是吗，那很棒，那是非常有趣和困难的工作。
+    id: xpersona:Zh
+    reward: 0
+    text: 太好了！ ！我曾经在服务业工作
+num_episodes: 222
+num_examples: 1729
