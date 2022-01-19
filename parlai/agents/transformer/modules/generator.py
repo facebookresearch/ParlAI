@@ -93,6 +93,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             opt,
             embedding=self.embeddings,
             decoder_class=self.swappables.decoder,  # type: ignore
+            dictionary=dictionary,
         )
 
     def reorder_encoder_states(self, encoder_states, indices):

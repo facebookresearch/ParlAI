@@ -1716,7 +1716,7 @@ class TorchAgent(ABC, Agent):
             labels = [ex.get(field + '_choice') for ex in exs]
             y_lens = [y.shape[0] for y in label_vecs]
 
-            ys, y_lens = self._pad_tensor(label_vecs)
+            ys, y_lens = self._pad_tensor(label_vecs, is_label=True)
 
             if sort and xs is None:
                 ys, valid_inds, label_vecs, labels, y_lens = argsort(

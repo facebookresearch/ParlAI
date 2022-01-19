@@ -12,7 +12,12 @@ from .functions import (  # noqa: F401
 from .attention import BasicAttention, MultiHeadAttention  # noqa: F401
 from .ffn import TransformerFFN  # noqa: F401
 from .encoder import TransformerEncoder, TransformerEncoderLayer  # noqa: F401
-from .decoder import TransformerDecoder, TransformerDecoderLayer  # noqa: F401
+from .decoder import (
+    TransformerDecoder,
+    TransformerDecoderLayer,
+    TransformerDecoderOnly,
+    TransformerDecoderOnlyLayer,
+)  # noqa: F401
 from .generator import TransformerGeneratorModel  # noqa: F401
 from .wrappers import TransformerLinearWrapper, TransformerResponseWrapper  # noqa: F401
 from .mem_net import TransformerMemNetModel  # noqa: F401
