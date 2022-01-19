@@ -818,7 +818,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Can be overridden to allow for some metrics on the generations calculated at
         eval.
         """
-        pass
+        self.record_local_metric(
+            'gen_n_toks',
+            AverageMetric.many([p.size(0) for p in preds], [1] * batch.batchsize),
+        )
 
     def rank_eval_label_candidates(self, batch, batchsize):
         """

@@ -719,7 +719,7 @@ class BlenderBot2RagAgent(RagAgent):
             batch = self._set_batch_gold_doc_vec(valid_exs, batch)
         if any(ex.get('memory_decoder_vec') is not None for ex in valid_exs):
             batch = self._set_batch_memory_decoder_vec(valid_exs, batch)
-        if any(ex.get(self.opt['skip_search_key']) is not None for ex in valid_exs):
+        if any(ex.get(self.opt.get('skip_search_key')) is not None for ex in valid_exs):
             batch = self._set_batch_skip_search(valid_exs, batch)
         return batch
 
