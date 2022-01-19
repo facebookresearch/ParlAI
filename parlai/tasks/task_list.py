@@ -1540,7 +1540,7 @@ task_list = [
         "id": "XPersona",
         "display_name": "XPersona",
         "task": "xpersona",
-        "tags": ["ChitChat", "Multilingual"],
+        "tags": ["ChitChat"],
         "description": (
             "XPersona is an extension of ConvAI2 with six more languages: Chinese, French, Indonesian, Italian, Korean, and Japanese."
         ),
