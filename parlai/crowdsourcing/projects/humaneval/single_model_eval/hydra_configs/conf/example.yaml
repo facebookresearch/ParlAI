@@ -8,6 +8,7 @@ mephisto:
     annotations_config_path: ${task_dir}/task_config/annotations_config.json
     onboarding_qualification: single_model_eval__onboarding
     block_qualification: single_model_eval__${current_time}__block  # Use the current time in the block, like with Acute-Evals
+    chat_data_folder: ${task_dir}/model_chat/
     model_opt_path: ${task_dir}/task_config/model_opts.yaml
     num_turns: 6
     task_model_parallel: true
