@@ -189,12 +189,5 @@ def _create_parlai_format(dpath: str):
                         f_write.write(str(line_num) + ' your persona:' + persona + '\n')
                     for utterance_A, utterance_B in dialogs:
                         line_num += 1
-                        f_write.write(
-                            str(line_num)
-                            + ' '
-                            + utterance_A
-                            + '\t'
-                            + utterance_B
-                            + '\n'
-                        )
+                        f_write.write(f"{line_num} {utterance_A}\t{utterance_B}\n")
             os.remove(load_path)
