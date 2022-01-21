@@ -893,6 +893,9 @@ class TrainLoop:
                 ):
                     yield self.log()
                 if stop_training:
+                    import ipdb
+
+                    ipdb.set_trace()
                     self.validate()
                 elif (
                     validate_time > self.val_every_n_secs
@@ -915,8 +918,10 @@ class TrainLoop:
                     self._last_valid_steps = self._train_steps
                     # make sure metrics are clean before we log
                     world.reset_metrics()
-                if (stop_training or save_time > self.save_every_n_secs) and opt.get(
-                    'model_file'
+                if (
+                    not stop_training
+                    and save_time > self.save_every_n_secs
+                    and opt.get('model_file')
                 ):
                     logging.info(
                         f"saving model checkpoint: {opt['model_file']}.checkpoint"
