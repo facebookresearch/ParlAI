@@ -850,16 +850,18 @@ class TrainLoop:
         logging.info('training...')
         opt = self.opt
         world = self.world
+        stop_training = False
         with world:
-            while True:
+            while stop_training is False:
                 # do one example / batch of examples
                 try:
                     world.parley()
                 except StopTrainException as e:
                     logging.info(f"Stopping from {e}")
-                    break
+                    stop_training = True
 
-                self.parleys += 1
+                if not stop_training:
+                    self.parleys += 1
                 self._train_steps = self.parleys // self.update_freq
                 self._last_log_steps += 1 / self.update_freq
 
@@ -875,22 +877,24 @@ class TrainLoop:
                     logging.info(
                         f'num_epochs completed:{self.max_num_epochs} time elapsed:{train_time}s'
                     )
-                    break
-                if train_time > self.max_train_time:
+                    stop_training = True
+                elif train_time > self.max_train_time:
                     logging.info(f'max_train_time elapsed:{train_time}s')
-                    break
-                if self._train_steps >= self.max_train_steps:
+                    stop_training = True
+                elif self._train_steps >= self.max_train_steps:
                     logging.info(
                         f'max_train_steps elapsed:{self._train_steps} '
                         f'time elapsed:{train_time}s'
                     )
-                    break
-                if (
+                    stop_training = True
+                elif (
                     log_time > self.log_every_n_secs
                     or self._last_log_steps >= self.log_every_n_steps
                 ):
                     yield self.log()
-                if (
+                if stop_training:
+                    self.validate()
+                elif (
                     validate_time > self.val_every_n_secs
                     or self._total_epochs - self.last_valid_epoch
                     >= self.val_every_n_epochs
@@ -909,11 +913,11 @@ class TrainLoop:
                     self.log_time.reset()
                     self.last_valid_epoch = self._total_epochs
                     self._last_valid_steps = self._train_steps
-                    if stop_training:
-                        break
                     # make sure metrics are clean before we log
                     world.reset_metrics()
-                if save_time > self.save_every_n_secs and opt.get('model_file'):
+                if (stop_training or save_time > self.save_every_n_secs) and opt.get(
+                    'model_file'
+                ):
                     logging.info(
                         f"saving model checkpoint: {opt['model_file']}.checkpoint"
                     )
