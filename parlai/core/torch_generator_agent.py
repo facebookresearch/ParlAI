@@ -436,7 +436,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--opt-prefix-tokens',
-            type=list,
+            type='ints',
             default=[],
             help='List of tokens to force at the beginning of generation, works in conjunction with agent-based prefix tokens',
         )

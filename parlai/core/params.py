@@ -175,6 +175,13 @@ def str2floats(s):
     return tuple(float(f) for f in s.split(','))
 
 
+def str2ints(s):
+    """
+    Look for single int or comma-separated int.
+    """
+    return tuple(int(f) for f in s.split(','))
+
+
 def str2multitask_weights(s):
     if s == 'stochastic':
         return s
@@ -330,6 +337,7 @@ class ParlaiParser(argparse.ArgumentParser):
         self.register('type', 'nonestr', str2none)
         self.register('type', 'bool', str2bool)
         self.register('type', 'floats', str2floats)
+        self.register('type', 'ints', str2floats)
         self.register('type', 'multitask_weights', str2multitask_weights)
         self.register('type', 'class', str2class)
         self.parlai_home = os.path.dirname(
