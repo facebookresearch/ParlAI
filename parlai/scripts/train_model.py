@@ -893,9 +893,6 @@ class TrainLoop:
                 ):
                     yield self.log()
                 if stop_training:
-                    import ipdb
-
-                    ipdb.set_trace()
                     self.validate()
                 elif (
                     validate_time > self.val_every_n_secs
