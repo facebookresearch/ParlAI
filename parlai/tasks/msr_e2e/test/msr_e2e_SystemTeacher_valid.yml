@@ -1,0 +1,55 @@
+acts:
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: MsrE2E_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = movie ; city = Los Angeles ; date = Tuesday ; distanceconstraints
+      = closest ; moviename = The Brothers Grimsby ; theater = Baldwin Hills Crenshaw'
+    id: MsrE2E_SystemTeacher
+    slots:
+      api_name: movie
+      city: Los Angeles
+      date: Tuesday
+      distanceconstraints: closest
+      moviename: The Brothers Grimsby
+      theater: Baldwin Hills Crenshaw
+    text: 'USER: On Tuesday I''m hopefully going to see The Brothers Grimsby in Los
+      Angeles. I think Baldwin Hills Crenshaw is the theater closest to me'
+    type: 'APICALL: '
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: It has a 2:30pm and 8:10pm show on Tue. Which one would you prefer?'
+    id: MsrE2E_SystemTeacher
+    slots:
+      api_name: movie
+      date: Tue
+      starttime: '{2:30pm#8:10pm}'
+    text: 'APIRESP: api_name = movie ; date = Tue ; starttime = {2:30pm#8:10pm}'
+    type: 'SYSTEM: '
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: MsrE2E_SystemTeacher
+    slots: {}
+    text: 'USER: I think the 8:10 would work best, can you book that one for me? I
+      need two tickets'
+    type: 'APICALL: '
+- - domain: movie
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Great I can book those for you.'
+    id: MsrE2E_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 1008
+num_examples: 10572

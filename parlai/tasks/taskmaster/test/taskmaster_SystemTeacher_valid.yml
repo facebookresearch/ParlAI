@@ -1,0 +1,50 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'USER: __SILENCE__'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: hello, how can i assist you?'
+    id: Taskmaster1_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = coffee_ordering ; location.store = the Hilton Knoxville
+      Starbucks in Knoxville, Tennessee ; name.drink = cinnamon shortbread latte'
+    id: Taskmaster1_SystemTeacher
+    slots:
+      api_name: coffee_ordering
+      location.store: the Hilton Knoxville Starbucks in Knoxville, Tennessee
+      name.drink: cinnamon shortbread latte
+    text: 'USER: Hi. I''m trying to order a cinnamon shortbread latte from the Hilton
+      Knoxville Starbucks in Knoxville, Tennessee.'
+    type: 'APICALL: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: did you say hilton knoxville?'
+    id: Taskmaster1_SystemTeacher
+    slots:
+      api_name: coffee_ordering
+      location.store: hilton knoxville
+    text: 'APIRESP: api_name = coffee_ordering ; location.store = hilton knoxville'
+    type: 'SYSTEM: '
+num_episodes: 1321
+num_examples: 32641

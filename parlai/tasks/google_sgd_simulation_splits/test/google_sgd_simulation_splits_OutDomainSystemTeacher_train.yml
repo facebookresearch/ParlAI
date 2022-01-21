@@ -1,0 +1,63 @@
+acts:
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_SystemTeacher
+    labels:
+    - 'APICALL: '
+    slots: {}
+    text: 'USER: I would like to find a SUV till 7th of March.'
+    type: 'APICALL: '
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_SystemTeacher
+    labels:
+    - 'SYSTEM: From where do you want to rent the car from? Also at which time do
+      you want to pick up the car and start the car rental?'
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_SystemTeacher
+    labels:
+    - 'APICALL: api_name = GetCarsAvailable ; car_type = SUV ; city = Long Beach ;
+      end_date = 2019-03-07 ; pickup_time = 11:00 ; start_date = 2019-03-04'
+    slots:
+      api_name: GetCarsAvailable
+      car_type: SUV
+      city: Long Beach
+      end_date: '2019-03-07'
+      pickup_time: '11:00'
+      start_date: '2019-03-04'
+    text: 'USER: I am looking for cars in Long Beach, CA and want to pick it up at
+      11 o"clock in the morning from 4th of this month.'
+    type: 'APICALL: '
+- - domain: RentalCars
+    episode_done: false
+    id: GoogleSgdOutDomain_SystemTeacher
+    labels:
+    - 'SYSTEM: There is a 1 car available at Downtown Station and it is a SUV of Alfa
+      Romeo Stelvio.'
+    slots:
+      car_name: Alfa Romeo Stelvio
+      car_type: SUV
+      city: Long Beach
+      end_date: '2019-03-07'
+      pickup_location: Downtown Station
+      pickup_time: '11:00'
+      price_per_day: '38.00'
+      start_date: '2019-03-04'
+    text: 'APIRESP: car_name = Alfa Romeo Stelvio ; car_type = SUV ; city = Long Beach
+      ; end_date = 2019-03-07 ; pickup_location = Downtown Station ; pickup_time =
+      11:00 ; price_per_day = 38.00 ; start_date = 2019-03-04'
+    type: 'SYSTEM: '
+num_episodes: 2303
+num_examples: 60589

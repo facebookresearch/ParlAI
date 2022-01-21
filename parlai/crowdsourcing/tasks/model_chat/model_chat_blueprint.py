@@ -137,7 +137,12 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     final_rating_question: str = field(
         default='Please rate your partner on a scale of 1-5.',
-        metadata={"help": "Text to show when asking worker to make their final rating"},
+        metadata={
+            "help": (
+                "Text to show when asking worker to make their final rating. For "
+                "multiple final ratings, separate text strings with a '|'."
+            )
+        },
     )
     max_concurrent_responses: int = field(
         default=1,

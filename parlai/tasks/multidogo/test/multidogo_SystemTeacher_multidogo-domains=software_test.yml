@@ -1,0 +1,50 @@
+acts:
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = software'
+    id: Multidogo_SystemTeacher
+    slots:
+      api_name: software
+    text: 'USER: HELLO RORY'
+    type: 'APICALL: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Hello! Welcome to Prodesk financial department. How may I help you?
+
+      '
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = software'
+    id: Multidogo_SystemTeacher
+    slots:
+      api_name: software
+    text: 'USER: I WANT REIMBURSE.'
+    type: 'APICALL: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Sure! I''ll help you with that. Could you please help me with your
+      name and the password?
+
+      '
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 155
+num_examples: 2759

@@ -27,6 +27,10 @@ from mephisto.operations.operator import Operator
 from mephisto.operations.hydra_config import register_script_config
 from mephisto.tools.scripts import load_db_and_process_config
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 _ = WIZARD_INTERNET_PARLAICHAT_BLUEPRINT
 

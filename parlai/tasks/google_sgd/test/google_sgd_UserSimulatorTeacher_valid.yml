@@ -1,0 +1,46 @@
+acts:
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: I want to make a restaurant reservation for 2 people at half past 11
+      in the morning.'
+    id: GoogleSGD_UserSimulatorTeacher
+    text: 'GOAL: api_name = ReserveRestaurant ; date = 2019-03-01 ; location = San
+      Jose ; number_of_seats = 2 ; restaurant_name = Sino ; time = 11:30'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Please find restaurants in San Jose. Can you try Sino?'
+    id: GoogleSGD_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: What city do you want to dine in? Do you have a preferred restaurant?'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Yes, thanks. What''s their phone number?'
+    id: GoogleSGD_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today.'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: What''s their address? Do they have vegetarian options on their menu?'
+    id: GoogleSGD_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Your reservation has been made. Their phone number is 408-247-8880.'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Thanks very much.'
+    id: GoogleSGD_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: The street address is 377 Santana Row #1000. They have good vegetarian
+      options.'
+    type: 'USER: '
+num_episodes: 2482
+num_examples: 26845

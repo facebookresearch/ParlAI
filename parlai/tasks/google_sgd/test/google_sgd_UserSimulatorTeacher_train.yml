@@ -1,0 +1,49 @@
+acts:
+- - domain: Restaurants
+    episode_done: false
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - 'USER: I am feeling hungry so I would like to find a place to eat.'
+    text: 'GOAL: api_name = FindRestaurants ; city = San Jose ; cuisine = American
+      | api_name = FindRestaurants ; city = Palo Alto ; cuisine = American ; price_range
+      = moderate | api_name = ReserveRestaurant ; city = Palo Alto ; date = 2019-03-01
+      ; party_size = 2 ; restaurant_name = Bird Dog ; time = 11:30'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - 'USER: I would like for it to be in San Jose.'
+    slots: {}
+    text: 'SYSTEM: Do you have a specific which you want the eating place to be located
+      at?'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - 'USER: I usually like eating the American type of food.'
+    slots: {}
+    text: 'SYSTEM: Is there a specific cuisine type you enjoy, such as Mexican, Italian
+      or something else?'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - 'USER: Can you give me the address of this restaurant.'
+    slots: {}
+    text: 'SYSTEM: I see that at 71 Saint Peter there is a good restaurant which is
+      in San Jose.'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - 'USER: Can you give me the phone number that I can contact them with?'
+    slots: {}
+    text: 'SYSTEM: If you want to go to this restaurant you can find it at 71 North
+      San Pedro Street.'
+    type: 'USER: '
+num_episodes: 16142
+num_examples: 181124

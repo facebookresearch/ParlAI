@@ -1,0 +1,45 @@
+acts:
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'USER: Hi, could you get me a restaurant booking on the 8th please?'
+    type: 'APICALL: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Any preference on the restaurant, location and time?'
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'USER: Could you get me a reservation at P.f. Chang''s in Corte Madera at
+      afternoon 12?'
+    type: 'APICALL: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Please confirm your reservation at P.f. Chang''s in Corte Madera at
+      12 pm for 2 on March 8th.'
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 3132
+num_examples: 67286

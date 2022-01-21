@@ -11,26 +11,19 @@ executors:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
-  standard_cpu37:
+  small_cpu38:
     docker:
-      - image: circleci/python:3.7.5-buster-node
-    environment:
-      PYTHONUNBUFFERED: 1
-    resource_class: xlarge
-
-  small_cpu37:
-    docker:
-      - image: circleci/python:3.7.5-buster-node
+      - image: circleci/python:3.8.0-buster-node
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
-  osx_cpu37:
+  osx_cpu38:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
       xcode: "11.3.1"
     environment:
-      PYTHON: 3.7.1
+      PYTHON: 3.8.0
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
 
@@ -105,6 +98,8 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            # This pre-Python-3.7 package will break use of Python-3.7-style dataclasses
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -120,6 +115,8 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            # This pre-Python-3.7 package will break use of Python-3.7-style dataclasses
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
             python -c 'import torch; print("Torch version:", torch.__version__)'
@@ -167,7 +164,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.4.1 -b stable
+              cd Mephisto; git checkout v0.4.2 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -231,26 +228,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-2021222-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-2021222-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-2021222-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-2021222-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -267,12 +264,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
+          key: deps-2021222-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu17
       - save_cache:
-          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
+          key: deps-2021222-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -312,8 +309,8 @@ commands:
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  cleaninstall_37:
-    executor: standard_cpu37
+  cleaninstall_38:
+    executor: standard_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -329,23 +326,12 @@ jobs:
             parlai display_data -t integration_tests
 
   unittests_osx:
-    executor: osx_cpu37
+    executor: osx_cpu38
     working_directory: ~/ParlAI
     parallelism: 2
     steps:
       - runtests:
           cachename: osx
-          marker: unit
-
-  unittests_37:
-    executor: standard_cpu37
-    working_directory: ~/ParlAI
-    parallelism: 8
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchcpu
-          cachename: ut37
           marker: unit
 
   unittests_38:
@@ -399,7 +385,7 @@ jobs:
           pytest_flags: -v -s
 
   crowdsourcing_tests:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -411,7 +397,7 @@ jobs:
             - installcrowdsourcingdeps
 
   teacher_tests:
-    executor: standard_cpu37
+    executor: standard_cpu38
     working_directory: ~/ParlAI
     parallelism: 16
     steps:
@@ -421,7 +407,7 @@ jobs:
           pytest_flags: -v -s
 
   build_website:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -429,14 +415,14 @@ jobs:
           deploy: false
 
   deploy_website:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     steps:
       - website:
           deploy: true
 
   test_website:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     steps:
       - run:
@@ -459,29 +445,26 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_37
+      - cleaninstall_38
       - unittests_gpu17:
           requires:
-            - unittests_37
+            - unittests_38
       - unittests_gpu18:
           requires:
-            - unittests_37
-      - unittests_38:
-          requires:
-            - unittests_37
-      - unittests_37
+            - unittests_38
+      - unittests_38
       - unittests_osx:
           requires:
-            - unittests_37
+            - unittests_38
       - long_gpu_tests:
           requires:
-            - unittests_37
+            - unittests_38
       - crowdsourcing_tests:
           requires:
-            - unittests_37
+            - unittests_38
       - teacher_tests:
           requires:
-            - unittests_37
+            - unittests_38
       - build_website:
           filters:
             branches:

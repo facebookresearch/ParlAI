@@ -23,7 +23,7 @@ from parlai.zoo.image_chat.transresnet_multimodal import (
 
 
 # Inputs
-AGENT_DISPLAY_IDS = ('Worker',)
+AGENT_DISPLAY_IDS = ('Speaker 1',)
 AGENT_MESSAGES = [
     ("Response 1",),
     ("Response 2",),

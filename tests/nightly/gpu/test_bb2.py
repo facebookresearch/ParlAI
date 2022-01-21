@@ -88,8 +88,7 @@ class TestBB2Rag(unittest.TestCase):
         _test_bb2_rag(KnowledgeAccessMethod.NONE, n_docs=1)
 
 
-@testing_utils.skipUnlessGPU
-@unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
+@testing_utils.skipIfCircleCI
 class TestBB2Fid(unittest.TestCase):
     """
     Test retrieval methods for BB2 with FiD.
