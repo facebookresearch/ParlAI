@@ -21,7 +21,7 @@ executors:
   osx_cpu38:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
-      xcode: "11.3.1"
+      xcode: "13.2.1"
     environment:
       PYTHON: 3.8.0
       PYTHONUNBUFFERED: 1
