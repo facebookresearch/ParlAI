@@ -55,6 +55,7 @@ check out [NEWS.md](https://github.com/facebookresearch/ParlAI/blob/main/NEWS.md
 ## Interactive Tutorial
 
 For those who want to start with ParlAI now, you can try our [Colab Tutorial](https://colab.research.google.com/drive/1bRMvN0lGXaTF5fuTidgvlAl-Lb41F7AD#scrollTo=KtVz5dCUmFkN).
+For those who want to try ParlAi with flask API, you can try the [flask demo](https://github.com/facebookresearch/ParlAI/tree/main/flask_api_demo).
 
 ## Installing ParlAI
 
