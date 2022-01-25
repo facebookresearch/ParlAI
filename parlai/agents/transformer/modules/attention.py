@@ -224,9 +224,13 @@ class MultiHeadAttention(nn.Module):
             if static_kv:
                 mask = incr_state['prev_mask']
             else:
-                mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
-                # Prepend along the key_len dimension (analogous to
-                # incr_state['prev_key'])
+                # Mask will be of size (B x query_len x key_len)
+                # During incremental decoding the query will only represent the next token,
+                # whereas the key/value will represent the entire sequence thus far.
+                # In such a case, we only want to look at the last element of the mask in the query dimension.
+                prev_mask = incr_state['prev_mask'][:, -query_len:, :]
+                mask = torch.cat([prev_mask, mask], dim=2)
+                # Prepend along the key_len dimension (analogous to incr_state['prev_key'])
 
         # Save new incremental states. We reshape to allow for reordering along batch
         # dimension.

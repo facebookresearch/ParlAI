@@ -774,56 +774,54 @@ class TransformerDecoderOnly(nn.Module):
             values contain the incremental state for each layer.
         """
         if isinstance(encoder_state, tuple):
-            encoder_output, _ = encoder_state
+            context, _ = encoder_state
         else:
-            encoder_output = encoder_state
+            context = encoder_state
+
+        is_incr_decoding = incr_state is not None
 
         # <gpt2>
         attention_mask = None
         position_ids = None
-        if incr_state is None:
-            # first step
-            if input.size(1) == 1 and int(input[0][0]) == self.start_idx:
-                # generating: ignore the start token
-                # without deep copy, the padding_idx (-1) in encoder_state can be reset to 0 with clamp_ inplace operation
-                model_input = encoder_output.clone()
-            else:
-                # forced decoding: concatenate the context
-                # with the labels
-                model_input = torch.cat([encoder_output, input], dim=-1)
+        if not is_incr_decoding:
+            # forced decoding: concatenate the context with the labels
+            model_input = torch.cat([context, input], dim=-1)
             attention_mask = model_input != self.pad_idx
             position_ids = (
                 attention_mask.cumsum(dim=-1, dtype=torch.int64) - 1
             ).clamp_(min=0)
         else:
-            input = input[:, 1:]
             # generating with continuation
+            attention_mask = torch.cat([context, input], dim=-1) != self.pad_idx
             # get the position ids
-            position_ids = (encoder_output != self.pad_idx).sum(
-                -1, True, dtype=torch.int64
-            ) - 1
-            delta = ((input != self.pad_idx)).sum(-1, True, dtype=torch.int64)
-            position_ids += delta
+            position_ids = (
+                attention_mask.cumsum(dim=-1, dtype=torch.int64) - 1
+            ).clamp_(min=0)
             # generation: get the last token input
             model_input = input[:, -1:]
-            attention_mask = torch.cat([encoder_output, input], dim=-1) != self.NULL_IDX
+            position_ids = position_ids[:, -1:]
         # </gpt2>
 
         # <TransformerDecoder>
-        if incr_state is None:
-            incr_state = {}
-
         tensor = self.forward_embedding(model_input, position_ids, **kwargs)
 
         tensor = self.dropout(tensor)  # --dropout
 
+        if incr_state is None:
+            incr_state = {}
         tensor, new_incr_state = self.forward_layers(tensor, incr_state, **kwargs)
 
         if self.variant == 'prelayernorm':
             tensor = self.norm_embeddings(tensor)
         # </TransformerDecoder>
 
-        tensor = tensor[:, encoder_output.size(1) :, :]
+        if not is_incr_decoding:
+            # In case context has been prepended to the input, remove it from output.
+            # Start token is prepended to input in TorchGeneratorModel.decode_forced,
+            # so model_input is actually `context + [start_tkn] + label[:-1]`.
+            # Since model predicts next token at each timestep, prediction starts at
+            # the position where start_tkn was.
+            tensor = tensor[:, context.size(1) :, :]
 
         return tensor, new_incr_state
 
@@ -844,7 +842,7 @@ class TransformerDecoderOnly(nn.Module):
                 )
                 new_incr_state[layer_no].append(nis)
             # don't move incr state, it's always on the correct device
-            s_tensor = PipelineHelper.chunk_to((s_tensor,), next_device)
+            s_tensor = PipelineHelper.chunk_to(s_tensor, next_device)
             chunks[chunk_idx] = (s_tensor, s_incr_state)
 
         tensor_out = PipelineHelper.join([c[0] for c in chunks])
