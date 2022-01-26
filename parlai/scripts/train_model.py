@@ -541,47 +541,49 @@ class TrainLoop:
             self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
-        new_valid = valid_report[opt['validation_metric']]
+        new_valid = valid_report.get(opt['validation_metric'])
 
-        if isinstance(new_valid, Metric):
-            new_valid = new_valid.value()
-
-        # check if this is the best validation so far
-        if (
-            self.best_valid is None
-            or self.valid_optim * new_valid > self.valid_optim * self.best_valid
-        ):
-            logging.success(
-                'new best {}: {:.4g}{}'.format(
-                    opt['validation_metric'],
-                    new_valid,
-                    ' (previous best was {:.4g})'.format(self.best_valid)
-                    if self.best_valid is not None
-                    else '',
-                )
-            )
-            self.best_valid = new_valid
-            self.impatience = 0
-            if opt.get('model_file'):
-                logging.info(f"saving best valid model: {opt['model_file']}")
-                self.save_model()
-                self.saved = True
+        if new_valid:
+            # check if this is the best validation so far
+            if isinstance(new_valid, Metric):
+                new_valid = new_valid.value()
             if (
-                opt['validation_metric_mode'] == 'max'
-                and self.best_valid >= opt['validation_cutoff']
-            ) or (
-                opt['validation_metric_mode'] == 'min'
-                and self.best_valid <= opt['validation_cutoff']
+                self.best_valid is None
+                or self.valid_optim * new_valid > self.valid_optim * self.best_valid
             ):
-                logging.info('task solved! stopping.')
-                return True
-        else:
-            self.impatience += 1
-            logging.report(
-                'did not beat best {}: {} impatience: {}'.format(
-                    opt['validation_metric'], round(self.best_valid, 4), self.impatience
+                logging.success(
+                    'new best {}: {:.4g}{}'.format(
+                        opt['validation_metric'],
+                        new_valid,
+                        ' (previous best was {:.4g})'.format(self.best_valid)
+                        if self.best_valid is not None
+                        else '',
+                    )
                 )
-            )
+                self.best_valid = new_valid
+                self.impatience = 0
+                if opt.get('model_file'):
+                    logging.info(f"saving best valid model: {opt['model_file']}")
+                    self.save_model()
+                    self.saved = True
+                if (
+                    opt['validation_metric_mode'] == 'max'
+                    and self.best_valid >= opt['validation_cutoff']
+                ) or (
+                    opt['validation_metric_mode'] == 'min'
+                    and self.best_valid <= opt['validation_cutoff']
+                ):
+                    logging.info('task solved! stopping.')
+                    return True
+            else:
+                self.impatience += 1
+                logging.report(
+                    'did not beat best {}: {} impatience: {}'.format(
+                        opt['validation_metric'],
+                        round(self.best_valid, 4),
+                        self.impatience,
+                    )
+                )
         self.validate_time.reset()
 
         # saving
