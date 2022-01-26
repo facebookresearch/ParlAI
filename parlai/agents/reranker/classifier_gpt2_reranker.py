@@ -4,9 +4,9 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Classifier Re-Ranker Object.
+Classifier Gpt2 Re-Ranker Object.
 
-Provided with a classifier model file, the re-ranker provides an API for re-ranking
+Provided with a classifier model file, the gpt2 re-ranker provides an API for re-ranking
 candidate outputs based on maximizing the probability of a given provided class.
 """
 from typing import Optional, List
@@ -25,7 +25,7 @@ class ClassifierGpt2Reranker(ClassifierReranker):
 
 class ClassifierGpt2RerankerAgent(AbstractGpt2RerankAgent):
     """
-    Generative Re-rank agent for adding a ClassifierReranker.
+    Generative GPT2 Re-rank agent for adding a ClassifierReranker.
     """
 
     @classmethod
