@@ -211,9 +211,7 @@ class TestTrainModel(unittest.TestCase):
             tl = get_tl(tmpdir)
             valid, _ = tl.train()
 
-        self.assertEqual(
-            tl.valid_reports[-1]['total_train_updates'], num_train_steps - 1
-        )
+        self.assertEqual(tl.valid_reports[-1]['total_train_updates'], num_train_steps)
         self.assertEqual(len(tl.valid_reports), num_validations)
         self.assertEqual(len(tl.train_reports), num_logs)  # log every valid as well
 
