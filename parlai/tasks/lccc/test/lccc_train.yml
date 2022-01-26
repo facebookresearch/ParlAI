@@ -1,0 +1,28 @@
+acts:
+- - episode_done: true
+    id: lccc
+    labels:
+    - 道歉！！再有时间找你去
+    text: 你去那儿竟然不喊我生气了，快点给我道歉
+- - episode_done: true
+    id: lccc
+    labels:
+    - SEED早上刚被禁用还有一个月的VIP路线呢禁了之后才买的另一个买了一年结果用了一下午就挂了现在用了个极速网速差的很
+    text: 我用SEED.24小时签到一次可以用4小时，对于我这种每天晚上逛一下的感觉不错
+- - episode_done: true
+    id: lccc
+    labels:
+    - 干完这一票我的会员等级就要升了！
+    text: 咬咬牙这回要全入了！
+- - episode_done: true
+    id: lccc
+    labels:
+    - 代表了哪里的普通人？
+    text: 记得还…我们普通人要搬三天砖才赚来的20元
+- - episode_done: true
+    id: lccc
+    labels:
+    - 好得差不多啦
+    text: 早点好起来啊。生日快乐
+num_episodes: 6820506
+num_examples: 8869637
