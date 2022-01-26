@@ -35,7 +35,7 @@ class TestIrBaseline(unittest.TestCase):
             }
         )
         assert valid['f1'] >= 0.41
-        assert test['f1'] >= 0.437
+        assert test['f1'] >= 0.434
 
     def test_fixed_label(self):
         with testing_utils.tempdir() as tmpdir:
