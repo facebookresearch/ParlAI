@@ -23,13 +23,9 @@ mephisto:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 3600  # Set to an hour because models are sometimes slow and Turkers get distracted
     max_num_concurrent_units: 10  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
-    maximum_units_per_worker: 1  # To match the equivalent setting in Fast ACUTEs
-    task_description: dummy_text  # TODO: this shouldn't have to be specified, since this text will be never shown. We're specifying the task description in the task_config/ folder instead. This needs to be fixed by eliminating the use of this variable in model_chat, I think
+    maximum_units_per_worker: 1 # TODO: Set the maximum number of tasks per worker
+    task_description: dummy_text  # TODO: this shouldn't have to be specified, since this text will be never shown. We're specifying the task description in the task_config/ folder instead.
     task_name: per_turn_eval__blender_90m_vs_3b__engaging__run02
     task_reward: 3
     task_tags: "chat,conversation,dialog,partner"
     task_title: "Chat with a fellow conversationalist!"
-mturk:
-  worker_blocklist_paths: ${task_dir}/block_list_orig.txt,${task_dir}/block_list_new.txt
-  # block_list_orig.txt: copied from /ParlAI/parlai_internal/crowdsourcing/block_list.py
-  # block_list_new.txt: Turkers who did poorly on per-turn evals
