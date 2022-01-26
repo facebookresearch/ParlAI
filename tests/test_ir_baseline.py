@@ -34,7 +34,7 @@ class TestIrBaseline(unittest.TestCase):
                 'num_epochs': 1,
             }
         )
-        assert valid['f1'] == 0.41
+        assert valid['f1'] >= 0.41
         assert test['f1'] >= 0.437
 
     def test_fixed_label(self):
