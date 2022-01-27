@@ -1609,7 +1609,7 @@ class TorchAgent(ABC, Agent):
         return obs
 
     def _pad_tensor(
-        self, items: List[Union[List[int], torch.LongTensor]]
+        self, items: List[Union[List[int], torch.LongTensor]], is_label: bool = False
     ) -> Tuple[torch.LongTensor, List[int]]:
         """
         Create a right padded matrix from an uneven list of lists.
@@ -1618,6 +1618,7 @@ class TorchAgent(ABC, Agent):
         is a list containing the lengths of each row.
 
         :param list[iter[int]] items: List of items
+        :param bool is_label: True if items are labels, False if contexts.
         :returns: (padded, lengths) tuple
         :rtype: (Tensor[int64], list[int])
 
