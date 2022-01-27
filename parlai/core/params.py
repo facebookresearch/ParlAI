@@ -1393,3 +1393,10 @@ class ParlaiParser(argparse.ArgumentParser):
         self.print_help()
         _sys.stderr.write('\nParse Error: %s\n' % message)
         _sys.exit(2)
+
+
+def default(val, default):
+    """
+    shorthand for explicit None check for optional arguments.
+    """
+    return val if val is not None else default
