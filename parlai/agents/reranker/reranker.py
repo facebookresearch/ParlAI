@@ -6,8 +6,8 @@
 """
 Re-Ranker Object.
 
-Provided with a predictor model file, the re-ranker provides
-an API for re-ranking candidate outputs.
+Provided with a predictor model file, the re-ranker provides an API for re-ranking
+candidate outputs.
 """
 import logging
 import torch
@@ -76,7 +76,7 @@ class AbstractReranker(ABC):
 
     def init_predictor(self, opt: Opt, shared=None):
         """
-        Initializes Predictor Module
+        Initializes Predictor Module.
         """
         if not shared:
             if not opt.get("predictor_model_file"):
@@ -409,7 +409,7 @@ class AbstractReranker(ABC):
     @abstractmethod
     def is_context(self, utt: str) -> bool:
         """
-        Determine if incoming utterance is part of the context
+        Determine if incoming utterance is part of the context.
 
         :param utt:
             an utterance

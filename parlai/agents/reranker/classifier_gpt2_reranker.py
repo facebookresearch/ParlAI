@@ -9,12 +9,6 @@ Classifier Gpt2 Re-Ranker Object.
 Provided with a classifier model file, the gpt2 re-ranker provides an API for re-ranking
 candidate outputs based on maximizing the probability of a given provided class.
 """
-from typing import Optional, List
-from parlai.core.agents import create_agent_from_model_file
-from parlai.core.message import Message
-from parlai.core.opt import Opt
-from parlai.core.params import ParlaiParser
-
 from parlai.agents.reranker.reranker import AbstractGpt2RerankAgent
 from parlai.agents.reranker.classifier_reranker import ClassifierReranker
 
