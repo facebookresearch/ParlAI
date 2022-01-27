@@ -387,3 +387,21 @@ class TransformerEncoder(nn.Module):
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
         return tensor_out
+
+
+class PassThroughEncoder(torch.nn.Module):
+    """
+    No-op encoder. Useful for decoder-only transformers.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Dummy __init__ to avoid passing superfluous args to nn.Module
+        """
+        super().__init__()
+
+    def forward(self, xs):
+        """
+        Decoder expects ``(encoder_output, encoder_mask)``.
+        """
+        return xs, None

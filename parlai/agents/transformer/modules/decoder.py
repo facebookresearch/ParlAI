@@ -113,7 +113,7 @@ class BaseTransformerDecoder(nn.Module, ABC):
     def forward(
         self,
         input: torch.Tensor,
-        encoder_state: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]],
+        encoder_state: Tuple[torch.Tensor, torch.Tensor],
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
@@ -485,7 +485,7 @@ class TransformerDecoder(BaseTransformerDecoder):
     def forward(
         self,
         input: torch.Tensor,
-        encoder_state: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]],
+        encoder_state: Tuple[torch.Tensor, torch.Tensor],
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
@@ -500,11 +500,7 @@ class TransformerDecoder(BaseTransformerDecoder):
             The incremental state: a dictionary whose keys index the layers and whose
             values contain the incremental state for each layer.
         """
-        if isinstance(encoder_state, tuple):
-            encoder_output, encoder_mask = encoder_state
-        else:
-            encoder_output = encoder_state
-            encoder_mask = None
+        encoder_output, encoder_mask = encoder_state
 
         seq_len = input.size(1)
         positions = torch.arange(
@@ -646,7 +642,7 @@ class TransformerDecoderOnly(BaseTransformerDecoder):
     def forward(
         self,
         input: torch.Tensor,
-        encoder_state: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]],
+        encoder_state: Tuple[torch.Tensor, ...],
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
@@ -661,10 +657,7 @@ class TransformerDecoderOnly(BaseTransformerDecoder):
             The incremental state: a dictionary whose keys index the layers and whose
             values contain the incremental state for each layer.
         """
-        if isinstance(encoder_state, tuple):
-            context, _ = encoder_state
-        else:
-            context = encoder_state
+        context, *_ = encoder_state
 
         is_incr_decoding = incr_state is not None
 

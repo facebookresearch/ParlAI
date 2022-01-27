@@ -5,9 +5,13 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
-from parlai.utils.torch import IdentityLayer, padded_tensor
+from parlai.utils.torch import padded_tensor
 
-from .modules import TransformerDecoderOnly, TransformerGeneratorModel
+from .modules import (
+    PassThroughEncoder,
+    TransformerDecoderOnly,
+    TransformerGeneratorModel,
+)
 
 
 class DecoderOnlyAgent(TorchGeneratorAgent):
@@ -19,7 +23,7 @@ class DecoderOnlyAgent(TorchGeneratorAgent):
             self.opt['n_encoder_layers'] == -1
         ), "Decoder-only model cannot have encoder layers."
         wrapped_class = TransformerGeneratorModel.with_components(
-            encoder=IdentityLayer, decoder=TransformerDecoderOnly
+            encoder=PassThroughEncoder, decoder=TransformerDecoderOnly
         )
         return wrapped_class(self.opt, self.dict)
 

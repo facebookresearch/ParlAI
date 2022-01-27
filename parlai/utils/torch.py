@@ -265,12 +265,6 @@ class IdentityLayer(torch.nn.Module):
     Useful for decoder-only Torch Generator agents.
     """
 
-    def __init__(self, *args, **kwargs):
-        """
-        Dummy __init__ to avoid passing superfluous args to nn.Module
-        """
-        super().__init__()
-
     def forward(self, xs):
         """
         Identity.

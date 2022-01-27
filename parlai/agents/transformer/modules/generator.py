@@ -102,19 +102,13 @@ class TransformerGeneratorModel(TorchGeneratorModel):
 
         See ``TorchGeneratorModel.reorder_encoder_states`` for a description.
         """
-        if isinstance(encoder_states, tuple):
-            enc, mask = encoder_states
-        else:
-            enc = encoder_states
-            mask = None
-
+        enc, mask = encoder_states
         if not torch.is_tensor(indices):
             indices = torch.LongTensor(indices).to(enc.device)
         enc = torch.index_select(enc, 0, indices)
-        if mask:
+        if mask is not None:
             mask = torch.index_select(mask, 0, indices)
-            return enc, mask
-        return enc
+        return enc, mask
 
     def reorder_decoder_incremental_state(
         self, incremental_state: Dict[int, dict], inds: torch.Tensor
