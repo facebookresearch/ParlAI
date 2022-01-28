@@ -1,10 +1,10 @@
 # Crowdsourcing task for single-model per-turn and per-dialogue evaluations
 
-Code to run the human crowdworker evaluations on a single model at a time from [Smith, et al. "Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents" (2022)](https://arxiv.org/abs/2201.04723). This crowdsourcing task will collect both per-turn evaluations (SM-Turn in the paper) and a final evaluation at the end of the conversation (SM-Dialog in the paper).
+Code to run the human crowdworker evaluations on a single model at a time from [Smith, et al. "Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents" (2022)](https://arxiv.org/abs/2201.04723). This crowdsourcing task will collect both evaluations of engagingness, humanness, and interestingness after every model response (SM-Turn in the paper) and a final evaluation of 1-to-5 Likert scores of those same metrics at the end of the conversation (SM-Dialog in the paper).
 
 ## Collecting evaluations
 
-To launch HITs, run `python run.py` in this folder. All Hydra flags are as in the human/model crowdsourcing task in `parlai/crowdsourcing/tasks/model_chat/`, which this crowdsourcing task is a custom version of.
+To launch HITs, run `python run.py` in this folder. All Hydra flags are as in the human/model crowdsourcing task in [`parlai/crowdsourcing/tasks/model_chat/`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/model_chat), which this crowdsourcing task is a custom version of.
 
 To specify the set of models that you want to evaluate, pass in a custom YAML file with the `mephisto.blueprint.model_opt_path` flag. The example `task_config/model_opts.yaml` file specifies the set of models evaluated in the paper:
 - `blender_3B`: (**BlenderBot3B** in the paper) The 2.7-billion parameter variant of the [BlenderBot 1.0 model](https://parl.ai/projects/recipes/)
@@ -22,6 +22,6 @@ Set `--filter-uniform-hits` to `True` to filter out any HITs in which the worker
 
 Features of this script include:
 - Filtering out HITs with acceptability violations, and saving a file of all Turkers violating acceptability checks
-- Saving rates of selecting various annotation buckets, as a function of conversation turn (SM-Turn scores) {TODO: right? Check that the output file has this}
-- Saving statistics about the distribution of Likert scores for each question asked at the end of each conversation (SM-Dialog scores)
-- {TODO: maybe look at a folder of the actual outputs of this script to see if you missed anything}
+- Saving a file of all per-turn ratings (SM-Turn scores) and per-dialogue ratings (SM-Dialog scores) across all conversations
+- Saving a file of the aggregate rates of selecting each annotation bucket
+- Saving statistics about the distribution of Likert scores for each question asked at the end of each conversation
