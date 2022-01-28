@@ -1,9 +1,9 @@
 # Per-turn Evaluation Crowdsourcing Task
-In this task, Turkers compare two models on every turn of a conversation by choosing the response based on a certain criteria. Each time the bot responds, it will give two possible responses instead of just one. The Turker will choose which of the two responses is better according to some metric (see here for a list), provide a justification of why the Turker chose that response, and then that choice will be accepted as the bot’s response and the conversation will continue. 
+In this task, Turkers compare two models on every turn of a conversation by choosing the response based on a certain criteria. Each time the Turker's partner responds, the Turker will see two possible responses, one from each of two models. The Turker will choose which of the two responses is better according to some metric, provide a justification of why the Turker chose that response, and then that choice will be accepted as the bot’s response and the conversation will continue. 
 
 ## Launching
 
-Call `run.py` to run this task with the default parameters, as set by `conf/example_model_comparison.yaml`. You can also manually adjust the parameters by setting that flag name as part of the run command. For example, `python run.py mephisto.blueprint.conversations_needed_string="blender_90M:blender_3B:10"` to compare the `blender_90M` model with the `blender_3B` model.
+Call `run.py` to run this task with the default parameters, as set by `hydra_configs/conf/example_model_comparison.yaml`. You can also manually adjust the parameters by setting that flag name as part of the run command. For example, `python run.py mephisto.blueprint.conversations_needed_string="blender_90M:blender_3B:10"` to compare the `blender_90M` model with the `blender_3B` model.
 
 Set `mephisto.blueprint.model_opt_path` to specify a path to a YAML file listing all models to be chatted with, as well as the ParlAI flags for running each one. See `task_config/model_opts.yaml` for an example.
 

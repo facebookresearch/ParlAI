@@ -12,7 +12,7 @@ from typing import Any, Dict
 
 import pandas as pd
 
-import parlai.utils.logging as logging  # TODO: check if this is how this import is usually done
+import parlai.utils.logging as logging
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
 from parlai.crowdsourcing.tasks.pairwise_per_turn_eval.per_turn_eval_blueprint import (

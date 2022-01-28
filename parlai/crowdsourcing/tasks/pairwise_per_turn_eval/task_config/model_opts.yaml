@@ -7,16 +7,6 @@ blender_90M: >
     --beam-size 10
     --inference beam
 
-blender_90M_beam_min_length_0: >
-    --model-file zoo:blender/blender_90M/model
-    --beam-block-full-context False
-    --beam-block-ngram 3
-    --beam-context-block-ngram 3
-    --beam-min-length 0
-    --beam-size 10
-    --inference beam
-# TODO: this is just for testing - remove this model opt entry before open-sourcing
-
 blender_3B: >
     --model-file zoo:blender/blender_3B/model
     --beam-block-full-context False
