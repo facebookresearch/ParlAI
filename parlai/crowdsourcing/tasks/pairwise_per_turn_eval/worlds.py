@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import random
-import sys
 import parlai.utils.logging as logging
 from typing import Any, Dict, Optional
 

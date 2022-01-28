@@ -148,8 +148,8 @@ class PerTurnEvalBlueprint(ModelChatBlueprint):
 
     def format_left_pane_text(self, args: "DictConfig"):
         """
-        Adds the user's intended persona into the left pane of the frontend
-        by modifying self.left_pane_text for code injection.
+        Adds the user's intended persona into the left pane of the frontend by modifying
+        self.left_pane_text for code injection.
         """
         self.left_pane_text = self.left_pane_text.format(
             task_question=args.blueprint.task_question
