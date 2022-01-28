@@ -15,9 +15,12 @@ from mephisto.data_model.worker import Worker
 import parlai.utils.logging as logging
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
     BLUEPRINT_TYPE,
-)  # noqa: F401  # For registering the blueprint
+)  # For registering the blueprint
 from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractResultsCompiler
+
+_ = BLUEPRINT_TYPE
+# NOTE: BLUEPRINT_TYPE needs to be imported here to register the blueprint
 
 
 class ModelChatResultsCompiler(AbstractResultsCompiler):
