@@ -313,12 +313,10 @@ class MemoryDecoder(BB2SubmoduleMixin):
         """
         assert self.agent_dict is not None
         memories = []
-        offset = 0
-        for idx, i in enumerate(input):
+        for idx, input_i in enumerate(input):
             if num_inputs[idx] == 0:
                 continue
-            context_lines_vec = i[offset : offset + num_inputs[idx]]
-            offset += num_inputs[idx]
+            context_lines_vec = input_i[: num_inputs[idx]]
             context_lines = [
                 self.agent_dict.vec2txt(self.clean_input(j)) for j in context_lines_vec
             ]

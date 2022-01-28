@@ -6,8 +6,8 @@
 """
 Re-Ranker Object.
 
-Provided with a predictor model file, the re-ranker provides
-an API for re-ranking candidate outputs.
+Provided with a predictor model file, the re-ranker provides an API for re-ranking
+candidate outputs.
 """
 import logging
 import torch
@@ -22,7 +22,7 @@ from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import TorchAgent
 from parlai.utils.strings import normalize_reply
 from parlai.utils.torch import argsort
-
+from parlai.agents.hugging_face.gpt2 import Gpt2Agent
 from projects.msc.agents.long_tga import TransformerVariantAgent
 
 RERANKER_STRATEGIES = ['sum_scores', 'hard_choice', 'reranker_score', 'none']
@@ -76,7 +76,7 @@ class AbstractReranker(ABC):
 
     def init_predictor(self, opt: Opt, shared=None):
         """
-        Initializes Predictor Module
+        Initializes Predictor Module.
         """
         if not shared:
             if not opt.get("predictor_model_file"):
@@ -409,7 +409,7 @@ class AbstractReranker(ABC):
     @abstractmethod
     def is_context(self, utt: str) -> bool:
         """
-        Determine if incoming utterance is part of the context
+        Determine if incoming utterance is part of the context.
 
         :param utt:
             an utterance
@@ -570,6 +570,21 @@ class LongAbstractGeneratorRerankAgent(
         Add command-line arguments specifically for this agent.
         """
         TransformerVariantAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        AbstractGeneratorRerankAgentMixin.add_cmdline_args(parser, partial_opt)
+        reranker_class = cls.get_reranker_class() or AbstractReranker
+        reranker_class.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
+
+
+class AbstractGpt2RerankAgent(AbstractGeneratorRerankAgentMixin, Gpt2Agent, ABC):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command-line arguments specifically for this agent.
+        """
+        Gpt2Agent.add_cmdline_args(parser, partial_opt=partial_opt)
         AbstractGeneratorRerankAgentMixin.add_cmdline_args(parser, partial_opt)
         reranker_class = cls.get_reranker_class() or AbstractReranker
         reranker_class.add_cmdline_args(parser, partial_opt=partial_opt)

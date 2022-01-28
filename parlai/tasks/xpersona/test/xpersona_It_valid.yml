@@ -1,0 +1,43 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Sto andando alla grande . mi sto solo rilassando con i miei due cani.
+    id: xpersona:It
+    reward: 0
+    text: 'your persona:ho due cani.
+
+      your persona:mi piace lavorare su auto d''epoca.
+
+      your persona:la mia musica preferita è il Country.
+
+      your persona:Possiedo due mustang vintage.
+
+      Ciao ! come stai sta sera ?'
+- - episode_done: false
+    eval_labels:
+    - Eccezionale. che tipo di volontariato fai?
+    id: xpersona:It
+    reward: 0
+    text: grande . nel mio tempo libero faccio volontariato.
+- - episode_done: false
+    eval_labels:
+    - buon per te . ti piacciono le auto d'epoca? ho due mustang d'epoca.
+    id: xpersona:It
+    reward: 0
+    text: lavoro in un rifugio per senzatetto nella mia cittá.
+- - episode_done: false
+    eval_labels:
+    - le macchine fanno per me, specialmente le auto d'epoca. mi piace lavorarci.
+      wrestling? ti piace ?
+    id: xpersona:It
+    reward: 0
+    text: pazzesco . le macchine non fanno per me. Faccio il wrestler.
+- - episode_done: false
+    eval_labels:
+    - non ho pensato ha quante persone ci sono in un' incontro di wrestling. non mi
+      piacciono le folle.
+    id: xpersona:It
+    reward: 0
+    text: si, amo la folla, conoscere gente.
+num_episodes: 140
+num_examples: 1080
