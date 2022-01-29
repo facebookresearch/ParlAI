@@ -1,4 +1,6 @@
 # Per-turn Evaluation Crowdsourcing Task
+Code to run human crowdworker evaluations on a pair of conversational models, one of the types of evaluation techniques explored in [Smith, et al. "Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents" (2022)](https://arxiv.org/abs/2201.04723).
+
 In this task, Turkers compare two models on every turn of a conversation by choosing the response based on a certain criteria. Each time the Turker's partner responds, the Turker will see two possible responses, one from each of two models. The Turker will choose which of the two responses is better according to some metric, provide a justification of why the Turker chose that response, and then that choice will be accepted as the bot’s response and the conversation will continue. 
 
 ## Launching
@@ -18,7 +20,7 @@ The following flags can be passed in to specify filepaths for overriding the tex
 
 ## Onboarding
 
-We provide a simple onboarding task (see `task_config/onboard_task_data.json`) to act as a "qualification" for first-time users. Users must select the correct response out of two given responses, in order to pass the onboarding and move onto the actual task. Multiple attempts are allowed, but if all of these attempts fails, they become blocked and can no longer do the task.
+We provide a simple onboarding task (see `task_config/onboard_task_data__engaging.json`) to act as a "qualification" for first-time users. Users must select the correct response out of two given responses, in order to pass the onboarding and move onto the actual task. Multiple attempts are allowed, but if all of these attempts fails, they become blocked and can no longer do the task.
 
 To change the worker selection criteria for onboarding, see `handleOnboardingSubmit` in `frontend/components/onboarding_components.jsx`.
 
