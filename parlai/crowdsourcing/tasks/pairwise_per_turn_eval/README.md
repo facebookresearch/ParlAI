@@ -26,6 +26,4 @@ To change the worker selection criteria for onboarding, see `handleOnboardingSub
 
 ## Analysis
 Run `analysis/compile_results.py` to compile and save statistics about collected human+model chats. Set `--results-folders` to the value of `mephisto.blueprint.chat_data_folder` used when running HITs. Specifically, the analysis file:
-- Has most of the features from `model_chat`'s analysis file (doesn't include analysis of annotation buckets, since it isn't used here) 
-- Based on the collected data, produces a `scipy.stats.binom_test` in order to test the statistical significance of the disparity in how often the user selects one model vs. the other
-- Produces a Labor vs Proportion of Significant Results graph, similar to that of Figure 5 of the ACUTE-EVAL paper.
+- Has most of the features from `parlai/crowdsourcing/tasks/model_chat`'s analysis script (doesn't include analysis of annotation buckets, since it isn't used here)
