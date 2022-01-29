@@ -16,7 +16,6 @@ from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
     SharedModelChatTaskState,
 )
 
-# import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 import parlai.crowdsourcing.tasks.pairwise_per_turn_eval.worlds as world_module
 
 

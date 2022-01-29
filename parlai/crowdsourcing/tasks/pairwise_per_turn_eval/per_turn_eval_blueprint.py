@@ -80,7 +80,6 @@ class PerTurnEvalBlueprint(ModelChatBlueprint):
     """
 
     ArgsClass = PerTurnEvalBlueprintArgs
-    # SharedStateClass = SharedModelChatTaskState
     BLUEPRINT_TYPE = BLUEPRINT_TYPE
 
     @classmethod
