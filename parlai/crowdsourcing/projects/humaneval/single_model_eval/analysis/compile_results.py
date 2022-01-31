@@ -269,7 +269,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         logging.info(f'\t{len(unacceptable_task_units):d} unacceptable conversations.')
         logging.info(f'\t{len(conversation_dfs):d} acceptable conversations.')
 
-        # # Compile full results
+        # # Compile results across all conversations
 
         if len(conversation_dfs) == 0:
             raise ValueError('No acceptable conversations found!')
@@ -289,7 +289,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
         # TODO: is there a less hacky way than this, which relies on the most recent
         #  value of `info_dict`, to put the columns back into the right order?
 
-        # # Calculate stats
+        # # Calculate and save auxiliary stats
 
         logging.info(
             f'Saving MTurk IDs of workers with unacceptable conversations to '
