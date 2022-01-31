@@ -17,7 +17,11 @@ mephisto:
     conversation_start_mode: 'hi'
     annotation_question: "Please answer the following:"
     conversations_needed_string: "blender_90M:10"
-    final_rating_question: "Please rate how much you'd prefer to talk to your partner for a long conversation. (1: Would not at all prefer, 5: Would very much prefer)|Please rate how human your partner sounds. (1: Very inhuman, 5: Very human)|Please rate how interesting your partner is. (1: Very boring, 5: Very interesting)"
+    final_rating_question: >-
+      Please rate how much you'd prefer to talk to your partner for a long conversation.
+      (1: Would not at all prefer, 5: Would very much prefer)|Please rate how human your
+      partner sounds. (1: Very inhuman, 5: Very human)|Please rate how interesting your
+      partner is. (1: Very boring, 5: Very interesting)
     left_pane_text_path: ${task_dir}/task_config/left_pane_text.html
     max_onboard_time: 300
     max_resp_time: 300
