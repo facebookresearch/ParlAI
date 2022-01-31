@@ -88,7 +88,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
             worker_id = task_unit['worker_id']
             assignment_id = task_unit['assignment_id']
 
-            # # Determining whether the task unit should be skipped
+            # # Extracting out useful data and skipping the task unit if needed
 
             # Extract out custom data
             if task_unit['data']['save_data'] is None:
@@ -191,6 +191,8 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     continue
 
             single_turn_dicts = []
+
+            # # Extracting out useful information for this conversation
 
             # Compile personas and previous utterances
             text_parts = []
