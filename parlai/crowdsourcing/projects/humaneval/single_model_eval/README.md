@@ -1,6 +1,18 @@
 # Crowdsourcing task for single-model per-turn and per-dialogue evaluations
 
-Code to run human crowdworker evaluations on a single model, one of the types of evaluation techniques explored in [Smith, et al. "Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents" (2022)](https://arxiv.org/abs/2201.04723). This crowdsourcing task consists of a conversation between a Turker and a model. The task will collect evaluations of engagingness, humanness, and interestingness after every model response (SM-Turn in the paper), as well as final ratings of 1-to-5 Likert scores of those same metrics at the end of the conversation (SM-Dialog in the paper).
+Code to run human crowdworker evaluations on a single model, one of the types of evaluation techniques explored in [Smith, et al. "Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents" (2022)](https://arxiv.org/abs/2201.04723). To cite:
+```
+@misc{smith2022human,
+      title={Human Evaluation of Conversations is an Open Problem: comparing the sensitivity of various methods for evaluating dialogue agents}, 
+      author={Eric Michael Smith and Orion Hsu and Rebecca Qian and Stephen Roller and Y-Lan Boureau and Jason Weston},
+      year={2022},
+      eprint={2201.04723},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
+
+This crowdsourcing task consists of a conversation between a Turker and a model. The task will collect evaluations of engagingness, humanness, and interestingness after every model response (SM-Turn in the paper), as well as final ratings of 1-to-5 Likert scores of those same metrics at the end of the conversation (SM-Dialog in the paper).
 
 ## Collecting evaluations
 
