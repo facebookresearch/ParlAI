@@ -88,9 +88,8 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
             worker_id = task_unit['worker_id']
             assignment_id = task_unit['assignment_id']
 
-            # # Extracting out useful data and skipping the task unit if needed
-
-            # Extract out custom data
+            # Skipping this conversation if save data is not found or the status is
+            # invalid
             if task_unit['data']['save_data'] is None:
                 logging.info('Found a task unit with no save data! Skipping.')
                 num_convos_with_no_save_data += 1
@@ -105,7 +104,7 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
             else:
                 num_complete_convos += 1
 
-            # Extract out useful data
+            # Extract out useful conversation-level data
             custom_data = task_unit['data']['save_data']['custom_data']
             mturk_worker_id = Worker.get(self.get_mephisto_db(), worker_id).worker_name
             task_start = datetime.utcfromtimestamp(task_unit['task_start'])
@@ -191,8 +190,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
                     continue
 
             single_turn_dicts = []
-
-            # # Extracting out useful information for this conversation
 
             # Compile personas and previous utterances
             text_parts = []
