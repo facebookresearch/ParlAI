@@ -358,10 +358,32 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
             **kwargs,
         )
 
-        self.encoder_attention = self.swappables.encoder_attention(
+        self.encoder_attention = self.swappables.encoder_attention(  # type: ignore
             opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
-        )  # type: ignore
+        )
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+
+    def build_self_attention(
+        self, n_heads: int = None, dim: int = None, dropout: float = 0
+    ) -> MultiHeadAttention:
+        return self.swappables.self_attention(  # type: ignore
+            opt=self.opt, n_heads=n_heads, dim=dim, dropout=dropout
+        )
+
+    def build_feedforward(
+        self,
+        dim: int = None,
+        dim_hidden: int = None,
+        relu_dropout: float = 0,
+        activation: str = 'relu',
+    ) -> TransformerFFN:
+        return self.swappables.feedforward(  # type: ignore
+            opt=self.opt,
+            dim=dim,
+            dim_hidden=dim_hidden,
+            relu_dropout=relu_dropout,
+            activation=activation,
+        )
 
     def forward(
         self,
@@ -548,9 +570,9 @@ class TransformerDecoderOnlyLayer(BaseTransformerDecoderLayer):
     def build_self_attention(
         self, n_heads: int = None, dim: int = None, dropout: float = 0
     ) -> MultiHeadAttention:
-        return self.swappables.self_attention(
+        return self.swappables.self_attention(  # type: ignore
             opt=self.opt, n_heads=n_heads, dim=dim, dropout=dropout
-        )  # type: ignore
+        )
 
     def build_feedforward(
         self,
@@ -559,13 +581,13 @@ class TransformerDecoderOnlyLayer(BaseTransformerDecoderLayer):
         relu_dropout: float = 0,
         activation: str = 'relu',
     ) -> TransformerFFN:
-        return self.swappables.feedforward(
+        return self.swappables.feedforward(  # type: ignore
             opt=self.opt,
             dim=dim,
             dim_hidden=dim_hidden,
             relu_dropout=relu_dropout,
             activation=activation,
-        )  # type: ignore
+        )
 
     def forward(
         self,
