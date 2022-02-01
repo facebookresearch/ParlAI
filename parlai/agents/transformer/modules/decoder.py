@@ -358,6 +358,9 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
             **kwargs,
         )
 
+        n_heads = default(n_heads, opt['n_heads'])
+        embedding_size = default(embedding_size, opt['embedding_size'])
+
         self.encoder_attention = self.swappables.encoder_attention(  # type: ignore
             opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
         )
