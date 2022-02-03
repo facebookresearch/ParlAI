@@ -17,10 +17,10 @@ tutorial_fast
 tutorial_mutators
 tutorial_crowdsourcing
 tutorial_chat_service
-tutorial_flask
 tutorial_swap_components
 tutorial_tests
 tutorial_model_cards
+tutorial_flask
 ```
 
 ```{toctree}
