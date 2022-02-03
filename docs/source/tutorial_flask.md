@@ -23,7 +23,6 @@ def Model_init():
   blender_agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
   return blender_agent
 
-#blender_agent = index()
 @app.route("/response", methods=["GET","POST"])
 def chatbot_response():
     data = request.json
