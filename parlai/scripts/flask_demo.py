@@ -4,10 +4,12 @@ from parlai.core.agents import create_agent_from_model_file
 
 app = Flask(__name__)
 
-#import model from the model file can be pretrained or fine tuned
-blender_agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
+def Model_init():
+  #import model from the model file can be pretrained or fine tuned
+  blender_agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
+  return blender_agent
 
-
+#blender_agent = index()
 @app.route("/response", methods=["GET","POST"])
 def chatbot_response():
     data = request.json
@@ -18,4 +20,5 @@ def chatbot_response():
 
 # main driver function
 if __name__ == "__main__":
-    app.run()
+  blender_agent = Model_init()
+  app.run()
