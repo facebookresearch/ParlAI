@@ -65,8 +65,6 @@ class PerTurnEvalResultsCompiler(AbstractResultsCompiler):
         self.stat_mean_length_by_date_path = os.path.join(
             self.output_folder, 'stat_mean_length_by_date.csv'
         )
-        # TODO: do we really need to keep saving the mean length of these stats by date?
-        #  Remove if not useful
         self.completion_time_by_model_pair_path = os.path.join(
             self.output_folder, 'mean_completion_times.csv'
         )
