@@ -34,7 +34,7 @@ executors:
       PYTHONUNBUFFERED: 1
     machine:
       image: ubuntu-1604:201903-01
-    resource_class: gpu.medium # tesla m60
+    resource_class: gpu.nvidia.medium.multi
 
 # -------------------------------------------------------------------------------------
 # reusable commands
@@ -421,9 +421,10 @@ workflows:
   commit:
     jobs:
       - cleaninstall_38
-      - unittests_gpu18:
-          requires:
-            - unittests_38
+      - unittests_gpu18
+#     - unittests_gpu18:
+#         requires:
+#           - unittests_38
 #     - unittests_osx:
 #         requires:
 #           - unittests_38
