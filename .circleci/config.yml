@@ -196,7 +196,7 @@ commands:
           name: Find tests to run
           command: |
             mkdir -p ~/ParlAI/data/models
-            python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" > teststorun.txt
+            python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" | grep -v ':'> teststorun.txt
             cat teststorun.txt
 
   runtests:
