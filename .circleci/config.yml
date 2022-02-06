@@ -91,8 +91,8 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'torch==1.8.1' 'torchvision~=0.9.0' 'torchtext~=0.9.0'
-            python -m pip install --progress-bar off 'fairscale~=0.3.0'
+            python -m pip install --progress-bar off 'torch!=1.10.1' 'torchvision~=0.11.0' 'torchtext~=0.11.0'
+            python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
@@ -110,6 +110,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
+            python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'torch~=1.10.1'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -211,26 +212,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-2021222-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220206-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-2021222-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220206-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-2021222-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220206-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-2021222-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220206-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -247,12 +248,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-2021222-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220206-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-2021222-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220206-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
