@@ -16,7 +16,7 @@ def chatbot_response():
     data = request.json
     blender_agent.observe({'text': data["UserText"], 'episode_done': False})
     response = blender_agent.act()
-    return {"response" : response['text']}
+    return {'response': response['text']}
 
 
 # main driver function
