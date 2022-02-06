@@ -1,11 +1,18 @@
-from flask import Flask, render_template, request
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
+from flask import Flask, request
 from parlai.core.agents import create_agent_from_model_file
 
 
 app = Flask(__name__)
 
 
-@app.route("/response", methods=["GET","POST"])
+@app.route("/response", methods=("GET", "POST"))
+
 def chatbot_response():
     data = request.json
     blender_agent.observe({'text': data["UserText"], 'episode_done': False})
