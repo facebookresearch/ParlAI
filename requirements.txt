@@ -18,7 +18,7 @@ torch>=1.4.0
 joblib==0.14.1
 nltk==3.6.6
 omegaconf~=2.1.1
-pandas==1.1.1
+pandas==1.4.0
 pytest_regressions==2.1.1
 pytest==5.3.2
 pexpect==4.7.0
