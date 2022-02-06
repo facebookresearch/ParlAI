@@ -17,7 +17,6 @@ from parlai.core.params import ParlaiParser, Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 import parlai.utils.testing as testing_utils
 
-from projects.light_whoami.agents.rpa_rerank import RPAReranker
 from projects.light_whoami.agents import (
     RPA_RERANKER,
     RPA_RERANKER_AUTO_EXPANDED,
@@ -95,6 +94,8 @@ class TestReranker(unittest.TestCase):
     """
 
     def _setup_parser(self) -> Opt:
+        from projects.light_whoami.agents.rpa_rerank import RPAReranker
+
         parser = ParlaiParser(True, True)
         parser = RPAReranker.add_cmdline_args(parser, {})
         parser = TorchRankerAgent.add_cmdline_args(parser, {})
