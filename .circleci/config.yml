@@ -122,6 +122,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off 'torch==1.10.2+cpu' 'torchvision==0.11.3+cpu' 'torchaudio==0.10.2+cpu' -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'transformers==4.3.3'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -212,26 +213,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220206-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220206a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220206-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220206a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220206-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220206a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220206-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220206a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -248,12 +249,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220206-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220206a-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220206-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220206a-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
