@@ -1,9 +1,9 @@
-## Flask API demo
+# Flask API demo
 
 __Authors__: Khushal Jethava
 
 
-### Parl.ai model implement on flask framework
+## Parl.ai model implement on flask framework
 
 With this script, you can implement your fine-tune or pretrained parlai model very easily.
 
