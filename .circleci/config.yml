@@ -168,7 +168,7 @@ commands:
             # echo "Done installing NVIDIA drivers."
             pyenv versions
             nvidia-smi
-            pyenv global 3.8.0
+            pyenv global 3.9.2
 
   findtests:
     description: Find tests to run
