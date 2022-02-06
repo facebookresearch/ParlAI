@@ -21,11 +21,12 @@ executors:
   osx_cpu38:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
-      xcode: "13.2.1"
+      xcode: "12.5.1"
     environment:
       PYTHON: 3.8.0
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
+    resource_class: macos.x86.medium.gen2
 
   gpu:
     environment:
