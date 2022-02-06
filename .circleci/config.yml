@@ -121,7 +121,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'torch==1.10.2+cpu' 'torchvision==0.11.2+cpu' 'torchaudio==0.11.2' -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'torch==1.10.2+cpu' 'torchvision==0.10.2+cpu' 'torchaudio==0.10.2+cpu' -f https://download.pytorch.org/whl/torch_stable.html
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
