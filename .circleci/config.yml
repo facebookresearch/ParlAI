@@ -21,11 +21,12 @@ executors:
   osx_cpu38:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
-      xcode: "11.3.1"
+      xcode: "12.5.1"
     environment:
       PYTHON: 3.8.0
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
+    resource_class: macos.x86.medium.gen2
 
   gpu:
     environment:
@@ -375,6 +376,8 @@ jobs:
     parallelism: 16
     steps:
       - runtests:
+          more_installs:
+            - installtorchcpu
           cachename: teacher
           marker: teacher
           pytest_flags: -v -s
@@ -422,9 +425,10 @@ workflows:
       - unittests_gpu18:
           requires:
             - unittests_38
-      - unittests_osx:
-          requires:
-            - unittests_38
+#     - unittests_osx:
+#         requires:
+#           - unittests_38
+      - unittests_osx
       - unittests_38
       - long_gpu_tests:
           requires:
@@ -432,9 +436,10 @@ workflows:
       - crowdsourcing_tests:
           requires:
             - unittests_38
-      - teacher_tests:
-          requires:
-            - unittests_38
+#     - teacher_tests:
+#         requires:
+#           - unittests_38
+      - teacher_tests
       - build_website:
           filters:
             branches:
