@@ -12,7 +12,6 @@ app = Flask(__name__)
 
 
 @app.route("/response", methods=("GET", "POST"))
-
 def chatbot_response():
     data = request.json
     blender_agent.observe({'text': data["UserText"], 'episode_done': False})
