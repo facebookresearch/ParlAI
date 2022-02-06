@@ -195,6 +195,7 @@ commands:
           working_directory: ~/ParlAI
           name: Find tests to run
           command: |
+            set +o pipefail
             mkdir -p ~/ParlAI/data/models
             python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" | grep -v ':'> teststorun.txt
             cat teststorun.txt
