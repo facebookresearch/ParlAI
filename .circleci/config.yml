@@ -454,9 +454,10 @@ workflows:
           requires:
             - unittests_38
       - unittests_38
-      - unittests_osx:
-          requires:
-            - unittests_38
+      - unittests_osx
+    # - unittests_osx:
+    #     requires:
+    #       - unittests_38
       - long_gpu_tests:
           requires:
             - unittests_38
