@@ -36,8 +36,16 @@ from parlai.nn.checkpoint import checkpoint_wrapper
 # BASE CLASSES #
 ################
 
+DecoderIncrState = Dict[int, Dict[str, Dict[str, torch.Tensor]]]
+
 
 class BaseTransformerDecoder(nn.Module, ABC):
+    """
+    Subclasses are require to implement ``forward``.
+
+    Subclasses can optionally override ``__init__``, ``build_layer``, and ``build_layers`` to customize subcomponents.
+    """
+
     def __init__(
         self,
         opt: Opt,
@@ -108,15 +116,42 @@ class BaseTransformerDecoder(nn.Module, ABC):
         self.layers = self.build_layers()
 
     def build_layers(self) -> nn.ModuleList:
-        raise NotImplementedError
+        """
+        Instantiates all layers. Called only once during __init__.
+
+        Additional setup common to all layers, such as checkpoint wrapping, can be done here.
+        """
+        layers = nn.ModuleList()
+        for i in range(self.n_layers):
+            layer = self.build_layer(index=i)
+            if self.opt.get('checkpoint_activations'):
+                layer = checkpoint_wrapper(layer)
+            layers.append(fsdp_wrap(layer))  # type: ignore
+        return layers
+
+    def build_layer(self, index: int) -> BaseTransformerDecoderLayer:
+        """
+        Instantiate a single layer. Called n_layers times during __init__.
+
+        :param int index:
+            Index of current layer.
+        """
+        return BaseTransformerDecoderLayer(  # type: ignore
+            self.opt,
+            attention_dropout=self.opt.get('attention_dropout', 0.0),
+            relu_dropout=self.opt.get('relu_dropout', 0.0),
+            dropout=self.opt.get('dropout', 0.0),
+            activation=self.activation,
+            variant=self.variant,
+        )
 
     def forward(
         self,
         input: torch.Tensor,
         encoder_state: Tuple[torch.Tensor, torch.Tensor],
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        incr_state: Optional[DecoderIncrState] = None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Forward pass.
 
@@ -169,20 +204,15 @@ class BaseTransformerDecoder(nn.Module, ABC):
         return tensor
 
     def forward_layers(
-        self,
-        layer_args: Tuple[torch.Tensor, ...],
-        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
-        **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+        self, tensor: torch.Tensor, *extra_args, incr_state: DecoderIncrState, **kwargs
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Forward pass of decoder layers.
 
         :param tensor:
             embedded input tensor for the decoder
-        :param enc_out:
-            encoder outputs
-        :param enc_mask:
-            encoder output mask
+        :param extra_args:
+            arguments to be passed to each layer
         :param incr_state:
             Dict mapping layer_idx to incremental state
 
@@ -192,24 +222,24 @@ class BaseTransformerDecoder(nn.Module, ABC):
         """
         new_incr_state = {}
         if getattr(self.layers, 'is_model_parallel', False):
-            tensor, new_incr_state = self._apply_model_parallel(layer_args, incr_state)
+            tensor, new_incr_state = self._apply_model_parallel(
+                tensor, *extra_args, incr_state=incr_state
+            )
         else:
             for idx, layer in enumerate(self.layers):
                 tensor, new_incr_state[idx] = layer(
-                    *layer_args, incr_state=incr_state.get(idx), **kwargs
+                    tensor, *extra_args, incr_state=incr_state.get(idx), **kwargs
                 )
 
         return tensor, new_incr_state
 
     def _apply_model_parallel(
-        self,
-        layer_args: Tuple[torch.Tensor, ...],
-        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
-    ):
+        self, tensor: torch.Tensor, *extra_args, incr_state: DecoderIncrState
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Pipeline application of model parallelism.
         """
-        chunks = PipelineHelper.split((*layer_args, incr_state))
+        chunks = PipelineHelper.split((tensor, *extra_args, incr_state))
         work_items = PipelineHelper.schedule_work_items(self.layers, chunks)
 
         new_incr_state = {i: [] for i, _ in enumerate(self.layers)}
@@ -236,7 +266,15 @@ class BaseTransformerDecoder(nn.Module, ABC):
         return tensor_out, new_incr_state
 
 
+DecoderLayerIncrState = Dict[str, Dict[str, torch.Tensor]]
+
+
 class BaseTransformerDecoderLayer(nn.Module, ABC):
+    """
+    Not meant to be directly instantiated. If this functionality is desired as-is,
+    use TransformerDecoderOnlyLayer instead.
+    """
+
     def __init__(
         self,
         opt: Opt,
@@ -279,7 +317,9 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
     def build_self_attention(
         self, n_heads: int = None, dim: int = None, dropout: float = 0
     ) -> MultiHeadAttention:
-        raise NotImplementedError
+        return MultiHeadAttention(
+            opt=self.opt, n_heads=n_heads, dim=dim, dropout=dropout
+        )
 
     def build_feedforward(
         self,
@@ -288,10 +328,62 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
         relu_dropout: float = 0,
         activation: str = 'relu',
     ) -> TransformerFFN:
-        raise NotImplementedError
+        return TransformerFFN(
+            opt=self.opt,
+            dim=dim,
+            dim_hidden=dim_hidden,
+            relu_dropout=relu_dropout,
+            activation=activation,
+        )
+
+    def forward(
+        self,
+        x: torch.Tensor,
+        *extra_args,
+        incr_state: Optional[DecoderLayerIncrState] = None,
+        **kwargs,
+    ) -> Tuple[torch.Tensor, DecoderLayerIncrState]:
+        """
+        Forward pass.
+
+        The incremental state is a dict with values for self-attention states.
+        """
+        if incr_state is None:
+            incr_state = {}
+
+        decoder_mask = self._create_selfattn_mask(x)
+        # first self attn
+        residual = x
+        if self.variant == 'prelayernorm':
+            x = self.norm1(x)
+
+        # don't peak into the future!
+        x, final_self_attn_incr_state = self.self_attention(
+            query=x,
+            mask=decoder_mask,
+            incr_state=incr_state.get('self_attn'),
+            static_kv=False,
+            **kwargs,
+        )[:2]
+        x = self.dropout(x)  # --dropout
+        x = x + residual
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            x = self.norm1(x)
+
+        # finally the ffn
+        residual = x
+        if self.variant == 'prelayernorm':
+            x = self.norm3(x)
+        x = self.ffn(x, **kwargs)
+        x = self.dropout(x)  # --dropout
+        x = residual + x
+        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
+            x = self.norm3(x)
+
+        return x, {'self_attn': final_self_attn_incr_state}
 
     def reorder_incremental_state(
-        self, incremental_state: Dict[str, dict], inds: torch.Tensor
+        self, incremental_state: DecoderLayerIncrState, inds: torch.Tensor
     ) -> Dict[str, dict]:
         """
         Reorder all incremental-state tensors for this layer.
@@ -327,7 +419,8 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
 )
 class TransformerDecoderLayer(BaseTransformerDecoderLayer):
     """
-    Implements a single Transformer decoder layer.
+    Implements a single Transformer decoder layer with cross (encoder) attention
+    as in [Vaswani, 2017](https://arxiv.org/abs/1706.03762).
 
     Decoder layers are similar to encoder layers but:
 
@@ -350,6 +443,9 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
     ):
         super().__init__(
             opt=opt,
+            n_heads=n_heads,
+            embedding_size=embedding_size,
+            ffn_size=ffn_size,
             attention_dropout=attention_dropout,
             relu_dropout=relu_dropout,
             dropout=dropout,
@@ -369,6 +465,9 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
     def build_self_attention(
         self, n_heads: int = None, dim: int = None, dropout: float = 0
     ) -> MultiHeadAttention:
+        """
+        Overridden to allow swapping out of the attention class at instantiation.
+        """
         return self.swappables.self_attention(  # type: ignore
             opt=self.opt, n_heads=n_heads, dim=dim, dropout=dropout
         )
@@ -380,6 +479,9 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
         relu_dropout: float = 0,
         activation: str = 'relu',
     ) -> TransformerFFN:
+        """
+        Overridden to allow swapping out of the feedforward class at instantiation.
+        """
         return self.swappables.feedforward(  # type: ignore
             opt=self.opt,
             dim=dim,
@@ -393,9 +495,9 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
         x: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        incr_state: Optional[DecoderLayerIncrState] = None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderLayerIncrState]:
         """
         Forward pass.
 
@@ -460,8 +562,8 @@ class TransformerDecoderLayer(BaseTransformerDecoderLayer):
         return x, new_incr_state
 
     def reorder_incremental_state(
-        self, incremental_state: Dict[str, dict], inds: torch.Tensor
-    ) -> Dict[str, dict]:
+        self, incremental_state: DecoderLayerIncrState, inds: torch.Tensor
+    ) -> DecoderLayerIncrState:
         """
         Reorder all incremental-state tensors for this layer.
         """
@@ -491,29 +593,31 @@ class TransformerDecoder(BaseTransformerDecoder):
     :param int n_positions: Size of the position embeddings matrix.
     """
 
-    def build_layers(self) -> nn.ModuleList:
-        layers = nn.ModuleList()
-        for _ in range(self.n_layers):
-            layer = self.swappables.layer(  # type: ignore
-                self.opt,
-                attention_dropout=self.opt.get('attention_dropout', 0.0),
-                relu_dropout=self.opt.get('relu_dropout', 0.0),
-                dropout=self.opt.get('dropout', 0.0),
-                activation=self.activation,
-                variant=self.variant,
-            )
-            if self.opt.get('checkpoint_activations'):
-                layer = checkpoint_wrapper(layer)
-            layers.append(fsdp_wrap(layer))  # type: ignore
-        return layers
+    def build_layer(self, index: int) -> BaseTransformerDecoderLayer:
+        """
+        Instantiate a single layer. Called n_layers times during __init__.
+
+        Overridden to allow swapping out of the layer class at instantiation.
+
+        :param int index:
+            Index of current layer.
+        """
+        return self.swappables.layer(  # type: ignore
+            self.opt,
+            attention_dropout=self.opt.get('attention_dropout', 0.0),
+            relu_dropout=self.opt.get('relu_dropout', 0.0),
+            dropout=self.opt.get('dropout', 0.0),
+            activation=self.activation,
+            variant=self.variant,
+        )
 
     def forward(
         self,
         input: torch.Tensor,
         encoder_state: Tuple[torch.Tensor, torch.Tensor],
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        incr_state: Optional[DecoderIncrState] = None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Forward pass.
 
@@ -545,7 +649,7 @@ class TransformerDecoder(BaseTransformerDecoder):
         tensor = self.dropout(tensor)  # --dropout
 
         tensor, new_incr_state = self.forward_layers(
-            (tensor, encoder_output, encoder_mask), incr_state, **kwargs
+            tensor, encoder_output, encoder_mask, incr_state=incr_state, **kwargs
         )
 
         if self.variant == 'prelayernorm':
@@ -562,17 +666,18 @@ class TransformerDecoder(BaseTransformerDecoder):
 @swappable(self_attention=MultiHeadAttention, feedforward=TransformerFFN)
 class TransformerDecoderOnlyLayer(BaseTransformerDecoderLayer):
     """
-    Implements a single Transformer decoder layer.
+    Implements a single Transformer decoder layer without attending to the encoder states.
 
-    Decoder layers are similar to encoder layers but:
-
-    1. Self-attention is limited in a causal (auto-regressive) manner.
-    2. Attend over all of the encoder states.
+    Decoder layers are similar to encoder layers but self-attention is limited in
+    a causal (auto-regressive) manner.
     """
 
     def build_self_attention(
         self, n_heads: int = None, dim: int = None, dropout: float = 0
     ) -> MultiHeadAttention:
+        """
+        Overridden to allow swapping out of the self attention class at instantiation.
+        """
         return self.swappables.self_attention(  # type: ignore
             opt=self.opt, n_heads=n_heads, dim=dim, dropout=dropout
         )
@@ -584,6 +689,9 @@ class TransformerDecoderOnlyLayer(BaseTransformerDecoderLayer):
         relu_dropout: float = 0,
         activation: str = 'relu',
     ) -> TransformerFFN:
+        """
+        Overridden to allow swapping out of the feedforward class at instantiation.
+        """
         return self.swappables.feedforward(  # type: ignore
             opt=self.opt,
             dim=dim,
@@ -592,85 +700,43 @@ class TransformerDecoderOnlyLayer(BaseTransformerDecoderLayer):
             activation=activation,
         )
 
-    def forward(
-        self,
-        x: torch.Tensor,
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
-        **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
-        """
-        Forward pass.
-
-        The incremental state is a dict with values for self- and encoder-attention
-        states.
-        """
-        if incr_state is None:
-            incr_state = {}
-
-        decoder_mask = self._create_selfattn_mask(x)
-        # first self attn
-        residual = x
-        if self.variant == 'prelayernorm':
-            x = self.norm1(x)
-
-        # don't peak into the future!
-        x, final_self_attn_incr_state = self.self_attention(
-            query=x,
-            mask=decoder_mask,
-            incr_state=incr_state.get('self_attn'),
-            static_kv=False,
-            **kwargs,
-        )[:2]
-        x = self.dropout(x)  # --dropout
-        x = x + residual
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = self.norm1(x)
-
-        # finally the ffn
-        residual = x
-        if self.variant == 'prelayernorm':
-            x = self.norm3(x)
-        x = self.ffn(x, **kwargs)
-        x = self.dropout(x)  # --dropout
-        x = residual + x
-        if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
-            x = self.norm3(x)
-
-        return x, {'self_attn': final_self_attn_incr_state}
-
 
 @swappable(layer=TransformerDecoderOnlyLayer)
 class TransformerDecoderOnly(BaseTransformerDecoder):
     """
     Transformer Decoder module for decoder-only architecture.
 
+    Intended to be used with a PassThroughEncoder, which will pass the context to this decoder unchanged.
+
     For documentation on parameters that are taken directly from opt,
     see parlai/agents/transformer/transformer.py
     """
 
-    def build_layers(self) -> nn.ModuleList:
-        layers = nn.ModuleList()
-        for _ in range(self.n_layers):
-            layer = self.swappables.layer(  # type: ignore
-                self.opt,
-                attention_dropout=self.opt.get('attention_dropout', 0.0),
-                relu_dropout=self.opt.get('relu_dropout', 0.0),
-                dropout=self.opt.get('dropout', 0.0),
-                activation=self.activation,
-                variant=self.variant,
-            )
-            if self.opt.get('checkpoint_activations'):
-                layer = checkpoint_wrapper(layer)
-            layers.append(fsdp_wrap(layer))  # type: ignore
-        return layers
+    def build_layer(self, index: int) -> BaseTransformerDecoderLayer:
+        """
+        Instantiate a single layer. Called n_layers times during __init__.
+
+        Overridden to allow swapping out of the layer class at instantiation.
+
+        :param int index:
+            Index of current layer.
+        """
+        return self.swappables.layer(  # type: ignore
+            self.opt,
+            attention_dropout=self.opt.get('attention_dropout', 0.0),
+            relu_dropout=self.opt.get('relu_dropout', 0.0),
+            dropout=self.opt.get('dropout', 0.0),
+            activation=self.activation,
+            variant=self.variant,
+        )
 
     def forward(
         self,
         input: torch.Tensor,
         encoder_state: Tuple[torch.Tensor, ...],
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        incr_state: Optional[DecoderIncrState] = None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Forward pass.
 
@@ -705,7 +771,9 @@ class TransformerDecoderOnly(BaseTransformerDecoder):
 
         if incr_state is None:
             incr_state = {}
-        tensor, new_incr_state = self.forward_layers((tensor,), incr_state, **kwargs)
+        tensor, new_incr_state = self.forward_layers(
+            tensor, incr_state=incr_state, **kwargs
+        )
 
         if self.variant == 'prelayernorm':
             tensor = self.norm_embeddings(tensor)

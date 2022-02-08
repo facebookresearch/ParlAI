@@ -402,6 +402,6 @@ class PassThroughEncoder(torch.nn.Module):
 
     def forward(self, xs):
         """
-        Decoder expects ``(encoder_output, encoder_mask)``.
+        TransformerGeneratorModel expects ``(encoder_output, encoder_mask)``.
         """
         return xs, None

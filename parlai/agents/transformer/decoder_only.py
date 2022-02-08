@@ -4,6 +4,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+
+from parlai.agents.transformer.transformer import add_common_cmdline_args
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.utils.torch import padded_tensor
 
@@ -15,6 +20,26 @@ from .modules import (
 
 
 class DecoderOnlyAgent(TorchGeneratorAgent):
+    """
+    DecoderOnlyAgent.
+
+    Implementation of TorchGeneratorAgent, where the model is a Decoder-Only Transformer.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command-line arguments specifically for this agent.
+        """
+        agent = parser.add_argument_group('Decoder-Only Transformer Arguments')
+        add_common_cmdline_args(agent)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return agent
+
     def build_model(self, states=None):
         """
         Override of ``TorchAgent.build_model``.
