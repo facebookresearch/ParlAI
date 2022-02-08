@@ -135,7 +135,7 @@ commands:
           command: |
             if (! python -c 'import maskrcnn_benchmark')
             then
-                python -m pip install opencv-python==4.2.0.34
+                python -m pip install 'opencv-python~=4.2.0.34'
                 git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
                 cd maskbench; git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable
                 python setup.py develop; cd -
