@@ -24,10 +24,10 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.2",
-    "css-loader": "^1.0.0",
+    "css-loader": "^3.5.1",
     "style-loader": "^0.23.0",
     "url-loader": "^2.0.1",
-    "webpack": "^4.19.1",
+    "webpack": "^5.0.0-rc.6",
     "webpack-cli": "^3.1.1"
   }
 }
