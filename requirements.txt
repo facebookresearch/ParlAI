@@ -13,7 +13,7 @@ iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
 hydra-core~=1.1.0
-ipython==7.19.0
+ipython==7.31.1
 torch>=1.4.0
 joblib==0.14.1
 nltk==3.6.6

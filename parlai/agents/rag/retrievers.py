@@ -1397,11 +1397,15 @@ class RetrievedChunkRanker(DocumentChunkRanker):
         """
         Return chunks according to the woi_chunk_retrieved_docs_mutator
         """
-        assert isinstance(doc_chunks, list)
+        if isinstance(doc_chunks, list):
+            docs = ''.join(doc_chunks)
+        else:
+            assert isinstance(doc_chunks, str)
+            docs = doc_chunks
         chunks = chunk_docs_in_message(
             Message(
                 {
-                    CONST.RETRIEVED_DOCS: [''.join(doc_chunks)],
+                    CONST.RETRIEVED_DOCS: [docs],
                     CONST.RETRIEVED_DOCS_TITLES: [doc_title],
                     CONST.RETRIEVED_DOCS_URLS: [doc_url],
                     CONST.SELECTED_SENTENCES: [CONST.NO_SELECTED_SENTENCES_TOKEN],
