@@ -93,7 +93,7 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'torch==1.10.2' 'torchvision~=0.11.2' 'torchtext~=0.11.2'
+            python -m pip install --progress-bar off torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.3.3'
@@ -214,26 +214,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220206a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220208a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220206a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220208a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220206a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220208a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220206a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220208a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -250,12 +250,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220206a-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220208a-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220206a-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220208a-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
