@@ -31,6 +31,9 @@ def _check_positional_embeddings(opt):
     Checks positional embedding compatibility with FSDP.
     """
     if not opt.get('learn_positional_embeddings') and should_use_fsdp(opt):
+        # note: we're doing on-the-fly setting here, abusing pass-by-reference
+        # this only works because we're calling this from build_model, which is
+        # only done in the original instantiation of an agent.
         opt['learn_positional_embeddings'] = True
         warn_once(
             "Using --ddp_backend zeroX requires --learn-positional-embeddings "
