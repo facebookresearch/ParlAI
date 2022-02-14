@@ -1,0 +1,39 @@
+{
+  "name": "mephisto-task-compiler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev": "webpack --mode development -q",
+    "dev:watch": "webpack --mode development -q --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "dependencies": {
+    "antd": "^4.16.13",
+    "@ant-design/icons": "^4.6.4",
+    "bootstrap": "^4.3.1",
+    "mephisto-task": "^1.0.3",
+    "react": "16.13.1",
+    "react-bootstrap": "^0.32.4",
+    "react-dom": "16.13.1",
+    "react-markdown": "^3.6.0",
+    "react-tracking": "^9.0.0",
+    "react-visibility-sensor": "^5.1.1",
+    "serialize-javascript": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.0",
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.2",
+    "css-loader": "^1.0.0",
+    "file-loader": "^6.0.0",
+    "style-loader": "^0.23.0",
+    "url-loader": "^2.0.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.1"
+  }
+}
