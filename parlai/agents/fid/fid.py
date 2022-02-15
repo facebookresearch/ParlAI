@@ -447,6 +447,7 @@ def concat_enc_outs(
     mask: torch.BoolTensor,
     embedding_size: int,
     padding_idx: int,
+    right_padded: bool = True,
 ) -> Tuple[torch.Tensor, torch.BoolTensor]:
     """
     Concatenate Encoder Outputs.
@@ -486,7 +487,11 @@ def concat_enc_outs(
     new_mask.fill_(False)
 
     for i, (out_i, length_i) in enumerate(zip(concat_outs, concat_lengths)):
-        new_out[i, :length_i] = out_i
-        new_mask[i, :length_i] = True
+        if right_padded:
+            new_out[i, :length_i] = out_i
+            new_mask[i, :length_i] = True
+        else:
+            new_out[i, new_out.size(1) - length_i :] = out_i
+            new_mask[i, new_out.size(1) - length_i :] = True
 
     return new_out, new_mask

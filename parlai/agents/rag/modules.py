@@ -329,6 +329,7 @@ class RagModel(TorchGeneratorModel):
         input_lengths: torch.LongTensor,
         top_docs: List[List[Document]],
         max_num_docs: int,
+        right_padded: bool = True,
     ) -> torch.LongTensor:
         """
         Add document tokens to input tokens.
@@ -368,7 +369,11 @@ class RagModel(TorchGeneratorModel):
                         self.expanded_input_truncate - self.min_doc_token_length,
                         input_i_len,
                     )
-                    input_i = input_i[input_i_len - new_input_length : input_i_len]
+                    if right_padded:
+                        input_i = input_i[input_i_len - new_input_length : input_i_len]
+                    else:
+                        input_i = input_i[input_i.size(0) - new_input_length :]
+
                     doc_max_len = max(max_len - len(input_i), 0)
                     sample_doc_tokens = sample_doc_tokens[:doc_max_len]
                     expanded_input.append(
@@ -380,7 +385,7 @@ class RagModel(TorchGeneratorModel):
                     input_i_new = input_i.new(
                         self.n_positions - self.n_extra_positions
                     ).fill_(self.pad_idx)
-                    input_i_new[: input_i.size(0)] = input_i
+                    input_i_new[input_i_new.size(0) - input_i.size(0) :] = input_i
                     expanded_input.append(torch.cat([input_i_new, sample_doc_tokens]))
             # append extra null inputs if there are diff # of docs per input
             expanded_input += [
@@ -388,9 +393,10 @@ class RagModel(TorchGeneratorModel):
             ] * (max_num_docs - len(docs))
         expanded_input, _ = padded_tensor(
             expanded_input,
-            fp16friendly=self.fp16,
+            fp16friendly=self.fp16 and right_padded,
             max_len=max_len if self.n_extra_positions <= 0 else None,
             pad_idx=self.pad_idx,
+            left_padded=not right_padded,
         )
         expanded_input = expanded_input.to(input.device)
         return expanded_input  # type: ignore
