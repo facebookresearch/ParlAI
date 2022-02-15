@@ -465,6 +465,8 @@ def concat_enc_outs(
         emb/hidden size of the enc representations
     :param padding_idx:
         pad token index; used for mask purposes.
+    :param right_padded:
+        whether the input is right padded
 
     :return (new_out, new_mask):
         return the encoder output and encoder mask, appropriately concatenated.

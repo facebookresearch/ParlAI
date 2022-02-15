@@ -342,6 +342,8 @@ class RagModel(TorchGeneratorModel):
             list of n_docs top documents for each input sequence
         :param max_num_docs:
             maximum number of docs out of all examples
+        :param right_padded:
+            whether the input is right padded.
 
         :return (tokens, lengths):
             return expanded token vectors & corresponding lengths

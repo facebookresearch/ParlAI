@@ -589,6 +589,10 @@ class TestLeftPadding(unittest.TestCase):
         _, new_mask = concat_enc_outs(
             enc_input, enc_output, mask, self.esz, self.pad_idx
         )
+        ########################################################################
+        # Assertion: new mask has `True` elements in first (n_docs * seqlen_i) #
+        # tokens in concatenated output                                        #
+        ########################################################################
         assert all(
             new_mask[i, : self.batch_lens[i] * self.n_docs].sum()
             == self.n_docs * self.batch_lens[i]
@@ -600,6 +604,10 @@ class TestLeftPadding(unittest.TestCase):
         _, new_mask = concat_enc_outs(
             enc_input, enc_output, mask, self.esz, self.pad_idx, right_padded=False
         )
+        #######################################################################
+        # Assertion: new mask has `True` elements in last (n_docs * seqlen_i) #
+        # tokens in concatenated output                                       #
+        #######################################################################
         assert all(
             new_mask[i, -(self.batch_lens[i] * self.n_docs) :].sum()
             == self.n_docs * self.batch_lens[i]
@@ -618,6 +626,10 @@ class TestLeftPadding(unittest.TestCase):
         expanded_output = rag.model.concat_docs_and_input(
             enc_input, torch.LongTensor(self.batch_lens), docs, self.n_docs
         )
+        ############################################################
+        # Assertion: expanded output has non-pad elements in first #
+        # (doc_len + seq_len_i) tokens                             #
+        ############################################################
         assert all(
             expanded_output[i, : doc_len + self.batch_lens[i // self.n_docs]]
             .eq(0)
@@ -625,6 +637,10 @@ class TestLeftPadding(unittest.TestCase):
             == 0
             for i in range(self.n_docs * self.bsz)
         )
+        #######################################################
+        # Assertion: expanded output has pad elements in last #
+        # total_len - (doc_len + seq_len_i) tokens            #
+        #######################################################
         assert all(
             expanded_output[i, doc_len + self.batch_lens[i // self.n_docs] :]
             .eq(0)
@@ -642,6 +658,10 @@ class TestLeftPadding(unittest.TestCase):
             self.n_docs,
             right_padded=False,
         )
+        ###########################################################
+        # Assertion: expanded output has non-pad elements in last #
+        # (doc_len + seq_len_i) tokens                            #
+        ###########################################################
         assert all(
             expanded_output[i, -(doc_len + self.batch_lens[i // self.n_docs]) :]
             .eq(0)
@@ -649,6 +669,10 @@ class TestLeftPadding(unittest.TestCase):
             == 0
             for i in range(self.n_docs * self.bsz)
         )
+        ########################################################
+        # Assertion: expanded output has pad elements in first #
+        # total_len - (doc_len + seq_len_i) tokens             #
+        ########################################################
         assert all(
             expanded_output[i, : -(doc_len + self.batch_lens[i // self.n_docs])]
             .eq(0)
