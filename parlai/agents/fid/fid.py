@@ -466,7 +466,7 @@ def concat_enc_outs(
     :param padding_idx:
         pad token index; used for mask purposes.
     :param right_padded:
-        whether the input is right padded
+        whether the input is right padded (true) or left padded (false)
 
     :return (new_out, new_mask):
         return the encoder output and encoder mask, appropriately concatenated.
