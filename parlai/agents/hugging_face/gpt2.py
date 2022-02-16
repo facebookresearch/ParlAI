@@ -241,7 +241,7 @@ class Gpt2Agent(TorchGeneratorAgent):
     ) -> ParlaiParser:
         agent = parser.add_argument_group("Gpt2 Args")
         agent.add_argument(
-            "--model_name",
+            "--model-name",
             type=str,
             default=None,
             help="Any GPT-2 model names.",
