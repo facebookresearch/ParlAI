@@ -166,6 +166,15 @@ class QueryGenerator(BB2SubmoduleMixin):
             opt['knowledge_access_method']
         )
         model_file = modelzoo_path(opt['datapath'], opt['query_generator_model_file'])
+        if (
+            self.knowledge_access_method is KnowledgeAccessMethod.SEARCH_ONLY
+            and 'blenderbot2/query_generator/model' in model_file
+        ):
+            raise ValueError(
+                'You cannot use the blenderbot2 query generator with search_only. Please '
+                'consider setting --query-generator-model-file zoo:sea/bart_sq_gen/model '
+                'instead.'
+            )
         if model_file and os.path.exists(model_file):
             logging.info(f'Building Query Generator from file: {model_file}')
             logging.disable()
@@ -173,6 +182,7 @@ class QueryGenerator(BB2SubmoduleMixin):
             overrides['inference'] = opt['query_generator_inference']
             overrides['beam_size'] = opt.get('query_generator_beam_size', 3)
             overrides['beam_min_length'] = opt.get('query_generator_beam_min_length', 2)
+            overrides['model_parallel'] = opt['model_parallel']
             if self.opt['query_generator_truncate'] > 0:
                 overrides['text_truncate'] = self.opt['query_generator_truncate']
                 overrides['truncate'] = self.opt['query_generator_truncate']
