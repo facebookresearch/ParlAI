@@ -46,7 +46,7 @@ To run a pairwise model comparison annotation task, create a `.yaml` config usin
 
 Here are the model comparisons ran in the paper, and corresponding values for `conversations_needed_string`:
 - Size (BlenderBot3B vs. BlenderBot90M): `"blender_90M:blender_3B:60"`
-- Generation Length (BlenderBot3B vs. BlenderBot3B-0): `"blender_3B:blender_3B_beam_min_length_0:60"`
+- Generation Length (BlenderBot3B vs. BlenderBot3B-M0): `"blender_3B:blender_3B_beam_min_length_0:60"`
 - Fine-tuning (BlenderBot3B vs. Reddit3B): `"blender_3B:reddit_3B:60"`
 
 To run a crowdsourcing task, run the following with your modified parameters:
