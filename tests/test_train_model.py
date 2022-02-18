@@ -238,7 +238,7 @@ class TestTrainModel(unittest.TestCase):
                     'model': 'repeat_label',
                     'short_final_eval': True,
                     'num_epochs': 1.0,
-                    'world_logs': log_report
+                    'world_logs': log_report,
                 }
             )
             with PathManager.open(log_report) as f:
@@ -251,7 +251,7 @@ class TestTrainModel(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             log_report = os.path.join(tmpdir, 'world_logs.jsonl')
-            multitask = 'integration_tests,blended_skill_talk'
+            multitask = 'integration_tests,integration_tests:ReverseTeacher'
             valid, test = testing_utils.train_model(
                 {
                     'task': multitask,
@@ -259,7 +259,7 @@ class TestTrainModel(unittest.TestCase):
                     'model': 'repeat_label',
                     'short_final_eval': True,
                     'num_epochs': 1.0,
-                    'world_logs': log_report
+                    'world_logs': log_report,
                 }
             )
 
@@ -269,7 +269,7 @@ class TestTrainModel(unittest.TestCase):
                 )
                 with PathManager.open(task_log_report) as f:
                     json_lines = f.readlines()
-                assert len(json_lines) == 10
+                assert len(json_lines) == 5
 
 
 @register_agent("fake_report")
