@@ -13,6 +13,7 @@ its memory or access the internet.
 The Memory Decoder examines the context and generates memories to write to
 the long-term memory module.
 """
+import re
 import copy
 import torch
 import torch.nn
@@ -252,6 +253,12 @@ class BlenderBot2RagAgent(RagAgent):
             default='persona:',
             help='filter input to the global knowledge retriever such that any utterance containing '
             'the phrase will not be given as input.',
+        )
+        bb2_group.add_argument(
+            '--clean-reply',
+            type=bool,
+            default=False,
+            help='filter reply during self_observe',
         )
         q_gen_group = parser.add_argument_group('BlenderBot2 Query Generator Args')
         q_gen_group.add_argument(
@@ -897,6 +904,39 @@ class BlenderBot2RagAgent(RagAgent):
             return loss, output
         else:
             return loss
+
+    def _clean_text(self, txt):
+        cleaned_txt = re.sub(r'_[\S]*unsafe_*', '', txt, flags=re.IGNORECASE)
+        return cleaned_txt.strip()
+
+    def self_observe(self, self_message: Message) -> None:
+        """
+        Observe one's own utterance.
+        Override TorchAgent.self_observe with the optional cleaned text
+
+        :param self_message:
+            The message corresponding to the output from batch_act.
+        """
+
+        if (
+            self.opt('clean_reply', False)
+            or self.observation['episode_done']  # last example in the episode
+            or use_reply == 'none'  # not including our own responses anyway
+            or (
+                use_reply == 'label'
+                and any([x in self.observation for l in ['labels', 'eval_labels']])
+            )  # has true label
+        ):
+            return super().self_observe(self_message)
+
+        # otherwise, we use the CLEANED last output the model generated
+        if self_message is not None:
+            last_reply = self_message['text']
+            clean_reply = self._clean_text(last_reply)
+            self.history.add_reply(clean_reply)
+            return
+
+        raise RuntimeError("Unexpected case in self_observe.")
 
 
 class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
