@@ -254,12 +254,6 @@ class BlenderBot2RagAgent(RagAgent):
             help='filter input to the global knowledge retriever such that any utterance containing '
             'the phrase will not be given as input.',
         )
-        bb2_group.add_argument(
-            '--clean-reply',
-            type=bool,
-            default=False,
-            help='filter reply during self_observe',
-        )
         q_gen_group = parser.add_argument_group('BlenderBot2 Query Generator Args')
         q_gen_group.add_argument(
             '--query-generator-ignore-phrase',
@@ -917,14 +911,14 @@ class BlenderBot2RagAgent(RagAgent):
         :param self_message:
             The message corresponding to the output from batch_act.
         """
+        use_reply = self.opt.get('use_reply', 'label')
 
         if (
-            self.opt('clean_reply', False)
-            or self.observation['episode_done']  # last example in the episode
+            self.observation['episode_done']  # last example in the episode
             or use_reply == 'none'  # not including our own responses anyway
             or (
                 use_reply == 'label'
-                and any([x in self.observation for l in ['labels', 'eval_labels']])
+                and any([l in self.observation for l in ['labels', 'eval_labels']])
             )  # has true label
         ):
             return super().self_observe(self_message)
