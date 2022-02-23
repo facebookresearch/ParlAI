@@ -67,7 +67,8 @@ class TestClassifierOnGenerator(unittest.TestCase):
         """
         Test the accuracy of the classifier trained on current utterances only.
 
-        TODO: add something about the expected accuracy
+        The accuracy is low here because the task was classified using a different
+        classifier, zoo:style_gen/prev_curr_classifier/model.
         """
         _, test = testing_utils.eval_model(
             opt={
@@ -82,9 +83,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
             },
             skip_valid=True,
         )
-        self.assertAlmostEqual(
-            test['accuracy'], 1.0, delta=0.0
-        )  # TODO: change if not right
+        self.assertAlmostEqual(test['accuracy'], 0.4375, delta=0.0)
 
 
 class TestStyleGen(unittest.TestCase):
