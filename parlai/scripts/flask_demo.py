@@ -10,6 +10,7 @@ from parlai.core.agents import create_agent_from_model_file
 
 app = Flask(__name__)
 
+blender_agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
 
 @app.route("/response", methods=("GET", "POST"))
 def chatbot_response():
@@ -21,5 +22,4 @@ def chatbot_response():
 
 # main driver function
 if __name__ == "__main__":
-    blender_agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
     app.run()
