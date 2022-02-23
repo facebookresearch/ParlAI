@@ -1418,6 +1418,17 @@ model_list = [
        .9973  .01745 38.08 604.1 15.86 5651 .9973    .1622 2.129 5e-10 5.633 89.36 43.71 693.4""",
     },
     {
+        "title": "Style-controlled generation: current-utterance-only classifier",
+        "id": "style_gen",
+        "path": "zoo:style_gen/curr_only_classifier/model",
+        "agent": "projects.style_gen.classifier:ClassifierAgent",
+        "task": "style_gen:LabeledBlendedSkillTalk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
+        "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance as the sole context.",
+        "example": "parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk --model-file zoo:style_gen/curr_only_classifier/model --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file",
+        "result": None,  # TODO NOW: add this
+    },
+    {
         "title": "Faster-R-CNN Detectron Features",
         "id": "detectron",
         "path": "zoo:detectron/detectron_model.pth",

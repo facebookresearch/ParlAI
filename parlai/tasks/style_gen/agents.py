@@ -124,3 +124,37 @@ class PrevCurrUttStyleTeacher(AbstractWrapperTeacher):
             assert 'text' not in act and act['episode_done'] is True
         act.force_set('episode_done', True)  # Clear the dialogue history
         return act
+
+
+class CurrUttOnlyStyleTeacher(AbstractWrapperTeacher):
+    """
+    Serving examples for use with projects.style_gen.classifier:ClassifierAgent.
+
+    This teacher will replace message['text'] with message['labels'][0], and it will
+    replace message['labels'] with [message['personality']]. This is to allow for
+    training/evaluation of projects.style_gen.classifier:ClassifierAgent in the case
+    where we want to classify the style of an utterance given only that utterance as
+    context.
+
+    Because the dialogue history is effectively overwritten by this action, all episodes
+    will be flattened into one example each.
+    """
+
+    def _edit_action(self, act: Message) -> Message:
+        """
+        Edit the fields of the action manually.
+        """
+        if 'labels' in act:
+            labels = act['labels']
+            if len(labels) != 1:
+                raise ValueError(
+                    f'{type(self).__name__} can only be used with one label!'
+                )
+            assert '\n' not in labels[0]
+            # Classifier will not expect any newlines in the context
+            act.force_set('text', labels[0])
+            act.force_set('labels', [act['personality']])
+        else:
+            assert 'text' not in act and act['episode_done'] is True
+        act.force_set('episode_done', True)  # Clear the dialogue history
+        return act
