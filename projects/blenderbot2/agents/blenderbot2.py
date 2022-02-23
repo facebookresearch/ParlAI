@@ -905,8 +905,7 @@ class BlenderBot2RagAgent(RagAgent):
 
     def self_observe(self, self_message: Message) -> None:
         """
-        Observe one's own utterance.
-        Override TorchAgent.self_observe with the optional cleaned text
+        Observe one's own utterance. Override TorchAgent.self_observe with cleaned text.
 
         :param self_message:
             The message corresponding to the output from batch_act.
