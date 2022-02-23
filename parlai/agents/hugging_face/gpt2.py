@@ -241,10 +241,7 @@ class Gpt2Agent(TorchGeneratorAgent):
     ) -> ParlaiParser:
         agent = parser.add_argument_group("Gpt2 Args")
         agent.add_argument(
-            "--model-name",
-            type=str,
-            default=None,
-            help="Any GPT-2 model names.",
+            "--model-name", type=str, default=None, help="Any GPT-2 model names."
         )
         agent.add_argument(
             "--gpt2-size",
