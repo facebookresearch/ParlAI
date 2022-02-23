@@ -67,7 +67,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
         """
         Test the accuracy of the classifier trained on current utterances only.
 
-        The accuracy is low here because the task was classified using a different
+        The accuracy is low here because the task was labeled using a different
         classifier, zoo:style_gen/prev_curr_classifier/model.
         """
         _, test = testing_utils.eval_model(

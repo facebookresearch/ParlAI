@@ -1432,7 +1432,7 @@ model_list = [
        .4311 .004642                              19.18 19.18 425.9       0          0  22.2 5651 .4363    .1586 5.633 2.658 5e-10 5.633 125.1       0          0 24.82 550.9
     weighted_f1
           .4319
-""",  # The accuracy is low here because the task was classified using a different classifier, zoo:style_gen/prev_curr_classifier/model
+""",  # The accuracy is low here because the task was labeled using a different classifier, zoo:style_gen/prev_curr_classifier/model
     },
     {
         "title": "Faster-R-CNN Detectron Features",
