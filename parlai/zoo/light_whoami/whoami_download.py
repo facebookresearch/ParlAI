@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Utility for downloading whoami models
+Utility for downloading whoami models.
 """
 from parlai.core.build_data import built, download_models, get_model_dir
 import os

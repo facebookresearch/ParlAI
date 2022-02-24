@@ -349,8 +349,8 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
         """
         Return the custom task data (without making a copy).
 
-        The second-to-last message contains the custom data saved by the model-chat
-        task code.
+        The second-to-last message contains the custom data saved by the model-chat task
+        code.
         """
         return actual_state['outputs']['messages'][-2]['data']['WORLD_DATA'][
             'custom_data'

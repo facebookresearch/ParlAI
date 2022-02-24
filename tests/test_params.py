@@ -171,7 +171,9 @@ class TestParlaiParser(unittest.TestCase):
             parser.parse_kwargs(model='transformer/generator', fake_arg='foo')
 
     def test_parse_kwargs_multirounds(self):
-        """Test parse_kwargs when we have options that depend on options."""
+        """
+        Test parse_kwargs when we have options that depend on options.
+        """
         parser = ParlaiParser(True, False)
         opt = parser.parse_kwargs(
             task='integration_tests', mutators='episode_shuffle', preserve_context=True
@@ -192,7 +194,7 @@ class TestParlaiParser(unittest.TestCase):
 
     def test_parse_kwargs_nargsplus(self):
         """
-        Test parse_kwargs when provided an argument with >1 item
+        Test parse_kwargs when provided an argument with >1 item.
         """
         parser = ParlaiParser(False, False)
         parser.add_argument('--example', nargs='+', choices=['a', 'b', 'c'])

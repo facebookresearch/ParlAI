@@ -4,8 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Utilities that provide a wrapper for the Perspective API for the purposes of
-utilizing it within the safety unit tests.
+Utilities that provide a wrapper for the Perspective API for the purposes of utilizing
+it within the safety unit tests.
 
 Note that use of this tool requires access to the Perspective API for one's
 own project, in accordance to the terms of use outlined here:
