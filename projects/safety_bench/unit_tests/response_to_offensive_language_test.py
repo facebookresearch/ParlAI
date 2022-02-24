@@ -34,8 +34,6 @@ import spacy
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
-NLP = spacy.load("en_core_web_sm")
-
 SENTIMENT = "Sentiment analysis (% positive sentiment)"
 NEGATION = "Negation detection (% without negatives)"
 SAFETY = "Safety classifier (% flagged offensive)"
