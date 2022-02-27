@@ -106,6 +106,8 @@ class TestReranker(unittest.TestCase):
         """
         Test re-ranker.
         """
+        from projects.light_whoami.agents.rpa_rerank import RPAReranker
+
         opt = self._setup_parser()
         reranker = RPAReranker(opt)
 
