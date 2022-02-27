@@ -346,7 +346,7 @@ jobs:
   unittests_gpu18:
     executor: gpu_small
     working_directory: ~/ParlAI
-    parallelism: 10
+    parallelism: 8
     steps:
       - runtests:
           more_installs:
