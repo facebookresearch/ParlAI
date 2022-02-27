@@ -28,7 +28,16 @@ executors:
       HOMEBREW_NO_AUTO_UPDATE: 1
     resource_class: macos.x86.medium.gen2
 
-  gpu:
+  gpu_small:
+    environment:
+      CUDA_VERSION: "11.2"
+      PYTHONUNBUFFERED: 1
+      CUDA_HOME: /usr/local/cuda-11.2
+    machine:
+       image: ubuntu-2004-cuda-11.2:202103-01
+    resource_class: gpu.nvidia.medium.small
+
+  gpu_medium:
     environment:
       CUDA_VERSION: "11.2"
       PYTHONUNBUFFERED: 1
@@ -36,6 +45,9 @@ executors:
     machine:
        image: ubuntu-2004-cuda-11.2:202103-01
     resource_class: gpu.nvidia.medium.multi
+
+
+
 
 # -------------------------------------------------------------------------------------
 # reusable commands
@@ -332,7 +344,7 @@ jobs:
           marker: unit
 
   unittests_gpu18:
-    executor: gpu
+    executor: gpu_small
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
@@ -345,7 +357,7 @@ jobs:
           marker: unit
 
   long_gpu_tests:
-    executor: gpu
+    executor: gpu_medium
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
