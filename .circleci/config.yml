@@ -35,7 +35,7 @@ executors:
       CUDA_HOME: /usr/local/cuda-11.2
     machine:
        image: ubuntu-2004-cuda-11.2:202103-01
-    resource_class: gpu.nvidia.medium.small
+    resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
     environment:
