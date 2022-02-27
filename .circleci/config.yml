@@ -226,26 +226,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220208a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220208a-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220208a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220208a-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -262,12 +262,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220208a-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220227-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220208a-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220227-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -434,10 +434,9 @@ workflows:
   commit:
     jobs:
       - cleaninstall_38
-      - unittests_gpu18
-#     - unittests_gpu18:
-#         requires:
-#           - unittests_38
+      - unittests_gpu18:
+          requires:
+            - unittests_38
 #     - unittests_osx:
 #         requires:
 #           - unittests_38
@@ -449,10 +448,9 @@ workflows:
       - crowdsourcing_tests:
           requires:
             - unittests_38
-#     - teacher_tests:
-#         requires:
-#           - unittests_38
-      - teacher_tests
+      - teacher_tests:
+          requires:
+            - unittests_38
       - build_website:
           filters:
             branches:
