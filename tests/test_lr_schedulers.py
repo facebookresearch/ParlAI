@@ -34,7 +34,7 @@ class TestLRSchedulers(unittest.TestCase):
         warmup_updates = args.get('warmup_updates', 0)
         assert warmup_updates >= 0
         if warmup_updates > 0:
-            assert output[warmup_updates - 1] == max_lr
+            self.assertAlmostEquals(output[warmup_updates - 1], max_lr, 2)
             # LR is always linear
             for step in range(warmup_updates - 2):
                 self.assertAlmostEqual(
@@ -106,7 +106,7 @@ class TestLRSchedulers(unittest.TestCase):
             invsqrt_lr_decay_gamma=1,
             end_zero=False,
         )
-        self.assertAlmostEquals(steps[-1], 0.03242722)
+        self.assertAlmostEquals(steps[-1], 0.032444)
 
         # decay very slowly
         steps = self._run_pass(
@@ -204,7 +204,9 @@ class TestLRIntegration(unittest.TestCase):
 
             if 'warmup_updates' in kwargs:
                 full_logs = logs_first[:20] + logs_second
-                assert full_logs[kwargs['warmup_updates'] - 1]['lr'] == 1.0
+                self.assertAlmostEqual(
+                    full_logs[kwargs['warmup_updates'] - 1]['lr'], 1.0, 2
+                )
 
             return logs_first, logs_second
 
