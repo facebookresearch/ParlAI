@@ -30,20 +30,20 @@ executors:
 
   gpu_small:
     environment:
-      CUDA_VERSION: "11.2"
+      CUDA_VERSION: "11.3"
       PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.2
+      CUDA_HOME: /usr/local/cuda-11.3
     machine:
-       image: ubuntu-2004-cuda-11.2:202103-01
+       image: ubuntu-2004-cuda-11.3:202103-01
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
     environment:
-      CUDA_VERSION: "11.2"
+      CUDA_VERSION: "11.3"
       PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.2
+      CUDA_HOME: /usr/local/cuda-11.3
     machine:
-       image: ubuntu-2004-cuda-11.2:202103-01
+       image: ubuntu-2004-cuda-11.3:202103-01
     resource_class: gpu.nvidia.medium.multi
 
 
