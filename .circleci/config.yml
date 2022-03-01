@@ -30,20 +30,20 @@ executors:
 
   gpu_small:
     environment:
-      CUDA_VERSION: "11.3"
+      CUDA_VERSION: "11.2"
       PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.3
+      CUDA_HOME: /usr/local/cuda-11.2
     machine:
-       image: ubuntu-2004-cuda-11.3:202103-01
+       image: ubuntu-2004-cuda-11.2:202103-01
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
     environment:
-      CUDA_VERSION: "11.3"
+      CUDA_VERSION: "11.2"
       PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.3
+      CUDA_HOME: /usr/local/cuda-11.2
     machine:
-       image: ubuntu-2004-cuda-11.3:202103-01
+       image: ubuntu-2004-cuda-11.2:202103-01
     resource_class: gpu.nvidia.medium.multi
 
 
@@ -174,10 +174,6 @@ commands:
           name: Setup CUDA
           working_directory: ~/
           command: |
-            # download and install nvidia drivers, cuda, etc
-            # wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-            # time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
-            # echo "Done installing NVIDIA drivers."
             pyenv versions
             nvidia-smi
             pyenv global 3.9.2
