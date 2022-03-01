@@ -181,8 +181,8 @@ class MultiobjectiveModuleBase(torch.nn.Module, ABC):
     """
     Base module for multi-objective layers.
 
-    This module contains context encoding layers, candidate encoding layers,
-    and an attention mechanism.
+    This module contains context encoding layers, candidate encoding layers, and an
+    attention mechanism.
     """
 
     extra_layers_ctxt: BypassEmbeddingTransformer
@@ -422,7 +422,8 @@ class GenerativeMultiObjectiveModule(MultiobjectiveModuleBase):
         self, *xs, ys=None, prev_enc=None, maxlen=None, bsz=None, multiobjective=False
     ) -> Tuple[torch.Tensor, ...]:
         """
-        Overload TGM.forward to account for both seq2seq modeling and multiobjective modeling.
+        Overload TGM.forward to account for both seq2seq modeling and multiobjective
+        modeling.
         """
         if not multiobjective:
             """

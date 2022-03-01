@@ -286,7 +286,7 @@ class TestTransformerGenerator(TestTransformerBase):
 
     def test_checkpoint(self):
         """
-        Checks --checkpoint-activations true
+        Checks --checkpoint-activations true.
         """
         valid, test = testing_utils.train_model(
             dict(

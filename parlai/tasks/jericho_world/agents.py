@@ -216,7 +216,8 @@ class BaseJerichoWorldTeacher(DialogTeacher):
         """
         Generates the string representing knowledge graph.
 
-        It may modifiy the knowledge graph, for example when --prune-knowledge-graph is true.
+        It may modifiy the knowledge graph, for example when --prune-knowledge-graph is
+        true.
         """
 
         def has_word_overlap(main_text, content_text_tokens):
@@ -234,11 +235,11 @@ class BaseJerichoWorldTeacher(DialogTeacher):
             """
             Returns false for edges that can NOT be readily inferred from the context.
 
-            Edges that are referring to objects not referenced in the location description,
-            except player (you). Thus, we drop these edges.
-            Also, for some teachers (eg, ActionKGTeacher) the model can see user inventory before,
-            and after the action, and they are important in result of action,.
-            Thus, we keep < you , have, X > edges as well.
+            Edges that are referring to objects not referenced in the location
+            description, except player (you). Thus, we drop these edges. Also, for some
+            teachers (eg, ActionKGTeacher) the model can see user inventory before, and
+            after the action, and they are important in result of action,. Thus, we keep
+            < you , have, X > edges as well.
             """
             # Each graph edge is a tuple: (subject, relation, object)
             sub, rel, obj = [s.strip().lower() for s in edge]

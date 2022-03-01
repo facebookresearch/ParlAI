@@ -83,7 +83,7 @@ class ParlAILRScheduler(object):
         """
         return (
             self.warmup_scheduler is not None
-            and self.warmup_scheduler.get_last_lr()[0] < 1.0
+            and self._number_training_updates < self.warmup_updates
         )
 
     def _warmup_lr(self, step):

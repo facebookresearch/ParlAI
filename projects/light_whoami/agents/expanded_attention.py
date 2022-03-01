@@ -5,7 +5,8 @@
 """
 Expanded Attention Transformer Model.
 
-Specifically, the decoder uses an additional attention mechanism over a (possibly separate) context.
+Specifically, the decoder uses an additional attention mechanism over a (possibly
+separate) context.
 """
 import os
 import torch
@@ -288,8 +289,8 @@ class ExpandedDecoderAttentionAgent(TransformerGeneratorAgent):
 
     def expanded_observe(self, observation: Message) -> Message:
         """
-        Add the relevant expanded input vectors; essentially extrapolates observe, for potential
-        subclasses.
+        Add the relevant expanded input vectors; essentially extrapolates observe, for
+        potential subclasses.
         """
         if 'text_vec' not in observation:
             return observation
@@ -503,7 +504,8 @@ class TransformerExpandedDecoderModel(TransformerGeneratorModel):
 
 class TransformerDoubleEncoder(TransformerEncoder):
     """
-    The Double Encoder encodes both the context and additional expanded attn input information.
+    The Double Encoder encodes both the context and additional expanded attn input
+    information.
     """
 
     def __init__(self, opt: Opt, *args, **kwargs):

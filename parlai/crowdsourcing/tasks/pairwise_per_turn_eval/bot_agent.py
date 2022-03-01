@@ -19,10 +19,11 @@ class PerTurnEvalTurkLikeAgent(TurkLikeAgent):
 
     def act(self, timeout=None):
         """
-        Same as model chat's bot_agent.py except the self_observe function
-        is removed, a custom observe is instead written in worlds.py. This
-        is so that the two bots can read each others' messages using
-        observe so that the conversation history stays the same.
+        Same as model chat's bot_agent.py except the self_observe function is removed, a
+        custom observe is instead written in worlds.py.
+
+        This is so that the two bots can read each others' messages using observe so
+        that the conversation history stays the same.
         """
 
         _ = timeout  # The model doesn't care about the timeout
