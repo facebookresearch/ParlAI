@@ -13,8 +13,9 @@ from parlai.utils.torch import padded_3d
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
-from parlai.utils.misc import recursive_getattr
+from parlai.utils.misc import recursive_getattr, warn_once
 from parlai.utils.logging import logging
+from parlai.utils.fsdp import should_use_fsdp
 
 from .modules import (
     TransformerMemNetModel,
@@ -23,6 +24,21 @@ from .modules import (
 )
 
 import torch
+
+
+def _check_positional_embeddings(opt):
+    """
+    Checks positional embedding compatibility with FSDP.
+    """
+    if not opt.get('learn_positional_embeddings') and should_use_fsdp(opt):
+        # note: we're doing on-the-fly setting here, abusing pass-by-reference
+        # this only works because we're calling this from build_model, which is
+        # only done in the original instantiation of an agent.
+        opt['learn_positional_embeddings'] = True
+        warn_once(
+            "Using --ddp_backend zeroX requires --learn-positional-embeddings "
+            "true. Forcing this to be true."
+        )
 
 
 def add_common_cmdline_args(parser):
@@ -249,6 +265,7 @@ class TransformerRankerAgent(TorchRankerAgent):
         """
         Build and return model.
         """
+        _check_positional_embeddings(self.opt)
         model = TransformerMemNetModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
@@ -345,6 +362,7 @@ class TransformerGeneratorAgent(TorchGeneratorAgent):
         """
         Build and return model.
         """
+        _check_positional_embeddings(self.opt)
         model = TransformerGeneratorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
@@ -405,6 +423,7 @@ class TransformerClassifierAgent(TorchClassifierAgent):
         return parser
 
     def build_model(self):
+        _check_positional_embeddings(self.opt)
         num_classes = len(self.class_list)
         self.base_model = TransformerMemNetModel(self.opt, self.dict)
         return TransformerLinearWrapper(self.base_model.context_encoder, num_classes)

@@ -24,10 +24,10 @@ Worker stats:
 WORKER_1
 WORKER_2
 WORKER_3
-  worker_id conversations problems_found  avg_problems_per_convo
-0  WORKER_1             1              2                     2.0
-1  WORKER_2             1              1                     1.0
-2  WORKER_3             1              0                     0.0
+  worker_id conversations problems_found avg_problems_per_convo
+0  WORKER_1             1              2                    2.0
+1  WORKER_2             1              1                    1.0
+2  WORKER_3             1              0                    0.0
 
 
 Worker conversation counts: {'WORKER_1': 1, 'WORKER_2': 1, 'WORKER_3': 1}
