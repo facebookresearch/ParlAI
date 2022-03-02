@@ -83,7 +83,7 @@ class ParlAILRScheduler(object):
         """
         return (
             self.warmup_scheduler is not None
-            and self._number_training_updates < self.warmup_updates
+            and self._number_training_updates <= self.warmup_updates
         )
 
     def _warmup_lr(self, step):
@@ -414,7 +414,7 @@ class InvSqrtLRScheduler(ParlAILRScheduler):
         return self.decay_factor / np.sqrt(max(1, self.invsqrt_lr_decay_gamma + step))
 
     def train_step(self, scheduler_steps):
-        if self.max_lr_steps > 0 and scheduler_steps >= self.max_lr_steps:
+        if self.max_lr_steps > 0 and scheduler_steps > self.max_lr_steps:
             raise StopTrainException('Maximum LR steps')
         self.scheduler.step()
 
@@ -448,7 +448,7 @@ class CosineLRScheduler(ParlAILRScheduler):
         return math.cos(math.pi * step / (2 * self.max_lr_steps))
 
     def train_step(self, scheduler_steps):
-        if scheduler_steps >= self.max_lr_steps:
+        if scheduler_steps > self.max_lr_steps:
             raise StopTrainException('End of Cosine LR Schedule')
         self.scheduler.step()
 
@@ -482,7 +482,7 @@ class LinearLRScheduler(ParlAILRScheduler):
         return lr_mult
 
     def train_step(self, scheduler_steps):
-        if scheduler_steps >= self.max_lr_steps:
+        if scheduler_steps > self.max_lr_steps:
             raise StopTrainException('End of Linear LR Schedule')
         self.scheduler.step()
 
