@@ -23,7 +23,7 @@ class TestLRSchedulers(unittest.TestCase):
             args, optimizer, {}, True
         )
         output = []
-        for step in range(total_steps):
+        for step in range(1, total_steps + 1):
             scheduler.step(step)
             output.append(scheduler.get_last_lr())
         for value in output:
