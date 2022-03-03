@@ -493,6 +493,9 @@ class TrainLoop:
                 pass
 
     def _save_train_stats(self, suffix=None):
+        if not is_primary_worker():
+            # never do IO as a non-primary worker
+            return
         fn = self.opt.get('model_file', None)
         if not fn:
             return

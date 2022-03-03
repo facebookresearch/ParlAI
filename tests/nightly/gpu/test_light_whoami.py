@@ -3,21 +3,13 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-import copy
-import os
-import torch
-import torch.cuda
-from typing import Optional
 import unittest
 
-from parlai.core.build_data import modelzoo_path
-from parlai.core.agents import create_agent
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser, Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
 import parlai.utils.testing as testing_utils
 
-from projects.light_whoami.agents.rpa_rerank import RPAReranker
 from projects.light_whoami.agents import (
     RPA_RERANKER,
     RPA_RERANKER_AUTO_EXPANDED,
@@ -95,6 +87,8 @@ class TestReranker(unittest.TestCase):
     """
 
     def _setup_parser(self) -> Opt:
+        from projects.light_whoami.agents.rpa_rerank import RPAReranker
+
         parser = ParlaiParser(True, True)
         parser = RPAReranker.add_cmdline_args(parser, {})
         parser = TorchRankerAgent.add_cmdline_args(parser, {})
@@ -105,6 +99,8 @@ class TestReranker(unittest.TestCase):
         """
         Test re-ranker.
         """
+        from projects.light_whoami.agents.rpa_rerank import RPAReranker
+
         opt = self._setup_parser()
         reranker = RPAReranker(opt)
 
@@ -128,7 +124,7 @@ class TestReranker(unittest.TestCase):
 @testing_utils.skipUnlessGPU
 class TestGenerativeRerank(unittest.TestCase):
     """
-    Test Generative Re-rankers
+    Test Generative Re-rankers.
     """
 
     @unittest.skipUnless(LOCAL_TEST, 'Skipping due to CI Memory Constraints')
@@ -173,7 +169,7 @@ class TestGenerativeRerank(unittest.TestCase):
 @testing_utils.skipUnlessGPU
 class TestPacer(unittest.TestCase):
     """
-    Test Pacer Agents
+    Test Pacer Agents.
     """
 
     @unittest.skipUnless(LOCAL_TEST, 'Skipping due to CI Memory Constraints')
@@ -270,7 +266,7 @@ class TestPacer(unittest.TestCase):
 @testing_utils.skipUnlessGPU
 class TestRpaUnlikelihood(unittest.TestCase):
     """
-    Test Generative Re-rankers
+    Test Generative Re-rankers.
     """
 
     @unittest.skipUnless(LOCAL_TEST, 'Skipping due to CI Memory Constraints')
@@ -428,7 +424,7 @@ class TestExpandedAttentionAutomated(unittest.TestCase):
 @testing_utils.skipUnlessGPU
 class TestExpandedAttentionAndReranker(unittest.TestCase):
     """
-    Test Generative Re-rankers
+    Test Generative Re-rankers.
     """
 
     @unittest.skipUnless(LOCAL_TEST, 'Skipping due to CI Memory Constraints')
