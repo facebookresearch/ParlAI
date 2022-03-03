@@ -1,0 +1,21 @@
+{
+    "config": {
+        "engaging": {
+            "name": "Does this response make you want to talk to your partner for a long conversation?",
+            "description": "Asks about engagingness"
+        },
+        "human": {
+            "name": "Does this response sound human?",
+            "description": "Asks about humanness"
+        },
+        "interesting": {
+            "name": "If you had to say that this response is either interesting or boring, would you say that it is interesting?",
+            "description": "Asks about interestingness"
+        },
+        "none": {
+            "name": "(None of the above)",
+            "description": "What to check if you can't check any of the others"
+        }
+    },
+    "show_line_breaks": true
+}

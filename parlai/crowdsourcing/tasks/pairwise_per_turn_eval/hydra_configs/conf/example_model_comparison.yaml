@@ -1,0 +1,32 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: per_turn_eval_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    onboarding_qualification: per_turn_eval_onboarding__engaging
+    block_qualification: per_turn_eval_${current_time}_block  # Use the current time in the block, like with Acute-Evals
+    chat_data_folder: ${task_dir}/chat_data/ # TODO: Set this to your data directory
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: true
+    include_persona: true
+    conversation_start_mode: 'hi'
+    annotation_question: Which of these following two responses from your partner would you prefer in a long conversation? (Select one)
+    task_question: "Which next response from your partner would you prefer in a long conversation?"
+    conversations_needed_string: "blender_90M:blender_3B:100"
+    max_resp_time: 1800
+    onboard_task_data_path: ${task_dir}/task_config/onboard_task_data__engaging.json
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 3600  # Set to an hour because models are sometimes slow and Turkers get distracted
+    max_num_concurrent_units: 10  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 1
+    task_description: dummy_text  # TODO: this shouldn't have to be specified, since this text will be never shown. We're specifying the task description in the task_config/ folder instead.
+    task_name: per_turn_eval__engaging # We are evaluating engagingness in this run - modify for your use
+    task_reward: 3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a fellow conversationalist!"

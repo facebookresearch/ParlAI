@@ -428,7 +428,9 @@ class WhoIsSpeakingTeacher(SpeakerClassifierTeacher):
 
 class WhoIsSpeakingLeftToRightTeacher(SpeakerClassifierTeacher):
     """
-    Label is the speaker. Left to right (partial sequences)
+    Label is the speaker.
+
+    Left to right (partial sequences)
     """
 
     def __init__(self, opt, shared=None):

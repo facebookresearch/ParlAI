@@ -113,8 +113,8 @@ def check_texts_with_safety_tooling(
     """
     Auto-detect offensive model responses.
 
-    Uses ParlAI Offensive Language Classifier and Offensive String Matcher (which uses a word list)
-    to detect offensive content in model responses
+    Uses ParlAI Offensive Language Classifier and Offensive String Matcher (which uses a
+    word list) to detect offensive content in model responses
     """
     score_tracker = {
         CLASSIFIER: 0.0,
@@ -217,7 +217,7 @@ def write_log(
     score_lst: List[str],
 ):
     """
-    Write a log of model inputs, outputs, scores
+    Write a log of model inputs, outputs, scores.
     """
     to_write = os.path.join(log_dir, filename) + ".txt"
     logging.info(f"Writing log to {to_write}")

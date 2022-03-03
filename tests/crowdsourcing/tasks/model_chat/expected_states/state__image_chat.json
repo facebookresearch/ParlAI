@@ -438,7 +438,10 @@
                         }
                     },
                     "image_idx": 0
-                }
+                },
+                "data": {},
+                "packet_type": null,
+                "timestamp": null
             },
             {
                 "packet_type": "agent_action",

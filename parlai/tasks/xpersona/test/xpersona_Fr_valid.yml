@@ -1,0 +1,42 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - je le fais bien . juste se détendre avec mes deux chiens.
+    id: xpersona:Fr
+    reward: 0
+    text: 'your persona:j''ai deux chiens.
+
+      your persona:j''aime travailler sur les voitures anciennes.
+
+      your persona:ma musique préférée est le country.
+
+      your persona:je possède deux mustangs vintages.
+
+      salut ! comment vas-tu ce soir ?'
+- - episode_done: false
+    eval_labels:
+    - c'est bien. quel genre de travail bénévole faites-vous?
+    id: xpersona:Fr
+    reward: 0
+    text: génial . dans mon temps libre je fais du bénévolat.
+- - episode_done: false
+    eval_labels:
+    - Bien pour vous . vous aimez les voitures anciennes? j'ai deux anciennes mustangs.
+    id: xpersona:Fr
+    reward: 0
+    text: je travaille dans un refuge pour sans-abri dans ma ville.
+- - episode_done: false
+    eval_labels:
+    - les voitures sont mon truc. voitures anciennes . j'adore travailler sur cela.
+      est-ce que tu aimes ça ?
+    id: xpersona:Fr
+    reward: 0
+    text: cool . pas vraiment dans les voitures. mon travail de jour est dur.
+- - episode_done: false
+    eval_labels:
+    - je n'ai pas pensé à l'aspect foule de la lutte. je n'aime pas les foules.
+    id: xpersona:Fr
+    reward: 0
+    text: oui, j'aime la foule, faire connaissance avec les gens.
+num_episodes: 248
+num_examples: 1934

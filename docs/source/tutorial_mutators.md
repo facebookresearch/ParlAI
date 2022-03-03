@@ -68,6 +68,22 @@ parlai display_data -t dailydialog:mutators=word_shuffle,convai2:mutators=flatte
 ```
 
 
+### Mutator arguments
+
+Some mutators have additional arguments. For example, `episode_shuffle` has an
+argument `preserve_context`.
+
+```bash
+parlai display_data -t dailydialog --mutators episode_shuffle --preserve_context True
+```
+
+Unfortunately, mutator arguments cannot be directly specified when using the `--task X:mutators=` format.  Instead, we can pass mutator arguments through the task argument.
+
+```bash
+parlai display_data -t dailydialog:mutators=episode_shuffle:preserve_context=True
+```
+
+
 ## Writing your own Mutators
 
 Mutators are meant to be added too. Following other patterns in ParlAI, you can

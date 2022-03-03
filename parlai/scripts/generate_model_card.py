@@ -448,8 +448,8 @@ def make_img_links(img_list, height='500px', width=None):
 
 def get_dataset_info(tasks):
     """
-    dataset info comes from guessing where it would be at the tasks site
-    and the task_list.py + anything else from the user
+    dataset info comes from guessing where it would be at the tasks site and the
+    task_list.py + anything else from the user.
     """
     curr_task_info = []
     for task in tasks:
@@ -914,8 +914,8 @@ class GenerateModelCard(ParlaiScript):
 
     def process_task(self, task):
         """
-        tries to remap tasks to their external version, and then may ignore the tasks w/o
-        ext.
+        tries to remap tasks to their external version, and then may ignore the tasks
+        w/o ext.
 
         version depending on `ignore_task`
         """
@@ -1351,8 +1351,8 @@ class GenerateModelCard(ParlaiScript):
     def evaluation(self):
         """
         returns a section with dataset info about the eval tasks if they exist,
-        information about the validation metric if it exists,
-        and create a table with the validation metric.
+        information about the validation metric if it exists, and create a table with
+        the validation metric.
         """
         # adding info about the eval tasks
         if self.eval_tasks == self.train_tasks:

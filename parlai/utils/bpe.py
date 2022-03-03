@@ -597,9 +597,9 @@ class Gpt2BpeHelper(BPEHelper):
         The reversible bpe codes work on unicode strings. This means you need a large #
         of unicode characters in your vocab if you want to avoid UNKs. When you're at
         something like a 10B token dataset you end up needing around 5K for decent
-        coverage. This is a significant percentage of your normal, say, 32K bpe vocab. To
-        avoid that, we want lookup tables between utf-8 bytes and unicode strings. And
-        avoids mapping to whitespace/control characters the bpe code barfs on.
+        coverage. This is a significant percentage of your normal, say, 32K bpe vocab.
+        To avoid that, we want lookup tables between utf-8 bytes and unicode strings.
+        And avoids mapping to whitespace/control characters the bpe code barfs on.
         """
         bs: List[int] = (
             list(range(ord("!"), ord("~") + 1))
