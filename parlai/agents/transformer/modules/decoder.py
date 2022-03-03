@@ -41,10 +41,15 @@ DecoderIncrState = Dict[int, Dict[str, Dict[str, torch.Tensor]]]
 
 class BaseTransformerDecoder(nn.Module, ABC):
     """
-    Subclasses are require to implement ``forward``.
+    Implements functionality common to all transformer decoder variants. Not intended to
+    be instantiated directly.
+
+    For a (Vaswani 2017) style encoder-decoder transformer, use ``TransformerDecoder``. For a GPT-style decoder-only transformer, use ``TransformerDecoderOnly``.
+
+    Subclasses are required to implement ``forward``. In your ``forward`` implementation, you can call ``forward_embedding`` to get embeddings for the input tokens and ``forward_layers`` to pass those embeddings sequentially through each layer.
 
     Subclasses can optionally override ``__init__``, ``build_layer``, and
-    ``build_layers`` to customize subcomponents.
+    ``build_layers`` to customize subcomponents. In particular, ``build_layer`` can be used to instantiate heterogeneous layers (e.g. every other layer being a different type).
     """
 
     def __init__(
@@ -214,9 +219,11 @@ class BaseTransformerDecoder(nn.Module, ABC):
         :param tensor:
             embedded input tensor for the decoder
         :param extra_args:
-            arguments to be passed to each layer
+            any number of positional arguments to be passed to each layer
         :param incr_state:
             Dict mapping layer_idx to incremental state
+        :param kwargs:
+            any number of keyword (named) arguments to be passed to each layer
 
         :return (tensor, new_incr_state):
             return encoding after applying decoder layers, as well
@@ -273,9 +280,12 @@ DecoderLayerIncrState = Dict[str, Dict[str, torch.Tensor]]
 
 class BaseTransformerDecoderLayer(nn.Module, ABC):
     """
-    Not meant to be directly instantiated.
+    Implements functionality common to all transformer decoder layer variants. Subclass
+    this if you'd like to modify the behavior of any layer in a transformer decoder.
 
-    If this functionality is desired as-is, use TransformerDecoderOnlyLayer instead.
+    While this code is functional, it is not intended to be instantiated directly. If
+    this functionality is desired as-is, use TransformerDecoderOnlyLayer instead to gain
+    the ability to swap self-attention and feedforward classes at instantiation.
     """
 
     def __init__(
