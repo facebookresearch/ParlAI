@@ -816,7 +816,7 @@ footer ul.primary-nav li:last-child a {
     color: white;
   }
 
-.socialBanner {
+.socialBannerWrapper {
     padding: 0 0;
     background-color: #000;
 }
