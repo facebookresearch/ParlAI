@@ -88,18 +88,36 @@ class TestLRSchedulers(unittest.TestCase):
     def test_cosine(self):
         self._run_pass(lr_scheduler='cosine', warmup_updates=0, end_zero=True)
         self._run_pass(lr_scheduler='cosine', warmup_updates=50, end_zero=True)
+        self._run_pass(
+            lr_scheduler='cosine', warmup_updates=50, end_zero=True, max_lr=0.5
+        )
+        self._run_pass(
+            lr_scheduler='cosine', warmup_updates=50, end_zero=True, max_lr=1.5
+        )
         with self.assertRaises(lr_scheduler.StopTrainException):
             self._run_pass(lr_scheduler='cosine', max_train_steps=100, total_steps=1000)
 
     def test_linear(self):
         self._run_pass(lr_scheduler='linear', warmup_updates=0, end_zero=True)
         self._run_pass(lr_scheduler='linear', warmup_updates=50, end_zero=True)
+        self._run_pass(
+            lr_scheduler='linear', warmup_updates=50, end_zero=True, max_lr=0.5
+        )
+        self._run_pass(
+            lr_scheduler='linear', warmup_updates=50, end_zero=True, max_lr=1.5
+        )
         with self.assertRaises(lr_scheduler.StopTrainException):
             self._run_pass(lr_scheduler='linear', max_train_steps=100, total_steps=1000)
 
     def test_invsqrt(self):
         self._run_pass(lr_scheduler='invsqrt', warmup_updates=0, end_zero=False)
         self._run_pass(lr_scheduler='invsqrt', warmup_updates=50, end_zero=False)
+        self._run_pass(
+            lr_scheduler='invsqrt', warmup_updates=50, end_zero=True, max_lr=0.5
+        )
+        self._run_pass(
+            lr_scheduler='invsqrt', warmup_updates=50, end_zero=True, max_lr=1.5
+        )
 
         # decay very fast
         steps = self._run_pass(
