@@ -1,0 +1,28 @@
+acts:
+- - episode_done: true
+    id: lccc_large
+    labels:
+    - 哈哈哈哈！那我的嘴巴可能要烂掉！
+    text: 火锅我在重庆成都吃了七八顿火锅
+- - episode_done: true
+    id: lccc_large
+    labels:
+    - 啥时候带我们见嫂子？
+    text: 刚应该带着你和我接你嫂子去坐车太没劲了
+- - episode_done: false
+    id: lccc_large
+    labels:
+    - 你又知道
+    text: 头不圆
+- - episode_done: true
+    id: lccc_large
+    labels:
+    - 好吧，你赢了，头真的不圆~~
+    text: 脸长的人头怎么可能圆
+- - episode_done: false
+    id: lccc_large
+    labels:
+    - 有道理
+    text: 也许人在国外呢，时差懂不懂
+num_episodes: 12007759
+num_examples: 14697626

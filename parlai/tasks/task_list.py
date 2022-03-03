@@ -1562,4 +1562,17 @@ task_list = [
             "website": "https://github.com/thu-coai/CDial-GPT",
         },
     },
+    {
+        "id": "LCCC_large",
+        "display_name": "LCCC_large",
+        "task": "lccc_large",
+        "tags": ["ChitChat"],
+        "description": (
+            "Large-scale cleaned Chinese conversation dataset."
+        ),
+        "links": {
+            "arXiv": "https://arxiv.org/pdf/2008.03946",
+            "website": "https://github.com/thu-coai/CDial-GPT",
+        },
+    },
 ]
