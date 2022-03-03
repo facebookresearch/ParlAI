@@ -58,7 +58,7 @@ class GPT2Decoder(torch.nn.Module):
 
     def _init_from_pretrained(self, opt):
         # load model
-        if opt["model_name"]:
+        if opt.get("model_name"):
             fle_key = opt["model_name"]
         else:
             model_sz = opt["gpt2_size"]
