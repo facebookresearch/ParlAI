@@ -40,7 +40,7 @@ class TestLRSchedulers(unittest.TestCase):
             # LR is always linear
             for step in range(warmup_updates - 2):
                 self.assertAlmostEqual(
-                    output[step + 1] - output[step], 1 / warmup_updates
+                    output[step + 1] - output[step], max_lr / warmup_updates
                 )
         if end_zero:
             self.assertAlmostEquals(output[-1], 0)
