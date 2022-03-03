@@ -35,6 +35,8 @@ class TestLRSchedulers(unittest.TestCase):
         assert warmup_updates >= 0
         if warmup_updates > 0:
             assert output[warmup_updates - 1] == max_lr
+            if warmup_updates < len(output):
+                assert output[warmup_updates - 1] < max_lr
             # LR is always linear
             for step in range(warmup_updates - 2):
                 self.assertAlmostEqual(
