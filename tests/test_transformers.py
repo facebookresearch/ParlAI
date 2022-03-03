@@ -1022,7 +1022,7 @@ class TestDecoderOnly(unittest.TestCase):
 
     @pytest.mark.nofbcode
     def test_resize_embeddings(self):
-        model = 'transformer/decoder_only'
+        model = 'transformer/decoder'
         with testing_utils.tempdir() as tmpdir:
             model_file = os.path.join(tmpdir, 'model_file')
             _, _ = testing_utils.train_model(
@@ -1064,7 +1064,7 @@ class TestDecoderOnly(unittest.TestCase):
     def _overfit_train(self, **args):
         args = dict(
             task='integration_tests:overfit',
-            model='transformer/decoder_only',
+            model='transformer/decoder',
             optimizer='sgd',
             learningrate=1,
             momentum=0.9,
