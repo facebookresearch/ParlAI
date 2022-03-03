@@ -1554,9 +1554,7 @@ task_list = [
         "display_name": "LCCC",
         "task": "lccc",
         "tags": ["ChitChat"],
-        "description": (
-            "Large-scale cleaned Chinese conversation dataset."
-        ),
+        "description": ("Large-scale cleaned Chinese conversation dataset."),
         "links": {
             "arXiv": "https://arxiv.org/pdf/2008.03946",
             "website": "https://github.com/thu-coai/CDial-GPT",

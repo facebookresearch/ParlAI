@@ -9,7 +9,7 @@ RESOURCES = [
         'https://cloud.tsinghua.edu.cn/f/f131a4d259184566a29c/?dl=1',
         'LCCC.zip',
         'f5203511cd8d6a608008af0aa290aa516d983abc16aa510471e3c4ee6bca7886',
-    ),
+    )
 ]
 
 
