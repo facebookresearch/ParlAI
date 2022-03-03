@@ -57,15 +57,15 @@ class DecoderOnlyAgent(TorchGeneratorAgent):
     def _pad_tensor(self, items, is_label=False):
         """
         Override of ``TorchAgent._pad_tensor``.
+
+        Pads context tensor on the left and label tensor on the right, such that when they are concatenated the example meets in the middle to form a continuous sequence.
         """
-        if is_label:
-            return padded_tensor(
-                items, pad_idx=self.NULL_IDX, left_padded=False, fp16friendly=False
-            )
-        else:
-            return padded_tensor(
-                items, pad_idx=self.NULL_IDX, left_padded=True, fp16friendly=False
-            )
+        return padded_tensor(
+            items,
+            pad_idx=self.NULL_IDX,
+            left_padded=(not is_label),
+            fp16friendly=self.fp16,
+        )
 
     def _resize_token_embeddings(self, state_dict, msg=None):
         """
