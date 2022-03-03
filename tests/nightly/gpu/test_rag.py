@@ -682,5 +682,34 @@ class TestLeftPadding(unittest.TestCase):
         )
 
 
+class TestExtraPositionsDocConcat(unittest.TestCase):
+    """
+    Ensure docs and input are concatenated appropriately
+    When using extra position embs.
+    """
+
+    bsz = 1
+    seqlen = 1024
+    n_docs = 3
+
+    def test_concat_docs_and_input(self):
+        for n_extra in [128, 2048]:
+            rag = create_agent(
+                Opt({**test_opt, 'n_docs': self.n_docs, 'n_extra_positions': n_extra})
+            )
+            enc_input = torch.LongTensor(self.bsz, self.seqlen).fill_(0)
+            docs = [
+                [
+                    Document("title", "I am a document!" * 1000, i)
+                    for i in range(self.n_docs)
+                ]
+                for _ in range(self.bsz)
+            ]
+            expanded_output = rag.model.concat_docs_and_input(
+                enc_input, self.seqlen, docs, self.n_docs
+            )
+            assert expanded_output.size(1) == self.seqlen + n_extra
+
+
 if __name__ == '__main__':
     unittest.main()
