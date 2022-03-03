@@ -9,7 +9,7 @@ Transformer decoder implementations.
 
 from __future__ import annotations
 from abc import ABC
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import torch

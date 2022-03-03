@@ -21,7 +21,7 @@ from .modules import (
 )
 
 
-class DecoderOnlyAgent(TorchGeneratorAgent):
+class DecoderAgent(TorchGeneratorAgent):
     """
     DecoderOnlyAgent.
 
