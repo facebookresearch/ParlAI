@@ -58,7 +58,7 @@ ExtraOutput = Union[EncoderOutput, Tuple[Encoding, MaskOut, AttnWeights, AttnWei
 
 
 def get_classifier_model_and_dict(
-    opt: Opt
+    opt: Opt,
 ) -> Tuple[Optional[TorchAgent], Optional[DictionaryAgent]]:
     """
     Build classifier model and dictionary.
@@ -708,9 +708,14 @@ class TransformerExpandedDecoder(TransformerDecoder):
         new_incr_state = {i: [] for i, _ in enumerate(self.layers)}
 
         for chunk_idx, layer_nos, next_device in work_items:
-            s_tensor, s_enc_out, s_enc_mask, s_incr_state, s_extra_out, s_extra_mask = chunks[
-                chunk_idx
-            ]
+            (
+                s_tensor,
+                s_enc_out,
+                s_enc_mask,
+                s_incr_state,
+                s_extra_out,
+                s_extra_mask,
+            ) = chunks[chunk_idx]
             for layer_no in layer_nos:
                 s_tensor, nis = self.layers[layer_no](
                     x=s_tensor,
@@ -722,7 +727,13 @@ class TransformerExpandedDecoder(TransformerDecoder):
                 )
                 new_incr_state[layer_no].append(nis)
             # don't move incr state, it's always on the correct device
-            s_tensor, s_enc_out, s_enc_mask, s_extra_out, s_extra_mask = PipelineHelper.chunk_to(
+            (
+                s_tensor,
+                s_enc_out,
+                s_enc_mask,
+                s_extra_out,
+                s_extra_mask,
+            ) = PipelineHelper.chunk_to(
                 (s_tensor, s_enc_out, s_enc_mask, s_extra_out, s_extra_mask),
                 next_device,
             )

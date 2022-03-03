@@ -43,7 +43,8 @@ class BaseTransformerDecoder(nn.Module, ABC):
     """
     Subclasses are require to implement ``forward``.
 
-    Subclasses can optionally override ``__init__``, ``build_layer``, and ``build_layers`` to customize subcomponents.
+    Subclasses can optionally override ``__init__``, ``build_layer``, and
+    ``build_layers`` to customize subcomponents.
     """
 
     def __init__(
@@ -119,7 +120,8 @@ class BaseTransformerDecoder(nn.Module, ABC):
         """
         Instantiates all layers. Called only once during __init__.
 
-        Additional setup common to all layers, such as checkpoint wrapping, can be done here.
+        Additional setup common to all layers, such as checkpoint wrapping, can be done
+        here.
         """
         layers = nn.ModuleList()
         for i in range(self.n_layers):
@@ -271,8 +273,9 @@ DecoderLayerIncrState = Dict[str, Dict[str, torch.Tensor]]
 
 class BaseTransformerDecoderLayer(nn.Module, ABC):
     """
-    Not meant to be directly instantiated. If this functionality is desired as-is,
-    use TransformerDecoderOnlyLayer instead.
+    Not meant to be directly instantiated.
+
+    If this functionality is desired as-is, use TransformerDecoderOnlyLayer instead.
     """
 
     def __init__(
@@ -419,8 +422,8 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
 )
 class TransformerDecoderLayer(BaseTransformerDecoderLayer):
     """
-    Implements a single Transformer decoder layer with cross (encoder) attention
-    as in [Vaswani, 2017](https://arxiv.org/abs/1706.03762).
+    Implements a single Transformer decoder layer with cross (encoder) attention as in
+    [Vaswani, 2017](https://arxiv.org/abs/1706.03762).
 
     Decoder layers are similar to encoder layers but:
 
@@ -666,10 +669,11 @@ class TransformerDecoder(BaseTransformerDecoder):
 @swappable(self_attention=MultiHeadAttention, feedforward=TransformerFFN)
 class TransformerDecoderOnlyLayer(BaseTransformerDecoderLayer):
     """
-    Implements a single Transformer decoder layer without attending to the encoder states.
+    Implements a single Transformer decoder layer without attending to the encoder
+    states.
 
-    Decoder layers are similar to encoder layers but self-attention is limited in
-    a causal (auto-regressive) manner.
+    Decoder layers are similar to encoder layers but self-attention is limited in a
+    causal (auto-regressive) manner.
     """
 
     def build_self_attention(

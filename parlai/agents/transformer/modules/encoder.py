@@ -391,12 +391,14 @@ class TransformerEncoder(nn.Module):
 
 class PassThroughEncoder(torch.nn.Module):
     """
-    No-op encoder. Useful for decoder-only transformers.
+    No-op encoder.
+
+    Useful for decoder-only transformers.
     """
 
     def __init__(self, *args, **kwargs):
         """
-        Dummy __init__ to avoid passing superfluous args to nn.Module
+        Dummy __init__ to avoid passing superfluous args to nn.Module.
         """
         super().__init__()
 

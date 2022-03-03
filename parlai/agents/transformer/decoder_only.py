@@ -25,7 +25,8 @@ class DecoderOnlyAgent(TorchGeneratorAgent):
     """
     DecoderOnlyAgent.
 
-    Implementation of TorchGeneratorAgent, where the model is a Decoder-Only Transformer.
+    Implementation of TorchGeneratorAgent, where the model is a Decoder-Only
+    Transformer.
     """
 
     @classmethod
@@ -58,7 +59,9 @@ class DecoderOnlyAgent(TorchGeneratorAgent):
         """
         Override of ``TorchAgent._pad_tensor``.
 
-        Pads context tensor on the left and label tensor on the right, such that when they are concatenated the example meets in the middle to form a continuous sequence.
+        Pads context tensor on the left and label tensor on the right, such that when
+        they are concatenated the example meets in the middle to form a continuous
+        sequence.
         """
         return padded_tensor(
             items,
