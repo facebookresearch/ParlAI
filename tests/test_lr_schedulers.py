@@ -36,7 +36,7 @@ class TestLRSchedulers(unittest.TestCase):
         if warmup_updates > 0:
             assert output[warmup_updates - 1] == max_lr
             if warmup_updates < len(output):
-                assert output[warmup_updates - 1] < max_lr
+                assert output[warmup_updates] < max_lr
             # LR is always linear
             for step in range(warmup_updates - 2):
                 self.assertAlmostEqual(
@@ -113,10 +113,10 @@ class TestLRSchedulers(unittest.TestCase):
         self._run_pass(lr_scheduler='invsqrt', warmup_updates=0, end_zero=False)
         self._run_pass(lr_scheduler='invsqrt', warmup_updates=50, end_zero=False)
         self._run_pass(
-            lr_scheduler='invsqrt', warmup_updates=50, end_zero=True, max_lr=0.5
+            lr_scheduler='invsqrt', warmup_updates=50, end_zero=False, max_lr=0.5
         )
         self._run_pass(
-            lr_scheduler='invsqrt', warmup_updates=50, end_zero=True, max_lr=1.5
+            lr_scheduler='invsqrt', warmup_updates=50, end_zero=False, max_lr=1.5
         )
 
         # decay very fast
