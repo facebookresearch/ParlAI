@@ -89,7 +89,10 @@ class RagModel(TorchGeneratorModel):
             padding_idx=self.pad_idx,
         )
         self.seq2seq_decoder = self.build_decoder(
-            opt, embedding=self.embeddings, padding_idx=self.pad_idx
+            opt,
+            embedding=self.embeddings,
+            dictionary=dictionary,
+            padding_idx=self.pad_idx,
         )
 
     @classmethod
@@ -121,7 +124,9 @@ class RagModel(TorchGeneratorModel):
         **kwargs,
     ):
         if decoder_class is None:
-            return RagDecoder(opt=opt, embedding=embedding, n_positions=n_positions)
+            return RagDecoder(
+                opt=opt, embedding=embedding, n_positions=n_positions, **kwargs
+            )
         else:
             return decoder_class(opt, *args, **kwargs)
 

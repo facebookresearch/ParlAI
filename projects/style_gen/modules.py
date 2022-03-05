@@ -85,7 +85,7 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
         """
         Return TransformerDecoderWithEmbeds instead of TransformerDecoder.
         """
-        return TransformerDecoderWithEmbeds(opt=opt, embedding=embedding)
+        return TransformerDecoderWithEmbeds(opt=opt, embedding=embedding, **kwargs)
 
     def __init__(self, opt, dictionary, num_classes: int):
         super().__init__(opt, dictionary)
