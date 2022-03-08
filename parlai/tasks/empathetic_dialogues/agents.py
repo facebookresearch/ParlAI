@@ -25,7 +25,7 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
         build(opt)
         base_datatype = self.datatype.split(':')[0]
         opt['datafile'] = os.path.join(
-            self.opt['datapath'],
+            opt['datapath'],
             'empatheticdialogues',
             'empatheticdialogues',
             base_datatype + '.csv',
