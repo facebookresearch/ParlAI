@@ -146,7 +146,6 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
                         'prepend_cand': entry[7],  # Deprecated
                         'deepmoji_ctx': entry[4],  # Deprecated
                         'deepmoji_cand': entry[5],  # Deprecated
-                        'episode_done': episode_done,
                         'label_candidates': entry[8],
                     }
                 )

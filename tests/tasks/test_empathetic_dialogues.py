@@ -103,7 +103,6 @@ class TestEDTeacher(unittest.TestCase):
                         'prepend_cand': None,
                         'deepmoji_ctx': None,
                         'deepmoji_cand': None,
-                        'episode_done': False,
                         'label_candidates': [],
                     },
                 ),
@@ -133,7 +132,6 @@ class TestEDTeacher(unittest.TestCase):
                         'prepend_cand': None,
                         'deepmoji_ctx': None,
                         'deepmoji_cand': None,
-                        'episode_done': True,
                         'label_candidates': [
                             "That really does make it special. I'm glad you have that. ",
                             "It must've have been. Glad they are okay now.",
@@ -249,7 +247,6 @@ class TestEDTeacher(unittest.TestCase):
                         'prepend_cand': None,
                         'deepmoji_ctx': None,
                         'deepmoji_cand': None,
-                        'episode_done': True,
                         'label_candidates': [
                             "Are you really able to work from home? Finding a gig is so difficult, I'm glad that it is working for you.",
                             "Oh no. That's quite unfortunate for the deer. Did you just drive past it?",
