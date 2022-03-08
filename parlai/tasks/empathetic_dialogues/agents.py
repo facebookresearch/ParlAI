@@ -4,14 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Optional
-from parlai.core.params import ParlaiParser
-from parlai.core.opt import Opt
 import os
-from typing import Any, List
+from typing import List, Optional
 
 from parlai.utils.io import PathManager
 from parlai.core.message import Message
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
 from .build import build
 
@@ -88,28 +87,24 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
                             for cand in sparts[8].split('|')
                         ]
                     else:
-                        inline_label_candidates = []
+                        inline_label_candidates = None
                 elif len(sparts) == 8:
-                    inline_label_candidates = []
+                    inline_label_candidates = None
                 else:
                     raise ValueError(f'Line {i:d} has the wrong number of fields!')
 
-                context_emb, cand_emb = None, None  # Deprecated fields
-                ft_ctx, ft_cand = None, None  # Deprecated fields
-                is_political = None  # Deprecated field
-
-                dialogue_parts = [
-                    contextt,
-                    label,
-                    prompt,
-                    sit,
-                    context_emb,
-                    cand_emb,
-                    ft_ctx,
-                    ft_cand,
-                    inline_label_candidates,
-                    is_political,
-                ]
+                dialogue_parts = Message(
+                    {
+                        'text': contextt,
+                        'labels': [label],
+                        'emotion': prompt,
+                        'situation': sit,
+                    }
+                )
+                if inline_label_candidates is not None:
+                    dialogue_parts.force_set(
+                        'label_candidates', inline_label_candidates
+                    )
 
                 if int(sparts[1]) % 2 == 0:
                     # experiencer is the "text" and responder is the "label"
@@ -136,26 +131,13 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
         for episode in data:
             for entry_idx, entry in enumerate(episode):
                 episode_done = entry_idx == len(episode) - 1
-                action = Message(
-                    {
-                        'situation': entry[3],
-                        'emotion': entry[2],
-                        'text': entry[0],
-                        'labels': [entry[1]],
-                        'prepend_ctx': entry[6],  # Deprecated
-                        'prepend_cand': entry[7],  # Deprecated
-                        'deepmoji_ctx': entry[4],  # Deprecated
-                        'deepmoji_cand': entry[5],  # Deprecated
-                        'label_candidates': entry[8],
-                    }
-                )
-                yield action, episode_done
+                yield entry, episode_done
 
     def _select_dialogues_to_add(
         self,
-        experiencer_text_dialogue: List[List[Any]],
-        responder_text_dialogue: List[List[Any]],
-    ) -> List[List[List[Any]]]:
+        experiencer_text_dialogue: List[Message],
+        responder_text_dialogue: List[Message],
+    ) -> List[List[Message]]:
         """
         Return conversation halves to add to self.data.
 
