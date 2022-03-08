@@ -10,6 +10,7 @@ import datetime
 import json
 import os
 import random
+import itertools
 
 from parlai.utils.io import PathManager
 from parlai.core.metrics import dict_report
