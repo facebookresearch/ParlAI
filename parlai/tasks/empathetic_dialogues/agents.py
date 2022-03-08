@@ -14,47 +14,31 @@ import numpy as np
 
 from parlai.utils.io import PathManager
 from parlai.core.message import Message
-from parlai.core.teachers import FixedDialogTeacher
+from parlai.core.teachers import DialogTeacher
 from .build import build
 
 
 DEFAULT_TRAIN_EXPERIENCER_ONLY = False
-DEFAULT_REMOVE_POLITICAL_CONVOS = False
 
 
-class EmpatheticDialoguesTeacher(FixedDialogTeacher):
+class EmpatheticDialoguesTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.opt = opt
+        self.datatype = opt['datatype']
+        build(opt)
         base_datatype = self.datatype.split(':')[0]
-        self.datapath = os.path.join(
+        opt['datafile'] = os.path.join(
             self.opt['datapath'],
             'empatheticdialogues',
             'empatheticdialogues',
             base_datatype + '.csv',
         )
+        self.id = 'empathetic_dialogues'
+        super().__init__(opt, shared)
+
         self.experiencer_side_only = (
             opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
             and base_datatype == 'train'
         ) or base_datatype != 'train'
-        if not shared:
-            print(
-                f'[EmpatheticDialoguesTeacher] Only use experiencer side? '
-                f'{self.experiencer_side_only}, datatype: {self.datatype}'
-            )
-        self.remove_political_convos = opt.get(
-            'remove_political_convos', DEFAULT_REMOVE_POLITICAL_CONVOS
-        )
-
-        if shared:
-            self.data = shared['data']
-        else:
-            build(opt)
-            self._setup_data(base_datatype)
-
-        self.num_exs = sum([len(d) for d in self.data])
-        self.num_eps = len(self.data)
-        self.reset()
 
     @classmethod
     def add_cmdline_args(
@@ -71,21 +55,11 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             # utterance would be the label
             help='In the train set, only use Speaker (experiencer) utterances as text and Listener (responder) utterances as labels.',
         )
-        agent.add_argument(
-            '--remove-political-convos',
-            type='bool',
-            default=DEFAULT_REMOVE_POLITICAL_CONVOS,
-            help='Remove all conversations containing an utterance marked as political',
-        )
         return parser
 
-    def num_episodes(self):
-        return self.num_eps
+    def setup_data(self, path):
 
-    def num_examples(self):
-        return self.num_exs
-
-    def _setup_data(self, base_datatype):
+        # TODO NOW: revise below
 
         if self.opt.get('deepmoji') is not None:
             self.embed = np.load(self.opt['deepmoji'] + base_datatype + ".npy")
@@ -98,6 +72,7 @@ class EmpatheticDialoguesTeacher(FixedDialogTeacher):
             ftpath = self.opt['fasttextloc']
             ftmodel = fastText.FastText.load_model(ftpath)
 
+        print('loading: ' + path)
         with PathManager.open(self.datapath) as f:
             df = f.readlines()
 
