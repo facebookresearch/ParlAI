@@ -10,8 +10,6 @@ from parlai.core.opt import Opt
 import os
 from typing import Any, List
 
-import numpy as np
-
 from parlai.utils.io import PathManager
 from parlai.core.message import Message
 from parlai.core.teachers import DialogTeacher
@@ -59,27 +57,14 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
 
     def setup_data(self, path):
 
-        # TODO NOW: revise below
-
-        if self.opt.get('deepmoji') is not None:
-            self.embed = np.load(self.opt['deepmoji'] + base_datatype + ".npy")
-
-        if self.opt.get('fasttextloc') is not None and self.opt.get('prepend', -1) > 0:
-            try:
-                import fastText
-            except ImportError:
-                raise ImportError("Please run 'pip install fasttext'.")
-            ftpath = self.opt['fasttextloc']
-            ftmodel = fastText.FastText.load_model(ftpath)
-
         print('loading: ' + path)
-        with PathManager.open(self.datapath) as f:
+        with PathManager.open(path) as f:
             df = f.readlines()
 
         turn_idx = 1
         responder_text_dialogue = []
         experiencer_text_dialogue = []
-        self.data = []
+        data = []
         for i in range(1, len(df)):
 
             cparts = df[i - 1].strip().split(",")
@@ -110,27 +95,9 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
                 else:
                     raise ValueError(f'Line {i:d} has the wrong number of fields!')
 
-                context_emb, cand_emb = None, None
-                if self.opt.get('deepmoji') is not None:
-                    context_emb = self.embed[i - 2]
-                    cand_emb = self.embed[i - 1]
-
-                ft_ctx, ft_cand = None, None
-                if (
-                    self.opt.get('fasttextloc') is not None
-                    and self.opt.get('prepend', -1) > 0
-                ):
-                    ft_ctx = ""
-                    gettop, _ = ftmodel.predict(contextt, k=self.opt['prepend'])
-                    for f in gettop:
-                        ft_ctx = f.split("_")[-1] + " " + ft_ctx
-                    ft_cand = ""
-                    gettop, _ = ftmodel.predict(label, k=self.opt['prepend'])
-                    for f in gettop:
-                        ft_cand = f.split("_")[-1] + " " + ft_cand
-
-                # Check if either the text or label are marked as being political
-                is_political = '<POLITICAL>' in cparts[7] or '<POLITICAL>' in sparts[7]
+                context_emb, cand_emb = None, None  # Deprecated fields
+                ft_ctx, ft_cand = None, None  # Deprecated fields
+                is_political = None  # Deprecated field
 
                 dialogue_parts = [
                     contextt,
@@ -156,16 +123,35 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
 
                 # We've finished the previous episode, so add it to the data
                 turn_idx = 1
-                self.data += self._select_dialogues_to_add(
+                data += self._select_dialogues_to_add(
                     experiencer_text_dialogue, responder_text_dialogue
                 )
                 experiencer_text_dialogue = []
                 responder_text_dialogue = []
 
         # Add in the final episode
-        self.data += self._select_dialogues_to_add(
+        data += self._select_dialogues_to_add(
             experiencer_text_dialogue, responder_text_dialogue
         )
+
+        for episode in data:
+            for entry_idx, entry in enumerate(episode):
+                episode_done = entry_idx == len(episode) - 1
+                action = Message(
+                    {
+                        'situation': entry[3],
+                        'emotion': entry[2],
+                        'text': entry[0],
+                        'labels': [entry[1]],
+                        'prepend_ctx': entry[6],  # Deprecated
+                        'prepend_cand': entry[7],  # Deprecated
+                        'deepmoji_ctx': entry[4],  # Deprecated
+                        'deepmoji_cand': entry[5],  # Deprecated
+                        'episode_done': episode_done,
+                        'label_candidates': entry[8],
+                    }
+                )
+                yield action, episode_done
 
     def _select_dialogues_to_add(
         self,
@@ -176,78 +162,14 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
         Return conversation halves to add to self.data.
 
         Given lists corresponding to the conversation turns from both sides of the
-        conversation, return only the list(s) that will be added to self.data.
-        Optionally filter by side of the conversation or by whether the conversation
-        contains any political language.
+        conversation, return only the list(s) that will be used by the teacher.
         """
-        if self.remove_political_convos and any(
-            [turn[9] for turn in experiencer_text_dialogue + responder_text_dialogue]
-        ):
-            return []
-        else:
-            selected_dialogues = []
-            if len(experiencer_text_dialogue) > 0:
-                selected_dialogues.append(experiencer_text_dialogue)
-            if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
-                selected_dialogues.append(responder_text_dialogue)
-            return selected_dialogues
-
-    def get(self, episode_idx, entry_idx=0):
-        ep = self.data[episode_idx]
-        ep_i = ep[entry_idx]
-        episode_done = entry_idx >= (len(ep) - 1)
-        action = Message(
-            {
-                'situation': ep_i[3],
-                'emotion': ep_i[2],
-                'text': ep_i[0],
-                'labels': [ep_i[1]],
-                'prepend_ctx': ep_i[6],
-                'prepend_cand': ep_i[7],
-                'deepmoji_ctx': ep_i[4],
-                'deepmoji_cand': ep_i[5],
-                'episode_done': episode_done,
-                'label_candidates': ep_i[8],
-            }
-        )
-
-        return action
-
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        return shared
-
-
-class EmotionClassificationSituationTeacher(EmpatheticDialoguesTeacher):
-    """
-    Class for detecting the emotion based on the situation.
-    """
-
-    def __init__(self, opt, shared=None):
-        opt['train_experiencer_only'] = True
-        # So that we only have one episode per train conversation
-        super().__init__(opt, shared)
-        if not shared:
-            self._get_situations()
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return len(self.data)
-
-    def _get_situations(self):
-        new_data = []
-        for ep in self.data:
-            new_data.append(ep[0])
-        self.data = new_data
-
-    def get(self, episode_idx, entry_idx=0):
-        ex = self.data[episode_idx]
-        episode_done = True
-
-        return Message({'labels': [ex[2]], 'text': ex[3], 'episode_done': episode_done})
+        selected_dialogues = []
+        if len(experiencer_text_dialogue) > 0:
+            selected_dialogues.append(experiencer_text_dialogue)
+        if len(responder_text_dialogue) > 0 and not self.experiencer_side_only:
+            selected_dialogues.append(responder_text_dialogue)
+        return selected_dialogues
 
 
 class DefaultTeacher(EmpatheticDialoguesTeacher):

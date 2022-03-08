@@ -7,10 +7,7 @@
 import unittest
 
 from parlai.core.opt import Opt
-from parlai.tasks.empathetic_dialogues.agents import (
-    EmotionClassificationSituationTeacher,
-    EmpatheticDialoguesTeacher,
-)
+from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.utils import testing as testing_utils
 
 
@@ -85,30 +82,6 @@ class TestEDTeacher(unittest.TestCase):
                     teacher = teacher_class(full_opt)
                     self.assertEqual(teacher.num_episodes(), num_episodes)
                     self.assertEqual(teacher.num_examples(), num_examples)
-
-            # Check EmotionClassificationSituationTeacher, with one example per episode
-            train_episode_count = EPISODE_COUNTS['train_experiencer_only']
-            # For the situation classifier, we only want to have one episode per train
-            # conversation
-            opts_episodes = [
-                ({'datatype': 'train'}, train_episode_count),  # Test the default mode
-                (
-                    {'datatype': 'train', 'train_experiencer_only': True},
-                    train_episode_count,
-                ),
-                (
-                    {'datatype': 'train', 'train_experiencer_only': False},
-                    train_episode_count,
-                ),
-                ({'datatype': 'valid'}, EPISODE_COUNTS['valid']),
-                ({'datatype': 'test'}, EPISODE_COUNTS['test']),
-            ]
-            for teacher_class in [EmotionClassificationSituationTeacher]:
-                for opt, num_episodes in opts_episodes:
-                    full_opt = Opt({**opt, 'datapath': data_path})
-                    teacher = teacher_class(full_opt)
-                    self.assertEqual(teacher.num_episodes(), num_episodes)
-                    self.assertEqual(teacher.num_examples(), num_episodes)
 
     def test_check_examples(self):
 
@@ -386,46 +359,6 @@ class TestEDTeacher(unittest.TestCase):
                 full_opt = Opt({**opt, 'datapath': data_path})
                 teacher = EmpatheticDialoguesTeacher(full_opt)
                 self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
-
-            # Check EmotionClassificationSituationTeacher
-            opts_and_examples = [
-                (
-                    {'datatype': 'train', 'train_experiencer_only': True},
-                    {
-                        'text': ' i used to scare for darkness',
-                        'labels': ['afraid'],
-                        'episode_done': True,
-                    },
-                ),
-                (
-                    {'datatype': 'train', 'train_experiencer_only': False},
-                    {
-                        'text': ' i used to scare for darkness',
-                        'labels': ['afraid'],
-                        'episode_done': True,
-                    },
-                ),
-                (
-                    {'datatype': 'valid'},
-                    {
-                        'text': 'I was walking through my hallway a few week ago, and my son was hiding under the table and grabbed my ankle. I thought i was got. ',
-                        'labels': ['surprised'],
-                        'episode_done': True,
-                    },
-                ),
-                (
-                    {'datatype': 'test'},
-                    {
-                        'text': "My mother stopped by my house one day and said she saw 3 dogs on the road, down from our house. They were starving, with ribs showing, and it was a mother dog and her two small puppies. Of course, my daughter wanted to bring them to our house, so we could feed and help them. We did, and my heart went out to them, as they were so sweet, but really were in a bad shape.",
-                        'labels': ['caring'],
-                        'episode_done': True,
-                    },
-                ),
-            ]
-            for opt, example in opts_and_examples:
-                full_opt = Opt({**opt, 'datapath': data_path})
-                teacher = EmotionClassificationSituationTeacher(full_opt)
-                self.assertEqual(teacher.get(episode_idx=1), example)
 
 
 if __name__ == '__main__':

@@ -20,9 +20,4 @@ Other optional fields:
 - [deepmoji_ctx]: vector encoding from deepmoji penultimate layer - or None 
 - [deepmoji_cand]: vector encoding from deepmoji penultimate layer for label line (candidate) - or None
 
-## EmotionClassificationSituationTeacher
-Classifier that returns the situation and emotion for each episode given by `EmpatheticDialoguesTeacher`. Examples:
-- [text]: A 1-3 sentence description of the situation that the conversation is (equivalent to [situation] for `EmpatheticDialoguesTeacher`)
-- [labels]: one of 32 emotion words (equivalent to [emotion] for `EmpatheticDialoguesTeacher`)
-
 Tags: #EmpatheticDialogues, #All, #ChitChat
