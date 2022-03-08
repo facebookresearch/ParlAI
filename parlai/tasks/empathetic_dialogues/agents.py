@@ -31,12 +31,11 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
             base_datatype + '.csv',
         )
         self.id = 'empathetic_dialogues'
-        super().__init__(opt, shared)
-
         self.experiencer_side_only = (
             opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
             and base_datatype == 'train'
         ) or base_datatype != 'train'
+        super().__init__(opt, shared)
 
     @classmethod
     def add_cmdline_args(
