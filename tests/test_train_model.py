@@ -251,7 +251,7 @@ class TestTrainModel(unittest.TestCase):
         """
         with testing_utils.tempdir() as tmpdir:
             log_report = os.path.join(tmpdir, 'world_logs.jsonl')
-            multitask = 'integration_tests,integration_tests:ReverseTeacher'
+            multitask = 'integration_tests:mutators=flatten,integration_tests:ReverseTeacher'
             valid, test = testing_utils.train_model(
                 {
                     'task': multitask,

@@ -2636,7 +2636,6 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
             opt[key] = value
         else:
             task.append(f)
-    opt['task'] = ':'.join(task)
 
 
 def create_task_agent_from_taskname(opt: Opt):
