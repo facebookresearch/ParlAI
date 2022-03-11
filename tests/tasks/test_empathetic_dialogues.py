@@ -99,6 +99,7 @@ class TestEDTeacher(unittest.TestCase):
                         'labels': [
                             'I do actually hit blank walls a lot of times but i get by'
                         ],
+                        'episode_done': False,
                     },
                 ),
                 (
@@ -108,6 +109,7 @@ class TestEDTeacher(unittest.TestCase):
                         'emotion': 'sentimental',
                         'text': 'Where has she gone?',
                         'labels': ['We no longer talk.'],
+                        'episode_done': True,
                     },
                 ),
                 (
@@ -117,6 +119,7 @@ class TestEDTeacher(unittest.TestCase):
                         'emotion': 'surprised',
                         'text': 'I may have let out a scream that will have him question my manhood for the rest of our lives, lol. ',
                         'labels': ['I would probably scream also.'],
+                        'episode_done': True,
                         'label_candidates': [
                             "That really does make it special. I'm glad you have that. ",
                             "It must've have been. Glad they are okay now.",
@@ -228,6 +231,7 @@ class TestEDTeacher(unittest.TestCase):
                         'emotion': 'caring',
                         'text': "Oh my goodness, that's very scary! I hope you are okay now and the drunk driver was punished for his actions?",
                         'labels': ['Yeah he was punished hes in jail still'],
+                        'episode_done': True,
                         'label_candidates': [
                             "Are you really able to work from home? Finding a gig is so difficult, I'm glad that it is working for you.",
                             "Oh no. That's quite unfortunate for the deer. Did you just drive past it?",
