@@ -143,6 +143,7 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
 
         Given lists corresponding to the conversation turns from both sides of the
         conversation, return only the list(s) that will be used by the teacher.
+        Optionally include both sides of the conversation.
         """
         selected_dialogues = []
         if len(experiencer_text_dialogue) > 0:
