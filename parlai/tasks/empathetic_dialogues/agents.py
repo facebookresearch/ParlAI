@@ -130,8 +130,8 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
 
         for episode in data:
             for entry_idx, entry in enumerate(episode):
-                episode_done = entry_idx == len(episode) - 1
-                yield entry, episode_done
+                new_episode = entry_idx == 0
+                yield entry, new_episode
 
     def _select_dialogues_to_add(
         self,
