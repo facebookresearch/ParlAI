@@ -32,6 +32,8 @@ if TYPE_CHECKING:
         MephistoAgentWrapper,
     )
 
+THEM = 'Partner'
+
 
 class ModelChatOnboardWorld(CrowdOnboardWorld):
     """
@@ -150,11 +152,6 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         self.acceptability_checker = AcceptabilityChecker()
         self.block_qualification = opt['block_qualification']
 
-        self.final_chat_data = None
-        # TODO: remove this attribute once chat data is only stored in the Mephisto
-        #  TaskRun for this HIT (see .get_custom_task_data() docstring for more
-        #  information)
-
         # below are timeout protocols
         self.max_resp_time = max_resp_time  # in secs
         print(
@@ -192,18 +189,17 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
         for idx, agent in enumerate([self.agent, self.bot]):
             if not self.chat_done:
                 acts[idx] = agent.act(timeout=self.max_resp_time)
-                if (
-                    agent == self.bot
-                    and hasattr(self.bot, 'agent_id')
-                    and self.bot.agent_id
-                ):
-                    # Set speaker name as self.bot_agent_id otherwise, at frontend bot name such as "TransformerGenerator" would appear
-                    Compatibility.backward_compatible_force_set(
-                        acts[idx], 'id', self.bot.agent_id
-                    )
                 acts[idx] = Message(
                     Compatibility.maybe_fix_act(acts[idx])
                 ).json_safe_payload()
+                if acts[idx]['id'] in [
+                    'TransformerGenerator',
+                    'Bart',
+                    'BlenderBot2WizIntGoldDocRetrieverFiD',
+                    'BlenderBot2SearchQueryFiD',
+                    'KdComboSearchQuery',
+                ]:
+                    acts[idx]['id'] = THEM
                 print(
                     f'Got act for agent idx {idx}, act was: {acts[idx]} and self.task_turn_idx: {self.task_turn_idx}.'
                 )
@@ -365,30 +361,15 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 'model_opt': self.bot.model_agent.opt,
             },
         }
-        # TODO: once the analysis scripts are fully switched over to DataBrowser, remove
-        #  the 'workers' and 'assignment_ids' keys, which will now be duplicated in the
-        #  returned Unit
-        # TODO: 'bad_workers' is for compatibility. Before, it was only non-empty if a
-        #  worker abandoned, returned, etc. a HIT, but now we don't even save chat
-        #  data in that case. Remove this key once fully once on DataBrowser
+        # 'bad_workers' is for compatibility. Before, it was only non-empty if a
+        # worker abandoned, returned, etc. a HIT, but now we don't even save chat
+        # data in that case
         if self.check_acceptability:
             data['acceptability_violations'] = (violations_string,)
             # Make a tuple for compatibility with a human/human conversation in
             # which we check both sides for acceptability
 
         return data
-
-    def get_custom_task_data(self):
-        """
-        Retrieves the final chat data for storage in the Mephisto database.
-
-        TODO: the final chat data is currently stored both in
-         mephisto.blueprint.chat_data_folder and in the Mephisto database. It'd be best
-         to remove the chat_data_folder arg completely, and to move the current logic in
-         self.get_final_chat_data() into this method, in order to have a single storage
-         location.
-        """
-        return self.final_chat_data
 
     def _prepare_acceptability_checking(self) -> Tuple[List[str], List[str]]:
         """
@@ -440,19 +421,25 @@ class ModelChatWorld(BaseModelChatWorld):
             # first utterance in the history.
             # Previously for BST task, we also had a big first utterance
             # that gave instructions. Removing that for this task.
-            persona_strings = [s.strip() for s in self.personas[1]]
-            persona_utterance = self._get_persona_utterance(
-                persona_strings=persona_strings,
-                context_dataset=self.context_info['context_dataset'],
-                additional_context=self.context_info['additional_context'],
-                is_bot=True,
-            )
-            message = control_msg.copy()
-            message['text'] = persona_utterance
+            if self.context_info['context_dataset'] != 'wizard_of_internet':
+                persona_strings = [s.strip() for s in self.personas[1]]
+                persona_utterance = self._get_persona_utterance(
+                    persona_strings=persona_strings,
+                    context_dataset=self.context_info['context_dataset'],
+                    additional_context=self.context_info['additional_context'],
+                    is_bot=True,
+                )
+                message = control_msg.copy()
+                message['text'] = persona_utterance
+                # The bot seeing its persona does not count as a "turn"
+            else:
+                message = control_msg.copy()
+                message['text'] = self.context_info['persona_1_strings']
+                print(f'Bot first observe: {message}')
             # The bot seeing its persona does not count as a "turn"
             self.bot.observe(validate(message), increment_turn=False)
 
-        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
+        if self.opt['conversation_start_mode'] == 'bst':
             print('[Displaying first utterances as per BST task.]')
             # Display the previous two utterances
             human_first_msg = {
@@ -505,9 +492,8 @@ class ModelChatWorld(BaseModelChatWorld):
             self.bot.observe(validate(human_first_msg))
 
             first_bot_act = self.bot.act()
-            first_bot_act = Compatibility.backward_compatible_force_set(
-                first_bot_act, 'id', self.bot.agent_id
-            )
+            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act['id'] = THEM
 
             self.agent.observe(validate(first_bot_act))
 
@@ -517,7 +503,31 @@ class ModelChatWorld(BaseModelChatWorld):
                 'id': first_bot_act['id'],
             }
             self.dialog.append(bot_utterance_data)
+        elif self.opt['conversation_start_mode'] == 'wizard_of_internet':
+            print('Using LIGHT')
+            human_first_msg = {
+                'episode_done': False,
+                'id': self.agent.id,
+                'text': self.context_info['persona_2_strings'],
+                'fake_start': True,
+                'agent_idx': 0,
+            }
+            time.sleep(1)
+            self.agent.observe(validate(human_first_msg))
+            time.sleep(1)
+            print(f'Sent over {human_first_msg} to human')
+            first_bot_act = self.bot.act()
+            first_bot_act = Compatibility.maybe_fix_act(first_bot_act)
+            first_bot_act['id'] = THEM
 
+            self.agent.observe(validate(first_bot_act))
+
+            bot_utterance_data = {
+                'agent_idx': 1,
+                'text': first_bot_act['text'],
+                'id': first_bot_act['id'],
+            }
+            self.dialog.append(bot_utterance_data)
         else:
             raise ValueError(
                 f"Conversation start mode {self.opt['conversation_start_mode']} "
@@ -596,7 +606,7 @@ class ModelChatWorld(BaseModelChatWorld):
         utterances, so it shouldn't get checked.
         """
         human_messages, violation_types = super()._prepare_acceptability_checking()
-        if self.opt['conversation_start_mode'] == 'blended_skill_talk':
+        if self.opt['conversation_start_mode'] == 'bst':
             violation_types.append('penalize_greetings')
             human_messages = human_messages[1:]
         return human_messages, violation_types
