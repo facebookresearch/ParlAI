@@ -619,7 +619,7 @@ class TrainLoop:
             return True
         return False
 
-    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask):
+    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
 
         # run evaluation on a single world
         valid_world.reset()
@@ -629,7 +629,7 @@ class TrainLoop:
         # set up world logger for the "test" fold
         if opt['world_logs'] and datatype == 'test':
             task_opt['world_logs'] = get_task_world_logs(
-                valid_world.getID(), opt['world_logs'], is_multitask
+                task, opt['world_logs'], is_multitask
             )
             world_logger = WorldLogger(task_opt)
 
@@ -691,9 +691,10 @@ class TrainLoop:
 
         max_exs_per_worker = max_exs / (len(valid_worlds) * num_workers())
         is_multitask = len(valid_worlds) > 1
-        for v_world in valid_worlds:
+        for index, v_world in enumerate(valid_worlds):
+            task = opt['task'].split(',')[index]
             task_report = self._run_single_eval(
-                opt, v_world, max_exs_per_worker, datatype, is_multitask
+                opt, v_world, max_exs_per_worker, datatype, is_multitask, task
             )
             reports.append(task_report)
 
