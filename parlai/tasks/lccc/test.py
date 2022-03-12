@@ -9,7 +9,3 @@ from parlai.utils.testing import AutoTeacherTest, skipIfCircleCI
 
 class TestDefaultTeacher(AutoTeacherTest):
     task = 'lccc'
-
-    @skipIfCircleCI
-    def test_train_stream_ordered(self, data_regression):
-        return super().test_train_stream_ordered(data_regression)
