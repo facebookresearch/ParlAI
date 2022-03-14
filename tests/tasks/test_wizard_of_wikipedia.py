@@ -89,30 +89,30 @@ class TestWoW(unittest.TestCase):
 
         str_output = stdout.getvalue()
         self.assertTrue(
-            '[ loaded {} episodes with a total of {} examples ]'.format(
+            'loaded {} episodes with a total of {} examples'.format(
                 world.num_episodes(), world.num_examples()
             )
             in str_output,
-            'Wizard of Wikipedia failed with following args: {}'.format(opt),
+            'Wizard of Wikipedia failed with following args: {}'.format(opt)
+            + str_output,
         )
 
     def test_custom_eval(self):
         """
         Test whether custom evaluation works.
         """
-        with testing_utils.capture_output():
-            parser = setup_args()
-            opt = parser.parse_args(
-                [
-                    '--task',
-                    'wizard_of_wikipedia',
-                    '--datatype',
-                    'valid',
-                    '--label-type',
-                    'chosen_sent',
-                ]
-            )
-            teacher = create_task_agent_from_taskname(opt)[0]
+        parser = setup_args()
+        opt = parser.parse_args(
+            [
+                '--task',
+                'wizard_of_wikipedia',
+                '--datatype',
+                'valid',
+                '--label-type',
+                'chosen_sent',
+            ]
+        )
+        teacher = create_task_agent_from_taskname(opt)[0]
 
         title = 'Gardening'
         cands = list('four')

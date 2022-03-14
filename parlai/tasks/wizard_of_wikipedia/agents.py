@@ -27,20 +27,7 @@ from parlai.utils.io import PathManager
 from parlai.utils import logging
 from parlai.utils.misc import warn_once
 from .build import build
-from .mutators import (
-    AddCheckedSentence,
-    CheckedSentenceAsLabel,
-    AddLabel,
-    AddLabelLM,
-    WowFilterNoPassageUsed,
-)
-import parlai.tasks.wizard_of_internet.mutators
-
-# agents import (
-#    WoiDropoutRetrievedDocs,
-#    WoiChunkRetrievedDocs,
-#    WoiFilterSelectedKnowledgeInRetrievedDocs,
-# )
+import parlai.tasks.wizard_of_internet.mutators  # type: ignore
 
 import json
 import os
@@ -186,6 +173,16 @@ def _build_rare_word_f1(datapath: str) -> RareWordF1Calculator:
     return RareWordF1Calculator(all_text, top_p=0.5)
 
 
+def _get_datafile(opt: Opt) -> str:
+    """
+    Extract datafile from opt.
+    """
+    task = opt.get('task', 'wizard_of_wikipedia:WizardOfWikipedia:random_split')
+    split = task.split(':')
+    split = split[2] if len(split) == 3 else 'random_split'
+    return _path(opt, split=split)
+
+
 class WizardOfWikipediaTeacher(DialogTeacher):
     """
     The default teacher; essentially reads the json file and outputs the raw data.
@@ -212,10 +209,8 @@ class WizardOfWikipediaTeacher(DialogTeacher):
 
     def __init__(self, opt, shared=None):
         task = opt.get('task', 'wizard_of_wikipedia:WizardOfWikipedia:random_split')
-        split = task.split(':')
-        split = split[2] if len(split) == 3 else 'random_split'
-        opt['task'] = 'wizard_of_wikipedia'
-        opt['datafile'] = _path(opt, split=split)
+        opt['datafile'] = _get_datafile(opt)
+        opt['length_datafile'] = f"{opt['datafile']}_{task.split(':')[:2][-1]}"
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
@@ -261,7 +256,7 @@ class WizardOfWikipediaTeacher(DialogTeacher):
 
         Optionally overrideable.
         """
-        return len(self.raw_data[ep])
+        return len(self.raw_data[ep]['dialog'])
 
 
 ###############################################################
@@ -293,12 +288,7 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
 
     def __init__(self, opt, shared=None):
-        self.add_missing_turns = opt.get('add_missing_turns', 'none')
-        self.label_type = opt.get('label_type', 'response')
-        self.include_knowledge = opt.get('include_knowledge', True)
-        self.include_checked_sentence = opt.get('include_checked_sentence', False)
-        self.knowledge_separator = opt.get('include_knowledge_separator', False)
-        self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
+        self._init_attributes(opt)
         if shared and 'rare_word_f1' in shared:
             self.rare_word_f1 = shared['rare_word_f1']
         elif self.label_type == 'response':
@@ -360,6 +350,17 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             'When "all" is chosen, all data are supplemented.',
         )
         return parser
+
+    def _init_attributes(self, opt: Opt):
+        """
+        Initialize teacher attributes.
+        """
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
+        self.label_type = opt.get('label_type', 'response')
+        self.include_knowledge = opt.get('include_knowledge', True)
+        self.include_checked_sentence = opt.get('include_checked_sentence', False)
+        self.knowledge_separator = opt.get('include_knowledge_separator', False)
+        self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
 
     def share(self):
         shared = super().share()
@@ -792,6 +793,7 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
 
     def __init__(self, opt, shared=None):
         self.opt = copy.deepcopy(opt)
+        self._init_attributes(opt)
         self.opt['label_type'] = 'response'
         self.id = 'WikiPageTitleTeacher'
         self._conv_history_len = self.opt['conversation_history_length']
@@ -803,10 +805,6 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
             self._conv_history_len = -1
         self._skip_no_title = self.opt['skip_no_title']
         super().__init__(self.opt, shared=shared)
-        if not shared:
-            self._preprocess_data()
-        else:
-            self.titles_data = shared['titles_data']
 
     @classmethod
     def add_cmdline_args(cls, parser, partial_opt=None):
@@ -851,12 +849,24 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
     def _should_include(self, act):
         return not (self._skip_no_title and act['labels'][0] == TOKEN_NOCHOSEN)
 
+    def setup_data(self, datafile):
+        logging.info(f'loading {datafile}')
+        with PathManager.open(datafile) as f:
+            self.raw_data = json.load(f)
+        self._preprocess_data()
+        for episode_idx in range(len(self.titles_data)):
+            for entry_idx in range(self.len_episode(episode_idx)):
+                ex = self._format_example(episode_idx, entry_idx)
+                ex.pop('episode_done', '')
+                if 'label_candidates' in ex and not ex['label_candidates']:
+                    ex.pop('label_candidates')
+                yield ex, entry_idx == 0
+
     def _preprocess_data(self):
         data = []
-        for episode_idx in range(super().num_episodes()):
+        for episode_idx in range(len(self.raw_data)):
             dialog_history = []
-            ex_idx = 0
-            while True:
+            for ex_idx in range(super().len_episode(episode_idx)):
                 a = super()._format_example(episode_idx, ex_idx)
                 text_parts = a['text'].split('\n')
                 if ex_idx == 0:
@@ -867,16 +877,13 @@ class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
                     title_act = self._generate_messages(dialog_history, a)
                     if self._should_include(title_act):
                         data.append(title_act)
-                if a['episode_done']:
-                    break
-                ex_idx += 1
                 dialog_history.append(a['labels'][0])
 
-        logging.info(
-            f'{len(data)} title generation examples generated '
-            f'from {super().num_examples()} original examples'
-        )
+        logging.info(f'{len(data)} title generation examples generated ')
         self.titles_data = data
+
+    def len_episode(self, ep):
+        return 1
 
     def _format_example(self, episode_idx, entry_idx=0):
         return self.titles_data[episode_idx]
@@ -928,19 +935,18 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
     """
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
 
         # get number of examples
-        self.num_exs = 0
-        for ep in range(self.num_episodes()):
-            d = self.raw_data[ep]
-            for entry in d['dialog']:
-                if (
-                    entry.get('checked_sentence', None) is not None
-                    and entry.get('checked_sentence') != {}
-                    and TOKEN_NOCHOSEN not in entry.get('checked_sentence')
-                ):
-                    self.num_exs += 1
+        # self.num_exs = 0
+        # for ep in range(self.num_episodes()):
+        #     d = self.raw_data[ep]
+        #     for entry in d['dialog']:
+        #         if (
+        #             entry.get('checked_sentence', None) is not None
+        #             and entry.get('checked_sentence') != {}
+        #             and TOKEN_NOCHOSEN not in entry.get('checked_sentence')
+        #         ):
+        #             self.num_exs += 1
         self.stop_words = [
             'i',
             'a',
@@ -1045,6 +1051,7 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
             self.sent_tok = nltk.data.load(st_path)
 
         self.teacher_type = opt.get('teacher_type')
+        super().__init__(opt, shared)
 
     @classmethod
     def add_cmdline_args(
@@ -1142,6 +1149,9 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
             i += 1
 
         return len_ep, idxs
+
+    def len_episode(self, ep: int) -> int:
+        return self.length_episode(self.raw_data[ep])[0]
 
     def _format_example(self, episode_idx, entry_idx=0):
         d = self.raw_data[episode_idx]

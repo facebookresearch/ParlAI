@@ -46,7 +46,6 @@ acts:
       until it was replaced by the finer indigo from America.
 
       '
-    label_candidates: []
     text: Blue
     title: Blue
 - - checked_sentence: The Royal Blue was the Baltimore and Ohio Railroad (B&O)'s flagship
@@ -341,7 +340,6 @@ acts:
       purple-orange; or by intermixing complementary colors.
 
       '
-    label_candidates: []
     text: Blue is always nice. I like royal blue.
     title: Royal Blue (train)
 - - checked_sentence: Blue Skies is a 1946 American musical comedy film directed by
@@ -640,7 +638,6 @@ acts:
       Rams, located in Cleveland, Ohio.
 
       '
-    label_candidates: []
     text: Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
     title: Blue Skies (1946 film)
 - - checked_sentence: Cinematography (also called "Direction of Photography") is the
@@ -803,7 +800,6 @@ acts:
       able to respond in time, which is a matter of both attitude and competence.
 
       '
-    label_candidates: []
     text: 'Cinematography
 
       Hi buddy, What you think about cinematography'
@@ -1030,7 +1026,6 @@ acts:
       (0.51–2.95 in), as well as a variety of film feeding systems.
 
       '
-    label_candidates: []
     text: Yes buddy,  Images captured with an electronic image-sensor, produces an
       electrical charge.The word "cinematography" is based on the Greek words  meaning
       movement, motion.
