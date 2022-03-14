@@ -7,6 +7,7 @@
 import os
 from typing import List, Optional
 
+import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
