@@ -11,6 +11,7 @@ from typing import Dict, List, Optional, Tuple
 import jsonlines
 import os
 from parlai.core.message import Message
+import random
 from tqdm import tqdm
 from parlai.core.metrics import F1Metric
 from parlai.core.params import ParlaiParser, Opt
@@ -631,3 +632,46 @@ class GoldDocsTeacher(BaseKnowledgeTeacher):
 class GoldDocTitlesTeacher(BaseKnowledgeTeacher):
     def _knowledge_piece(self):
         return CONST.SELECTED_DOCS_TITLES
+
+
+class ContextGenerator:
+    """
+    Generates contexts shown to crowdsourced workers when collecting WizInt
+    conversations.
+    """
+
+    def __init__(self, opt, datatype: str = 'test', seed: Optional[int] = None):
+        """
+        Initalize the context generator.
+        """
+        import json
+
+        if seed is not None:
+            self.rng = random.Random(seed)
+        else:
+            self.rng = random.Random()
+
+        with open(opt['persona_path']) as f:
+            self.personas = json.load(f)
+
+    def get_context(self) -> dict:
+        """
+        Get context information to be shown at the beginning of one conversation. Values
+        in return dict:
+
+        - context_dataset: the dataset
+        - persona_1_strings, persona_2_strings: 2 persona strings each for the two
+            speakers
+        """
+        persona = random.choice(self.personas)
+
+        bot_persona_msg = persona
+        human_persona = persona.replace('\n', ' ')
+
+        human_persona_msg = f'You have the following persona: {human_persona}'
+
+        return {
+            'context_dataset': 'wizard_of_internet',
+            'persona_1_strings': bot_persona_msg,
+            'persona_2_strings': human_persona_msg,
+        }
