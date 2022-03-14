@@ -20,7 +20,6 @@ DEFAULT_TRAIN_EXPERIENCER_ONLY = False
 
 class EmpatheticDialoguesTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-        self.datatype = opt['datatype']
         build(opt)
         base_datatype = self.datatype.split(':')[0]
         opt['datafile'] = os.path.join(
