@@ -936,17 +936,6 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
     def __init__(self, opt, shared=None):
 
-        # get number of examples
-        # self.num_exs = 0
-        # for ep in range(self.num_episodes()):
-        #     d = self.raw_data[ep]
-        #     for entry in d['dialog']:
-        #         if (
-        #             entry.get('checked_sentence', None) is not None
-        #             and entry.get('checked_sentence') != {}
-        #             and TOKEN_NOCHOSEN not in entry.get('checked_sentence')
-        #         ):
-        #             self.num_exs += 1
         self.stop_words = [
             'i',
             'a',
