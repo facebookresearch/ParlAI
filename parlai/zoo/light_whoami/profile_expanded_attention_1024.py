@@ -6,7 +6,8 @@
 """
 Profile Expanded Attention 1024-truncation model.
 
-Performs two rounds of expanded attention over the full LIGHT context (without dialogue history).
+Performs two rounds of expanded attention over the full LIGHT context (without dialogue
+history).
 """
 from parlai.zoo.light_whoami.whoami_download import download_with_model_type
 

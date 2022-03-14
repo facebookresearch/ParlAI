@@ -1,0 +1,41 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: model_chat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    onboarding_qualification: single_model_eval__onboarding
+    block_qualification: single_model_eval__${current_time}__block  # Use the current time in the block, like with Acute-Evals
+    chat_data_folder: ${task_dir}/model_chat/
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: true
+    include_persona: true
+    conversation_start_mode: 'hi'
+    annotation_question: "Please answer the following:"
+    conversations_needed_string: "blender_90M:10"
+    final_rating_question: >-
+      Please rate how much you'd prefer to talk to your partner for a long conversation.
+      (1: Would not at all prefer, 5: Would very much prefer)|Please rate how human your
+      partner sounds. (1: Very inhuman, 5: Very human)|Please rate how interesting your
+      partner is. (1: Very boring, 5: Very interesting)
+    left_pane_text_path: ${task_dir}/task_config/left_pane_text.html
+    max_onboard_time: 300
+    max_resp_time: 300
+    onboard_task_data_path: ${task_dir}/task_config/onboard_task_data.json
+    task_description_file: ${task_dir}/task_config/task_description.html
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 900
+    max_num_concurrent_units: 5  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 1
+    task_description: dummy_text  # This is unused
+    task_name: single_model_eval__example
+    task_reward: 3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a fellow conversationalist!"
+mturk:
+ worker_blocklist_paths: null
