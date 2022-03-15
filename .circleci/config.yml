@@ -159,7 +159,7 @@ commands:
       - run:
             name: Install Mephisto
             command: |
-              pip install mephisto==1.0.0b1
+              pip install mephisto==1.0.0b2
               echo | mephisto check
 
   setupcuda:
