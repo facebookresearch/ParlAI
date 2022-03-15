@@ -168,91 +168,29 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
     Adds persona and WoW topic to ED context strings.
     """
 
-    RECOMPILE_DEFAULT = False
-
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt=partial_opt)
-        agent = parser.add_argument_group('EDPersonaTopicifierTeacher arguments')
-        agent.add_argument(
-            '--recompile-persona-topic-data',
-            type='bool',
-            default=cls.RECOMPILE_DEFAULT,
-            help='Re-compile data with ConvAI2 personas and WoW topics added. Only useful for demonstrating how data was produced.',
-        )
-        return parser
-
     def __init__(self, opt, shared=None):
         self.persona_topicifier = PersonaTopicifier(
             opt=opt, should_have_personas=False, should_have_topics=False
         )
-        super().__init__(opt, shared=shared)
         self.id = 'parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher'
 
-        # Running over all examples is really slow because the process of finding a WoW
-        # topic is expensive, so let's load cached data with personas and topics unless
-        # --recompile-persona-topic-data is True
-        if opt.get('recompile_persona_topic_data', self.RECOMPILE_DEFAULT):
-            self.data_path = (
-                _cached_data_path(
-                    opt=self.opt, experiencer_side_only=self.experiencer_side_only
-                )
-                + '.recompiled'
-            )
-            warn_once(f'Compiling data file for {self.data_path}.')
-            self.persona_topic_data = self._compile_data()
-            warn_once(f'Saving data to {self.data_path}.')
-            with PathManager.open(self.data_path, 'w') as f_write:
-                json.dump(self.persona_topic_data, f_write)
-        else:
-            self.data_path = _cached_data_path(
-                opt=self.opt, experiencer_side_only=self.experiencer_side_only
-            )
-            warn_once(f'Loading cached data from {self.data_path}.')
-            with PathManager.open(self.data_path, 'r') as f_read:
-                self.persona_topic_data = json.load(f_read)
+        self.data_path = _cached_data_path(
+            opt=opt, experiencer_side_only=self.experiencer_side_only
+        )
+        warn_once(f'Loading cached data from {self.data_path}.')
+        with PathManager.open(self.data_path, 'r') as f_read:
+            self.persona_topic_data = json.load(f_read)
 
-    def _compile_data(self) -> List[List[dict]]:
-        """
-        Compile data to be saved for faster future use.
-        """
-        warn_once(f'Starting to compile {self.num_episodes():d} episodes.')
-        all_data = []
-        for episode_idx in tqdm(range(self.num_episodes())):
-            episode_data = []
-            entry_idx = 0
-            while True:
-                example_data = self._get_example(
-                    episode_idx=episode_idx, entry_idx=entry_idx
-                )
-                episode_data.append(example_data)
-                if example_data['episode_done']:
-                    all_data.append(episode_data)
-                    break
-                else:
-                    entry_idx += 1
+        super().__init__(opt, shared=shared)
 
-        return all_data
-
-    def _get_example(self, episode_idx: int, entry_idx: Optional[int] = None):
-        """
-        Get example from the base ED teacher and add persona and WoW topic strings.
-        """
-        gotten = super().get(episode_idx, entry_idx=entry_idx)
-        if entry_idx == 0:
-            modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
-            gotten['text'] = modified_text
-        return gotten
-
-    def get(self, episode_idx: int, entry_idx: Optional[int] = None) -> dict:
+    def setup_data(self, path):
         """
         Get example from the final data with personas and WoW topic strings.
         """
-        if entry_idx is None:
-            entry_idx = 0
-        return self.persona_topic_data[episode_idx][entry_idx]
+        for episode in self.persona_topic_data:
+            for entry_idx, entry in enumerate(episode):
+                new_episode = entry_idx == 0
+                yield entry, new_episode
 
 
 class PersonaTopicifier:
