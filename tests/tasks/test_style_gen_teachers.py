@@ -97,11 +97,11 @@ class TestStyleGenTeachers(unittest.TestCase):
                         'labels': ['Did you suffer any injuries?'],
                         'situation': "I felt guilty when I was driving home one night and a person tried to fly into my lane, and didn't see me. I honked and they swerved back into their lane, slammed on their brakes, and hit the water cones.",
                         'emotion': 'guilty',
-                        'personality': 'Curious',
                         'prepend_ctx': 'None',
                         'prepend_cand': 'None',
                         'deepmoji_ctx': 'None',
                         'deepmoji_cand': 'None',
+                        'personality': 'Curious',
                         'episode_done': False,
                         'label_candidates': {
                             'num_cands': 100,
