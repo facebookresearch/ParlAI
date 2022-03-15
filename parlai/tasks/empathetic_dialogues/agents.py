@@ -22,18 +22,9 @@ DEFAULT_TRAIN_EXPERIENCER_ONLY = False
 class EmpatheticDialoguesTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
-        base_datatype = opt['datatype'].split(':')[0]
-        opt['datafile'] = os.path.join(
-            opt['datapath'],
-            'empatheticdialogues',
-            'empatheticdialogues',
-            base_datatype + '.csv',
-        )
+        opt['datafile'] = self._get_datafile(opt)
         self.id = 'empathetic_dialogues'
-        self.experiencer_side_only = (
-            opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
-            and base_datatype == 'train'
-        ) or base_datatype != 'train'
+        self.experiencer_side_only = self._get_experiencer_side_only(opt)
         super().__init__(opt, shared)
 
     @classmethod
@@ -52,6 +43,31 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
             help='In the train set, only use Speaker (experiencer) utterances as text and Listener (responder) utterances as labels.',
         )
         return parser
+
+    def _get_base_datatype(self, opt) -> str:
+        return opt['datatype'].split(':')[0]
+
+    def _get_datafile(self, opt) -> str:
+        """
+        Get the datafile path. Useful for subclassed teachers.
+        """
+        base_datatype = self._get_base_datatype(opt)
+        return os.path.join(
+            opt['datapath'],
+            'empatheticdialogues',
+            'empatheticdialogues',
+            base_datatype + '.csv',
+        )
+
+    def _get_experiencer_side_only(self, opt):
+        """
+        Determine which side(s) of the conversation to use.
+        """
+        base_datatype = self._get_base_datatype(opt)
+        return (
+            opt.get('train_experiencer_only', DEFAULT_TRAIN_EXPERIENCER_ONLY)
+            and base_datatype == 'train'
+        ) or base_datatype != 'train'
 
     def setup_data(self, path):
 

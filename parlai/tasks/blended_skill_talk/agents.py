@@ -24,7 +24,10 @@ from parlai.tasks.convai2.agents import (
     DefaultTeacher as Convai2DefaultTeacher,
     BothTeacher,
 )
-from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
+from parlai.tasks.empathetic_dialogues.agents import (
+    EmpatheticDialoguesTeacher,
+    DEFAULT_TRAIN_EXPERIENCER_ONLY,
+)
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
@@ -65,7 +68,11 @@ def _topic_to_persona_path(opt: Opt) -> str:
 
 
 def _cached_data_path(opt: Opt, experiencer_side_only: bool) -> str:
-    # Build the data if it doesn't exist.
+    """
+    Build the data if it doesn't exist.
+
+    See EDPersonaTopicifierTeacher in ParlAI v1.5.1 and earlier for the code to add persona strings to the base EmpatheticDialogues dataset.
+    """
     build(opt)
     dt = opt['datatype'].split(':')[0]
     side_string = 'experiencer_only' if experiencer_side_only else 'both_sides'
@@ -172,23 +179,33 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
         self.persona_topicifier = PersonaTopicifier(
             opt=opt, should_have_personas=False, should_have_topics=False
         )
+        super().__init__(opt, shared=shared)
         self.id = 'parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher'
 
-        self.data_path = _cached_data_path(
-            opt=opt, experiencer_side_only=self.experiencer_side_only
-        )
-        warn_once(f'Loading cached data from {self.data_path}.')
-        with PathManager.open(self.data_path, 'r') as f_read:
-            self.persona_topic_data = json.load(f_read)
-
-        super().__init__(opt, shared=shared)
+    def _get_datafile(self, opt) -> str:
+        """
+        Specify a custom datafile path for examples with personas.
+        """
+        experiencer_side_only = self._get_experiencer_side_only(opt)
+        return _cached_data_path(opt=opt, experiencer_side_only=experiencer_side_only)
 
     def setup_data(self, path):
         """
         Get example from the final data with personas and WoW topic strings.
         """
-        for episode in self.persona_topic_data:
+
+        warn_once(f'Loading cached data from {path}.')
+        with PathManager.open(path, 'r') as f_read:
+            persona_topic_data = json.load(f_read)
+
+        for episode in persona_topic_data:
             for entry_idx, entry in enumerate(episode):
+
+                # For compatibility with DialogTeacher
+                del entry['episode_done']
+                if self._get_base_datatype(self.opt) == 'train':
+                    del entry['label_candidates']
+
                 new_episode = entry_idx == 0
                 yield entry, new_episode
 
