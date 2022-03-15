@@ -49,7 +49,9 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
 
     def _get_datafile(self, opt) -> str:
         """
-        Get the datafile path. Useful for subclassed teachers.
+        Get the datafile path.
+
+        Useful for subclassed teachers.
         """
         base_datatype = self._get_base_datatype(opt)
         return os.path.join(
