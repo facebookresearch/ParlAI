@@ -189,6 +189,7 @@ class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
             opt=opt, should_have_personas=False, should_have_topics=False
         )
         super().__init__(opt, shared=shared)
+        self.id = 'parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher'
 
         # Running over all examples is really slow because the process of finding a WoW
         # topic is expensive, so let's load cached data with personas and topics unless
