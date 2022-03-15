@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.params import ParlaiParser
 import copy
 import json
 import os
@@ -12,7 +11,6 @@ import random
 import re
 from collections import defaultdict
 from typing import List, Optional, Dict, Tuple
-from tqdm import tqdm
 
 from parlai.core.opt import Opt
 from parlai.core.teachers import (
@@ -24,10 +22,7 @@ from parlai.tasks.convai2.agents import (
     DefaultTeacher as Convai2DefaultTeacher,
     BothTeacher,
 )
-from parlai.tasks.empathetic_dialogues.agents import (
-    EmpatheticDialoguesTeacher,
-    DEFAULT_TRAIN_EXPERIENCER_ONLY,
-)
+from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
