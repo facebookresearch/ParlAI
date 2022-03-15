@@ -216,6 +216,9 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                     'labels': (
                         'you must be very fast . hunting is one of my favorite hobbies .',
                     ),
+                    'labels': [
+                        'you must be very fast . hunting is one of my favorite hobbies .'
+                    ],
                     'reward': 0,
                     'label_candidates': (
                         'my mom was single with 3 boys , so we never left the projects .',
