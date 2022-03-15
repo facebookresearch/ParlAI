@@ -71,7 +71,8 @@ def _cached_data_path(opt: Opt, experiencer_side_only: bool) -> str:
     """
     Build the data if it doesn't exist.
 
-    See EDPersonaTopicifierTeacher in ParlAI v1.5.1 and earlier for the code to add persona strings to the base EmpatheticDialogues dataset.
+    See EDPersonaTopicifierTeacher in ParlAI v1.5.1 and earlier for the code to add
+    persona strings to the base EmpatheticDialogues dataset.
     """
     build(opt)
     dt = opt['datatype'].split(':')[0]
