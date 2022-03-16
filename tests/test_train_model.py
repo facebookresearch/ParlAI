@@ -271,6 +271,35 @@ class TestTrainModel(unittest.TestCase):
                     json_lines = f.readlines()
                 assert len(json_lines) == 5
 
+    def test_save_multiple_world_logs_evaltask(self):
+        """
+        Test that we can save multiple world_logs from train model on multiple tasks
+        where there are more evaltasks than tasks.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            log_report = os.path.join(tmpdir, 'world_logs.jsonl')
+            multitask = 'integration_tests,integration_tests:ReverseTeacher'
+            evaltask = 'integration_tests,integration_tests:mutators=flatten,integration_tests:ReverseTeacher:mutator=reverse'
+            valid, test = testing_utils.train_model(
+                {
+                    'task': multitask,
+                    'evaltask': evaltask,
+                    'validation_max_exs': 10,
+                    'model': 'repeat_label',
+                    'short_final_eval': True,
+                    'num_epochs': 1.0,
+                    'world_logs': log_report,
+                }
+            )
+
+            for task in evaltask.split(','):
+                task_log_report = get_task_world_logs(
+                    task, log_report, is_multitask=True
+                )
+                with PathManager.open(task_log_report) as f:
+                    json_lines = f.readlines()
+                assert len(json_lines) == 4
+
     def test_save_multiple_world_logs_mutator(self):
         """
         Test that we can save multiple world_logs from train model on multiple tasks

@@ -692,7 +692,10 @@ class TrainLoop:
         max_exs_per_worker = max_exs / (len(valid_worlds) * num_workers())
         is_multitask = len(valid_worlds) > 1
         for index, v_world in enumerate(valid_worlds):
-            task = opt['task'].split(',')[index]
+            if opt.get('evaltask'):
+                task = opt['evaltask'].split(',')[index]
+            else:
+                task = opt['task'].split(',')[index]
             task_report = self._run_single_eval(
                 opt, v_world, max_exs_per_worker, datatype, is_multitask, task
             )
