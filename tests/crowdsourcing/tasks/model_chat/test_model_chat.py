@@ -120,7 +120,7 @@ fixed_response: >
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be
-                self._get_channel_info().job.task_runner.task_run.get_blueprint().use_onboarding = (
+                self._get_live_run().task_runner.task_run.get_blueprint().use_onboarding = (
                     False
                 )
                 # Don't require onboarding for this test agent

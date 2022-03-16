@@ -386,6 +386,7 @@ try:
                 '++mephisto.task.maximum_units_per_worker=0',
                 '++num_turns=3',
                 '++turn_timeout=300',
+                '++mephisto.task.submission_timout=10',
             ]
             self._set_up_config(task_directory=TASK_DIRECTORY, overrides=overrides)
 

@@ -93,6 +93,7 @@ class AbstractCrowdsourcingTest:
                     f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
                     f'+current_time={int(time.time())}',
+                    f"+mephisto.task.submission_timout=10",
                 ]
                 + overrides,
             )
@@ -111,13 +112,30 @@ class AbstractCrowdsourcingTest:
         self.operator.validate_and_run_config(
             self.config.mephisto, shared_state=shared_state
         )
-        self.server = self._get_channel_info().job.architect.server
+        self.server = self._get_server()
+
+    def _get_live_run(self):
+        """
+        Get the LiveTaskRun from this job
+        """
+        live_runs = list(self.operator.get_running_task_runs().values())
+        if len(live_runs) == 0:
+            raise ValueError('No live runs present')
+        return live_runs[0]
+
+    def _get_server(self):
+        """
+        Return the MockArchitect's server associated with this run
+        """
+        live_run = self._get_live_run()
+        return live_run.architect.server
 
     def _get_channel_info(self):
         """
         Return channel info for the currently running job.
         """
-        channels = list(self.operator.supervisor.channels.values())
+        live_run = self._get_live_run()
+        channels = list(live_run.client_io.channels.values())
         if len(channels) > 0:
             return channels[0]
         else:
@@ -135,22 +153,28 @@ class AbstractCrowdsourcingTest:
 
         for idx in range(num_agents):
 
-            mock_worker_name = f"MOCK_WORKER_{idx:d}"
-            max_num_tries = 6
+            mock_worker_registration_name = f"MOCK_WORKER_{idx:d}"
+            mock_worker_name = f"{mock_worker_registration_name}_sandbox"
+            max_num_tries = 3
             initial_wait_time = 0.5  # In seconds
             num_tries = 0
             wait_time = initial_wait_time
             while num_tries < max_num_tries:
                 try:
-
-                    # Register the worker
-                    self.server.register_mock_worker(mock_worker_name)
-                    workers = self.db.find_workers(worker_name=mock_worker_name)
-                    worker_id = workers[0].db_id
-
                     # Register the agent
                     mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
-                    self.server.register_mock_agent(worker_id, mock_agent_details)
+                    self.server.register_mock_agent(
+                        mock_worker_registration_name, mock_agent_details
+                    )
+                    self.assert_sandbox_worker_created(mock_worker_name)
+                    workers = self.db.find_workers(worker_name=mock_worker_name)
+                    print(
+                        f"try num: {num_tries}:",
+                        workers,
+                        self.db.find_workers(),
+                        [w.worker_name for w in self.db.find_workers()],
+                    )
+                    worker_id = workers[0].db_id
 
                     if assume_onboarding:
                         # Submit onboarding from the agent
@@ -159,6 +183,9 @@ class AbstractCrowdsourcingTest:
                         self.server.register_mock_agent_after_onboarding(
                             worker_id, onboard_agents[0].get_agent_id(), onboard_data
                         )
+                        self.await_channel_requests()
+                    self.await_channel_requests()
+                    print(f"try num: {num_tries}:", self.db.find_agents())
                     _ = self.db.find_agents()[idx]
                     # Make sure the agent can be found, or else raise an IndexError
 
@@ -185,6 +212,25 @@ class AbstractCrowdsourcingTest:
         agent_ids = [agent.db_id for agent in agents]
 
         return agent_ids
+
+    def await_channel_requests(self, timeout=2) -> None:
+        time.sleep(0.1)
+        tracked_run = self._get_live_run()
+        self.assertTrue(  # type: ignore
+            self.operator._run_loop_until(
+                lambda: len(tracked_run.client_io.request_id_to_channel_id) == 0,
+                timeout,
+            ),
+            f"Channeled requests not processed in time!",
+        )
+
+    def assert_sandbox_worker_created(self, worker_name, timeout=2) -> None:
+        self.assertTrue(  # type: ignore
+            self.operator._run_loop_until(
+                lambda: len(self.db.find_workers(worker_name=worker_name)) > 0, timeout
+            ),
+            f"Worker {worker_name} not created in time!",
+        )
 
 
 class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
@@ -225,12 +271,11 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
             agent_id = self._register_mock_agents(num_agents=1)[0]
 
         # Set initial data
-        self.server.request_init_data(agent_id)
+        self.await_channel_requests()
 
         # Make agent act
-        self.server.send_agent_act(
-            agent_id, {"MEPHISTO_is_submit": True, "task_data": task_data}
-        )
+        self.server.submit_mock_unit(agent_id, task_data)
+        self.await_channel_requests()
 
         return self.db.find_agents()[0].state.get_data()
 
@@ -279,10 +324,6 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # # Feed messages to the agents
 
-        # Set initial data
-        for agent_id in agent_ids:
-            self.server.request_init_data(agent_id)
-
         # Have agents talk to each other
         assert len(agent_messages) == len(agent_task_data)
         for message_round, task_data_round in zip(agent_messages, agent_task_data):
@@ -308,22 +349,18 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     'episode_done': False,
                 },
             )
+            self.await_channel_requests()
 
         # Submit the HIT
         for agent_id in agent_ids:
-            self.server.send_agent_act(
-                agent_id=agent_id,
-                act_content={
-                    'task_data': {'final_data': {}},
-                    'MEPHISTO_is_submit': True,
-                },
-            )
+            self.server.submit_mock_unit(agent_id, {'final_data': {}})
+            self.await_channel_requests()
 
         # # Check that the inputs and outputs are as expected
 
         # Wait until all messages have arrived
         wait_time = 5.0  # In seconds
-        max_num_tries = 30  # max_num_tries * wait_time is the max time to wait
+        max_num_tries = 1  # max_num_tries * wait_time is the max time to wait
         num_tries = 0
         while num_tries < max_num_tries:
             actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
@@ -430,6 +467,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             "episode_done": False,
         }
         self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
+        self.await_channel_requests()
 
 
 def check_stdout(actual_stdout: str, expected_stdout_path: str):
