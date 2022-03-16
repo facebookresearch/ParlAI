@@ -245,11 +245,6 @@ class WizardOfWikipediaTeacher(DialogTeacher):
 
         return action
 
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        return shared
-
     def len_episode(self, ep: int) -> int:
         """
         Length of an episode.
