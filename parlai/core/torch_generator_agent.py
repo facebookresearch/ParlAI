@@ -1692,7 +1692,7 @@ class GreedySearch(TreeSearch):
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_score = tok_scores[0].item()
+            tok_score = torch.softmax(logprobs.view(-1), dim=-1)[tok_ids].item()
             tok_rank = 0
             token_details: Optional[List[_PathSelectionTokenDetails]] = [
                 {"token_score": tok_score, "token_rank": tok_rank}
@@ -1732,13 +1732,14 @@ class BeamSearch(TreeSearch):
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
+            probs = torch.softmax(logprobs, dim=-1)
             tok_scores = (
-                torch.index_select(logprobs, 0, hyp_ids)
+                torch.index_select(probs, 0, hyp_ids)
                 .gather(1, tok_ids.unsqueeze(1))
                 .view(-1)
             )
             tok_ranks = (
-                logprobs.argsort(1, descending=True)
+                probs.argsort(1, descending=True)
                 .argsort(1)
                 .view(-1)
                 .gather(0, best_idxs)
@@ -1811,7 +1812,7 @@ class TopKSampling(TreeSearch):
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_scores = scores.view(-1).cpu().numpy()
+            tok_scores = probs[hyp_ids, choices].view(-1).cpu().numpy()
             tok_ranks = choices.view(-1).cpu().numpy()
             token_details = []
 
@@ -1852,18 +1853,19 @@ class NucleusSampling(TreeSearch):
         # The subtraction here is to get the exclusive prefix sum,
         # to guarantee the first element is not masked
         mask = (sprobs.cumsum(dim=-1) - sprobs) >= self.p
-        sprobs[mask] = 0
-        sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
-        choices = torch.multinomial(sprobs, 1)[:, 0]
+        trunc_sprobs = sprobs.detach().clone()
+        trunc_sprobs[mask] = 0
+        trunc_sprobs.div_(trunc_sprobs.sum(dim=-1).unsqueeze(1))
+        choices = torch.multinomial(trunc_sprobs, 1)[:, 0]
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
         tok_ids = sinds[hyp_ids, choices]
         # Convert back to logspace.
-        scores = sprobs[hyp_ids, choices].log()
+        scores = trunc_sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_scores = scores.view(-1).cpu().numpy()
+            tok_scores = sprobs[hyp_ids, choices].view(-1).cpu().numpy()
             tok_ranks = choices.view(-1).cpu().numpy()
             token_details = []
 

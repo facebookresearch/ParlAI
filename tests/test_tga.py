@@ -191,22 +191,16 @@ class TestGeneration(unittest.TestCase):
             'beam': {
                 'text_token_info': [
                     ('__start__', {"token_score": 0.0, "token_rank": 1}),
-                    ('5', {"token_score": -2.5510462364763953e-05, "token_rank": 0}),
-                    (
-                        '__end__',
-                        {"token_score": -1.1920922133867862e-06, "token_rank": 0},
-                    ),
+                    ('5', {"token_score": 0.999, "token_rank": 0}),
+                    ('__end__', {"token_score": 0.999, "token_rank": 0}),
                 ],
                 'extra_args': ['--beam-size', '3'],
             },
             'greedy': {
                 'text_token_info': [
                     ('__start__', {"token_score": 0.0, "token_rank": 1}),
-                    ('5', {"token_score": -2.5510462364763953e-05, "token_rank": 0}),
-                    (
-                        '__end__',
-                        {"token_score": -1.1920922133867862e-06, "token_rank": 0},
-                    ),
+                    ('5', {"token_score": 0.999, "token_rank": 0}),
+                    ('__end__', {"token_score": 0.999, "token_rank": 0}),
                 ],
                 'extra_args': [],
             },
@@ -250,6 +244,7 @@ class TestGeneration(unittest.TestCase):
                             "token_score"
                         ],
                         tok_data[1]["token_score"],
+                        rel_tol=1e-3,
                     ), f"failed token probability prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
                     assert math.isclose(
                         gold_data[inference_type]['text_token_info'][i][1][
@@ -271,7 +266,7 @@ class TestGeneration(unittest.TestCase):
                     "hypothesis_ids": torch.LongTensor([0]),
                     "token_ids": torch.LongTensor([2]),
                     "scores": torch.Tensor([-0.6]),
-                    "token_details": [{"token_score": -0.1, "token_rank": 0}],
+                    "token_details": [{"token_score": 0.3800, "token_rank": 0}],
                 },
             },
             "beam_with_one_beam": {
@@ -282,7 +277,7 @@ class TestGeneration(unittest.TestCase):
                     "hypothesis_ids": torch.LongTensor([0]),
                     "token_ids": torch.LongTensor([2]),
                     "scores": torch.Tensor([-0.6]),
-                    "token_details": [{"token_score": -0.1, "token_rank": 0}],
+                    "token_details": [{"token_score": 0.3800, "token_rank": 0}],
                 },
             },
             "beam_with_multiple_beams": {
@@ -297,8 +292,8 @@ class TestGeneration(unittest.TestCase):
                     "token_ids": torch.LongTensor([2, 3]),
                     "scores": torch.Tensor([-0.7, -0.8]),
                     "token_details": [
-                        {"token_score": -0.2, "token_rank": 0},
-                        {"token_score": -0.3, "token_rank": 1},
+                        {"token_score": 0.3567, "token_rank": 0},
+                        {"token_score": 0.3228, "token_rank": 1},
                     ],
                 },
             },
@@ -312,7 +307,7 @@ class TestGeneration(unittest.TestCase):
                     "hypothesis_ids": torch.LongTensor([0]),
                     "token_ids": torch.LongTensor([1]),
                     "scores": torch.Tensor([-3.5]),
-                    "token_details": [{"token_score": -0.5, "token_rank": 0}],
+                    "token_details": [{"token_score": 1.0, "token_rank": 0}],
                 },
             },
             "topk_with_multiple_beams": {
@@ -329,8 +324,8 @@ class TestGeneration(unittest.TestCase):
                     "token_ids": torch.LongTensor([1, 2]),
                     "scores": torch.Tensor([-3.5, -2.6]),
                     "token_details": [
-                        {"token_score": -0.5, "token_rank": 0},
-                        {"token_score": -0.6, "token_rank": 0},
+                        {"token_score": 1.0, "token_rank": 0},
+                        {"token_score": 1.0, "token_rank": 0},
                     ],
                 },
             },
@@ -346,7 +341,7 @@ class TestGeneration(unittest.TestCase):
                     "scores": torch.Tensor(
                         [-3.0]
                     ),  # the -0.5 logprob normalizes to 0 in truncated distribution
-                    "token_details": [{"token_score": -0.0, "token_rank": 0}],
+                    "token_details": [{"token_score": 1.0, "token_rank": 0}],
                 },
             },
             "nucleus_with_multiple_beams": {
@@ -365,8 +360,8 @@ class TestGeneration(unittest.TestCase):
                         [-3.0, -2.0]
                     ),  # the -0.5, -0.6 logprobs normalize to 0 in truncated distributions
                     "token_details": [
-                        {"token_score": -0.0, "token_rank": 0},
-                        {"token_score": -0.0, "token_rank": 0},
+                        {"token_score": 1.0, "token_rank": 0},
+                        {"token_score": 1.0, "token_rank": 0},
                     ],
                 },
             },
@@ -397,7 +392,7 @@ class TestGeneration(unittest.TestCase):
                 assert math.isclose(
                     token_details["token_score"],
                     expected_token_details["token_score"],
-                    rel_tol=1e-5,
+                    rel_tol=1e-3,
                 ), f"failed test_tree_search for test {test_name} on field token_details"
                 assert (
                     token_details["token_rank"] == expected_token_details["token_rank"]
