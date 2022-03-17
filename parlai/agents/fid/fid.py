@@ -409,7 +409,7 @@ class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
         for doc_idx in range(n_docs_in_message):
             doc_content = message[consts.RETRIEVED_DOCS][doc_idx]
             for sel_sentc in selected_sentences:
-                if sel_sentc in doc_content:
+                if sel_sentc in doc_content and doc_idx not in already_added_doc_idx:
                     retrieved_docs.append(
                         self._extract_doc_from_message(message, doc_idx)
                     )
