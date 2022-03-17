@@ -9,7 +9,7 @@ import queue
 import random
 from typing import List, Any, Dict, Tuple, Set, TYPE_CHECKING
 
-from mephisto.operations.logger_core import get_logger
+from mephisto.utils.logger_core import get_logger
 from mephisto.abstractions.blueprint import SharedTaskState, TaskRunner
 from omegaconf import DictConfig
 
