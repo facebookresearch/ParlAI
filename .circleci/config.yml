@@ -435,9 +435,10 @@ workflows:
       - long_gpu_tests:
           requires:
             - unittests_38
-      - crowdsourcing_tests
-#          requires:  # TODO: add this prereq back in once all tests pass
+#      - crowdsourcing_tests:  # TODO: add this prereq back in once all tests pass
+#          requires:
 #            - unittests_38
+      - crowdsourcing_tests  # TODO: remove me once all tests pass
       - teacher_tests:
           requires:
             - unittests_38
