@@ -9,7 +9,6 @@ Utility methods for conversations format.
 import datetime
 import json
 import os
-import random
 import itertools
 
 from parlai.utils.io import PathManager
