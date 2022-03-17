@@ -66,7 +66,7 @@ class AcuteEvalRunner(TaskRunner):
         random.seed(self.args.blueprint.random_seed)
         self.is_concurrent = False
         self.assignment_duration_in_seconds = (
-            task_run.get_task_config().assignment_duration_in_seconds
+            task_run.get_task_args().assignment_duration_in_seconds
         )
 
         # class attributes

@@ -109,9 +109,7 @@ class AbstractCrowdsourcingTest:
         Set up the operator and server.
         """
         self.operator = Operator(self.db)
-        self.operator.validate_and_run_config(
-            self.config.mephisto, shared_state=shared_state
-        )
+        self.operator.launch_task_run(self.config.mephisto, shared_state=shared_state)
         self.server = self._get_server()
 
     def _get_live_run(self):
@@ -216,21 +214,14 @@ class AbstractCrowdsourcingTest:
     def await_channel_requests(self, timeout=2) -> None:
         time.sleep(0.1)
         tracked_run = self._get_live_run()
-        self.assertTrue(  # type: ignore
-            self.operator._run_loop_until(
-                lambda: len(tracked_run.client_io.request_id_to_channel_id) == 0,
-                timeout,
-            ),
-            f"Channeled requests not processed in time!",
-        )
+        assert self.operator._run_loop_until(
+            lambda: len(tracked_run.client_io.request_id_to_channel_id) == 0, timeout
+        ), f"Channeled requests not processed in time!"
 
     def assert_sandbox_worker_created(self, worker_name, timeout=2) -> None:
-        self.assertTrue(  # type: ignore
-            self.operator._run_loop_until(
-                lambda: len(self.db.find_workers(worker_name=worker_name)) > 0, timeout
-            ),
-            f"Worker {worker_name} not created in time!",
-        )
+        assert self.operator._run_loop_until(
+            lambda: len(self.db.find_workers(worker_name=worker_name)) > 0, timeout
+        ), f"Worker {worker_name} not created in time!"
 
 
 class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
