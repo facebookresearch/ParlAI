@@ -1310,7 +1310,7 @@ class ObservationEchoRetriever(RagRetriever):
 
     def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
         self._largest_seen_idx += 1
-        new_idx = max(len(self._query_ids), self._largest_seen_idx)
+        new_idx = self._largest_seen_idx
         if new_idx in self._query_ids.values() or new_idx in self._saved_docs:
             raise RuntimeError(
                 "Nonunique new_idx created in add_retrieve_doc in ObservationEchoRetriever \n"
