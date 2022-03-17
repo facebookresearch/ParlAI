@@ -342,7 +342,8 @@ FORM_TASK_DATA = [{'form_responses': responses} for responses in FORM_RESPONSES]
 # TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
-try:
+# try:
+if True:  # TODO: restore or remove try/except
 
     import mephisto
     from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
@@ -411,8 +412,8 @@ try:
             )
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass
 
 if __name__ == "__main__":
     unittest.main()

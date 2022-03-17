@@ -14,7 +14,8 @@ import unittest
 import pytest
 
 
-try:
+# try:
+if True:  # TODO: restore or remove try/except
 
     from parlai.crowdsourcing.tasks.acute_eval.fast_eval import (
         FastAcuteExecutor,
@@ -88,8 +89,8 @@ try:
             shutil.rmtree(root_dir)
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass
 
 if __name__ == "__main__":
     unittest.main()

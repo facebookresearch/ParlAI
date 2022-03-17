@@ -13,7 +13,8 @@ import numpy as np
 import torch
 from pytest_regressions.file_regression import FileRegressionFixture
 
-try:
+# try:
+if True:  # TODO: restore or remove try/except
 
     from parlai.crowdsourcing.tasks.model_chat.utils import ImageStack
     import parlai.utils.testing as testing_utils
@@ -73,5 +74,5 @@ try:
                 file_regression.check(contents=stdout)
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass

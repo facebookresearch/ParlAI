@@ -16,7 +16,8 @@ from pytest_regressions.file_regression import FileRegressionFixture
 import parlai.utils.testing as testing_utils
 
 
-try:
+# try:
+if True:  # TODO: restore or remove try/except
 
     from parlai.crowdsourcing.tasks.model_chat.analysis.compile_results import (
         ModelChatResultsCompiler,
@@ -133,5 +134,5 @@ try:
                 file_regression.check(outputs[prefix], basename=prefix)
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass

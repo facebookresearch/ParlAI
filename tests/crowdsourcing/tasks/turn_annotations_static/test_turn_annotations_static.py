@@ -23,7 +23,8 @@ TASK_DATA_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tas
 IN_FLIGHT_CONFIG_NAME = "example_in_flight_qa"
 
 
-try:
+# try:
+if True:  # TODO: restore or remove try/except
 
     from parlai.crowdsourcing.tasks.turn_annotations_static.run import TASK_DIRECTORY
     from parlai.crowdsourcing.utils.frontend import build_task
@@ -141,8 +142,8 @@ try:
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass
 
 if __name__ == "__main__":
     unittest.main()

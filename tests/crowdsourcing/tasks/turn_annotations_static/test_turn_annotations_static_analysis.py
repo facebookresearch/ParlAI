@@ -16,7 +16,8 @@ import pandas as pd
 import parlai.utils.testing as testing_utils
 
 
-try:
+# try:
+if True:  # TODO: restore or remove try/except
 
     from parlai.crowdsourcing.tasks.turn_annotations_static.analysis.compile_results import (
         TurnAnnotationsStaticResultsCompiler,
@@ -146,8 +147,8 @@ try:
                     )
 
 
-except ImportError:
-    pass
+# except ImportError:
+#     pass
 
 
 if __name__ == "__main__":
