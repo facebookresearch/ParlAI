@@ -29,4 +29,20 @@ PRESET_DESCRIPTIONS = {
         "Architecture parameters (number layers, etc.) for BART-Large. See "
         "[Lewis et. al. (2019](https://arxiv.org/abs/1910.13461)"
     ),
+    "gen/seeker_dialogue": (
+        "Generation parameters for SeeKeR, Dialogue. See"
+        "[Shuster et al. (2022)](TODO: LINK)"
+    ),
+    "gen/seeker_lm": (
+        "Generation parameters for SeeKeR, Language Model. See"
+        "[Shuster et al. (2022)](TODO: LINK)"
+    ),
+    "arch/r2c2_base_400M": (
+        "Architecture parameters for R2C2 Base 400M model. See"
+        "[Shuster et al. (2022)](TODO: LINK)"
+    ),
+    "arch/r2c2_base_3B": (
+        "Architecture parameters for R2C2 Base 3B model. See"
+        "[Shuster et al. (2022)](TODO: LINK)"
+    ),
 }

@@ -10,15 +10,21 @@
 
 import copy
 import os
+import json
 import jsonlines
 from typing import List, Optional, Tuple
 
-from parlai.core.teachers import ChunkTeacher
+from parlai.core.teachers import ChunkTeacher, DialogTeacher
 from .build import build, DATASET_NAME_LOCAL
+from .build_open import build as build_
 from .utils.text_utils import simplify_nq_example
 
 from parlai.core.opt import Opt
+from parlai.core.message import Message
+from parlai.core.metrics import ExactMatchMetric, normalize_answer, AverageMetric
 from parlai.core.params import ParlaiParser
+
+from parlai.utils.io import PathManager
 
 
 def _count_lines_in_file(fname):
@@ -243,6 +249,85 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 'long_answers_candidate'
             ]
         return message_dict
+
+
+class InMetric(AverageMetric):
+    @staticmethod
+    def compute(guess: str, answers: List[str]) -> Optional["InMetric"]:
+        if guess is None or answers is None:
+            return None
+        guess = normalize_answer(guess)
+        for a in answers:
+            if normalize_answer(a) in guess:
+                return InMetric(1)
+        return InMetric(0)
+
+
+class NaturalQuestionsOpenTeacher(DialogTeacher):
+    def __init__(self, opt: Opt, shared=None):
+        self.fold = opt["datatype"].split(":")[0]
+        self.dpath = os.path.join(opt["datapath"], "NaturalQuestions_retrieval")
+        self.opt = opt
+        self.opt['datafile'] = os.path.join(self.dpath, self.fold + ".csv")
+        if shared is None:
+            build_(opt)
+        super().__init__(opt, shared)
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        group = parser.add_argument_group("Natural Questions retrieval")
+        group.add_argument(
+            "--normalize-everything",
+            default=False,
+            type=bool,
+            help="Noramlize text + label in training",
+        )
+        return parser
+
+    def setup_data(self, fold):
+        with PathManager.open(
+            os.path.join(self.dpath, self.fold + "_with_gold.json")
+        ) as json_file:
+            gold_datas = json.load(json_file)["data"]
+        for gold_data in gold_datas:
+            text = gold_data["question"]
+            label = gold_data["short_answers"][0]
+            if self.opt.get("normalize_everything"):
+                text = normalize_answer(text)
+                label = normalize_answer(label)
+            yield {
+                'text': text,
+                'label': label,
+                'title': gold_data['title'],
+                'checked_sentence': gold_data['context'],
+                'answers': json.dumps(gold_data["short_answers"]),
+            }, True
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ):
+        if "text" in model_response and model_response["text"] is not None:
+            self.metrics.add(
+                "exact_match",
+                ExactMatchMetric.compute(
+                    guess=model_response["text"],
+                    answers=json.loads(teacher_action["answers"]),
+                ),
+            )
+
+            self.metrics.add(
+                "in_metric",
+                InMetric.compute(
+                    guess=model_response["text"],
+                    answers=json.loads(teacher_action["answers"]),
+                ),
+            )
 
 
 class DefaultTeacher(NaturalQuestionsTeacher):

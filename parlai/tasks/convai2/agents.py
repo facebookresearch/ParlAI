@@ -150,16 +150,21 @@ class NormalizedTeacherTrait(object):
     def setup_data(self, path):
         logging.info(f"loading normalized fbdialog data: {path}")
         exs_counter = 0
-        for (text, labels, reward, candidates), new_episode in super().setup_data(path):
+        for data, new_episode in super().setup_data(path):
+            text, labels, reward = data[:3]
+            candidates = None if len(data) == 3 else data[3]
             if new_episode:
                 exs_counter = 0
             if self.max_num_turns > 0 and exs_counter >= self.max_num_turns:
                 continue
             text = self.normalize_replies(text)
             labels = [self.normalize_replies(l) for l in labels]
-            candidates = [self.normalize_replies(c) for c in candidates]
             exs_counter += 1
-            yield (text, labels, reward, candidates), new_episode
+            if candidates:
+                candidates = [self.normalize_replies(c) for c in candidates]
+                yield (text, labels, reward, candidates), new_episode
+            else:
+                yield (text, labels, reward), new_episode
 
 
 class NormalizedTeacher(NormalizedTeacherTrait, SelfOriginalTeacher):
