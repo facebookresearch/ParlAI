@@ -407,7 +407,7 @@ def download_from_google_drive(gd_id, destination):
 
     with get_http_session() as session:
         response = session.get(URL, params={'id': gd_id}, stream=True)
-        token = _get_confirm_token(response)
+        token = _get_confirm_token(response) or 't'
 
         if token:
             response.close()
