@@ -4,22 +4,50 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from flask import Flask, request
-from parlai.core.agents import create_agent_from_model_file
+"""
+Example Flask server which hosts a model.
+
+## Examples
+**Serving the model**
+```shell
+parlai flask -m repeat_query
+parlai flask -mf zoo:blender/blender_90M/model
+```
+
+**Hitting the API***
+```shell
+curl -k http://localhost:5000/response -H "Content-Type: application/json" -d '{"text": "foobar"}'
+```
+"""
+
+from parlai.core.agents import create_agent
+from parlai.core.params import ParlaiParser
+from parlai.core.script import ParlaiScript, register_script
 
 
-app = Flask(__name__)
+@register_script('flask', hidden=True)
+class Flask(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        parser = ParlaiParser(True, True)
+        return parser
 
-blender_agent = create_agent_from_model_file("zoo:blender/blender_90M/model")
+    def chatbot_response(self):
+        from flask import request
 
-@app.route("/response", methods=("GET", "POST"))
-def chatbot_response():
-    data = request.json
-    blender_agent.observe({'text': data["UserText"], 'episode_done': False})
-    response = blender_agent.act()
-    return {'response': response['text']}
+        data = request.json
+        self.agent.observe({'text': data["text"], 'episode_done': False})
+        response = self.agent.act()
+        return {'response': response['text']}
+
+    def run(self):
+        from flask import Flask, request
+
+        self.agent = create_agent(self.opt)
+        app = Flask("parlai_flask")
+        app.route("/response", methods=("GET", "POST"))(self.chatbot_response)
+        app.run()
 
 
-# main driver function
 if __name__ == "__main__":
-    app.run()
+    Flask.main()
