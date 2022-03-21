@@ -264,6 +264,7 @@ class TestT5Model(unittest.TestCase):
             )
 
 
+@testing_utils.skipUnlessGPU
 class TestT5Distributed(_AbstractTest):
     base_config = dict(
         task='integration_tests:overfit',
