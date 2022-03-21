@@ -41,7 +41,7 @@ class Flask(ParlaiScript):
         return {'response': response['text']}
 
     def run(self):
-        from flask import Flask, request
+        from flask import Flask
 
         self.agent = create_agent(self.opt)
         app = Flask("parlai_flask")
