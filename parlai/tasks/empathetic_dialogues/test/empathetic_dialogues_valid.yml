@@ -1,7 +1,5 @@
 acts:
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: terrified
+- - emotion: terrified
     episode_done: false
     eval_labels:
     - Are you fine now?
@@ -30,15 +28,11 @@ acts:
     - have you asked your friends for family?
     - I love math, good luck with your exams than.
     - I am not sure I would do well in that house
-    prepend_cand: null
-    prepend_ctx: null
     situation: Today,as i was leaving for work in the morning,i had a tire burst in
       the middle of a busy road. That scared the hell out of me!
     text: Today,as i was leaving for work in the morning,i had a tire burst in the
       middle of a busy road. That scared the hell out of me!
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: terrified
+- - emotion: terrified
     episode_done: true
     eval_labels:
     - Cool :) Is your car damaged a lot?
@@ -69,14 +63,10 @@ acts:
     - That's always a good thing. It means you should get on great with your neighbors.
     - That's always tough. It's so hard to tell what other factors come into play
       in situations like that. Are you happy where you're currently at, or still looking?
-    prepend_cand: null
-    prepend_ctx: null
     situation: Today,as i was leaving for work in the morning,i had a tire burst in
       the middle of a busy road. That scared the hell out of me!
     text: Yeah,i'm doing alright now, but with minor injuries.
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: surprised
+- - emotion: surprised
     episode_done: false
     eval_labels:
     - That's funny, hope he didn't give you a heart attack.
@@ -108,16 +98,12 @@ acts:
     - I understand but try not to be jealous. Good things will come to you to in its
       own time
     - i hope you do really well
-    prepend_cand: null
-    prepend_ctx: null
     situation: 'I was walking through my hallway a few week ago, and my son was hiding
       under the table and grabbed my ankle. I thought i was got. '
     text: 'A few weeks ago, I was walking through my hallway, minding my own business,
       when all of a sudden a hand reached out from under a table and grabbed my ankle.
       I was so suprised. I thought i was got. Turns out, it was my son. '
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: surprised
+- - emotion: surprised
     episode_done: true
     eval_labels:
     - I would probably scream also.
@@ -147,15 +133,11 @@ acts:
     - You can only do so much.  Next time I'd just let him drink on his own.
     - I am sure you will meet them
     - Wow thats nice.  What do you drive?
-    prepend_cand: null
-    prepend_ctx: null
     situation: 'I was walking through my hallway a few week ago, and my son was hiding
       under the table and grabbed my ankle. I thought i was got. '
     text: 'I may have let out a scream that will have him question my manhood for
       the rest of our lives, lol. '
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: excited
+- - emotion: excited
     episode_done: false
     eval_labels:
     - 'Wow! That sounds amazing. Where are you going? '
@@ -185,8 +167,6 @@ acts:
     - That is terrible. How long have you had this pet?
     - That's so exciting! Have you run a marathon before?
     - woohoo! you are one lucky child!
-    prepend_cand: null
-    prepend_ctx: null
     situation: I'm overly excited today because will be flying outside the country
       for the first time tomorrow.
     text: I'm overly excited because will be flying outside the country for the first
