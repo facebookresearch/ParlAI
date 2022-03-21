@@ -23,6 +23,11 @@ This work is based on the following paper:
 <p align="center"><img width="90%" src="hiking.png" /></p>
 
 
+## Results
+
+TODO TODO TODO TODO
+
+
 ## Pre-trained Models
 
 We provide the following models in the [ParlAI Model Zoo](https://parl.ai/docs/zoo.html)
@@ -97,9 +102,9 @@ You can find the model card for the Seeker Dialogue 3B model [here](model_card)
 
 To train your own SeeKeR dialogue model, we provide both a 400M and 3B R2C2 base model. We've grouped all of the search, knowledge, and dialogue response tasks into the following "parent" tasks:
 
-- Search: `projects.seeker.tasks.search:SearchQueryTeacher`
+- Search: `projects.seeker.tasks.search_query:SearchQueryTeacher`
 - Knowledge: `projects.seeker.tasks.knowledge:KnowledgeTeacher`
-- Dialogue Response: `projects.seeker.tasks.knowledge:DialogueTeacher`
+- Dialogue Response: `projects.seeker.tasks.dialogue:DialogueTeacher`
 
 To train SeeKeR dialogue models, we utilized several [ParlAI Speedups](https://parl.ai/docs/tutorial_fast.html), including fp16 training, distributed data parallel, and checkpointing activations. See below for a sample command:
 
@@ -107,7 +112,7 @@ To train SeeKeR dialogue models, we utilized several [ParlAI Speedups](https://p
 
 ```shell
 $ python -m parlai.scripts.multiprocessing_train \
---task projects.seeker.tasks.knowledge,projects.seeker.tasks.dialogue,projects.seeker.tasks.search \
+--task projects.seeker.tasks.knowledge,projects.seeker.tasks.dialogue,projects.seeker.tasks.search_query \
 --multitask-weights 2,2,1 -bs 1 -vstep 1000 -vmt ppl -vp 5 -vmm min -vme 100000 -lstep 50 \
 --init-opt arch/r2c2_base_3B --init-model zoo:seeker/r2c2_blenderbot_3B/model \
 --model projects.seeker.agents.seeker:ComboFidGoldDocumentAgent --n-docs 5 \
