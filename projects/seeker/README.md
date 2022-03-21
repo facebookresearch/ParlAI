@@ -25,7 +25,53 @@ This work is based on the following paper:
 
 ## Results
 
-TODO TODO TODO TODO
+### Open-Domain Dialogue
+
+We collected 100 annotated human-model conversations, in which we asked human crowdworkers to have natural conversations with a given model. For each conversational turn, we asked the crowdworkers to mark their whether their partner's responses have one or more of the following conversational attributes:
+
+1. **Consistent**: Does the response 1) make sense in the context of the conversation; 2) make sense in and of itself?
+2. **Knowledgeable**: Does the response contain some knowledgeable, correct information?
+3. **Factually Incorrect**: Is some of the response factually incorrect? An admixture of ideas?
+4. **Engaging**: Are you engaged by the response? Do you want to continue the conversation?
+
+We also compute the following two metrics post-hoc from the data:
+
+1. **Knowledgeable and Engaging**: What percent of all responses are marked as both knowledgeable and engaging?
+2. **% Knowledgeable that is Engaging**: What percent of knowledgeable responses are marked as engaging?
+
+We present the results below. The SeeKeR Dialogue model outperforms BlenderBot 1, and BlenderBot 2, with statistically significant improvements (*) in knowledgeability, engagingness, and the two computed metrics.
+
+
+| Model                                                                | Consistent &#8593; | Knowledgeable &#8593; | Factually Incorrect &#8595; | Per-Turn Engaging &#8593;| Knowledgable & Engaging &#8593; | % Knowledgeable that is Engaging &#8593; | Zoo Model |
+|----------------------------------------------------------------------|------------:|---------------:|---------------------:|-------------------:|-------------------------:|----------------------------------:| :----------- |
+| BlenderBot1 [Roller et al. (2021)](https://arxiv.org/abs/2004.13637) | 75.47%      | 36.17%        | 9.14%               | 78.72%            | 28.79%                  | 79.58%                           | `zoo:blender/blender_3B/model` |
+| BlenderBot 2 [project](https://parl.ai/projects/blenderbot2/)        | 65.06%      | 27.88%        | 4.12%               | 83.52%            | 21.93%                  | 78.67%                           | `zoo:blenderbot2/blenderbot2_3B/model`
+| SeeKeR Dialogue [Shuster et al. 2022](TODO_LINK)                     | **78.47 %** | **46.49%**\*  | **3.94%**           | **90.41%**\*      | **44.03%**\*            | **94.71%**\*                     | `zoo:seeker/seeker_dialogue_3B/model` |
+
+
+### Topical Prompt Completion
+
+We source a list of 100 events [from Wikipedia that occurred in January 2022](https://en.wikipedia.org/wiki/Portal:Current_events/January_2022), and extract entities (ignoring "covid" and countries, as they might be too general a topic). We then construct prompts of the form, “In recent developments we have learned the following about <TOPIC>.”, and we ask the language model to continue it. We annotate model outputs, marking the following attributes:
+
+1. **Sensible**: does it reasonably follow the prompt?
+2. **True**: does it contain some true information?
+3. **Hallucination**: does it contain some false information?
+4. **Topical**: does it reference what happened in the last two months, i.e., January and February 2022?.
+
+We compare SeeKeR models equipped with the [Mojeek search engine](https://mojeek.com) to standard GPT2 models trained on the same data, as well as GPT3 zero-shot. The results below show that our SeeKeR models improve over GPT2 models with more true completions, fewer hallucinations, and more topicality. GPT3 is highly sensible, and generates true outputs often, but also produces lots of hallucinations and is not topical.
+
+
+| Model                          | Sensible &#8593; | True &#8593; | Hallucination &#8595; | Topical &#8593; | Zoo File                                 |
+|--------------------------------|-----------------:|--------------:|-----------------------:|-----------------:|------------------------------------------|
+| GPT2 Medium (345M)             |              81% |          15% |                   68% |              1% |                                          |
+| GPT2 Large (762M)              |              81% |          18% |                   71% |              0% |                                          |
+| GPT2 XL (1.5B)                 |              81% |          14% |                   73% |              0% |                                          |
+| GPT3 (175B InstructGPT)        |              82% |          58% |                   62% |              4% |                                          |
+| SeeKeR GPT2 Medium (345M)      |              75% |          34% |                   54% |             13% | `zoo:seeker/seeker_lm_med/model`         |
+| SeeKeR GPT2 Large (762M)       |              68% |          36% |                   51% |              8% | `zoo:seeker/seeker_lm_large/model`       |
+| SeeKeR GPT2 XL (1.5B)          |              77% |          43% |                   58% |             15% | `zoo:seeker/seeker_lm_xl/model`          |
+| SeeKeR GPT2 XL (Jan '22)       |              71% |          43% |                   51% |             19% | `zoo:seeker/seeker_lm_xl/model`          |
+| SeeKeR R2C2 Dialogue + LM (3B) |              80% |          55% |                   42% |             19% | `zoo:seeker/seeker_lm_dialogue_3B/model` |
 
 
 ## Pre-trained Models
