@@ -430,11 +430,11 @@ class AcuteEvalRunner(TaskRunner):
     def run_unit(self, unit: "Unit", agent: "Agent") -> None:
         """
         Static runners will get the task data, send it to the user, then wait for the
-        agent to act (the data to be completed)
+        agent to submit (the data to be completed)
         """
         # Frontend implicitly asks for the initialization data, so we just need
         # to wait for a response
-        _ = agent.act(timeout=self.assignment_duration_in_seconds)
+        _ = agent.await_submit(timeout=self.assignment_duration_in_seconds)
         if self.args.blueprint.block_on_onboarding_fail:
             # check whether workers failed onboarding
             self.check_and_update_worker_approval(agent)
