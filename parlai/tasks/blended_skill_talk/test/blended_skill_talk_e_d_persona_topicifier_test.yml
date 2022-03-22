@@ -5,7 +5,7 @@ acts:
     episode_done: false
     eval_labels:
     - Did you suffer any injuries?
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - I hope it goes well! If it makes you feel any better, most of them are probably
       just as nervous and are looking for any excuse to relax and let their guard
@@ -62,7 +62,7 @@ acts:
     episode_done: true
     eval_labels:
     - Why did you feel guilty? People really shouldn't drive drunk.
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - Yep! or if you're house will be hit.  Many possibilities with tornadoes!
     - 'Wow! I better! I Stopped at Associates of General Studies, because I wanted
@@ -101,7 +101,7 @@ acts:
     eval_labels:
     - Yeah i wanted to tell you about the time i was hit by a drunk driver im so happy
       to still be alive after that experience
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - Sugar will do that to kids every time.  Just don't let them on a  roller coaster
       to make it even worse.
@@ -150,7 +150,7 @@ acts:
     episode_done: true
     eval_labels:
     - Yeah he was punished hes in jail still
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - Are you really able to work from home? Finding a gig is so difficult, I'm glad
       that it is working for you.
@@ -194,7 +194,7 @@ acts:
     eval_labels:
     - sorry to hear! do you have any idea about the break up? did you think about
       it ?
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - That is insane! I've never heard of anything like that before.  You all should
       start protesting!

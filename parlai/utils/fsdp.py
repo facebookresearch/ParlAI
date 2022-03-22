@@ -68,7 +68,7 @@ def maybe_fsdp_wrap(opt):
         mixed_precision=mixed_precision,
         compute_dtype=compute_dtype,
         state_dict_device=torch.device('cpu'),
-        flatten_parameters=False,
+        flatten_parameters=True,
         process_group=get_dist_group(),
     )
     with fairscale_enable_wrap(wrapper_cls=FSDP, **fsdp_args):
