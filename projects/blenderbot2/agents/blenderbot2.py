@@ -80,7 +80,7 @@ class HistoryCleanReply(History):
             dict_agent=dict_agent,
         )
         self.add_cleaned_reply_to_history = opt.get(
-            'add_cleaned_reply_to_history', True
+            'add_cleaned_reply_to_history', False
         )
 
     @abstractmethod
