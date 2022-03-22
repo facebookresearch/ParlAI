@@ -154,7 +154,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         python /private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/analysis/compile_results.py \
             --problem-buckets they,you,new,none,engaging \
             --is-engaging True \
-            --model-nickname KNOWLEDGE_SLUDGE_SESSION_MEM
+            --model-nickname FiD_SUMMSC
             FiD_SUMMSC
         """
 
@@ -195,6 +195,7 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         conversation_idx = 0
         conversation_dfs = []
         final_rating_stats = {}
+        oss_data = []
         for read_folder in read_folders:
             read_folder_name = os.path.split(read_folder)[-1]
             for file_name in sorted(os.listdir(read_folder)):
@@ -281,6 +282,16 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
                     'initial_task_data': data['initial_task_data'],
                     'initial_data_id': initial_data_id,
                 }
+
+                oss_data.append(
+                    {
+                        'dialog': data['dialog'],
+                        'model_name': data['model_name'],
+                        'initial_task_data': data['context_info'][
+                            'observation_for_bot'
+                        ],
+                    }
+                )
 
                 # Check that the conversation consists of pairs of comments between
                 # agents 0 and 1, with 1(bot) speaking first
@@ -543,6 +554,14 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         with open(rating_path, 'w') as fw:
             json.dump(problem_counts[model_nickname]['pairwise_ratings'], fw)
         print(f'Wrote pairwise ratings to: {rating_path}')
+
+        oss_path = rating_path = os.path.join(
+            f'/private/home/jingxu23/ParlAI/parlai/crowdsourcing/tasks/model_chat/results/oss/{self.model_nickname}.jsonl'
+        )
+        with open(oss_path, 'w') as fw:
+            for d in oss_data:
+                fw.write(json.dumps(d) + '\n')
+        print(f'Wrote oss data to: {oss_path}')
 
         # Save full results
         all_conversations_df = pd.DataFrame()
