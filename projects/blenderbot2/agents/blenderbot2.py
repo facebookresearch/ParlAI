@@ -13,6 +13,7 @@ its memory or access the internet.
 The Memory Decoder examines the context and generates memories to write to
 the long-term memory module.
 """
+from abc import abstractmethod
 import re
 import copy
 import torch
@@ -33,7 +34,7 @@ from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch
+from parlai.core.torch_agent import Batch, History
 from parlai.tasks.wizard_of_internet.constants import (
     SELECTED_DOCS,
     SELECTED_DOCS_TITLES,
@@ -56,6 +57,53 @@ from parlai.agents.fid.fid import SearchQuerySearchEngineFiDAgent
 
 ZOO_QUERY_GENERATOR = 'zoo:blenderbot2/query_generator/model'
 ZOO_MEMORY_DECODER = 'zoo:blenderbot2/memory_decoder/model'
+
+
+class HistoryCleanReply(History):
+    def __init__(
+        self,
+        opt,
+        field='text',
+        maxlen=None,
+        size=-1,
+        p1_token='__p1__',
+        p2_token='__p2__',
+        dict_agent=None,
+    ):
+        super().__init__(
+            opt,
+            field=field,
+            maxlen=maxlen,
+            size=size,
+            p1_token=p1_token,
+            p2_token=p2_token,
+            dict_agent=dict_agent,
+        )
+        self.add_cleaned_reply_to_history = opt.get(
+            'add_cleaned_reply_to_history', True
+        )
+
+    @abstractmethod
+    def _clean_text(self, txt):
+        """
+        Clean text to be override with custom logic
+        """
+
+    def add_reply(self, text):
+        clean_text = text
+        if self.add_cleaned_reply_to_history:
+            clean_text = self._clean_text(text)
+        super().add_reply(clean_text)
+
+
+class HistoryCleanUnsafeToken(HistoryCleanReply):
+    """
+    Override the history _clean_text to filter out special tokens like _potentially_unsafe
+    """
+
+    def _clean_text(self, txt):
+        cleaned_txt = re.sub(r'_[\S]*unsafe_*', '', txt, flags=re.IGNORECASE)
+        return cleaned_txt.strip()
 
 
 class BlenderBot2ModelTypeMixin(RagModelInterface):
@@ -340,6 +388,12 @@ class BlenderBot2RagAgent(RagAgent):
             hidden=True,
             help='model file for memory writer',
         )
+        bb2_group.add_argument(
+            '--add-cleaned-reply-to-history',
+            type=bool,
+            default=False,
+            help='whether to add the cleaned bb2 generated text without any special tokens to its history',
+        )
         memory_decoder = parser.add_argument_group('BlenderBot2 Memory Decoder Args')
         memory_decoder.add_argument(
             '--memory-decoder-key',
@@ -391,6 +445,10 @@ class BlenderBot2RagAgent(RagAgent):
             help='specify to combine memories on one line, rather than several.',
         )
         return parser
+
+    @classmethod
+    def history_class(cls):
+        return HistoryCleanUnsafeToken
 
     @property
     def rag_model_type(self) -> str:
@@ -898,38 +956,6 @@ class BlenderBot2RagAgent(RagAgent):
             return loss, output
         else:
             return loss
-
-    def _clean_text(self, txt):
-        cleaned_txt = re.sub(r'_[\S]*unsafe_*', '', txt, flags=re.IGNORECASE)
-        return cleaned_txt.strip()
-
-    def self_observe(self, self_message: Message) -> None:
-        """
-        Observe one's own utterance. Override TorchAgent.self_observe with cleaned text.
-
-        :param self_message:
-            The message corresponding to the output from batch_act.
-        """
-        use_reply = self.opt.get('use_reply', 'label')
-
-        if (
-            self.observation['episode_done']  # last example in the episode
-            or use_reply == 'none'  # not including our own responses anyway
-            or (
-                use_reply == 'label'
-                and any([l in self.observation for l in ['labels', 'eval_labels']])
-            )  # has true label
-        ):
-            return super().self_observe(self_message)
-
-        # otherwise, we use the CLEANED last output the model generated
-        if self_message is not None:
-            last_reply = self_message['text']
-            clean_reply = self._clean_text(last_reply)
-            self.history.add_reply(clean_reply)
-            return
-
-        raise RuntimeError("Unexpected case in self_observe.")
 
 
 class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
