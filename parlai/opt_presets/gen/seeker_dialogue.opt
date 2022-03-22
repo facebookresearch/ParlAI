@@ -31,6 +31,7 @@
   "sdm_beam_size": 1,
   "sdm_history_size": 1,
   "sdm_inference": "greedy",
+  "sdm_model": "projects.seeker.agents.seeker:ComboFidSearchQueryAgent",
   "search_decision": "always",
   "sqm_beam_block_ngram": -1,
   "sqm_beam_min_length": 2,

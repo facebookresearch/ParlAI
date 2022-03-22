@@ -2611,7 +2611,7 @@ Which level are you at?
             "400M parameter generative model pretrained on Reddit, RoBERTa, and CC100en tasks, but not finetuned."
         ),
         "example": (
-            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 4 --model bart -o gen/seeker r2c2_base_400M/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_400m"
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 4 --model bart r2c2_base_400M/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_400m"
         ),
         "result": "Results vary.",
     },
@@ -2626,7 +2626,7 @@ Which level are you at?
             "2.7B parameter generative model pretrained on Reddit, RoBERTa, and CC100en tasks, but not finetuned."
         ),
         "example": (
-            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 1 --model bart -o gen/seeker r2c2_base_3B/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_3B"
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 1 --model bart r2c2_base_3B/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_3B"
         ),
         "result": "Results vary.",
     },
