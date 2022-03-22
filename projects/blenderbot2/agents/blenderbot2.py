@@ -86,7 +86,7 @@ class HistoryCleanReply(History):
     @abstractmethod
     def _clean_text(self, txt):
         """
-        Clean text to be override with custom logic
+        Clean text to be override with custom logic.
         """
 
     def add_reply(self, text):
@@ -98,7 +98,8 @@ class HistoryCleanReply(History):
 
 class HistoryCleanUnsafeToken(HistoryCleanReply):
     """
-    Override the history _clean_text to filter out special tokens like _potentially_unsafe
+    Override the history _clean_text to filter out special tokens like
+    _potentially_unsafe.
     """
 
     def _clean_text(self, txt):
