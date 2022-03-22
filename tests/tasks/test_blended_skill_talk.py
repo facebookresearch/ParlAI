@@ -213,9 +213,9 @@ class TestPersonaTopicifierTeachers(unittest.TestCase):
                 "blended_skill_talk:ConvAI2PersonaTopicifier",
                 {
                     'text': "your persona: i like to remodel homes.\nyour persona: i like to go hunting.\nyour persona: i like to shoot a bow.\nyour persona: my favorite holiday is halloween.\nNicholas Sparks\nhi , how are you doing ? i'm getting ready to do some cheetah chasing to stay in shape .",
-                    'labels': (
-                        'you must be very fast . hunting is one of my favorite hobbies .',
-                    ),
+                    'labels': [
+                        'you must be very fast . hunting is one of my favorite hobbies .'
+                    ],
                     'reward': 0,
                     'label_candidates': (
                         'my mom was single with 3 boys , so we never left the projects .',

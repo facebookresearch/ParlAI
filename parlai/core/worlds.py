@@ -53,7 +53,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.data import DatatypeHelper
-from parlai.utils.misc import Timer, display_messages
+from parlai.utils.misc import Timer, display_messages, warn_once
 from parlai.tasks.tasks import ids_to_tasks
 from parlai.utils.misc import error_once
 
@@ -562,10 +562,17 @@ class MultiWorld(World):
         self.parleys = -1
         # Check to see if we are training
         self.is_training = DatatypeHelper.is_training(opt.get('datatype'))
+        # Check to see if we should shuffle
+        self.should_shuffle = DatatypeHelper.should_shuffle(opt.get('datatype'))
         # Make multi-task task probabilities.
         self.cum_task_weights = [1] * len(self.worlds)
         self.task_choices = range(len(self.worlds))
         weights = self.opt.get('multitask_weights', [1])
+        # Warn about multi-task weights being ignored if we are in a datatype that doesn't involve shuffling
+        if weights != [1] and not self.should_shuffle:
+            warn_once(
+                f"WARNING: multitask weights are ignored for datatype {opt.get('datatype')} as we iterate through tasks in a round robin"
+            )
         if weights == 'stochastic':
             weights = [w.num_episodes() for w in self.worlds]
         sum = 0
@@ -672,7 +679,7 @@ class MultiWorld(World):
         if self.new_world:
             self.new_world = False
             self.parleys = 0
-            if self.is_training:
+            if self.should_shuffle:
                 # select random world
                 self.world_idx = random.choices(
                     self.task_choices, cum_weights=self.cum_task_weights
