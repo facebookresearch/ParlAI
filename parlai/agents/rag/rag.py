@@ -553,18 +553,6 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         """
         return self._generation_agent._set_text_vec(self, obs, history, truncate)
 
-    def _add_generation_metrics(self, batch: Batch, preds: List[torch.Tensor]):
-        """
-        Can be overridden to allow for some metrics on the generations calculated at
-        eval.
-        """
-        self.record_local_metric(
-            'gen_n_toks',
-            AverageMetric.many(
-                [p.size(0) for p in preds], [1] * len(preds)
-            ),  # type: ignore
-        )
-
     ##### 3. Custom Batch handling #####
 
     def set_batch_query(self, batch: Batch, queries: List[torch.LongTensor]) -> Batch:
