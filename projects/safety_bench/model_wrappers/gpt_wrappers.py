@@ -19,7 +19,7 @@ from projects.safety_bench.utils.wrapper_loading import register_model_wrapper
 
 class GPTWrapper(ABC):
     """
-    Base class wrapper for GPT wrapper
+    Base class wrapper for GPT wrapper.
     """
 
     def __init__(self):

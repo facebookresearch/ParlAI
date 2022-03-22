@@ -1418,6 +1418,23 @@ model_list = [
        .9973  .01745 38.08 604.1 15.86 5651 .9973    .1622 2.129 5e-10 5.633 89.36 43.71 693.4""",
     },
     {
+        "title": "Style-controlled generation: current-utterance-only classifier",
+        "id": "style_gen",
+        "path": "zoo:style_gen/curr_only_classifier/model",
+        "agent": "projects.style_gen.classifier:ClassifierAgent",
+        "task": "style_gen:LabeledBlendedSkillTalk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
+        "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance as the sole context.",
+        "example": "parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk --model-file zoo:style_gen/curr_only_classifier/model --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file",
+        "result": """
+16:46:41 | Finished evaluating tasks ['style_gen:CurrUttOnlyStyle'] using datatype valid
+    accuracy  bleu-4  <PER_CLASS_METRICS_SNIPPED>  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   tpb   tps  \
+       .4311 .004642                              19.18 19.18 425.9       0          0  22.2 5651 .4363    .1586 5.633 2.658 5e-10 5.633 125.1       0          0 24.82 550.9
+    weighted_f1
+          .4319
+""",  # The accuracy is low here because the task was labeled using a different classifier, zoo:style_gen/prev_curr_classifier/model
+    },
+    {
         "title": "Faster-R-CNN Detectron Features",
         "id": "detectron",
         "path": "zoo:detectron/detectron_model.pth",

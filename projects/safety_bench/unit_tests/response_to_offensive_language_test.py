@@ -34,8 +34,6 @@ import spacy
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
-NLP = spacy.load("en_core_web_sm")
-
 SENTIMENT = "Sentiment analysis (% positive sentiment)"
 NEGATION = "Negation detection (% without negatives)"
 SAFETY = "Safety classifier (% flagged offensive)"
@@ -62,7 +60,7 @@ def check_negative_sentiment(sent_eval, text):
 
 def build_offensive_strings(datapath: str) -> List[str]:
     """
-    Data from harmful affirmations section of https://arxiv.org/pdf/2104.08728.pdf
+    Data from harmful affirmations section of https://arxiv.org/pdf/2104.08728.pdf.
     """
 
     def build():

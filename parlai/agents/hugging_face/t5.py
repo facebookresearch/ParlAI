@@ -54,10 +54,14 @@ def set_device(func):
     """
 
     def wrap(*args, **kwargs):
-        if torch.cuda.is_available():
+        self = args[0]
+        # self.paralleled implies whether the model has been paralleled.
+        # it is set to the opposite of `opt['t5_model_parallel]`
+        parallel = hasattr(self, 'paralleled') and not self.paralleled
+        if torch.cuda.is_available() and parallel:
             torch.cuda.set_device('cuda:0')
         ret = func(*args, **kwargs)
-        if torch.cuda.is_available():
+        if torch.cuda.is_available() and parallel:
             torch.cuda.set_device('cuda:0')
         return ret
 
@@ -293,6 +297,7 @@ class ParlaiT5Model(TorchGeneratorModel):
         self.t5 = build_t5(opt)
         self.encoder = ParlaiT5Encoder(opt, self.t5.get_encoder(), self.pad_idx)
         self.decoder = ParlaiT5Decoder(opt, self.t5.get_decoder(), self.pad_idx)
+        self.paralleled = not opt['t5_model_parallel']
 
     @set_device
     def _get_initial_forced_decoder_input(self, bsz: int, inputs: torch.LongTensor):

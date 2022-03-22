@@ -58,23 +58,26 @@ class GPT2Decoder(torch.nn.Module):
 
     def _init_from_pretrained(self, opt):
         # load model
-        model_sz = opt["gpt2_size"]
-        if model_sz == "small":
-            model_key = "gpt2"
-        elif model_sz == "distilgpt2":
-            model_key = "distilgpt2"
+        if opt.get("model_name"):
+            fle_key = opt["model_name"]
         else:
-            model_key = f"gpt2-{model_sz}"
+            model_sz = opt["gpt2_size"]
+            if model_sz == "small":
+                model_key = "gpt2"
+            elif model_sz == "distilgpt2":
+                model_key = "distilgpt2"
+            else:
+                model_key = f"gpt2-{model_sz}"
 
-        # check if datapath has the files that hugging face code looks for
-        hf_dir = os.path.join(opt["datapath"], "hf", model_key)
-        if all(
-            PathManager.exists(os.path.join(hf_dir, file_name))
-            for file_name in ["pytorch_model.bin", "config.json"]
-        ):
-            fle_key = PathManager.get_local_path(hf_dir, recursive=True)
-        else:
-            fle_key = model_key
+            # check if datapath has the files that hugging face code looks for
+            hf_dir = os.path.join(opt["datapath"], "hf", model_key)
+            if all(
+                PathManager.exists(os.path.join(hf_dir, file_name))
+                for file_name in ["pytorch_model.bin", "config.json"]
+            ):
+                fle_key = PathManager.get_local_path(hf_dir, recursive=True)
+            else:
+                fle_key = model_key
         return GPT2Model.from_pretrained(fle_key)
 
     def forward(self, input, encoder_state, incr_state=None):
@@ -237,6 +240,9 @@ class Gpt2Agent(TorchGeneratorAgent):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         agent = parser.add_argument_group("Gpt2 Args")
+        agent.add_argument(
+            "--model-name", type=str, default=None, help="Any GPT-2 model names."
+        )
         agent.add_argument(
             "--gpt2-size",
             type=str,
