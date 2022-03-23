@@ -232,8 +232,8 @@ commands:
       - restore_cache:
           key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
-      - installdeps
       - << parameters.more_installs >>
+      - installdeps
       - save_cache:
           key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
