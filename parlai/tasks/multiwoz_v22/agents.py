@@ -210,8 +210,6 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
             return {}
         blob = filtered.head(1).to_dict('records')
 
-        #results = {}
-        #results["OPTIONS"] = json.dumps(blob[0])
         results = blob[0]
         results["COUNT"] = count
         return results

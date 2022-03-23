@@ -4,9 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+"""
+Note: This sweep file is presented as an example of the pretraining used. Note that it relies on internal versions of these datasets and uses internal sweep scripts, so it will not work in practice.
+"""
+
+
 from parlai_internal.projects.param_sweep_utils.param_sweep import run_grid
 import time
 import os
+
 
 SCRIPT_NAME = os.path.basename(__file__).replace(".py", "")
 TODAY = format(time.asctime().replace(":", "-").replace(" ", "_")[:-14])
