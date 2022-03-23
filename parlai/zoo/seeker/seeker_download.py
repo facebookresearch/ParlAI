@@ -10,20 +10,10 @@ from parlai.core.build_data import built, download_models, get_model_dir
 import os
 import os.path
 
-# TODO: DELETE
-LOCAL_PATH = "http://localhost:8000/{}"
-
 
 def download_with_model_type(datapath, model_type, version):
     ddir = os.path.join(get_model_dir(datapath), 'seeker')
     if not built(os.path.join(ddir, model_type), version):
         opt = {'datapath': datapath, 'model_type': model_type}
         fnames = ['model.tgz']
-        download_models(
-            opt,
-            fnames,
-            'seeker',
-            version=version,
-            use_model_type=True,
-            path=LOCAL_PATH.format(model_type),
-        )
+        download_models(opt, fnames, 'seeker', version=version, use_model_type=True)

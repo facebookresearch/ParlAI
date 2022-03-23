@@ -12,7 +12,7 @@ from nltk.corpus import stopwords
 import nltk
 import spacy
 import torch
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 from parlai.core.torch_agent import Batch
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
@@ -139,8 +139,26 @@ def krm_get_batch_context_only_knowledge(
 
 
 def extract_entities(
-    sentence, pos=('PROPN', 'NOUN'), use_named_entities=True, use_noun_chunks=True
-):
+    sentence: str,
+    pos: Tuple[str] = ('PROPN', 'NOUN'),
+    use_named_entities: bool = True,
+    use_noun_chunks: bool = True,
+) -> List[str]:
+    """
+    Given a sentence, extract the entities from the sentence.
+
+    :param sentence:
+        provided sentence
+    :param pos:
+        parts of speech to look at
+    :param use_named_entities:
+        whether to include named entities
+    :param use_noun_chunks:
+        whether to include noun chunks.
+
+    :return entities:
+        return list of entities.
+    """
     global nlp
     if nlp is None:
         logging.info('Loading spacy once')
@@ -167,7 +185,17 @@ def extract_entities(
     return results
 
 
-def calc_f1_msmarco(pred, gold_items):
+def calc_f1_msmarco(pred: str, gold_items: List[str]) -> float:
+    """
+    Calculate F1 overlap between prediction sentence and gold labels
+
+    :param pred:
+        prediction string
+    :param gold_items:
+        list of gold items
+
+    :return f1_overlap:
+    """
     try:
         pred_items = nltk.word_tokenize(pred)
     except IndexError:
@@ -184,6 +212,16 @@ def calc_f1_msmarco(pred, gold_items):
 
 
 def calc_f1_msc(pred, gold_items):
+    """
+    Calculate F1 overlap between prediction sentence and gold labels
+
+    :param pred:
+        prediction string
+    :param gold_items:
+        list of gold items
+
+    :return f1_overlap:
+    """
     try:
         pred_items = nltk.word_tokenize(pred)
     except IndexError:
@@ -206,7 +244,25 @@ def calc_f1_msc(pred, gold_items):
     return f1
 
 
-def remove_possible_title_from_text(text, title, min_title_length=3, overlap_ratio=0.5):
+def remove_possible_title_from_text(
+    text: str, title: str, min_title_length: int = 3, overlap_ratio: float = 0.5
+) -> str:
+    """
+    Remove title from text document.
+
+    :param text:
+        text string
+    :param title:
+        title to remove
+    :param min_title_length:
+        minimum length of title to remove
+    :param overlap_ratio:
+        minimum ratio required to remove.
+
+    :return cleaned:
+        return cleaned text
+    """
+
     def _high_intersection(s1, s2):
         return len(s1.intersection(s2)) > overlap_ratio * len(s2)
 

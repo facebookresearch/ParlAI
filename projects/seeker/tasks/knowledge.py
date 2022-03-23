@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""
+SeeKeR Knowledge Tasks.
+"""
 import os
 import json
 from typing import Optional
@@ -39,6 +42,8 @@ class WoiKnowledgeTeacher(woi.DefaultTeacher):
                 'woi_filter_selected_knowledge_in_retrieved_docs',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -60,6 +65,8 @@ class WowKnowledgeTeacher(wow.DefaultTeacher):
                 'add_selected_sentences_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -78,6 +85,8 @@ class MsMarcoKnowledgeTeacher(ms_marco.DefaultTeacher):
                 'add_selected_sentences_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -93,6 +102,8 @@ class SquadKnowledgeTeacher(squad.DefaultTeacher):
                 'add_selected_sentences_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -108,6 +119,8 @@ class TriviaQAKnowledgeTeacher(triviaqa.DefaultTeacher):
                 'add_selected_sentences_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -119,6 +132,8 @@ class NQKnowledgeTeacher(nq.DefaultTeacher):
         mutators = '+'.join(
             ['nq_to_woi', 'woi_chunk_retrieved_docs', 'add_selected_sentences_mutator']
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -134,6 +149,8 @@ class NQOpenKnowledgeTeacher(nq.NaturalQuestionsOpenTeacher):
                 'add_selected_sentences_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -188,20 +205,22 @@ class NQOpenDialoguesKnowledgeTeacher(NQOpenKnowledgeTeacher):
             yield ex, done
 
 
-def get_dialogue_task_mutators() -> str:
+def get_dialogue_task_mutators(opt: Opt) -> str:
     """
     Set the mutators appropriately for the dialogue tasks.
     """
     mutators = '+'.join(
         ['flatten', 'extract_entity_for_knowledge_model', 'skip_retrieval_mutator']
     )
+    if opt.get('mutators'):
+        mutators = '+'.join([mutators, opt['mutators']])
     logging.warning(f'overriding mutators to {mutators}')
     return mutators
 
 
 class Convai2KnowledgeTeacher(convai2.NormalizedTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         opt['task'] += ':no_cands'
         super().__init__(opt, shared)
         self.id = 'Convai2KnowledgeTeacher'
@@ -209,21 +228,21 @@ class Convai2KnowledgeTeacher(convai2.NormalizedTeacher):
 
 class EDKnowledgeTeacher(ed.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'EDKnowledgeTeacher'
 
 
 class BSTKnowledgeTeacher(bst.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'BSTKnowledgeTeacher'
 
 
 class MSCKnowledgeTeacher(msc.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         opt['include_session1'] = False
         super().__init__(opt, shared)
         self.id = 'MSCKnowledgeTeacher'
@@ -231,7 +250,7 @@ class MSCKnowledgeTeacher(msc.DefaultTeacher):
 
 class MSCKnowledgeOverlapTeacher(msc.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = '+'.join(
+        mutators = '+'.join(
             [
                 'flatten',
                 'msc_find_selected_sentence_knowledge',
@@ -239,7 +258,11 @@ class MSCKnowledgeOverlapTeacher(msc.DefaultTeacher):
                 'skip_retrieval_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
+        logging.warning(f'overriding mutators to {mutators}')
         opt['include_session1'] = False
+        opt['mutators'] = mutators
         super().__init__(opt, shared)
         self.id = 'MSCKnowledgeOverlapTeacher'
 

@@ -4,15 +4,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Knowledge-Dialogue Combo Model.
+SeeKeR Agent.
 
-This model can be used as both a KRM (with FiD/Search Functionality) and a DRM
+This agent enables a four stage process:
+
+1) determine if search
+2) generate search query
+3) generate knowledge response
+4) generate dialogue response
 """
 from collections import defaultdict
 import copy
 import torch
 from types import MethodType
-from typing import List, Tuple, Optional, Dict, Any
+from typing import List, Tuple, Optional, Dict, Any, Type
 
 from parlai.agents.bart.bart import BartAgent
 from parlai.agents.fid.fid import (
@@ -31,7 +36,7 @@ from parlai.core.message import Message
 from parlai.core.mutators import MessageMutator, Mutator
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
-from parlai.core.torch_agent import Batch, Output
+from parlai.core.torch_agent import Batch, Output, History
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
 import parlai.utils.logging as logging
@@ -94,6 +99,10 @@ class ComboFidAgent(FidAgent):
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
         Overrides FidAgent.batchify to add skip retrieval input vec.
+
+        Additionally adds the prior knowledge responses to the batch. This allows
+        context blocking in a KRM setup that includes the prior generations from
+        the knowledge component.
         """
         batch = super().batchify(obs_batch, sort)
         valid_exs = [ex for ex in obs_batch if self.is_valid(ex)]
@@ -139,7 +148,7 @@ class ComboFidAgent(FidAgent):
 
     def eval_step(self, batch: Batch) -> Optional[Output]:
         """
-        Bypass direct module accesses in super classes.
+        Add top documents to the output.
         """
         output = TorchGeneratorAgent.eval_step(self, batch)
         if output is not None and not self.opt.get('serializable', False):
@@ -186,7 +195,7 @@ class SeekerAgent(Agent):
         return additional_agent_parser
 
     @classmethod
-    def add_additional_args(cls, parser: ParlaiParser) -> ParlaiParser:
+    def add_additional_subagent_args(cls, parser: ParlaiParser) -> ParlaiParser:
         """
         Add additional args for the sub agents.
         """
@@ -208,12 +217,20 @@ class SeekerAgent(Agent):
         """
         Command line args for the Seeker Agent
         """
-        cls.add_additional_args(parser)
+        cls.add_additional_subagent_args(parser)
         group = parser.add_argument_group('SeeKeR Agent Args')
-        group.add_argument('--krm-model', type=str, help='agent to load for krm')
-        group.add_argument('--drm-model', type=str, help='agent to load for krm')
-        group.add_argument('--sqm-model', type=str, help='agent to load for sqm')
-        group.add_argument('--sdm-model', type=str, help='agent to load for sdm')
+        group.add_argument(
+            '--krm-model', type=str, help='agent (not model file) to load for krm'
+        )
+        group.add_argument(
+            '--drm-model', type=str, help='agent (not model file) to load for krm'
+        )
+        group.add_argument(
+            '--sqm-model', type=str, help='agent (not model file) to load for sqm'
+        )
+        group.add_argument(
+            '--sdm-model', type=str, help='agent (not model file) to load for sdm'
+        )
         group.add_argument(
             '--search-decision-control-token',
             type=str,
@@ -266,7 +283,7 @@ class SeekerAgent(Agent):
             '--beam-disregard-knowledge-for-context-blocking',
             type='bool',
             default=False,
-            help='If True disregard the knowledge input for the context blocking.',
+            help='If True disregard the knowledge input for DRM context blocking.',
         )
         group.add_argument(
             '--include-knowledge-in-krm-context-blocking',
@@ -316,7 +333,7 @@ class SeekerAgent(Agent):
             if 'override' in opt:
                 opt['override']['krm_search_server'] = opt['search_server']
 
-        self._construct_opts(opt)
+        self._construct_subagent_opts(opt)
         self.search_query_agent = None
         self.search_decision_agent = None
 
@@ -324,9 +341,9 @@ class SeekerAgent(Agent):
             self.knowledge_agent = create_agent(
                 self.opts['knowledge_agent'], requireModelExists=True
             )
-            # TODO: There was a log here
-            # print('Options for Knowledge Response Agent')
-            # self.knowledge_agent.opt.log()
+            logging.verbose("options for knowledge agent")
+            if logging.logger.isEnabledFor(logging.VERBOSE):
+                self.knowledge_agent.opt.log()
         else:
             self.knowledge_agent = create_agent_from_shared(
                 shared['knowledge_agent_share']
@@ -359,6 +376,8 @@ class SeekerAgent(Agent):
                 ),
                 self.dialogue_agent,
             )
+
+        # Shared Agents
         self.search_query_agent = self._init_shared_model('search_query_agent')
         self.search_decision_agent = self._init_shared_model('search_decision_agent')
 
@@ -371,6 +390,7 @@ class SeekerAgent(Agent):
 
         self._init_mutators(opt)
 
+        # Other Attrs
         self.search_decision = SearchDecision(opt['search_decision'])
         self.min_knowledge_length_when_search = opt['min_knowledge_length_when_search']
         self.inject_query_string = opt.get('inject_query_string', '')
@@ -378,11 +398,11 @@ class SeekerAgent(Agent):
         super().__init__(opt, shared)
 
     @property
-    def history(self):
+    def history(self) -> History:
         return self.dialogue_agent.history
 
     @property
-    def knowledge_agent_history(self):
+    def knowledge_agent_history(self) -> History:
         return self.knowledge_agent.history
 
     def reset(self):
@@ -438,7 +458,7 @@ class SeekerAgent(Agent):
         krm_shared['opt'] = opt
         return model_class(opt, krm_shared)
 
-    def _construct_opts(self, opt: Opt):
+    def _construct_subagent_opts(self, opt: Opt):
         """
         Construct opts for each sub agent.
 
@@ -474,7 +494,7 @@ class SeekerAgent(Agent):
             filename = opt[f"{agent.replace('agent', 'response')}_model_path"]
             if not filename:
                 continue
-            self.opts[agent] = self._agent_opt(
+            self.opts[agent] = self._get_subagent_opt(
                 filename=filename,
                 specific_override_args=override_opts[agent],
                 general_override_args=override_opts['general'],
@@ -482,12 +502,11 @@ class SeekerAgent(Agent):
             self.opts[agent]['model_file'] = filename
             self.opts[agent]['override']['model_file'] = filename
 
-    def _agent_opt(
+    def _get_subagent_opt(
         self,
         filename: str,
         specific_override_args: Dict[str, Any],
         general_override_args: Dict[str, Any],
-        **kwargs,
     ) -> Opt:
         """
         Given an agent opt, construct the new opt for the agent.
@@ -504,11 +523,7 @@ class SeekerAgent(Agent):
         opt = Opt.load(modelzoo_path(self.opt['datapath'], filename))
         opt['override'] = {}
         blocklist_general = ['model', 'model_file', 'init_model']
-        general_override_args = {
-            **general_override_args,
-            **kwargs,
-            'skip_generation': False,
-        }
+        general_override_args['skip_generation'] = False
 
         # Remove the prefix for the model for the specific override args.
         specific_override_args = {
@@ -535,6 +550,13 @@ class SeekerAgent(Agent):
     def observe(self, observation: Message) -> Dict[str, Message]:
         """
         Observe in 3 out of the 4 modules.
+
+        :param observation:
+            incoming message
+
+        :return self.observation:
+            returned observation is actually a dictionary mapping
+            agent module name to the corresponding observation
         """
         if not isinstance(observation, Message):
             observation = Message(observation)
@@ -572,7 +594,9 @@ class SeekerAgent(Agent):
             self.search_decision_agent
             and self.search_decision is SearchDecision.COMPUTE
         ):
-            assert self.search_decision_agent.history.size == 1, "wrong history size!"
+            assert (
+                self.search_decision_agent.history.size == 1
+            ), "wrong history size! set --sdm-history-size 1"
             sdm_obs = copy.deepcopy(observation)
             if self.opt['search_decision_control_token']:
                 sdm_obs.force_set(
@@ -605,11 +629,11 @@ class SeekerAgent(Agent):
 
         :return (batch_reply, search_indices, observations):
             batch_reply: reply from the search decision agent
-            search_indices: which batch indices to search with.
+            search_indices: batch indices with which to use search.
             observations: modified knowledge agent observations
         """
         search_indices = []
-        batch_reply_sdm = [{}] * len(knowledge_agent_observations)
+        batch_reply_sdm = [{} for _ in range(len(knowledge_agent_observations))]
         if self.search_decision is SearchDecision.ALWAYS:
             [o.force_set('skip_retrieval', False) for o in knowledge_agent_observations]
             search_indices = list(range(len(knowledge_agent_observations)))
@@ -650,7 +674,7 @@ class SeekerAgent(Agent):
         :return batch_reply:
             return the batch reply from the search query agent
         """
-        batch_reply_sqm = [{}] * len(observations)
+        batch_reply_sqm = [{} for _ in range(len(observations))]
         if self.search_query_agent and search_indices:
             batch_replies_with_search = self.search_query_agent.batch_act(
                 [
@@ -690,8 +714,6 @@ class SeekerAgent(Agent):
         """
         Knowledge Response Model batch act.
 
-        Additionally construct observations for the dialogue model.
-
         :param observations:
             list of observations
         :param knowledge_agent_observations:
@@ -704,7 +726,7 @@ class SeekerAgent(Agent):
             batch_reply: batch reply from KRM
         """
         old_min_length = self.knowledge_agent.beam_min_length
-        batch_reply_krm = [{}] * len(observations)
+        batch_reply_krm = [{} for _ in range(len(observations))]
 
         if search_indices and self.min_knowledge_length_when_search > 0:
             # Need to handle min length for searching
@@ -757,7 +779,7 @@ class SeekerAgent(Agent):
         Then observe all of the replies.
 
         :param observations:
-            raw observations from self.observe
+            observations from self.observe
         :param batch_reply_krm:
             batch reply from the KRM module
 
@@ -766,6 +788,10 @@ class SeekerAgent(Agent):
         """
         knowledge = [
             reply_knowledge.get('text', '') for reply_knowledge in batch_reply_krm
+        ]
+        full_text = [
+            o['knowledge_agent'].get('full_text', o.get('text', ''))
+            for o in observations
         ]
         logging.debug(f'Generated knowledge: {knowledge}')
         dialogue_agent_observations = []
@@ -776,6 +802,8 @@ class SeekerAgent(Agent):
                 f"\n{TOKEN_KNOWLEDGE} {batch_reply_krm[i].get('text', '')} {TOKEN_END_KNOWLEDGE}",
             )
             drm_obs.force_set('skip_retrieval', True)
+            if not self.dialogue_agent_clones[i].history.get_history_str():
+                drm_obs.force_set('text', full_text[i])
             dialogue_agent_observations.append(
                 self.dialogue_agent_clones[i].observe(drm_obs)
             )
@@ -791,16 +819,22 @@ class SeekerAgent(Agent):
 
         return batch_reply_drm
 
-    def batch_act(self, observations: List[Dict[str, Message]]):
+    def batch_act(self, observations: List[Dict[str, Message]]) -> List[Message]:
         """
         Full batch_act pipeline.
+
+        :param observations:
+            batchsize-length list of observations from self.observe
+
+        :return reply:
+            return batchsize-length list of final replies.
         """
         knowledge_agent_observations = [o['knowledge_agent'] for o in observations]
         # First, determine whether we're searching
         batch_reply_sdm, search_indices, knowledge_agent_observations = self.batch_act_sdm(
             observations, knowledge_agent_observations
         )
-        # Second, determine whether to generate search queries
+        # Second, generate search queries
         batch_reply_sqm = self.batch_act_sqm(observations, search_indices)
 
         # Third, generate the knowledge sentence

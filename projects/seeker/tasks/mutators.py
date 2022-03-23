@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Mutators for the Knowledge-Dialogue model.
+Mutators for the SeeKeR Tasks.
 """
 from abc import abstractmethod
 import nltk
@@ -218,7 +218,7 @@ class MsMarcoToWoi(MessageMutator):
 @register_mutator("ms_marco_filter_has_answer")
 class MsMarcoFilterHasAnswer(ManyEpisodeMutator):
     """
-    Allows to filter any examples that have an answer present.
+    Filters out examples that do not have an answer present.
     """
 
     def many_episode_mutation(self, episode):
@@ -398,9 +398,6 @@ class ExtractEntity(ManyEpisodeMutator):
                 longest_ent = max(ents, key=len)
             else:
                 continue
-            new_text = message[
-                'text'
-            ]  # + '\n' + "|".join(context_ent) + "\n" + "|".join(label_ent) + "\n" + str(ents) + "\n" + longest_ent
             new_message.force_set('response_labels', message['labels'])
             new_message.force_set('labels', [longest_ent])
             new_message.force_set(CONST.SELECTED_SENTENCES, [longest_ent])

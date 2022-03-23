@@ -68,3 +68,10 @@ class BlenderBot3BWrapper(ParlAIModelZooWrapper):
     @property
     def zoo_path(self):
         return "zoo:blender/blender_3B/model"
+
+
+@register_model_wrapper("seeker_dialogue")
+class SeekerDialogue3BWrapper(ParlAIModelZooWrapper):
+    @property
+    def zoo_path(self):
+        return "zoo:seeker/seeker_dialogue_3B/model"

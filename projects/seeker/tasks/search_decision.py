@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""
+SeeKeR Search Decision Tasks.
+"""
 from typing import Optional
 
 from parlai.core.opt import Opt
@@ -32,6 +35,8 @@ class WoiSearchDecisionTeacher(woi.DefaultTeacher):
                 'skip_retrieval_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -47,6 +52,8 @@ class WowSearchDecisionTeacher(wow.DefaultTeacher):
                 'skip_retrieval_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         opt['add_missing_turns'] = 'all'
@@ -59,6 +66,8 @@ class SquadSearchDecisionTeacher(squad.OpensquadTeacher):
         mutators = '+'.join(
             ['do_generate_search_query_mutator', 'skip_retrieval_mutator']
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -70,6 +79,8 @@ class TriviaQASearchDecisionTeacher(triviaqa.NoEvidenceWebTeacher):
         mutators = '+'.join(
             ['do_generate_search_query_mutator', 'skip_retrieval_mutator']
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -81,13 +92,15 @@ class NQSearchDecisionTeacher(nq.NaturalQuestionsOpenTeacher):
         mutators = '+'.join(
             ['do_generate_search_query_mutator', 'skip_retrieval_mutator']
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
         self.id = 'NQSearchDecisionTeacher'
 
 
-def get_dialogue_task_mutators() -> str:
+def get_dialogue_task_mutators(opt: Opt) -> str:
     """
     Set the mutators appropriately for the dialogue tasks.
     """
@@ -98,13 +111,15 @@ def get_dialogue_task_mutators() -> str:
             'bst_tasks_maybe_generate_search_query_mutator',
         ]
     )
+    if opt.get('mutators'):
+        mutators = '+'.join([mutators, opt['mutators']])
     logging.warning(f'overriding mutators to {mutators}')
     return mutators
 
 
 class Convai2SearchDecisionTeacher(convai2.NormalizedTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         opt['task'] += ':no_cands'
         super().__init__(opt, shared)
         self.id = 'Convai2SearchDecisionTeacher'
@@ -112,14 +127,14 @@ class Convai2SearchDecisionTeacher(convai2.NormalizedTeacher):
 
 class EDSearchDecisionTeacher(ed.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'EDSearchDecisionTeacher'
 
 
 class MSCSearchDecisionTeacher(msc.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         opt['include_session1'] = False
         super().__init__(opt, shared)
         self.id = 'MSCSearchDecisionTeacher'

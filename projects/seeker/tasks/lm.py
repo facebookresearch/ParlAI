@@ -166,8 +166,9 @@ class AbstractLMChunkTeacher(ChunkTeacher, ABC):
                 # no actual context here...
                 turn[NO_KNOWLEDGE_FIELD] = ''
             else:
+                newline_correction = int(turn['text'].endswith('\n'))
                 turn[NO_KNOWLEDGE_FIELD] = turn['text'][
-                    : turn['text'].index(TOKEN_KNOWLEDGE) - 1
+                    : turn['text'].index(TOKEN_KNOWLEDGE) - newline_correction
                 ]
             turn['labels'] = [yturn.get('text').strip()]
             turn['episode_done'] = False
@@ -433,7 +434,7 @@ class SearchQueryTeacher(KnowledgeTeacher):
             help="Remove the length of characters from the beginning of the text that exactly match the title.",
         )
         agent.add_argument(
-            "--radnom-trim-min-length",
+            "--random-trim-min-length",
             type=int,
             default=-1,
             help=(
@@ -445,7 +446,7 @@ class SearchQueryTeacher(KnowledgeTeacher):
 
     def __init__(self, opt, shared=None):
         self._rem_possible_title = opt['remove_possible_title']
-        self._random_trim_min_len = opt['radnom_trim_min_length']
+        self._random_trim_min_len = opt['random_trim_min_length']
         super().__init__(opt, shared=shared)
 
     def _clean_text(self, txt, label):

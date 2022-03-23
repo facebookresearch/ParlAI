@@ -24,7 +24,9 @@ from parlai.core.message import Message
 from parlai.core.metrics import ExactMatchMetric, normalize_answer, AverageMetric
 from parlai.core.params import ParlaiParser
 
+from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
 
 
 def _count_lines_in_file(fname):
@@ -129,7 +131,10 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         self.use_context = opt.get('use_context', False)
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
-        self.dtype = self.opt['datatype'].split(':')[0]
+        self.dtype = DatatypeHelper.fold(self.opt['datatype'])
+        if self.dtype == 'test':
+            logging.error("No test split for this teacher; overriding to valid")
+            self.dtype = 'valid'
         self.dpath = os.path.join(self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
         self.n_samples = None
         super().__init__(self.opt, shared)

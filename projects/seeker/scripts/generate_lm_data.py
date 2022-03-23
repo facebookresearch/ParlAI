@@ -36,11 +36,11 @@ import os
 import random
 import time
 import torch
-from typing import Optional
+from typing import Optional, List, Tuple
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 
-from parlai.agents.rag.retrievers import RetrieverType
+from parlai.agents.rag.retrievers import RetrieverType, Document
 from parlai.agents.fid.fid import SearchQuerySearchEngineFiDAgent
 from parlai.agents.tfidf_retriever.utils import filter_word
 from parlai.core.agents import Agent, create_agent
@@ -99,20 +99,21 @@ class OverlapAgent(Agent):
         self.threshold = opt['f1_overlap_threshold']
         self.dummy = torch.zeros(1, 1, dtype=torch.long)
 
-    def act(self):
-        """
-        Search CC for overlap with the observation label.
+    def share(self):
+        shared = super().share()
+        shared['search_engine'] = self.search_engine
+        return shared
 
-        Return the best fitting document. A document is valid if the f1 is above the
-        threshold AND the f1 is less than 1.0 AND the target label is not in the
-        document.
+    def construct_search_query(self, labels: List[str]) -> List[str]:
         """
-        start = time.time()
-        obs = self.observation
-        reply = {'text': INVALID, 'id': self.getID(), 'episode_done': False}
-        if obs is None or obs['text'] == DO_NOT_RETRIEVE:
-            return Message(reply)
-        labels = obs.get('labels', obs.get('eval_labels', None))
+        Construct the search query
+
+        :param observation:
+            observation from task
+
+        :return query:
+            return search query.
+        """
         assert labels
         search_query = [
             ' '.join(
@@ -123,14 +124,23 @@ class OverlapAgent(Agent):
                 ]
             )
         ]
-        if (
-            self.opt['min_num_search_words'] > 0
-            and len(search_query[0].split()) <= self.opt['min_num_search_words']
-        ):
-            return Message(reply)
-        self.search_engine.set_search_queries(search_query)
-        retrieved, _ = self.search_engine.retrieve_and_score(self.dummy)
-        all_docs = [d.get_tokenization_str() for d in retrieved[0]]  # batched
+        return search_query
+
+    def get_best_doc(
+        self, all_docs: List[Document], labels: List[str]
+    ) -> Tuple[Optional[float], Optional[Document], Optional[int]]:
+        """
+        Given a set of all retrieved docs, determine best fitting document.
+
+        :param all_docs:
+            list of all retrieved Documents
+        :param labels:
+            labels for the current example
+
+        :return (best_f1, best_doc, best_doc_idx):
+            return the best document, along with the f1 overlap and index into all_docs
+
+        """
         docs = []
         for i, d in enumerate(all_docs):
             if d.startswith('.'):
@@ -143,7 +153,6 @@ class OverlapAgent(Agent):
         f1s, inds = torch.FloatTensor(
             [F1Metric.compute(labels[0], [d]).value() for _, d in docs]
         ).topk(len(docs))
-        logging.debug(f'search time: {time.time() - start:.2f}; maxf1: {f1s[0]}')
         best_doc = None
         best_doc_idx = None
         best_f1 = None
@@ -153,6 +162,38 @@ class OverlapAgent(Agent):
                 best_doc_idx = docs[ind][0]
                 best_f1 = f1.item()
                 break
+
+        return best_f1, best_doc, best_doc_idx
+
+    def act(self):
+        """
+        Search for overlap with the observation label.
+
+        Return the best fitting document. A document is valid if the f1 is above the
+        threshold AND the f1 is less than 1.0 AND the target label is not in the
+        document.
+        """
+        obs = self.observation
+        reply = {'text': INVALID, 'id': self.getID(), 'episode_done': False}
+        if obs is None or obs['text'] == DO_NOT_RETRIEVE:
+            return Message(reply)
+
+        # construct the search query
+        labels = obs.get('labels', obs.get('eval_labels', None))
+        search_query = self.construct_search_query(labels)
+        if (
+            self.opt['min_num_search_words'] > 0
+            and len(search_query[0].split()) <= self.opt['min_num_search_words']
+        ):
+            return Message(reply)
+
+        # retrieve
+        self.search_engine.set_search_queries(search_query)
+        retrieved, _ = self.search_engine.retrieve_and_score(self.dummy)
+        all_docs = [d.get_tokenization_str() for d in retrieved[0]]  # batched
+
+        # Find the right doc
+        best_f1, best_doc, best_doc_idx = self.get_best_doc(all_docs, labels)
         if best_doc:
             assert best_doc_idx is not None
             reply['knowledge'] = f'{TOKEN_KNOWLEDGE}{best_doc}{TOKEN_END_KNOWLEDGE}'
@@ -169,7 +210,7 @@ class OverlapSearchEngine(BB2SearchQuerySearchEngineRetriever):
         return [[doc_text]]
 
 
-class ComputeOverlap(ParlaiScript):
+class GenerateLmData(ParlaiScript):
     @classmethod
     def setup_args(cls):
         parser = setup_args()
@@ -253,9 +294,6 @@ class ComputeOverlap(ParlaiScript):
                     and self.n_valid % self.opt['write_every_n_valid_exs'] == 0
                 ):
                     self.log()
-            if self.opt['display_examples']:
-                # display examples
-                print(self.world.display() + '\n~~')
             if log_time.time() > log_every_n_secs:
                 report = self.world.report()
                 report['n_valid'] = self.n_valid
@@ -266,10 +304,7 @@ class ComputeOverlap(ParlaiScript):
 
     def generate_data(self):
         """
-        Evaluates a model.
-
-        :param opt: tells the evaluation function how to run
-        :return: the final result of calling report()
+        Generate the LM Data.
         """
         random.seed(42)
         # load model and possibly print opt
@@ -308,4 +343,4 @@ class ComputeOverlap(ParlaiScript):
 
 
 if __name__ == '__main__':
-    ComputeOverlap.main()
+    GenerateLmData.main()

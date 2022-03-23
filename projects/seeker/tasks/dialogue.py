@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+"""
+SeeKeR Dialogue Tasks.
+"""
 from typing import Optional
 
 from parlai.core.opt import Opt
@@ -31,7 +34,10 @@ class WoiDialogueTeacher(woi.DefaultTeacher):
                 'woi_add_checked_sentence_to_input',
                 'skip_retrieval_mutator',
             ]
+            + opt.get('mutators', '').split('+')
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -51,6 +57,8 @@ class WowDialogueTeacher(wow.DefaultTeacher):
                 'woi_pop_documents_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
@@ -68,26 +76,30 @@ class MsMarcoDialogueTeacher(ms_marco.DefaultTeacher):
                 'skip_retrieval_mutator',
             ]
         )
+        if opt.get('mutators'):
+            mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
         self.id = "MsMarcoDialogueTeacher"
 
 
-def get_dialogue_task_mutators() -> str:
+def get_dialogue_task_mutators(opt: Opt) -> str:
     """
     Set the mutators appropriately for the dialogue tasks.
     """
     mutators = '+'.join(
         ['flatten', 'extract_entity_for_response_model', 'skip_retrieval_mutator']
     )
+    if opt.get('mutators'):
+        mutators = '+'.join([mutators, opt['mutators']])
     logging.warning(f'overriding mutators to {mutators}')
     return mutators
 
 
 class Convai2DialogueTeacher(convai2.NormalizedTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         opt['task'] += ':no_cands'
         super().__init__(opt, shared)
         self.id = 'Convai2DialogueTeacher'
@@ -95,21 +107,21 @@ class Convai2DialogueTeacher(convai2.NormalizedTeacher):
 
 class EDDialogueTeacher(ed.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'EDDialogueTeacher'
 
 
 class BSTDialogueTeacher(bst.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'BSTDialogueTeacher'
 
 
 class MSCDialogueTeacher(msc.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators()
+        opt['mutators'] = get_dialogue_task_mutators(opt)
         opt['include_session1'] = False
         super().__init__(opt, shared)
         self.id = 'MSCDialogueTeacher'
@@ -146,7 +158,7 @@ class DialogueTeacher(MultiTaskTeacher):
             for teacher in [
                 'WoiDialogueTeacher',
                 'WowDialogueTeacher',
-                'MsMarcoKnowledgeTeacher',
+                'MsMarcoDialogueTeacher',
                 'Convai2DialogueTeacher',
                 'EDDialogueTeacher',
                 'BSTDialogueTeacher',

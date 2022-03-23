@@ -2679,7 +2679,7 @@ Which level are you at?
         "result": """
             Enter Your Message: Hey, what you can tell me about ai research?
             13:05:40 | Search Queries: ['AI research']
-            13:05:40 | sending search request to http://devfair0169:3005/search_server
+            13:05:40 | sending search request to <SERVER>
             13:05:40 | Generated knowledge: ['Non-delusional Q-learning and value-iteration']
             [ComboFidSearchQuery]: Ai research is the study of non delusional q-learning. It is a form of machine learning.
         """,
@@ -2739,7 +2739,7 @@ Which level are you at?
         "title": "SeeKeR LM Medium",
         "id": "seeker",
         "path": "zoo:seeker/seeker_lm_med/model",
-        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
         "task": "cc",
         "project": "https://parl.ai/projects/seeker",
         "description": (
@@ -2760,7 +2760,7 @@ Which level are you at?
         "title": "SeeKeR LM Large",
         "id": "seeker",
         "path": "zoo:seeker/seeker_lm_large/model",
-        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
         "task": "cc",
         "project": "https://parl.ai/projects/seeker",
         "description": (
@@ -2782,7 +2782,7 @@ Which level are you at?
         "title": "SeeKeR LM XL",
         "id": "seeker",
         "path": "zoo:seeker/seeker_lm_xl/model",
-        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
         "task": "cc",
         "project": "https://parl.ai/projects/seeker",
         "description": (

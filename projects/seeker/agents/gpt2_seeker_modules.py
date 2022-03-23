@@ -182,14 +182,16 @@ class ComboGPT2Decoder(GPT2Decoder):
 
 class GPT2WithRetrieverModel(FidModel):
     """
-    The model.
+    GPT2 with Retriever Model.
+
+    A GPT2 model that receives documents from a retriever.
     """
 
     def __init__(self, opt, dictionary, retriever_shared=None):
         self.add_start_token = opt["add_start_token"]
         opt['converting'] = True  # set not to build the retriever
         FidModel.__init__(self, opt, dictionary, retriever_shared)
-        opt['converting'] = False  # set not to build the retriever
+        opt['converting'] = False
         self.config = self.seq2seq_decoder.transformer.config
         self.embedding_size = self.config.n_embd
         self.lm_head = torch.nn.Linear(
@@ -451,9 +453,9 @@ class GPT2WithRetrieverModel(FidModel):
 
 class ComboGPT2Model(GPT2WithRetrieverModel, ComboFidModel):
     """
-    The Combo Agent here is similar to the one in kd_combo.
+    Combo model.
 
-    Except, rather than being based on FiD, it's based on GPT2Fid.
+    This model can handle contexts with and without retrieved documents.
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
@@ -495,7 +497,7 @@ class ComboGPT2Model(GPT2WithRetrieverModel, ComboFidModel):
         Optional[torch.Tensor],
     ]:
         """
-        Copy most of the KDCombo Forward here, but include the target_lengths for the
+        Copy most of the ComboFidModel.forward here, but include the target_lengths for the
         encoder.
 
         Note, however, that we don't use it.

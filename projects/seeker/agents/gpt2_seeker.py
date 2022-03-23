@@ -44,12 +44,10 @@ class GPT2WithRetrieverAgentBase(Gpt2Agent, BaseGenerationAgentMixin):
 
 class GPT2WithRetrieverAgent(FidAgent, GPT2WithRetrieverAgentBase):
     """
-    GPT2 FiD agent.
+    GPT2 with Retriever agent.
 
     This agent packs in the retrieved documents and input context
     as one big "prompt" to the language model.
-
-    There is no "FiD" computation, per se.
     """
 
     def __init__(self, opt, shared=None):
@@ -62,7 +60,7 @@ class GPT2WithRetrieverAgent(FidAgent, GPT2WithRetrieverAgentBase):
     ) -> ParlaiParser:
         FidAgent.add_cmdline_args(parser, partial_opt)
         Gpt2Agent.add_cmdline_args(parser, partial_opt)
-        group = parser.add_argument_group('GPT2 Fid')
+        group = parser.add_argument_group('GPT2 Retriever Agent')
         group.add_argument(
             '--filter-docs-with-label',
             type='bool',
@@ -182,8 +180,10 @@ class GPT2WithRetrieverGoldDocumentAgent(
 ####################
 class GPT2ComboAgent(GPT2WithRetrieverAgent):
     """
-    I am copying over a bunch of stuff from the KDCombo agent, since I want to make sure
-    that the GPT2WithRetrieverAgent functions are primarily used.
+    Combo GPT2 Agent.
+
+    This agent can handle retrieval for some contexts, and vanilla decoder-only
+    computation for others.
     """
 
     @classmethod
@@ -194,8 +194,8 @@ class GPT2ComboAgent(GPT2WithRetrieverAgent):
         Add Combo Args.
         """
         super().add_cmdline_args(parser, partial_opt)
-        kd_combo = parser.add_argument_group('KD Combo Group')
-        kd_combo.add_argument(
+        gpt2_combo = parser.add_argument_group('GPT2 Combo Group')
+        gpt2_combo.add_argument(
             '--skip-retrieval-key',
             type=str,
             default='skip_retrieval',
@@ -204,7 +204,7 @@ class GPT2ComboAgent(GPT2WithRetrieverAgent):
 
     def build_model(self) -> ComboGPT2Model:
         """
-        Build and return KdComboFidModel.
+        Build and return ComboGPT2Model.
         """
         model = ComboGPT2Model(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
@@ -215,7 +215,7 @@ class GPT2ComboAgent(GPT2WithRetrieverAgent):
 
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
-        Overrides FidAgent.batchify to add skip retrieval input vec.
+        Overrides batchify to add skip retrieval input vec.
         """
         batch = super().batchify(obs_batch, sort)
         valid_exs = [ex for ex in obs_batch if self.is_valid(ex)]
@@ -237,7 +237,7 @@ class GPT2ComboAgent(GPT2WithRetrieverAgent):
         Optional[torch.LongTensor],
     ]:
         """
-        Override FidModel._model_input to add skip_retrieval_vec.
+        Override _model_input to add skip_retrieval_vec.
         """
         return (
             batch.text_vec,

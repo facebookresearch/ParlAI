@@ -27,7 +27,7 @@ This work is based on the following paper:
 
 ### Open-Domain Dialogue
 
-We collected 100 annotated human-model conversations, in which we asked human crowdworkers to have natural conversations with a given model. For each conversational turn, we asked the crowdworkers to mark their whether their partner's responses have one or more of the following conversational attributes:
+We collected 100 annotated human-model conversations, in which we asked human crowdworkers to have natural conversations with a given model. For each conversational turn, crowdworkers marked their whether their partner's responses had one or more of the following conversational attributes:
 
 1. **Consistent**: Does the response 1) make sense in the context of the conversation; 2) make sense in and of itself?
 2. **Knowledgeable**: Does the response contain some knowledgeable, correct information?
@@ -44,14 +44,14 @@ We present the results below. The SeeKeR Dialogue model outperforms BlenderBot 1
 
 | Model                                                                | Consistent &#8593; | Knowledgeable &#8593; | Factually Incorrect &#8595; | Per-Turn Engaging &#8593;| Knowledgable & Engaging &#8593; | % Knowledgeable that is Engaging &#8593; | Zoo Model |
 |----------------------------------------------------------------------|------------:|---------------:|---------------------:|-------------------:|-------------------------:|----------------------------------:| :----------- |
-| BlenderBot1 [Roller et al. (2021)](https://arxiv.org/abs/2004.13637) | 75.47%      | 36.17%        | 9.14%               | 78.72%            | 28.79%                  | 79.58%                           | `zoo:blender/blender_3B/model` |
-| BlenderBot 2 [project](https://parl.ai/projects/blenderbot2/)        | 65.06%      | 27.88%        | 4.12%               | 83.52%            | 21.93%                  | 78.67%                           | `zoo:blenderbot2/blenderbot2_3B/model`
-| SeeKeR Dialogue [Shuster et al. 2022](TODO_LINK)                     | **78.47 %** | **46.49%**\*  | **3.94%**           | **90.41%**\*      | **44.03%**\*            | **94.71%**\*                     | `zoo:seeker/seeker_dialogue_3B/model` |
+| BlenderBot1 ([Roller et al. (2021)](https://arxiv.org/abs/2004.13637)) | 75.47%      | 36.17%        | 9.14%               | 78.72%            | 28.79%                  | 79.58%                           | `zoo:blender/blender_3B/model` |
+| BlenderBot 2 ([project](https://parl.ai/projects/blenderbot2/))        | 65.06%      | 27.88%        | 4.12%               | 83.52%            | 21.93%                  | 78.67%                           | `zoo:blenderbot2/blenderbot2_3B/model`
+| SeeKeR Dialogue ([Shuster et al. 2022](TODO_LINK))                     | **78.47 %** | **46.49%**\*  | **3.94%**           | **90.41%**\*      | **44.03%**\*            | **94.71%**\*                     | `zoo:seeker/seeker_dialogue_3B/model` |
 
 
 ### Topical Prompt Completion
 
-We source a list of 100 events [from Wikipedia that occurred in January 2022](https://en.wikipedia.org/wiki/Portal:Current_events/January_2022), and extract entities (ignoring "covid" and countries, as they might be too general a topic). We then construct prompts of the form, “In recent developments we have learned the following about <TOPIC>.”, and we ask the language model to continue it. We annotate model outputs, marking the following attributes:
+We source a list of 100 events [from Wikipedia that occurred in January 2022](https://en.wikipedia.org/wiki/Portal:Current_events/January_2022), and extract entities (ignoring "covid" and countries, as they might be too general a topic). We then construct prompts of the form: “In recent developments we have learned the following about \[TOPIC\].”, and we ask the language model to continue it. We annotate model outputs, marking the following attributes:
 
 1. **Sensible**: does it reasonably follow the prompt?
 2. **True**: does it contain some true information?
@@ -140,7 +140,7 @@ The following system requirements assume the model can be loaded with `--fp16 Tr
 
 ### Model Cards
 
-You can find the model card for the Seeker Dialogue 3B model [here](model_card)
+You can find the model card for the Seeker Dialogue 3B model [here](TODO_MODEL_CARD)
 
 ## Train your own SeeKeR
 
@@ -184,7 +184,7 @@ Same command as above, except specify the following for `--init-opt` and `--init
 To train the SeeKeR LM, you'll need to provide language modeling tasks for all three components (search, knowledge, response) of SeeKeR. To do this, you can run the [`generate_lm_data.py`](https://github.com/facebookresearch/ParlAI/tree/main/projects/seeker/scripts/generate_lm_data.py/) as follows:
 
 ```shell
-$ python generate_lm_data.py --task my_task --save-dir path/to/save/dir --search-server <server> --datatype train
+$ python generate_lm_data.py --task my_task --save-dir path/to/savedir --search-server <server> --datatype train
 ```
 
 - **NOTE**: Make sure to specify the right datatype (train, valid, test).
@@ -215,8 +215,8 @@ python -m parlai.scripts.multiprocessing_train \
 
 ### Resource Requirements
 
-- We trained the SeeKeR dialogue models with 64 16GB GPUs, however they can reasonably be trained with as few as 8 gpus.
-- We trained the SeeKeR LM models with 32 16GB GPUs, however they can reasonably be trained with as few as 8 gpus.
+- We trained the SeeKeR dialogue models with 64 x 32GB GPUs, however they can reasonably be trained with as few as 8 gpus.
+- We trained the SeeKeR LM models with 32 x 32GB GPUs, however they can reasonably be trained with as few as 8 gpus.
 - All models were trained with **distributed training**; the examples provided above use **multiprocessing training**; the former can be used when in a SLURM cluster environment.
 
 
