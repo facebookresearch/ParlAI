@@ -69,9 +69,8 @@ commands:
       - run:
           name: Setup ramdisk
           command: |
-            mkdir $HOME/tmp
-            sudo chown root $HOME/tmp
-            sudo mount -t tmpfs tmpfs $HOME/tmp
+            sudo mkdir -p /mnt/ramdisk
+            sudo mount -t tmpfs tmpfs /mnt/ramdisk
       - run:
           name: Sets up the virtual environment
           command: |
@@ -245,7 +244,7 @@ commands:
           name: Run tests
           no_output_timeout: 60m
           command: |
-            export TMPDIR=~/tmp  # set python's temp directory to ram disk
+            export TMPDIR=/mnt/ramdisk  # set python's temp directory to ram disk
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
           key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
