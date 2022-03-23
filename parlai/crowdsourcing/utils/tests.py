@@ -24,6 +24,14 @@ from mephisto.tools.scripts import augment_config_from_db
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
+# TODO this method may belong somewhere else, as it likely effects other things!!!
+def filter_agent_data(agent_state):
+    old_messages = agent_state['outputs']['messages']
+    new_messages = [m for m in old_messages if 'text' in m]
+    agent_state['outputs']['messages'] = new_messages
+    return agent_state
+
+
 class AbstractCrowdsourcingTest:
     """
     Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
@@ -93,7 +101,7 @@ class AbstractCrowdsourcingTest:
                     f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
                     f'+current_time={int(time.time())}',
-                    f"+mephisto.task.submission_timout=10",
+                    f"+mephisto.task.submission_timeout=10",
                 ]
                 + overrides,
             )
@@ -268,7 +276,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         self.server.submit_mock_unit(agent_id, task_data)
         self.await_channel_requests()
 
-        return self.db.find_agents()[0].state.get_data()
+        return filter_agent_data(self.db.find_agents()[0].state.get_data())
 
     def _check_agent_state(
         self, state: Dict[str, Any], data_regression: DataRegressionFixture
@@ -353,8 +361,12 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         wait_time = 5.0  # In seconds
         max_num_tries = 1  # max_num_tries * wait_time is the max time to wait
         num_tries = 0
+
         while num_tries < max_num_tries:
-            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+            actual_states = [
+                filter_agent_data(agent.state.get_data())
+                for agent in self.db.find_agents()
+            ]
             assert len(actual_states) == len(expected_states)
             expected_num_messages = sum(
                 len(state['outputs']['messages']) for state in expected_states

@@ -159,7 +159,12 @@ commands:
       - run:
             name: Install Mephisto
             command: |
-              pip install mephisto==1.0.0b2
+              cd ..
+              git clone git@github.com:facebookresearch/Mephisto.git Mephisto
+              cd Mephisto; git checkout v1.0.0 -b stable
+              pip install -r requirements.txt
+              python setup.py develop
+              # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
 
   setupcuda:
