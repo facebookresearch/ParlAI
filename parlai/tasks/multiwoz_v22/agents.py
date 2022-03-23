@@ -360,8 +360,10 @@ class UserSimulatorTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeacher
 class SystemTeacher(MultiwozV22Parser, tod_agents.TodSystemTeacher):
     pass
 
+
 class StandaloneApiTeacher(MultiwozV22Parser, tod_agents.TodStandaloneApiTeacher):
     pass
+
 
 class SingleGoalAgent(MultiwozV22Parser, tod_agents.TodSingleGoalAgent):
     pass

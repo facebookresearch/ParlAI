@@ -185,12 +185,18 @@ class SerializationHelpers:
     def maybe_inner_list_join(cls, values):
         if type(values) is dict:
             return str(values)
-        if isinstance(values, str) or isinstance(values, int) or isinstance(values, float):
+        if (
+            isinstance(values, str)
+            or isinstance(values, int)
+            or isinstance(values, float)
+        ):
             return values
         elif isinstance(values, Iterable):
             return SerializationHelpers.inner_list_join(values)
         else:
-            raise RuntimeError(f"invalid type of argument for maybe_inner_list_join: {values}; type {type(values)}")
+            raise RuntimeError(
+                f"invalid type of argument for maybe_inner_list_join: {values}; type {type(values)}"
+            )
 
     @classmethod
     def api_dict_to_str(cls, apidict):
