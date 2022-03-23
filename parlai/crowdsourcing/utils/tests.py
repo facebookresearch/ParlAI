@@ -24,12 +24,12 @@ from mephisto.tools.scripts import augment_config_from_db
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
-# TODO this method may belong somewhere else, as it likely effects other things!!!
-def filter_agent_data(agent_state):
-    old_messages = agent_state['outputs']['messages']
-    new_messages = [m for m in old_messages if 'text' in m]
-    agent_state['outputs']['messages'] = new_messages
-    return agent_state
+# # TODO this method may belong somewhere else, as it likely effects other things!!!
+# def filter_agent_data(agent_state):
+#     old_messages = agent_state['outputs']['messages']
+#     new_messages = [m for m in old_messages if 'text' in m]
+#     agent_state['outputs']['messages'] = new_messages
+#     return agent_state
 
 
 class AbstractCrowdsourcingTest:
@@ -276,7 +276,7 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         self.server.submit_mock_unit(agent_id, task_data)
         self.await_channel_requests()
 
-        return filter_agent_data(self.db.find_agents()[0].state.get_data())
+        return self.db.find_agents()[0].state.get_data()
 
     def _check_agent_state(
         self, state: Dict[str, Any], data_regression: DataRegressionFixture
@@ -363,10 +363,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         num_tries = 0
 
         while num_tries < max_num_tries:
-            actual_states = [
-                filter_agent_data(agent.state.get_data())
-                for agent in self.db.find_agents()
-            ]
+            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
             assert len(actual_states) == len(expected_states)
             expected_num_messages = sum(
                 len(state['outputs']['messages']) for state in expected_states
