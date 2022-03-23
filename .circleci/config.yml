@@ -69,6 +69,7 @@ commands:
       - run:
           name: Setup ramdisk
           command: |
+            df
             sudo mkdir -p /mnt/ramdisk
             sudo mount -t tmpfs tmpfs /mnt/ramdisk
       - run:
