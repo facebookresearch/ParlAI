@@ -69,6 +69,7 @@ commands:
       - run:
           name: Setup ramdisk
           command: |
+            mkdir ~/tmp
             sudo mount -t tmpfs tmpfs ~/tmp
       - run:
           name: Sets up the virtual environment
