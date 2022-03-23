@@ -1,0 +1,42 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - je vais bien, je viens de quitter le travail et je suis fatigué, j'ai deux emplois.
+    id: xpersona:Fr
+    reward: 0
+    text: 'your persona:je lis vingt livres par an.
+
+      your persona:je suis un cascadeur comme deuxième travail.
+
+      your persona:je ne mange que casher.
+
+      your persona:j''ai été élevé dans une famille monoparentale.
+
+      bonjour que fais tu aujourd''hui?'
+- - episode_done: false
+    eval_labels:
+    - j'ai plutôt lu, j'ai lu environ 20 livres cette année.
+    id: xpersona:Fr
+    reward: 0
+    text: je viens de finir de regarder un film d'horreur
+- - episode_done: false
+    eval_labels:
+    - mais un bon film est toujours bon.
+    id: xpersona:Fr
+    reward: 0
+    text: Hou la la ! j'aime un bon film d'horreur. aimer ce temps plus frais
+- - episode_done: false
+    eval_labels:
+    - je travaille aussi dans les films.
+    id: xpersona:Fr
+    reward: 0
+    text: Oui ! mon fils est au premier cycle du secondaire et je viens de le laisser
+      le regarder aussi
+- - episode_done: false
+    eval_labels:
+    - oui c'est soigné, je stunt double, c'est tellement amusant et dur de travailler.
+    id: xpersona:Fr
+    reward: 0
+    text: bon ! ! j'ai travaillé dans le domaine des services à la personne
+num_episodes: 249
+num_examples: 1950

@@ -41,7 +41,7 @@ class TestClassifierOnGenerator(unittest.TestCase):
         self.assertEqual(valid['accuracy'], 1.0)
         self.assertEqual(test['accuracy'], 1.0)
 
-    def test_accuracy(self):
+    def test_prev_curr_accuracy(self):
         """
         Test the accuracy of the classifier trained on previous and current utterances.
 
@@ -62,6 +62,28 @@ class TestClassifierOnGenerator(unittest.TestCase):
             skip_valid=True,
         )
         self.assertAlmostEqual(test['accuracy'], 1.0, delta=0.0)
+
+    def test_curr_only_accuracy(self):
+        """
+        Test the accuracy of the classifier trained on current utterances only.
+
+        The accuracy is low here because the task was labeled using a different
+        classifier, zoo:style_gen/prev_curr_classifier/model.
+        """
+        _, test = testing_utils.eval_model(
+            opt={
+                'batchsize': 4,
+                'fp16': True,
+                'num_examples': 16,
+                'model_file': 'zoo:style_gen/curr_only_classifier/model',
+                'model': 'projects.style_gen.classifier:ClassifierAgent',
+                'classes_from_file': 'image_chat_personalities_file',
+                'task': 'style_gen:CurrUttOnlyStyle',
+                'wrapper_task': 'style_gen:LabeledBlendedSkillTalk',
+            },
+            skip_valid=True,
+        )
+        self.assertAlmostEqual(test['accuracy'], 0.4375, delta=0.0)
 
 
 class TestStyleGen(unittest.TestCase):

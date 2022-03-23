@@ -3,8 +3,7 @@ acts:
     deepmoji_ctx: null
     emotion: sentimental
     episode_done: false
-    id: blended_skill_talk:e_d_persona_topicifier
-    label_candidates: []
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     labels:
     - Was this a friend you were in love with, or just a best friend?
     prepend_cand: null
@@ -28,8 +27,7 @@ acts:
     deepmoji_ctx: null
     emotion: sentimental
     episode_done: false
-    id: blended_skill_talk:e_d_persona_topicifier
-    label_candidates: []
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     labels:
     - Where has she gone?
     prepend_cand: null
@@ -41,8 +39,7 @@ acts:
     deepmoji_ctx: null
     emotion: sentimental
     episode_done: true
-    id: blended_skill_talk:e_d_persona_topicifier
-    label_candidates: []
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     labels:
     - Oh was this something that happened because of an argument?
     prepend_cand: null
@@ -54,8 +51,7 @@ acts:
     deepmoji_ctx: null
     emotion: sentimental
     episode_done: false
-    id: blended_skill_talk:e_d_persona_topicifier
-    label_candidates: []
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     labels:
     - This was a best friend. I miss her.
     prepend_cand: null
@@ -77,8 +73,7 @@ acts:
     deepmoji_ctx: null
     emotion: sentimental
     episode_done: true
-    id: blended_skill_talk:e_d_persona_topicifier
-    label_candidates: []
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     labels:
     - We no longer talk.
     prepend_cand: null

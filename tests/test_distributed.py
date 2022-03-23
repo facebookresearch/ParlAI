@@ -159,6 +159,7 @@ class TestDistributed(_AbstractTest):
         assert test['exs'].value() == inttests.NUM_TEST
 
 
+@testing_utils.skipIfCircleCI
 @testing_utils.skipUnlessGPU
 class TestZero2(TestDistributed):
     """

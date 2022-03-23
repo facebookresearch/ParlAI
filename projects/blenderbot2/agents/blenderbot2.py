@@ -719,7 +719,7 @@ class BlenderBot2RagAgent(RagAgent):
             batch = self._set_batch_gold_doc_vec(valid_exs, batch)
         if any(ex.get('memory_decoder_vec') is not None for ex in valid_exs):
             batch = self._set_batch_memory_decoder_vec(valid_exs, batch)
-        if any(ex.get(self.opt['skip_search_key']) is not None for ex in valid_exs):
+        if any(ex.get(self.opt.get('skip_search_key')) is not None for ex in valid_exs):
             batch = self._set_batch_skip_search(valid_exs, batch)
         return batch
 
@@ -924,6 +924,4 @@ class BlenderBot2SearchQueryFiDAgent(BlenderBot2FidAgent):
 class BlenderBot2WizIntGoldDocRetrieverFiDAgent(
     WizIntGoldDocRetrieverFiDAgent, BlenderBot2FidAgent
 ):
-    def _set_query_vec(self, observation: Message) -> Message:
-        self.show_observation_to_echo_retriever(observation)
-        super()._set_query_vec(observation)
+    pass

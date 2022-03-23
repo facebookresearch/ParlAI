@@ -7,10 +7,7 @@
 import unittest
 
 from parlai.core.opt import Opt
-from parlai.tasks.empathetic_dialogues.agents import (
-    EmotionClassificationSituationTeacher,
-    EmpatheticDialoguesTeacher,
-)
+from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.utils import testing as testing_utils
 
 
@@ -86,30 +83,6 @@ class TestEDTeacher(unittest.TestCase):
                     self.assertEqual(teacher.num_episodes(), num_episodes)
                     self.assertEqual(teacher.num_examples(), num_examples)
 
-            # Check EmotionClassificationSituationTeacher, with one example per episode
-            train_episode_count = EPISODE_COUNTS['train_experiencer_only']
-            # For the situation classifier, we only want to have one episode per train
-            # conversation
-            opts_episodes = [
-                ({'datatype': 'train'}, train_episode_count),  # Test the default mode
-                (
-                    {'datatype': 'train', 'train_experiencer_only': True},
-                    train_episode_count,
-                ),
-                (
-                    {'datatype': 'train', 'train_experiencer_only': False},
-                    train_episode_count,
-                ),
-                ({'datatype': 'valid'}, EPISODE_COUNTS['valid']),
-                ({'datatype': 'test'}, EPISODE_COUNTS['test']),
-            ]
-            for teacher_class in [EmotionClassificationSituationTeacher]:
-                for opt, num_episodes in opts_episodes:
-                    full_opt = Opt({**opt, 'datapath': data_path})
-                    teacher = teacher_class(full_opt)
-                    self.assertEqual(teacher.num_episodes(), num_episodes)
-                    self.assertEqual(teacher.num_examples(), num_episodes)
-
     def test_check_examples(self):
 
         with testing_utils.tempdir() as tmpdir:
@@ -126,12 +99,7 @@ class TestEDTeacher(unittest.TestCase):
                         'labels': [
                             'I do actually hit blank walls a lot of times but i get by'
                         ],
-                        'prepend_ctx': None,
-                        'prepend_cand': None,
-                        'deepmoji_ctx': None,
-                        'deepmoji_cand': None,
                         'episode_done': False,
-                        'label_candidates': [],
                     },
                 ),
                 (
@@ -141,12 +109,7 @@ class TestEDTeacher(unittest.TestCase):
                         'emotion': 'sentimental',
                         'text': 'Where has she gone?',
                         'labels': ['We no longer talk.'],
-                        'prepend_ctx': None,
-                        'prepend_cand': None,
-                        'deepmoji_ctx': None,
-                        'deepmoji_cand': None,
                         'episode_done': True,
-                        'label_candidates': [],
                     },
                 ),
                 (
@@ -156,10 +119,6 @@ class TestEDTeacher(unittest.TestCase):
                         'emotion': 'surprised',
                         'text': 'I may have let out a scream that will have him question my manhood for the rest of our lives, lol. ',
                         'labels': ['I would probably scream also.'],
-                        'prepend_ctx': None,
-                        'prepend_cand': None,
-                        'deepmoji_ctx': None,
-                        'deepmoji_cand': None,
                         'episode_done': True,
                         'label_candidates': [
                             "That really does make it special. I'm glad you have that. ",
@@ -272,10 +231,6 @@ class TestEDTeacher(unittest.TestCase):
                         'emotion': 'caring',
                         'text': "Oh my goodness, that's very scary! I hope you are okay now and the drunk driver was punished for his actions?",
                         'labels': ['Yeah he was punished hes in jail still'],
-                        'prepend_ctx': None,
-                        'prepend_cand': None,
-                        'deepmoji_ctx': None,
-                        'deepmoji_cand': None,
                         'episode_done': True,
                         'label_candidates': [
                             "Are you really able to work from home? Finding a gig is so difficult, I'm glad that it is working for you.",
@@ -386,46 +341,6 @@ class TestEDTeacher(unittest.TestCase):
                 full_opt = Opt({**opt, 'datapath': data_path})
                 teacher = EmpatheticDialoguesTeacher(full_opt)
                 self.assertEqual(teacher.get(episode_idx=1, entry_idx=1), example)
-
-            # Check EmotionClassificationSituationTeacher
-            opts_and_examples = [
-                (
-                    {'datatype': 'train', 'train_experiencer_only': True},
-                    {
-                        'text': ' i used to scare for darkness',
-                        'labels': ['afraid'],
-                        'episode_done': True,
-                    },
-                ),
-                (
-                    {'datatype': 'train', 'train_experiencer_only': False},
-                    {
-                        'text': ' i used to scare for darkness',
-                        'labels': ['afraid'],
-                        'episode_done': True,
-                    },
-                ),
-                (
-                    {'datatype': 'valid'},
-                    {
-                        'text': 'I was walking through my hallway a few week ago, and my son was hiding under the table and grabbed my ankle. I thought i was got. ',
-                        'labels': ['surprised'],
-                        'episode_done': True,
-                    },
-                ),
-                (
-                    {'datatype': 'test'},
-                    {
-                        'text': "My mother stopped by my house one day and said she saw 3 dogs on the road, down from our house. They were starving, with ribs showing, and it was a mother dog and her two small puppies. Of course, my daughter wanted to bring them to our house, so we could feed and help them. We did, and my heart went out to them, as they were so sweet, but really were in a bad shape.",
-                        'labels': ['caring'],
-                        'episode_done': True,
-                    },
-                ),
-            ]
-            for opt, example in opts_and_examples:
-                full_opt = Opt({**opt, 'datapath': data_path})
-                teacher = EmotionClassificationSituationTeacher(full_opt)
-                self.assertEqual(teacher.get(episode_idx=1), example)
 
 
 if __name__ == '__main__':

@@ -300,8 +300,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         output = super().eval_step(batch)
         if output is None or not hasattr(self.model, 'retriever'):
             return output
-        assert isinstance(self.model, RagModel)
-        if hasattr(self.model.retriever, 'top_docs'):
+        if hasattr(self.model.retriever, 'top_docs'):  # type: ignore
             output.top_docs = self.model.retriever.top_docs  # type: ignore
         return output
 

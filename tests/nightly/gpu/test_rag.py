@@ -18,7 +18,8 @@ import parlai.utils.testing as testing_utils
 
 try:
     from parlai.agents.rag.dpr import DprQueryEncoder
-    from parlai.agents.rag.retrievers import RetrievedChunkRanker
+    from parlai.agents.rag.retrievers import RetrievedChunkRanker, Document
+    from parlai.agents.fid.fid import concat_enc_outs
 except ImportError:
     pass
 
@@ -554,6 +555,160 @@ class TestWOIChunking(unittest.TestCase):
             chunks[0][0]
             == self.DOC_CONTENT[0][: self.DOC_CONTENT[0].find(' ', chunk_sz)]
         )
+
+
+class TestLeftPadding(unittest.TestCase):
+    """
+    Test whether left-padding functionality works.
+    """
+
+    bsz = 4
+    seqlen = 32
+    n_docs = 5
+    esz = 16
+    batch_lens = [4, 8, 16, 32]
+    pad_idx = 0
+
+    def _create_input_and_mask(self, right_padded=True):
+        enc_input = torch.LongTensor(self.bsz, self.seqlen).fill_(0)
+        mask = torch.BoolTensor(self.bsz, self.seqlen).fill_(False)
+        for i, input_len in enumerate(self.batch_lens):
+            if right_padded:
+                enc_input[i, :input_len] = torch.arange(1, input_len + 1)
+                mask[i, :input_len] = True
+            else:
+                enc_input[i, -input_len:] = torch.arange(1, input_len + 1)
+                mask[i, -input_len:] = True
+        return enc_input, mask
+
+    def test_concat_enc_outs(self):
+        enc_output = torch.rand(self.bsz * self.n_docs, self.seqlen, self.esz)
+        enc_input, mask = self._create_input_and_mask()
+        # Right padded
+        mask = mask.repeat_interleave(self.n_docs, dim=0)
+        _, new_mask = concat_enc_outs(
+            enc_input, enc_output, mask, self.esz, self.pad_idx
+        )
+        ########################################################################
+        # Assertion: new mask has `True` elements in first (n_docs * seqlen_i) #
+        # tokens in concatenated output                                        #
+        ########################################################################
+        assert all(
+            new_mask[i, : self.batch_lens[i] * self.n_docs].sum()
+            == self.n_docs * self.batch_lens[i]
+            for i in range(self.bsz)
+        )
+        # Left padded
+        enc_input, mask = self._create_input_and_mask(right_padded=False)
+        mask = mask.repeat_interleave(self.n_docs, dim=0)
+        _, new_mask = concat_enc_outs(
+            enc_input, enc_output, mask, self.esz, self.pad_idx, right_padded=False
+        )
+        #######################################################################
+        # Assertion: new mask has `True` elements in last (n_docs * seqlen_i) #
+        # tokens in concatenated output                                       #
+        #######################################################################
+        assert all(
+            new_mask[i, -(self.batch_lens[i] * self.n_docs) :].sum()
+            == self.n_docs * self.batch_lens[i]
+            for i in range(self.bsz)
+        )
+
+    def test_concat_docs_and_input(self):
+        rag = create_agent(Opt({**test_opt, 'n_docs': self.n_docs}))
+        enc_input, _ = self._create_input_and_mask()
+        docs = [
+            [Document("title", "I am a document!", i) for i in range(self.n_docs)]
+            for _ in range(self.bsz)
+        ]
+        doc_len = len(rag.dict.txt2vec(docs[0][0].get_passage_str()))
+        # right padded
+        expanded_output = rag.model.concat_docs_and_input(
+            enc_input, torch.LongTensor(self.batch_lens), docs, self.n_docs
+        )
+        ############################################################
+        # Assertion: expanded output has non-pad elements in first #
+        # (doc_len + seq_len_i) tokens                             #
+        ############################################################
+        assert all(
+            expanded_output[i, : doc_len + self.batch_lens[i // self.n_docs]]
+            .eq(0)
+            .sum()
+            == 0
+            for i in range(self.n_docs * self.bsz)
+        )
+        #######################################################
+        # Assertion: expanded output has pad elements in last #
+        # total_len - (doc_len + seq_len_i) tokens            #
+        #######################################################
+        assert all(
+            expanded_output[i, doc_len + self.batch_lens[i // self.n_docs] :]
+            .eq(0)
+            .sum()
+            == expanded_output.size(1) - (doc_len + self.batch_lens[i // self.n_docs])
+            for i in range(self.n_docs * self.bsz)
+        )
+
+        # Left padded
+        enc_input, _ = self._create_input_and_mask(right_padded=False)
+        expanded_output = rag.model.concat_docs_and_input(
+            enc_input,
+            torch.LongTensor(self.batch_lens),
+            docs,
+            self.n_docs,
+            right_padded=False,
+        )
+        ###########################################################
+        # Assertion: expanded output has non-pad elements in last #
+        # (doc_len + seq_len_i) tokens                            #
+        ###########################################################
+        assert all(
+            expanded_output[i, -(doc_len + self.batch_lens[i // self.n_docs]) :]
+            .eq(0)
+            .sum()
+            == 0
+            for i in range(self.n_docs * self.bsz)
+        )
+        ########################################################
+        # Assertion: expanded output has pad elements in first #
+        # total_len - (doc_len + seq_len_i) tokens             #
+        ########################################################
+        assert all(
+            expanded_output[i, : -(doc_len + self.batch_lens[i // self.n_docs])]
+            .eq(0)
+            .sum()
+            == expanded_output.size(1) - (doc_len + self.batch_lens[i // self.n_docs])
+            for i in range(self.n_docs * self.bsz)
+        )
+
+
+class TestExtraPositionsDocConcat(unittest.TestCase):
+    """
+    Ensure docs and input are concatenated appropriately
+    When using extra position embs.
+    """
+
+    bsz = 1
+    seqlen = 1024
+    n_docs = 3
+
+    def test_concat_docs_and_input(self):
+        for n_extra in [128, 2048]:
+            rag = create_agent(
+                Opt({**test_opt, 'n_docs': self.n_docs, 'n_extra_positions': n_extra})
+            )
+            enc_input = torch.LongTensor(self.bsz, self.seqlen).fill_(0)
+            docs = [
+                [
+                    Document("title", "I am a document!" * 1000, i)
+                    for i in range(self.n_docs)
+                ]
+                for _ in range(self.bsz)
+            ]
+            expanded_output = rag.model.concat_docs_and_input(
+                enc_input, self.seqlen, docs, self.n_docs
+            )
+            assert expanded_output.size(1) == self.seqlen + n_extra
 
 
 if __name__ == '__main__':

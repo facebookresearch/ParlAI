@@ -1,0 +1,41 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Hi!",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Hey there! How's your day going? I just got back from hiking in the Appalachian Mountains. I saw an eagle and a black bear!",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "engaging", "human", "interesting"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I just had a really bad day at work, messed up a very important order and my boss got really angry at me.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "ugh i don't care wha;rey8nqlb",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "none"
+                ]
+            }
+        ]
+    ],
+    "min_correct": 0,
+    "max_incorrect": 2,
+    "max_failures_allowed": 100
+}

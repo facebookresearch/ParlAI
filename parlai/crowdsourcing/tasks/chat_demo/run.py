@@ -24,6 +24,11 @@ from mephisto.tools.scripts import load_db_and_process_config
 
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfigMixin
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
+
 
 @dataclass
 class ScriptConfig(MTurkRunScriptConfigMixin, TestScriptConfig):

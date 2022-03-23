@@ -1536,4 +1536,28 @@ task_list = [
         ),
         "links": {"arXiv": "https://arxiv.org/abs/2110.07518"},
     },
+    {
+        "id": "XPersona",
+        "display_name": "XPersona",
+        "task": "xpersona",
+        "tags": ["ChitChat"],
+        "description": (
+            "XPersona is an extension of ConvAI2 with six more languages: Chinese, French, Indonesian, Italian, Korean, and Japanese."
+        ),
+        "links": {
+            "arXiv": "https://arxiv.org/pdf/2003.07568.pdf",
+            "website": "https://github.com/HLTCHKUST/Xpersona",
+        },
+    },
+    {
+        "id": "LCCC",
+        "display_name": "LCCC",
+        "task": "lccc",
+        "tags": ["ChitChat"],
+        "description": ("Large-scale cleaned Chinese conversation dataset."),
+        "links": {
+            "arXiv": "https://arxiv.org/pdf/2008.03946",
+            "website": "https://github.com/thu-coai/CDial-GPT",
+        },
+    },
 ]

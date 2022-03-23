@@ -1,0 +1,41 @@
+acts:
+- - episode_done: false
+    id: xpersona:Zh
+    labels:
+    - 你必须很快。狩猎是我最喜欢的爱好之一。
+    reward: 0
+    text: 'your persona:我喜欢装修房屋。
+
+      your persona:我喜欢打猎。
+
+      your persona:我喜欢打弓。
+
+      your persona:我最喜欢的假期是万圣节。
+
+      嗨，你好吗 ？我准备做一些猎豹追捕以保持体形。'
+- - episode_done: false
+    id: xpersona:Zh
+    labels:
+    - 当我不狩猎弓箭时，我也会改造房屋。
+    reward: 0
+    text: 我是 ！为了我的爱好，我喜欢装罐头或一些糖果。
+- - episode_done: false
+    id: xpersona:Zh
+    labels:
+    - 棒极了 。您有一年中最喜欢的季节或时间吗？
+    reward: 0
+    text: 那很好 。当我上高中时，我在100m冲刺中排名第六！
+- - episode_done: false
+    id: xpersona:Zh
+    labels:
+    - 你最喜欢吃什么肉？
+    reward: 0
+    text: 我不 。但是我确实喜欢一种肉，因为那是我唯一吃的。
+- - episode_done: false
+    id: xpersona:Zh
+    labels:
+    - 我喜欢鸡肉或通心粉和奶酪。
+    reward: 0
+    text: 我不得不说它的主要肋骨。你有最喜欢的食物吗？
+num_episodes: 16878
+num_examples: 124122

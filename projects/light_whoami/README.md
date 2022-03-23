@@ -119,7 +119,7 @@ The following agents combine expanded decoder attention with RPA Re-Ranking or P
 
 The following table provides the zoo paths for the released pre-trained models (used in `--model-file` or `--init-model`):
 
-Model | RPA | Mistaken Identity | Zoo Path
+Model | RPA | Mistaken Identity | Zoo Path |
 ------|------------------------:| ------------------------:|------------------------:|
 LTR RPA Re-Ranker | - | - | zoo:light_whoami/rpa_reranker/model |
 128-Truncate Vanilla Baseline | 87.61 | 6.45% | zoo:light_whoami/vanilla_128/model |

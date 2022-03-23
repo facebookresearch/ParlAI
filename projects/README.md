@@ -74,6 +74,9 @@ _Task & models for chitchat with a given persona._
 
 ## Well-Behaved
 
+- **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
+  _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
+
 - **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
   _Benchmarks for evaluating the safety of English-language dialogue models_
 
@@ -141,3 +144,5 @@ _QA model for answering questions by retrieving and reading knowledge._
 - **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
 _ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
 
+- **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
+_Compares how well different human crowdworker evaluation techniques can detect relative performance differences among dialogue models._

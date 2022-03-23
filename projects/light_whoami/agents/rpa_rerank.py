@@ -303,7 +303,7 @@ class RPAReranker(AbstractReranker):
 
 class RPARerankAgent(AbstractGeneratorRerankAgent):
     """
-    Generative Re-rank agent for LIGHT Am I Me or You
+    Generative Re-rank agent for LIGHT Am I Me or You.
     """
 
     @classmethod
