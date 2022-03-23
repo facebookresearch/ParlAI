@@ -15,6 +15,10 @@ from omegaconf import DictConfig
 from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 

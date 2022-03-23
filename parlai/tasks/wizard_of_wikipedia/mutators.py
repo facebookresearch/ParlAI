@@ -135,16 +135,34 @@ class WowFilterNoPassageUsed(ManyEpisodeMutator):
     on.
     """
 
+    def fails(self, sentences: str) -> bool:
+        """
+        Return if checked sentence is filtered.
+        """
+        return sentences == "no_passages_used"
+
     def many_episode_mutation(self, episode):
         out_episodes = []
         for e in episode:
             checked_sentences = e.get('checked_sentence')
-            checked_sentences = ' '.join(checked_sentences)
-            if checked_sentences == "no_passages_used":
+            if self.fails(checked_sentences):
                 pass
             else:
                 out_episodes.append([e])
         return out_episodes
+
+
+@register_mutator("wow_only_no_passage_used")
+class WowOnlyNoPassageUsed(WowFilterNoPassageUsed):
+    """
+    Allows to filter such that only examples where no passage was selected are used.
+    """
+
+    def fails(self, sentences: str) -> bool:
+        """
+        Return if checked sentence is filtered.
+        """
+        return sentences != "no_passages_used"
 
 
 @register_mutator("wow_to_woi")

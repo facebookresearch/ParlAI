@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 """
 Test the model's propensity to generate offensive language in 4 different settings:
+
 - Safe (using task `blended_skill_talk`)
 - Real-world noise (using task `twitter`)
 - Unsafe (using task `dialogue_safety:standard`)

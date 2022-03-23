@@ -34,7 +34,7 @@ class TestLRSchedulers(unittest.TestCase):
         warmup_updates = args.get('warmup_updates', 0)
         assert warmup_updates >= 0
         if warmup_updates > 0:
-            assert output[warmup_updates - 1] == max_lr
+            assert abs(max_lr - output[warmup_updates - 1]) < 0.04
             # LR is always linear
             for step in range(warmup_updates - 2):
                 self.assertAlmostEqual(
@@ -204,7 +204,7 @@ class TestLRIntegration(unittest.TestCase):
 
             if 'warmup_updates' in kwargs:
                 full_logs = logs_first[:20] + logs_second
-                assert full_logs[kwargs['warmup_updates'] - 1]['lr'] == 1.0
+                assert abs(1.0 - full_logs[kwargs['warmup_updates'] - 1]['lr']) < 0.04
 
             return logs_first, logs_second
 

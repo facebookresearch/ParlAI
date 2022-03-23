@@ -1305,10 +1305,17 @@ class ObservationEchoRetriever(RagRetriever):
         self.n_docs = opt['n_docs']
         self._query_ids = dict()
         self._saved_docs = dict()
+        self._largest_seen_idx = -1
         super().__init__(opt, dictionary, shared=shared)
 
     def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
-        new_idx = len(self._query_ids)
+        self._largest_seen_idx += 1
+        new_idx = self._largest_seen_idx
+        if new_idx in self._query_ids.values() or new_idx in self._saved_docs:
+            raise RuntimeError(
+                "Nonunique new_idx created in add_retrieve_doc in ObservationEchoRetriever \n"
+                "this might return the same set of docs for two distinct queries"
+            )
         self._query_ids[query] = new_idx
         self._saved_docs[new_idx] = retrieved_docs or [
             BLANK_DOC for _ in range(self.n_docs)
@@ -1319,6 +1326,11 @@ class ObservationEchoRetriever(RagRetriever):
 
     def get_delimiter(self) -> str:
         return self._delimiter
+
+    def _clear_mapping(self):
+        self._query_ids = dict()
+        self._saved_docs = dict()
+        self._largest_seen_idx = -1
 
     def retrieve_and_score(
         self, query: torch.LongTensor
@@ -1336,6 +1348,10 @@ class ObservationEchoRetriever(RagRetriever):
         retrieved_doc_scores = retrieved_doc_scores.repeat(batch_size, 1).to(
             query.device
         )
+
+        # empty the 2 mappings after each retrieval
+        self._clear_mapping()
+
         return retrieved_docs, retrieved_doc_scores
 
 
@@ -1397,11 +1413,15 @@ class RetrievedChunkRanker(DocumentChunkRanker):
         """
         Return chunks according to the woi_chunk_retrieved_docs_mutator
         """
-        assert isinstance(doc_chunks, list)
+        if isinstance(doc_chunks, list):
+            docs = ''.join(doc_chunks)
+        else:
+            assert isinstance(doc_chunks, str)
+            docs = doc_chunks
         chunks = chunk_docs_in_message(
             Message(
                 {
-                    CONST.RETRIEVED_DOCS: [''.join(doc_chunks)],
+                    CONST.RETRIEVED_DOCS: [docs],
                     CONST.RETRIEVED_DOCS_TITLES: [doc_title],
                     CONST.RETRIEVED_DOCS_URLS: [doc_url],
                     CONST.SELECTED_SENTENCES: [CONST.NO_SELECTED_SENTENCES_TOKEN],

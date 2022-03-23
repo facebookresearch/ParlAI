@@ -19,6 +19,11 @@ from parlai.crowdsourcing.tasks.turn_annotations_static.run import (
 )
 from parlai.crowdsourcing.tasks.turn_annotations_static.run import defaults
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
+
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 

@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Prepare data for integration tests. User will need to subsequently follow instructions in
-the `Human Evalulations` section of the README here:
+Prepare data for integration tests. User will need to subsequently follow instructions
+in the `Human Evalulations` section of the README here:
+
 <https://github.com/facebookresearch/ParlAI/tree/main/projects/safety_recipes>
 
 For example, to prepare integration tests for the adversarial setting for the wrapper for

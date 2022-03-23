@@ -37,7 +37,7 @@ rate of 1e-3. We'll build the dictionary ahead of time to ensure it's kept the
 same. *This will be our baseline*.
 
     parlai build_dict --task convai2 --dict-file dictfile
-    parlai train --dict-file dictfile --model transformer/generator --task \
+    parlai train --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 250 --ffn-size 1000 --optimizer adam --learningrate 1e-3
 
@@ -58,7 +58,7 @@ Note that during evaluation, we don't need to keep activations around for
 backpropagation, so we can also afford to increase the batchsize. About 2x
 commonly works, but 1.5x is more conservative.
 
-    parlai train --dict-file dictfile --model transformer/generator --task \
+    parlai train --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 250 --ffn-size 1000 --optimizer adam --learningrate 1e-3 \
         --skip-generation true --eval-batchsize 128
@@ -86,7 +86,7 @@ that in order to use dynamic batching, we must also set a `--truncate` option.
 We'll use 256, since that is longer than almost all the conversations in our
 data. Note you can use the `clen` metric to help you set a good truncation.
 
-    parlai train --dict-file dictfile --model transformer/generator --task \
+    parlai train --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 250 --ffn-size 1000 --optimizer adam --learningrate 1e-3 \
         --skip-generation true --eval-batchsize 128 \
@@ -121,7 +121,7 @@ CUDA cores. We will slightly adjust the size of the network to support this.
 We'll slightly adjust the network parameters (--embedding-size and --ffn-size)
 to conform to this.
 
-    parlai train --dict-file dictfile --model transformer/generator --task \
+    parlai train --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 256 --ffn-size 1024 --optimizer adam --learningrate 1e-3 \
         --skip-generation true --eval-batchsize 128 \
@@ -132,7 +132,7 @@ Further notice that FP16 often significantly lowers the memory size of your mode
 and activations (almost by a factor of 2). This means you can usually get away with
 significantly increasing the batchsize (and eval batchsize).
 
-    parlai train --dict-file dictfile --model transformer/generator --task \
+    parlai train --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 256 --ffn-size 1024 --optimizer adam --learningrate 1e-3 \
         --skip-generation true \
@@ -156,7 +156,7 @@ enabled by setting `--num-workers` to a value greater than 0. A good rule of
 thumb is to set `--num-workers` to the number of CPU cores you have PER GPU.
 On my server, there are 8 cores per GPU, so I will set it to 8.
 
-    parlai train --dict-file dictfile --model transformer/generator --task \
+    parlai train --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 256 --ffn-size 1024 --optimizer adam --learningrate 1e-3 \
         --skip-generation true \
@@ -171,7 +171,7 @@ If you have multiple GPUs, you can utilize them by switching from `train` to
 roughly 3.5x faster. The arguments for the training are left otherwise the same.
 
     parlai multiprocessing_train \
-        --dict-file dictfile --model transformer/generator --task \
+        --dict-file dictfile --model transformer/generator \
         --task convai2 --num-epochs 1.0 --batchsize 64 --n-layers 8  \
         --embedding-size 256 --ffn-size 1024 --optimizer adam --learningrate 1e-3 \
         --skip-generation true \

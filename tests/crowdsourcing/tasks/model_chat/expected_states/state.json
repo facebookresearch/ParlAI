@@ -410,7 +410,10 @@
                     "workers": [
                         "--NOT-MTURK-AGENT-MOCK_WORKER_0"
                     ]
-                }
+                },
+                "data": {},
+                "packet_type": null,
+                "timestamp": null
             },
             {
                 "data": {
