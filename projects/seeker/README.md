@@ -20,7 +20,7 @@ This work is based on the following paper:
 ## Example Conversations
 
 <p align="center"><img width="90%" src="stardew.png" /></p>
-<p align="center"><img width="90%" src="hiking.png" /></p>
+<p align="center"><img width="90%" src="hiking_convo.png" /></p>
 
 
 ## Results
