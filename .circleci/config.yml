@@ -69,8 +69,9 @@ commands:
       - run:
           name: Setup ramdisk
           command: |
-            mkdir ~/tmp
-            sudo mount -t tmpfs tmpfs ~/tmp
+            mkdir $HOME/tmp
+            sudo chown root $HOME/tmp
+            sudo mount -t tmpfs tmpfs $HOME/tmp
       - run:
           name: Sets up the virtual environment
           command: |
