@@ -277,7 +277,7 @@ class TestT5Distributed(_AbstractTest):
         t5_model_arch='t5-small',
         validation_metric='ppl',
         skip_generation=True,
-        learningrate=1e-2,
+        learningrate=1e-3,
         validation_every_n_epochs=25,
         verbose=True,
         save_after_valid=False,

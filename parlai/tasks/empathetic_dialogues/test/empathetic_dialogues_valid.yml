@@ -10,7 +10,7 @@ acts:
     - The loss of a pet is heartbreaking. I know how you feel. How old was Trevor.
     - I guess that was what you call a temporary situation. Sometimes moving on is
       required.
-    - 'That''s great news, well done. '
+    - That's great news, well done.
     - Oh nice, where are you going?
     - Never late you know!
     - Yes,i am
@@ -21,7 +21,7 @@ acts:
     - Oh my, I hope that doesn't mean more workload for you.
     - That's too bad. What happened? Is everyone OK?
     - That is good. Where you running late
-    - 'That makes all the difference. I am glad you were able to get out of that position. '
+    - That makes all the difference. I am glad you were able to get out of that position.
     - Yea I know that feel, outside of a few people I knew nearly know one and avoided
       lots of people cause no one cared
     - It seems most responsible to alert someone to clean it.
@@ -41,7 +41,7 @@ acts:
     - I've actually never gone there. What's it like?
     - College is when the tear will start to flow. I love children.
     - Ho, I am sorry to hear that.
-    - 'I think it''s very common that we take things for granted. '
+    - I think it's very common that we take things for granted.
     - That's awesome! I'm very excited for you this is a good event for you!
     - What kind of con was it
     - Personally I'm a huge fan of red velvet, but black forest is amazing too!
@@ -51,7 +51,7 @@ acts:
       be thankful for but I know I need to work on just a little bit before I am fully
       content.
     - Well thank you as well.
-    - 'as long as the cake is funfetti i am more than there '
+    - as long as the cake is funfetti i am more than there
     - I don't understand the context of this conversation.
     - well how did it go? did you do well?
     - It ain't so bad. I'm sure you'll make a few new friends and everything will
@@ -81,12 +81,12 @@ acts:
     - How'd it go
     - I agree.. Did something happen?
     - I agree, you need money for everything these days and it controls us.
-    - 'That does sound like a really fun job. I also work freelance and would also
-      like something more stable. '
+    - That does sound like a really fun job. I also work freelance and would also
+      like something more stable.
     - Who did you go see? And are you still friends with all the same people? I wonder
       if any of them kept their ticket stubs too.
     - how did it go
-    - 'That must be so much fun. I have never surfed but love to be on a boat. '
+    - That must be so much fun. I have never surfed but love to be on a boat.
     - That's a good idea. I haven't done that in years. I always feel like I barely
       dodge a bullet by not getting it.
     - That's great! It's definitely a good thing when you can be yourself.
@@ -109,7 +109,7 @@ acts:
     - I would probably scream also.
     id: empathetic_dialogues
     label_candidates:
-    - 'That really does make it special. I''m glad you have that. '
+    - That really does make it special. I'm glad you have that.
     - It must've have been. Glad they are okay now.
     - Well sometimes companies make mistakes. I doubt it's anything you did.
     - Oh no, I'm so so sorry. I've always had at least one pet throughout my life,
@@ -140,7 +140,7 @@ acts:
 - - emotion: excited
     episode_done: false
     eval_labels:
-    - 'Wow! That sounds amazing. Where are you going? '
+    - Wow! That sounds amazing. Where are you going?
     id: empathetic_dialogues
     label_candidates:
     - What kind of school was she at before?
@@ -163,7 +163,7 @@ acts:
       on his face!
     - Where are you located ?
     - Have you talked to him about it?
-    - 'They say dogs are mans best friend. '
+    - They say dogs are mans best friend.
     - That is terrible. How long have you had this pet?
     - That's so exciting! Have you run a marathon before?
     - woohoo! you are one lucky child!
