@@ -20,7 +20,7 @@ SWEEP_NAME = f"{SCRIPT_NAME}{TODAY}"
 
 here_path = os.path.realpath(__file__).replace(".py", "")
 projects = here_path[here_path.find("/projects") :]
-SAVEROOT = "/checkpoint/mpchen" + projects + TODAY
+SAVEROOT = "/checkpoint/" + projects + TODAY
 
 HOURS = 23
 GPUS = 8
@@ -70,9 +70,7 @@ grid = {
     "-t": TEACHER_OPTIONS,
     "--api-descriptions": [True, False],
     # other params
-    "--model": [
-        "parlai_fb.agents.bart.r3f:R3fFirstTurnHistoryRepeatAgent",
-    ],
+    "--model": ["parlai_fb.agents.bart.r3f:R3fFirstTurnHistoryRepeatAgent"],
     "--fp16": [True],
     "--label-truncate": [512],
     "--log-every-n-secs": [30],
