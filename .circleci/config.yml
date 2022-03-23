@@ -70,8 +70,10 @@ commands:
           name: Setup ramdisk
           command: |
             df
-            sudo mkdir -p /mnt/ramdisk
-            sudo mount -t tmpfs tmpfs /mnt/ramdisk
+            if [ ! -d /mnt/ramdisk ]; then
+                sudo mkdir -p /mnt/ramdisk
+                sudo mount -t tmpfs tmpfs /mnt/ramdisk
+            fi
       - run:
           name: Sets up the virtual environment
           command: |
