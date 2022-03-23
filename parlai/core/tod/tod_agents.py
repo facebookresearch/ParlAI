@@ -736,6 +736,19 @@ class TodUserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
         self._num_examples_cache = sum([len(x.rounds) for x in self.episodes])
         self._num_episodes_cache = len(self.episodes)
 
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = super().add_cmdline_args(parser, partial_opt)
+        parser.add_argument(
+            "--api-schemas",
+            type="bool",
+            default=False,
+            help="Preempt first turn with intents + required/optional parameters as key/value for given domain. NOOP for this teacher, but including to make sweeps easier",
+        )
+        return parser
+
     def setup_data(self, fold):
         for episode in self.generate_episodes():
             if len(episode.rounds) < 1:

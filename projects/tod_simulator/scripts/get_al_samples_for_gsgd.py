@@ -10,7 +10,7 @@ Quick script for dumping out relevant conversation ids from GoogleSGD.
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript, register_script
 from parlai.tasks.google_sgd_simulation_splits.agents import GoogleSgdOutDomainParser
-from parlai.core.tod.tod_agents_and_teachers import TodStructuredDataParser
+from parlai.core.tod.tod_agents import TodStructuredDataParser
 
 import parlai
 import os
