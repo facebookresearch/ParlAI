@@ -28,7 +28,7 @@ import os
 
 
 STANDALONE_API_FILE_PATH = (
-    "/checkpoint/<INSERT_HERE>/projects/user_simulator/standalone_api_data/multiwoz_v22"
+    "/checkpoint/mpchen/projects/user_simulator/standalone_api_data/multiwoz_simpler/output"
 )
 
 
@@ -47,7 +47,7 @@ class TodDistributedUberMultiwozScript(TodDistributedUberScript):
         if self.opt["api_schemas"]:
             grounding = "parlai.tasks.multiwoz_v22.agents:SingleApiSchemaAgent"
         else:
-            grounding = "parlai.core.tod.tod_agents_and_teachers:TodEmptyApiSchemaAgent"
+            grounding = "parlai.core.tod.tod_agents:TodEmptyApiSchemaAgent"
 
         model_model_opt["api_schema_grounding_model"] = grounding
         model_model_opt[
@@ -55,7 +55,7 @@ class TodDistributedUberMultiwozScript(TodDistributedUberScript):
         ] = "parlai.tasks.multiwoz_v22.agents:SingleGoalAgent"
         model_model_opt[  # Same as original but including for completion
             "api_resp_model"
-        ] = "parlai.core.tod.tod_agents_and_teachers:TodStandaloneApiAgent"
+        ] = "parlai.core.tod.tod_agents:TodStandaloneApiAgent"
         model_model_opt["standalone_api_file"] = STANDALONE_API_FILE_PATH
 
         model_model_opt["system_model_file"] = self.opt["model_file"]
@@ -80,7 +80,7 @@ class TodDistributedUberMultiwozScript(TodDistributedUberScript):
 
     @classmethod
     def setup_args(cls):
-        parser = super().setup_arg()
+        parser = super().setup_args()
         parser.set_defaults(
             skip_al_generation=True
         )  # We're not doing this for multiwoz yet

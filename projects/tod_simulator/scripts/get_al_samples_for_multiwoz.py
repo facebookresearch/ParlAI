@@ -9,7 +9,7 @@ Quick script for dumping out relevant conversation ids from GoogleSGD.
 
 from parlai.core.params import ParlaiParser
 from parlai.core.script import ParlaiScript, register_script
-from parlai.tasks.google_sgd_simulation_splits.agents import GoogleSgdOutDomainParser
+from parlai.tasks.multiwoz_v22.agents import MultiwozV22Parser
 from parlai.core.tod.tod_agents import TodStructuredDataParser
 
 import parlai
@@ -20,7 +20,7 @@ import random
 PARLAI_DATA_PATH = os.path.dirname(os.path.dirname(parlai.__file__)) + "/data"
 
 
-class GrabEpisodes(GoogleSgdOutDomainParser, TodStructuredDataParser):
+class GrabEpisodes(MultiwozV22Parser, TodStructuredDataParser):
     def get_agent_type_suffix(self):
         return "GrabEpisodes"
 
@@ -72,8 +72,8 @@ def setup_args(parser=None):
     return parser
 
 
-@register_script("get_al_samples_for_gsgd_script")
-class GetAlSamplesForGsgdScript(ParlaiScript):
+@register_script("get_al_samples_for_multiwoz_script")
+class GetAlSamplesForMultiwozV22Script(ParlaiScript):
     @classmethod
     def setup_args(cls):
         return setup_args()
@@ -95,7 +95,7 @@ class GetAlSamplesForGsgdScript(ParlaiScript):
     def get_al_samples_random(self, existing_al_ids):
         save_me = {}
         for datatype in ["train", "valid", "test"]:
-            unfiltered_episodes = self.get_gsgd_episodes_for_datatype(datatype)
+            unfiltered_episodes = self.get_multiwoz_episodes_for_datatype(datatype)
             filtered_episodes = [
                 x
                 for x in unfiltered_episodes
@@ -123,7 +123,7 @@ class GetAlSamplesForGsgdScript(ParlaiScript):
         for datatype in ["train", "valid", "test"]:
             found = [False] * len(wanted_apis)
             save_me[datatype] = {}
-            for episode in self.get_gsgd_episodes_for_datatype(datatype):
+            for episode in self.get_multiwoz_episodes_for_datatype(datatype):
                 if episode.extras["dialogue_id"] in existing_al_ids.get(datatype, []):
                     if self.opt["cumulative_al"]:
                         save_me[datatype][
@@ -150,7 +150,7 @@ class GetAlSamplesForGsgdScript(ParlaiScript):
                             ] = episode.goal_calls_utt
         return save_me
 
-    def get_gsgd_episodes_for_datatype(self, datatype):
+    def get_multiwoz_episodes_for_datatype(self, datatype):
         datapath = PARLAI_DATA_PATH
         if "datapath" in self.opt:
             datapath = self.opt["datapath"]
@@ -159,7 +159,6 @@ class GetAlSamplesForGsgdScript(ParlaiScript):
         opt = {
             "datatype": datatype,
             "datapath": datapath,
-            "gsgd_domains": "all",
             "n_shot": -1,
             "episodes_randomization_seed": -1,
         }
@@ -201,4 +200,4 @@ class GetAlSamplesForGsgdScript(ParlaiScript):
 
 
 if __name__ == "__main__":
-    GetAlSamplesForGsgdScript.main()
+    GetAlSamplesForMultiwozV22Script.main()

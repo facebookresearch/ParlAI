@@ -97,7 +97,7 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
         for raw_round in blob["dialog"][1:]:
             if "prefix_stripped_text" not in raw_round[0]:
                 for i in range(len(raw_round)):
-                    if PREFIXES[i] not in raw_round[i]['text']:
+                    if PREFIXES[i] not in raw_round[i]['text'] and False:
                         raise RuntimeError(
                             f"Missing prefix `{PREFIXES[i]}` before turn of text: `{raw_round[i]}`"
                         )

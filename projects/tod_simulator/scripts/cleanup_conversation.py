@@ -138,7 +138,7 @@ class ConversationCleanup(ParlaiScript):
                 convo["metadata_path"] = Metadata._get_path(out)
                 convo["context"] = [
                     {
-                        "all_goals_hit": tod_metrics[i]["all_goals_hit"],
+                        "synthetic_task_success": tod_metrics[i]["synthetic_task_success"],
                         "goal_text": tod_metrics[i]["goal"]["text"],
                     }
                 ]
