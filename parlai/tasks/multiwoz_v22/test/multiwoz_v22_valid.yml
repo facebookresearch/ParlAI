@@ -27,16 +27,26 @@ acts:
     id: MultiwozV22_SystemTeacher
     slots:
       COUNT: 10
-      OPTIONS: '[{"address": "Regent Street City Centre", "area": "centre", "food":
-        "chinese", "id": "19212", "introduction": "charlie chan serves a variety of
-        popular chinese dishes at their restaurant", "location": [52.201743, 0.124843],
-        "name": "charlie chan", "phone": "01223361763", "postcode": "cb21db", "pricerange":
-        "cheap", "type": "restaurant", "signature": NaN}]'
-    text: 'APIRESP: COUNT = 10 ; OPTIONS = [{"address": "Regent Street City Centre",
-      "area": "centre", "food": "chinese", "id": "19212", "introduction": "charlie
-      chan serves a variety of popular chinese dishes at their restaurant", "location":
-      [52.201743, 0.124843], "name": "charlie chan", "phone": "01223361763", "postcode":
-      "cb21db", "pricerange": "cheap", "type": "restaurant", "signature": NaN}]'
+      address: Regent Street City Centre
+      area: centre
+      food: chinese
+      id: '19212'
+      introduction: charlie chan serves a variety of popular chinese dishes at their
+        restaurant
+      location:
+      - 52.201743
+      - 0.124843
+      name: charlie chan
+      phone: '01223361763'
+      postcode: cb21db
+      pricerange: cheap
+      signature: .nan
+      type: restaurant
+    text: 'APIRESP: COUNT = 10 ; address = Regent Street City Centre ; area = centre
+      ; food = chinese ; id = 19212 ; introduction = charlie chan serves a variety
+      of popular chinese dishes at their restaurant ; location = 0.124843, 52.201743
+      ; name = charlie chan ; phone = 01223361763 ; postcode = cb21db ; pricerange
+      = cheap ; signature = nan ; type = restaurant'
     type: 'SYSTEM: '
 - - domain: restaurant, train
     episode_done: false
