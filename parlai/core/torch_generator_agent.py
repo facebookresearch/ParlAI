@@ -1254,7 +1254,7 @@ class _HypothesisTail(object):
 
 
 class _PathSelectionTokenDetails(TypedDict, total=False):
-    token_prob: float  # conditional probability of token (normalized)
+    token_logprob: float  # conditional log-probability of token (normalized)
     token_rank: int  # rank of token in conditional distribution
 
 
@@ -1345,11 +1345,12 @@ class TreeSearch(object):
         ]
 
         self.verbose = verbose
+        # (beam size, sample length) list of lists containing token-level data for each token in each hypo in the beam
         self.token_details: Optional[List[List[_PathSelectionTokenDetails]]] = None
         if self.verbose:
             self.token_details = []
             for _ in range(self.beam_size):
-                self.token_details.append([{"token_prob": 0.0, "token_rank": 1}])
+                self.token_details.append([{"token_logprob": 0.0, "token_rank": 0}])
 
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
@@ -1692,9 +1693,9 @@ class GreedySearch(TreeSearch):
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_prob = torch.softmax(logprobs.view(-1), dim=-1)[tok_ids].item()
+            tok_logprob = torch.softmax(logprobs.view(-1), dim=-1)[tok_ids].log().item()
             tok_rank = 0
-            token_details = [{"token_prob": tok_prob, "token_rank": tok_rank}]
+            token_details = [{"token_logprob": tok_logprob, "token_rank": tok_rank}]
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
@@ -1745,11 +1746,14 @@ class BeamSearch(TreeSearch):
 
             token_details = []
 
-            for tok_prob, tok_rank in zip(
-                tok_probs.cpu().numpy(), tok_ranks.cpu().numpy()
+            for tok_logprob, tok_rank in zip(
+                tok_probs.log().cpu().numpy(), tok_ranks.cpu().numpy()
             ):
                 token_details.append(
-                    {"token_prob": tok_prob.item(), "token_rank": int(tok_rank.item())}
+                    {
+                        "token_logprob": tok_logprob.item(),
+                        "token_rank": int(tok_rank.item()),
+                    }
                 )
 
         return _PathSelection(
@@ -1812,13 +1816,13 @@ class TopKSampling(TreeSearch):
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_probs = probs[hyp_ids, choices].view(-1).cpu().numpy()
+            tok_logprobs = probs[hyp_ids, choices].log().view(-1).cpu().numpy()
             tok_ranks = choices.view(-1).cpu().numpy()
             token_details = []
 
-            for tok_prob, tok_rank in zip(tok_probs, tok_ranks):
+            for tok_logprob, tok_rank in zip(tok_logprobs, tok_ranks):
                 token_details.append(
-                    {"token_prob": tok_prob, "token_rank": int(tok_rank)}
+                    {"token_logprob": tok_logprob, "token_rank": int(tok_rank)}
                 )
 
         return _PathSelection(
@@ -1865,13 +1869,13 @@ class NucleusSampling(TreeSearch):
 
         token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_probs = sprobs[hyp_ids, choices].view(-1).cpu().numpy()
+            tok_logprobs = sprobs[hyp_ids, choices].log().view(-1).cpu().numpy()
             tok_ranks = choices.view(-1).cpu().numpy()
             token_details = []
 
-            for tok_prob, tok_rank in zip(tok_probs, tok_ranks):
+            for tok_logprob, tok_rank in zip(tok_logprobs, tok_ranks):
                 token_details.append(
-                    {"token_prob": tok_prob, "token_rank": int(tok_rank)}
+                    {"token_logprob": tok_logprob, "token_rank": int(tok_rank)}
                 )
 
         return _PathSelection(

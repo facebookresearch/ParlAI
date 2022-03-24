@@ -190,17 +190,17 @@ class TestGeneration(unittest.TestCase):
         gold_data = {
             'beam': {
                 'text_token_info': [
-                    ('__start__', {"token_prob": 0.0, "token_rank": 1}),
-                    ('5', {"token_prob": 0.999, "token_rank": 0}),
-                    ('__end__', {"token_prob": 0.999, "token_rank": 0}),
+                    ('__start__', {"token_logprob": 0.0, "token_rank": 0}),
+                    ('5', {"token_logprob": math.log(0.999), "token_rank": 0}),
+                    ('__end__', {"token_logprob": math.log(0.999), "token_rank": 0}),
                 ],
                 'extra_args': ['--beam-size', '3'],
             },
             'greedy': {
                 'text_token_info': [
-                    ('__start__', {"token_prob": 0.0, "token_rank": 1}),
-                    ('5', {"token_prob": 0.999, "token_rank": 0}),
-                    ('__end__', {"token_prob": 0.999, "token_rank": 0}),
+                    ('__start__', {"token_logprob": 0.0, "token_rank": 0}),
+                    ('5', {"token_logprob": math.log(0.999), "token_rank": 0}),
+                    ('__end__', {"token_logprob": math.log(0.999), "token_rank": 0}),
                 ],
                 'extra_args': [],
             },
@@ -241,11 +241,11 @@ class TestGeneration(unittest.TestCase):
                     ), f"failed token prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
                     assert math.isclose(
                         gold_data[inference_type]['text_token_info'][i][1][
-                            "token_prob"
+                            "token_logprob"
                         ],
-                        tok_data[1]["token_prob"],
-                        rel_tol=1e-3,
-                    ), f"failed token probability prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
+                        tok_data[1]["token_logprob"],
+                        abs_tol=1e-3,
+                    ), f"failed token log-probability prediction for inference type {inference_type} at token {gold_data[inference_type]['text_token_info'][i][0]}"
                     assert math.isclose(
                         gold_data[inference_type]['text_token_info'][i][1][
                             "token_rank"
@@ -266,7 +266,9 @@ class TestGeneration(unittest.TestCase):
                     "hypothesis_ids": torch.LongTensor([0]),
                     "token_ids": torch.LongTensor([2]),
                     "scores": torch.Tensor([-0.6]),
-                    "token_details": [{"token_prob": 0.3800, "token_rank": 0}],
+                    "token_details": [
+                        {"token_logprob": math.log(0.3800), "token_rank": 0}
+                    ],
                 },
             },
             "beam_with_one_beam": {
@@ -277,7 +279,9 @@ class TestGeneration(unittest.TestCase):
                     "hypothesis_ids": torch.LongTensor([0]),
                     "token_ids": torch.LongTensor([2]),
                     "scores": torch.Tensor([-0.6]),
-                    "token_details": [{"token_prob": 0.3800, "token_rank": 0}],
+                    "token_details": [
+                        {"token_logprob": math.log(0.3800), "token_rank": 0}
+                    ],
                 },
             },
             "beam_with_multiple_beams": {
@@ -292,8 +296,8 @@ class TestGeneration(unittest.TestCase):
                     "token_ids": torch.LongTensor([2, 3]),
                     "scores": torch.Tensor([-0.7, -0.8]),
                     "token_details": [
-                        {"token_prob": 0.3567, "token_rank": 0},
-                        {"token_prob": 0.3228, "token_rank": 1},
+                        {"token_logprob": math.log(0.3567), "token_rank": 0},
+                        {"token_logprob": math.log(0.3228), "token_rank": 1},
                     ],
                 },
             },
@@ -307,7 +311,7 @@ class TestGeneration(unittest.TestCase):
                     "hypothesis_ids": torch.LongTensor([0]),
                     "token_ids": torch.LongTensor([1]),
                     "scores": torch.Tensor([-3.5]),
-                    "token_details": [{"token_prob": 1.0, "token_rank": 0}],
+                    "token_details": [{"token_logprob": 0.0, "token_rank": 0}],
                 },
             },
             "topk_with_multiple_beams": {
@@ -324,8 +328,8 @@ class TestGeneration(unittest.TestCase):
                     "token_ids": torch.LongTensor([1, 2]),
                     "scores": torch.Tensor([-3.5, -2.6]),
                     "token_details": [
-                        {"token_prob": 1.0, "token_rank": 0},
-                        {"token_prob": 1.0, "token_rank": 0},
+                        {"token_logprob": 0.0, "token_rank": 0},
+                        {"token_logprob": 0.0, "token_rank": 0},
                     ],
                 },
             },
@@ -341,7 +345,7 @@ class TestGeneration(unittest.TestCase):
                     "scores": torch.Tensor(
                         [-3.0]
                     ),  # the -0.5 logprob normalizes to 0 in truncated distribution
-                    "token_details": [{"token_prob": 1.0, "token_rank": 0}],
+                    "token_details": [{"token_logprob": 0.0, "token_rank": 0}],
                 },
             },
             "nucleus_with_multiple_beams": {
@@ -360,8 +364,8 @@ class TestGeneration(unittest.TestCase):
                         [-3.0, -2.0]
                     ),  # the -0.5, -0.6 logprobs normalize to 0 in truncated distributions
                     "token_details": [
-                        {"token_prob": 1.0, "token_rank": 0},
-                        {"token_prob": 1.0, "token_rank": 0},
+                        {"token_logprob": 0.0, "token_rank": 0},
+                        {"token_logprob": 0.0, "token_rank": 0},
                     ],
                 },
             },
@@ -390,9 +394,9 @@ class TestGeneration(unittest.TestCase):
                 path_selection.token_details, expected_result["token_details"]
             ):
                 assert math.isclose(
-                    token_details["token_prob"],
-                    expected_token_details["token_prob"],
-                    rel_tol=1e-3,
+                    token_details["token_logprob"],
+                    expected_token_details["token_logprob"],
+                    abs_tol=1e-3,
                 ), f"failed test_tree_search for test {test_name} on field token_details"
                 assert (
                     token_details["token_rank"] == expected_token_details["token_rank"]
