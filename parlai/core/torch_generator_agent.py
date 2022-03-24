@@ -820,7 +820,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         self.record_local_metric(
             'gen_n_toks',
-            AverageMetric.many([p.size(0) for p in preds], [1] * batch.batchsize),
+            AverageMetric.many([p.size(0) for p in preds], [1] * len(preds)),
         )
 
     def rank_eval_label_candidates(self, batch, batchsize):
