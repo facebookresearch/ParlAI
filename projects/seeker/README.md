@@ -140,7 +140,7 @@ The following system requirements assume the model can be loaded with `--fp16 Tr
 
 ### Model Cards
 
-You can find the model card for the Seeker Dialogue 3B model [here](TODO_MODEL_CARD)
+You can find the model card for the Seeker Dialogue 3B model [here](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/seeker/model_card.md).
 
 ## Train your own SeeKeR
 
