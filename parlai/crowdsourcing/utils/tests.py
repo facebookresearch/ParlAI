@@ -24,14 +24,6 @@ from mephisto.tools.scripts import augment_config_from_db
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
-# # TODO this method may belong somewhere else, as it likely effects other things!!!
-# def filter_agent_data(agent_state):
-#     old_messages = agent_state['outputs']['messages']
-#     new_messages = [m for m in old_messages if 'text' in m]
-#     agent_state['outputs']['messages'] = new_messages
-#     return agent_state
-
-
 class AbstractCrowdsourcingTest:
     """
     Abstract class for end-to-end tests of Mephisto-based crowdsourcing tasks.
@@ -357,49 +349,28 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # # Check that the inputs and outputs are as expected
 
-        # Wait until all messages have arrived
-        wait_time = 5.0  # In seconds
-        max_num_tries = 1  # max_num_tries * wait_time is the max time to wait
-        num_tries = 0
-
-        while num_tries < max_num_tries:
-            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
-            assert len(actual_states) == len(expected_states)
-            expected_num_messages = sum(
-                len(state['outputs']['messages']) for state in expected_states
-            )
-            actual_num_messages = sum(
-                len(state['outputs']['messages']) for state in actual_states
-            )
-            if expected_num_messages == actual_num_messages:
-                break
-            else:
-                num_tries += 1
-                print(
-                    f'The expected number of messages is '
-                    f'{expected_num_messages:d}, but the actual number of messages '
-                    f'is {actual_num_messages:d}! Waiting for {wait_time:0.1f} seconds '
-                    f'for more messages to arrive (try #{num_tries:d} of '
-                    f'{max_num_tries:d})...'
-                )
-                time.sleep(wait_time)
-        else:
-            actual_num_messages = sum(
-                len(state['outputs']['messages']) for state in actual_states
-            )
-            print(f'\nPrinting all {actual_num_messages:d} messages received:')
-            for state in actual_states:
-                for message in state['outputs']['messages']:
-                    print(message)
+        # Get and filter actual messages
+        actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+        if len(actual_states) != len(expected_states):
             raise ValueError(
-                f'The expected number of messages ({expected_num_messages:d}) never '
-                f'arrived!'
+                f'There are {len(actual_states):d} agent states, instead of {len(expected_states):d} as expected!'
             )
+        filtered_actual_states = []
+        for actual_state in actual_states:
+            filtered_actual_states.append(self._filter_agent_state_data(actual_state))
 
         # Check the contents of each message
-        for actual_state, expected_state in zip(actual_states, expected_states):
+        for actual_state, expected_state in zip(
+            filtered_actual_states, expected_states
+        ):
             clean_actual_state = self._remove_non_deterministic_keys(actual_state)
             assert clean_actual_state['inputs'] == expected_state['inputs']
+            actual_num_messages = len(clean_actual_state['outputs']['messages'])
+            expected_num_messages = len(expected_state['outputs']['messages'])
+            if actual_num_messages != expected_num_messages:
+                raise ValueError(
+                    f'The actual number of messages is {actual_num_messages:d}, instead of {expected_num_messages:d} as expected!'
+                )
             for actual_message, expected_message in zip(
                 clean_actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
@@ -418,6 +389,20 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         """
         return actual_state
 
+    def _filter_agent_state_data(self, agent_state: dict) -> dict:
+        """
+        Remove agent state messages that do not contain text and are thus not useful for
+        testing the crowdsourcing task.
+        """
+        filtered_messages = [
+            m for m in agent_state['outputs']['messages'] if 'text' in m
+        ]
+        filtered_agent_state = {
+            'inputs': agent_state['inputs'],
+            'outputs': {**agent_state['outputs'], 'messages': filtered_messages},
+        }
+        return filtered_agent_state
+
     def _check_output_key(
         self: Union['AbstractParlAIChatTest', unittest.TestCase],
         key: str,
@@ -433,25 +418,11 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         This function can be extended to handle special cases for subclassed Mephisto
         tasks.
         """
-        if key == 'timestamp':
-            pass  # The timestamp will obviously be different
-        elif key == 'data':
-            for key_inner, expected_value_inner in expected_value.items():
-                if key_inner in ['beam_texts', 'message_id']:
-                    pass  # The message ID will be different
-                else:
-                    if actual_value[key_inner] != expected_value_inner:
-                        raise ValueError(
-                            f'The value of ["{key}"]["{key_inner}"] is supposed to be '
-                            f'{expected_value_inner} but is actually '
-                            f'{actual_value[key_inner]}!'
-                        )
-        else:
-            if actual_value != expected_value:
-                raise ValueError(
-                    f'The value of ["{key}"] is supposed to be {expected_value} but is '
-                    f'actually {actual_value}!'
-                )
+        if actual_value != expected_value:
+            raise ValueError(
+                f'The value of ["{key}"] is supposed to be {expected_value} but is '
+                f'actually {actual_value}!'
+            )
 
     def _send_agent_message(
         self, agent_id: str, agent_display_id: str, text: str, task_data: Dict[str, Any]

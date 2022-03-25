@@ -151,10 +151,27 @@ fixed_response: >
 
         def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
             actual_state = super()._remove_non_deterministic_keys(actual_state)
+
+            # This chat task additionally includes a non-deterministic key in the first message
             custom_data = self._get_custom_data(actual_state)
-            del custom_data['dialog'][0]['message_id']
-            # This chat task additionally includes a message_id in the first message
+            del custom_data['dialog'][0]['update_id']
+
             return actual_state
+
+        def _filter_agent_state_data(self, agent_state: dict) -> dict:
+            """
+            Remove agent state messages that do not contain text or final chat data and are thus not useful for testing the crowdsourcing task.
+            """
+            filtered_messages = [
+                m
+                for m in agent_state['outputs']['messages']
+                if 'text' in m or 'final_chat_data' in m
+            ]
+            filtered_agent_state = {
+                'inputs': agent_state['inputs'],
+                'outputs': {**agent_state['outputs'], 'messages': filtered_messages},
+            }
+            return filtered_agent_state
 
 
 # except ImportError:
