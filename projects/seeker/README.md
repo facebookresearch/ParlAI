@@ -14,7 +14,7 @@
 
 This work is based on the following paper:
 
-1. [Language Models that Seek for Knowledge: Modular Search & Generation for Dialogue and Prompt Completion](TODO:LINK). Kurt Shuster, Mojtaba Komeili, Leonard Adolphs, Stephen Roller, Arthur Szlam, Jason Weston.
+1. [Language Models that Seek for Knowledge: Modular Search & Generation for Dialogue and Prompt Completion](https://arxiv.org/abs/2203.13224). Kurt Shuster, Mojtaba Komeili, Leonard Adolphs, Stephen Roller, Arthur Szlam, Jason Weston.
 
 
 ## Example Conversations
@@ -46,7 +46,7 @@ We present the results below. The SeeKeR Dialogue model outperforms BlenderBot 1
 |----------------------------------------------------------------------|------------:|---------------:|---------------------:|-------------------:|-------------------------:|----------------------------------:| :----------- |
 | BlenderBot1 ([Roller et al. (2021)](https://arxiv.org/abs/2004.13637)) | 75.47%      | 36.17%        | 9.14%               | 78.72%            | 28.79%                  | 79.58%                           | `zoo:blender/blender_3B/model` |
 | BlenderBot 2 ([project](https://parl.ai/projects/blenderbot2/))        | 65.06%      | 27.88%        | 4.12%               | 83.52%            | 21.93%                  | 78.67%                           | `zoo:blenderbot2/blenderbot2_3B/model`
-| SeeKeR Dialogue ([Shuster et al. 2022](TODO_LINK))                     | **78.47 %** | **46.49%**\*  | **3.94%**           | **90.41%**\*      | **44.03%**\*            | **94.71%**\*                     | `zoo:seeker/seeker_dialogue_3B/model` |
+| SeeKeR Dialogue ([Shuster et al. 2022](https://arxiv.org/abs/2203.13224))                     | **78.47 %** | **46.49%**\*  | **3.94%**           | **90.41%**\*      | **44.03%**\*            | **94.71%**\*                     | `zoo:seeker/seeker_dialogue_3B/model` |
 
 
 ### Topical Prompt Completion

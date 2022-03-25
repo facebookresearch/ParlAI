@@ -63,7 +63,7 @@ We used the metric `ppl` as the validation metric. Recall that `ppl` is perplexi
 
 ## Related Paper(s)
 
-[Language Models that Seek for Knowledge: Modular Search & Generation for Dialogue and Prompt Completion](TODO:LINK). Kurt Shuster, Mojtaba Komeili, Leonard Adolphs, Stephen Roller, Arthur Szlam, Jason Weston.
+[Language Models that Seek for Knowledge: Modular Search & Generation for Dialogue and Prompt Completion](https://arxiv.org/abs/2203.13224). Kurt Shuster, Mojtaba Komeili, Leonard Adolphs, Stephen Roller, Arthur Szlam, Jason Weston.
 
 ## Hyperparameters
 
