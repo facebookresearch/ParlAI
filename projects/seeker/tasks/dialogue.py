@@ -34,7 +34,6 @@ class WoiDialogueTeacher(woi.DefaultTeacher):
                 'woi_add_checked_sentence_to_input',
                 'skip_retrieval_mutator',
             ]
-            + opt.get('mutators', '').split('+')
         )
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])

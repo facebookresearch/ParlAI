@@ -154,7 +154,7 @@ class IdentityLayer(torch.nn.Module):
     """
     Acts as the encoder for the FiD model.
 
-    Custom Identity layer (as opposed to parlai.tuils.torch.IdentityLayer) to account
+    Custom Identity layer (as opposed to parlai.utils.torch.IdentityLayer) to account
     for special output required.
     """
 
