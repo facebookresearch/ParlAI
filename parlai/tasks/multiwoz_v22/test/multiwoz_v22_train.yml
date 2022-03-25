@@ -24,17 +24,31 @@ acts:
       food?'
     slots:
       COUNT: 33
-      OPTIONS: '[{"address": "124 tenison road", "area": "east", "internet": "yes",
-        "parking": "no", "id": "0", "location": [52.1963733, 0.1987426], "name": "a
-        and b guest house", "phone": "01223315702", "postcode": "cb12dp", "price":
-        {"double": "70", "family": "90", "single": "50"}, "pricerange": "moderate",
-        "stars": "4", "takesbookings": "yes", "type": "guesthouse", "n": NaN}]'
-    text: 'APIRESP: COUNT = 33 ; OPTIONS = [{"address": "124 tenison road", "area":
-      "east", "internet": "yes", "parking": "no", "id": "0", "location": [52.1963733,
-      0.1987426], "name": "a and b guest house", "phone": "01223315702", "postcode":
-      "cb12dp", "price": {"double": "70", "family": "90", "single": "50"}, "pricerange":
-      "moderate", "stars": "4", "takesbookings": "yes", "type": "guesthouse", "n":
-      NaN}]'
+      address: 124 tenison road
+      area: east
+      id: '0'
+      internet: 'yes'
+      location:
+      - 52.1963733
+      - 0.1987426
+      n: .nan
+      name: a and b guest house
+      parking: 'no'
+      phone: '01223315702'
+      postcode: cb12dp
+      price:
+        double: '70'
+        family: '90'
+        single: '50'
+      pricerange: moderate
+      stars: '4'
+      takesbookings: 'yes'
+      type: guesthouse
+    text: 'APIRESP: COUNT = 33 ; address = 124 tenison road ; area = east ; id = 0
+      ; internet = yes ; location = 0.1987426, 52.1963733 ; n = nan ; name = a and
+      b guest house ; parking = no ; phone = 01223315702 ; postcode = cb12dp ; price
+      = {''double'': ''70'', ''family'': ''90'', ''single'': ''50''} ; pricerange
+      = moderate ; stars = 4 ; takesbookings = yes ; type = guesthouse'
     type: 'SYSTEM: '
 - - domain: hotel, restaurant
     episode_done: false
@@ -56,18 +70,26 @@ acts:
       sound?'
     slots:
       COUNT: 33
-      OPTIONS: '[{"address": "106 Regent Street City Centre", "area": "centre", "food":
-        "indian", "id": "19214", "introduction": "curry garden serves traditional
-        indian and bangladeshi cuisine cooked with fresh produce delivered every day",
-        "location": [52.200187, 0.126407], "name": "curry garden", "phone": "01223302330",
-        "postcode": "cb21dp", "pricerange": "expensive", "type": "restaurant", "signature":
-        NaN}]'
-    text: 'APIRESP: COUNT = 33 ; OPTIONS = [{"address": "106 Regent Street City Centre",
-      "area": "centre", "food": "indian", "id": "19214", "introduction": "curry garden
-      serves traditional indian and bangladeshi cuisine cooked with fresh produce
-      delivered every day", "location": [52.200187, 0.126407], "name": "curry garden",
-      "phone": "01223302330", "postcode": "cb21dp", "pricerange": "expensive", "type":
-      "restaurant", "signature": NaN}]'
+      address: 106 Regent Street City Centre
+      area: centre
+      food: indian
+      id: '19214'
+      introduction: curry garden serves traditional indian and bangladeshi cuisine
+        cooked with fresh produce delivered every day
+      location:
+      - 52.200187
+      - 0.126407
+      name: curry garden
+      phone: '01223302330'
+      postcode: cb21dp
+      pricerange: expensive
+      signature: .nan
+      type: restaurant
+    text: 'APIRESP: COUNT = 33 ; address = 106 Regent Street City Centre ; area =
+      centre ; food = indian ; id = 19214 ; introduction = curry garden serves traditional
+      indian and bangladeshi cuisine cooked with fresh produce delivered every day
+      ; location = 0.126407, 52.200187 ; name = curry garden ; phone = 01223302330
+      ; postcode = cb21dp ; pricerange = expensive ; signature = nan ; type = restaurant'
     type: 'SYSTEM: '
 num_episodes: 7913
 num_examples: 133963

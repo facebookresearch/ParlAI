@@ -77,6 +77,11 @@ ACUTE_EVAL_TYPES = {
         "s1_choice": "<Speaker 1> talks about the image better",
         "s2_choice": "<Speaker 2> talks about the image better",
     },
+    'knowledge': {
+        'question': 'If you had to say that one speaker is more knowledgeable and one is more ignorant, who is more knowledgeable?',
+        's1_choice': '<Speaker 1> is more knowledgeable',
+        's2_choice': '<Speaker 2> is more knowledgeable',
+    },
 }
 
 

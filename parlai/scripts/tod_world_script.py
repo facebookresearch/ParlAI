@@ -58,8 +58,14 @@ class TodWorldLogger(WorldLogger):
     def _log_batch(self, world):
         batch_acts = world.get_batch_acts()
         for i, acts in enumerate(batch_acts):
-            # filter out for empty
-            acts = [act for act in acts if act["id"] != "" and act["text"] != ""]
+            acts = [
+                act for act in acts if act is not None and "id" in act and "text" in act
+            ]
+            acts = [
+                act
+                for act in acts
+                if act["id"] != "" and (act["text"] != "" or "Human" in act["id"])
+            ]
             if len(acts) > 0:
                 self._add_msgs(acts, idx=i)
             if world.episode_done():

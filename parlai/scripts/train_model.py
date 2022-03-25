@@ -25,6 +25,7 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 # * More logging (e.g. to files), make things prettier.
 import copy
 import json
+import os
 import numpy as np
 import signal
 from typing import Tuple
@@ -42,14 +43,17 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.worlds import create_task, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
+from parlai.scripts.eval_model import get_task_world_logs
 from parlai.utils.distributed import (
     sync_object,
     is_primary_worker,
     all_gather_list,
     is_distributed,
+    get_rank,
     num_workers,
 )
 from parlai.utils.misc import Timer, nice_report
+from parlai.utils.world_logging import WorldLogger
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
@@ -257,6 +261,20 @@ def setup_args(parser=None) -> ParlaiParser:
         help='Report micro-averaged metrics instead of macro averaged metrics.',
         recommended=False,
     )
+    train.add_argument(
+        '--world-logs',
+        type=str,
+        default='',
+        help='Saves a jsonl file of the world logs.'
+        'Set to the empty string to not save at all.',
+    )
+    train.add_argument(
+        '--save-format',
+        type=str,
+        default='conversations',
+        choices=['conversations', 'parlai'],
+    )
+    WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
 
@@ -475,6 +493,9 @@ class TrainLoop:
                 pass
 
     def _save_train_stats(self, suffix=None):
+        if not is_primary_worker():
+            # never do IO as a non-primary worker
+            return
         fn = self.opt.get('model_file', None)
         if not fn:
             return
@@ -598,19 +619,41 @@ class TrainLoop:
             return True
         return False
 
-    def _run_single_eval(self, opt, valid_world, max_exs):
+    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
 
         # run evaluation on a single world
         valid_world.reset()
+
+        world_logger = None
+        task_opt = opt.copy()
+        # set up world logger for the "test" fold
+        if opt['world_logs'] and datatype == 'test':
+            task_opt['world_logs'] = get_task_world_logs(
+                task, opt['world_logs'], is_multitask
+            )
+            world_logger = WorldLogger(task_opt)
 
         cnt = 0
         max_cnt = max_exs if max_exs > 0 else float('inf')
         while not valid_world.epoch_done() and cnt < max_cnt:
             valid_world.parley()
+            if world_logger is not None:
+                world_logger.log(valid_world)
             if cnt == 0 and opt['display_examples']:
                 print(valid_world.display() + '\n~~')
                 print(valid_world.report())
             cnt = valid_world.report().get('exs') or 0
+
+        if world_logger is not None:
+            # dump world acts to file
+            world_logger.reset()  # add final acts to logs
+            if is_distributed():
+                rank = get_rank()
+                base_outfile, extension = os.path.splitext(task_opt['world_logs'])
+                outfile = base_outfile + f'_{rank}' + extension
+            else:
+                outfile = task_opt['world_logs']
+            world_logger.write(outfile, valid_world, file_format=opt['save_format'])
 
         valid_report = valid_world.report()
         if opt.get('validation_share_agent', False):
@@ -647,8 +690,15 @@ class TrainLoop:
         reports = []
 
         max_exs_per_worker = max_exs / (len(valid_worlds) * num_workers())
-        for v_world in valid_worlds:
-            task_report = self._run_single_eval(opt, v_world, max_exs_per_worker)
+        is_multitask = len(valid_worlds) > 1
+        for index, v_world in enumerate(valid_worlds):
+            if opt.get('evaltask'):
+                task = opt['evaltask'].split(',')[index]
+            else:
+                task = opt['task'].split(',')[index]
+            task_report = self._run_single_eval(
+                opt, v_world, max_exs_per_worker, datatype, is_multitask, task
+            )
             reports.append(task_report)
 
         tasks = [world.getID() for world in valid_worlds]

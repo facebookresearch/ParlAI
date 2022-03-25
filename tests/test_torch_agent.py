@@ -898,8 +898,8 @@ class TestTorchAgent(unittest.TestCase):
 
     def test_respond(self):
         """
-        Tests respond() in the base Agent class, where the agent provides
-        a string response to a single message.
+        Tests respond() in the base Agent class, where the agent provides a string
+        response to a single message.
         """
         agent = get_agent()
         message = Message(
@@ -923,8 +923,8 @@ class TestTorchAgent(unittest.TestCase):
 
     def test_batch_respond(self):
         """
-        Tests batch_respond() in the base Agent class, where the agent provides
-        a batch response to a batch of messages.
+        Tests batch_respond() in the base Agent class, where the agent provides a batch
+        response to a batch of messages.
         """
         agent = get_agent()
 

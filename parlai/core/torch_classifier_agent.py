@@ -557,9 +557,15 @@ class TorchClassifierAgent(TorchAgent):
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
         elif self._should_initialize_optimizer():
-            optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(optim_params)
-            self.build_lr_scheduler(states, hard_reset=self.is_finetune)
+            was_reset = self.init_optim(
+                [p for p in self.model.parameters() if p.requires_grad],
+                optim_states=states.get('optimizer'),
+                saved_optim_type=states.get('optimizer_type'),
+                is_finetune=self.is_finetune,
+            )
+            if was_reset:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=self.is_finetune or was_reset)
 
     def build_criterion(self):
         weight_tensor = torch.FloatTensor(self.class_weights)

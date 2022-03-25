@@ -74,9 +74,10 @@ class RagModel(TorchGeneratorModel):
             opt['text_truncate'] or opt['truncate'], get_n_positions_from_options(opt)
         )
         if self.n_extra_positions > 0:
-            self.expanded_input_truncate = max(
-                self.expanded_input_truncate, self.n_extra_positions
-            )
+            # This attribute is overloaded.
+            # when n_extra_positions == 0, it is the truncation of the full expanded input
+            # when >0, it is the maximum length of the knowledge tokens.
+            self.expanded_input_truncate = self.n_extra_positions
         self.min_doc_token_length = opt['min_doc_token_length']
 
         # modules
@@ -534,6 +535,7 @@ class T5RagModel(RagModel):
         super().__init__(opt, dictionary, retriever_shared)
         self.embedding_size = opt['t5'].model_dim
         self.t5 = opt.pop('t5', None)
+        self.paralleled = not opt['t5_model_parallel']
 
     @classmethod
     def build_encoder(
