@@ -12,7 +12,14 @@ from parlai.core.message import Message
 from parlai.core.mutators import register_mutator, MessageMutator, ManyEpisodeMutator
 from parlai.tasks.wizard_of_internet import constants as CONST
 import parlai.tasks.wizard_of_internet.mutators  # type: ignore
-import spacy
+import parlai.utils.logging as logging
+
+try:
+    import spacy
+except ModuleNotFoundError:
+    logging.error('Please install spacy: pip install spacy')
+    spacy = None
+
 from projects.seeker.utils import (
     GENERATE_QUERY,
     IS_SEARCH_REQUIRED,
@@ -168,6 +175,7 @@ class BSTMaybeGenerateSearchQueryMutator(SearchQueryClassificationMixin):
     def get_label(self, message: Message) -> str:
         global nlp
         if nlp is None:
+            assert spacy is not None
             nlp = spacy.load('en_core_web_sm')
         entities = nlp(message['text'].split('\n')[-1]).ents
         if entities:

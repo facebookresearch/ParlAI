@@ -20,8 +20,9 @@ try:
 
     STOP_WORDS = stopwords.words('english')
     import nltk
-except ModuleNotFoundError:
+except (ModuleNotFoundError, LookupError):
     logging.error("Please install NLTK: pip install nltk")
+    logging.error("Then run `nltk.download('stopwords')`")
     nltk = None
     stopwords = None
     STOP_WORDS = []
@@ -175,6 +176,7 @@ def extract_entities(
     if nlp is None:
         logging.info('Loading spacy once')
         try:
+            assert spacy is not None
             nlp = spacy.load("en_core_web_sm")
         except Exception:
             raise RuntimeError(
@@ -209,6 +211,7 @@ def calc_f1_msmarco(pred: str, gold_items: List[str]) -> float:
     :return f1_overlap:
     """
     try:
+        assert nltk is not None
         pred_items = nltk.word_tokenize(pred)
     except IndexError:
         # malformed prediction; return 0
@@ -235,6 +238,7 @@ def calc_f1_msc(pred, gold_items):
     :return f1_overlap:
     """
     try:
+        assert nltk is not None
         pred_items = nltk.word_tokenize(pred)
     except IndexError:
         # malformed prediction; return 0
