@@ -2732,4 +2732,204 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             """
         ),
     },
+    {
+        "title": "R2C2 Base 400M",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_base_400M/model",
+        "agent": "bart",
+        "task": "pushshift.io,roberta,cc100en",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "400M parameter generative model pretrained on Reddit, RoBERTa, and CC100en tasks, but not finetuned."
+        ),
+        "example": (
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 4 --model bart r2c2_base_400M/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_400m"
+        ),
+        "result": "Results vary.",
+    },
+    {
+        "title": "R2C2 Base 2.7B",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_base_3B/model",
+        "agent": "bart",
+        "task": "pushshift.io,roberta,cc100en",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "2.7B parameter generative model pretrained on Reddit, RoBERTa, and CC100en tasks, but not finetuned."
+        ),
+        "example": (
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 1 --model bart r2c2_base_3B/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_3B"
+        ),
+        "result": "Results vary.",
+    },
+    {
+        "title": "R2C2 BlenderBot 400M",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_blenderbot_400M/model",
+        "agent": "bart",
+        "task": "blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues",
+        "project": "https://parl.ai/projects/seeker",
+        "description": ("400M parameter generative model fine-tuned on the BST tasks"),
+        "example": (
+            "parlai i -mf zoo:seeker/r2c2_blenderbot_400M/model -t blended_skill_talk"
+        ),
+        "result": """
+            Enter Your Message: Hi, what do you do for a living?\n
+            [Bart]: I'm a stay at home mom. What about you? What do you like to do for fun?
+        """,
+    },
+    {
+        "title": "R2C2 BlenderBot 3BM",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_blenderbot_3B/model",
+        "agent": "bart",
+        "task": "blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues",
+        "project": "https://parl.ai/projects/seeker",
+        "description": ("3B parameter generative model fine-tuned on the BST tasks"),
+        "example": (
+            "parlai i -mf zoo:seeker/r2c2_blenderbot_3B/model -t blended_skill_talk"
+        ),
+        "result": """
+            Enter Your Message: Hi, what do you do for a living?\n
+            [Bart]: I am a lawyer at a large firm.  What about you?  Do you have kids?
+        """,
+    },
+    {
+        "title": "SeeKeR Dialogue 400M",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_dialogue_400M/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "projects.seeker.tasks.knowledge:KnowledgeTeacher,projects.seeker.tasks.knowledge:DialogueTeacher,projects.seeker.tasks.knowledge:SearchQueryTeacher,projects.seeker.tasks.knowledge:SearchDecisionTeacher",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR Dialogue model; trained to search the internet, synthesize knowledge, "
+            "and produce a dialogue response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_dialogue_400M/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            13:05:40 | Search Queries: ['AI research']
+            13:05:40 | sending search request to <SERVER>
+            13:05:40 | Generated knowledge: ['Non-delusional Q-learning and value-iteration']
+            [ComboFidSearchQuery]: Ai research is the study of non delusional q-learning. It is a form of machine learning.
+        """,
+    },
+    {
+        "title": "SeeKeR Dialogue 3B",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_dialogue_3B/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "projects.seeker.tasks.knowledge:KnowledgeTeacher,projects.seeker.tasks.knowledge:DialogueTeacher,projects.seeker.tasks.knowledge:SearchQueryTeacher,projects.seeker.tasks.knowledge:SearchDecisionTeacher",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR Dialogue model; trained to search the internet, synthesize knowledge, "
+            "and produce a dialogue response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_dialogue_3B/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            12:28:46 | Search Queries: ['ai research']
+            12:28:46 | sending search request to <SERVER>
+            12:28:50 | Generated knowledge: ['Computer science defines AI research as the study of  intelligent agents : any device that perceives its environment']
+            [ComboFidSearchQuery]: The study of intelligent agents and how they perceive their environment is called AI research. What do you want to know about it?
+        """,
+    },
+    {
+        "title": "SeeKeR LM + Dialogue 3B",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_dialogue_3B/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "projects.seeker.tasks.knowledge:KnowledgeTeacher,projects.seeker.tasks.knowledge:DialogueTeacher,projects.seeker.tasks.knowledge:SearchQueryTeacher,projects.seeker.tasks.knowledge:SearchDecisionTeacher",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM and Dialogue model; trained to search the internet, synthesize knowledge, "
+            "and produce a dialogue response. Additionally trained on language modeling data."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_dialogue_3B/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            [ComboFidSearchQuery]: The study of intelligent agents and how they perceive their environment is called AI research. It is very interesting.
+        """,
+        "example2": (
+            "parlai i -mf zoo:seeker/seeker_lm_dialogue_3B/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result2": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:35:35 | Search Queries: ['parlAI']
+            13:35:35 | sending search request to <SERVER>
+            13:35:39 | Generated knowledge: ['ParlAI (pronounced “par-lay”) is a one-stop shop for dialog research, where researchers can submit new tasks and training algorithms to a single, shared repository.']
+            [ComboFidSearchQuery]: ParlAI is a dialog research platform that allows researchers to share tasks, training algorithms, and more.
+        """,
+    },
+    {
+        "title": "SeeKeR LM Medium",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_med/model",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
+        "task": "cc",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM Medium model - a GPT2-Medium model trained to search the internet, synthesize knowledge, "
+            "and produce a response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_med/model -o gen/seeker_lm --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:29:24 | Search Queries: ['ParlAI Software Updates']
+            13:29:24 | sending search request to <SERVER>
+            [GPT2ComboSearchQuery]: ParlAI: A Dialog Research Software Platform by Miller, A. H. (2017).
+        """,
+    },
+    {
+        "title": "SeeKeR LM Large",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_large/model",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
+        "task": "cc",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM Large model - a GPT2-Large model trained to search the internet, synthesize knowledge, "
+            "and produce a response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_large/model -o gen/seeker_lm --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:32:59 | Search Queries: ['ParlAI: A New Software for Machine Learning']
+            13:32:59 | sending search request to <SERVER>
+            13:33:02 | Generated knowledge: ['... Finally, teachers are a type of agent that talk to the learner, for example, one that implements a task listed previously.... That’s why ParlAI supports integration with Mechanical Turk for data collection, training, and evaluation.']
+            [GPT2ComboSearchQuery]: ParlAI is a type of agent that talk to the learner, for example, one that implements a task listed previously. That's why it supports integration with Mechanical Turk for data collection, training, and evaluation.
+        """,
+    },
+    {
+        "title": "SeeKeR LM XL",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_xl/model",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
+        "task": "cc",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM XL model - a GPT2-XL model trained to search the internet, synthesize knowledge, "
+            "and produce a response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_xl/model -o gen/seeker_lm --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:36:25 | Search Queries: ['ParlAI: New software to help AI researchers']
+            13:36:25 | sending search request to <SERVER>
+            13:36:29 | Generated knowledge: ['ParlAI: A new software platform for dialog research_0 / POSTED ON MAY 15, 2017 TO AI Research, ML Applications...']
+            [GPT2ComboSearchQuery]: ParlAI: A new software platform for dialog research. Image credit: AI Research, ML Applications
+        """,
+    },
 ]
