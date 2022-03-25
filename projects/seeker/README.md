@@ -16,6 +16,9 @@ This work is based on the following paper:
 
 1. [Language Models that Seek for Knowledge: Modular Search & Generation for Dialogue and Prompt Completion](https://arxiv.org/abs/2203.13224). Kurt Shuster, Mojtaba Komeili, Leonard Adolphs, Stephen Roller, Arthur Szlam, Jason Weston.
 
+## Example LM completions
+
+<p align="center"><img width="90%" src="gpt2_comparisons.png" /></p>
 
 ## Example Conversations
 
