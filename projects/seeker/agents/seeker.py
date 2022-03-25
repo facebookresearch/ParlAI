@@ -17,7 +17,7 @@ from collections import defaultdict
 import copy
 import torch
 from types import MethodType
-from typing import List, Tuple, Optional, Dict, Any, Type
+from typing import List, Tuple, Optional, Dict, Any
 
 from parlai.agents.bart.bart import BartAgent
 from parlai.agents.fid.fid import (
@@ -101,8 +101,8 @@ class ComboFidAgent(FidAgent):
         Overrides FidAgent.batchify to add skip retrieval input vec.
 
         Additionally adds the prior knowledge responses to the batch. This allows
-        context blocking in a KRM setup that includes the prior generations from
-        the knowledge component.
+        context blocking in a KRM setup that includes the prior generations from the
+        knowledge component.
         """
         batch = super().batchify(obs_batch, sort)
         valid_exs = [ex for ex in obs_batch if self.is_valid(ex)]
@@ -215,7 +215,7 @@ class SeekerAgent(Agent):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         """
-        Command line args for the Seeker Agent
+        Command line args for the Seeker Agent.
         """
         cls.add_additional_subagent_args(parser)
         group = parser.add_argument_group('SeeKeR Agent Args')

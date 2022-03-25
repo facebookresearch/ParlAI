@@ -46,8 +46,8 @@ class GPT2WithRetrieverAgent(FidAgent, GPT2WithRetrieverAgentBase):
     """
     GPT2 with Retriever agent.
 
-    This agent packs in the retrieved documents and input context
-    as one big "prompt" to the language model.
+    This agent packs in the retrieved documents and input context as one big "prompt" to
+    the language model.
     """
 
     def __init__(self, opt, shared=None):

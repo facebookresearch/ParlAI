@@ -34,7 +34,6 @@ $ parlai dd -t projects.seeker.tasks.lm:SearchQueryTeacher --root-dir /path/to/d
 import nltk
 import os
 import random
-import time
 import torch
 from typing import Optional, List, Tuple
 from parlai.core.params import ParlaiParser
@@ -106,7 +105,7 @@ class OverlapAgent(Agent):
 
     def construct_search_query(self, labels: List[str]) -> List[str]:
         """
-        Construct the search query
+        Construct the search query.
 
         :param observation:
             observation from task
@@ -139,7 +138,6 @@ class OverlapAgent(Agent):
 
         :return (best_f1, best_doc, best_doc_idx):
             return the best document, along with the f1 overlap and index into all_docs
-
         """
         docs = []
         for i, d in enumerate(all_docs):

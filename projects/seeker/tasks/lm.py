@@ -55,8 +55,8 @@ class AbstractLMChunkTeacher(ChunkTeacher, ABC):
     """
     LM Chunk Teacher, base.
 
-    Provides functionality for subclassed teachers for extracting
-    data from world log files, generated via `generate_lm_data.py`
+    Provides functionality for subclassed teachers for extracting data from world log
+    files, generated via `generate_lm_data.py`
     """
 
     def __init__(self, opt: Opt, shared=None) -> None:
@@ -419,8 +419,8 @@ class SearchQueryTeacher(KnowledgeTeacher):
     """
     Search Query teacher.
 
-    Given an input context, predict the title of the document
-    from which the "gold" knowledge is derived.
+    Given an input context, predict the title of the document from which the "gold"
+    knowledge is derived.
     """
 
     @classmethod

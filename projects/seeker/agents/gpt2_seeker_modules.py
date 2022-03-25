@@ -154,8 +154,8 @@ class IdentityLayer(torch.nn.Module):
     """
     Acts as the encoder for the FiD model.
 
-    Custom Identity layer (as opposed to parlai.tuils.torch.IdentityLayer)
-    to account for special output required.
+    Custom Identity layer (as opposed to parlai.tuils.torch.IdentityLayer) to account
+    for special output required.
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, *args, **kwargs):
@@ -497,8 +497,8 @@ class ComboGPT2Model(GPT2WithRetrieverModel, ComboFidModel):
         Optional[torch.Tensor],
     ]:
         """
-        Copy most of the ComboFidModel.forward here, but include the target_lengths for the
-        encoder.
+        Copy most of the ComboFidModel.forward here, but include the target_lengths for
+        the encoder.
 
         Note, however, that we don't use it.
         """

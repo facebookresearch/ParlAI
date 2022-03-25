@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Utility Functions
+Utility Functions.
 """
 from collections import Counter
 from enum import Enum
@@ -72,8 +72,8 @@ def drm_get_batch_context(self, batch: Batch, orig_fun: Callable):
     """
     Override the get context method for the DRM.
 
-    This override removes the knowledge response from the
-    set of tokens being blocked in the dialogue response.
+    This override removes the knowledge response from the set of tokens being blocked in
+    the dialogue response.
     """
     ctxts = orig_fun(batch)
     knowledge_start_id = self.dict.txt2vec(TOKEN_KNOWLEDGE)
@@ -201,7 +201,7 @@ def extract_entities(
 
 def calc_f1_msmarco(pred: str, gold_items: List[str]) -> float:
     """
-    Calculate F1 overlap between prediction sentence and gold labels
+    Calculate F1 overlap between prediction sentence and gold labels.
 
     :param pred:
         prediction string
@@ -228,7 +228,7 @@ def calc_f1_msmarco(pred: str, gold_items: List[str]) -> float:
 
 def calc_f1_msc(pred, gold_items):
     """
-    Calculate F1 overlap between prediction sentence and gold labels
+    Calculate F1 overlap between prediction sentence and gold labels.
 
     :param pred:
         prediction string
