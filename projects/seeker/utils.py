@@ -8,19 +8,29 @@ Utility Functions
 """
 from collections import Counter
 from enum import Enum
-from nltk.corpus import stopwords
-import nltk
-
-try:
-    import spacy
-except ModuleNotFoundError:
-    spacy = None
 import torch
 from typing import Callable, List, Tuple
 
 from parlai.core.torch_agent import Batch
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE, TOKEN_END_KNOWLEDGE
 import parlai.utils.logging as logging
+
+try:
+    from nltk.corpus import stopwords
+
+    STOP_WORDS = stopwords.words('english')
+    import nltk
+except ModuleNotFoundError:
+    logging.error("Please install NLTK: pip install nltk")
+    nltk = None
+    stopwords = None
+    STOP_WORDS = []
+
+try:
+    import spacy
+except ModuleNotFoundError:
+    logging.error("Please install spacy: pip install spacy")
+    spacy = None
 
 ##############
 # Zoo Models #
@@ -43,8 +53,6 @@ GENERATE_QUERY = '__generate-query__'
 IS_SEARCH_REQUIRED = '__is-search-required__'
 DO_SEARCH = '__do-search__'
 DO_NOT_SEARCH = '__do-not-search__'
-
-STOP_WORDS = stopwords.words('english')
 
 nlp = None
 

@@ -8,14 +8,14 @@ import unittest
 import parlai.scripts.eval_model as ems
 import parlai.utils.testing as testing_utils
 
-from projects.seeker.utils import (
-    R2C2_BASE_400M,
-    R2C2_BLENDERBOT_400M,
-    SEEKER_DIALOGUE_400M,
-    SEEKER_LM_MED,
-)
-
-LOCAL_TEST = False
+R2C2_BASE_400M = 'zoo:seeker/r2c2_base_400M/model'
+R2C2_BASE_3B = 'zoo:seeker/r2c2_base_3B/model'
+R2C2_BLENDERBOT_400M = 'zoo:seeker/r2c2_blenderbot_400M/model'
+R2C2_BLENDERBOT_3B = 'zoo:seeker/r2c2_blenderbot_3B/model'
+SEEKER_DIALOGUE_400M = 'zoo:seeker/seeker_dialogue_400M/model'
+SEEKER_DIALOGUE_3B = 'zoo:seeker/seeker_dialogue_3B/model'
+SEEKER_LM_DIALOGUE_3B = 'zoo:seeker/seeker_lm_dialogue_3B/model'
+SEEKER_LM_MED = 'zoo:seeker/seeker_lm_med/model'
 
 search_task = 'projects.seeker.tasks.search_query'
 dialogue_task = 'projects.seeker.tasks.dialogue:WoiDialogueTeacher'
