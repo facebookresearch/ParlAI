@@ -20,7 +20,9 @@ SEEKER_LM_MED = 'zoo:seeker/seeker_lm_med/model'
 search_task = 'projects.seeker.tasks.search_query'
 dialogue_task = 'projects.seeker.tasks.dialogue:WoiDialogueTeacher'
 knowledge_task_search = 'projects.seeker.tasks.knowledge:WoiKnowledgeTeacher'
-knowledge_task_no_search = 'projects.seeker.tasks.knowledge:Convai2KnowledgeTeacher'
+knowledge_task_no_search = (
+    'projects.seeker.tasks.knowledge:WoiKnowledgeTeacher:mutators=skip_retrieval'
+)
 all_tasks = ','.join(
     [search_task, dialogue_task, knowledge_task_no_search, knowledge_task_search]
 )
