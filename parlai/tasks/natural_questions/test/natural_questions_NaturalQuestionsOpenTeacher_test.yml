@@ -1,0 +1,53 @@
+acts:
+- - answers: '["Wilhelm Conrad R\u00f6ntgen"]'
+    checked_sentence: 'The first Nobel Prize in Physics was awarded in 1901 to Wilhelm
+      Conrad Röntgen , of Germany , who received 150,782 SEK , which is equal to 7,731,004
+      SEK in December 2007 . John Bardeen is the only laureate to win the prize twice
+      -- in 1956 and 1972 . Maria Skłodowska - Curie also won two Nobel Prizes , for
+      physics in 1903 and chemistry in 1911 . William Lawrence Bragg was , until October
+      2014 , the youngest ever Nobel laureate ; he won the prize in 1915 at the age
+      of 25 . Two women have won the prize : Curie and Maria Goeppert - Mayer ( 1963
+      ) . As of 2017 , the prize has been awarded to 206 individuals . There have
+      been six years in which the Nobel Prize in Physics was not awarded ( 1916 ,
+      1931 , 1934 , 1940 -- 1942 ) .'
+    episode_done: true
+    eval_labels:
+    - Wilhelm Conrad Röntgen
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    text: who got the first nobel prize in physics
+    title: List of Nobel laureates in Physics
+- - answers: '["May 18 , 2018"]'
+    checked_sentence: Deadpool 2 is scheduled to be released in the United States
+      on May 18 , 2018 . A sequel , Deadpool 3 , is in development .
+    episode_done: true
+    eval_labels:
+    - May 18 , 2018
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    text: when is the next deadpool movie being released
+    title: Deadpool 2
+- - answers: '["MFSK", "Olivia"]'
+    checked_sentence: ''
+    episode_done: true
+    eval_labels:
+    - MFSK
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    text: which mode is used for short wave broadcast service
+    title: Shortwave radio
+- - answers: '["till September"]'
+    checked_sentence: ''
+    episode_done: true
+    eval_labels:
+    - till September
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    text: the south west wind blows across nigeria between
+    title: Geography of Nigeria
+- - answers: '["hit points or health points"]'
+    checked_sentence: ''
+    episode_done: true
+    eval_labels:
+    - hit points or health points
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    text: what does hp mean in war and order
+    title: Health (gaming)
+num_episodes: 3610
+num_examples: 3610

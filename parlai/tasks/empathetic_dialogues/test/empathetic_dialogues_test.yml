@@ -1,7 +1,5 @@
 acts:
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: guilty
+- - emotion: guilty
     episode_done: false
     eval_labels:
     - Did you suffer any injuries?
@@ -21,14 +19,14 @@ acts:
     - Oh my, did you have a good time?
     - I do feel that way, I try to always have a Christian attitude.
     - Ahaha, I hate running too
-    - 'That is so nice that she made note that you had been wanting it for so long! '
+    - That is so nice that she made note that you had been wanting it for so long!
     - Oh wow, I love hippos and I don't know what sloth look like will let google
       help me out :)
     - What platform do you play it on? PC or PS4?
     - I do hope they stopped the car at least ! That sounds disgusting, but its better
       than throwing up in the car right ?
     - Do you have any idea where you will go? Is it accompanied?
-    - 'so you were really prepared. '
+    - so you were really prepared.
     - That happened to me too.. with the other Exorcist movies and the Ring movies.
       Even though they scared me, I was too curious to not see the others.
     - oh its hurts a little
@@ -36,31 +34,27 @@ acts:
     - I know how you feel.  I moved away from my family and friends this summer.  Do
       you have family nearby at all? I often feel lonely when I'm watching a movie
       by myself but then I remind myself that I'm loved by a lot of people.
-    prepend_cand: null
-    prepend_ctx: null
     situation: I felt guilty when I was driving home one night and a person tried
       to fly into my lane, and didn't see me. I honked and they swerved back into
       their lane, slammed on their brakes, and hit the water cones.
     text: Yeah about 10 years ago I had a horrifying experience. It was 100% their
       fault but they hit the water barrels and survived. They had no injuries but
       they almost ran me off the road.
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: guilty
+- - emotion: guilty
     episode_done: true
     eval_labels:
     - Why did you feel guilty? People really shouldn't drive drunk.
     id: empathetic_dialogues
     label_candidates:
     - Yep! or if you're house will be hit.  Many possibilities with tornadoes!
-    - 'Wow! I better! I Stopped at Associates of General Studies, because I wanted
-      to be a mom more. So that is a HUGE step for you! '
+    - Wow! I better! I Stopped at Associates of General Studies, because I wanted
+      to be a mom more. So that is a HUGE step for you!
     - You have to :) Everyone has bad moments and if you can't laugh at them, then
       they just eat you up!
     - that is awesome, i hope that happens to me on my next trip, where where you
       going
     - Oh, I would love time away like that! How did you enjoy it?
-    - 'I remember these game well, like Contra and Battle Toads. '
+    - I remember these game well, like Contra and Battle Toads.
     - I love going to the Spurs games.
     - That sounds good. I bet it was fun to hangout and eat with your friend.
     - Yes I've got one.  She's a stray that showed up to work one day.
@@ -70,21 +64,17 @@ acts:
     - It must have been! Have you guys been apart before?
     - That is a terrible tragedy, my friend. Did the dog get sick?
     - I bet you were really proud!
-    - 'That blows dude , i bet it was not your fault '
+    - That blows dude , i bet it was not your fault
     - oh no! that's terrible! I've had that happen before and it sucks
     - Oh? That's not good. Do you think he has lots of secrets?
     - Oh wow. How far away did you move??
     - That is not something to take for granted, enjoy yourself!
-    prepend_cand: null
-    prepend_ctx: null
     situation: I felt guilty when I was driving home one night and a person tried
       to fly into my lane, and didn't see me. I honked and they swerved back into
       their lane, slammed on their brakes, and hit the water cones.
     text: No I wasn't hit. It turned out they were drunk. I felt guilty but realized
       it was his fault.
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: caring
+- - emotion: caring
     episode_done: false
     eval_labels:
     - Yeah i wanted to tell you about the time i was hit by a drunk driver im so happy
@@ -107,24 +97,20 @@ acts:
     - Wow! What a great team to be on!
     - My dream job is being born rich. Its too late for that
     - Oh man, the beach always sounds nice
-    - 'It seems like it''s a lot of ruckus, I''ve visited friends who have your situation
-      and I can only imagine. '
+    - It seems like it's a lot of ruckus, I've visited friends who have your situation
+      and I can only imagine.
     - I know how you feel. I'm working right now :(
     - That sounds so good i love steaks
     - Sounds good, when she got back I hope you schooled her on Halo ?
     - thats really good of you. she is a lucky gal
     - What kind of thing?  You could always change that in the future.
-    prepend_cand: null
-    prepend_ctx: null
     situation: My mother stopped by my house one day and said she saw 3 dogs on the
       road, down from our house. They were starving, with ribs showing, and it was
       a mother dog and her two small puppies. Of course, my daughter wanted to bring
       them to our house, so we could feed and help them. We did, and my heart went
       out to them, as they were so sweet, but really were in a bad shape.
     text: Well, can you tell me about your experience? I think we swapped places
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: caring
+- - emotion: caring
     episode_done: true
     eval_labels:
     - Yeah he was punished hes in jail still
@@ -153,11 +139,9 @@ acts:
     - You should install security cameras outside your house.
     - Border collie. She was great!
     - Oh dear me.. So sorry to hear that! what did you do?
-    - 'Praise God man! He really is amazing and we should always be grateful for we
-      have '
+    - Praise God man! He really is amazing and we should always be grateful for we
+      have
     - Oh no.. Did he pass away?
-    prepend_cand: null
-    prepend_ctx: null
     situation: My mother stopped by my house one day and said she saw 3 dogs on the
       road, down from our house. They were starving, with ribs showing, and it was
       a mother dog and her two small puppies. Of course, my daughter wanted to bring
@@ -165,9 +149,7 @@ acts:
       out to them, as they were so sweet, but really were in a bad shape.
     text: Oh my goodness, that's very scary! I hope you are okay now and the drunk
       driver was punished for his actions?
-- - deepmoji_cand: null
-    deepmoji_ctx: null
-    emotion: lonely
+- - emotion: lonely
     episode_done: false
     eval_labels:
     - sorry to hear! do you have any idea about the break up? did you think about
@@ -198,12 +180,10 @@ acts:
       now?
     - sorry to hear! do you have any idea about the break up? did you think about
       it ?
-    - 'That''s a silver lining in all of it at least! '
+    - That's a silver lining in all of it at least!
     - Of course, no one deserves to have their heartbroken like that. I hope you find
       someone who treats you with the respect and kindness you deserve.
     - Wow thats really cool! You must be happy to know about that stuff its interesting!
-    prepend_cand: null
-    prepend_ctx: null
     situation: I just broke up with my girlfriend, we were together for 8 years, i
       feel so empty.
     text: I there, dont know what to do, jst broke up with my girlfirned, we were

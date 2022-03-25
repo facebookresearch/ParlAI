@@ -210,9 +210,8 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
             return {}
         blob = filtered.head(1).to_dict('records')
 
-        results = {}
+        results = blob[0]
         results["COUNT"] = count
-        results["OPTIONS"] = json.dumps(blob)
         return results
 
     def _slot_in_schema(self, slot, intent):
@@ -359,6 +358,18 @@ class UserSimulatorTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeacher
 
 
 class SystemTeacher(MultiwozV22Parser, tod_agents.TodSystemTeacher):
+    pass
+
+
+class StandaloneApiTeacher(MultiwozV22Parser, tod_agents.TodStandaloneApiTeacher):
+    pass
+
+
+class SingleGoalAgent(MultiwozV22Parser, tod_agents.TodSingleGoalAgent):
+    pass
+
+
+class SingleApiSchemaAgent(MultiwozV22Parser, tod_agents.TodSingleApiSchemaAgent):
     pass
 
 

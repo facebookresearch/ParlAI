@@ -111,3 +111,31 @@ class TestMultiworld(unittest.TestCase):
                     exs = report[f'{task}/exs'].value()
                     assert exs > 0, err
                 world.reset_metrics()
+
+    def test_with_ordered(self):
+        """
+        Test that multi-tasking works deterministically with datatype train:ordered.
+        """
+
+        opt = ParlaiParser(True, True).parse_kwargs(
+            task='teacher1,teacher2',
+            multitask_weights='1,1',
+            model='fixed_response',
+            fixed_response='None',
+            datatype='train:ordered',
+            batchsize=1,
+        )
+        multiworld1 = create_task(opt, create_agent(opt))
+        multiworld2 = create_task(opt, create_agent(opt))
+
+        while not (multiworld1.epoch_done() or multiworld2.epoch_done()):
+            multiworld1.parley()
+            acts1 = multiworld1.get_acts()
+
+            multiworld2.parley()
+            acts2 = multiworld2.get_acts()
+
+            self.assertEqual(len(acts1), len(acts2))
+            assert all([act1 == act2 for act1, act2 in zip(acts1, acts2)])
+
+        assert multiworld1.epoch_done() and multiworld2.epoch_done()

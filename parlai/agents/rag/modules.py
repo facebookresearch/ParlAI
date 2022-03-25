@@ -540,6 +540,7 @@ class T5RagModel(RagModel):
         super().__init__(opt, dictionary, retriever_shared)
         self.embedding_size = opt['t5'].model_dim
         self.t5 = opt.pop('t5', None)
+        self.paralleled = not opt['t5_model_parallel']
 
     @classmethod
     def build_encoder(
