@@ -10,7 +10,11 @@ from collections import Counter
 from enum import Enum
 from nltk.corpus import stopwords
 import nltk
-import spacy
+
+try:
+    import spacy
+except ModuleNotFoundError:
+    spacy = None
 import torch
 from typing import Callable, List, Tuple
 
