@@ -139,6 +139,14 @@ commands:
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
+  installgcloud:
+    description: Install Google Cloud (for NQ teachers)
+    steps:
+      - run:
+          name: Install Google Cloud (for NQ teachers)
+          command: |
+            python -m pip install google-cloud-storage
+
   installdetectrondeps:
     description: Install opencv, vqa-maskrcnn-benchmark
     steps:
@@ -386,6 +394,7 @@ jobs:
       - runtests:
           more_installs:
             - installtorchcpu
+            - installgcloud
           cachename: teacher
           marker: teacher
           pytest_flags: -v -s
