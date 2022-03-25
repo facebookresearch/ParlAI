@@ -6,6 +6,7 @@
 import copy
 import torch.cuda
 import unittest
+from parlai.core.agents import create_agent
 
 import parlai.utils.testing as testing_utils
 
@@ -201,6 +202,39 @@ class TestBB2QGenParams(unittest.TestCase):
             query_generator_beam_size=3,
             query_generator_beam_min_length=2,
         )
+
+
+@testing_utils.skipUnlessGPU
+@unittest.skipIf(LOCAL, "Skipping Test because its slow and mem intensive")
+class TestBB2CleanText(unittest.TestCase):
+    SPEICIAL_TOKEN = '_POTENTIALLY_UNSAFE__'
+
+    def test_bb2_history(self):
+        """
+        Test out-of-the-box BB2 generation.
+        """
+        opt = copy.deepcopy(common_opt)
+        opt.update(
+            {
+                'model_file': ZOO_BB2,
+                'override': {
+                    'search_server': SEARCH_SERVER,
+                    'add_cleaned_reply_to_history': True,
+                },
+            }
+        )
+        bb2 = create_agent(opt)
+
+        text_with_safety_token = f"Don't have a cow, Man! {self.SPEICIAL_TOKEN}"
+        obs = {'text': text_with_safety_token}
+        bb2.observe(obs)
+        assert self.SPEICIAL_TOKEN in bb2.history.get_history_str()
+
+        bb2.history.reset()
+        obs = {'text': "I am Groot"}
+        bb2.observe(obs)
+        bb2.history.add_reply(text_with_safety_token)
+        assert self.SPEICIAL_TOKEN not in bb2.history.get_history_str()
 
 
 @testing_utils.skipUnlessGPU
