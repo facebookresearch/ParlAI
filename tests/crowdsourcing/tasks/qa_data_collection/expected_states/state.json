@@ -1,13 +1,11 @@
 {
   "outputs": {
     "messages": [
-      {"packet_type": "update_status", "sender_id": "mephisto", "receiver_id": "1", "data": {"state": {"agent_display_name": "QA Agent"}, "message_id": "fa0ea5fd-3eb9-43f0-9e4e-03efefb1dae0"}, "timestamp": 1608770545.9222307}, 
-      {"packet_type": "agent_action", "sender_id": "mephisto", "receiver_id": "1", "data": {"episode_done": false, "id": "QA Collector", "passage": "Pope Paul VI became the first reigning pontiff ever to visit the Americas when he flew to New York in October 1965 to address the United Nations. As a gesture of goodwill, the pope gave to the UN two pieces of papal jewelry, a diamond cross and ring, with the hopes that the proceeds from their sale at auction would contribute to the UN's efforts to end human suffering. During the pope's visit, as the U.S. involvement in the Vietnam War escalated under President Johnson, Paul VI pleaded for peace before the UN:", "text": "Please provide a question given the passage.", "message_id": "f1cb5e95-7c06-435b-82e9-e900e0e8d579"}, "timestamp": 1608770545.9229805}, 
-      {"packet_type": "agent_action", "sender_id": "1", "receiver_id": "Mephisto", "data": {"text": "Who was the first reigning pope to ever visit the Americas?", "task_data": {}, "id": "QA Agent", "episode_done": false}, "timestamp": 1608770546.104441}, 
-      {"packet_type": "agent_action", "sender_id": "mephisto", "receiver_id": "1", "data": {"episode_done": false, "id": "QA Collector", "text": "Thanks. And what is the answer to your question?", "message_id": "c668bdc6-0f5e-4c3d-b1c0-d84de8ff003f"}, "timestamp": 1608770546.1050787}, 
-      {"packet_type": "agent_action", "sender_id": "1", "receiver_id": "Mephisto", "data": {"text": "Pope Paul VI", "task_data": {}, "id": "QA Agent", "episode_done": false}, "timestamp": 1608770546.2045512}, 
-      {"packet_type": "agent_action", "sender_id": "mephisto", "receiver_id": "1", "data": {"id": "SUBMIT_WORLD_DATA", "WORLD_DATA": {"custom_data": null, "worker_data": {}}, "text": "", "message_id": "e548be79-94ab-4d48-9b35-291afa2fc30b"}, "timestamp": 1608770546.205236}, 
-      {"packet_type": "agent_action", "sender_id": "1", "receiver_id": "Mephisto", "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": true}, "timestamp": 1608770546.3049755}
+      {"episode_done": false, "id": "QA Collector", "passage": "Pope Paul VI became the first reigning pontiff ever to visit the Americas when he flew to New York in October 1965 to address the United Nations. As a gesture of goodwill, the pope gave to the UN two pieces of papal jewelry, a diamond cross and ring, with the hopes that the proceeds from their sale at auction would contribute to the UN's efforts to end human suffering. During the pope's visit, as the U.S. involvement in the Vietnam War escalated under President Johnson, Paul VI pleaded for peace before the UN:", "text": "Please provide a question given the passage."},
+      {"text": "Who was the first reigning pope to ever visit the Americas?", "task_data": {}, "id": "QA Agent", "episode_done": false},
+      {"episode_done": false, "id": "QA Collector", "text": "Thanks. And what is the answer to your question?"},
+      {"text": "Pope Paul VI", "task_data": {}, "id": "QA Agent", "episode_done": false},
+      {"id": "SUBMIT_WORLD_DATA", "WORLD_DATA": {"custom_data": null, "worker_data": {}}, "text": ""}
     ]
   }, "inputs": {}
 }
