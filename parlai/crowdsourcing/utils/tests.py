@@ -350,6 +350,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         # # Check that the inputs and outputs are as expected
 
         # Get and filter actual messages
+        time.sleep(10)  # Wait for any late messages to arrive
         actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
         if len(actual_states) != len(expected_states):
             raise ValueError(

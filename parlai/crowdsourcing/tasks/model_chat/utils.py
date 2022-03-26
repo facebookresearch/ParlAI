@@ -346,12 +346,32 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
         # TODO: in `self._check_output_key()`, there is other logic for ignoring
         #  keys with non-deterministic values. Consolidate all of that logic here!
         custom_data = self._get_custom_data(actual_state)
-        for key in ['datapath', 'parlai_home', 'starttime']:
-            # The 'datapath' and 'parlai_home' keys will change depending on where
-            # the test is run
-            del custom_data['task_description']['model_opt'][key]
+        # Delete keys that will change depending on when/where the test is run
+        for key in ['model_file']:
+            del custom_data['task_description'][key]
+        for key in ['datapath', 'dict_file', 'model_file', 'parlai_home', 'starttime']:
+            if key in custom_data['task_description']['model_opt']:
+                del custom_data['task_description']['model_opt'][key]
+        for key in ['model_file']:
+            if key in custom_data['task_description']['model_opt']['override']:
+                del custom_data['task_description']['model_opt']['override'][key]
 
         return actual_state
+
+    def _filter_agent_state_data(self, agent_state: dict) -> dict:
+        """
+        Remove agent state messages that do not contain text or final chat data and are thus not useful for testing the crowdsourcing task.
+        """
+        filtered_messages = [
+            m
+            for m in agent_state['outputs']['messages']
+            if 'text' in m or 'final_chat_data' in m
+        ]
+        filtered_agent_state = {
+            'inputs': agent_state['inputs'],
+            'outputs': {**agent_state['outputs'], 'messages': filtered_messages},
+        }
+        return filtered_agent_state
 
     def _get_custom_data(self, actual_state: dict) -> dict:
         """

@@ -158,21 +158,6 @@ fixed_response: >
 
             return actual_state
 
-        def _filter_agent_state_data(self, agent_state: dict) -> dict:
-            """
-            Remove agent state messages that do not contain text or final chat data and are thus not useful for testing the crowdsourcing task.
-            """
-            filtered_messages = [
-                m
-                for m in agent_state['outputs']['messages']
-                if 'text' in m or 'final_chat_data' in m
-            ]
-            filtered_agent_state = {
-                'inputs': agent_state['inputs'],
-                'outputs': {**agent_state['outputs'], 'messages': filtered_messages},
-            }
-            return filtered_agent_state
-
 
 # except ImportError:
 #     pass
