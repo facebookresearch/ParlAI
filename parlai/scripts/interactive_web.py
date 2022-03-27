@@ -273,7 +273,7 @@ def interactive_web(opt):
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
     agent.opt.log()
-    SHARED['opt'] = agent.opt
+    SHARED['opt'] = opt
     SHARED['agent'] = agent
     SHARED['world'] = create_task(SHARED.get('opt'), [human_agent, SHARED['agent']])
 
