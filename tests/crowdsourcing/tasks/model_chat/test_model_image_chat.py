@@ -60,7 +60,7 @@ if True:  # TODO: restore or remove try/except
 
         def setUp(self) -> None:
             self._setup()
-            self.message_sleep_time = 10
+            self.message_sleep_time = 20
             # Wait for the message with the encoded image to arrive
 
         def tearDown(self) -> None:
