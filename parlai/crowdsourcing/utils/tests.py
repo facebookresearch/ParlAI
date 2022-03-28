@@ -153,52 +153,38 @@ class AbstractCrowdsourcingTest:
 
             mock_worker_registration_name = f"MOCK_WORKER_{idx:d}"
             mock_worker_name = f"{mock_worker_registration_name}_sandbox"
-            max_num_tries = 3
-            initial_wait_time = 0.5  # In seconds
-            num_tries = 0
-            wait_time = initial_wait_time
-            while num_tries < max_num_tries:
-                try:
-                    # Register the agent
-                    mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
-                    self.server.register_mock_agent(
-                        mock_worker_registration_name, mock_agent_details
-                    )
-                    self.assert_sandbox_worker_created(mock_worker_name)
-                    workers = self.db.find_workers(worker_name=mock_worker_name)
-                    print(
-                        f"try num: {num_tries}:",
-                        workers,
-                        self.db.find_workers(),
-                        [w.worker_name for w in self.db.find_workers()],
-                    )
-                    worker_id = workers[0].db_id
 
-                    if assume_onboarding:
-                        # Submit onboarding from the agent
-                        onboard_agents = self.db.find_onboarding_agents()
-                        onboard_data = {"onboarding_data": {"success": True}}
-                        self.server.register_mock_agent_after_onboarding(
-                            worker_id, onboard_agents[0].get_agent_id(), onboard_data
-                        )
-                        self.await_channel_requests()
-                    self.await_channel_requests()
-                    print(f"try num: {num_tries}:", self.db.find_agents())
-                    _ = self.db.find_agents()[idx]
-                    # Make sure the agent can be found, or else raise an IndexError
+            # Register the agent
+            mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
+            self.server.register_mock_agent(
+                mock_worker_registration_name, mock_agent_details
+            )
+            self.assert_sandbox_worker_created(mock_worker_name)
+            workers = self.db.find_workers(worker_name=mock_worker_name)
+            print(
+                "Workers:",
+                workers,
+                self.db.find_workers(),
+                [w.worker_name for w in self.db.find_workers()],
+            )
+            worker_id = workers[0].db_id
 
-                    break
-                except IndexError:
-                    num_tries += 1
-                    print(
-                        f'The agent could not be registered after {num_tries:d} '
-                        f'attempt(s), out of {max_num_tries:d} attempts total. Waiting '
-                        f'for {wait_time:0.1f} seconds...'
-                    )
-                    time.sleep(wait_time)
-                    wait_time *= 2  # Wait for longer next time
-            else:
-                raise ValueError('The worker could not be registered!')
+            if assume_onboarding:
+                # Submit onboarding from the agent
+                onboard_agents = self.db.find_onboarding_agents()
+                onboard_data = {"onboarding_data": {"success": True}}
+                self.server.register_mock_agent_after_onboarding(
+                    worker_id, onboard_agents[0].get_agent_id(), onboard_data
+                )
+                self.await_channel_requests()
+            self.await_channel_requests()
+            print("Agents:", self.db.find_agents())
+
+            # Make sure the agent can be found
+            try:
+                _ = self.db.find_agents()[idx]
+            except IndexError:
+                raise ValueError('The agent could not be registered!')
 
         # Get all agents' IDs
         agents = self.db.find_agents()
