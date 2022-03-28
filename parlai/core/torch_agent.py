@@ -2114,9 +2114,8 @@ class TorchAgent(ABC, Agent):
             opt_from_disk['force_fp16_tokens'] = True
 
         if opt_from_disk.get('image_mode') == 'none':
-            # 2022-03-28 this mode changed to 'no_image_model'
+            # 2022-03-28 this mode changed to 'no_image_model' a long time ago.
             opt_from_disk['image_mode'] = 'no_image_model'
-            opt_from_disk['force_fp16_tokens'] = True
 
         return opt_from_disk
 
