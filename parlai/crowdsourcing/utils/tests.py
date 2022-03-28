@@ -93,7 +93,6 @@ class AbstractCrowdsourcingTest:
                     f'mephisto/provider=mock',
                     f'+task_dir={task_directory}',
                     f'+current_time={int(time.time())}',
-                    f"+mephisto.task.submission_timeout=10",
                 ]
                 + overrides,
             )
