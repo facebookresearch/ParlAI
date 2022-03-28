@@ -285,6 +285,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
     Abstract class for end-to-end tests of one-turn ParlAIChatBlueprint tasks.
     """
 
+    def _setup(self):
+        super()._setup()
+        self.message_sleep_time = 0  # Time to wait for any late messages to arrive
+
     def _test_agent_states(
         self,
         num_agents: int,
@@ -350,7 +354,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         # # Check that the inputs and outputs are as expected
 
         # Get and filter actual messages
-        time.sleep(10)  # Wait for any late messages to arrive
+        time.sleep(self.message_sleep_time)
         actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
         if len(actual_states) != len(expected_states):
             raise ValueError(
