@@ -201,7 +201,7 @@ class SeekerAgent(Agent):
         """
         additional_agent_parser = cls.get_additional_agent_args()
         for action in additional_agent_parser._actions:
-            key = action.option_strings[-1]
+            key = sorted(action.option_strings, key=lambda x: len(x))[-1]
             type = action.type
 
             for prefix in ['krm', 'drm', 'sqm', 'sdm']:
