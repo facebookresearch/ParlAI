@@ -59,7 +59,7 @@ class ImageLoader:
         self.netCNN = None
         self.image_mode = opt.get('image_mode', 'no_image_model')
         self.use_cuda = not self.opt.get('no_cuda', False) and torch.cuda.is_available()
-        if self.image_mode not in ['no_image_model', 'raw', 'ascii', 'none']:
+        if self.image_mode not in ['no_image_model', 'raw', 'ascii']:
             if 'image_mode' not in opt or 'image_size' not in opt:
                 raise RuntimeError(
                     'Need to add image arguments to opt. See '

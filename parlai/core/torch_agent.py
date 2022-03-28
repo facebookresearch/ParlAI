@@ -2113,6 +2113,11 @@ class TorchAgent(ABC, Agent):
             # model it MUST add the fp16 tokens, even if it's not fp16 mode now.
             opt_from_disk['force_fp16_tokens'] = True
 
+        if opt_from_disk.get('image_mode') == 'none':
+            # 2022-03-28 this mode changed to 'no_image_model'
+            opt_from_disk['image_mode'] = 'no_image_model'
+            opt_from_disk['force_fp16_tokens'] = True
+
         return opt_from_disk
 
     def reset(self):
