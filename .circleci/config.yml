@@ -139,14 +139,6 @@ commands:
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
-  installgcloud:
-    description: Install Google Cloud (for NQ teachers)
-    steps:
-      - run:
-          name: Install Google Cloud (for NQ teachers)
-          command: |
-            python -m pip install google-cloud-storage
-
   installdetectrondeps:
     description: Install opencv, vqa-maskrcnn-benchmark
     steps:
@@ -230,26 +222,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220328-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220328-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220328-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220328-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -266,12 +258,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220227-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220328-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220227-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220328-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -394,7 +386,6 @@ jobs:
       - runtests:
           more_installs:
             - installtorchcpu
-            - installgcloud
           cachename: teacher
           marker: teacher
           pytest_flags: -v -s
