@@ -21,7 +21,7 @@ import parlai.tasks.ms_marco.agents as ms_marco
 
 import parlai.utils.logging as logging
 
-import projects.seeker.tasks.mutators  # type: ignore
+import projects.seeker.tasks.mutators  # type: ignore   # noqa: F401
 
 
 class WoiDialogueTeacher(woi.DefaultTeacher):
