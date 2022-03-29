@@ -95,7 +95,7 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
                 )
 
                 contextt = cparts[5].replace("_comma_", ",")
-                label = sparts[5].replace("_comma_", ",")
+                label = sparts[5].replace("_comma_", ",").strip()
                 prompt = sparts[2]
                 sit = sparts[3].replace("_comma_", ",")
                 if len(sparts) == 9:
@@ -120,6 +120,9 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
                     }
                 )
                 if inline_label_candidates is not None:
+                    inline_label_candidates = [
+                        lc.strip() for lc in inline_label_candidates
+                    ]
                     dialogue_parts.force_set(
                         'label_candidates', inline_label_candidates
                     )
