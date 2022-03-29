@@ -10,22 +10,18 @@ from parlai.utils.testing import AutoTeacherTest  # noqa: F401
 class NQAutoTeacherTest(AutoTeacherTest):
     def test_train_stream_ordered(self, data_regression):
         """
-        Test --datatype train:stream:ordered.
+        Ignore train set because it's so large.
         """
         pass
 
 
 class TestNaturalQuestionsTeacher(NQAutoTeacherTest):
-    task = 'natural_questions'  # replace with your teacher name
+    task = 'natural_questions'
 
 
 class TestNaturalQuestionsSampleTeacher(AutoTeacherTest):
-    task = (
-        'natural_questions:NaturalQuestionsSampleTeacher'
-    )  # replace with your teacher name
+    task = 'natural_questions:NaturalQuestionsSampleTeacher'
 
 
 class TestNaturalQuestionsOpenTeacher(AutoTeacherTest):
-    task = (
-        'natural_questions:NaturalQuestionsOpenTeacher'
-    )  # replace with your teacher name
+    task = 'natural_questions:NaturalQuestionsOpenTeacher'
