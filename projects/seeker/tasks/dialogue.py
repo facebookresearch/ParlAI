@@ -21,7 +21,7 @@ import parlai.tasks.ms_marco.agents as ms_marco
 
 import parlai.utils.logging as logging
 
-import projects.seeker.tasks.mutators  # type: ignore
+import projects.seeker.tasks.mutators  # type: ignore   # noqa: F401
 
 
 class WoiDialogueTeacher(woi.DefaultTeacher):
@@ -34,7 +34,6 @@ class WoiDialogueTeacher(woi.DefaultTeacher):
                 'woi_add_checked_sentence_to_input',
                 'skip_retrieval_mutator',
             ]
-            + opt.get('mutators', '').split('+')
         )
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])

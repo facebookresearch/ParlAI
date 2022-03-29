@@ -20,7 +20,7 @@ SEEKER_LM_MED = 'zoo:seeker/seeker_lm_med/model'
 search_task = 'projects.seeker.tasks.search_query'
 dialogue_task = 'projects.seeker.tasks.dialogue:WoiDialogueTeacher'
 knowledge_task_search = 'projects.seeker.tasks.knowledge:WoiKnowledgeTeacher'
-knowledge_task_no_search = 'projects.seeker.tasks.knowledge:Convai2KnowledgeTeacher'
+knowledge_task_no_search = 'projects.seeker.tasks.knowledge:WoiKnowledgeTeacher:mutators=skip_retrieval_mutator'
 all_tasks = ','.join(
     [search_task, dialogue_task, knowledge_task_no_search, knowledge_task_search]
 )
@@ -67,6 +67,7 @@ class TestDialogueZoo(unittest.TestCase):
             'model_file': SEEKER_DIALOGUE_400M,
             'task': 'integration_tests:nocandidate',
             'init_opt': 'gen/seeker_dialogue',
+            'allow_missing_init_opts': True,
             'search_decision': 'never',
             'num_examples': 2,
             'datatype': 'valid',
@@ -81,6 +82,7 @@ class TestLMZoo(unittest.TestCase):
             'model_file': SEEKER_LM_MED,
             'task': 'integration_tests:nocandidate',
             'init_opt': 'gen/seeker_lm',
+            'allow_missing_init_opts': True,
             'search_decision': 'never',
             'num_examples': 2,
             'datatype': 'valid',

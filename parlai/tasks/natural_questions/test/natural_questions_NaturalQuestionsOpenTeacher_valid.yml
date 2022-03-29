@@ -127,5 +127,5 @@ acts:
     id: natural_questions:NaturalQuestionsOpenTeacher
     text: what is the smallest prime number that is greater than 30
     title: List of prime numbers
-num_episodes: 1223
-num_examples: 1223
+num_episodes: 8757
+num_examples: 8757
