@@ -315,7 +315,7 @@ class InMetric(AverageMetric):
 class NaturalQuestionsOpenTeacher(DialogTeacher):
     def __init__(self, opt: Opt, shared=None):
         self.fold = opt["datatype"].split(":")[0]
-        self.dpath = os.path.join(opt["datapath"], "NaturalQuestions_retrieval")
+        self.dpath = os.path.join(opt["datapath"], "NaturalQuestionsOpen")
         self.opt = opt
         self.opt['datafile'] = os.path.join(self.dpath, self.fold + ".csv")
         if shared is None:
@@ -327,7 +327,7 @@ class NaturalQuestionsOpenTeacher(DialogTeacher):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        group = parser.add_argument_group("Natural Questions retrieval")
+        group = parser.add_argument_group("Natural Questions Open")
         group.add_argument(
             "--normalize-everything",
             default=False,
