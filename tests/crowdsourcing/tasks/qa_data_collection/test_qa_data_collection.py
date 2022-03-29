@@ -20,8 +20,7 @@ FORM_TASK_DATA = ({},)
 # No info is sent through the 'task_data' field when submitting the form
 
 
-# try:
-if True:  # TODO: restore or remove try/except
+try:
 
     from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
         SharedParlAITaskState,
@@ -86,8 +85,8 @@ if True:  # TODO: restore or remove try/except
             )
 
 
-# except ImportError:
-#     pass
+except ImportError:
+    pass
 
 if __name__ == "__main__":
     unittest.main()

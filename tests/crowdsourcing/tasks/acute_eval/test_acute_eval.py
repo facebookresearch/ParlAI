@@ -14,8 +14,7 @@ import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
-# try:
-if True:  # TODO: restore or remove try/except
+try:
 
     from parlai.crowdsourcing.tasks.acute_eval.run import TASK_DIRECTORY
     from parlai.crowdsourcing.utils.tests import AbstractOneTurnCrowdsourcingTest
@@ -60,8 +59,8 @@ if True:  # TODO: restore or remove try/except
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
 
-# except ImportError:
-#     pass
+except ImportError:
+    pass
 
 if __name__ == "__main__":
     unittest.main()

@@ -57,8 +57,7 @@ FORM_TASK_DATA = (
 )
 
 
-# try:
-if True:  # TODO: restore or remove try/except
+try:
 
     import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
     from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
@@ -159,8 +158,8 @@ fixed_response: >
             return actual_state
 
 
-# except ImportError:
-#     pass
+except ImportError:
+    pass
 
 if __name__ == "__main__":
     unittest.main()
