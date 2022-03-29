@@ -275,7 +275,7 @@ def interactive_web(opt):
     agent.opt.log()
     SHARED['opt'] = agent.opt
     SHARED['agent'] = agent
-    SHARED['world'] = create_task(SHARED.get('opt'), [human_agent, SHARED['agent']])
+    SHARED['world'] = create_task(opt, [human_agent, SHARED['agent']])
 
     MyHandler.protocol_version = 'HTTP/1.0'
     httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
