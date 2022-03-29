@@ -15,7 +15,7 @@ import jsonlines
 from typing import List, Optional, Tuple
 
 from parlai.core.teachers import ChunkTeacher, DialogTeacher
-from .build import build, DATASET_NAME_LOCAL
+from .build import build, DATASET_NAME_LOCAL, build_sample
 from .build_open import build as build_
 from .utils.text_utils import simplify_nq_example
 
@@ -195,6 +195,18 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 short_answers.append(annotation['yes_no_answer'])
         return short_answers
 
+    def _get_fname(self, chunk_idx: int) -> str:
+        """
+        Get the filname of the data chunk.
+
+        :param chunk_idx:
+            which chunk to get
+
+        :return chunk_name:
+            return the chunk fname
+        """
+        return f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
+
     def load_from_chunk(self, chunk_idx: int):
         """
         Loads from a chunk of the dataset, given the chunk index.
@@ -213,7 +225,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 labels.append(candidate_labels[label_ind])
             return labels
 
-        fname = f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
+        fname = self._get_fname(chunk_idx)
         fpath = os.path.join(self.dpath, fname)
         output = []
         with jsonlines.open(fpath, 'r') as fi:
@@ -256,6 +268,38 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         return message_dict
 
 
+class NaturalQuestionsSampleTeacher(NaturalQuestionsTeacher):
+    """
+    Loads the NQ Sample data for testing purposes.
+    """
+
+    def __init__(self, opt, shared=None):
+        build_sample(opt)
+        self.use_html = opt.get('use_html', False)
+        self.use_long_answer = opt.get('use_long_answer', False)
+        self.use_context = opt.get('use_context', False)
+        self.id = 'natural_questions'
+        self.opt = copy.deepcopy(opt)
+        self.dtype = DatatypeHelper.fold(self.opt['datatype'])
+        if self.dtype == 'test':
+            logging.error("No test split for this teacher; overriding to valid")
+            self.dtype = 'valid'
+        self.dpath = os.path.join(
+            self.opt['datapath'], f"{DATASET_NAME_LOCAL}_sample", self.dtype
+        )
+        self.n_samples = None
+        ChunkTeacher.__init__(self, self.opt, shared)
+
+    def _get_fname(self, chunk_idx: int) -> str:
+        return f'nq-{self.dtype}-sample.jsonl'
+
+    def get_fold_chunks(self, opt) -> List[int]:
+        return list(range(1))
+
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        return (200, 200)
+
+
 class InMetric(AverageMetric):
     @staticmethod
     def compute(guess: str, answers: List[str]) -> Optional["InMetric"]:
@@ -271,7 +315,7 @@ class InMetric(AverageMetric):
 class NaturalQuestionsOpenTeacher(DialogTeacher):
     def __init__(self, opt: Opt, shared=None):
         self.fold = opt["datatype"].split(":")[0]
-        self.dpath = os.path.join(opt["datapath"], "NaturalQuestions_retrieval")
+        self.dpath = os.path.join(opt["datapath"], "NaturalQuestionsOpen")
         self.opt = opt
         self.opt['datafile'] = os.path.join(self.dpath, self.fold + ".csv")
         if shared is None:
@@ -283,7 +327,7 @@ class NaturalQuestionsOpenTeacher(DialogTeacher):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         super().add_cmdline_args(parser, partial_opt)
-        group = parser.add_argument_group("Natural Questions retrieval")
+        group = parser.add_argument_group("Natural Questions Open")
         group.add_argument(
             "--normalize-everything",
             default=False,
