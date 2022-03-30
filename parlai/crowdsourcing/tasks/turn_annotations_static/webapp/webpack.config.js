@@ -12,6 +12,7 @@ module.exports = {
   output: {
     path: __dirname,
     filename: "build/bundle.js",
+    hashFunction: "sha256",
   },
   node: {
     net: "empty",

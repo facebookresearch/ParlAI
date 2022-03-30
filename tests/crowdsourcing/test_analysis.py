@@ -55,7 +55,7 @@ class MockMephistoBrowser:
         self._data = dict()
         db = MockMephistoDB()
         for idx in range(LEN_MOCK_DATA):
-            unit = MockUnit(db, "mock_db", defaultdict(int))
+            unit = MockUnit.get(db, "mock_db", defaultdict(int))
             self._data[unit] = {
                 'unit_id': idx * 10,
                 'worker_id': idx,
