@@ -18,10 +18,9 @@ import unittest
 try:
     import transformers  # noqa
     from parlai.agents.hugging_face.hugging_face import HF_VERSION
-    from parlai.agents.hugging_face.t5 import TASK_CONFIGS
-    from parlai.agents.hugging_face.t5 import set_device
+    from parlai.agents.hugging_face.t5 import TASK_CONFIGS, check_hf_version, set_device
 
-    HF_AVAILABLE = HF_VERSION >= 4.3
+    HF_AVAILABLE = check_hf_version(HF_VERSION)
 except ImportError:
     TASK_CONFIGS = None
     set_device = unittest.skip
@@ -34,6 +33,8 @@ from parlai.core.torch_agent import Batch
 import parlai.utils.testing as testing_utils
 from parlai.utils.torch import padded_tensor
 from parlai.utils.testing import tempdir
+
+from tests.test_distributed import _AbstractTest
 
 
 device = 'cpu' if not torch.cuda.is_available() else 'cuda:0'
@@ -261,6 +262,32 @@ class TestT5Model(unittest.TestCase):
                     t5_model_arch='t5-small',
                 )
             )
+
+
+@testing_utils.skipUnlessGPU
+class TestT5Distributed(_AbstractTest):
+    base_config = dict(
+        task='integration_tests:overfit',
+        model='hugging_face/t5',
+        optimizer='adam',
+        batchsize=1,
+        num_epochs=50,
+        short_final_eval=True,
+        validation_max_exs=12,
+        t5_model_arch='t5-small',
+        validation_metric='ppl',
+        skip_generation=True,
+        learningrate=1e-3,
+        validation_every_n_epochs=25,
+        verbose=True,
+        save_after_valid=False,
+    )
+
+    def test_t5_distributed(self):
+        valid, test = self._distributed_train_model()
+
+        self.assertLessEqual(valid['ppl'], 1.60)
+        self.assertLessEqual(test['ppl'], 1.60)
 
 
 if __name__ == '__main__':

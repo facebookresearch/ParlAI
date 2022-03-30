@@ -88,7 +88,7 @@ class DownloadableFile:
                     f"Checksum for {self.file_name} from \n{self.url}\n"
                     f"does not match the expected checksum:\n"
                     f"{sha256_hash.hexdigest()} (received) != {self.hashcode} (expected)\n"
-                    f"\nPlease try again. You may need to manually delete {self.filename}."
+                    f"\nPlease try again. You may need to manually delete {self.file_name}."
                 )
             else:
                 logging.debug("Checksum Successful")
@@ -407,7 +407,7 @@ def download_from_google_drive(gd_id, destination):
 
     with get_http_session() as session:
         response = session.get(URL, params={'id': gd_id}, stream=True)
-        token = _get_confirm_token(response)
+        token = _get_confirm_token(response) or 't'
 
         if token:
             response.close()

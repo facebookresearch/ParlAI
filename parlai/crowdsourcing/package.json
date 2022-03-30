@@ -1,0 +1,28 @@
+{
+  "name": "mturk",
+  "scripts": {
+    "lint": "eslint . --ext jsx,js"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^8.11.0",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-ignore-generated-and-nolint": "^1.0.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
+    "husky": "^1.3.1",
+    "lint-staged": "^8.1.4",
+    "prettier": "^1.16.4"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,json,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}

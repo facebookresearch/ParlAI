@@ -11,36 +11,43 @@ executors:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
-  standard_cpu37:
+  small_cpu38:
     docker:
-      - image: circleci/python:3.7.5-buster-node
-    environment:
-      PYTHONUNBUFFERED: 1
-    resource_class: xlarge
-
-  small_cpu37:
-    docker:
-      - image: circleci/python:3.7.5-buster-node
+      - image: circleci/python:3.8.0-buster-node
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
-  osx_cpu37:
+  osx_cpu38:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
-      xcode: "11.3.1"
+      xcode: "12.5.1"
     environment:
-      PYTHON: 3.7.1
+      PYTHON: 3.8.0
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
+    resource_class: macos.x86.medium.gen2
 
-  gpu:
+  gpu_small:
     environment:
-      CUDA_VERSION: "10.2"
+      CUDA_VERSION: "11.2"
       PYTHONUNBUFFERED: 1
+      CUDA_HOME: /usr/local/cuda-11.2
     machine:
-      image: ubuntu-1604:201903-01
-    resource_class: gpu.medium # tesla m60
+       image: ubuntu-2004-cuda-11.2:202103-01
+    resource_class: gpu.nvidia.small.multi
+
+  gpu_medium:
+    environment:
+      CUDA_VERSION: "11.2"
+      PYTHONUNBUFFERED: 1
+      CUDA_HOME: /usr/local/cuda-11.2
+    machine:
+       image: ubuntu-2004-cuda-11.2:202103-01
+    resource_class: gpu.nvidia.medium.multi
+
+
+
 
 # -------------------------------------------------------------------------------------
 # reusable commands
@@ -92,34 +99,19 @@ commands:
             python setup.py develop
             python -c "import nltk; nltk.download('punkt')"
 
-  installtorchgpu17:
+  installtorchgpu:
     description: Install torch GPU and dependencies
     steps:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.7.1+cu101 torchvision==0.8.2+cu101 -f https://download.pytorch.org/whl/torch_stable.html
-            python -m pip install --progress-bar off 'fairscale~=0.3.0'
-            python -m pip install --progress-bar off 'torchtext==0.7.0'
+            python -m pip install --progress-bar off torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+            python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
-            python -c 'import torch; print("Torch version:", torch.__version__)'
-            python -m torch.utils.collect_env
-
-  installtorchgpu18:
-    description: Install torch GPU and dependencies
-    steps:
-      - run:
-          name: Install torch GPU and dependencies
-          command: |
-            python -m pip install --progress-bar off 'torch==1.8.1' 'torchvision~=0.9.0' 'torchtext~=0.9.0'
-            python -m pip install --progress-bar off 'fairscale~=0.3.0'
-            python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers==4.3.3'
-            python -m pip install --progress-bar off 'fairseq==0.10.0'
-            python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
             python -c 'import torch; print("Torch version:", torch.__version__)'
@@ -131,7 +123,8 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.7.1
+            python -m pip install --progress-bar off 'transformers==4.3.3'
+            python -m pip install --progress-bar off 'torch==1.10.2'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -141,7 +134,8 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'torch==1.10.2+cpu' 'torchvision==0.11.3+cpu' 'torchaudio==0.10.2+cpu' -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'transformers==4.3.3'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -153,10 +147,10 @@ commands:
           command: |
             if (! python -c 'import maskrcnn_benchmark')
             then
-                python -m pip install opencv-python==4.2.0.34
+                python -m pip install yacs 'opencv-python~=4.3.0.00'
                 git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
                 cd maskbench; git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable
-                python setup.py develop; cd -
+                python setup.py install; cd -
             fi
 
   installcrowdsourcingdeps:
@@ -167,7 +161,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.4.0 -b stable
+              cd Mephisto; git checkout v1.0.0 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -180,13 +174,9 @@ commands:
           name: Setup CUDA
           working_directory: ~/
           command: |
-            # download and install nvidia drivers, cuda, etc
-            wget --quiet --no-clobber -P ~/nvidia-downloads 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-430.40.run'
-            time sudo /bin/bash ~/nvidia-downloads/NVIDIA-Linux-x86_64-430.40.run --no-drm -q --ui=none
-            echo "Done installing NVIDIA drivers."
             pyenv versions
             nvidia-smi
-            pyenv global 3.7.0
+            pyenv global 3.9.2
 
   findtests:
     description: Find tests to run
@@ -198,8 +188,9 @@ commands:
           working_directory: ~/ParlAI
           name: Find tests to run
           command: |
+            set +o pipefail
             mkdir -p ~/ParlAI/data/models
-            python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" > teststorun.txt
+            python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" | grep -v ':'> teststorun.txt
             cat teststorun.txt
 
   runtests:
@@ -231,26 +222,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220328-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20210722-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220328-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220328-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20210722-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220328-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -267,12 +258,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220328-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
-      - installtorchgpu17
+      - installtorchgpu
       - save_cache:
-          key: deps-20210722-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220328-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -312,8 +303,8 @@ commands:
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  cleaninstall_37:
-    executor: standard_cpu37
+  cleaninstall_38:
+    executor: standard_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -329,23 +320,12 @@ jobs:
             parlai display_data -t integration_tests
 
   unittests_osx:
-    executor: osx_cpu37
+    executor: osx_cpu38
     working_directory: ~/ParlAI
     parallelism: 2
     steps:
       - runtests:
           cachename: osx
-          marker: unit
-
-  unittests_37:
-    executor: standard_cpu37
-    working_directory: ~/ParlAI
-    parallelism: 8
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchcpu
-          cachename: ut37
           marker: unit
 
   unittests_38:
@@ -360,38 +340,26 @@ jobs:
           marker: unit
 
   unittests_gpu18:
-    executor: gpu
+    executor: gpu_small
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
       - runtests:
           more_installs:
-            - installtorchgpu18
+            - installtorchgpu
             - installdetectrondeps
           install_cuda: true
           cachename: gpu18
           marker: unit
 
-  unittests_gpu17:
-    executor: gpu
-    working_directory: ~/ParlAI
-    parallelism: 8
-    steps:
-      - runtests:
-          more_installs:
-            - installtorchgpu17
-          install_cuda: true
-          cachename: gpu17
-          marker: unit
-
   long_gpu_tests:
-    executor: gpu
+    executor: gpu_medium
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
       - runtests:
           more_installs:
-            - installtorchgpu17
+            - installtorchgpu
             - installdetectrondeps
           install_cuda: true
           cachename: nightly
@@ -399,7 +367,7 @@ jobs:
           pytest_flags: -v -s
 
   crowdsourcing_tests:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -407,20 +375,23 @@ jobs:
           cachename: crowdsourcing
           marker: crowdsourcing
           more_installs:
-            - installtorchgpu17
+            - installtorchgpu
             - installcrowdsourcingdeps
 
   teacher_tests:
-    executor: standard_cpu37
+    executor: standard_cpu38
     working_directory: ~/ParlAI
     parallelism: 16
     steps:
       - runtests:
+          more_installs:
+            - installtorchcpu
           cachename: teacher
           marker: teacher
+          pytest_flags: -v -s
 
   build_website:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -428,14 +399,14 @@ jobs:
           deploy: false
 
   deploy_website:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     steps:
       - website:
           deploy: true
 
   test_website:
-    executor: small_cpu37
+    executor: small_cpu38
     working_directory: ~/ParlAI
     steps:
       - run:
@@ -458,29 +429,23 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_37
-      - unittests_gpu17:
-          requires:
-            - unittests_37
+      - cleaninstall_38
       - unittests_gpu18:
           requires:
-            - unittests_37
-      - unittests_38:
-          requires:
-            - unittests_37
-      - unittests_37
+            - unittests_38
       - unittests_osx:
           requires:
-            - unittests_37
+            - unittests_38
+      - unittests_38
       - long_gpu_tests:
           requires:
-            - unittests_37
+            - unittests_38
       - crowdsourcing_tests:
           requires:
-            - unittests_37
+            - unittests_38
       - teacher_tests:
           requires:
-            - unittests_37
+            - unittests_38
       - build_website:
           filters:
             branches:

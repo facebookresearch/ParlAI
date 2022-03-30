@@ -238,6 +238,7 @@ def eval_model(opt):
     for task in tasks:
         task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
+        logging.report(f"Report for {task}:\n{nice_report(task_report)}")
 
     report = aggregate_named_reports(
         dict(zip(tasks, reports)), micro_average=opt.get('aggregate_micro', False)

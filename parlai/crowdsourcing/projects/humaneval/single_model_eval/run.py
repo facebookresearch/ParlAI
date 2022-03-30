@@ -12,26 +12,21 @@ import hydra
 from mephisto.operations.hydra_config import register_script_config
 from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
-    STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
-)
-from parlai.crowdsourcing.tasks.turn_annotations_static.util import run_static_task
+from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import BLUEPRINT_TYPE
+from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
+import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
 
-
-# TODO: merge this with run.py once Hydra supports recursive defaults
-#  (https://github.com/facebookresearch/hydra/issues/171)
-
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+_ = BLUEPRINT_TYPE
 
-defaults = [
-    {'mephisto/blueprint': STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example_in_flight_qa"},
-]
+defaults = ['_self_', {"conf": "example"}]
 
 
 @dataclass
@@ -51,7 +46,7 @@ register_script_config(name='scriptconfig', module=ScriptConfig)
 
 @hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
-    run_static_task(cfg=cfg, task_directory=TASK_DIRECTORY)
+    run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=world_module)
 
 
 if __name__ == "__main__":

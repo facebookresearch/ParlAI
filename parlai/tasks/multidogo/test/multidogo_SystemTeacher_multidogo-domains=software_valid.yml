@@ -1,0 +1,49 @@
+acts:
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = software'
+    id: Multidogo_SystemTeacher
+    slots:
+      api_name: software
+    text: 'USER: __SILENCE__'
+    type: 'APICALL: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Hello! Good morning, You''re connected to finance department of ATA.
+      How may I help you today?'
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = software'
+    id: Multidogo_SystemTeacher
+    slots:
+      api_name: software
+    text: 'USER: Good morning.
+
+      I like to report my travel expenses.'
+    type: 'APICALL: '
+- - domain: software
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Definitely! I''ll make a record of your expenses, May I know your name
+      and password? '
+    id: Multidogo_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 67
+num_examples: 1203

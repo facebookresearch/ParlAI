@@ -1,0 +1,57 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: __SILENCE__'
+    id: Taskmaster1_UserSimulatorTeacher
+    text: 'GOAL: '
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Hi. I want to ride Uber in car.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: hey there, how can i help you?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Mohit Tetar.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: sure, where are you heading to?
+
+      where is your destination?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Yeah. Got it.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: and where would you like to be picked up?
+
+      i''m sorry, i didn''t understand you.
+
+      where would you like to be picked up?
+
+      ok, so you''d like to go from a restaurant to a movie theater, is that correct?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Yep, today at 9:00 p.m.'
+    id: Taskmaster1_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: How many people will you need a ride for?
+
+      and what type of ride would you like?
+
+      an uber ride for two people, shared ride, from a restaurant to a movie theater
+      will cost $7.94 and take about 8 minutes.
+
+      would you like to book this right now?'
+    type: 'USER: '
+num_episodes: 1326
+num_examples: 15936

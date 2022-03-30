@@ -1,0 +1,47 @@
+acts:
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'USER: i''m looking to move house so i''m after some options'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    text: 'GOAL: api_name = FindHomeByArea ; area = Sunnyvale ; intent = buy ; number_of_baths
+      = 2 ; number_of_beds = 3 | api_name = ScheduleVisit ; property_name = Apricot
+      Pit Apartments ; visit_date = 2019-03-06 | api_name = ShareLocation ; contact_name
+      = Sophia ; location = 400 East Remington Drive | api_name = GetRide ; destination
+      = 400 East Remington Drive ; number_of_seats = 1 ; ride_type = Regular'
+    type: 'USER: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'USER: Umm three bedrooms would be good and i want to buy'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Are you looking to rent or buy? How many room will you need?'
+    type: 'USER: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'USER: can you look for me in sunnyvale'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: What are are you interested in?'
+    type: 'USER: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'USER: can you find places with two bathrooms'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: How many bathrooms do you need'
+    type: 'USER: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'USER: Does this place have a garage?'
+    id: GoogleSgdOutDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: I have 10 properties that might suit, including Apricot pit apartments
+      400 east remington drive. The listing price is $3,650,000'
+    type: 'USER: '
+num_episodes: 768
+num_examples: 9778

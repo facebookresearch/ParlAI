@@ -6,7 +6,7 @@
 
 import hashlib
 import os
-from typing import Iterable, List, Tuple, Union
+from typing import Iterable, List, Optional, Tuple, Union
 
 import pandas as pd
 from pytest_regressions.data_regression import DataRegressionFixture
@@ -76,16 +76,11 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
         """
         Return overrides for all subclassed Fast ACUTE test code.
         """
-        # TODO: clean this up when Hydra has support for recursive defaults
+
         return [
-            '+mephisto.blueprint.acute_eval_type=engaging',
             'mephisto.blueprint.block_on_onboarding_fail=False',
-            '+mephisto.blueprint.matchups_per_pair=60',
-            '+mephisto.blueprint.num_self_chats=5',
-            f'+mephisto.blueprint.onboarding_path={self.TASK_DIRECTORY}/task_config/onboarding.json',
-            f'+mephisto.blueprint.root_dir={root_dir}',
-            '+mephisto.blueprint.sufficient_matchups_multiplier=2',
-            '+mephisto.blueprint.task=blended_skill_talk',
+            f'mephisto.blueprint.onboarding_path={self.TASK_DIRECTORY}/task_config/onboarding.json',
+            f'mephisto.blueprint.root_dir={root_dir}',
             'mephisto.task.task_name=acute_eval_test',
         ]
 
@@ -119,6 +114,7 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
             results_folder=outputs['results_folder'],
             file_suffix='full.csv',
             dataframe_regression=dataframe_regression,
+            drop_columns=['task_start', 'time_taken'],
         )
 
     def test_grid_csv(
@@ -174,11 +170,21 @@ class AbstractFastAcuteTest(AbstractOneTurnCrowdsourcingTest):
         results_folder: str,
         file_suffix: str,
         dataframe_regression: DataFrameRegressionFixture,
+        drop_columns: Optional[list] = None,
     ):
+        """
+        Check a dataframe for correctness.
+
+        Check the dataframe stored at the file with suffix file_suffix in the folder
+        results_folder. Pass in drop_column to indicate columns that shouldn't be
+        checked because they will vary across runs (for instance, timestamp columns).
+        """
+        if drop_columns is None:
+            drop_columns = []
         file_path = self._get_matching_file_path(
             results_folder=results_folder, file_suffix=file_suffix
         )
-        df = pd.read_csv(file_path)
+        df = pd.read_csv(file_path).drop(columns=drop_columns)
         dataframe_regression.check(data_frame=df)
 
     def _check_file_contents(

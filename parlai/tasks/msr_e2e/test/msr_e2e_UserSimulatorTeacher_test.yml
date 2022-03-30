@@ -1,0 +1,50 @@
+acts:
+- - domain: taxi
+    episode_done: false
+    eval_labels:
+    - 'USER: Hello. Can you please find a taxi for 2 at 9 am tomorrow from 525 Portland
+      Ave Minneapolis, MN 55415 to .2090 Woodwinds Dr Woodbury, MN 55125. Thanks'
+    id: MsrE2E_UserSimulatorTeacher
+    text: 'GOAL: api_name = taxi ; date = tomorrow ; dropoff_location = 2090 Woodwinds
+      Dr Woodbury ; greeting = Hello ; numberofpeople = 2 ; pickup_location = 525
+      Portland Ave Minneapolis ; pickup_time = 9am ; state = MN'
+    type: 'USER: '
+- - domain: taxi
+    episode_done: false
+    eval_labels:
+    - 'USER: Yes please'
+    id: MsrE2E_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: That''d be $20-27 with uberX. Would you like to proceed?'
+    type: 'USER: '
+- - domain: taxi
+    episode_done: true
+    eval_labels:
+    - 'USER: [DONE]'
+    id: MsrE2E_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Your UberX ride was confirmed, have a safe trip.'
+    type: 'USER: '
+- - domain: restaurant
+    episode_done: false
+    eval_labels:
+    - 'USER: I need to book a table of four at the elephant bar tonight in bakersfield
+      california'
+    id: MsrE2E_UserSimulatorTeacher
+    text: 'GOAL: api_name = restaurant ; city = bakersfield ; date = tonight ; numberofpeople
+      = 4 ; restaurantname = elephant bar ; state = california | api_name = restaurant
+      ; city = bakersfield ; state = california | api_name = restaurant ; numberofpeople
+      = 2 ; starttime = 6:30pm | api_name = restaurant ; personfullname = Donald Drumph'
+    type: 'USER: '
+- - domain: restaurant
+    episode_done: false
+    eval_labels:
+    - 'USER: are there any good places in bakersfield california?'
+    id: MsrE2E_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: That restaurant is not in the network, sorry.
+
+      Can I help you with something else?'
+    type: 'USER: '
+num_episodes: 1011
+num_examples: 4847

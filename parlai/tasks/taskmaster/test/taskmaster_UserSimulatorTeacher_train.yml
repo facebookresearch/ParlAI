@@ -1,0 +1,46 @@
+acts:
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_UserSimulatorTeacher
+    labels:
+    - 'USER: __SILENCE__'
+    text: 'GOAL: '
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_UserSimulatorTeacher
+    labels:
+    - 'USER: Hi, I need an Uber pickup from the Wichita Dwight D. Eisenhower National
+      Airport to the Wichita State University campus.'
+    slots: {}
+    text: 'SYSTEM: hi, how can i assist you?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_UserSimulatorTeacher
+    labels:
+    - 'USER: I just need if it if it''s I have four people but if it''s possible to
+      get a shared ride, I I''d like that.'
+    slots: {}
+    text: 'SYSTEM: what kind of ride would you like?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_UserSimulatorTeacher
+    labels:
+    - 'USER: Okay, then we''re going to have to go with that.'
+    slots: {}
+    text: 'SYSTEM: for a party of 4, you can only request uberx or uberxl.'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster1_UserSimulatorTeacher
+    labels:
+    - 'USER: Tonight at 9:00 p.m. We''ll be landing at about 8:30, so 9:00 p.m. should
+      be good.'
+    slots: {}
+    text: 'SYSTEM: your fare estimate is $22.69. what time do you want to be picked
+      up?'
+    type: 'USER: '
+num_episodes: 10555
+num_examples: 125733

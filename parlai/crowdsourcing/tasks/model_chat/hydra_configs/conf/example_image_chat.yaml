@@ -1,4 +1,8 @@
 #@package _global_
+defaults:
+  - /mephisto/blueprint: model_image_chat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
 mephisto:
   blueprint:
     annotations_config_path: ""
@@ -14,13 +18,6 @@ mephisto:
     assignment_duration_in_seconds: 600
     max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
     maximum_units_per_worker: 3
-    task_description: |
-      <b><h4>Task Description</h4></b>
-      <br>
-      Dummy Task Description.
-
-      Lorem ipsum.
-      <br><br>
     task_name: model_image_chat
     task_reward: 3
     task_tags: "chat,conversation,dialog,partner,image"

@@ -24,6 +24,11 @@ from mephisto.tools.scripts import load_db_and_process_config
 
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfigMixin
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
+
 
 @dataclass
 class ScriptConfig(MTurkRunScriptConfigMixin, TestScriptConfig):
@@ -41,9 +46,10 @@ class ScriptConfig(MTurkRunScriptConfigMixin, TestScriptConfig):
 
 register_script_config(name="scriptconfig", module=ScriptConfig)
 relative_task_directory = os.path.relpath(TASK_DIRECTORY, os.path.dirname(__file__))
+config_path = os.path.join(relative_task_directory, 'hydra_configs')
 
 
-@hydra.main(config_path=relative_task_directory, config_name="scriptconfig")
+@hydra.main(config_path=config_path, config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
     db, cfg = load_db_and_process_config(cfg)
 

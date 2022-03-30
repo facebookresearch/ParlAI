@@ -43,9 +43,13 @@ from parlai.scripts.self_chat import self_chat, setup_args as self_chat_setup_ar
 from parlai.utils.strings import normalize_reply
 from parlai.utils.testing import capture_output
 
+_ = FAST_ACUTE_BLUEPRINT_TYPE
+
 ########################
 # ACUTE EVAL CONSTANTS #
 ########################
+
+FAST_ACUTE_CONFIG_NAME = "example_fast_acute"
 
 ACUTE_EVAL_TYPES = {
     'human': {
@@ -58,6 +62,11 @@ ACUTE_EVAL_TYPES = {
         's1_choice': 'I would prefer to talk to <Speaker 1>',
         's2_choice': 'I would prefer to talk to <Speaker 2>',
     },
+    'interesting': {
+        'question': 'If you had to say one of these speakers is interesting and one is boring, who would you say is more interesting?',
+        's1_choice': '<Speaker 1> is more interesting',
+        's2_choice': '<Speaker 2> is more interesting',
+    },
     'roleplay': {
         'question': 'How well does the speaker play their role in the conversation?',
         's1_choice': '<Speaker 1> plays their role better.',
@@ -67,6 +76,11 @@ ACUTE_EVAL_TYPES = {
         "question": "Who talks about the image better?",
         "s1_choice": "<Speaker 1> talks about the image better",
         "s2_choice": "<Speaker 2> talks about the image better",
+    },
+    'knowledge': {
+        'question': 'If you had to say that one speaker is more knowledgeable and one is more ignorant, who is more knowledgeable?',
+        's1_choice': '<Speaker 1> is more knowledgeable',
+        's2_choice': '<Speaker 2> is more knowledgeable',
     },
 }
 
@@ -547,14 +561,7 @@ class FastAcuteExecutor(object):
         self._print_progress(f'ACUTE results saved to {self.results_path}')
 
 
-defaults = [
-    '_self_',
-    {"mephisto/blueprint": FAST_ACUTE_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    'conf/base_fast_acute',
-    {"conf": "example_fast_acute"},
-]
+defaults = ['_self_', {"conf": FAST_ACUTE_CONFIG_NAME}]
 
 
 @dataclass

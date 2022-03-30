@@ -5,7 +5,7 @@ acts:
     episode_done: false
     eval_labels:
     - Are you fine now?
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - It's amazing how many feelings and memories mementos like that can bring back.
     - Good for you! There is nothing wrong or uncool about short hair.
@@ -54,7 +54,7 @@ acts:
     episode_done: true
     eval_labels:
     - Cool :) Is your car damaged a lot?
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - I've actually never gone there. What's it like?
     - College is when the tear will start to flow. I love children.
@@ -92,7 +92,7 @@ acts:
     episode_done: false
     eval_labels:
     - That's funny, hope he didn't give you a heart attack.
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - o no what did you do?
     - I definitely recommend getting some mace and a pocket knife. Stay safe out there!
@@ -146,7 +146,7 @@ acts:
     episode_done: true
     eval_labels:
     - I would probably scream also.
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - 'That really does make it special. I''m glad you have that. '
     - It must've have been. Glad they are okay now.
@@ -184,7 +184,7 @@ acts:
     episode_done: false
     eval_labels:
     - 'Wow! That sounds amazing. Where are you going? '
-    id: blended_skill_talk:e_d_persona_topicifier
+    id: parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher
     label_candidates:
     - What kind of school was she at before?
     - Yes, I hate those kind of people. They have nothing to do expect lying about

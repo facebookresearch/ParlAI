@@ -32,6 +32,7 @@ IMAGE_MODE_TO_DIM = {
 }
 
 
+@unittest.skip
 @testing_utils.skipUnlessVision
 class TestImageLoader(unittest.TestCase):
     """

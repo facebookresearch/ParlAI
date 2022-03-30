@@ -32,7 +32,10 @@ except ModuleNotFoundError:
 ######################################################################
 
 
-DUMMY_OPT = {'task_name': 'mock_task_name', 'output_folder': '/dummy/tmp'}
+parser_ = AbstractResultsCompiler.setup_args()
+opt_string = '--task-name mock_task_name --output-folder /dummy/tmp'
+args_ = parser_.parse_args(opt_string.split())
+DUMMY_OPT = vars(args_)
 LEN_MOCK_DATA = 5
 
 
@@ -52,7 +55,7 @@ class MockMephistoBrowser:
         self._data = dict()
         db = MockMephistoDB()
         for idx in range(LEN_MOCK_DATA):
-            unit = MockUnit(db, "mock_db", defaultdict(int))
+            unit = MockUnit.get(db, "mock_db", defaultdict(int))
             self._data[unit] = {
                 'unit_id': idx * 10,
                 'worker_id': idx,

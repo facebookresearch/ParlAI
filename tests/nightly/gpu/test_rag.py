@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import copy
+import os
 import torch
 import torch.cuda
 from typing import Optional
@@ -12,10 +13,13 @@ import unittest
 from parlai.core.build_data import modelzoo_path
 from parlai.core.agents import create_agent
 from parlai.core.params import ParlaiParser, Opt
+from parlai.scripts.self_chat import SelfChat
 import parlai.utils.testing as testing_utils
 
 try:
     from parlai.agents.rag.dpr import DprQueryEncoder
+    from parlai.agents.rag.retrievers import RetrievedChunkRanker, Document
+    from parlai.agents.fid.fid import concat_enc_outs
 except ImportError:
     pass
 
@@ -107,7 +111,7 @@ RAG_MODEL_TYPE_OPTIONS = {
 }
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagDpr(unittest.TestCase):
     """
     Test all RAG DPR Model Types with Base Generators.
@@ -165,7 +169,7 @@ class TestRagDpr(unittest.TestCase):
         self._test_rag_type('turn:thorough=True', 'transformer/generator', no_cuda=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestFidDpr(unittest.TestCase):
     """
     Test FiD DPR Model.
@@ -189,7 +193,7 @@ class TestFidDpr(unittest.TestCase):
         self._test_fid('transformer/generator')
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagDprPoly(unittest.TestCase):
     """
     Test RAG DPR Poly model.
@@ -215,7 +219,7 @@ class TestRagDprPoly(unittest.TestCase):
         self._test_rag_type('turn', no_cuda=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagTfidf(unittest.TestCase):
     """
     Test RAG TFIDF model.
@@ -228,7 +232,7 @@ class TestRagTfidf(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestFidRag(unittest.TestCase):
     """
     Test Fid Rag.
@@ -254,7 +258,7 @@ class TestFidRag(unittest.TestCase):
         self._test_fid('transformer/generator')
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagPolyfaiss(unittest.TestCase):
     """
     Test Rag PolyFAISS.
@@ -269,7 +273,7 @@ class TestRagPolyfaiss(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRegret(unittest.TestCase):
     """
     Test ReGReT.
@@ -293,7 +297,7 @@ class TestRegret(unittest.TestCase):
         self._test_regret()
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestOtherOptions(unittest.TestCase):
     """
     Test other RAG Options.
@@ -312,7 +316,7 @@ class TestOtherOptions(unittest.TestCase):
         testing_utils.eval_model(opt, skip_test=True)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestQueryModels(unittest.TestCase):
     """
     Test other RAG Options.
@@ -365,7 +369,7 @@ def _test_zoo_file(mf: str, fid: bool = False, fid_rag: bool = False):
     torch.cuda.empty_cache()
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestRagZooModels(unittest.TestCase):
     """
     Test ZOO Models.
@@ -387,7 +391,7 @@ class TestRagZooModels(unittest.TestCase):
         _test_zoo_file(RAG_TURN_DO_ZOO_MODEL)
 
 
-@testing_utils.skipUnlessGPU
+@testing_utils.skipIfCircleCI
 class TestFidZooModels(unittest.TestCase):
     """
     Test FiD zoo models.
@@ -403,6 +407,7 @@ class TestFidZooModels(unittest.TestCase):
         _test_zoo_file(FID_RAG_DPR_POLY_ZOO_MODEL, True, True)
 
 
+@testing_utils.skipIfCircleCI
 class TestLoadDPRModel(unittest.TestCase):
     """
     Test loading different DPR models for RAG.
@@ -499,6 +504,211 @@ class TestLoadDPRModel(unittest.TestCase):
             default_query_encoder.embeddings.weight.float().cpu(),
             rag.model.retriever.query_encoder.embeddings.weight.float().cpu(),
         )
+
+
+@testing_utils.skipIfCircleCI
+class TestRagSelfChat(unittest.TestCase):
+    """
+    Test Self-Chat with RAG-based model.
+    """
+
+    def test_self_chat(self):
+        with testing_utils.tempdir() as td:
+            gen_model = 'bart'
+            model_type = 'token'
+            opt = copy.deepcopy(common_opt)
+            seed_utt_file = os.path.join(td, 'seed.txt')
+            opt.update(
+                {
+                    'generation_model': gen_model,
+                    'rag_model_type': model_type,
+                    'no_cuda': True,
+                    **GENERATION_OPTS[gen_model],
+                    'task': 'empathetic_dialogues',
+                    'seed_messages_from_file': seed_utt_file,
+                }
+            )
+            opt.pop('num_examples', '')
+            with open(seed_utt_file, 'w') as f:
+                f.writelines(["Hi, my name is Bob", "Hi, my name is Alice"])
+            SelfChat.main(**opt)
+
+
+@testing_utils.skipIfCircleCI
+class TestWOIChunking(unittest.TestCase):
+    """
+    Test that the woi_chunk_retrieved_docs Chunker works as intended.
+    """
+
+    DOC_TITLE = 'I AM FAKE'
+    DOC_CONTENT = ['hello there old friend ' * 100]
+
+    def test_chunker(self):
+        n_chunks = 1
+        chunk_sz = 500
+        chunker = RetrievedChunkRanker(n_chunks, chunk_sz)
+        chunks = chunker.get_top_chunks(
+            query='', doc_title=self.DOC_TITLE, doc_chunks=self.DOC_CONTENT, doc_url=''
+        )
+        assert len(chunks) == 1 and len(chunks[0]) == 1
+        assert (
+            chunks[0][0]
+            == self.DOC_CONTENT[0][: self.DOC_CONTENT[0].find(' ', chunk_sz)]
+        )
+
+
+class TestLeftPadding(unittest.TestCase):
+    """
+    Test whether left-padding functionality works.
+    """
+
+    bsz = 4
+    seqlen = 32
+    n_docs = 5
+    esz = 16
+    batch_lens = [4, 8, 16, 32]
+    pad_idx = 0
+
+    def _create_input_and_mask(self, right_padded=True):
+        enc_input = torch.LongTensor(self.bsz, self.seqlen).fill_(0)
+        mask = torch.BoolTensor(self.bsz, self.seqlen).fill_(False)
+        for i, input_len in enumerate(self.batch_lens):
+            if right_padded:
+                enc_input[i, :input_len] = torch.arange(1, input_len + 1)
+                mask[i, :input_len] = True
+            else:
+                enc_input[i, -input_len:] = torch.arange(1, input_len + 1)
+                mask[i, -input_len:] = True
+        return enc_input, mask
+
+    def test_concat_enc_outs(self):
+        enc_output = torch.rand(self.bsz * self.n_docs, self.seqlen, self.esz)
+        enc_input, mask = self._create_input_and_mask()
+        # Right padded
+        mask = mask.repeat_interleave(self.n_docs, dim=0)
+        _, new_mask = concat_enc_outs(
+            enc_input, enc_output, mask, self.esz, self.pad_idx
+        )
+        ########################################################################
+        # Assertion: new mask has `True` elements in first (n_docs * seqlen_i) #
+        # tokens in concatenated output                                        #
+        ########################################################################
+        assert all(
+            new_mask[i, : self.batch_lens[i] * self.n_docs].sum()
+            == self.n_docs * self.batch_lens[i]
+            for i in range(self.bsz)
+        )
+        # Left padded
+        enc_input, mask = self._create_input_and_mask(right_padded=False)
+        mask = mask.repeat_interleave(self.n_docs, dim=0)
+        _, new_mask = concat_enc_outs(
+            enc_input, enc_output, mask, self.esz, self.pad_idx, right_padded=False
+        )
+        #######################################################################
+        # Assertion: new mask has `True` elements in last (n_docs * seqlen_i) #
+        # tokens in concatenated output                                       #
+        #######################################################################
+        assert all(
+            new_mask[i, -(self.batch_lens[i] * self.n_docs) :].sum()
+            == self.n_docs * self.batch_lens[i]
+            for i in range(self.bsz)
+        )
+
+    def test_concat_docs_and_input(self):
+        rag = create_agent(Opt({**test_opt, 'n_docs': self.n_docs}))
+        enc_input, _ = self._create_input_and_mask()
+        docs = [
+            [Document("title", "I am a document!", i) for i in range(self.n_docs)]
+            for _ in range(self.bsz)
+        ]
+        doc_len = len(rag.dict.txt2vec(docs[0][0].get_passage_str()))
+        # right padded
+        expanded_output = rag.model.concat_docs_and_input(
+            enc_input, torch.LongTensor(self.batch_lens), docs, self.n_docs
+        )
+        ############################################################
+        # Assertion: expanded output has non-pad elements in first #
+        # (doc_len + seq_len_i) tokens                             #
+        ############################################################
+        assert all(
+            expanded_output[i, : doc_len + self.batch_lens[i // self.n_docs]]
+            .eq(0)
+            .sum()
+            == 0
+            for i in range(self.n_docs * self.bsz)
+        )
+        #######################################################
+        # Assertion: expanded output has pad elements in last #
+        # total_len - (doc_len + seq_len_i) tokens            #
+        #######################################################
+        assert all(
+            expanded_output[i, doc_len + self.batch_lens[i // self.n_docs] :]
+            .eq(0)
+            .sum()
+            == expanded_output.size(1) - (doc_len + self.batch_lens[i // self.n_docs])
+            for i in range(self.n_docs * self.bsz)
+        )
+
+        # Left padded
+        enc_input, _ = self._create_input_and_mask(right_padded=False)
+        expanded_output = rag.model.concat_docs_and_input(
+            enc_input,
+            torch.LongTensor(self.batch_lens),
+            docs,
+            self.n_docs,
+            right_padded=False,
+        )
+        ###########################################################
+        # Assertion: expanded output has non-pad elements in last #
+        # (doc_len + seq_len_i) tokens                            #
+        ###########################################################
+        assert all(
+            expanded_output[i, -(doc_len + self.batch_lens[i // self.n_docs]) :]
+            .eq(0)
+            .sum()
+            == 0
+            for i in range(self.n_docs * self.bsz)
+        )
+        ########################################################
+        # Assertion: expanded output has pad elements in first #
+        # total_len - (doc_len + seq_len_i) tokens             #
+        ########################################################
+        assert all(
+            expanded_output[i, : -(doc_len + self.batch_lens[i // self.n_docs])]
+            .eq(0)
+            .sum()
+            == expanded_output.size(1) - (doc_len + self.batch_lens[i // self.n_docs])
+            for i in range(self.n_docs * self.bsz)
+        )
+
+
+class TestExtraPositionsDocConcat(unittest.TestCase):
+    """
+    Ensure docs and input are concatenated appropriately
+    When using extra position embs.
+    """
+
+    bsz = 1
+    seqlen = 1024
+    n_docs = 3
+
+    def test_concat_docs_and_input(self):
+        for n_extra in [128, 2048]:
+            rag = create_agent(
+                Opt({**test_opt, 'n_docs': self.n_docs, 'n_extra_positions': n_extra})
+            )
+            enc_input = torch.LongTensor(self.bsz, self.seqlen).fill_(0)
+            docs = [
+                [
+                    Document("title", "I am a document!" * 1000, i)
+                    for i in range(self.n_docs)
+                ]
+                for _ in range(self.bsz)
+            ]
+            expanded_output = rag.model.concat_docs_and_input(
+                enc_input, self.seqlen, docs, self.n_docs
+            )
+            assert expanded_output.size(1) == self.seqlen + n_extra
 
 
 if __name__ == '__main__':

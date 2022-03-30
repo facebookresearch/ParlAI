@@ -10,17 +10,23 @@
 
 import copy
 import os
+import json
 import jsonlines
-from tqdm import tqdm
 from typing import List, Optional, Tuple
 
-import parlai.utils.logging as logging
-from parlai.core.teachers import ChunkTeacher
-from .build import build, DATASET_NAME_LOCAL
+from parlai.core.teachers import ChunkTeacher, DialogTeacher
+from .build import build, DATASET_NAME_LOCAL, build_sample
+from .build_open import build as build_
 from .utils.text_utils import simplify_nq_example
 
 from parlai.core.opt import Opt
+from parlai.core.message import Message
+from parlai.core.metrics import ExactMatchMetric, normalize_answer, AverageMetric
 from parlai.core.params import ParlaiParser
+
+from parlai.utils.data import DatatypeHelper
+from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
 
 
 def _count_lines_in_file(fname):
@@ -125,7 +131,10 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         self.use_context = opt.get('use_context', False)
         self.id = 'natural_questions'
         self.opt = copy.deepcopy(opt)
-        self.dtype = self.opt['datatype'].split(':')[0]
+        self.dtype = DatatypeHelper.fold(self.opt['datatype'])
+        if self.dtype == 'test':
+            logging.error("No test split for this teacher; overriding to valid")
+            self.dtype = 'valid'
         self.dpath = os.path.join(self.opt['datapath'], DATASET_NAME_LOCAL, self.dtype)
         self.n_samples = None
         super().__init__(self.opt, shared)
@@ -146,17 +155,10 @@ class NaturalQuestionsTeacher(ChunkTeacher):
         raise ValueError(f'Invalid data type: "{self.dtype}"')
 
     def get_num_samples(self, opt) -> Tuple[int, int]:
-        if self.n_samples:
-            return self.n_samples
-        logging.log(f'Counting the number of samples in {self.dtype}')
-        files = os.listdir(self.dpath)
-        n_samples = 0
-        for fname in tqdm(files):
-            if fname.startswith('.'):  # some of the OS specific files
-                continue
-            n_samples += _count_lines_in_file(os.path.join(self.dpath, fname))
-        logging.info(f'{n_samples} examples found in {self.dtype} dataset.')
-        self.n_samples = (n_samples, n_samples)
+        if self.dtype == 'train':
+            self.n_samples = (307373, 307373)
+        else:
+            self.n_samples = (7830, 7830)
         return self.n_samples
 
     def _get_candidate_long_answers(self, example):
@@ -193,6 +195,18 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 short_answers.append(annotation['yes_no_answer'])
         return short_answers
 
+    def _get_fname(self, chunk_idx: int) -> str:
+        """
+        Get the filname of the data chunk.
+
+        :param chunk_idx:
+            which chunk to get
+
+        :return chunk_name:
+            return the chunk fname
+        """
+        return f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
+
     def load_from_chunk(self, chunk_idx: int):
         """
         Loads from a chunk of the dataset, given the chunk index.
@@ -211,7 +225,7 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 labels.append(candidate_labels[label_ind])
             return labels
 
-        fname = f'nq-{self.dtype}-{str(chunk_idx).zfill(2)}.jsonl'
+        fname = self._get_fname(chunk_idx)
         fpath = os.path.join(self.dpath, fname)
         output = []
         with jsonlines.open(fpath, 'r') as fi:
@@ -252,6 +266,117 @@ class NaturalQuestionsTeacher(ChunkTeacher):
                 'long_answers_candidate'
             ]
         return message_dict
+
+
+class NaturalQuestionsSampleTeacher(NaturalQuestionsTeacher):
+    """
+    Loads the NQ Sample data for testing purposes.
+    """
+
+    def __init__(self, opt, shared=None):
+        build_sample(opt)
+        self.use_html = opt.get('use_html', False)
+        self.use_long_answer = opt.get('use_long_answer', False)
+        self.use_context = opt.get('use_context', False)
+        self.id = 'natural_questions'
+        self.opt = copy.deepcopy(opt)
+        self.dtype = DatatypeHelper.fold(self.opt['datatype'])
+        if self.dtype == 'test':
+            logging.error("No test split for this teacher; overriding to valid")
+            self.dtype = 'valid'
+        self.dpath = os.path.join(
+            self.opt['datapath'], f"{DATASET_NAME_LOCAL}_sample", self.dtype
+        )
+        self.n_samples = None
+        ChunkTeacher.__init__(self, self.opt, shared)
+
+    def _get_fname(self, chunk_idx: int) -> str:
+        return f'nq-{self.dtype}-sample.jsonl'
+
+    def get_fold_chunks(self, opt) -> List[int]:
+        return list(range(1))
+
+    def get_num_samples(self, opt) -> Tuple[int, int]:
+        return (200, 200)
+
+
+class InMetric(AverageMetric):
+    @staticmethod
+    def compute(guess: str, answers: List[str]) -> Optional["InMetric"]:
+        if guess is None or answers is None:
+            return None
+        guess = normalize_answer(guess)
+        for a in answers:
+            if normalize_answer(a) in guess:
+                return InMetric(1)
+        return InMetric(0)
+
+
+class NaturalQuestionsOpenTeacher(DialogTeacher):
+    def __init__(self, opt: Opt, shared=None):
+        self.fold = opt["datatype"].split(":")[0]
+        self.dpath = os.path.join(opt["datapath"], "NaturalQuestionsOpen")
+        self.opt = opt
+        self.opt['datafile'] = os.path.join(self.dpath, self.fold + ".csv")
+        if shared is None:
+            build_(opt)
+        super().__init__(opt, shared)
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        group = parser.add_argument_group("Natural Questions Open")
+        group.add_argument(
+            "--normalize-everything",
+            default=False,
+            type=bool,
+            help="Noramlize text + label in training",
+        )
+        return parser
+
+    def setup_data(self, fold):
+        with PathManager.open(
+            os.path.join(self.dpath, self.fold + "_with_gold.json")
+        ) as json_file:
+            gold_datas = json.load(json_file)["data"]
+        for gold_data in gold_datas:
+            text = gold_data["question"]
+            label = gold_data["short_answers"][0]
+            if self.opt.get("normalize_everything"):
+                text = normalize_answer(text)
+                label = normalize_answer(label)
+            yield {
+                'text': text,
+                'label': label,
+                'title': gold_data['title'],
+                'checked_sentence': gold_data['context'],
+                'answers': json.dumps(gold_data["short_answers"]),
+            }, True
+
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ):
+        if "text" in model_response and model_response["text"] is not None:
+            self.metrics.add(
+                "exact_match",
+                ExactMatchMetric.compute(
+                    guess=model_response["text"],
+                    answers=json.loads(teacher_action["answers"]),
+                ),
+            )
+
+            self.metrics.add(
+                "in_metric",
+                InMetric.compute(
+                    guess=model_response["text"],
+                    answers=json.loads(teacher_action["answers"]),
+                ),
+            )
 
 
 class DefaultTeacher(NaturalQuestionsTeacher):

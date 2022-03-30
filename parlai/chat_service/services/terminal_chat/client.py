@@ -121,15 +121,19 @@ def setup_args():
     parser_grp.add_argument(
         '--port', default=35496, type=int, help='Port to run the terminal chat server'
     )
+    parser_grp.add_argument(
+        '--host', default='localhost', type=str, help='Host to connect to.'
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     opt = setup_args()
     port = opt.get('port', 34596)
+    host = opt.get('host', 'localhost')
     print("Connecting to port: ", port)
     ws = websocket.WebSocketApp(
-        "ws://localhost:{}/websocket".format(port),
+        f"ws://{host}:{port}/websocket",
         on_message=on_message,
         on_error=on_error,
         on_close=on_close,

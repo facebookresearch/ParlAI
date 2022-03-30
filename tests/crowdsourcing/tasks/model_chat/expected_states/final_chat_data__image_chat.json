@@ -16,74 +16,74 @@
         },
         {
             "episode_done": false,
-            "id": "TransresnetAgent",
+            "id": "Speaker 2",
             "text": "I must learn that bird's name!",
             "agent_idx": 1
         },
         {
             "agent_idx": 0,
             "text": "Response 1",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 2",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 3",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 4",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 5",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent"
+            "id": "Speaker 2"
         },
         {
             "agent_idx": 0,
             "text": "Response 6",
-            "id": "Worker"
+            "id": "Speaker 1"
         },
         {
             "agent_idx": 1,
             "text": "My, aren't you a pretty bird?",
-            "id": "TransresnetAgent",
+            "id": "Speaker 2",
             "final_rating": 0
         }
     ],
     "workers": [
-        "--NOT-MTURK-AGENT-MOCK_WORKER_0"
+        "--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"
     ],
     "bad_workers": [],
     "acceptability_violations": [
@@ -98,7 +98,6 @@
     "task_description": {
         "annotations_config": null,
         "model_nickname": "transresnet_multimodal",
-        "model_file": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data/models/image_chat/transresnet_multimodal/model",
         "model_opt": {
             "show_advanced_args": false,
             "task": "internal:comment_battle:imageDialog",
@@ -111,7 +110,6 @@
             ],
             "batchsize": 500,
             "model": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",
-            "model_file": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data/models/image_chat/transresnet_multimodal/model",
             "init_model": "resnet152",
             "dict_class": null,
             "evaltask": null,
@@ -203,7 +201,6 @@
             "pretrained": true,
             "personality_override": null,
             "personalities_path": null,
-            "dict_file": "/private/home/kshuster/transresnet_mm_release_models/model.dict",
             "dict_initpath": null,
             "dict_language": "english",
             "dict_max_ngram_size": -1,
@@ -240,7 +237,6 @@
                 "attention_dropout": 0.2,
                 "relu_dropout": 0.2,
                 "n_positions": 1000,
-                "model_file": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data/models/image_chat/transresnet_multimodal/model",
                 "image_mode": "resnet152",
                 "model_parallel": false
             },

@@ -2,226 +2,118 @@
     "outputs": {
         "messages": [
             {
-                "packet_type": "update_status",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
-                    "state": {"agent_display_name": "Worker"},
-                    "message_id": "79ee17f5-0edd-45ea-9e12-0f73782de2c4"
-                },
-                "timestamp": 1609255262.574956
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "episode_done": false,
                     "id": "SYSTEM",
                     "text": "Welcome! You'll now have a conversation with your partner.\n\n<-- FIRST, YOUR PARTNER WILL SAY SOMETHING ABOUT THIS IMAGE TO YOUR LEFT.\n\nBe sure to talk about this image a little bit before discussing other things!\n",
                     "task_data": {
-                        "image_src": "data:image/jpeg;base64,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"
+                        "image_src": "data:image/jpeg;base64,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"
                     },
-                    "agent_idx": null,
-                    "message_id": "94762003-4349-47b7-9688-a07e1954fd80"
-                },
-                "timestamp": 1609255264.6383498
+                    "agent_idx": null
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "I must learn that bird's name!",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "I must learn that bird's name!",
                         "My, aren't you a pretty bird?"
                     ],
-                    "episode_done": false,
-                    "message_id": "20e89086-f426-4f63-836e-ae42523da6e3"
-                },
-                "timestamp": 1609255264.6529183
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "Response 1",
                     "task_data": {},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.653284
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "My, aren't you a pretty bird?",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "My, aren't you a pretty bird?",
                         "I must learn that bird's name!"
                     ],
-                    "episode_done": false,
-                    "message_id": "03b5bc38-c7d7-4e32-b4fe-c2239c0ad13d"
-                },
-                "timestamp": 1609255264.6681395
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "Response 2",
                     "task_data": {},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.6686988
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "My, aren't you a pretty bird?",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "My, aren't you a pretty bird?",
                         "I must learn that bird's name!"
                     ],
-                    "episode_done": false,
-                    "message_id": "8746ccd3-7158-44a8-b89d-5296f5817e49"
-                },
-                "timestamp": 1609255264.6843553
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "Response 3",
                     "task_data": {},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.6849954
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "My, aren't you a pretty bird?",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "My, aren't you a pretty bird?",
                         "I must learn that bird's name!"
                     ],
-                    "episode_done": false,
-                    "message_id": "8e564ba2-9cd2-4f2d-b305-a59e6cac3f87"
-                },
-                "timestamp": 1609255264.700533
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "Response 4",
                     "task_data": {},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.701345
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "My, aren't you a pretty bird?",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "My, aren't you a pretty bird?",
                         "I must learn that bird's name!"
                     ],
-                    "episode_done": false,
-                    "message_id": "868e7523-766c-4fd4-b1e5-3015e12d89dc"
-                },
-                "timestamp": 1609255264.718423
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "Response 5",
                     "task_data": {},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.7193751
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "My, aren't you a pretty bird?",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "My, aren't you a pretty bird?",
                         "I must learn that bird's name!"
                     ],
-                    "episode_done": false,
-                    "message_id": "61cba585-a10f-4be8-8161-4831cb176848"
-                },
-                "timestamp": 1609255264.7350285
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "Response 6",
                     "task_data": {},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.7359936
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "text": "My, aren't you a pretty bird?",
-                    "id": "TransresnetAgent",
+                    "id": "Speaker 2",
                     "text_candidates": [
                         "My, aren't you a pretty bird?",
                         "I must learn that bird's name!"
                     ],
-                    "episode_done": false,
-                    "message_id": "4d867441-2b53-4670-a839-e0b9d7f5499b"
-                },
-                "timestamp": 1609255264.7520306
+                    "episode_done": false
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
                     "text": "",
                     "task_data": {"final_rating": 0},
-                    "id": "Worker",
+                    "id": "Speaker 1",
                     "episode_done": false
-                },
-                "timestamp": 1609255264.7529757
             },
             {
                 "final_chat_data": {
@@ -240,49 +132,49 @@
                         },
                         {
                             "episode_done": false,
-                            "id": "TransresnetAgent",
+                            "id": "Speaker 2",
                             "text": "I must learn that bird's name!",
                             "agent_idx": 1
                         },
-                        {"agent_idx": 0, "text": "Response 1", "id": "Worker"},
+                        {"agent_idx": 0, "text": "Response 1", "id": "Speaker 1"},
                         {
                             "agent_idx": 1,
                             "text": "My, aren't you a pretty bird?",
-                            "id": "TransresnetAgent"
+                            "id": "Speaker 2"
                         },
-                        {"agent_idx": 0, "text": "Response 2", "id": "Worker"},
+                        {"agent_idx": 0, "text": "Response 2", "id": "Speaker 1"},
                         {
                             "agent_idx": 1,
                             "text": "My, aren't you a pretty bird?",
-                            "id": "TransresnetAgent"
+                            "id": "Speaker 2"
                         },
-                        {"agent_idx": 0, "text": "Response 3", "id": "Worker"},
+                        {"agent_idx": 0, "text": "Response 3", "id": "Speaker 1"},
                         {
                             "agent_idx": 1,
                             "text": "My, aren't you a pretty bird?",
-                            "id": "TransresnetAgent"
+                            "id": "Speaker 2"
                         },
-                        {"agent_idx": 0, "text": "Response 4", "id": "Worker"},
+                        {"agent_idx": 0, "text": "Response 4", "id": "Speaker 1"},
                         {
                             "agent_idx": 1,
                             "text": "My, aren't you a pretty bird?",
-                            "id": "TransresnetAgent"
+                            "id": "Speaker 2"
                         },
-                        {"agent_idx": 0, "text": "Response 5", "id": "Worker"},
+                        {"agent_idx": 0, "text": "Response 5", "id": "Speaker 1"},
                         {
                             "agent_idx": 1,
                             "text": "My, aren't you a pretty bird?",
-                            "id": "TransresnetAgent"
+                            "id": "Speaker 2"
                         },
-                        {"agent_idx": 0, "text": "Response 6", "id": "Worker"},
+                        {"agent_idx": 0, "text": "Response 6", "id": "Speaker 1"},
                         {
                             "agent_idx": 1,
                             "text": "My, aren't you a pretty bird?",
-                            "id": "TransresnetAgent",
+                            "id": "Speaker 2",
                             "final_rating": 0
                         }
                     ],
-                    "workers": ["--NOT-MTURK-AGENT-MOCK_WORKER_0"],
+                    "workers": ["--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"],
                     "bad_workers": [],
                     "acceptability_violations": [null],
                     "hit_ids": ["1"],
@@ -290,7 +182,6 @@
                     "task_description": {
                         "annotations_config": null,
                         "model_nickname": "transresnet_multimodal",
-                        "model_file": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data/models/image_chat/transresnet_multimodal/model",
                         "model_opt": {
                             "show_advanced_args": false,
                             "task": "internal:comment_battle:imageDialog",
@@ -301,7 +192,6 @@
                             "multitask_weights": [1],
                             "batchsize": 500,
                             "model": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",
-                            "model_file": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data/models/image_chat/transresnet_multimodal/model",
                             "init_model": "resnet152",
                             "dict_class": null,
                             "evaltask": null,
@@ -393,7 +283,6 @@
                             "pretrained": true,
                             "personality_override": null,
                             "personalities_path": null,
-                            "dict_file": "/private/home/kshuster/transresnet_mm_release_models/model.dict",
                             "dict_initpath": null,
                             "dict_language": "english",
                             "dict_max_ngram_size": -1,
@@ -430,7 +319,6 @@
                                 "attention_dropout": 0.2,
                                 "relu_dropout": 0.2,
                                 "n_positions": 1000,
-                                "model_file": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data/models/image_chat/transresnet_multimodal/model",
                                 "image_mode": "resnet152",
                                 "model_parallel": false
                             },
@@ -438,13 +326,11 @@
                         }
                     },
                     "image_idx": 0
-                }
+                },
+                "data": {},
+                "packet_type": null
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
                     "id": "SUBMIT_WORLD_DATA",
                     "WORLD_DATA": {
                         "custom_data": {
@@ -463,49 +349,49 @@
                                 },
                                 {
                                     "episode_done": false,
-                                    "id": "TransresnetAgent",
+                                    "id": "Speaker 2",
                                     "text": "I must learn that bird's name!",
                                     "agent_idx": 1
                                 },
-                                {"agent_idx": 0, "text": "Response 1", "id": "Worker"},
+                                {"agent_idx": 0, "text": "Response 1", "id": "Speaker 1"},
                                 {
                                     "agent_idx": 1,
                                     "text": "My, aren't you a pretty bird?",
-                                    "id": "TransresnetAgent"
+                                    "id": "Speaker 2"
                                 },
-                                {"agent_idx": 0, "text": "Response 2", "id": "Worker"},
+                                {"agent_idx": 0, "text": "Response 2", "id": "Speaker 1"},
                                 {
                                     "agent_idx": 1,
                                     "text": "My, aren't you a pretty bird?",
-                                    "id": "TransresnetAgent"
+                                    "id": "Speaker 2"
                                 },
-                                {"agent_idx": 0, "text": "Response 3", "id": "Worker"},
+                                {"agent_idx": 0, "text": "Response 3", "id": "Speaker 1"},
                                 {
                                     "agent_idx": 1,
                                     "text": "My, aren't you a pretty bird?",
-                                    "id": "TransresnetAgent"
+                                    "id": "Speaker 2"
                                 },
-                                {"agent_idx": 0, "text": "Response 4", "id": "Worker"},
+                                {"agent_idx": 0, "text": "Response 4", "id": "Speaker 1"},
                                 {
                                     "agent_idx": 1,
                                     "text": "My, aren't you a pretty bird?",
-                                    "id": "TransresnetAgent"
+                                    "id": "Speaker 2"
                                 },
-                                {"agent_idx": 0, "text": "Response 5", "id": "Worker"},
+                                {"agent_idx": 0, "text": "Response 5", "id": "Speaker 1"},
                                 {
                                     "agent_idx": 1,
                                     "text": "My, aren't you a pretty bird?",
-                                    "id": "TransresnetAgent"
+                                    "id": "Speaker 2"
                                 },
-                                {"agent_idx": 0, "text": "Response 6", "id": "Worker"},
+                                {"agent_idx": 0, "text": "Response 6", "id": "Speaker 1"},
                                 {
                                     "agent_idx": 1,
                                     "text": "My, aren't you a pretty bird?",
-                                    "id": "TransresnetAgent",
+                                    "id": "Speaker 2",
                                     "final_rating": 0
                                 }
                             ],
-                            "workers": ["--NOT-MTURK-AGENT-MOCK_WORKER_0"],
+                            "workers": ["--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"],
                             "bad_workers": [],
                             "acceptability_violations": [null],
                             "hit_ids": ["1"],
@@ -513,7 +399,6 @@
                             "task_description": {
                                 "annotations_config": null,
                                 "model_nickname": "transresnet_multimodal",
-                                "model_file": "/home/circleci/ParlAI/data/models/image_chat/transresnet_multimodal/model",
                                 "model_opt": {
                                     "show_advanced_args": false,
                                     "task": "internal:comment_battle:imageDialog",
@@ -524,7 +409,6 @@
                                     "multitask_weights": [1],
                                     "batchsize": 500,
                                     "model": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",
-                                    "model_file": "/home/circleci/ParlAI/data/models/image_chat/transresnet_multimodal/model",
                                     "init_model": "resnet152",
                                     "dict_class": null,
                                     "evaltask": null,
@@ -616,7 +500,6 @@
                                     "pretrained": true,
                                     "personality_override": null,
                                     "personalities_path": null,
-                                    "dict_file": "/home/circleci/ParlAI/data/models/image_chat/transresnet_multimodal/model.dict",
                                     "dict_initpath": null,
                                     "dict_language": "english",
                                     "dict_max_ngram_size": -1,
@@ -653,7 +536,6 @@
                                         "attention_dropout": 0.2,
                                         "relu_dropout": 0.2,
                                         "n_positions": 1000,
-                                        "model_file": "/home/circleci/ParlAI/data/models/image_chat/transresnet_multimodal/model",
                                         "image_mode": "resnet152"
                                     },
                                     "dict_loaded": true
@@ -664,15 +546,6 @@
                         "worker_data": {}
                     },
                     "text": ""
-                },
-                "timestamp": 1609255264.7544067
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": true},
-                "timestamp": 1609255264.7562492
             }
         ]
     },

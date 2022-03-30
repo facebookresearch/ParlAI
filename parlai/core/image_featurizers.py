@@ -100,7 +100,7 @@ class ImageLoader:
 
         self.transform = self.transforms.Compose(
             [
-                self.transforms.Scale(self.image_size),
+                self.transforms.Resize(self.image_size),
                 self.transforms.CenterCrop(self.crop_size),
                 self.transforms.ToTensor(),
                 self.transforms.Normalize(

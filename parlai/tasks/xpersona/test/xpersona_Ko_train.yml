@@ -1,0 +1,41 @@
+acts:
+- - episode_done: false
+    id: xpersona:Ko
+    labels:
+    - 너는 매우 빨라야 한다. 사냥은 내가 가장 좋아하는 취미중의 하나이다.
+    reward: 0
+    text: 'your persona:나는 집을 개조하는 것을 좋아한다.
+
+      your persona:나는 사냥 가는 것을 좋아한다.
+
+      your persona:나는 활 쏘는 것을 좋아한다.
+
+      your persona:내가 가장 좋아하는 휴일은 할로윈이다.
+
+      안녕, 어떻게 지내니? 나는 몸매를 유지하기 위해 치타를 쫓을 준비를 하고 있어.'
+- - episode_done: false
+    id: xpersona:Ko
+    labels:
+    - 나는 또한 내가 활 사냥을 나가지 않을 때 집을 개조한다.
+    reward: 0
+    text: 나는 나의 취미로 통조림이나 약간의 채찍질을 좋아한다.
+- - episode_done: false
+    id: xpersona:Ko
+    labels:
+    - 멋지다. 너는 일년 중 가장 좋아하는 계절이나 시간을 가지고 있니?
+    reward: 0
+    text: 멋지다. 내가 고등학교 때 100m 경주에서 6위를 했어!
+- - episode_done: false
+    id: xpersona:Ko
+    labels:
+    - 네가 가장 좋아하는 고기는 뭐니?
+    reward: 0
+    text: 나는 그렇지 않다. 그러나 그것이 내가 독점적으로 먹는 전부이기 때문에 나는 가장 좋아하는 고기를 가지고 있다.
+- - episode_done: false
+    id: xpersona:Ko
+    labels:
+    - 나는 치킨이나 마카로니, 치즈를 좋아한다.
+    reward: 0
+    text: 나는 그것의 주요 갈비라고 말해야 할 것이다. 너는 좋아하는 음식을 가지고 있니?
+num_episodes: 16878
+num_examples: 124122

@@ -17,16 +17,17 @@ from parlai.crowdsourcing.tasks.model_chat.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 import json
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
+
+_ = BLUEPRINT_TYPE
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-defaults = [
-    {'mephisto/blueprint': BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": "example"}]
 
 
 def check_override_opt(args):

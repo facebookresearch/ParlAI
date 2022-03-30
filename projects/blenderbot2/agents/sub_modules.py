@@ -166,6 +166,15 @@ class QueryGenerator(BB2SubmoduleMixin):
             opt['knowledge_access_method']
         )
         model_file = modelzoo_path(opt['datapath'], opt['query_generator_model_file'])
+        if (
+            self.knowledge_access_method is KnowledgeAccessMethod.SEARCH_ONLY
+            and 'blenderbot2/query_generator/model' in model_file
+        ):
+            raise ValueError(
+                'You cannot use the blenderbot2 query generator with search_only. Please '
+                'consider setting --query-generator-model-file zoo:sea/bart_sq_gen/model '
+                'instead.'
+            )
         if model_file and os.path.exists(model_file):
             logging.info(f'Building Query Generator from file: {model_file}')
             logging.disable()
@@ -173,6 +182,8 @@ class QueryGenerator(BB2SubmoduleMixin):
             overrides['inference'] = opt['query_generator_inference']
             overrides['beam_size'] = opt.get('query_generator_beam_size', 3)
             overrides['beam_min_length'] = opt.get('query_generator_beam_min_length', 2)
+            overrides['model_parallel'] = opt['model_parallel']
+            overrides['no_cuda'] = opt['no_cuda']
             if self.opt['query_generator_truncate'] > 0:
                 overrides['text_truncate'] = self.opt['query_generator_truncate']
                 overrides['truncate'] = self.opt['query_generator_truncate']
@@ -181,7 +192,7 @@ class QueryGenerator(BB2SubmoduleMixin):
             )
             assert isinstance(base_agent, TorchAgent)
             self.agents = [base_agent]
-            bsz = opt.get('batchsize', 1)
+            bsz = max(opt.get('batchsize') or 1, opt.get('eval_batchsize') or 1)
             rag_turn_n_turns = opt.get('rag_turn_n_turns', 1)
             if bsz > 1 or rag_turn_n_turns > 1:
                 self.agents += [
@@ -196,6 +207,7 @@ class QueryGenerator(BB2SubmoduleMixin):
         input: torch.LongTensor,
         num_memories: torch.LongTensor,
         generated_memories: Optional[List[List[str]]],
+        skip_search: Optional[torch.BoolTensor],
     ) -> Tuple[torch.LongTensor, List[str]]:
         """
         Classify input and get retrieval type.
@@ -242,6 +254,8 @@ class QueryGenerator(BB2SubmoduleMixin):
                 self.retrieval_type[i] = RetrievalType.MEMORY.value
             elif strip_punc(s) in NONE_STRINGS + MEMORY_STRINGS:
                 self.retrieval_type[i] = RetrievalType.NONE.value
+            elif skip_search is not None and skip_search[i]:
+                self.retrieval_type[i] = RetrievalType.NONE.value
             else:
                 self.retrieval_type[i] = RetrievalType.SEARCH.value
                 searches.append(s)
@@ -274,6 +288,7 @@ class MemoryDecoder(BB2SubmoduleMixin):
                 'beam_size': opt.get('memory_decoder_beam_size', 3),
                 'beam_min_length': opt.get('memory_decoder_beam_min_length', 10),
                 'beam_block_ngram': 3,
+                'no_cuda': opt.get('no_cuda', False),
             }
             if self.opt.get('memory_decoder_truncate', -1) > 0:
                 overrides['text_truncate'] = self.opt['memory_decoder_truncate']
@@ -310,12 +325,10 @@ class MemoryDecoder(BB2SubmoduleMixin):
         """
         assert self.agent_dict is not None
         memories = []
-        offset = 0
-        for idx, i in enumerate(input):
+        for idx, input_i in enumerate(input):
             if num_inputs[idx] == 0:
                 continue
-            context_lines_vec = i[offset : offset + num_inputs[idx]]
-            offset += num_inputs[idx]
+            context_lines_vec = input_i[: num_inputs[idx]]
             context_lines = [
                 self.agent_dict.vec2txt(self.clean_input(j)) for j in context_lines_vec
             ]
@@ -326,6 +339,8 @@ class MemoryDecoder(BB2SubmoduleMixin):
             mem_string = '\n'.join(memories_i)
             logging.verbose(f'Writing memories: {mem_string}')
             memories.append(memories_i)
+
+        self.memories_full_list = memories
         return memories
 
     def _extract_from_raw_memories(self, raw_memories: List[str]) -> List[str]:

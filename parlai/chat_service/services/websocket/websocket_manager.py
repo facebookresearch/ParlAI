@@ -233,9 +233,7 @@ class WebsocketManager(ChatServiceManager):
         if quick_replies is not None:
             quick_replies = list(quick_replies)
 
-        message = json.dumps(
-            {'text': message.replace('\n', '<br />'), 'quick_replies': quick_replies}
-        )
+        message = json.dumps({'text': message, 'quick_replies': quick_replies})
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         if socket_id not in self.subs:

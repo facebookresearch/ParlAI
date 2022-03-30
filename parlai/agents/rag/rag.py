@@ -48,6 +48,7 @@ from parlai.agents.rag.model_types import (
 )
 from parlai.agents.rag.modules import RagModel, T5RagModel
 from parlai.agents.rag.retrievers import Document
+from parlai.utils.fsdp import is_fsdp
 
 
 class BaseGenerationAgentMixin(ABC):
@@ -85,7 +86,9 @@ class T5RagAgent(T5Agent, BaseGenerationAgentMixin):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Override since T5 needs to call TGA generate.
         """
@@ -136,6 +139,13 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     @property
     def generation_model(self) -> str:
         return self._generation_model
+
+    @property
+    def model_api(self) -> RagModel:
+        if hasattr(self.model, 'module') and not is_fsdp(self.model):
+            return self.model.module
+        else:
+            return self.model
 
     @generation_model.setter
     def generation_model(self, model: str):
@@ -280,9 +290,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         observation = self._generation_agent.observe(self, observation)
         if observation.is_padding():
             return observation
-        if 'query_vec' not in observation:
+        if 'query_vec' not in observation and self._query_key in observation:
             self._set_query_vec(observation)
-        if 'input_turn_cnt_vec' not in observation:
+        if 'input_turn_cnt_vec' not in observation and self._query_key in observation:
             self._set_input_turn_cnt_vec(observation)
         return observation
 
@@ -290,8 +300,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         output = super().eval_step(batch)
         if output is None or not hasattr(self.model, 'retriever'):
             return output
-        assert isinstance(self.model, RagModel)
-        if hasattr(self.model.retriever, 'top_docs'):
+        if hasattr(self.model.retriever, 'top_docs'):  # type: ignore
             output.top_docs = self.model.retriever.top_docs  # type: ignore
         return output
 
@@ -656,7 +665,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Override TGA._generate to potentially call ReGReT.
 
@@ -666,7 +677,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             beam_preds_scores, _ = self._regret_generate(
                 batch, beam_size, self.regret_intermediate_maxlen, prefix_tokens
             )
-            preds, _ = zip(*beam_preds_scores)
+            preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, preds)  # type: ignore
             gen_outs = self._rag_generate(new_batch, beam_size, max_ts, prefix_tokens)
         else:
@@ -677,8 +688,10 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
     def _rerank_beams(
         self,
         batch: Batch,
-        n_best_beam_preds_scores: List[List[Tuple[torch.LongTensor, torch.Tensor]]],
-    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor]]]:
+        n_best_beam_preds_scores: List[
+            List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]
+        ],
+    ) -> List[List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]]]:
         """
         Optional rerank beams, according to RAG Model type.
 
@@ -702,7 +715,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         beam_size: int,
         max_ts: int,
         prefix_tokens: Optional[torch.LongTensor] = None,
-    ) -> Tuple[List[Tuple[torch.LongTensor, torch.Tensor]], List[TreeSearch]]:
+    ) -> Tuple[
+        List[Tuple[torch.LongTensor, torch.Tensor, Optional[Dict]]], List[TreeSearch]
+    ]:
         """
         Separate from _generate to handle regret.
         """
@@ -879,7 +894,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 beam_preds_scores, beams = self._regret_generate(
                     batch, self.beam_size, self.regret_intermediate_maxlen
                 )
-            regret_preds, _ = zip(*beam_preds_scores)
+            regret_preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, regret_preds)  # type: ignore
             regret_model_output = self.model(
                 *self._model_input(new_batch), ys=batch.label_vec

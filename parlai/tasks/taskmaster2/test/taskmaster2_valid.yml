@@ -1,0 +1,43 @@
+acts:
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Taskmaster2_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster2_SystemTeacher
+    slots: {}
+    text: 'USER: '
+    type: 'APICALL: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Hello.'
+    id: Taskmaster2_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: Taskmaster2_SystemTeacher
+    slots: {}
+    text: 'USER: Hi Assistant. How are you?'
+    type: 'APICALL: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: I''m good and yourself?'
+    id: Taskmaster2_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 1730
+num_examples: 36404

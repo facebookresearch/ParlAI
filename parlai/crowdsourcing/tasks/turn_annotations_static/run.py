@@ -18,20 +18,16 @@ from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_bluepri
 from parlai.crowdsourcing.tasks.turn_annotations_static.util import run_static_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
+
+_ = STATIC_BLUEPRINT_TYPE
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-# To run the task with your own config outside this folder (recommended!)
-# Use the command formulation below. For more info,
-# check the README in parlai/crowdsourcing/
-# python turn_annotations_static/run.py conf=<conf name sans yaml> --config-dir <path to directory with a conf/ folder>
-
-defaults = [
-    {'mephisto/blueprint': STATIC_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": 'example'},
-]
+defaults = ["_self_", {"conf": 'example'}]
 
 
 @dataclass

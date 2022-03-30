@@ -9,7 +9,7 @@ Utility methods for conversations format.
 import datetime
 import json
 import os
-import random
+import itertools
 
 from parlai.utils.io import PathManager
 from parlai.core.metrics import dict_report
@@ -196,26 +196,34 @@ class Conversations:
     """
 
     def __init__(self, datapath):
-        self.conversations = self._load_conversations(datapath)
+        self._datapath = datapath
         self.metadata = self._load_metadata(datapath)
 
     def __len__(self):
-        return len(self.conversations)
+        return sum(1 for _ in self._load_raw(self._datapath))
 
-    def _load_conversations(self, datapath):
+    def _load_raw(self, datapath):
+        """
+        Load the data as a raw, unparsed file.
+
+        Useful for fast IO stuff like random indexing.
+        """
         if not PathManager.exists(datapath):
             raise RuntimeError(
                 f'Conversations at path {datapath} not found. '
                 'Double check your path.'
             )
 
-        conversations = []
         with PathManager.open(datapath, 'r') as f:
             lines = f.read().splitlines()
             for line in lines:
-                conversations.append(Conversation(json.loads(line)))
+                yield line
 
-        return conversations
+    def _parse(self, line):
+        return Conversation(json.loads(line))
+
+    def _load_conversations(self, datapath):
+        return (self._parse(line) for line in self._load_raw(datapath))
 
     def _load_metadata(self, datapath):
         """
@@ -225,7 +233,7 @@ class Conversations:
         Metadata should be of the following format:
         {
             'date': <date collected>,
-            'opt': <opt used to collect the data,
+            'opt': <opt used to collect the data>,
             'speakers': <identity of speakers>,
             ...
             Other arguments.
@@ -235,7 +243,7 @@ class Conversations:
             metadata = Metadata(datapath)
             return metadata
         except RuntimeError:
-            logging.error('Metadata does not exist. Please double check your datapath.')
+            logging.debug('Metadata does not exist. Please double check your datapath.')
             return None
 
     def read_metadata(self):
@@ -245,36 +253,25 @@ class Conversations:
             logging.warning('No metadata available.')
 
     def __getitem__(self, index):
-        return self.conversations[index]
+        raw = self._load_raw(self._datapath)
+        item = list(itertools.islice(raw, index, index + 1))[0]
+        return self._parse(item)
 
     def __iter__(self):
-        self.iterator_idx = 0
-        return self
-
-    def __next__(self):
-        """
-        Return the next conversation.
-        """
-        if self.iterator_idx >= len(self):
-            raise StopIteration
-
-        conv = self.conversations[self.iterator_idx]
-        self.iterator_idx += 1
-
-        return conv
-
-    def read_conv_idx(self, idx):
-        convo = self.conversations[idx]
-        logging.info(convo)
-
-    def read_rand_conv(self):
-        idx = random.choice(range(len(self)))
-        self.read_conv_idx(idx)
+        return self._load_conversations(self._datapath)
 
     @staticmethod
     def _get_path(datapath):
         fle, _ = os.path.splitext(datapath)
         return fle + '.jsonl'
+
+    @staticmethod
+    def _check_parent_dir_exits(datapath):
+        parent_dir = os.path.dirname(datapath)
+        if not parent_dir or PathManager.exists(parent_dir):
+            return
+        logging.info(f'Parent directory ({parent_dir}) did not exist and was created.')
+        PathManager.mkdirs(parent_dir)
 
     @classmethod
     def save_conversations(
@@ -294,6 +291,7 @@ class Conversations:
         each of which is comprised of a list of act pairs (i.e. a list dictionaries
         returned from one parley)
         """
+        cls._check_parent_dir_exits(datapath)
         to_save = cls._get_path(datapath)
 
         context_ids = context_ids.strip().split(',')

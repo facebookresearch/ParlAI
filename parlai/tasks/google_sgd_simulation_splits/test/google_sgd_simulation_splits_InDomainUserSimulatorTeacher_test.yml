@@ -1,0 +1,51 @@
+acts:
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Hi, could you get me a restaurant booking on the 8th please?'
+    id: GoogleSgdInDomain_UserSimulatorTeacher
+    text: 'GOAL: api_name = ReserveRestaurant ; date = 2019-03-08 ; location = Corte
+      Madera ; number_of_seats = 2 ; restaurant_name = P.f. Chang''s ; time = 12:00
+      | api_name = ReserveRestaurant ; date = 2019-03-08 ; location = Corte Madera
+      ; number_of_seats = 2 ; restaurant_name = Benissimo Restaurant & Bar ; time
+      = 12:00'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Could you get me a reservation at P.f. Chang''s in Corte Madera at afternoon
+      12?'
+    id: GoogleSgdInDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Any preference on the restaurant, location and time?'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Sure, that is great.'
+    id: GoogleSgdInDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Please confirm your reservation at P.f. Chang''s in Corte Madera
+      at 12 pm for 2 on March 8th.'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Could you try booking a table at Benissimo instead?'
+    id: GoogleSgdInDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Sorry, your reservation could not be made. Could I help you with
+      something else?'
+    type: 'USER: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'USER: Sure, may I know if they have vegetarian options and how expensive is
+      their food?'
+    id: GoogleSgdInDomain_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Sure, please confirm your reservation at Benissimo Restaurant &
+      Bar in Corte Madera at 12 pm for 2 on March 8th.'
+    type: 'USER: '
+num_episodes: 3132
+num_examples: 32077

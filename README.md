@@ -58,7 +58,7 @@ For those who want to start with ParlAI now, you can try our [Colab Tutorial](ht
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3.7+ and [Pytorch](https://pytorch.org) 1.6 or higher.
+ParlAI currently requires Python3.8+ and [Pytorch](https://pytorch.org) 1.6 or higher.
 Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/main/requirements.txt). Some
 models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents)) have additional requirements.
 We *strongly* recommend you install ParlAI in a [venv](https://docs.python.org/3/library/venv.html) or [conda](https://www.anaconda.com/) environment.

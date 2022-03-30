@@ -22,6 +22,7 @@ from IPython.core.display import HTML
 from mephisto.tools.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
 from mephisto.data_model.unit import Unit as MephistoUnit
+from mephisto.data_model.worker import Worker
 from scipy.stats import binom_test
 
 from parlai.core.params import ParlaiParser
@@ -137,8 +138,8 @@ class AcuteAnalyzer(object):
         mephisto_root_path = opt['mephisto_root']
         if not mephisto_root_path:
             mephisto_root_path = None
-        mephisto_db = LocalMephistoDB(database_path=mephisto_root_path)
-        self.mephisto_data_browser = MephistoDataBrowser(db=mephisto_db)
+        self.mephisto_db = LocalMephistoDB(database_path=mephisto_root_path)
+        self.mephisto_data_browser = MephistoDataBrowser(db=self.mephisto_db)
         self.checkbox_prefix = self.CHECKBOX_PREFIX
         # Prepended to checkbox columns in self.dataframe
         self.dataframe = self._extract_to_dataframe()
@@ -168,6 +169,9 @@ class AcuteAnalyzer(object):
         response: Dict[str, Any] = {
             'run_id': self.run_id,
             'worker': unit_details['worker_id'],
+            'worker_name': Worker.get(
+                self.mephisto_db, unit_details['worker_id']
+            ).worker_name,
             'time_taken': unit_details['task_end'] - unit_details['task_start'],
             'question': task_data['task_specs']['question'],
             'unit_id': unit_details['unit_id'],
@@ -275,7 +279,7 @@ class AcuteAnalyzer(object):
             ~df["worker"].isin(workers_failing_onboarding) & ~df["is_onboarding"]
         ]
         print(
-            f'{self.dataframe.size:d} dataframe entries remaining after removing users who failed onboarding.'
+            f'{self.dataframe.index.size:d} dataframe entries remaining after removing users who failed onboarding.'
         )
 
     def _load_pairing_files(self):

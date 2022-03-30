@@ -9,9 +9,9 @@
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
-const ONBOARDING_MIN_CORRECT = 4;
-const ONBOARDING_MAX_INCORRECT = 3;
-const ONBOARDING_MAX_FAILURES_ALLOWED = 1;
+const DEFAULT_MIN_CORRECT = 4;
+const DEFAULT_MAX_INCORRECT = 3;
+const DEFAULT_MAX_FAILURES_ALLOWED = 1;
 var onboardingFailuresCount = 0;
 
 var renderOnboardingFail = function () {
@@ -35,7 +35,6 @@ function arraysEqual(_arr1, _arr2) {
 }
 
 var handleOnboardingSubmit = function ({ onboardingData, currentTurnAnnotations, onSubmit }) {
-    // OVERRIDE: Re-implement this to change onboarding success criteria
     console.log('handleOnboardingSubmit');
     var countCorrect = 0;
     var countIncorrect = 0;
@@ -60,10 +59,13 @@ var handleOnboardingSubmit = function ({ onboardingData, currentTurnAnnotations,
         }
     }
     console.log('correct: ' + countCorrect + ', incorrect: ' + countIncorrect);
-    if (countCorrect >= ONBOARDING_MIN_CORRECT && countIncorrect <= ONBOARDING_MAX_INCORRECT) {
+    const min_correct = onboardingData.hasOwnProperty("min_correct") ? onboardingData.min_correct : DEFAULT_MIN_CORRECT;
+    const max_incorrect = onboardingData.hasOwnProperty("max_incorrect") ? onboardingData.max_incorrect : DEFAULT_MAX_INCORRECT;
+    const max_failures_allowed = onboardingData.hasOwnProperty("max_failures_allowed") ? onboardingData.max_failures_allowed : DEFAULT_MAX_FAILURES_ALLOWED;
+    if (countCorrect >= min_correct && countIncorrect <= max_incorrect) {
         onSubmit({ annotations: currentTurnAnnotations, success: true });
     } else {
-        if (onboardingFailuresCount < ONBOARDING_MAX_FAILURES_ALLOWED) {
+        if (onboardingFailuresCount < max_failures_allowed) {
             onboardingFailuresCount += 1;
             alert('You did not label the sample conversation well enough. Please try one more time!');
         } else {
@@ -127,7 +129,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
     } else {
         const [currentTurnAnnotations, setCurrentAnnotations] = React.useState(
             Array.from(Array(onboardingData.dialog.length), () => Object.fromEntries(
-                annotationBuckets.map(bucket => [bucket.value, false]))
+                Object.keys(annotationBuckets.config).map(bucket => [bucket, false]))
             )
         );
         return (
@@ -177,7 +179,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
                         className="button is-link btn-lg"
                         onClick={() => handleOnboardingSubmit({ 
                             onboardingData, 
-                            currentTurnAnnotations, 
+                            currentTurnAnnotations,
                             onSubmit,
                         })}
                     >

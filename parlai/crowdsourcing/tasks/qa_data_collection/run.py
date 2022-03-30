@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-
 import os
 from dataclasses import dataclass, field
 from typing import List, Any
@@ -12,7 +11,6 @@ from typing import List, Any
 import hydra
 from omegaconf import DictConfig
 from mephisto.abstractions.blueprints.parlai_chat.parlai_chat_blueprint import (
-    BLUEPRINT_TYPE,
     SharedParlAITaskState,
 )
 from mephisto.operations.hydra_config import register_script_config
@@ -23,15 +21,14 @@ from parlai.crowdsourcing.tasks.qa_data_collection.util import get_teacher
 from parlai.crowdsourcing.utils.frontend import build_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-defaults = [
-    {"mephisto/blueprint": BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": "example"}]
 
 
 @dataclass

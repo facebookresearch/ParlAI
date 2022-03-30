@@ -6,6 +6,8 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models
 
+- **Maintaining Identity** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/light_whoami/) _State-of-the-art dialogue models cannot maintain identity -- we study measurements & methods for this open problem._
+
 - **More Parameters or More Compute?** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/params_vs_compute) _Answer: Both! Two new methods that explore this question: Hash Layers for more parameters, and Staircase Attention for more power per parameter._
 
 - **Style-Controlled Generation** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen) [[paper]](https://arxiv.org/abs/2009.10855) _Tasks and models for training and evaluating generative models conditioned on a style token._
@@ -72,6 +74,9 @@ _Task & models for chitchat with a given persona._
 
 ## Well-Behaved
 
+- **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
+  _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
+
 - **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
   _Benchmarks for evaluating the safety of English-language dialogue models_
 
@@ -89,6 +94,10 @@ _Task & models for chitchat with a given persona._
 
 
 ## Knowledge Grounded
+
+- **SeeKeR:** [[project]](http://parl.ai/projects/seeker) _Modular open source search-augmented language model._
+
+- **Reason first, then respond:** [[paper]](https://arxiv.org/abs/2111.05204) _A modular Generation method for Knowledge-infused Dialogue._
 
 - **Internet-Augmented Dialogue Generation** [[project]](http://parl.ai/projects/sea) [[paper]](https://arxiv.org/abs/2107.07566).
   _Utilizing a search-engine for open domain chitchat task & models._
@@ -137,3 +146,5 @@ _QA model for answering questions by retrieving and reading knowledge._
 - **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
 _ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
 
+- **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
+_Compares how well different human crowdworker evaluation techniques can detect relative performance differences among dialogue models._

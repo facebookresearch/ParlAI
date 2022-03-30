@@ -12,27 +12,28 @@ import hydra
 from mephisto.operations.hydra_config import register_script_config
 from omegaconf import DictConfig
 
-from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
-    IMAGE_CHAT_BLUEPRINT_TYPE,
+from parlai.crowdsourcing.tasks.pairwise_per_turn_eval.per_turn_eval_blueprint import (
+    BLUEPRINT_TYPE,
 )
-from parlai.crowdsourcing.tasks.model_chat.impl import run_task
+from parlai.crowdsourcing.tasks.pairwise_per_turn_eval.impl import run_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
-import parlai.crowdsourcing.tasks.model_chat.worlds as world_module
+
+"""
+Read parlai/crowdsourcing/README.md to learn how to launch
+crowdsourcing tasks with this script.
+"""
+
+_ = BLUEPRINT_TYPE
 
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-defaults = [
-    {'mephisto/blueprint': IMAGE_CHAT_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example_image_chat"},
-]
+defaults = ['_self_', {"conf": "example"}]
 
 
 @dataclass
-class ScriptConfig(MTurkRunScriptConfig):
+class PerTurnEvalConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
     monitoring_log_rate: int = field(
@@ -43,12 +44,12 @@ class ScriptConfig(MTurkRunScriptConfig):
     )
 
 
-register_script_config(name='scriptconfig', module=ScriptConfig)
+register_script_config(name='perturnevalconfig', module=PerTurnEvalConfig)
 
 
-@hydra.main(config_path="hydra_configs", config_name="scriptconfig")
+@hydra.main(config_path="hydra_configs", config_name="perturnevalconfig")
 def main(cfg: DictConfig) -> None:
-    run_task(cfg=cfg, task_directory=TASK_DIRECTORY, world_module=world_module)
+    run_task(cfg=cfg, task_directory=TASK_DIRECTORY)
 
 
 if __name__ == "__main__":

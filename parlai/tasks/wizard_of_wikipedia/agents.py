@@ -18,7 +18,6 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 from __future__ import annotations
 from typing import Iterable, Optional, Tuple
 from parlai.core.message import Message
-from parlai.core.mutators import register_mutator, MessageMutator
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
@@ -28,6 +27,20 @@ from parlai.utils.io import PathManager
 from parlai.utils import logging
 from parlai.utils.misc import warn_once
 from .build import build
+from .mutators import (
+    AddCheckedSentence,
+    CheckedSentenceAsLabel,
+    AddLabel,
+    AddLabelLM,
+    WowFilterNoPassageUsed,
+)
+import parlai.tasks.wizard_of_internet.mutators
+
+# agents import (
+#    WoiDropoutRetrievedDocs,
+#    WoiChunkRetrievedDocs,
+#    WoiFilterSelectedKnowledgeInRetrievedDocs,
+# )
 
 import json
 import os
@@ -227,17 +240,19 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
         d = self.data[episode_idx]
         dialog_entry = d['dialog'][entry_idx]
         episode_done = entry_idx == len(d['dialog']) - 1
-        action = {
-            'wizard_eval': d['wizard_eval'],
-            'chosen_topic': d['chosen_topic'],
-            'chosen_topic_passage': d['chosen_topic_passage'],
-            'text': dialog_entry['text'],
-            'retrieved_topics': dialog_entry['retrieved_topics'],
-            'retrieved_passages': dialog_entry['retrieved_passages'],
-            'checked_sentence': dialog_entry.get('checked_sentence', None),
-            'checked_passage': dialog_entry.get('checked_passage', None),
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'wizard_eval': d['wizard_eval'],
+                'chosen_topic': d['chosen_topic'],
+                'chosen_topic_passage': d['chosen_topic_passage'],
+                'text': dialog_entry['text'],
+                'retrieved_topics': dialog_entry['retrieved_topics'],
+                'retrieved_passages': dialog_entry['retrieved_passages'],
+                'checked_sentence': dialog_entry.get('checked_sentence', None),
+                'checked_passage': dialog_entry.get('checked_passage', None),
+                'episode_done': episode_done,
+            }
+        )
 
         return action
 
@@ -444,14 +459,16 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             else:
                 label_cands = wizard_entry.get('candidate_responses', [])
 
-        action = {
-            'id': 'WizardDialogKnowledgeTeacher',
-            'text': text,
-            'labels': labels,
-            'chosen_topic': chosen_topic,
-            'episode_done': episode_done,
-            'label_candidates': label_cands,
-        }
+        action = Message(
+            {
+                'id': 'WizardDialogKnowledgeTeacher',
+                'text': text,
+                'labels': labels,
+                'chosen_topic': chosen_topic,
+                'episode_done': episode_done,
+                'label_candidates': label_cands,
+            }
+        )
         if self.include_knowledge:
             action['knowledge'] = knowledge_str
         if self.include_checked_sentence:
@@ -623,12 +640,14 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         if self.add_topic and entry_idx == 0:
             text = d.get('chosen_topic', '') + '\n' + text
 
-        action = {
-            'id': 'WizardBasicDialog',
-            'text': text,
-            'labels': labels,
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'id': 'WizardBasicDialog',
+                'text': text,
+                'labels': labels,
+                'episode_done': episode_done,
+            }
+        )
         if 'label_candidates' in d:
             action['label_candidates'] = d['label_candidates']
 
@@ -728,36 +747,42 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             # just a batch padding item
             return a
         # save some memory, we don't need label_candidates
-        a['label_candidates'] = []
+        a.force_set('label_candidates', [])
         if not a['knowledge'].startswith(TOKEN_NOCHOSEN):
             # make sure the token is appearing
-            a['knowledge'] = (
-                TOKEN_NOCHOSEN
-                + ' '
-                + TOKEN_KNOWLEDGE
-                + ' '
-                + TOKEN_NOCHOSEN
-                + '\n'
-                + a['knowledge']
+            a.force_set(
+                'knowledge',
+                (
+                    TOKEN_NOCHOSEN
+                    + ' '
+                    + TOKEN_KNOWLEDGE
+                    + ' '
+                    + TOKEN_NOCHOSEN
+                    + '\n'
+                    + a['knowledge']
+                ),
             )
         if self.only_checked_knowledge:
             # useful for test time evaluation, where it's only ever trained on true
             # knowledge
-            a['knowledge'] = (
-                a['title'] + ' ' + TOKEN_KNOWLEDGE + ' ' + a['checked_sentence']
+            a.force_set(
+                'knowledge',
+                (a['title'] + ' ' + TOKEN_KNOWLEDGE + ' ' + a['checked_sentence']),
             )
 
         if random.random() < self.dropout:
             # Drop the knowledge with some probability
-            a['title'] = TOKEN_NOCHOSEN
-            a['checked_sentence'] = TOKEN_NOCHOSEN
-            a['knowledge'] = (
-                TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
+            a.force_set('title', TOKEN_NOCHOSEN)
+            a.force_set('checked_sentence', TOKEN_NOCHOSEN)
+            a.force_set(
+                'knowledge',
+                TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN,
             )
         elif self.prepend_gold_knowledge:
-            a[
-                'text'
-            ] = f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}"
+            a.force_set(
+                'text',
+                f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}",
+            )
         return a
 
 
@@ -1153,11 +1178,13 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
         # get sentence span
         span_label = self.get_span_label(d, idx)
 
-        action = {
-            'id': 'WizardDocReader:{}'.format(self.teacher_type),
-            'labels': [sentence],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'id': 'WizardDocReader:{}'.format(self.teacher_type),
+                'labels': [sentence],
+                'episode_done': episode_done,
+            }
+        )
 
         if self.teacher_type == 'docs':
             action['text'] = '{}\n{}'.format(passage, text)
@@ -1277,119 +1304,3 @@ class SelfchatTeacher(BasicBothDialogTeacher):
     """
 
     pass
-
-
-@register_mutator("add_checked_sentence_to_input_wow")
-class AddCheckedSentence(MessageMutator):
-    """
-    Adds the checked sentence to the end of the text.
-
-    But only a single time.
-    """
-
-    @property
-    def checked_sentence_kword(self):
-        return 'checked_sentence'
-
-    def message_mutation(self, message: Message) -> Message:
-        new_message = message.copy()
-        if 'text' not in message:
-            return message
-        text = new_message.pop('text')
-        checked_sentence = new_message.get(self.checked_sentence_kword, '')
-        if isinstance(checked_sentence, list):
-            checked_sentence = ' '.join(checked_sentence)
-
-        text += f'\n{TOKEN_KNOWLEDGE} {checked_sentence} {TOKEN_END_KNOWLEDGE}'
-        new_message['text'] = text
-
-        return new_message
-
-
-@register_mutator("checked_sentence_as_label_wow")
-class CheckedSentenceAsLabel(MessageMutator):
-    """
-    Uses the checked sentence (knowledge) as label.
-    """
-
-    @property
-    def checked_sentence_kword(self):
-        return 'checked_sentence'
-
-    def message_mutation(self, message: Message) -> Message:
-        new_message = message.copy()
-        if 'text' not in message or 'labels' not in message or not message['labels']:
-            return message
-        labels = new_message.pop('labels')
-        checked_sentence = new_message.get(self.checked_sentence_kword, '')
-        if isinstance(checked_sentence, list):
-            checked_sentence = ' '.join(checked_sentence)
-
-        new_message['dialogue_response'] = labels
-        new_message['labels'] = [checked_sentence]
-        return new_message
-
-
-@register_mutator("add_label_to_input_wow")
-class AddLabel(MessageMutator):
-    """
-    Adds the dialogue sentence to the input.
-
-    But only a single time.
-    """
-
-    def message_mutation(self, message: Message) -> Message:
-        new_message = message.copy()
-        if 'text' not in message or 'labels' not in message or not message['labels']:
-            return message
-        if 'dialogue_response' in new_message:
-            # checked_sentence_as_label was applied before
-            labels = new_message['dialogue_response']
-        else:
-            labels = new_message['labels']
-        dialogue_response = labels[0]
-        text = new_message.pop('text')
-
-        text += f'\n{TOKEN_LABEL} {dialogue_response} {TOKEN_END_LABEL}'
-        new_message['text'] = text
-
-        return new_message
-
-
-@register_mutator("add_label_to_input_lm_wow")
-class AddLabelLM(MessageMutator):
-    """
-    Adds the dialogue sentence to the input (language modeling version).
-
-    Language modeling version where a random piece of the label is sampled in
-    the input. The rest is placed inside special tokens.
-
-    E.g. run with: parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
-    flatten,add_label_to_input_lm_wow
-
-    To add the checked sentence as the label, use:
-        parlai display_data -t wizard_of_wikipedia -n 100 -dt valid --mutators
-        flatten,add_label_to_input_lm_wow,checked_sentence_as_label_wow
-    """
-
-    def message_mutation(self, message: Message) -> Message:
-        new_message = message.copy()
-        if 'text' not in message or 'labels' not in message or not message['labels']:
-            return message
-        if 'dialogue_response' in new_message:
-            # checked_sentence_as_label was applied before
-            labels = new_message['dialogue_response']
-        else:
-            labels = new_message['labels']
-        dialogue_response = labels[0]
-        text = new_message.pop('text')
-
-        ls = dialogue_response.split()
-        ind = random.randint(0, len(ls) - 1)
-        label1 = ' '.join(ls[0:ind])
-        label2 = ' '.join(ls[ind : len(ls)])
-
-        text += f'\n{label1}\n{TOKEN_LABEL} {label2} {TOKEN_END_LABEL}'
-        new_message['text'] = text
-
-        return new_message

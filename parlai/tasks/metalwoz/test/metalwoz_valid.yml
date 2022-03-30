@@ -1,73 +1,69 @@
 acts:
-- - bot_prompt: Reply to the customer and try to fulfil their request. If you think
-      the request they are making goes beyond your role, inform the user that you
-      are not equipped to help them
-    bot_role: You are a bot that clarifies the rules for games
-    domain: GAME_RULES
+- - bot_prompt: Ask the user to narrow down their request a little
+    bot_role: You are a bot that provides facts about different cities
+    domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Hello how may I help you? hello.
+    - Hello how may I help you?
     id: metalwoz
-    task_id: a5137c64
-    text: You are a bot that clarifies the rules for games
-    user_prompt: Start a conversation based on you customerRole
-    user_role: You are interacting with a bot that clarifies the rules of games
-    utterance_id: 194e1958
-- - bot_prompt: Reply to the customer and try to fulfil their request. If you think
-      the request they are making goes beyond your role, inform the user that you
-      are not equipped to help them
-    bot_role: You are a bot that clarifies the rules for games
-    domain: GAME_RULES
+    task_id: 284cf7ff
+    text: You are a bot that provides facts about different cities
+    user_prompt: Ask the bot to compare LA and New York City
+    user_role: You are interacting with a bot that provides facts about different
+      cities
+    utterance_id: 4c18684f
+- - bot_prompt: Ask the user to narrow down their request a little
+    bot_role: You are a bot that provides facts about different cities
+    domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Yes sure. What game ?
+    - Sure, which cities?
     id: metalwoz
-    task_id: a5137c64
-    text: Hi, can you help me with a game?
-    user_prompt: Start a conversation based on you customerRole
-    user_role: You are interacting with a bot that clarifies the rules of games
-    utterance_id: 194e1958
-- - bot_prompt: Reply to the customer and try to fulfil their request. If you think
-      the request they are making goes beyond your role, inform the user that you
-      are not equipped to help them
-    bot_role: You are a bot that clarifies the rules for games
-    domain: GAME_RULES
+    task_id: 284cf7ff
+    text: Hey, I'd like to compare two cities
+    user_prompt: Ask the bot to compare LA and New York City
+    user_role: You are interacting with a bot that provides facts about different
+      cities
+    utterance_id: 4c18684f
+- - bot_prompt: Ask the user to narrow down their request a little
+    bot_role: You are a bot that provides facts about different cities
+    domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - No there isn't.
+    - Can you narrow down what you want to compare?
     id: metalwoz
-    task_id: a5137c64
-    text: Okay, I need to know if theres a rule for who goes first in checkers
-    user_prompt: Start a conversation based on you customerRole
-    user_role: You are interacting with a bot that clarifies the rules of games
-    utterance_id: 194e1958
-- - bot_prompt: Reply to the customer and try to fulfil their request. If you think
-      the request they are making goes beyond your role, inform the user that you
-      are not equipped to help them
-    bot_role: You are a bot that clarifies the rules for games
-    domain: GAME_RULES
+    task_id: 284cf7ff
+    text: Please compare Los Angeles with New York City
+    user_prompt: Ask the bot to compare LA and New York City
+    user_role: You are interacting with a bot that provides facts about different
+      cities
+    utterance_id: 4c18684f
+- - bot_prompt: Ask the user to narrow down their request a little
+    bot_role: You are a bot that provides facts about different cities
+    domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Yes as long as you take move.
+    - Los Angeles has a population of 3.976 million, NYC has a population of 8.538
+      million
     id: metalwoz
-    task_id: a5137c64
-    text: So it doesn't matter who goes first?
-    user_prompt: Start a conversation based on you customerRole
-    user_role: You are interacting with a bot that clarifies the rules of games
-    utterance_id: 194e1958
-- - bot_prompt: Reply to the customer and try to fulfil their request. If you think
-      the request they are making goes beyond your role, inform the user that you
-      are not equipped to help them
-    bot_role: You are a bot that clarifies the rules for games
-    domain: GAME_RULES
+    task_id: 284cf7ff
+    text: Sure. What's the difference in population?
+    user_prompt: Ask the bot to compare LA and New York City
+    user_role: You are interacting with a bot that provides facts about different
+      cities
+    utterance_id: 4c18684f
+- - bot_prompt: Ask the user to narrow down their request a little
+    bot_role: You are a bot that provides facts about different cities
+    domain: CITY_INFO
     episode_done: false
     eval_labels:
-    - Yes probably.
+    - 304.6 mi
     id: metalwoz
-    task_id: a5137c64
-    text: Okay, I guess we'll just take turns then
-    user_prompt: Start a conversation based on you customerRole
-    user_role: You are interacting with a bot that clarifies the rules of games
-    utterance_id: 194e1958
-num_episodes: 6207
-num_examples: 37545
+    task_id: 284cf7ff
+    text: Oh wow, that's a huge difference. How big is New York?
+    user_prompt: Ask the bot to compare LA and New York City
+    user_role: You are interacting with a bot that provides facts about different
+      cities
+    utterance_id: 4c18684f
+num_episodes: 3788
+num_examples: 23165
