@@ -728,12 +728,17 @@ class TFIDFRetriever(RagRetriever):
         assert self.max_doc_paragraphs != 0
         if not shared:
             self.tfidf_retriever = create_agent(tfidf_opt)
+            self.query_encoder = DprQueryEncoder(
+                opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
+            )
         else:
             self.tfidf_retriever = shared['tfidf_retriever']
+            self.query_encoder = shared['query_encoder']
 
     def share(self) -> TShared:
         shared = super().share()
         shared['tfidf_retriever'] = self.tfidf_retriever
+        shared['query_encoder'] = self.query_encoder
         return shared
 
     def retrieve_and_score(

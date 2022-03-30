@@ -1,0 +1,70 @@
+acts:
+- - answers: '["2,718"]'
+    checked_sentence: As of June 14 , 2018 , there were 2,718 death row inmates in
+      the United States . The number of death row inmates changes daily with new convictions
+      , appellate decisions overturning conviction or sentence alone , commutations
+      , or deaths ( through execution or otherwise ) . Due to this fluctuation as
+      well as lag and inconsistencies in inmate reporting procedures across jurisdictions
+      , the information in this article may be out of date .
+    episode_done: true
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    labels:
+    - 2,718
+    text: total number of death row inmates in the us
+    title: List of death row inmates in the United States
+- - answers: '["seven"]'
+    checked_sentence: Despite originally being billed as a miniseries , HBO renewed
+      the series for a second season . Production on the second season began in March
+      2018 and is set to premiere in 2019 . The entire main cast will return with
+      the addition of Meryl Streep . All seven episodes are being written by Kelley
+      and directed by Andrea Arnold .
+    episode_done: true
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    labels:
+    - seven
+    text: big little lies season 2 how many episodes
+    title: Big Little Lies (TV series)
+- - answers: '["Foreigner"]'
+    checked_sentence: '`` Waiting for a Girl Like You '''' is a 1981 power ballad
+      by the British - American rock band Foreigner . The distinctive synthesizer
+      theme was performed by the then - little - known Thomas Dolby , this song also
+      marked a major departure from their earlier singles because their previous singles
+      were mid to upper tempo rock songs while this song was a softer love song with
+      the energy of a power ballad .'
+    episode_done: true
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    labels:
+    - Foreigner
+    text: who sang waiting for a girl like you
+    title: Waiting for a Girl Like You
+- - answers: '["Saltfjellet"]'
+    checked_sentence: The Arctic circle crosses mainland Norway at Saltfjellet , which
+      separates Helgeland from the northern part of Nordland county . Thus about half
+      of the county lies north of the Arctic circle , along with the whole of Troms
+      and Finnmark counties . The total area of mainland Norway above the Arctic circle
+      is ca. 95,000 km ( 37,000 sq mi ) . The population is about 393,000 , which
+      makes this the most populated arctic region in the world .
+    episode_done: true
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    labels:
+    - Saltfjellet
+    text: where do you cross the arctic circle in norway
+    title: Arctic Norway
+- - answers: '["Sam - I - am"]'
+    checked_sentence: A character named `` Sam - I - am '' pesters an unnamed character
+      to try a plate of green eggs and ham . The unnamed character refuses , responding
+      , `` I do not like green eggs and ham . I do not like them , Sam - I - am .
+      '' He continues to repeat this as Sam persistently follows him , asking him
+      to try them in eight locations ( house , box , car , tree , train , dark , rain
+      , boat ) and with three animals ( mouse , fox , and goat ) . Finally , he gives
+      into Sam 's pestering and tries the green eggs and ham , which he does like
+      after all and happily responds , `` I do so like green eggs and ham . Thank
+      you . Thank you , Sam - I - am . ''
+    episode_done: true
+    id: natural_questions:NaturalQuestionsOpenTeacher
+    labels:
+    - Sam - I - am
+    text: who is the main character in green eggs and ham
+    title: Green Eggs and Ham
+num_episodes: 79168
+num_examples: 79168
