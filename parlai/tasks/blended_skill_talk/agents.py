@@ -158,8 +158,8 @@ class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
         )
         super().__init__(opt, shared=shared)
 
-    def get(self, episode_idx, entry_idx=None):
-        gotten = super().get(episode_idx, entry_idx=entry_idx)
+    def _format_example(self, episode_idx, entry_idx=None):
+        gotten = super()._format_example(episode_idx, entry_idx)
         if entry_idx == 0:
             modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
             gotten.force_set('text', modified_text)
