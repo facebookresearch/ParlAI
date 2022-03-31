@@ -2,6 +2,7 @@
 boto3==1.17.95
 botocore==1.20.95
 coloredlogs==14.0
+click=7.1.2
 datasets>=1.4.1
 docutils<0.16,>=0.14
 emoji==0.5.4
