@@ -105,13 +105,13 @@ def setup_args(parser=None) -> ParlaiParser:
     )
     train.add_argument(
         '--eval-dynamic-batching',  # FIXME: see https://github.com/facebookresearch/ParlAI/issues/3367
-        default=None,
+        default='off',
         type='nonestr',
         choices={None, 'off', 'full', 'batchsort'},
         help=(
-            'Set dynamic batching at evaluation time. Set to off for '
-            'train-only dynamic batching. Set to none (default) to use same '
-            'setting as --dynamic-batching.'
+            'Set dynamic batching at evaluation time. Set to off (default) for '
+            'train-only dynamic batching (which maintains the order of examples during validation). ' 
+            'Set to none to use same setting as --dynamic-batching.'
         ),
     )
     train.add_argument(
