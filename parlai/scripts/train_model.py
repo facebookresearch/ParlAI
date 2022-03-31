@@ -110,7 +110,7 @@ def setup_args(parser=None) -> ParlaiParser:
         choices={None, 'off', 'full', 'batchsort'},
         help=(
             'Set dynamic batching at evaluation time. Set to off (default) for '
-            'train-only dynamic batching (which maintains the order of examples during validation). ' 
+            'train-only dynamic batching (which maintains the order of examples during validation). '
             'Set to none to use same setting as --dynamic-batching.'
         ),
     )
