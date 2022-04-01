@@ -62,7 +62,7 @@ class AbstractReranker(ABC):
             '--reranker-delimiter',
             type=str,
             default=None,
-            help='delimiter for the retriever',
+            help='delimiter for the reranker',
         )
         return parser
 
@@ -467,12 +467,6 @@ class AbstractGeneratorRerankAgentMixin:
             default=False,
             help='specify to enable certain debugging procedures.',
         )
-        gen_agent.add_argument(
-            '--inference-opt-key',
-            type=str,
-            default='inference',
-            help='specify inference opt key for dialogue response model',
-        )
 
         return parser
 
@@ -482,9 +476,8 @@ class AbstractGeneratorRerankAgentMixin:
         """
         super().__init__(opt, shared)
         reranker_class = self.get_reranker_class()
-        self.inference_opt_key = opt.get('inference_opt_key', 'inference')
         self.inference_strategies = (
-            opt['inference_strategies'] or opt[self.inference_opt_key]
+            opt['inference_strategies'] or opt['inference']
         ).split(',')
         self.debug_mode = opt.get('debug_mode', False)
         if not shared:
@@ -520,6 +513,9 @@ class AbstractGeneratorRerankAgentMixin:
         shared['reranker'] = self.reranker.share()
         return shared
 
+    def set_decoding_method(self, strategy):
+        self.opt['inference'] = strategy
+
     def batch_act(self, observations: List[Message]) -> List[Message]:
         """
         Batch process a list of observations.
@@ -530,7 +526,7 @@ class AbstractGeneratorRerankAgentMixin:
         batch_reply = [Message() for _ in range(len(observations))]
         # 1. get all beam texts to consider
         for strategy in self.inference_strategies:
-            self.opt[self.inference_opt_key] = strategy
+            self.set_decoding_method(strategy)
             inference_batch_reply = super().batch_act(observations)
             for i, resp in enumerate(inference_batch_reply):
                 beam_texts = batch_reply[i].get('beam_texts', [])
