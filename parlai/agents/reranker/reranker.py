@@ -12,7 +12,7 @@ candidate outputs.
 import logging
 import torch
 from abc import ABC, abstractmethod, abstractclassmethod
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import create_agent_from_model_file, Agent
 from parlai.core.build_data import modelzoo_path
@@ -283,7 +283,7 @@ class AbstractReranker(ABC):
     def rerank(
         self,
         observation: Message,
-        response_cands: List[str],
+        response_cands: Union[List[str], List[Message]],
         response_cand_scores: torch.Tensor,
     ) -> Tuple[List[str], List[int]]:
         """
