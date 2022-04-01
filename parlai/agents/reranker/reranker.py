@@ -516,6 +516,9 @@ class AbstractGeneratorRerankAgentMixin:
     def set_decoding_method(self, strategy):
         self.opt['inference'] = strategy
 
+    def get_response_cands(self, generator_response):
+        return [b[0] for b in generator_response['beam_texts']]
+
     def batch_act(self, observations: List[Message]) -> List[Message]:
         """
         Batch process a list of observations.
@@ -548,7 +551,7 @@ class AbstractGeneratorRerankAgentMixin:
                 continue
             reranked_candidates, indices = self.reranker.rerank(
                 observation,
-                [b[0] for b in generator_response['beam_texts']],  # text
+                self.get_response_cands(generator_response),  # text
                 torch.tensor([b[1] for b in generator_response['beam_texts']]),  # score
             )
             if self.debug_mode:
