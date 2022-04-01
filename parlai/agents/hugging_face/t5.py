@@ -167,7 +167,7 @@ class T5Agent(TorchGeneratorAgent):
 
         Use HF's built-in generation to perform beam search unless otherwise specified.
         """
-        if self.opt.get("t5_hf_generation", True) == False:
+        if self.opt.get("t5_hf_generation", True) is False:
             return super()._generate(batch, beam_size, max_ts, prefix_tokens)
 
         bad_words_ids = None
