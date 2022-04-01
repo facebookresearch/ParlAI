@@ -106,7 +106,13 @@ class T5Agent(TorchGeneratorAgent):
                 'translation_en_to_fr',
                 'translation_en_to_ro',
             ],
-            help='Task specific generation config for T5',
+            help='Task specific generation config for T5. Cannot be used if `--tf-hf-generation` is set to False.',
+        )
+        group.add_argument(
+            '--t5-hf-generation',
+            type=bool,
+            default=True,
+            help='Use implementation of generation from Hugging Face or TorchGeneratorAgent',
         )
         return parser
 
@@ -159,8 +165,11 @@ class T5Agent(TorchGeneratorAgent):
         """
         Generate an output with beam search.
 
-        Use HF's built-in generation to perform beam search.
+        Use HF's built-in generation to perform beam search unless otherwise specified.
         """
+        if self.opt.get("t5_hf_generation", True) == False:
+            return super()._generate(batch, beam_size, max_ts, prefix_tokens)
+
         bad_words_ids = None
         if self.beam_block_list is not None:
             bad_words_ids = [
@@ -238,10 +247,7 @@ class ParlaiT5Encoder(torch.nn.Module):
             self.stack.parallelize()
         mask = input != self.padding_idx
         outputs = self.stack(input, attention_mask=mask, output_hidden_states=False)
-        for k in outputs:
-            if torch.is_tensor(outputs[k]):
-                outputs[k] = outputs[k].to(input.device)
-        return outputs[0], mask
+        return outputs[0].to(input.device), mask
 
 
 class ParlaiT5Decoder(torch.nn.Module):
