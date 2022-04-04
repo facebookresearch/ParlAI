@@ -12,7 +12,7 @@ candidate outputs.
 import logging
 import torch
 from abc import ABC, abstractmethod, abstractclassmethod
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import create_agent_from_model_file, Agent
 from parlai.core.build_data import modelzoo_path
@@ -283,7 +283,7 @@ class AbstractReranker(ABC):
     def rerank(
         self,
         observation: Message,
-        response_cands: Union[List[str], List[Message]],
+        response_cands: List[str],
         response_cand_scores: torch.Tensor,
     ) -> Tuple[List[str], List[int]]:
         """
@@ -467,6 +467,12 @@ class AbstractGeneratorRerankAgentMixin:
             default=False,
             help='specify to enable certain debugging procedures.',
         )
+        gen_agent.add_argument(
+            '--inference-opt-key',
+            type=str,
+            default='inference',
+            help='specify inference opt key for dialogue response model',
+        )
 
         return parser
 
@@ -476,8 +482,9 @@ class AbstractGeneratorRerankAgentMixin:
         """
         super().__init__(opt, shared)
         reranker_class = self.get_reranker_class()
+        self.inference_opt_key = opt.get('inference_opt_key', 'inference')
         self.inference_strategies = (
-            opt['inference_strategies'] or opt['inference']
+            opt['inference_strategies'] or opt[self.inference_opt_key]
         ).split(',')
         self.debug_mode = opt.get('debug_mode', False)
         if not shared:
@@ -498,11 +505,6 @@ class AbstractGeneratorRerankAgentMixin:
         assert strategy in RERANKER_STRATEGIES
         self.reranker.reranker_strategy = strategy
 
-    def get_observations_for_reranker(
-        self, observations: List[Message]
-    ) -> List[Message]:
-        return observations
-
     def share(self):
         """
         Share model parameters.
@@ -514,10 +516,12 @@ class AbstractGeneratorRerankAgentMixin:
         return shared
 
     def set_decoding_method(self, strategy):
-        self.opt['inference'] = strategy
+        self.opt[self.inference_opt_key] = strategy
 
-    def get_response_cands(self, generator_response):
-        return [b[0] for b in generator_response['beam_texts']]
+    def get_observations_for_reranker(
+        self, observations: List[Message], batch_reply: List[Message]
+    ) -> List[Message]:
+        return observations
 
     def batch_act(self, observations: List[Message]) -> List[Message]:
         """
@@ -537,7 +541,9 @@ class AbstractGeneratorRerankAgentMixin:
                 new_beam_texts = [(*b, strategy) for b in resp.get('beam_texts', [])]
                 batch_reply[i].force_set('beam_texts', beam_texts + new_beam_texts)
         # 2. Rerank
-        observations_for_reranker = self.get_observations_for_reranker(observations)
+        observations_for_reranker = self.get_observations_for_reranker(
+            observations, batch_reply
+        )
         for observation, generator_response in zip(
             observations_for_reranker, batch_reply
         ):
@@ -551,7 +557,7 @@ class AbstractGeneratorRerankAgentMixin:
                 continue
             reranked_candidates, indices = self.reranker.rerank(
                 observation,
-                self.get_response_cands(generator_response),  # text
+                [b[0] for b in generator_response['beam_texts']],  # text
                 torch.tensor([b[1] for b in generator_response['beam_texts']]),  # score
             )
             if self.debug_mode:
