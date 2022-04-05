@@ -7,12 +7,14 @@ on:
   pull_request:
 
 jobs:
-  pre-commit:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-    - uses: pre-commit/action@v2.0.0
+  # TODO(roller): uncomment this. it drifted due to click versioning.
+  # see #4481 for details
+  # pre-commit:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - uses: actions/setup-python@v2
+  #   - uses: pre-commit/action@v2.0.0
 
   lint:
     runs-on: ubuntu-latest

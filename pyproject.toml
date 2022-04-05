@@ -1,5 +1,4 @@
 [tool.black]
-required-version = 19.3b0
 line-length = 88
 skip-string-normalization = true
 target-version = ['py36', 'py37', 'py38']
