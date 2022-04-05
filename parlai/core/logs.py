@@ -194,7 +194,7 @@ class WandbLogger(object):
                     for task_opt in maybe_task_opts:
                         if len(task_opt.split("=")) == 2:
                             k, v = task_opt.split("=")
-                            setattr(self.run.config, k, v)
+                            setattr(self.run.config, k, v, allow_val_change=True)
         if model is not None:
             self.run.watch(model)
 
