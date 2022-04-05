@@ -62,7 +62,7 @@ class AbstractReranker(ABC):
             '--reranker-delimiter',
             type=str,
             default=None,
-            help='delimiter for the retriever',
+            help='delimiter for the reranker',
         )
         return parser
 
@@ -505,11 +505,6 @@ class AbstractGeneratorRerankAgentMixin:
         assert strategy in RERANKER_STRATEGIES
         self.reranker.reranker_strategy = strategy
 
-    def get_observations_for_reranker(
-        self, observations: List[Message]
-    ) -> List[Message]:
-        return observations
-
     def share(self):
         """
         Share model parameters.
@@ -519,6 +514,14 @@ class AbstractGeneratorRerankAgentMixin:
         shared = super().share()
         shared['reranker'] = self.reranker.share()
         return shared
+
+    def set_decoding_method(self, strategy):
+        self.opt[self.inference_opt_key] = strategy
+
+    def get_observations_for_reranker(
+        self, observations: List[Message], batch_reply: List[Message]
+    ) -> List[Message]:
+        return observations
 
     def batch_act(self, observations: List[Message]) -> List[Message]:
         """
@@ -530,7 +533,7 @@ class AbstractGeneratorRerankAgentMixin:
         batch_reply = [Message() for _ in range(len(observations))]
         # 1. get all beam texts to consider
         for strategy in self.inference_strategies:
-            self.opt[self.inference_opt_key] = strategy
+            self.set_decoding_method(strategy)
             inference_batch_reply = super().batch_act(observations)
             for i, resp in enumerate(inference_batch_reply):
                 beam_texts = batch_reply[i].get('beam_texts', [])
@@ -538,7 +541,9 @@ class AbstractGeneratorRerankAgentMixin:
                 new_beam_texts = [(*b, strategy) for b in resp.get('beam_texts', [])]
                 batch_reply[i].force_set('beam_texts', beam_texts + new_beam_texts)
         # 2. Rerank
-        observations_for_reranker = self.get_observations_for_reranker(observations)
+        observations_for_reranker = self.get_observations_for_reranker(
+            observations, batch_reply
+        )
         for observation, generator_response in zip(
             observations_for_reranker, batch_reply
         ):
