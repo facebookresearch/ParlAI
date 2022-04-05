@@ -10,6 +10,8 @@ Catch all for a number of "other" scripts.
 
 import os
 import unittest
+from parlai.core.message import Message
+from parlai.core.mutators import MessageMutator, register_mutator
 import parlai.utils.testing as testing_utils
 
 
@@ -145,6 +147,18 @@ class TestVacuum(unittest.TestCase):
             ), "Backup should not exist"
 
 
+@register_mutator('degenerate')
+class DegenerateMutator(MessageMutator):
+    """
+    Replace message text with empty strings.
+    """
+
+    def message_mutation(self, message: Message) -> Message:
+        message.force_set('text', '')
+        message.force_set('labels', [''])
+        return message
+
+
 class TestDetectOffensive(unittest.TestCase):
     def test_offensive(self):
         from parlai.scripts.detect_offensive_language import DetectOffensive
@@ -155,6 +169,18 @@ class TestDetectOffensive(unittest.TestCase):
         assert report['string_offenses%'] == 0
         assert report['word_offenses'] == 0
         assert report['exs'] == 100
+
+    def test_offensive_degenerate_case(self):
+        """
+        Test functionality for degenerate tasks.
+        """
+        from parlai.scripts.detect_offensive_language import DetectOffensive
+
+        report = DetectOffensive.main(
+            task='integration_tests:overfit', safety='all', mutators='degenerate'
+        )
+        assert report['classifier_offenses%'] == 0
+        assert report['exs'] == 4
 
 
 class TestParty(unittest.TestCase):
