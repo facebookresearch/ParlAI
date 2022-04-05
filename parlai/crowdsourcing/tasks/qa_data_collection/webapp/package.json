@@ -11,7 +11,7 @@
   "dependencies": {
     "bootstrap": "^4.3.1",
     "bootstrap-chat": "^2.0.0",
-    "mephisto-task": "^2.0.0",
+    "mephisto-task": "^2.0.1",
     "rc-slider": "^8.6.3",
     "react": "16.13.1",
     "react-bootstrap": "^0.32.4",
