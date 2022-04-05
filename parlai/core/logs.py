@@ -189,6 +189,12 @@ class WandbLogger(object):
             for key, value in opt.items():
                 if value is None or isinstance(value, (str, numbers.Number, tuple)):
                     setattr(self.run.config, key, value)
+                if key == "task":  # For ags specified in the task argument
+                    maybe_task_opts = value.split(":")
+                    for task_opt in maybe_task_opts:
+                        if len(task_opt.split("=")) == 2:
+                            k, v = task_opt.split("=")
+                            setattr(self.run.config, k, v)
         if model is not None:
             self.run.watch(model)
 
