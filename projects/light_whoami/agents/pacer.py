@@ -203,10 +203,11 @@ class PacerTreeSearchMixin(TreeSearch):
         Override to save de-tokenized version of context.
         """
         # remove pad_idx from the batch vec
-        self.context = clean_vec(
+        self.context = batch_context_list[batch_idx]
+        clean_context = clean_vec(
             batch_context_list[batch_idx], self.agent.END_IDX, [self.agent.NULL_IDX]
         )
-        self.context_str = self.agent._v2t(self.context)
+        self.context_str = self.agent._v2t(clean_context)
         self.character = self.get_target_character()
         return self
 
