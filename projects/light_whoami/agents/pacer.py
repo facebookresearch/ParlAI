@@ -46,7 +46,7 @@ class PacerAgentMixin:
     @classmethod
     def get_partial_only_reranker_class(cls) -> AbstractReranker:
         """
-        Return class to instantiate classifier
+        Return class to instantiate classifier.
         """
         return RPAReranker
 
