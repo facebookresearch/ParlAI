@@ -517,10 +517,7 @@ def validate_onboarding(data):
     status_message = messages[-2]
     if status_message is None:
         return False
-    submitted_data = status_message.get('data')
-    if submitted_data is None:
-        return False
-    final_status = submitted_data.get('final_status')
+    final_status = status_message.get('final_status')
     return final_status == ONBOARD_SUCCESS
 
 
