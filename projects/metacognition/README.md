@@ -10,4 +10,4 @@ COMING SOON!
 
 ## Paper
 
-[Link](https://arxiv.org/abs/2012.14983);git s accepted to TACL 2022.
+[Link](https://arxiv.org/abs/2012.14983); accepted to TACL 2022.
