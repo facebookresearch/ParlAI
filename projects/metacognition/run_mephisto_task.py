@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 import json
 import os
 import random
@@ -70,7 +74,9 @@ already_tabooed_questions = [
     "Produced until 2001, what was the name of the 128-bit game console produced by Sega that has developed quite a cult following?",
 ]
 
-with open(os.path.join(STATIC_FILES_DIR, "blender3B_forced_IDK_test__need_2_more.jsonl")) as f:
+with open(
+    os.path.join(STATIC_FILES_DIR, "blender3B_forced_IDK_test__need_2_more.jsonl")
+) as f:
     all_samples = [
         s
         for s in [json.loads(line) for line in f if line]

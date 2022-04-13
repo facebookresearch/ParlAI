@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 import base64
 from io import BytesIO
-import gzip
 import itertools
 import json
-import logging
 import math  # noqa: F401
 import numpy as np
 import random
@@ -14,7 +16,7 @@ import os.path
 import torch
 
 from parlai.agents.bert_classifier.bert_classifier import BertClassifierAgent
-from parlai.agents.transformer.modules import TransformerGeneratorModel, _normalize
+from parlai.agents.transformer.modules import TransformerGeneratorModel
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, GlobalTimerMetric, SumMetric
@@ -39,6 +41,12 @@ from parlai.projects.metacognition.wsgi import (
 )
 
 
+def _normalize(tensor, norm_layer):
+    """Broadcast layer norm."""
+    size = tensor.size()
+    return norm_layer(tensor.view(-1, size[-1])).view(size)
+
+
 def custom_decoder_layer(layer, x, encoder_output, encoder_mask):
     decoder_mask = layer._create_selfattn_mask(x)
     # first self attn
@@ -48,10 +56,7 @@ def custom_decoder_layer(layer, x, encoder_output, encoder_mask):
 
     # don't peak into the future!
     x, final_self_attn_incr_state = layer.self_attention(
-        query=x,
-        mask=decoder_mask,
-        incr_state=None,
-        static_kv=False,
+        query=x, mask=decoder_mask, incr_state=None, static_kv=False
     )
     x = layer.dropout(x)  # --dropout
     x = x + residual
@@ -354,8 +359,7 @@ def claim_from_training_data(
                 )
             elif balance_correctness == "onlycorrect":
                 Z = minmax(
-                    Z,
-                    len(sds) * minmax(len(co2sd2stock[True][sd]) for sd in sds) / p,
+                    Z, len(sds) * minmax(len(co2sd2stock[True][sd]) for sd in sds) / p
                 )
             else:
                 raise ValueError(balance_correctness)
@@ -895,10 +899,7 @@ class CertaintyOntoBSTTeacher(DialogTeacher):
     def add_cmdline_args(cls, argparser):
         group = argparser.add_argument_group("CertaintyClassificationTeacher Arguments")
         group.add_argument(
-            "--nturns",
-            default=-1,
-            type=int,
-            help="How many samples to show",
+            "--nturns", default=-1, type=int, help="How many samples to show"
         )
         group.add_argument(
             "--simplify-certainty",
@@ -938,10 +939,7 @@ class CertaintyOntoTextfileTeacher(DialogTeacher):
     def add_cmdline_args(cls, argparser):
         group = argparser.add_argument_group("CertaintyOntoTextfileTeacher Arguments")
         group.add_argument(
-            "--nturns",
-            default=-1,
-            type=int,
-            help="How many samples to show",
+            "--nturns", default=-1, type=int, help="How many samples to show"
         )
         group.add_argument(
             "--simplify-certainty",
@@ -989,10 +987,7 @@ class CertaintyOntoTriviaQATeacher(DialogTeacher):
     def add_cmdline_args(cls, argparser):
         group = argparser.add_argument_group("CertaintyClassificationTeacher Arguments")
         group.add_argument(
-            "--nsamples",
-            default=-1,
-            type=int,
-            help="How many samples to show",
+            "--nsamples", default=-1, type=int, help="How many samples to show"
         )
         group.add_argument(
             "--simplify-certainty",
@@ -1060,30 +1055,50 @@ class CorrectnessProbingTeacher(DialogTeacher):
                 totals += 1
                 desired_class = "RIGHT" if d["regex_correctness"] else "WRONG"
                 if self.correctness_prediction_mode == "probing":
-                    self.examples.append(({
-                        "text": d["text"],
-                        "label": d["label"],
-                        "desired_class": desired_class,
-                        "certainty": d["bert_certainty"][1:-1],
-                    }, True))
+                    self.examples.append(
+                        (
+                            {
+                                "text": d["text"],
+                                "label": d["label"],
+                                "desired_class": desired_class,
+                                "certainty": d["bert_certainty"][1:-1],
+                            },
+                            True,
+                        )
+                    )
                 elif self.correctness_prediction_mode == "bert-q":
-                    self.examples.append(({
-                        "text": d["text"],
-                        "label": desired_class,
-                        "label_candidates": ["WRONG", "RIGHT"],
-                    }, True))
+                    self.examples.append(
+                        (
+                            {
+                                "text": d["text"],
+                                "label": desired_class,
+                                "label_candidates": ["WRONG", "RIGHT"],
+                            },
+                            True,
+                        )
+                    )
                 elif self.correctness_prediction_mode == "bert-qp":
-                    self.examples.append(({
-                        "text": d["text"] + "\n" + d["label"],
-                        "label": desired_class,
-                        "label_candidates": ["WRONG", "RIGHT"],
-                    }, True))
+                    self.examples.append(
+                        (
+                            {
+                                "text": d["text"] + "\n" + d["label"],
+                                "label": desired_class,
+                                "label_candidates": ["WRONG", "RIGHT"],
+                            },
+                            True,
+                        )
+                    )
                 elif self.correctness_prediction_mode == "bert-p":
-                    self.examples.append(({
-                        "text": d["label"],
-                        "label": desired_class,
-                        "label_candidates": ["WRONG", "RIGHT"],
-                    }, True))
+                    self.examples.append(
+                        (
+                            {
+                                "text": d["label"],
+                                "label": desired_class,
+                                "label_candidates": ["WRONG", "RIGHT"],
+                            },
+                            True,
+                        )
+                    )
                 else:
                     raise Exception()
         else:
@@ -1107,30 +1122,50 @@ class CorrectnessProbingTeacher(DialogTeacher):
                         rights += 1
                     totals += 1
                     if self.correctness_prediction_mode == "probing":
-                        self.examples.append(({
-                            "text": d["question"],
-                            "label": d["prediction"],
-                            "desired_class": correctness,
-                            "certainty": certainty,
-                        }, True))
+                        self.examples.append(
+                            (
+                                {
+                                    "text": d["question"],
+                                    "label": d["prediction"],
+                                    "desired_class": correctness,
+                                    "certainty": certainty,
+                                },
+                                True,
+                            )
+                        )
                     elif self.correctness_prediction_mode == "bert-q":
-                        self.examples.append(({
-                            "text": d["question"],
-                            "label": correctness,
-                            "label_candidates": ["WRONG", "RIGHT"],
-                        }, True))
+                        self.examples.append(
+                            (
+                                {
+                                    "text": d["question"],
+                                    "label": correctness,
+                                    "label_candidates": ["WRONG", "RIGHT"],
+                                },
+                                True,
+                            )
+                        )
                     elif self.correctness_prediction_mode == "bert-qp":
-                        self.examples.append(({
-                            "text": d["question"] + "\n" + d["prediction"],
-                            "label": correctness,
-                            "label_candidates": ["WRONG", "RIGHT"],
-                        }, True))
+                        self.examples.append(
+                            (
+                                {
+                                    "text": d["question"] + "\n" + d["prediction"],
+                                    "label": correctness,
+                                    "label_candidates": ["WRONG", "RIGHT"],
+                                },
+                                True,
+                            )
+                        )
                     elif self.correctness_prediction_mode == "bert-p":
-                        self.examples.append(({
-                            "text": d["prediction"],
-                            "label": correctness,
-                            "label_candidates": ["WRONG", "RIGHT"],
-                        }, True))
+                        self.examples.append(
+                            (
+                                {
+                                    "text": d["prediction"],
+                                    "label": correctness,
+                                    "label_candidates": ["WRONG", "RIGHT"],
+                                },
+                                True,
+                            )
+                        )
                     else:
                         raise Exception()
         print(f"\n{rights}/{totals} = {100*rights/totals:.3f}% right!\n")
@@ -1382,27 +1417,12 @@ class ClassifierOnGeneratorAgent(TransformerGeneratorAgent):
             default=False,
             help="Only train the classifier head and not the encoder and decoder",
         )
-        agent.add_argument(
-            "--n-classifier-layers",
-            type=int,
-        )
-        agent.add_argument(
-            "--classifier-hidsize",
-            type=int,
-            default=512,
-        )
+        agent.add_argument("--n-classifier-layers", type=int)
+        agent.add_argument("--classifier-hidsize", type=int, default=512)
         agent.add_argument("--classifier-state-pooling")
         agent.add_argument("--classifier-state-pre-pooling")
-        agent.add_argument(
-            "--classifier-with-encode",
-            type=bool,
-            default=True,
-        )
-        agent.add_argument(
-            "--classifier-with-decode",
-            type=bool,
-            default=True,
-        )
+        agent.add_argument("--classifier-with-encode", type=bool, default=True)
+        agent.add_argument("--classifier-with-decode", type=bool, default=True)
         return agent
 
     def __init__(self, opt, shared=None):
@@ -1586,8 +1606,8 @@ class ClassifierOnGeneratorAgent(TransformerGeneratorAgent):
             with_decode=self.with_decode,
         )
 
-        self.enrich_potential_blender_state_dict_ = (
-            lambda sd: model.enrich_potential_blender_state_dict_(sd)
+        self.enrich_potential_blender_state_dict_ = lambda sd: model.enrich_potential_blender_state_dict_(
+            sd
         )
 
         return model
@@ -1690,7 +1710,6 @@ class ClassifierOnGeneratorAgent(TransformerGeneratorAgent):
 
 
 class BertCalibrator(BertClassifierAgent):
-
     def _get_classes_tensor(self, batch):
         try:
             classes_tensor = torch.LongTensor(
@@ -1729,31 +1748,27 @@ class BertCalibrator(BertClassifierAgent):
         )
 
 
-
-
-
-
-
-
-
-with open(f"{MCDIR}/calibrator_training_answers.txt", 'w') as f:
-    print(
-        "\n".join([
-            d["label"]
-            for d in claim_from_training_data(
-                balance_correctness="anycorrectness",
-                certainty_distribution="everything-oversample",
-                with_eva=False,
-                from_the_back=True,
-                training_samples=TriviaQARun.get_run(
-                    f"{DATADIR2}/NoEvidenceUnion_blender_3B_default_trainset_withembeddings_cleanedanswers_triviaqa:NoEvidenceUnion_replies.jsonl",
-                    no_cache=True,
-                ).samples[:50000],
-                training_certainty_samples=TriviaQARun.get_run(
-                    f"{DATADIR2}/triviaqa_full_166_parlai.projects.metacognition.agents:CertaintyOntoTriviaQATeacher_replies.jsonl",
-                    no_cache=True,
-                ).samples[:50000],
-            )
-        ]),
-        file=f,
-    )
+if __name__ == "__main__":
+    with open(f"{MCDIR}/calibrator_training_answers.txt", 'w') as f:
+        print(
+            "\n".join(
+                [
+                    d["label"]
+                    for d in claim_from_training_data(
+                        balance_correctness="anycorrectness",
+                        certainty_distribution="everything-oversample",
+                        with_eva=False,
+                        from_the_back=True,
+                        training_samples=TriviaQARun.get_run(
+                            f"{DATADIR2}/NoEvidenceUnion_blender_3B_default_trainset_withembeddings_cleanedanswers_triviaqa:NoEvidenceUnion_replies.jsonl",
+                            no_cache=True,
+                        ).samples[:50000],
+                        training_certainty_samples=TriviaQARun.get_run(
+                            f"{DATADIR2}/triviaqa_full_166_parlai.projects.metacognition.agents:CertaintyOntoTriviaQATeacher_replies.jsonl",
+                            no_cache=True,
+                        ).samples[:50000],
+                    )
+                ]
+            ),
+            file=f,
+        )

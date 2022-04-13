@@ -38,8 +38,8 @@ from mephisto.core.data_browser import DataBrowser as MephistoDataBrowser
 from mephisto.data_model.worker import Worker
 
 
-USERDIR = "/home/<your_username>"
-MCDIR = USERDIR + "/ParlAI/parlai_external/projects/metacognition"
+USERDIR = os.environ["PARLAI_HOME"]
+MCDIR = USERDIR + "/projects/metacognition"
 DATADIR0 = "/some/storage/project"
 DATADIR1 = DATADIR0 + "/models"
 DATADIR2 = DATADIR1 + "/results"
@@ -404,13 +404,7 @@ class CachedReductionPlotGroup(CachedGroup):
     reductions = ["PCA", "PCA128--tSNE"]
     stdizers = [True, False]
 
-    def __init__(
-        self,
-        run: TriviaQARun,
-        embedder: str,
-        reduction: str,
-        stdize: bool,
-    ):
+    def __init__(self, run: TriviaQARun, embedder: str, reduction: str, stdize: bool):
         self.run = run
         self.embedder = embedder
         self.reduction = reduction
@@ -670,8 +664,7 @@ def all_mturk_worker_annotations(task_name):
 
         worker_name = Worker(db, data["worker_id"]).worker_name
         for ins, outs in zip(
-            data["data"]["inputs"]["samples"],
-            data["data"]["outputs"]["final_data"],
+            data["data"]["inputs"]["samples"], data["data"]["outputs"]["final_data"]
         ):
             annotation = "🏃🤷💁🙋"[outs["certainty"]]
             if outs["certainty"] != 0:
@@ -885,8 +878,7 @@ def route_logfile(start, end, logfile):
                     [
                         f"{ngram} <span class='score'>({val:.2g})</span>"
                         for val, ngram in sorted(
-                            list(zip(coefs[metric], vocab)),
-                            key=lambda t: -abs(t[0]),
+                            list(zip(coefs[metric], vocab)), key=lambda t: -abs(t[0])
                         )
                         if predicate(val)
                     ]
@@ -962,8 +954,7 @@ def route_logfile(start, end, logfile):
     "/miniannotation/<int:seed>/<path:annotation_filename>", methods=["GET", "POST"]
 )
 def route_miniannotation(
-    seed: int = 0,
-    annotation_filename: str = f"{MCDIR}/miniannotations.json"[1:],
+    seed: int = 0, annotation_filename: str = f"{MCDIR}/miniannotations.json"[1:]
 ):
     annotation_filename = "/" + annotation_filename
     # Load existing annotations
@@ -1226,8 +1217,7 @@ def sort_annotators_into_n_columns(worker2qp2a, n):
 
 @app.route("/pilotconfusion/<path:worker2qp2a_file>")
 def route_pilotconfusion(
-    worker2qp2a_file="pilot150/mturk_pilot.json",
-    path=f"{MCDIR}/annotations",
+    worker2qp2a_file="pilot150/mturk_pilot.json", path=f"{MCDIR}/annotations"
 ):
     result = "<html><head>" + STYLE + "</head><body><center>"
 
@@ -1461,9 +1451,7 @@ def route_pilotconfusion(
 def route_compare_two_annotations(who1: str, who2: str):
     annotations = []
     for name in [who1, who2]:
-        with open(
-            f"{MCDIR}/annotations/pilot150/{name.lower()}.json"
-        ) as f:
+        with open(f"{MCDIR}/annotations/pilot150/{name.lower()}.json") as f:
             annotations.append(json.load(f))
 
     result = "<html><head>" + STYLE + "</head><body><center>"
@@ -1708,8 +1696,7 @@ def route_mephistojudge_worker(worker_name):
         correctness_counter = Counter()
         _r = "<table><tbody>"
         for ins, outs in zip(
-            contents["inputs"]["samples"],
-            contents["outputs"]["final_data"],
+            contents["inputs"]["samples"], contents["outputs"]["final_data"]
         ):
             a, *raws = _a2s(outs).split(" ")
             total_counter[a] += 1
@@ -1945,9 +1932,7 @@ def simplify_annotations(annotations, binary_certainty=False, binary_correctness
 def route_certain_buckets():
     result = "<html><head>" + STYLE + "</head><body><center>"
 
-    with open(
-        f"{MCDIR}/annotations/validset/3x2000_blender3B_valid.json"
-    ) as f:
+    with open(f"{MCDIR}/annotations/validset/3x2000_blender3B_valid.json") as f:
         worker2qp2a = json.load(f)
 
     qp2as = defaultdict(list)
@@ -2169,9 +2154,7 @@ def route_correctness_trace(identifier="mauriceravel_5aa"):
 
 @app.route("/blender3B_<string:model>_test.jsonl")
 def route_annotatable_data(model):
-    with open(
-        f"{MCDIR}/webapp/src/static/blender3B_valid.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/webapp/src/static/blender3B_valid.jsonl") as f:
         past_qs = set(json.loads(l)["question"] for l in f.read().splitlines())
     vanilla_samples = TriviaQARun.get_run(
         f"{DATADIR2}/NoEvidenceUnion_blender_3B_default_withembeddings_cleanedanswers_triviaqa:NoEvidenceUnion_replies.jsonl"
@@ -2487,15 +2470,10 @@ def route_process_sweep_results_json(phase, sweepname="somename"):
                 )
                 d = {"question": q}
                 for name, s in zip(names, sample_tuple):
-                    d[name] = {
-                        "prediction": s.prediction,
-                        "correctness": s.is_correct,
-                    }
+                    d[name] = {"prediction": s.prediction, "correctness": s.is_correct}
                 result["samples"].append(d)
             # Get metadata from JSON files
-            (rundir,) = glob(
-                f"{DATADIR1}/2020????/sweep_mccfts2_{sweepname}/{runid}"
-            )
+            (rundir,) = glob(f"{DATADIR1}/2020????/sweep_mccfts2_{sweepname}/{runid}")
             for ending in ("opt", "dict-vocab.json", "dict.opt", "trainstats"):
                 with open(f"{rundir}/model.{ending}") as f:
                     result[ending] = json.load(f)
@@ -2511,8 +2489,7 @@ def route_process_sweep_results_json(phase, sweepname="somename"):
                         result[fn[:6]] = f.read()
             allresults[runid] = result
         with open(
-            f"{DATADIR1}/FinetuningSweepStats/sweep-results.{sweepname}.json",
-            "wt",
+            f"{DATADIR1}/FinetuningSweepStats/sweep-results.{sweepname}.json", "wt"
         ) as f:
             json.dump(allresults, f)
         return "done"
@@ -2533,9 +2510,7 @@ def route_process_sweep_results_json(phase, sweepname="somename"):
         ]
         outputs = {}
         for fn in (f"sweep-results.{sweepname}.json",):
-            with open(
-                f"{DATADIR0}/NewFinetuningSweepStats/" + fn
-            ) as f:
+            with open(f"{DATADIR0}/NewFinetuningSweepStats/" + fn) as f:
                 for runid, run in json.load(f).items():
                     # if runid in "f98".split(): continue
                     d = {
@@ -2543,10 +2518,7 @@ def route_process_sweep_results_json(phase, sweepname="somename"):
                         "samples": run["samples"],
                     }
                     outputs[runid] = d
-            with open(
-                f"{DATADIR0}/NewFinetuningSweepStats/yes_qps.txt",
-                "wt",
-            ) as wf:
+            with open(f"{DATADIR0}/NewFinetuningSweepStats/yes_qps.txt", "wt") as wf:
                 for runid in sorted(list(outputs.keys())):
                     for s in outputs[runid]["samples"]:
                         print(s["question"] + "\n" + s["YEA"]["prediction"], file=wf)
@@ -2588,14 +2560,14 @@ def route_process_sweep_results_json(phase, sweepname="somename"):
 
 @app.route("/join-finetune-sweep-results")
 def route_join_finetune_sweep_results():
-    path = f"{DATADIR1}/FinetuningSweepStats/sweep-results.{}.stats.json"
+    path = "{}/FinetuningSweepStats/sweep-results.{}.stats.json"
     result = {}
-    for fn in glob(path.format("*")):
+    for fn in glob(path.format(DATADIR1, "*")):
         with open(fn) as f:
             name = fn.split(".")[-3]
             for k, v in json.load(f).items():
                 result[name + "_" + k] = v
-    with open(path.format("ALL"), "w") as f:
+    with open(path.format(DATADIR1, "ALL"), "w") as f:
         json.dump(result, f)
     return "done"
 
@@ -2924,11 +2896,7 @@ def route_compare_finetune_sweep_results_json(sweepname):
             head += _h
             result += _b
 
-    _vs = [
-        (1, 3, 3, 3, 1),
-        (1, 3, 3, 3, 3),
-        (1, 3, 3, 3, 5),
-    ]
+    _vs = [(1, 3, 3, 3, 1), (1, 3, 3, 3, 3), (1, 3, 3, 3, 5)]
     for i, v1 in enumerate(_vs):
         for v2 in _vs[i + 1 :]:
             result += f"<h1>Is '{v1}' weighting or '{v2}' better?</h1>"
@@ -2988,9 +2956,7 @@ def route_probe_results(sweepname, dset):
     # Load all data
     runs = {}
     for fn in itertools.chain.from_iterable(
-        glob(
-            f"{DATADIR1}/2020*/mcprobe_{sn}/*/model.{dset}"
-        )
+        glob(f"{DATADIR1}/2020*/mcprobe_{sn}/*/model.{dset}")
         for sn in sweepname.split("+")
     ):
         runid = "/".join(fn.split("/")[3:6])
@@ -3137,9 +3103,7 @@ def calibration_metrics(pos_probs, blender_got_it_right, nbins=20):
     return ece, mce, nll
 
 
-with open(
-    f"{MCDIR}/calibrator_training_answers.txt"
-) as f:
+with open(f"{MCDIR}/calibrator_training_answers.txt") as f:
     leaking_training_answers = set(f.read().splitlines())
 
 q2noleak = {
@@ -3200,7 +3164,7 @@ def route_probe_certainties(infix="probe_ametsub_446_says"):
                         "p(RIGHT)": [
                             {"RIGHT": s.maxprob, "WRONG": 1 - s.maxprob}[s.prediction]
                             for s in ss
-                        ],
+                        ]
                     }
                 )
             )
@@ -3219,7 +3183,7 @@ def route_probe_certainties(infix="probe_ametsub_446_says"):
                                 ]
                             )
                             for s in ss
-                        ],
+                        ]
                     }
                 )
             )
@@ -3613,9 +3577,7 @@ def mc_paired_perm_test(xs, ys, nsamples=100_000, statistic=np.sum):
 def route_calibrate():
     result = "<html><head>" + STYLE + "</head><body><center>"
 
-    with open(
-        f"{MCDIR}/3x4000_blender3B_test_fourmodels.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/3x4000_blender3B_test_fourmodels.jsonl") as f:
         all_samples = [json.loads(d) for d in f.read().splitlines()]
 
     testvalid_qs = set(s["question"] for s in all_samples)
@@ -3652,9 +3614,7 @@ def route_calibrate():
         for t in ("vanilla", "forced_IDK", "forced_TRY", "forced_YEA")
     }
 
-    with open(
-        f"{MCDIR}/3x5000_blender3B_test_fourmodels.non_simplified.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/3x5000_blender3B_test_fourmodels.non_simplified.jsonl") as f:
         non_simplified_samples = [json.loads(d) for d in f.read().splitlines()]
         non_simplified_four_cos_ces_ps = {
             t.split("_")[-1]: {
@@ -3769,7 +3729,7 @@ def route_calibrate():
             for a, b in [
                 (0.025, 0.025),
                 (0.0, 0.275),
-                (0.0, 0.375), ##
+                (0.0, 0.375),  ##
                 # (0.0, 0.5),
                 # (0.0, 0.525),
                 # (0.0, 0.55),
@@ -3813,9 +3773,7 @@ def route_calibrate():
         result += f"{100 * sum(cos_thisone) / len(cos_thisone):.2f}%"
         ps = [
             mc_paired_perm_test(
-                xs=np.array(cos_vanilla),
-                ys=np.array(cos_thisone),
-                nsamples=1_000,
+                xs=np.array(cos_vanilla), ys=np.array(cos_thisone), nsamples=1_000
             )
             for _ in range(1)
         ]
@@ -3829,7 +3787,7 @@ def route_calibrate():
             mc_paired_perm_test(
                 xs=np.array(list(zip(cos_vanilla, isyea_vanilla))),
                 ys=np.array(list(zip(cos_thisone, isyea_thisone))),
-                statistic=lambda xs: np.mean(xs[:,0][xs[:,1]]),
+                statistic=lambda xs: np.mean(xs[:, 0][xs[:, 1]]),
                 nsamples=1_000_000,
             )
             for _ in range(1)
@@ -3963,9 +3921,7 @@ def turks_to_simplified_majority(annotations, simplify=True):
 def finalmephisto_worker2qp2a():
     d = defaultdict(dict)
     for s in ["", "_need3", "_need2", "_need1", "_need1_1211"]:
-        with open(
-            f"{MCDIR}/file_you_can_send_me{s}.json"
-        ) as f:
+        with open(f"{MCDIR}/file_you_can_send_me{s}.json") as f:
             print(s)
             for worker, qp2a in json.load(f).items():
                 for qp, a in qp2a.items():
@@ -3981,9 +3937,7 @@ def route_finalmephistoextract():
 
     annotated_qp2as = {}
 
-    with open(
-        f"{MCDIR}/webapp/src/static/blender3B_all_four_dedup_test.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/webapp/src/static/blender3B_all_four_dedup_test.jsonl") as f:
         for d in f.read().splitlines():
             d = json.loads(d)
             qp = d["question"] + "#=%=#" + d["prediction"]
@@ -3998,17 +3952,13 @@ def route_finalmephistoextract():
     targets = ("vanilla", "forced_IDK", "forced_TRY", "forced_YEA")
     target2qps = {}
     for target in targets:
-        with open(
-            f"{MCDIR}/webapp/src/static/blender3B_{target}_test.jsonl"
-        ) as f:
+        with open(f"{MCDIR}/webapp/src/static/blender3B_{target}_test.jsonl") as f:
             target2qps[target] = [
                 d["question"] + "#=%=#" + d["prediction"]
                 for d in [json.loads(l) for l in f.read().splitlines()]
             ]
 
-    with open(
-        f"{MCDIR}/3x1000_blender3B_test_fourmodels.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/3x1000_blender3B_test_fourmodels.jsonl") as f:
         taken_1k_questions = [
             d["question"] for d in [json.loads(l) for l in f.read().splitlines()]
         ]
@@ -4055,8 +4005,7 @@ def route_finalmephistoextract():
 
     result += f"<h3>from {counts[3]} to {len(choices)}</h3>"
     with open(
-        f"{MCDIR}/3x5000_blender3B_test_fourmodels.non_simplified.jsonl",
-        "wt",
+        f"{MCDIR}/3x5000_blender3B_test_fourmodels.non_simplified.jsonl", "wt"
     ) as f:
         for c in choices:
             print(json.dumps(c), file=f)
@@ -4084,9 +4033,7 @@ def route_finalmephistoextract():
 
     missing = ([], [], [], [])
 
-    with open(
-        f"{MCDIR}/webapp/src/static/blender3B_all_four_dedup_test.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/webapp/src/static/blender3B_all_four_dedup_test.jsonl") as f:
         for l in f.read().splitlines():
             d = json.loads(l)
             qp = d["question"] + "#=%=#" + d["prediction"]
@@ -4241,9 +4188,7 @@ def route_certaintysankey():
         "vanilla": {"EVA": [], "IDK": [], "TRY": [], "YEA": []},
         "calibrator-controlled": {"EVA": [], "IDK": [], "TRY": [], "YEA": []},
     }
-    with open(
-        f"{MCDIR}/3x4000_blender3B_test_fourmodels.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/3x4000_blender3B_test_fourmodels.jsonl") as f:
         for l in f.read().splitlines():
             d = json.loads(l)
             target = "forced_TRY" if q2posprob[d["question"]] <= 0.375 else "forced_YEA"
@@ -4293,11 +4238,7 @@ def route_certaintysankey():
     assert len(certainties) == len(chatbots)
 
     df = pd.DataFrame(
-        {
-            "certainty": certainties,
-            "percent correct": p_corrects,
-            "chatbot": chatbots,
-        }
+        {"certainty": certainties, "percent correct": p_corrects, "chatbot": chatbots}
     )
 
     result += render_altair_plot(
@@ -4349,9 +4290,7 @@ def route_certaintysankey():
 def vanilla_ngrams():
     result = "<html><head>" + STYLE + "</head><body><center>"
 
-    with open(
-        f"{MCDIR}/3x5000_blender3B_test_fourmodels.jsonl"
-    ) as f:
+    with open(f"{MCDIR}/3x5000_blender3B_test_fourmodels.jsonl") as f:
         four_models = [json.loads(l) for l in f.read().splitlines()]
 
     metrics = [
@@ -4423,8 +4362,7 @@ def vanilla_ngrams():
                     [
                         f"{val:.3f} &amp; {ngram}"
                         for val, ngram in sorted(
-                            list(zip(coefs[metric], vocab)),
-                            reverse=True,
+                            list(zip(coefs[metric], vocab)), reverse=True
                         )
                         if predicate(val)
                     ]

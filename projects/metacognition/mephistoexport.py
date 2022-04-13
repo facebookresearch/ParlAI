@@ -1,3 +1,9 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 import json
 from collections import defaultdict
 
@@ -31,7 +37,7 @@ def all_mturk_worker_annotations(task_name):
 
         worker_name = Worker(db, data["worker_id"]).worker_name
         for ins, outs in zip(
-            data["data"]["inputs"]["samples"], data["data"]["outputs"]["final_data"],
+            data["data"]["inputs"]["samples"], data["data"]["outputs"]["final_data"]
         ):
             annotation = "🏃🤷💁🙋"[outs["certainty"]]
             if outs["certainty"] != 0:
@@ -46,7 +52,9 @@ def all_mturk_worker_annotations(task_name):
 qp2as = {}
 
 INFILE = "/some/storage/ParlAI/parlai/projects/metacognition/webapp/src/static/blender3B_all_four_dedup_test.jsonl"
-OUTFILE = "/some/storage/ParlAI/parlai/projects/metacognition/mephisto_intermediate.json"
+OUTFILE = (
+    "/some/storage/ParlAI/parlai/projects/metacognition/mephisto_intermediate.json"
+)
 
 with open(INFILE) as f:
     for d in f.read().splitlines():
@@ -55,7 +63,9 @@ with open(INFILE) as f:
         qp2as[qp] = []
 
 i = 0
-for worker, qp2a in all_mturk_worker_annotations("metacognition_blender3b_test_4dedupx3x5000_need3").items():
+for worker, qp2a in all_mturk_worker_annotations(
+    "metacognition_blender3b_test_4dedupx3x5000_need3"
+).items():
     i += 1
     for qp, a in qp2a.items():
         if qp in qp2as:
@@ -64,5 +74,10 @@ for worker, qp2a in all_mturk_worker_annotations("metacognition_blender3b_test_4
 print(f"Total workers: {i}")
 
 with open(OUTFILE, 'w') as f:
-    json.dump(all_mturk_worker_annotations("metacognition_blender3b_test_4dedupx3x5000_need3"), f)
+    json.dump(
+        all_mturk_worker_annotations(
+            "metacognition_blender3b_test_4dedupx3x5000_need3"
+        ),
+        f,
+    )
     # json.dump({"qp2as": qp2as}, f)
