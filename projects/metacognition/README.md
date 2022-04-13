@@ -1,5 +1,9 @@
 # Reducing conversational agents' overconfidence through linguistic calibration
 
+## Paper
+
+[Link](https://arxiv.org/abs/2012.14983); accepted to TACL 2022.
+
 ## Data
 
 The data, containing fragments of TriviaQA and model responses is not part of the repository, but can be downloaded [here](https://sjmielke.com/data/metacognition_data.zip). Please follow the instructions in that zip file to recreate the data from TriviaQA sources.

@@ -656,7 +656,7 @@ class DPRRetriever(RagRetriever):
             query.cpu().detach().to(torch.float32).numpy(), n_docs
         )
         ids, np_vectors = zip(*top_docs_and_scores)
-        vectors = torch.tensor(np_vectors).to(query)
+        vectors = torch.tensor(np.array(np_vectors)).to(query)
         if isinstance(self.indexer, DenseHNSWFlatIndexer):
             vectors = vectors[:, :, :-1]
         # recompute exact FAISS scores
