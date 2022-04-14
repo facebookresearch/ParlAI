@@ -1332,7 +1332,7 @@ class ObservationEchoRetriever(RagRetriever):
     def get_delimiter(self) -> str:
         return self._delimiter
 
-    def _clear_mapping(self):
+    def clear_mapping(self):
         self._query_ids = dict()
         self._saved_docs = dict()
         self._largest_seen_idx = -1
@@ -1353,9 +1353,6 @@ class ObservationEchoRetriever(RagRetriever):
         retrieved_doc_scores = retrieved_doc_scores.repeat(batch_size, 1).to(
             query.device
         )
-
-        # empty the 2 mappings after each retrieval
-        self._clear_mapping()
 
         return retrieved_docs, retrieved_doc_scores
 

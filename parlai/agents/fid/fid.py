@@ -376,6 +376,12 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
         self.show_observation_to_echo_retriever(observation)
         super()._set_query_vec(observation)
 
+    def eval_step(self, batch):
+        output = super().eval_step(batch)
+        if hasattr(self.model_api.retriever, 'clear_mapping'):
+            self.model_api.retriever.clear_mapping()
+        return output
+
 
 class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
     """
