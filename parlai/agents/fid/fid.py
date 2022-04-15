@@ -384,7 +384,7 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
 
     def batch_act(self, observations):
         """
-        Clear the _saved_docs and _query_ids mappings in ObservationEchoRetriever
+        Clear the _saved_docs and _query_ids mappings in ObservationEchoRetriever.
         """
         batch_reply = super().batch_act(observations)
         if hasattr(self.model_api.retriever, 'clear_mapping'):

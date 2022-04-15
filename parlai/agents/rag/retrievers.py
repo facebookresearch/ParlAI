@@ -1413,7 +1413,7 @@ class RetrievedChunkRanker(DocumentChunkRanker):
         doc_url: str,
     ):
         """
-        Return chunks according to the woi_chunk_retrieved_docs_mutator
+        Return chunks according to the woi_chunk_retrieved_docs_mutator.
         """
         if isinstance(doc_chunks, list):
             docs = ''.join(doc_chunks)
