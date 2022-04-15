@@ -348,9 +348,9 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
                 'GoldDocRetrieverFiDAgent only works with `rag_retriever_query` being `"full_history"`. '
                 f'Changing opt value for `rag_retriever_query`: `"{prev_sel}"` -> `"full_history"`'
             )
-        if (
-            opt['dynamic_batching'] == 'full'
-            or opt.get('eval_dynamic_batching') == 'full'
+        if not (
+            opt['dynamic_batching'] in [None, 'off']
+            and opt.get('eval_dynamic_batching') in [None, 'off']
         ):
             raise RuntimeError(
                 "For now dynamic batching doesn't work with ObservationEchoRetriever as it cleans up _saved_docs mapping after each batch act."
