@@ -4,10 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.build import DownloadableFile, build_data
+from parlai.core.build_data import DownloadableFile
+import parlai.core.build_data as build_data
 from parlai.utils import logging
-from parlai.tasks.triviqa.build import build as triviaqa_build
+from parlai.tasks.triviaqa.build import build as triviaqa_build
 
+import zipfile
 import itertools
 import json
 import os
@@ -17,7 +19,7 @@ RESOURCES = [
     DownloadableFile(
         'http://parl.ai/downloads/metacognition/metacognition_data_public_0413.zip',
         'metacognition_data_public_0413.zip',
-        'd0ae89defe2fd0b0a4221eaa642a457d7d40cef475f54798119c7f3b8dd9361d',
+        '2da42d11209c897d2333fda9a21f4ee6acb1bc5996b0b7183a544cb26f7138f0',
     )
 ]
 
@@ -43,6 +45,7 @@ def build(opt):
     # Download the data.
     for downloadable_file in RESOURCES:
         downloadable_file.download_file(datapath)
+        # NOTE: this breaks, and I haven't had a chance to figure out why yet
 
     # Mark the data as built.
     build_data.mark_done(datapath, version)

@@ -11,6 +11,7 @@ import json
 import math  # noqa: F401
 import numpy as np
 import random
+import os
 import os.path
 
 import torch
@@ -26,12 +27,12 @@ from parlai.core.torch_classifier_agent import (
     ConfusionMatrixMetric,
     TorchClassifierAgent,
 )
-from parlai.tasks.triviaqa.build import build
+from parlai.tasks.triviaqa.build import build as triviaqa_build
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.torch import PipelineHelper
 
-from parlai.projects.metacognition.wsgi import (
+from projects.metacognition.utils import (
     MCDIR,
     DATADIR0,
     DATADIR2,
@@ -39,6 +40,7 @@ from parlai.projects.metacognition.wsgi import (
     glob1,
     strip_control,
 )
+from projects.metacognition.build import build
 
 
 def _normalize(tensor, norm_layer):
@@ -203,7 +205,7 @@ class ControllingTransformerGeneratorAgent(TransformerGeneratorAgent):
         super().__init__(opt, shared)
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         argparser.add_argument_group(
             "ControllingTransformerGeneratorAgent Arguments"
         ).add_argument(
@@ -422,6 +424,7 @@ def claim_from_training_data(
 # -t parlai.projects.metacognition.agents:CertaintyControlTeacher
 class CertaintyControlTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
+        build(opt)
         self.claimed_triviaqa = opt["claimed_data"]
         self.is_training = opt["datatype"].startswith("train")
         self.balance_correctness = opt["balance_correctness"]
@@ -672,7 +675,7 @@ class CertaintyControlTeacher(DialogTeacher):
             yield d, True
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("CertaintyControlTeacher Arguments")
         group.add_argument(
             "--claimed-data",
@@ -729,7 +732,7 @@ class CertaintyControlTeacher(DialogTeacher):
 
 
 def _path(opt):
-    build(opt)
+    triviaqa_build(opt)
 
     return (
         os.path.join(opt["datapath"], "TriviaQA", "qa"),
@@ -739,6 +742,7 @@ def _path(opt):
 
 class NoEvidenceUnionControlledTeacher(DialogTeacher):
     def __init__(self, opt, shared=None, control=None):
+        build(opt)
         if not hasattr(self, "prefix"):
             self.prefix = ""
             self.suffix = "train" if opt["datatype"].startswith("train") else "dev"
@@ -775,7 +779,7 @@ class NoEvidenceUnionControlledTeacher(DialogTeacher):
             yield (question, answers), True
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("ControlForced Teacher Arguments")
         group.add_argument(
             "--force-same",
@@ -817,6 +821,7 @@ class NoEvidenceUnionForcedYEATeacher(NoEvidenceUnionControlledTeacher):
 
 class CertaintyClassificationTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
+        build(opt)
         path = f"{MCDIR}/annotations/validset/"
         dataset = (
             "3x2000_blender3B_valid.majorities"
@@ -850,7 +855,7 @@ class CertaintyClassificationTeacher(DialogTeacher):
             }, True
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("CertaintyClassificationTeacher Arguments")
         group.add_argument(
             "--classify-with-prediction",
@@ -868,6 +873,7 @@ class CertaintyClassificationTeacher(DialogTeacher):
 
 class CertaintyOntoBSTTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
+        build(opt)
         opt["datafile"] = os.path.join(
             opt["datapath"],
             "blended_skill_talk",
@@ -896,7 +902,7 @@ class CertaintyOntoBSTTeacher(DialogTeacher):
                         return
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("CertaintyClassificationTeacher Arguments")
         group.add_argument(
             "--nturns", default=-1, type=int, help="How many samples to show"
@@ -911,6 +917,7 @@ class CertaintyOntoBSTTeacher(DialogTeacher):
 
 class CertaintyOntoTextfileTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
+        build(opt)
         opt["datafile"] = opt["textfile"]
         self.simplify = opt["simplify_certainty"]
         self.nturns = opt["nturns"]
@@ -936,7 +943,7 @@ class CertaintyOntoTextfileTeacher(DialogTeacher):
                         return
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("CertaintyOntoTextfileTeacher Arguments")
         group.add_argument(
             "--nturns", default=-1, type=int, help="How many samples to show"
@@ -957,6 +964,7 @@ class CertaintyOntoTextfileTeacher(DialogTeacher):
 
 class CertaintyOntoTriviaQATeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
+        build(opt)
         if not hasattr(self, "prefix"):
             self.prefix = ""
             self.suffix = "train" if opt["datatype"].startswith("train") else "dev"
@@ -984,7 +992,7 @@ class CertaintyOntoTriviaQATeacher(DialogTeacher):
                 return
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("CertaintyClassificationTeacher Arguments")
         group.add_argument(
             "--nsamples", default=-1, type=int, help="How many samples to show"
@@ -1005,6 +1013,7 @@ class CertaintyOntoTriviaQATeacher(DialogTeacher):
 
 class CorrectnessProbingTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
+        build(opt)
         self.claimed_triviaqa = opt["claimed_data"]
         self.is_training = opt["datatype"].startswith("train")
         self.balance_correctness = opt["balance_correctness"]
@@ -1179,7 +1188,7 @@ class CorrectnessProbingTeacher(DialogTeacher):
         yield from self.examples
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         group = argparser.add_argument_group("CorrectnessProbeTeacher Arguments")
         group.add_argument(
             "--simplify-correctness",
@@ -1399,7 +1408,7 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
 
 class ClassifierOnGeneratorAgent(TransformerGeneratorAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
+    def add_cmdline_args(cls, argparser, partial_opt):
         # This is how we get the classifier args without inheriting directly!
         TransformerGeneratorAgent.add_cmdline_args(argparser)
         TorchClassifierAgent.add_cmdline_args(argparser)
@@ -1606,8 +1615,8 @@ class ClassifierOnGeneratorAgent(TransformerGeneratorAgent):
             with_decode=self.with_decode,
         )
 
-        self.enrich_potential_blender_state_dict_ = lambda sd: model.enrich_potential_blender_state_dict_(
-            sd
+        self.enrich_potential_blender_state_dict_ = (
+            lambda sd: model.enrich_potential_blender_state_dict_(sd)
         )
 
         return model
