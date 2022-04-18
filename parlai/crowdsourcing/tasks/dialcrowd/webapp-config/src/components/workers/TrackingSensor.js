@@ -4,12 +4,12 @@
 *********************************************/
 
 import React from "react";
-import track, { useTracking } from 'react-tracking';
+import { useTracking } from 'react-tracking';
 import VisibilitySensor from 'react-visibility-sensor';
 
 
 function TrackingSensor (props) {
-  const { Track, trackEvent } = useTracking();
+  const { trackEvent } = useTracking();
   return <VisibilitySensor scrollDelay={15000} onChange={(isVisible) => {
     trackEvent({action: isVisible ? 'appear' : 'disappear', name: props.name, ...props.event});
   }}>

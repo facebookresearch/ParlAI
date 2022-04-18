@@ -3,11 +3,7 @@
 * Carnegie Mellon University 2022
 *********************************************/
 
-import {all, call, put, takeEvery,} from 'redux-saga/effects';
-
-import queryString from 'query-string';
-
-import axios from 'axios';
+import {put, takeEvery,} from 'redux-saga/effects';
 
 export default function* rootSaga() {
   yield takeEvery('COM_ALL', combineData);

@@ -15,7 +15,7 @@ from omegaconf import DictConfig
 from parlai.crowdsourcing.tasks.dialcrowd.dialcrowd_blueprint import (
     STATIC_BLUEPRINT_TYPE,
 )
-from parlai.crowdsourcing.tasks.turn_annotations_static.util import run_static_task
+from parlai.crowdsourcing.tasks.dialcrowd.util import run_static_task
 from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
 
 

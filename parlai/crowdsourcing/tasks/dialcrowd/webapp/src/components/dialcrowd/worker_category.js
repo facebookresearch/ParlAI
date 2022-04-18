@@ -13,7 +13,6 @@ import {getStyle} from "./style.js";
 import track, { useTracking } from 'react-tracking';
 import TrackingSensor from './TrackingSensor.js';
 
-const confirm = Modal.confirm;
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;

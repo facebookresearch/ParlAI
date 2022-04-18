@@ -5,7 +5,7 @@
 
 import React from 'react';
 import {Input, Form, Button} from 'antd';
-import { SketchPicker, ChromePicker } from 'react-color';
+import { SketchPicker } from 'react-color';
 
 class ColorPicker extends React.Component {
   /* Args:
@@ -111,14 +111,6 @@ class ColorPicker extends React.Component {
       left: 0,
       bottom: 0,
       position: 'absolute'
-    };
-    
-    const cover = {
-      position: 'fixed',
-      top: '0px',
-      right: '0px',
-      bottom: '0px',
-      left: '0px',
     };
 
     if (this.state.visiblePicker) {

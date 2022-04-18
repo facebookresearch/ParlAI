@@ -9,9 +9,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from 'react-redux';
-// import { BaseFrontend, LoadingScreen } from "./components/core_components.jsx";
-// import Home from "./components/Home.js"
-// import Category from "./components/requesters/template/category/Category.js"
 import Layout from "./components/Layout.js"
 import configureStore from './store/configureStore.js'
 

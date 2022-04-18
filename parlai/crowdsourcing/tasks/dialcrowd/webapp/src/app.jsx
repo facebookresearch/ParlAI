@@ -22,7 +22,6 @@ function MainApp() {
     initialTaskData,
     taskConfig,
     handleSubmit,
-    isOnboarding,
   } = useMephistoTask();
   console.log('Entering MainApp');
   if (blockedReason !== null) {
@@ -56,7 +55,6 @@ function MainApp() {
         taskData={initialTaskData}
         taskConfig={taskConfig}
         onSubmit={handleSubmit}
-        isOnboarding={isOnboarding}
       />
     </div>
   );

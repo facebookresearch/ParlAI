@@ -4,6 +4,5 @@
  * LICENSE file in the root directory of this source tree.
  */
 import './app.jsx';
-//import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/style.css';
 import 'antd/dist/antd.css'

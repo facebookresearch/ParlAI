@@ -18,7 +18,7 @@ class Layout extends React.Component {
               style={{marginLeft: "10px", fontSize: 20}}
           />
           <div key="logo" style={{float: "right", "marginRight": "20px"}}>
-            <img width={"100px"} src={"http://dialrc.org/img/site-logo.png"} alt="logo"/>
+            <img width={"80px"} src={"https://avatars.githubusercontent.com/u/32077306?s=200&v=4"} alt="logo"/>
           </div>
         </AntLayout.Header>
         <AntLayout.Content style={{
@@ -32,7 +32,7 @@ class Layout extends React.Component {
         </AntLayout.Content>
 
         <AntLayout.Footer style={{}}>
-          <strong>Copyright © 2021, DialRC, Carnegie Mellon University</strong>
+          <strong>Copyright © 2022, DialRC, Carnegie Mellon University</strong>
           <div style={{float: "right", "marginRight": "10px"}}><a href={"mailto:kyusongl@cs.cmu.edu"}><Icon
               style={{fontSize: 20}} type="contacts"/></a> <a href={"https://github.com/dialrc/dialcrowd"}><Icon
               style={{fontSize: 20}} type="github"/></a></div>

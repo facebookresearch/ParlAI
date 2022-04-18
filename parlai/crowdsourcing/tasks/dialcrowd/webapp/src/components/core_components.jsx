@@ -7,7 +7,6 @@
  */
 
 import React from "react";
-import { OnboardingComponent } from './onboarding_components.jsx'; 
 import { MainTaskComponent } from './task_components.jsx'; 
 
 function LoadingScreen() {
@@ -18,11 +17,8 @@ function TaskFrontend({ taskData, taskConfig, isOnboarding, onSubmit }) {
   if (!taskData) {
     return <LoadingScreen />;
   }
-  if (isOnboarding) {
-    return <OnboardingComponent onboardingData={taskConfig.onboarding_data} annotationBuckets={taskConfig.annotation_buckets} annotationQuestion={taskConfig.annotation_question} onSubmit={onSubmit} />;
-  }
   return (
-    <MainTaskComponent taskData={taskData} taskTitle={taskConfig.task_title} taskDescription={taskConfig.task_description} taskConfig={taskConfig} onSubmit={onSubmit}></MainTaskComponent>
+    <MainTaskComponent taskData={taskData} taskConfig={taskConfig} onSubmit={onSubmit}></MainTaskComponent>
   );
 }
 
