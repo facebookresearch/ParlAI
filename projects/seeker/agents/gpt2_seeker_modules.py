@@ -154,7 +154,7 @@ class IdentityLayer(torch.nn.Module):
     """
     Acts as the encoder for the FiD model.
 
-    Custom Identity layer (as opposed to parlai.tuils.torch.IdentityLayer) to account
+    Custom Identity layer (as opposed to parlai.utils.torch.IdentityLayer) to account
     for special output required.
     """
 
@@ -526,7 +526,13 @@ class ComboGPT2Model(GPT2WithRetrieverModel, ComboFidModel):
             return output
         assert all(t is None for t in [input_turns_cnt, positions, segments])
         # Encode with `super()` call for non-skip-retrieval inputs
-        enc_out_retrieval, mask_retrieval, _, top_docs, top_doc_scores = super().encoder(
+        (
+            enc_out_retrieval,
+            mask_retrieval,
+            _,
+            top_docs,
+            top_doc_scores,
+        ) = super().encoder(
             input[~skip_retrieval_vec],  # type: ignore
             input_lengths[~skip_retrieval_vec],  # type: ignore
             query_vec[~skip_retrieval_vec],  # type: ignore
@@ -539,7 +545,12 @@ class ComboGPT2Model(GPT2WithRetrieverModel, ComboFidModel):
         enc_out_skip_retrieval, mask_skip_retrieval = self.seq2seq_encoder(
             input[skip_retrieval_vec]
         )
-        new_out, new_mask, new_top_docs, new_top_doc_scores = interleave_fid_combo_outputs(
+        (
+            new_out,
+            new_mask,
+            new_top_docs,
+            new_top_doc_scores,
+        ) = interleave_fid_combo_outputs(
             enc_out_retrieval,
             enc_out_skip_retrieval.unsqueeze(-1),
             mask_retrieval,

@@ -9,7 +9,7 @@ import queue
 import random
 from typing import List, Any, Dict, Tuple, Set, TYPE_CHECKING
 
-from mephisto.operations.logger_core import get_logger
+from mephisto.utils.logger_core import get_logger
 from mephisto.abstractions.blueprint import SharedTaskState, TaskRunner
 from omegaconf import DictConfig
 
@@ -66,7 +66,7 @@ class AcuteEvalRunner(TaskRunner):
         random.seed(self.args.blueprint.random_seed)
         self.is_concurrent = False
         self.assignment_duration_in_seconds = (
-            task_run.get_task_config().assignment_duration_in_seconds
+            task_run.get_task_args().assignment_duration_in_seconds
         )
 
         # class attributes
@@ -430,11 +430,11 @@ class AcuteEvalRunner(TaskRunner):
     def run_unit(self, unit: "Unit", agent: "Agent") -> None:
         """
         Static runners will get the task data, send it to the user, then wait for the
-        agent to act (the data to be completed)
+        agent to submit (the data to be completed)
         """
         # Frontend implicitly asks for the initialization data, so we just need
         # to wait for a response
-        _ = agent.act(timeout=self.assignment_duration_in_seconds)
+        _ = agent.await_submit(timeout=self.assignment_duration_in_seconds)
         if self.args.blueprint.block_on_onboarding_fail:
             # check whether workers failed onboarding
             self.check_and_update_worker_approval(agent)

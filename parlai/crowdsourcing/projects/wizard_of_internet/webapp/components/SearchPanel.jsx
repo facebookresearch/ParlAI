@@ -12,14 +12,14 @@ import { valid_search_query } from "./Moderator.js";
 
 export default function SearchPanel({ mephistoContext,
     searchResults, selected, handleSelect, setSearchQuery, isWizard }) {
-    const { sendMessage } = mephistoContext;
+    const { sendLiveUpdate } = mephistoContext;
     const { agentState } = mephistoContext;
     const { taskConfig } = mephistoContext;
 
     function handleQuery(props) {
         const { query } = props;
         setSearchQuery(query);
-        GetSearchResults(query, sendMessage);
+        GetSearchResults(query, sendLiveUpdate);
     }
 
     const wizard_sidepane = (agentState.wants_act) ? <div>
@@ -70,7 +70,7 @@ function SearchResults({ search_results, selected, selectedChange }) {
     </div>);
 }
 
-function GetSearchResults(query, sendMessage) {
+function GetSearchResults(query, sendLiveUpdate) {
     const q = query;
     const ts = Date.now();
     const message = {
@@ -80,7 +80,7 @@ function GetSearchResults(query, sendMessage) {
         text: query,
         is_search_query: true
     };
-    sendMessage(message);
+    sendLiveUpdate(message);
 }
 
 

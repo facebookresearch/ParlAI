@@ -4,14 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.utils.testing import AutoTeacherTest  # noqa: F401
+from parlai.utils.testing import AutoTeacherTest
 
 
-class TestNaturalQuestionsTeacher(AutoTeacherTest):
-    task = 'natural_questions'  # replace with your teacher name
+class TestNaturalQuestionsSampleTeacher(AutoTeacherTest):
+    task = 'natural_questions:NaturalQuestionsSampleTeacher'
 
 
 class TestNaturalQuestionsOpenTeacher(AutoTeacherTest):
-    task = (
-        'natural_questions:NaturalQuestionsOpenTeacher'
-    )  # replace with your teacher name
+    task = 'natural_questions:NaturalQuestionsOpenTeacher'

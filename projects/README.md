@@ -92,8 +92,13 @@ _Task & models for chitchat with a given persona._
 - **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/) [[paper]](https://arxiv.org/abs/1911.03842).
   _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
 
+- **Reducing conversational agents' overconfidence through linguistic calibration** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/metacognition) [[paper]](https://arxiv.org/abs/2012.14983).
+  _Analysis and methods for relating and correcting linguistice confidence and correctness in dialogue generation, using closed-book QA as a testbed._
+
 
 ## Knowledge Grounded
+
+- **SeeKeR:** [[project]](http://parl.ai/projects/seeker) _Modular open source search-augmented language model._
 
 - **Reason first, then respond:** [[paper]](https://arxiv.org/abs/2111.05204) _A modular Generation method for Knowledge-infused Dialogue._
 

@@ -27,7 +27,7 @@ def _import_google_cloud_client():
     return storage
 
 
-def _download_with_cloud_storage_client(dpath):
+def _download_with_cloud_storage_client(dpath, sample: bool = False):
     # Initiating the Cloud Storage Client with anonymous credentials
     stm = _import_google_cloud_client()
     storage_client = stm.Client.create_anonymous_client()
@@ -54,9 +54,14 @@ def _download_with_cloud_storage_client(dpath):
         if not blob_name.endswith('.gz'):  # Not a zipped file
             continue
 
-        if blob_name.startswith('v1.0/train'):
+        if sample and blob_name.startswith('v1.0/sample'):
+            if 'train' in blob_name:
+                train_blobs.append(blob)
+            else:
+                valid_blobs.append(blob)
+        elif not sample and blob_name.startswith('v1.0/train'):
             train_blobs.append(blob)
-        elif blob_name.startswith('v1.0/dev'):
+        elif not sample and blob_name.startswith('v1.0/dev'):
             valid_blobs.append(blob)
 
     # Downloading the blobs to their respective dtype directory
@@ -94,8 +99,10 @@ def _move_valid_files_from_dev_to_valid(dpath):
             os.rename(os.path.join(valid_path, f), os.path.join(valid_path, new))
 
 
-def build(opt):
+def build(opt, sample: bool = False):
     dpath = os.path.join(opt['datapath'], DATASET_NAME_LOCAL)
+    if sample:
+        dpath = f"{dpath}_sample"
     version = 'v1.0'
 
     if not build_data.built(dpath, version_string=version):
@@ -105,7 +112,11 @@ def build(opt):
             build_data.remove_dir(dpath)
             logging.info('Removed the existing data (old version).')
         build_data.make_dir(dpath)
-        _download_with_cloud_storage_client(dpath)
+        _download_with_cloud_storage_client(dpath, sample)
         _untar_dataset_files(dpath)
         _move_valid_files_from_dev_to_valid(dpath)
         build_data.mark_done(dpath, version_string=version)
+
+
+def build_sample(opt):
+    build(opt, True)
