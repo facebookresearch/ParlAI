@@ -15,20 +15,13 @@ from omegaconf import DictConfig
 from parlai.crowdsourcing.tasks.dialcrowd.dialcrowd_blueprint import (
     STATIC_BLUEPRINT_TYPE,
 )
-from parlai.crowdsourcing.tasks.dialcrowd.util import run_static_task
-from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig
-
+from parlai.crowdsourcing.utils.mturk import MTurkRunScriptConfig, run_static_task
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
+_ = STATIC_BLUEPRINT_TYPE
 
-defaults = [
-    '_self_',
-    {'mephisto/blueprint': STATIC_BLUEPRINT_TYPE},
-    {"mephisto/architect": "local"},
-    {"mephisto/provider": "mock"},
-    {"conf": "example"},
-]
+defaults = ["_self_", {"conf": "example"}]
 
 
 @dataclass
@@ -48,7 +41,7 @@ register_script_config(name='scriptconfig', module=ScriptConfig)
 
 @hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
-    run_static_task(cfg=cfg, task_directory=TASK_DIRECTORY)
+    run_static_task(cfg=cfg, task_directory=TASK_DIRECTORY, task_id='dialcrowd')
 
 
 if __name__ == "__main__":

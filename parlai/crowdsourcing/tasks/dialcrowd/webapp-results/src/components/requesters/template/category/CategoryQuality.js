@@ -426,7 +426,6 @@ class CategoryQuality extends Component {
       return null;
     }
     else{
-      console.log('am here now')
       console.log(this.state.results_detail)
       return <div>
         <p>We calculate the worker's time according to how long they take in selecting the intent for each question. 

@@ -5,11 +5,7 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-import {Tabs} from 'antd';
-import Icon from '@ant-design/icons';
 import CategoryConfigure from "./CategoryConfigure.js";
-
-const TabPane = Tabs.TabPane;
 
 class Category extends React.Component {
   /* Props:
@@ -28,11 +24,7 @@ class Category extends React.Component {
 
   render() {
     return <div>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab={<span><Icon type="home"/>Configure</span>} key="1">
-          <CategoryConfigure data={this.props.session}/>
-        </TabPane>
-      </Tabs>
+      <CategoryConfigure data={this.props.session}/>
     </div>
   }
 }

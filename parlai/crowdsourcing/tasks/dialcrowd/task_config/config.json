@@ -2,7 +2,7 @@
   "consent": [],
   "dataGolden": [
     {
-      "answer": "pay bill",
+      "answer": "transactions",
       "sentence": "what are my transactions\r",
       "sentid": 1
     }
@@ -14,11 +14,7 @@
   "requirements": [
     {
       "key": 0,
-      "content": "1234"
-    },
-    {
-      "key": 1,
-      "content": "5678"
+      "content": "I am over 18 years old"
     }
   ],
   "time": "2.5",

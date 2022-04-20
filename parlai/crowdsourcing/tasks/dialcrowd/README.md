@@ -1,4 +1,61 @@
 # DialCrowd
+DialCrowd is a dialogue crowdsourcing toolkit that helps requesters write clear HITs, view and analyze results, and obtain higher-quality data. This integration allows for the requester interface, worker interface, and analysis interface to be integrated into ParlAI so requesters can have access to ParlAI's tools with DialCrowd's tools.
+
+## Example Walkthrough
+
+### Configuration
+
+![screenshot](images/config1.png)
+We start with a general configuration section. Here, you can indicate the background for your study, general instructions, enable markdown, specify the time each HIT should take, the payment per HIT, number of utterances per HIT, number of annotations per utterance, and number of sentences per page on the HIT. You can also upload your data in .txt format where each new line is a new utterance to be annotated.
+
+***
+
+![screenshot](images/config2.png)
+Then, we have the task units for quality control section. Here, you can specify how many duplicate task units as well as how many golden task units you would like each worker to annotate (we suggest less than 10% of each HIT be quality control units).
+
+***
+
+![screenshot](images/config3.png)
+We allow you to upload a consent form for the workers that they will have to agree to before accessing the HIT. This form allows you to inform workers of possible risks and also asks for their explicit consent for participation in your data collection.
+
+***
+
+![screenshot](images/config4.png)
+For each of your intents, we provide areas where you can add any additional instructions for each intent, as well as add examples and counterexamples along with explanations. It is important to provide illustrative examples for the workers, so they will be able to provide the annotations according to the definitions you set.
+
+***
+
+![screenshot](images/config5.png)
+This allows workers to provide feedback in an open-response input box so that you may improve future iterations of your task.
+
+***
+
+![screenshot](images/config6.png)
+You can customize the colors, fonts, and text size associated with your HIT to highlight any important information.
+
+### Annotation Page
+![screenshot](images/annotation1.png)
+We show the worker the background for your study, as well as the instructions and the table of intents with their respective definitions, examples, counterexamples, and explanations. 
+
+***
+
+![screenshot](images/annotation2.png)
+Each worker will have a dropdown menu with all the intents, as well as an option to reshow the instructions and examples if they wish to refer back. A confidence score is also provided so that if workers are unsure, they can indicate that.
+
+### Results Page
+![screenshot](images/results1.png)
+We track workers' times for each annotation, as well as provide the average time taken per annotation, if the annotations had any abnormality (ex. a worker selecting one intent for all utterances), agreement, agreement with the golden questions, and inter-user agreement.
+
+***
+
+![screenshot](images/results2.png)
+We calculate Fleiss' kappa for each of the questions, as well as overall kappa.
+
+***
+
+![screenshot](images/results3.png)
+
+We then provide a graph of the time taken by each worker for the HIT, so you are able to pinpoint and check the results of any workers that may have spent an extremely long or short time on the HIT.
 
 ## Usage
 
@@ -79,7 +136,7 @@ The `WorkerCategory` element takes in three attributes passed by ParlAI:
 
 #### Backend (ParlAI Scripts)
 
-- `dialcrowd_blueprint.py`: Loading data/configuration files. The data is loaded to `self.raw_data` in the `TurnAnnotationsStaticBlueprintArgs`. The configuration file is loaded in the function `TurnAnnotationsStaticBlueprintArgs.get_frontend_args`. The return value of `TurnAnnotationsStaticBlueprintArgs` will be the data passed to the `taskConfig` attribute of `WorkerCategory`.
+- `dialcrowd_blueprint.py`: Loading data/configuration files. The data is loaded to `self.raw_data` in the `DialCrowdStaticBlueprintArgs`. The configuration file is loaded in the function `DialCrowdStaticBlueprintArgs.get_frontend_args`. The return value of `DialCrowdStaticBlueprintArgs` will be the data passed to the `taskConfig` attribute of `WorkerCategory`.
 
 
 #### Configurations
