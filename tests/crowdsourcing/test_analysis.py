@@ -17,7 +17,6 @@ try:
     class MockUnit(Unit):
         pass
 
-
 except ModuleNotFoundError:
     # In case Mephisto is not installed we use a simpler mock object.
     class MockUnit:
