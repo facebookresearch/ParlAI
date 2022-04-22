@@ -95,17 +95,13 @@ class CasinoTeacher(Teacher):
             episode = copy.deepcopy(dialogue)
             episode[
                 'perspective'
-            ] = (
-                'mturk_agent_1'
-            )  # id of the agent whose perspective will be used in this dialog
+            ] = 'mturk_agent_1'  # id of the agent whose perspective will be used in this dialog
             episodes.append(episode)
 
             episode = copy.deepcopy(dialogue)
             episode[
                 'perspective'
-            ] = (
-                'mturk_agent_2'
-            )  # id of the agent whose perspective will be used in this dialog
+            ] = 'mturk_agent_2'  # id of the agent whose perspective will be used in this dialog
             episodes.append(episode)
 
         self.episodes = episodes

@@ -315,9 +315,7 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                 if raw_episode["dialogue_id"] != self.opt["dialogue_id"]:
                     continue
 
-            skip = (
-                False
-            )  # need to skip outer for loop while in `for domains` inner for loop
+            skip = False  # need to skip outer for loop while in `for domains` inner for loop
             if self.opt.get("well_formatted_domains_only", True):
                 if len(domains) == 0:
                     skip = True

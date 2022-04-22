@@ -163,7 +163,6 @@ try:
                     actual_value=actual_chat_data, expected_value=expected_chat_data
                 )
 
-
 except ImportError:
     pass
 

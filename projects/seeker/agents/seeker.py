@@ -831,9 +831,11 @@ class SeekerAgent(Agent):
         """
         knowledge_agent_observations = [o['knowledge_agent'] for o in observations]
         # First, determine whether we're searching
-        batch_reply_sdm, search_indices, knowledge_agent_observations = self.batch_act_sdm(
-            observations, knowledge_agent_observations
-        )
+        (
+            batch_reply_sdm,
+            search_indices,
+            knowledge_agent_observations,
+        ) = self.batch_act_sdm(observations, knowledge_agent_observations)
         # Second, generate search queries
         batch_reply_sqm = self.batch_act_sqm(observations, search_indices)
 
