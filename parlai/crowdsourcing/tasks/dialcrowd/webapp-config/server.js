@@ -1,3 +1,8 @@
+/*********************************************
+* @ Jessica Huynh, Ting-Rui Chiang, Kyusong Lee 
+* Carnegie Mellon University 2022
+*********************************************/
+
 const express = require('express');
 const app = module.exports.app = express();
 const path = require('path');
