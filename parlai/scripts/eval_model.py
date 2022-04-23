@@ -148,13 +148,6 @@ def prepare_tb_logger(opt):
     if opt['tensorboard_log'] and is_primary_worker():
         tb_logger = TensorboardLogger(opt)
 
-        trainstats_suffix = '.trainstats'
-        if opt.get('model_file') and PathManager.exists(opt['model_file'] + trainstats_suffix):
-            with PathManager.open(opt['model_file'] + trainstats_suffix) as ts:
-                obj = json.load(ts)
-                parleys = obj.get('parleys', 0)
-        else:
-            parleys = 0
     else:
         tb_logger = None
 
@@ -164,7 +157,17 @@ def prepare_tb_logger(opt):
         setting = 'valid'
     else:
         setting = 'test'
-    return tb_logger, parleys, setting
+    return tb_logger, setting
+
+def get_n_parleys(opt):
+    trainstats_suffix = '.trainstats'
+    if opt.get('model_file') and PathManager.exists(opt['model_file'] + trainstats_suffix):
+        with PathManager.open(opt['model_file'] + trainstats_suffix) as ts:
+            obj = json.load(ts)
+            parleys = obj.get('parleys', 0)
+    else:
+        parleys = 0
+    return parleys
 
 
 def _eval_single_world(opt, agent, task):
@@ -256,7 +259,10 @@ def eval_model(opt):
     agent = create_agent(opt, requireModelExists=True)
     agent.opt.log()
 
-    tb_logger, parleys, setting = prepare_tb_logger(opt)
+    tb_logger, setting = prepare_tb_logger(opt)
+
+    if tb_logger:
+        n_parleys = get_n_parleys(opt)
 
     tasks = opt['task'].split(',')
     reports = []
@@ -278,10 +284,9 @@ def eval_model(opt):
     print(nice_report(report))
     _save_eval_stats(opt, report)
     if tb_logger:
-        tb_logger.log_metrics(setting, parleys, report)
+        tb_logger.log_metrics(setting, n_parleys, report)
         tb_logger.flush()
     return report
-
 
 
 @register_script('eval_model', aliases=['em', 'eval'])
