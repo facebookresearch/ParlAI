@@ -578,6 +578,6 @@ class T5RagModel(RagModel):
 
     @set_device
     def decoder_output(self, latent: torch.Tensor):
-        tensor = latent * (self.t5.model_dim ** -0.5)
+        tensor = latent * (self.t5.model_dim**-0.5)
         logits = self.t5.lm_head(tensor)
         return logits

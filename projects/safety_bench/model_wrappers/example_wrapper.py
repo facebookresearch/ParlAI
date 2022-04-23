@@ -29,6 +29,4 @@ class ExampleWrapper:
         # Be sure to reset the model's dialogue history before/after
         # every call to `get_response`.
 
-        return (
-            "Hello"
-        )  # In this example, we always respond 'Hello' regardless of the input
+        return "Hello"  # In this example, we always respond 'Hello' regardless of the input
