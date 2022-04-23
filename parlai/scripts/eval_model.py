@@ -159,6 +159,7 @@ def prepare_tb_logger(opt):
         setting = 'test'
     return tb_logger, setting
 
+
 def get_n_parleys(opt):
     trainstats_suffix = '.trainstats'
     if opt.get('model_file') and PathManager.exists(opt['model_file'] + trainstats_suffix):
