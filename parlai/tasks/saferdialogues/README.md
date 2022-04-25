@@ -16,4 +16,6 @@ Note: The dataset is flattened, so there is one example per episode.
 
 If the `--recovery` flag is set to `false` (`true` by default) then the recovery response is omitted and the labels contains the signaling message and the text contains the context lines before that.
 
+Use the `--bad` flag and set to `true` (`false` by default) to use a different test set that is paralell to the BAD dataset's test split.
+
 Tags: #SaFeRDialogues, #All, #Recovery, #Safety, #ChitChat
