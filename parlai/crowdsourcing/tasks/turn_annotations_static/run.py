@@ -46,7 +46,9 @@ register_script_config(name='scriptconfig', module=ScriptConfig)
 
 @hydra.main(config_path="hydra_configs", config_name="scriptconfig")
 def main(cfg: DictConfig) -> None:
-    run_static_task(cfg=cfg, task_directory=TASK_DIRECTORY, task_id='turn_annotations_static')
+    run_static_task(
+        cfg=cfg, task_directory=TASK_DIRECTORY, task_id='turn_annotations_static'
+    )
 
 
 if __name__ == "__main__":

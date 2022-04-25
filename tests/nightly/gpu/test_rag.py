@@ -684,8 +684,7 @@ class TestLeftPadding(unittest.TestCase):
 
 class TestExtraPositionsDocConcat(unittest.TestCase):
     """
-    Ensure docs and input are concatenated appropriately
-    When using extra position embs.
+    Ensure docs and input are concatenated appropriately When using extra position embs.
     """
 
     bsz = 1

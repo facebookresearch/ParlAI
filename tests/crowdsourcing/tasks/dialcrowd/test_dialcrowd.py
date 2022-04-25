@@ -10,7 +10,6 @@ End-to-end testing for DialCrowd.
 import json
 import os
 import unittest
-from typing import List
 
 import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
@@ -52,8 +51,8 @@ try:
             overrides = [
                 f'mephisto.blueprint.data_jsonl={TASK_CONFIG_FOLDER}/sample_data.jsonl'
             ]
-            
-            task_data_path=os.path.join(TASK_DATA_FOLDER, 'data.json')
+
+            task_data_path = os.path.join(TASK_DATA_FOLDER, 'data.json')
 
             # # Load the .json of the task data
             with open(task_data_path) as f:

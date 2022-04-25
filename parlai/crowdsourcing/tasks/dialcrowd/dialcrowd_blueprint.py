@@ -6,13 +6,10 @@
 
 import json
 import logging
-import math
 import os
-import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, TYPE_CHECKING
 
-import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
@@ -30,6 +27,7 @@ def get_task_path():
 
 
 STATIC_BLUEPRINT_TYPE = 'dialcrowd_static_blueprint'
+
 
 @dataclass
 class DialCrowdStaticBlueprintArgs(StaticReactBlueprintArgs):
@@ -90,18 +88,20 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
         Specifies what options within a task_config should be forwarded to the client
         for use by the task's frontend.
         """
-        
+
         # load the task configuration
         with open(os.path.join(get_task_path(), 'task_config/config.json')) as f:
             task_config = json.load(f)
 
         # combine the task configuration loaded from json with the settings
         # required by ParlAI.
-        task_config.update({
-            "task_description": self.args.task.get('task_description', None),
-            "task_title": self.args.task.get('task_title', None),
-            "frame_height": '100%',
-            "num_subtasks": self.args.blueprint.subtasks_per_unit,
-            "block_mobile": True
-        })
+        task_config.update(
+            {
+                "task_description": self.args.task.get('task_description', None),
+                "task_title": self.args.task.get('task_title', None),
+                "frame_height": '100%',
+                "num_subtasks": self.args.blueprint.subtasks_per_unit,
+                "block_mobile": True,
+            }
+        )
         return task_config

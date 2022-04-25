@@ -21,6 +21,7 @@ from omegaconf import DictConfig, OmegaConf, MISSING
 
 from parlai.crowdsourcing.utils.frontend import build_task
 
+
 @dataclass
 class MTurkConfig:
     """
@@ -93,6 +94,7 @@ def soft_block_mturk_workers(
                 soft_block_qual_name=soft_block_qual_name,
                 requester_name=cfg.mephisto.provider.get("requester_name", None),
             )
+
 
 def run_static_task(cfg: DictConfig, task_directory: str, task_id: str):
     """
