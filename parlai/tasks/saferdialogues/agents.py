@@ -17,6 +17,8 @@ def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
+    if opt['bad'] and dt == 'test':
+        dt = 'test_bad'
     return os.path.join(
         opt['datapath'], 'saferdialogues', 'saferdialogues_dataset', dt + '.txt'
     )
@@ -34,6 +36,12 @@ class SaferDialoguesTeacher(ParlAIDialogTeacher):
             type=bool,
             default=True,
             help="Whether or not to include the recovery utterance",
+        )
+        agent.add_argument(
+            '--bad',
+            type=bool,
+            default=False,
+            help="Whether or not to use the extra test set parallel with BAD dataset",
         )
         return parser
 
