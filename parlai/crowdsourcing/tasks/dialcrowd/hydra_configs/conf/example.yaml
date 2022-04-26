@@ -14,6 +14,7 @@ mephisto:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 450
     max_num_concurrent_units: 0
+    maximum_units_per_worker: 1
     task_description: Our goal is to build an AI chat bot that can help people complete
       certain tasks. To achieve this goal and train the bot, we need some sentences
       labeled by human annotators. Please help us classify the sentences below.
