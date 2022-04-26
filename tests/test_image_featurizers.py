@@ -67,10 +67,6 @@ class TestImageLoader(unittest.TestCase):
     def test_resnext(self):
         self._base_test_loader("resnext")
 
-    @testing_utils.skipUnlessDetectron
-    def test_faster_r_cnn(self):
-        self._base_test_loader("faster_r_cnn", True)
-
     def test_other_image_modes(self):
         """
         Test non-featurized image modes.
