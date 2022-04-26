@@ -9,15 +9,12 @@ Provide functionality for loading images.
 """
 
 import parlai.core.build_data as build_data
-from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
 
 import os
 from PIL import Image
-import numpy as np
 import torch
-from typing import Dict, Tuple, List
 from zipfile import ZipFile
 
 _greyscale = '  .,:;crsA23hHG#98&@'
