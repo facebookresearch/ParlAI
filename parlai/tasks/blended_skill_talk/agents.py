@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import copy
-import json
 import os
 import random
 import re
@@ -13,15 +12,8 @@ from collections import defaultdict
 from typing import List, Optional, Dict, Tuple
 
 from parlai.core.opt import Opt
-from parlai.core.teachers import (
-    ParlAIDialogTeacher,
-    create_task_agent_from_taskname,
-    MultiTaskTeacher,
-)
-from parlai.tasks.convai2.agents import (
-    DefaultTeacher as Convai2DefaultTeacher,
-    BothTeacher,
-)
+from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname
+from parlai.tasks.convai2.agents import BothTeacher
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
 from parlai.utils.misc import warn_once
