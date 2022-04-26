@@ -81,6 +81,9 @@ METRICS_DISPLAY_DATA = {
     "f1": MetricDisplayData(
         "F1", "Unigram F1 overlap, under a standardized (model-independent) tokenizer"
     ),
+    "gen_n_toks": MetricDisplayData(
+        "Generation Length", "Average length of generated outputs in number of tokens"
+    ),
     "gnorm": MetricDisplayData("Gradient Norm", "Gradient norm"),
     "gpu_mem": MetricDisplayData(
         "GPU Memory",
