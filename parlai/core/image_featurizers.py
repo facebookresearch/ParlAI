@@ -12,7 +12,6 @@ import parlai.core.build_data as build_data
 from parlai.core.opt import Opt
 import parlai.utils.logging as logging
 from parlai.utils.io import PathManager
-from parlai.zoo.detectron.build import build
 
 import os
 from PIL import Image
@@ -44,7 +43,6 @@ IMAGE_MODE_SWITCHER = {
     'resnext101_32x16d_wsl_spatial': ['resnext101_32x16d_wsl', -2],
     'resnext101_32x32d_wsl_spatial': ['resnext101_32x32d_wsl', -2],
     'resnext101_32x48d_wsl_spatial': ['resnext101_32x48d_wsl', -2],
-    'faster_r_cnn_152_32x8d': ['', -1],
 }
 
 
@@ -72,8 +70,6 @@ class ImageLoader:
                 self._init_resnet_cnn()
             elif 'resnext' in self.image_mode:
                 self._init_resnext_cnn()
-            elif 'faster_r_cnn_152_32x8d' in self.image_mode:
-                self._init_faster_r_cnn()
             else:
                 raise RuntimeError(
                     'Image mode {} not supported'.format(self.image_mode)
@@ -84,7 +80,7 @@ class ImageLoader:
         """
         Return if image mode has spatial dimensionality.
         """
-        return any([s in image_mode for s in ['spatial', 'faster_r_cnn']])
+        return any([s in image_mode for s in ['spatial']])
 
     def _init_transform(self):
         # initialize the transform function using torch vision.
@@ -158,12 +154,6 @@ class ImageLoader:
         if self.use_cuda:
             self.netCNN.cuda()
 
-    def _init_faster_r_cnn(self):
-        """
-        Initialize Detectron Model.
-        """
-        self.netCNN = DetectronFeatureExtractor(self.opt, self.use_cuda)
-
     def _image_mode_switcher(self):
         if self.image_mode not in IMAGE_MODE_SWITCHER:
             raise NotImplementedError(
@@ -190,7 +180,7 @@ class ImageLoader:
             with torch.no_grad():
                 feature = self.netCNN(transform)
         else:
-            feature = self.netCNN.get_detectron_features([image])[0]
+            raise RuntimeError("detectron support has been removed.")
         # save the feature
         if path is not None:
             import parlai.utils.torch as torch_utils
