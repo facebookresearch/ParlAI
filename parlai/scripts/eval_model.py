@@ -147,7 +147,6 @@ def get_task_world_logs(task, world_logs, is_multitask=False):
 def prepare_tb_logger(opt):
     if opt['tensorboard_log'] and is_primary_worker():
         tb_logger = TensorboardLogger(opt)
-
     else:
         tb_logger = None
 
