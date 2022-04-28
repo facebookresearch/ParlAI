@@ -1,5 +1,5 @@
 [flake8]
-exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py,.eggs
+exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py,.eggs,test_dialcrowd.py
 extend-ignore =
     E741
     E501
