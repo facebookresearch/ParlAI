@@ -1,5 +1,5 @@
 [flake8]
-exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py,.eggs,test_dialcrowd.py
+exclude = .git,__pycache__,parlai_internal,legacy_agents,task_config.py,.eggs
 extend-ignore =
     E741
     E501
@@ -10,6 +10,7 @@ extend-ignore =
     W503
     F403
     F541
+    E305
 select = C,E,F,W,B,B950,RST,PAI,BLK
 
 max-line-length=80
