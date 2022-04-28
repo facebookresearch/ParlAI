@@ -73,7 +73,7 @@ try:
 
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
-except ImportError as e:
+except (ImportError) as _:
     pass
 
 if __name__ == "__main__":
