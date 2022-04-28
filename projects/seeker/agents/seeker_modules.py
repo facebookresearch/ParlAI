@@ -243,9 +243,13 @@ class ComboFidModel(FidModel):
 
         assert all(t is None for t in [input_turns_cnt, positions, segments])
         # Encode with `super()` call for non-skip-retrieval inputs
-        enc_out_retrieval, mask_retrieval, input_turns_cnt, top_docs, top_doc_scores = super(
-            ComboFidModel, self
-        ).encoder(
+        (
+            enc_out_retrieval,
+            mask_retrieval,
+            input_turns_cnt,
+            top_docs,
+            top_doc_scores,
+        ) = super(ComboFidModel, self).encoder(
             input[~skip_retrieval_vec],
             input_lengths[~skip_retrieval_vec],
             query_vec[~skip_retrieval_vec],
@@ -258,7 +262,12 @@ class ComboFidModel(FidModel):
             input[skip_retrieval_vec]
         )
 
-        new_out, new_mask, new_top_docs, new_top_doc_scores = interleave_fid_combo_outputs(
+        (
+            new_out,
+            new_mask,
+            new_top_docs,
+            new_top_doc_scores,
+        ) = interleave_fid_combo_outputs(
             enc_out_retrieval,
             enc_out_skip_retrieval,
             mask_retrieval,

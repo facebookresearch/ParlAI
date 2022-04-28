@@ -535,8 +535,8 @@ class ScriptableGpt2BpeHelper(object):
                     for j, piece in enumerate(split):
                         if j > 0:
                             # add the special token as a delimiter
-                            pieces.insert(i + j, (special_token, FINAL))
-                        pieces.insert(i + j + int(j > 0), (piece, SPLITABLE))
+                            pieces.insert(i + (2 * j) - 1, (special_token, FINAL))
+                        pieces.insert(i + (2 * j), (piece, SPLITABLE))
                 else:
                     i += 1
 
