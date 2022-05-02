@@ -16,9 +16,9 @@ mephisto:
     conversations_needed_string: "blender_90M:10"
     left_pane_text_path: ${task_dir}/task_config/darma_left_pane_text.html 
     task_description_file: ${task_dir}/task_config/darma_left_pane_text.html 
-    # onboard_task_data_path: ${task_dir}/task_config/darma_onboard_task_data.json
-    # annotations_config_path: ${task_dir}/task_config/darma_annotations_config.json
-    # annotation_question: "Choose one."
+    onboard_task_data_path: ${task_dir}/task_config/darma_onboard_task_data.json
+    annotations_config_path: ${task_dir}/task_config/darma_annotations_config.json
+    annotation_question: "Choose one."
     onboarding_qualification: darma_onboarding
     block_qualification: darma_onboarding_block
     final_rating_question: "How coherent was E? | How responsive was E to what you wrote? | Did E understand your point of view (as B)? | Did E convince you to change your behavior?"
