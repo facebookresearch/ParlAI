@@ -1,3 +1,10 @@
+**WARNING**
+
+This project has been archived. If you need to use this project, please revert
+to ParlAI 1.4.1.
+
+------
+
 # Multi-Modal Open-Domain Dialogue
 
 Kurt Shuster<sup>∗</sup>, Eric Michael Smith<sup>∗</sup>, Da Ju, Jason Weston
