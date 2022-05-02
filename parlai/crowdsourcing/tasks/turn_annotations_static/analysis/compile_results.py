@@ -513,10 +513,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 except Exception:
                     n_ij = 0.0
                 p_j[j] += n_ij
-                P_bar_sum_term += n_ij ** 2
+                P_bar_sum_term += n_ij**2
 
         p_j = [tmp / (N * number_of_raters) for tmp in p_j]
-        P_e_bar = sum([tmp ** 2 for tmp in p_j])
+        P_e_bar = sum([tmp**2 for tmp in p_j])
 
         P_bar = (P_bar_sum_term - N * number_of_raters) / (
             N * number_of_raters * (number_of_raters - 1)

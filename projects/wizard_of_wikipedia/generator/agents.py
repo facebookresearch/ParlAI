@@ -105,7 +105,7 @@ class TwoStageAgent(_GenericWizardAgent):
 class EndToEndAgent(_GenericWizardAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self._vectorize_text = lru_cache(int(2 ** 20))(self._vectorize_text)
+        self._vectorize_text = lru_cache(int(2**20))(self._vectorize_text)
 
         # knowledge truncate defaults to the same as --truncate
         self.knowledge_truncate = opt.get('knowledge_truncate')

@@ -140,7 +140,6 @@ try:
 
             self._test_agent_state(task_data=task_data, data_regression=data_regression)
 
-
 except ImportError:
     pass
 

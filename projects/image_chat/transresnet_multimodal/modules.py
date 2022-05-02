@@ -526,7 +526,7 @@ class MultimodalCombiner(nn.Module):
                 n_positions, hidden_dim, out=self.position_embeddings.weight
             )
         else:
-            nn.init.normal_(self.position_embeddings.weight, 0, hidden_dim ** -0.5)
+            nn.init.normal_(self.position_embeddings.weight, 0, hidden_dim**-0.5)
 
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):

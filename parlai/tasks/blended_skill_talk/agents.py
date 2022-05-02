@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 import copy
-import json
 import os
 import random
 import re
@@ -13,15 +12,8 @@ from collections import defaultdict
 from typing import List, Optional, Dict, Tuple
 
 from parlai.core.opt import Opt
-from parlai.core.teachers import (
-    ParlAIDialogTeacher,
-    create_task_agent_from_taskname,
-    MultiTaskTeacher,
-)
-from parlai.tasks.convai2.agents import (
-    DefaultTeacher as Convai2DefaultTeacher,
-    BothTeacher,
-)
+from parlai.core.teachers import ParlAIDialogTeacher, create_task_agent_from_taskname
+from parlai.tasks.convai2.agents import BothTeacher
 from parlai.tasks.empathetic_dialogues.agents import EmpatheticDialoguesTeacher
 from parlai.tasks.wizard_of_wikipedia.agents import WizardDialogKnowledgeTeacher
 from parlai.utils.misc import warn_once
@@ -117,93 +109,6 @@ def create_agents(opt):
 ################################################################################
 ## Teachers for adding ConvAI2 personas and WoW topics to existing datasets   ##
 ################################################################################
-
-
-class ConvAI2PersonaTopicifierTeacher(Convai2DefaultTeacher):
-    """
-    Adds WoW topics to ConvAI2 data.
-    """
-
-    def __init__(self, opt, shared=None):
-        if 'stream' in opt['datatype']:
-            warn_once(
-                'Warning: the BST Convai2 teacher is not compatible with '
-                'streaming datatypes. Switching to nonstreaming.'
-            )
-            # StreamDialogData works by reading directly from a text file without any
-            # alteration, but this teacher must append a WoW topic string to the context
-            # of the first example of each episode.
-            opt['datatype'] = opt['datatype'].replace(':stream', '')
-        self.persona_topicifier = PersonaTopicifier(
-            opt=opt, should_have_personas=True, should_have_topics=False
-        )
-        super().__init__(opt, shared=shared)
-
-    def get(self, episode_idx, entry_idx=None):
-        gotten = super().get(episode_idx, entry_idx=entry_idx)
-        if entry_idx == 0:
-            modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
-            gotten.force_set('text', modified_text)
-        return gotten
-
-
-class WoWPersonaTopicifierTeacher(WizardDialogKnowledgeTeacher):
-    """
-    Adds personas to WoW data.
-    """
-
-    def __init__(self, opt, shared=None):
-        self.persona_topicifier = PersonaTopicifier(
-            opt=opt, should_have_personas=False, should_have_topics=True
-        )
-        super().__init__(opt, shared=shared)
-
-    def _format_example(self, episode_idx, entry_idx=None):
-        gotten = super()._format_example(episode_idx, entry_idx)
-        if entry_idx == 0:
-            modified_text = self.persona_topicifier.get_modified_text(gotten['text'])
-            gotten.force_set('text', modified_text)
-        return gotten
-
-
-class EDPersonaTopicifierTeacher(EmpatheticDialoguesTeacher):
-    """
-    Adds persona and WoW topic to ED context strings.
-    """
-
-    def __init__(self, opt, shared=None):
-        self.persona_topicifier = PersonaTopicifier(
-            opt=opt, should_have_personas=False, should_have_topics=False
-        )
-        super().__init__(opt, shared=shared)
-        self.id = 'parlai.tasks.blended_skill_talk.agents:EDPersonaTopicifierTeacher'
-
-    def _get_datafile(self, opt) -> str:
-        """
-        Specify a custom datafile path for examples with personas.
-        """
-        experiencer_side_only = self._get_experiencer_side_only(opt)
-        return _cached_data_path(opt=opt, experiencer_side_only=experiencer_side_only)
-
-    def setup_data(self, path):
-        """
-        Get example from the final data with personas and WoW topic strings.
-        """
-
-        warn_once(f'Loading cached data from {path}.')
-        with PathManager.open(path, 'r') as f_read:
-            persona_topic_data = json.load(f_read)
-
-        for episode in persona_topic_data:
-            for entry_idx, entry in enumerate(episode):
-
-                # For compatibility with DialogTeacher
-                del entry['episode_done']
-                if self._get_base_datatype(self.opt) == 'train':
-                    del entry['label_candidates']
-
-                new_episode = entry_idx == 0
-                yield entry, new_episode
 
 
 class PersonaTopicifier:
@@ -369,23 +274,6 @@ class PersonaTopicifier:
 
         modified_utterance = persona + topic + utt
         return modified_utterance
-
-
-class AllTeacher(MultiTaskTeacher):
-    """
-    Multitask teacher that combines all "Persona Topicifier" teachers.
-    """
-
-    def __init__(self, opt, shared=None):
-        topicifier_tasks = [
-            'blended_skill_talk:ConvAI2PersonaTopicifier',  # ConvAI2
-            'blended_skill_talk:EDPersonaTopicifier',  # Empathetic Dialogues
-            'blended_skill_talk:WoWPersonaTopicifier',  # Wizard of Wikipedia
-            'blended_skill_talk:BlendedSkillTalk',  # Blended Skill Talk
-        ]
-        opt = copy.deepcopy(opt)
-        opt['task'] = ','.join(topicifier_tasks)
-        super().__init__(opt, shared)
 
 
 ################################################################

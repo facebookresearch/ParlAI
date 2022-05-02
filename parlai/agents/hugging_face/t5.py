@@ -349,7 +349,7 @@ class ParlaiT5Model(TorchGeneratorModel):
         # Taken directly from HuggingFace
         # Rescale output before projecting on vocab
         # See https://github.com/tensorflow/mesh/blob/fa19d69eafc9a482aff0b59ddd96b025c0cb207d/mesh_tensorflow/transformer/transformer.py#L586
-        tensor = tensor * (self.t5.model_dim ** -0.5)
+        tensor = tensor * (self.t5.model_dim**-0.5)
         lm_logits = self.t5.lm_head(tensor)
         return lm_logits
 

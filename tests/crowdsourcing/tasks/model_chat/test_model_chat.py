@@ -157,7 +157,6 @@ fixed_response: >
 
             return actual_state
 
-
 except ImportError:
     pass
 
