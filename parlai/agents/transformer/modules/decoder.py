@@ -81,9 +81,6 @@ class TransformerDecoderLayer(nn.Module):
         )  # type: ignore
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
-        self.encoder_attention = self.swappables.encoder_attention(
-            opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
-        )  # type: ignore
         self.norm2 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
 
         self.ffn = self.swappables.feedforward(
@@ -94,6 +91,10 @@ class TransformerDecoderLayer(nn.Module):
             activation=activation,
         )  # type: ignore
         self.norm3 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
+
+        self.encoder_attention = self.swappables.encoder_attention(
+            opt=self.opt, n_heads=n_heads, dim=embedding_size, dropout=attention_dropout
+        )  # type: ignore
 
     def forward(
         self,
