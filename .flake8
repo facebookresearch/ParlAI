@@ -10,6 +10,7 @@ extend-ignore =
     W503
     F403
     F541
+    E305
 select = C,E,F,W,B,B950,RST,PAI,BLK
 
 max-line-length=80

@@ -360,7 +360,8 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
 
     def _filter_agent_state_data(self, agent_state: dict) -> dict:
         """
-        Remove agent state messages that do not contain text or final chat data and are thus not useful for testing the crowdsourcing task.
+        Remove agent state messages that do not contain text or final chat data and are
+        thus not useful for testing the crowdsourcing task.
         """
         filtered_messages = [
             m

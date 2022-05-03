@@ -145,7 +145,6 @@ try:
                         f'\n\n\tActual results:\n{actual_results.to_csv()}'
                     )
 
-
 except ImportError:
     pass
 

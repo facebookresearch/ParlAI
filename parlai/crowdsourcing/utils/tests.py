@@ -113,7 +113,7 @@ class AbstractCrowdsourcingTest:
 
     def _get_live_run(self):
         """
-        Get the LiveTaskRun from this job
+        Get the LiveTaskRun from this job.
         """
         live_runs = list(self.operator.get_running_task_runs().values())
         if len(live_runs) == 0:
@@ -122,7 +122,7 @@ class AbstractCrowdsourcingTest:
 
     def _get_server(self):
         """
-        Return the MockArchitect's server associated with this run
+        Return the MockArchitect's server associated with this run.
         """
         live_run = self._get_live_run()
         return live_run.architect.server

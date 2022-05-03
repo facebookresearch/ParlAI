@@ -79,7 +79,6 @@ try:
                 # Tear down temp file
                 shutil.rmtree(root_dir)
 
-
 except ImportError:
     pass
 

@@ -1,0 +1,468 @@
+{
+  "consent": [],
+  "dataGolden": [
+    {
+      "answer": "transactions",
+      "sentence": "what are my transactions\r",
+      "sentid": 1
+    }
+  ],
+  "generic_instructions": "In this task, we need you to categorize some sentences. Below, we list the possible categories. Please read the description of each category carefully, and click \"Start the task\" at the bottom of this section to start the next section. In that section, sentences will be shown. Please choose a category for each sentence by selecting an option from the drop-down menu at the right of the sentence.",
+  "generic_introduction": "Our goal is to build an AI chat bot that can help people complete certain tasks. To achieve this goal and train the bot, we need some sentences labeled by human annotators. Please help us classify the sentences below.",
+  "hasFeedbackQuestion": true,
+  "payment": "0.65",
+  "requirements": [
+    {
+      "key": 0,
+      "content": "I am over 18 years old"
+    }
+  ],
+  "time": "2.5",
+  "questionSurveys": [],
+  "questionSystems": [],
+  "category_data": [
+    {
+      "sentence": "please tell me my in-person transactions for the last three days using my debit card",
+      "sentid": 1,
+      "category": []
+    },
+    {
+      "sentence": "send $5 from savings to checking",
+      "sentid": 2,
+      "category": []
+    },
+    {
+      "sentence": "is there enough money in my bank of hawaii for vacation",
+      "sentid": 3,
+      "category": []
+    },
+    {
+      "sentence": "i need to pay my cable bill",
+      "sentid": 4,
+      "category": []
+    },
+    {
+      "sentence": "read my bill balances",
+      "sentid": 5,
+      "category": []
+    },
+    {
+      "sentence": "please tell me all of my recent transactions",
+      "sentid": 6,
+      "category": []
+    },
+    {
+      "sentence": "please transfer $100 from my checking to my savings account",
+      "sentid": 7,
+      "category": []
+    },
+    {
+      "sentence": "could you check my bank balance for me",
+      "sentid": 8,
+      "category": []
+    },
+    {
+      "sentence": "i need help paying my electric bill",
+      "sentid": 9,
+      "category": []
+    },
+    {
+      "sentence": "what is the amount of balance i have to pay on my bill",
+      "sentid": 10,
+      "category": []
+    },
+    {
+      "sentence": "i want to see my entertainment transactions",
+      "sentid": 11,
+      "category": []
+    },
+    {
+      "sentence": "make a transfer of $200 from my savings account to my checking account",
+      "sentid": 12,
+      "category": []
+    },
+    {
+      "sentence": "i'd like to know my bank balance please",
+      "sentid": 13,
+      "category": []
+    },
+    {
+      "sentence": "pay my cell bill from my deposit account",
+      "sentid": 14,
+      "category": []
+    },
+    {
+      "sentence": "what do my bills add up to",
+      "sentid": 15,
+      "category": []
+    },
+    {
+      "sentence": "show me my transactions on tacobell",
+      "sentid": 16,
+      "category": []
+    },
+    {
+      "sentence": "how can i send money from one account to another",
+      "sentid": 17,
+      "category": []
+    },
+    {
+      "sentence": "what is the balance of my bank accounts",
+      "sentid": 18,
+      "category": []
+    },
+    {
+      "sentence": "i want to pay that bill now",
+      "sentid": 19,
+      "category": []
+    },
+    {
+      "sentence": "how much is my current cable bill for",
+      "sentid": 20,
+      "category": []
+    },
+    {
+      "sentence": "show me the last five transactions",
+      "sentid": 21,
+      "category": []
+    },
+    {
+      "sentence": "need to transfer from one account to my other one",
+      "sentid": 22,
+      "category": []
+    },
+    {
+      "sentence": "i want my checking balance at chase",
+      "sentid": 23,
+      "category": []
+    },
+    {
+      "sentence": "is there anyone available to help pay an internet bill",
+      "sentid": 24,
+      "category": []
+    },
+    {
+      "sentence": "how much do i owe in bills",
+      "sentid": 25,
+      "category": []
+    },
+    {
+      "sentence": "please show me my recent transaction",
+      "sentid": 26,
+      "category": []
+    },
+    {
+      "sentence": "i want to initiate a transfer from one account to the other",
+      "sentid": 27,
+      "category": []
+    },
+    {
+      "sentence": "i wish to know the balance of my bank of american account now",
+      "sentid": 28,
+      "category": []
+    },
+    {
+      "sentence": "i need to pay this month's tv subscription fee",
+      "sentid": 29,
+      "category": []
+    },
+    {
+      "sentence": "i need the dollar amount due on my verizon bill, please",
+      "sentid": 30,
+      "category": []
+    },
+    {
+      "sentence": "what transactions have i made on liquor in the past month",
+      "sentid": 31,
+      "category": []
+    },
+    {
+      "sentence": "send $20 from debit to steve's account",
+      "sentid": 32,
+      "category": []
+    },
+    {
+      "sentence": "perform a search for my most recent balance on my amex account",
+      "sentid": 33,
+      "category": []
+    },
+    {
+      "sentence": "will you take my bill payment",
+      "sentid": 34,
+      "category": []
+    },
+    {
+      "sentence": "what's the total i owe on all my bills",
+      "sentid": 35,
+      "category": []
+    },
+    {
+      "sentence": "show me the transaction on my car",
+      "sentid": 36,
+      "category": []
+    },
+    {
+      "sentence": "i need to move my money",
+      "sentid": 37,
+      "category": []
+    },
+    {
+      "sentence": "what is my saving's account balance",
+      "sentid": 38,
+      "category": []
+    },
+    {
+      "sentence": "i really want to pay my cable bill from my checking account",
+      "sentid": 39,
+      "category": []
+    },
+    {
+      "sentence": "how much do i owe for my gas and phone bills",
+      "sentid": 40,
+      "category": []
+    },
+    {
+      "sentence": "let me know the list of transaction on my first hawaiian bank",
+      "sentid": 41,
+      "category": []
+    },
+    {
+      "sentence": "transfer $5 from savings to checking",
+      "sentid": 42,
+      "category": []
+    },
+    {
+      "sentence": "check my visa account and see if i have enough money for dinner tonight",
+      "sentid": 43,
+      "category": []
+    },
+    {
+      "sentence": "can you assist me in paying my electric bill",
+      "sentid": 44,
+      "category": []
+    },
+    {
+      "sentence": "i need to know my bill total for my verizon payment due this month",
+      "sentid": 45,
+      "category": []
+    },
+    {
+      "sentence": "what were my last five transactions on my visa card",
+      "sentid": 46,
+      "category": []
+    },
+    {
+      "sentence": "transfer money from one place to another",
+      "sentid": 47,
+      "category": []
+    },
+    {
+      "sentence": "how much total cash do i have in the bank",
+      "sentid": 48,
+      "category": []
+    },
+    {
+      "sentence": "help me pay my cable bill",
+      "sentid": 49,
+      "category": []
+    },
+    {
+      "sentence": "can you tell me what the amount on my directv bill is",
+      "sentid": 50,
+      "category": []
+    }
+  ],
+  "nAssignment": "5",
+  "numofsent": 5,
+  "nUnit": "5",
+  "nUnitDuplicated": 1,
+  "nUnitGolden": 1,
+  "questionCategories": [
+    {
+      "key": 0,
+      "title": "transactions",
+      "instruction": "Request for information about transactions of a bank account.",
+      "examples": [
+        {
+          "key": 0,
+          "content": "how much did my last purchase cost",
+          "explain": "Purchase causes a transaction, so it is a question about transactions."
+        },
+        {
+          "key": 1,
+          "content": "i need to see all visa purchases for march",
+          "explain": "Purchase causes a transaction, so it is a question about transactions."
+        }
+      ],
+      "counterexamples": [
+        {
+          "key": 0,
+          "content": "help me transfer $x from credit to debit",
+          "explain": "It is not asking for information, so it should not be classified as transactions. Instead, it should be classified as \"transfer\"."
+        },
+        {
+          "key": 1,
+          "content": "how much do i have to pay for my cable bill",
+          "explain": "It is asking for information about bill balance."
+        }
+      ]
+    },
+    {
+      "key": 1,
+      "title": "transfer",
+      "instruction": "Request to make a transfer from one banking account to another one. ",
+      "examples": [
+        {
+          "key": 0,
+          "content": "send over a hundred dollars from huntington into saving",
+          "explain": "Sending money is the same as making a transfer."
+        },
+        {
+          "key": 1,
+          "content": "send 1200 dollars between usaa and navy federal accounts",
+          "explain": "Sending money is the same as making a transfer."
+        }
+      ],
+      "counterexamples": [
+        {
+          "key": 0,
+          "content": "Pay my internet bill with my discover account",
+          "explain": "Paying a bill does not transfer money to a banking account, so this sentence should not be categorized as transfer. Instead, it should be categorized as \"pay bill\"."
+        },
+        {
+          "key": 1,
+          "content": "is tehre enough in my bluebird account for groceries this week",
+          "explain": "This sentence is asking for information about the balance in an account, so it should be categorized as \"balance\"."
+        }
+      ]
+    },
+    {
+      "key": 2,
+      "title": "balance",
+      "instruction": "Ask information about the amount of money in a banking account.",
+      "examples": [
+        {
+          "key": 0,
+          "content": "is there enough in my bluebird account for groceries this week",
+          "explain": "To answer this question, information about the balance of the banking is required. Therefore, it is asking for information about the balance."
+        },
+        {
+          "key": 1,
+          "content": "how much money is in my checking account",
+          "explain": "It is asking the amount of money in a banking account."
+        }
+      ],
+      "counterexamples": [
+        {
+          "key": 0,
+          "content": "what's the balance on my bills",
+          "explain": "This sentence asks for information about bills, instead of a banking account. Thus, it should be classified as \"bill balance\" instead of \"balance\"."
+        },
+        {
+          "key": 1,
+          "content": "i need to see all visa purchases for march",
+          "explain": "This is asking for the information about transactions."
+        }
+      ]
+    },
+    {
+      "key": 3,
+      "title": "pay bill",
+      "instruction": "Request for help to pay a bill.",
+      "examples": [
+        {
+          "key": 0,
+          "content": "use my checkings account to pay the electric bill",
+          "explain": "It requests to pay the electric bill."
+        },
+        {
+          "key": 1,
+          "content": "can you give me a hand paying my water bill",
+          "explain": "It asks for help to pay a bill."
+        }
+      ],
+      "counterexamples": [
+        {
+          "key": 0,
+          "content": "how much do i have to pay for my cable bill",
+          "explain": "This sentence is asking for information about a bill, instead of paying it. Therefore, this sentence should be categorized as \"bill balance\", instead of \"pay balance\"."
+        },
+        {
+          "key": 1,
+          "content": "send 1200 dollars between usaa and navy federal accounts",
+          "explain": "This request is to send money, so it should be categorized as \"transfer\"."
+        }
+      ]
+    },
+    {
+      "key": 4,
+      "title": "bill balance",
+      "instruction": "Request for information about the balance of a bill.",
+      "examples": [
+        {
+          "key": 0,
+          "content": "do i owe any bills",
+          "explain": "To answer this question, information about the balance of the bills is required. So it is a request for information about bill balance."
+        },
+        {
+          "key": 1,
+          "content": "what am i being charged for my water bill",
+          "explain": "This question asks the balance of the water bill."
+        }
+      ],
+      "counterexamples": [
+        {
+          "key": 0,
+          "content": "what's the balance of my savings",
+          "explain": "This sentence asks for information about the balance of a banking account, instead of a bill. So it should be categorized as \"balance\", rather than \"bill balance\"."
+        },
+        {
+          "key": 1,
+          "content": "i'd like to pay my bill",
+          "explain": "This sentence does not ask for information about a bill. It should be categorized as \"pay bill\"."
+        }
+      ]
+    }
+  ],
+  "style": {
+    "global": {
+      "spacing": "0",
+      "backgroundColor": "#FFFFFF"
+    },
+    "tabTitle": {
+      "color": "#000000",
+      "fontSize": 14,
+      "lineHeight": 1.5,
+      "fontFamily": "Helvetica",
+      "text-align": "left"
+    },
+    "background": {
+      "color": "#000000",
+      "fontSize": "18",
+      "lineHeight": "1.5",
+      "fontFamily": "Helvetica",
+      "text-align": "left"
+    },
+    "instruction": {
+      "color": "#282828",
+      "fontSize": "18",
+      "lineHeight": "1.5",
+      "fontFamily": "Helvetica",
+      "text-align": "left"
+    },
+    "example": {
+      "color": "#282828",
+      "fontSize": "18",
+      "lineHeight": "1.5",
+      "fontFamily": "Helvetica",
+      "text-align": "left"
+    },
+    "utterance": {
+      "color": "#282828",
+      "fontSize": "20",
+      "lineHeight": "1.5",
+      "fontFamily": "Helvetica",
+      "text-align": "left"
+    }
+  }
+}

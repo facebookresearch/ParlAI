@@ -284,6 +284,8 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
 
     def __init__(self, opt, shared=None):
         self._init_attributes(opt)
+        if shared is None:
+            build(opt)
         if shared and 'rare_word_f1' in shared:
             self.rare_word_f1 = shared['rare_word_f1']
         elif self.label_type == 'response':

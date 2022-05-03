@@ -115,7 +115,7 @@ class BaseTransformerDecoder(nn.Module, ABC):
             )
         else:
             nn.init.normal_(
-                self.position_embeddings.weight, 0, self.embedding_size ** -0.5
+                self.position_embeddings.weight, 0, self.embedding_size**-0.5
             )
 
         # build the model
