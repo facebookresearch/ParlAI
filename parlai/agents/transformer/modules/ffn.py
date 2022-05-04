@@ -12,6 +12,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.opt import Opt
+from parlai.core.params import default
 
 
 class TransformerFFN(nn.Module):
@@ -30,14 +31,8 @@ class TransformerFFN(nn.Module):
     ):
         super(TransformerFFN, self).__init__(**kwargs)
 
-        def _default(val, default):
-            """
-            shorthand for explicit None check for optional arguments.
-            """
-            return val if val is not None else default
-
-        dim = _default(dim, opt['embedding_size'])
-        dim_hidden = _default(dim_hidden, opt['ffn_size'])
+        dim = default(dim, opt['embedding_size'])
+        dim_hidden = default(dim_hidden, opt['ffn_size'])
 
         self.opt = opt
         self.relu_dropout = nn.Dropout(p=relu_dropout)

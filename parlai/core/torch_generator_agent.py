@@ -835,7 +835,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         for i in range(batchsize):
             num_cands = len(batch.candidate_vecs[i])
             enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            cands, _ = self._pad_tensor(batch.candidate_vecs[i], is_label=True)
             cands = cands.to(batch.text_vec.device)
             scores, _ = self.model.decode_forced(enc, cands)
             score_view = scores.reshape(num_cands * cands.size(1), -1)

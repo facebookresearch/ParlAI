@@ -15,6 +15,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from parlai.core.opt import Opt
+from parlai.core.params import default
 from parlai.utils.torch import neginf
 
 
@@ -98,14 +99,8 @@ class MultiHeadAttention(nn.Module):
     ):
         super(MultiHeadAttention, self).__init__()
 
-        def _default(val, default):
-            """
-            shorthand for explicit None check for optional arguments.
-            """
-            return val if val is not None else default
-
-        n_heads = _default(n_heads, opt['n_heads'])
-        dim = _default(dim, opt['embedding_size'])
+        n_heads = default(n_heads, opt['n_heads'])
+        dim = default(dim, opt['embedding_size'])
 
         self.n_heads = n_heads
         self.dim = dim
@@ -224,9 +219,13 @@ class MultiHeadAttention(nn.Module):
             if static_kv:
                 mask = incr_state['prev_mask']
             else:
-                mask = torch.cat([incr_state['prev_mask'], mask], dim=2)
-                # Prepend along the key_len dimension (analogous to
-                # incr_state['prev_key'])
+                # Mask will be of size (B x query_len x key_len)
+                # During incremental decoding the query will only represent the next token,
+                # whereas the key/value will represent the entire sequence thus far.
+                # In such a case, we only want to look at the last element of the mask in the query dimension.
+                prev_mask = incr_state['prev_mask'][:, -query_len:, :]
+                mask = torch.cat([prev_mask, mask], dim=2)
+                # Prepend along the key_len dimension (analogous to incr_state['prev_key'])
 
         # Save new incremental states. We reshape to allow for reordering along batch
         # dimension.

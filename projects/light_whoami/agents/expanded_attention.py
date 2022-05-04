@@ -21,6 +21,7 @@ from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     LAYER_NORM_EPS,
 )
+from parlai.agents.transformer.modules.decoder import DecoderIncrState
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import create_agent_from_model_file
 from parlai.core.build_data import modelzoo_path
@@ -645,9 +646,9 @@ class TransformerExpandedDecoder(TransformerDecoder):
         self,
         input: torch.Tensor,
         encoder_state,
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        incr_state: Optional[DecoderIncrState] = None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Override TD.Forward to include extra encoder outputs.
         """
@@ -667,9 +668,9 @@ class TransformerExpandedDecoder(TransformerDecoder):
         tensor: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
+        incr_state: DecoderIncrState,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Override to pass more options to model parallel (which is unfortunately not
         handled in super class.)
@@ -681,7 +682,7 @@ class TransformerExpandedDecoder(TransformerDecoder):
             )
         else:
             tensor, new_incr_state = super().forward_layers(
-                tensor, encoder_output, encoder_mask, incr_state, **kwargs
+                tensor, encoder_output, encoder_mask, incr_state=incr_state, **kwargs
             )
 
         return tensor, new_incr_state
@@ -779,7 +780,7 @@ class ExpandedAttentionTransformerDecoderLayer(TransformerDecoderLayer):
         )
         self.opt = opt
         if not opt['expanded_attention_share_weights']:
-            self.extra_input_attention = self.swappables.encoder_attention(
+            self.extra_input_attention = self.swappables.encoder_attention(  # type: ignore
                 opt=self.opt,
                 n_heads=opt['n_heads'],
                 dim=opt['embedding_size'],

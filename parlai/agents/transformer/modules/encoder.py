@@ -23,6 +23,7 @@ from parlai.agents.transformer.modules import (
 )
 from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
+from parlai.core.params import default
 from parlai.utils.misc import warn_once
 from parlai.utils.torch import PipelineHelper
 from parlai.utils.fsdp import fsdp_wrap
@@ -50,15 +51,9 @@ class TransformerEncoderLayer(nn.Module):
     ):
         super().__init__()
 
-        def _default(val, default):
-            """
-            shorthand for explicit None check for optional arguments.
-            """
-            return val if val is not None else default
-
-        n_heads = _default(n_heads, opt['n_heads'])
-        embedding_size = _default(embedding_size, opt['embedding_size'])
-        ffn_size = _default(ffn_size, opt['ffn_size'])
+        n_heads = default(n_heads, opt['n_heads'])
+        embedding_size = default(embedding_size, opt['embedding_size'])
+        ffn_size = default(ffn_size, opt['ffn_size'])
 
         self.opt = opt
         self.dim = embedding_size
@@ -143,9 +138,6 @@ class TransformerEncoder(nn.Module):
     ):
         super().__init__()
 
-        def _default(val, default):
-            return val if val is not None else default
-
         self.opt = opt
         self.embedding_size = opt['embedding_size']
         self.ffn_size = opt['ffn_size']
@@ -156,19 +148,19 @@ class TransformerEncoder(nn.Module):
         )
         self.n_heads = opt['n_heads']
         self.dim = self.embedding_size
-        self.embeddings_scale = _default(
+        self.embeddings_scale = default(
             embeddings_scale, opt.get('embeddings_scale', False)
         )
         self.reduction_type = reduction_type
         self.padding_idx = padding_idx
         # this is --dropout, not --relu-dropout or --attention-dropout
-        self.dropout_frac = _default(dropout, opt.get('dropout', 0.0))
+        self.dropout_frac = default(dropout, opt.get('dropout', 0.0))
         self.dropout = nn.Dropout(p=self.dropout_frac)
-        self.activation = _default(activation, opt.get('activation', 'relu'))
-        self.variant = _default(variant, opt.get('variant', 'aiayn'))
-        self.n_segments = _default(n_segments, opt.get('n_segments', 0))
+        self.activation = default(activation, opt.get('activation', 'relu'))
+        self.variant = default(variant, opt.get('variant', 'aiayn'))
+        self.n_segments = default(n_segments, opt.get('n_segments', 0))
 
-        self.n_positions = _default(n_positions, get_n_positions_from_options(opt))
+        self.n_positions = default(n_positions, get_n_positions_from_options(opt))
         self.out_dim = self.embedding_size
         assert (
             self.embedding_size % self.n_heads == 0
@@ -224,7 +216,7 @@ class TransformerEncoder(nn.Module):
 
         # build the model
         self.layers = self.build_layers()
-        self.output_scaling = _default(output_scaling, opt.get('output_scaling', 1.0))
+        self.output_scaling = default(output_scaling, opt.get('output_scaling', 1.0))
 
     def build_layers(self) -> nn.ModuleList:
         layers = nn.ModuleList()
@@ -395,3 +387,23 @@ class TransformerEncoder(nn.Module):
 
         tensor_out, mask_out = PipelineHelper.join(chunks)
         return tensor_out
+
+
+class PassThroughEncoder(torch.nn.Module):
+    """
+    No-op encoder.
+
+    Useful for decoder-only transformers.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """
+        Dummy __init__ to avoid passing superfluous args to nn.Module.
+        """
+        super().__init__()
+
+    def forward(self, xs):
+        """
+        TransformerGeneratorModel expects ``(encoder_output, encoder_mask)``.
+        """
+        return xs, None
