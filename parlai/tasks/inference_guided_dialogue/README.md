@@ -2,6 +2,20 @@
 
 ### Data Configurations
 
+Sample: 
+```
+Dialogue history 
+<speaker1> Cameron knew I was dishonest! \n
+<speaker2> You should have behaved better! \n
+<speaker1> Hmm. Cameron now know when I lied to him. \n
+
+Inference Q&A
+<infq> How to describe <speaker1>? <infa> Unable to be trusted, deceitful \n 
+
+Response
+<speaker2> I cant believe you lied to your friend.
+```
+
 There are three main options for training: 
 
 - `infqa_response`: First generate the question given the dialogue history, then generate an answer to it, then generate a response given all the context (dialogue history + question + answer).
@@ -10,7 +24,6 @@ There are three main options for training:
 
 Pass these key values as command line arguments via `-gt` or `--generation_target`. 
 - i.e. `parlai dd -t inference_guided_dialogue -gt infqa_response` 
-
 
 ### Fine-tuning BlenderBot with this data
 
@@ -47,6 +60,7 @@ parlai train_model \
     -vmm min \
     --save-after-valid True \
     --model-file /tmp/test_train_90M # directory to save to 
+    --special-tok-lst "<speaker1>,<speaker2>,<infq>,<infa>"
 ```
 
 For full set of arguments, refer to the ParlAI docs: https://www.parl.ai/docs/cli_usage.html#train-model
