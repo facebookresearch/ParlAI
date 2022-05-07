@@ -1,5 +1,13 @@
 # Inference Guided Dialogue 
 
+## Prerequisite
+
+Place data in `data/inference_guided_dialogue` (with the parent directory being the ParlAI repo: i.e. in `ParlAI` after `git clone <parlai code url>; cd ParlAI;`
+
+Current data: `batch_1_prompt_valid.json`
+If you want to change the file, place some other file into `data/inference_guided_dialogue` and then change the filepath specified in the `__init__` function of `InferenceGuidedDialogueTeacher` in `agents.py`. 
+
+
 ### Data Configurations
 
 Sample: 
