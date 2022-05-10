@@ -431,7 +431,7 @@ class TimerMetric(Metric):
             return self
         total: TScalar = self._value + other._value
         start: float = min(self._start, other._start)
-        end: float = max(self._start, other._end)
+        end: float = max(self._end, other._end)
         return type(self)(total, start, end)
 
     def value(self) -> float:
