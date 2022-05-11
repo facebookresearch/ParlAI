@@ -49,7 +49,10 @@ class FastAcuteBlueprintArgs(AcuteEvalBlueprintArgs):
         },
     )
     acute_eval_type: str = field(
-        default='engaging', metadata={"help": "Which evaluation to run for ACUTEs"}
+        default='engaging',
+        metadata={
+            "help": "Which evaluation to run for ACUTEs. Set to 'custom' for manual specification of the evaluation question"
+        },
     )
     matchups_per_pair: int = field(
         default=60,
