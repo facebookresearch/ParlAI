@@ -116,9 +116,12 @@ class FastAcuteExecutor(object):
         self.chat_files: Dict[str, str] = {}
 
         # question config for running ACUTE
-        self.question_config: Dict[str, str] = ACUTE_EVAL_TYPES[
-            self.fast_acute_args.acute_eval_type
-        ]
+        if self.fast_acute_args.acute_eval_type.lower() == 'custom':
+            self.question_config: Optional[Dict[str, str]] = None
+        else:
+            self.question_config: Optional[Dict[str, str]] = ACUTE_EVAL_TYPES[
+                self.fast_acute_args.acute_eval_type
+            ]
 
         self.run_id = self.args.mephisto.task.task_name
 
@@ -505,12 +508,16 @@ class FastAcuteExecutor(object):
         total_convos = self.fast_acute_args.matchups_per_pair * len(self.combos)
         additional_params = {
             'pairings_filepath': self.pairings_filepath,
-            's1_choice': self.question_config['s1_choice'],
-            's2_choice': self.question_config['s2_choice'],
-            'eval_question': self.question_config['question'],
             'num_matchup_pairs': total_convos,
             'block_qualification': f"{self.args.mephisto.task.task_name}_block_qual",
         }
+        if self.question_config is not None:
+            additional_params = {
+                **additional_params,
+                's1_choice': self.question_config['s1_choice'],
+                's2_choice': self.question_config['s2_choice'],
+                'eval_question': self.question_config['question'],
+            }
         overwritten_param_strings = []
         for key, val in additional_params.items():
             if val != self.fast_acute_args.get(key, None):
