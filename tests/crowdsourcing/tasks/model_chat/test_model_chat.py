@@ -120,7 +120,7 @@ fixed_response: >
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be
-                self._get_channel_info().job.task_runner.task_run.get_blueprint().use_onboarding = (
+                self._get_live_run().task_runner.task_run.get_blueprint().use_onboarding = (
                     False
                 )
                 # Don't require onboarding for this test agent
@@ -150,11 +150,12 @@ fixed_response: >
 
         def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
             actual_state = super()._remove_non_deterministic_keys(actual_state)
-            custom_data = self._get_custom_data(actual_state)
-            del custom_data['dialog'][0]['message_id']
-            # This chat task additionally includes a message_id in the first message
-            return actual_state
 
+            # This chat task additionally includes a non-deterministic key in the first message
+            custom_data = self._get_custom_data(actual_state)
+            del custom_data['dialog'][0]['update_id']
+
+            return actual_state
 
 except ImportError:
     pass

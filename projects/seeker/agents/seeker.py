@@ -201,7 +201,7 @@ class SeekerAgent(Agent):
         """
         additional_agent_parser = cls.get_additional_agent_args()
         for action in additional_agent_parser._actions:
-            key = action.option_strings[-1]
+            key = max(action.option_strings, key=lambda x: len(x))
             type = action.type
 
             for prefix in ['krm', 'drm', 'sqm', 'sdm']:
@@ -831,9 +831,11 @@ class SeekerAgent(Agent):
         """
         knowledge_agent_observations = [o['knowledge_agent'] for o in observations]
         # First, determine whether we're searching
-        batch_reply_sdm, search_indices, knowledge_agent_observations = self.batch_act_sdm(
-            observations, knowledge_agent_observations
-        )
+        (
+            batch_reply_sdm,
+            search_indices,
+            knowledge_agent_observations,
+        ) = self.batch_act_sdm(observations, knowledge_agent_observations)
         # Second, generate search queries
         batch_reply_sqm = self.batch_act_sqm(observations, search_indices)
 

@@ -20,6 +20,7 @@ for alias in sorted(PRESET_DESCRIPTIONS.keys()):
         expansion_str = []
         for key, value in expansion.items():
             key = '--' + key.replace('_', '-')
+            value = str(value).replace("\n", r"\n")
             expansion_str.append(f'`{key} {value}`')
         expansion_str = " ".join(expansion_str)
         fout.write(f'`{alias}` | {description} | {expansion_str}\n')

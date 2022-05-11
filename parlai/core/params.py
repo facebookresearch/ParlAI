@@ -974,6 +974,19 @@ class ParlaiParser(argparse.ArgumentParser):
                 'got an attribute error when parsing.'
             )
 
+    def _handle_single_dash_parsearg(self, args, actions):
+        if _sys.version_info >= (3, 8, 0):
+            newargs = []
+            for arg in args:
+                darg = f'-{arg}'
+                if arg.startswith('-') and not arg.startswith('--') and darg in actions:
+                    newargs.append(darg)
+                else:
+                    newargs.append(arg)
+            return newargs
+        else:
+            return args
+
     def parse_known_args(self, args=None, namespace=None, nohelp=False):
         """
         Parse known args to ignore help flag.
@@ -987,16 +1000,7 @@ class ParlaiParser(argparse.ArgumentParser):
         actions = set()
         for action in self._actions:
             actions.update(action.option_strings)
-        if _sys.version_info >= (3, 8, 0):
-            newargs = []
-            for arg in args:
-                darg = f'-{arg}'
-                if arg.startswith('-') and not arg.startswith('--') and darg in actions:
-                    newargs.append(darg)
-                else:
-                    newargs.append(arg)
-            args = newargs
-
+        args = self._handle_single_dash_parsearg(args, actions)
         if nohelp:
             # ignore help
             args = [
@@ -1099,7 +1103,9 @@ class ParlaiParser(argparse.ArgumentParser):
         if args_that_override is None:
             args_that_override = _sys.argv[1:]
 
-        args_that_override = fix_underscores(args_that_override)
+        args_that_override = self._handle_single_dash_parsearg(
+            fix_underscores(args_that_override), option_strings_dict.keys()
+        )
 
         for i in range(len(args_that_override)):
             if args_that_override[i] in option_strings_dict:
@@ -1393,3 +1399,10 @@ class ParlaiParser(argparse.ArgumentParser):
         self.print_help()
         _sys.stderr.write('\nParse Error: %s\n' % message)
         _sys.exit(2)
+
+
+def default(val, default):
+    """
+    shorthand for explicit None check for optional arguments.
+    """
+    return val if val is not None else default

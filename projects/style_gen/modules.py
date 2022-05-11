@@ -85,7 +85,7 @@ class ClassifierOnGeneratorModel(TransformerGeneratorModel):
         """
         Return TransformerDecoderWithEmbeds instead of TransformerDecoder.
         """
-        return TransformerDecoderWithEmbeds(opt=opt, embedding=embedding)
+        return TransformerDecoderWithEmbeds(opt=opt, embedding=embedding, **kwargs)
 
     def __init__(self, opt, dictionary, num_classes: int):
         super().__init__(opt, dictionary)
@@ -169,7 +169,7 @@ class TransformerDecoderWithEmbeds(TransformerDecoder):
         new_incr_state = {}
         if getattr(self.layers, 'is_model_parallel', False):
             tensor, new_incr_state = self._apply_model_parallel(
-                tensor, encoder_output, encoder_mask, incr_state
+                tensor, encoder_output, encoder_mask, incr_state=incr_state
             )
         else:
             for idx, layer in enumerate(self.layers):

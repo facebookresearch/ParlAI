@@ -1067,6 +1067,7 @@ class StreamDialogData(DialogData):
             self.reset_data = shared['reset']
             # Share datafile and data_loader for computing num_exs and num_eps
             self.datafile = shared['datafile']
+            self.length_datafile = opt.get('length_datafile', None)
             self.data_loader = shared['data_loader']
             if 'lock' in shared:
                 self.lock = shared['lock']
@@ -1078,6 +1079,7 @@ class StreamDialogData(DialogData):
                     ERROR_MESSAGE_NO_DATAFILE.format(class_name=self.__class__.__name__)
                 )
             self.datafile = opt['datafile']
+            self.length_datafile = opt.get('length_datafile', None)
             self.reset_data = None
             self.is_reset = True
         self.entry_idx = 0
@@ -1137,8 +1139,13 @@ class StreamDialogData(DialogData):
         Note that this can take some time for large datasets. Episode and entry indexes
         cannot be specified during streaming.
         """
-        datafiles = self.datafile if type(self.datafile) is tuple else [self.datafile]
-        length_file = datafiles[0] + ".lengths"
+        if self.length_datafile:
+            length_file = self.length_datafile
+        else:
+            datafiles = (
+                self.datafile if type(self.datafile) is tuple else [self.datafile]
+            )
+            length_file = datafiles[0] + ".lengths"
         if not PathManager.exists(length_file):
             num_eps = 0
             num_exs = 0

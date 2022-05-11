@@ -175,7 +175,7 @@ def download(url, path, fname, redownload=False, num_retries=5):
     download = not PathManager.exists(outfile) or redownload
     logging.info(f"Downloading {url} to {outfile}")
     retry = num_retries
-    exp_backoff = [2 ** r for r in reversed(range(retry))]
+    exp_backoff = [2**r for r in reversed(range(retry))]
 
     pbar = tqdm.tqdm(unit='B', unit_scale=True, desc='Downloading {}'.format(fname))
 

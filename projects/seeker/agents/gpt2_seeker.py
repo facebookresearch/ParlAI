@@ -6,7 +6,7 @@
 """
 GPT2 SeeKeR Agent for Language Modeling.
 """
-from typing import Optional, Tuple, List
+from typing import Optional, Tuple, List, Union
 import torch
 import torch.nn
 
@@ -91,7 +91,9 @@ class GPT2WithRetrieverAgent(FidAgent, GPT2WithRetrieverAgentBase):
         self._generation_model = model
         self._generation_agent = GPT2WithRetrieverAgentBase
 
-    def _pad_tensor(self, items):
+    def _pad_tensor(
+        self, items: List[Union[List[int], torch.LongTensor]], is_label: bool = False
+    ) -> Tuple[torch.LongTensor, List[int]]:
         """
         Override to always set fp16friendly to False and left_pad to True.
         """

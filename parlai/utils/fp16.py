@@ -122,8 +122,8 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
             raise NotImplementedError("Need to implement the parameter group transfer.")
         optimizer.param_groups[0]['params'] = self.fp32_params
 
-        self.scaler = DynamicLossScaler(2.0 ** 15)
-        self.min_loss_scale = 2 ** -5
+        self.scaler = DynamicLossScaler(2.0**15)
+        self.min_loss_scale = 2**-5
         self._aggregate_gnorms = aggregate_gnorms
 
     @classmethod
@@ -318,7 +318,7 @@ class DynamicLossScaler(object):
 
     def __init__(
         self,
-        init_scale: float = 2.0 ** 15,
+        init_scale: float = 2.0**15,
         scale_factor: float = 2.0,
         scale_window: int = 2000,
         tolerance: float = 0.00,
@@ -415,7 +415,7 @@ class MemoryEfficientFP16Optimizer(torch.optim.Optimizer):
         self,
         init_optimizer: torch.optim.Optimizer,  # type: ignore
         aggregate_gnorms: bool = False,
-        loss_initial_scale: float = 2.0 ** 17,
+        loss_initial_scale: float = 2.0**17,
         min_loss_scale: float = 1e-4,
     ):
         self.optimizer = init_optimizer
@@ -832,7 +832,7 @@ class Adafactor(torch.optim.Optimizer):
                 group['lr'] = self._get_lr(group, state)
 
                 beta2t = 1.0 - math.pow(state['step'], group['decay_rate'])
-                update = (grad ** 2) + group['eps'][0]
+                update = (grad**2) + group['eps'][0]
                 if factored:
                     exp_avg_sq_row = state['exp_avg_sq_row']
                     exp_avg_sq_col = state['exp_avg_sq_col']

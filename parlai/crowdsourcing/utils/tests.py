@@ -108,16 +108,31 @@ class AbstractCrowdsourcingTest:
         Set up the operator and server.
         """
         self.operator = Operator(self.db)
-        self.operator.validate_and_run_config(
-            self.config.mephisto, shared_state=shared_state
-        )
-        self.server = self._get_channel_info().job.architect.server
+        self.operator.launch_task_run(self.config.mephisto, shared_state=shared_state)
+        self.server = self._get_server()
+
+    def _get_live_run(self):
+        """
+        Get the LiveTaskRun from this job.
+        """
+        live_runs = list(self.operator.get_running_task_runs().values())
+        if len(live_runs) == 0:
+            raise ValueError('No live runs present')
+        return live_runs[0]
+
+    def _get_server(self):
+        """
+        Return the MockArchitect's server associated with this run.
+        """
+        live_run = self._get_live_run()
+        return live_run.architect.server
 
     def _get_channel_info(self):
         """
         Return channel info for the currently running job.
         """
-        channels = list(self.operator.supervisor.channels.values())
+        live_run = self._get_live_run()
+        channels = list(live_run.client_io.channels.values())
         if len(channels) > 0:
             return channels[0]
         else:
@@ -135,45 +150,40 @@ class AbstractCrowdsourcingTest:
 
         for idx in range(num_agents):
 
-            mock_worker_name = f"MOCK_WORKER_{idx:d}"
-            max_num_tries = 6
-            initial_wait_time = 0.5  # In seconds
-            num_tries = 0
-            wait_time = initial_wait_time
-            while num_tries < max_num_tries:
-                try:
+            mock_worker_registration_name = f"MOCK_WORKER_{idx:d}"
+            mock_worker_name = f"{mock_worker_registration_name}_sandbox"
 
-                    # Register the worker
-                    self.server.register_mock_worker(mock_worker_name)
-                    workers = self.db.find_workers(worker_name=mock_worker_name)
-                    worker_id = workers[0].db_id
+            # Register the agent
+            mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
+            self.server.register_mock_agent(
+                mock_worker_registration_name, mock_agent_details
+            )
+            self.assert_sandbox_worker_created(mock_worker_name)
+            workers = self.db.find_workers(worker_name=mock_worker_name)
+            print(
+                "Workers:",
+                workers,
+                self.db.find_workers(),
+                [w.worker_name for w in self.db.find_workers()],
+            )
+            worker_id = workers[0].db_id
 
-                    # Register the agent
-                    mock_agent_details = f"FAKE_ASSIGNMENT_{idx:d}"
-                    self.server.register_mock_agent(worker_id, mock_agent_details)
+            if assume_onboarding:
+                # Submit onboarding from the agent
+                onboard_agents = self.db.find_onboarding_agents()
+                onboard_data = {"onboarding_data": {"success": True}}
+                self.server.register_mock_agent_after_onboarding(
+                    worker_id, onboard_agents[0].get_agent_id(), onboard_data
+                )
+                self.await_channel_requests()
+            self.await_channel_requests()
+            print("Agents:", self.db.find_agents())
 
-                    if assume_onboarding:
-                        # Submit onboarding from the agent
-                        onboard_agents = self.db.find_onboarding_agents()
-                        onboard_data = {"onboarding_data": {"success": True}}
-                        self.server.register_mock_agent_after_onboarding(
-                            worker_id, onboard_agents[0].get_agent_id(), onboard_data
-                        )
-                    _ = self.db.find_agents()[idx]
-                    # Make sure the agent can be found, or else raise an IndexError
-
-                    break
-                except IndexError:
-                    num_tries += 1
-                    print(
-                        f'The agent could not be registered after {num_tries:d} '
-                        f'attempt(s), out of {max_num_tries:d} attempts total. Waiting '
-                        f'for {wait_time:0.1f} seconds...'
-                    )
-                    time.sleep(wait_time)
-                    wait_time *= 2  # Wait for longer next time
-            else:
-                raise ValueError('The worker could not be registered!')
+            # Make sure the agent can be found
+            try:
+                _ = self.db.find_agents()[idx]
+            except IndexError:
+                raise ValueError('The agent could not be registered!')
 
         # Get all agents' IDs
         agents = self.db.find_agents()
@@ -185,6 +195,18 @@ class AbstractCrowdsourcingTest:
         agent_ids = [agent.db_id for agent in agents]
 
         return agent_ids
+
+    def await_channel_requests(self, timeout=2) -> None:
+        time.sleep(0.1)
+        tracked_run = self._get_live_run()
+        assert self.operator._run_loop_until(
+            lambda: len(tracked_run.client_io.request_id_to_channel_id) == 0, timeout
+        ), f"Channeled requests not processed in time!"
+
+    def assert_sandbox_worker_created(self, worker_name, timeout=2) -> None:
+        assert self.operator._run_loop_until(
+            lambda: len(self.db.find_workers(worker_name=worker_name)) > 0, timeout
+        ), f"Worker {worker_name} not created in time!"
 
 
 class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
@@ -225,12 +247,11 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
             agent_id = self._register_mock_agents(num_agents=1)[0]
 
         # Set initial data
-        self.server.request_init_data(agent_id)
+        self.await_channel_requests()
 
         # Make agent act
-        self.server.send_agent_act(
-            agent_id, {"MEPHISTO_is_submit": True, "task_data": task_data}
-        )
+        self.server.submit_mock_unit(agent_id, task_data)
+        self.await_channel_requests()
 
         return self.db.find_agents()[0].state.get_data()
 
@@ -248,6 +269,10 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
     """
     Abstract class for end-to-end tests of one-turn ParlAIChatBlueprint tasks.
     """
+
+    def _setup(self):
+        super()._setup()
+        self.message_sleep_time = 0  # Time to wait for any late messages to arrive
 
     def _test_agent_states(
         self,
@@ -279,10 +304,6 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # # Feed messages to the agents
 
-        # Set initial data
-        for agent_id in agent_ids:
-            self.server.request_init_data(agent_id)
-
         # Have agents talk to each other
         assert len(agent_messages) == len(agent_task_data)
         for message_round, task_data_round in zip(agent_messages, agent_task_data):
@@ -308,61 +329,38 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     'episode_done': False,
                 },
             )
+            self.await_channel_requests()
 
         # Submit the HIT
         for agent_id in agent_ids:
-            self.server.send_agent_act(
-                agent_id=agent_id,
-                act_content={
-                    'task_data': {'final_data': {}},
-                    'MEPHISTO_is_submit': True,
-                },
-            )
+            self.server.submit_mock_unit(agent_id, {'final_data': {}})
+            self.await_channel_requests()
 
         # # Check that the inputs and outputs are as expected
 
-        # Wait until all messages have arrived
-        wait_time = 5.0  # In seconds
-        max_num_tries = 30  # max_num_tries * wait_time is the max time to wait
-        num_tries = 0
-        while num_tries < max_num_tries:
-            actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
-            assert len(actual_states) == len(expected_states)
-            expected_num_messages = sum(
-                len(state['outputs']['messages']) for state in expected_states
-            )
-            actual_num_messages = sum(
-                len(state['outputs']['messages']) for state in actual_states
-            )
-            if expected_num_messages == actual_num_messages:
-                break
-            else:
-                num_tries += 1
-                print(
-                    f'The expected number of messages is '
-                    f'{expected_num_messages:d}, but the actual number of messages '
-                    f'is {actual_num_messages:d}! Waiting for {wait_time:0.1f} seconds '
-                    f'for more messages to arrive (try #{num_tries:d} of '
-                    f'{max_num_tries:d})...'
-                )
-                time.sleep(wait_time)
-        else:
-            actual_num_messages = sum(
-                len(state['outputs']['messages']) for state in actual_states
-            )
-            print(f'\nPrinting all {actual_num_messages:d} messages received:')
-            for state in actual_states:
-                for message in state['outputs']['messages']:
-                    print(message)
+        # Get and filter actual messages
+        time.sleep(self.message_sleep_time)
+        actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+        if len(actual_states) != len(expected_states):
             raise ValueError(
-                f'The expected number of messages ({expected_num_messages:d}) never '
-                f'arrived!'
+                f'There are {len(actual_states):d} agent states, instead of {len(expected_states):d} as expected!'
             )
+        filtered_actual_states = []
+        for actual_state in actual_states:
+            filtered_actual_states.append(self._filter_agent_state_data(actual_state))
 
         # Check the contents of each message
-        for actual_state, expected_state in zip(actual_states, expected_states):
+        for actual_state, expected_state in zip(
+            filtered_actual_states, expected_states
+        ):
             clean_actual_state = self._remove_non_deterministic_keys(actual_state)
             assert clean_actual_state['inputs'] == expected_state['inputs']
+            actual_num_messages = len(clean_actual_state['outputs']['messages'])
+            expected_num_messages = len(expected_state['outputs']['messages'])
+            if actual_num_messages != expected_num_messages:
+                raise ValueError(
+                    f'The actual number of messages is {actual_num_messages:d}, instead of {expected_num_messages:d} as expected!'
+                )
             for actual_message, expected_message in zip(
                 clean_actual_state['outputs']['messages'],
                 expected_state['outputs']['messages'],
@@ -381,6 +379,20 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         """
         return actual_state
 
+    def _filter_agent_state_data(self, agent_state: dict) -> dict:
+        """
+        Remove agent state messages that do not contain text and are thus not useful for
+        testing the crowdsourcing task.
+        """
+        filtered_messages = [
+            m for m in agent_state['outputs']['messages'] if 'text' in m
+        ]
+        filtered_agent_state = {
+            'inputs': agent_state['inputs'],
+            'outputs': {**agent_state['outputs'], 'messages': filtered_messages},
+        }
+        return filtered_agent_state
+
     def _check_output_key(
         self: Union['AbstractParlAIChatTest', unittest.TestCase],
         key: str,
@@ -396,25 +408,11 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         This function can be extended to handle special cases for subclassed Mephisto
         tasks.
         """
-        if key == 'timestamp':
-            pass  # The timestamp will obviously be different
-        elif key == 'data':
-            for key_inner, expected_value_inner in expected_value.items():
-                if key_inner in ['beam_texts', 'message_id']:
-                    pass  # The message ID will be different
-                else:
-                    if actual_value[key_inner] != expected_value_inner:
-                        raise ValueError(
-                            f'The value of ["{key}"]["{key_inner}"] is supposed to be '
-                            f'{expected_value_inner} but is actually '
-                            f'{actual_value[key_inner]}!'
-                        )
-        else:
-            if actual_value != expected_value:
-                raise ValueError(
-                    f'The value of ["{key}"] is supposed to be {expected_value} but is '
-                    f'actually {actual_value}!'
-                )
+        if actual_value != expected_value:
+            raise ValueError(
+                f'The value of ["{key}"] is supposed to be {expected_value} but is '
+                f'actually {actual_value}!'
+            )
 
     def _send_agent_message(
         self, agent_id: str, agent_display_id: str, text: str, task_data: Dict[str, Any]
@@ -430,6 +428,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             "episode_done": False,
         }
         self.server.send_agent_act(agent_id=agent_id, act_content=act_content)
+        self.await_channel_requests()
 
 
 def check_stdout(actual_stdout: str, expected_stdout_path: str):

@@ -290,5 +290,28 @@ class TestT5Distributed(_AbstractTest):
         self.assertLessEqual(test['ppl'], 1.60)
 
 
+@testing_utils.skipUnlessGPU
+class TestT5DistributedWithGen(_AbstractTest):
+    base_config = dict(
+        task='integration_tests:overfit',
+        model='hugging_face/t5',
+        optimizer='adam',
+        batchsize=1,
+        num_epochs=1,
+        short_final_eval=True,
+        validation_max_exs=12,
+        t5_model_arch='t5-small',
+        validation_metric='ppl',
+        skip_generation=False,
+        learningrate=1e-3,
+        verbose=True,
+        save_after_valid=False,
+    )
+
+    def test_t5_distributed(self):
+        # just testing this runs appropriately
+        valid, test = self._distributed_train_model()
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -27,6 +27,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch, TorchAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
+from parlai.utils.fsdp import is_fsdp
 
 
 def check_hf_version(v: Tuple[int, int]) -> bool:
@@ -198,7 +199,10 @@ class T5Agent(TorchGeneratorAgent):
         if overrides:
             generation_params.update(overrides)
 
-        outputs = self.model.t5.generate(**generation_params)
+        model = self.model
+        if hasattr(self.model, 'module') and not is_fsdp(self.model):
+            model = self.model.module
+        outputs = model.t5.generate(**generation_params)
         outputs = [(outputs[i], 0, None) for i in range(outputs.size(0))]
         return outputs, []
 
@@ -345,7 +349,7 @@ class ParlaiT5Model(TorchGeneratorModel):
         # Taken directly from HuggingFace
         # Rescale output before projecting on vocab
         # See https://github.com/tensorflow/mesh/blob/fa19d69eafc9a482aff0b59ddd96b025c0cb207d/mesh_tensorflow/transformer/transformer.py#L586
-        tensor = tensor * (self.t5.model_dim ** -0.5)
+        tensor = tensor * (self.t5.model_dim**-0.5)
         lm_logits = self.t5.lm_head(tensor)
         return lm_logits
 

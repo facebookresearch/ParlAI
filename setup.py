@@ -9,10 +9,10 @@ import sys
 
 from setuptools import setup, find_packages
 
-VERSION = '1.5.1'  # if you update, update parlai/__init__.py too!
+VERSION = '1.6.0'  # if you update, update parlai/__init__.py too!
 
-if sys.version_info < (3, 7):
-    sys.exit('Sorry, Python >=3.7 is required for ParlAI.')
+if sys.version_info < (3, 8):
+    sys.exit('Sorry, Python >=3.8 is required for ParlAI.')
 
 with open('README.md', encoding="utf8") as f:
     # strip the header and badges etc

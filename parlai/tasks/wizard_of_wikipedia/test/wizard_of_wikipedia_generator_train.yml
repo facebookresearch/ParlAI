@@ -37,7 +37,6 @@ acts:
       impossible of realization tomorrow...
 
       '
-    label_candidates: []
     labels:
     - I think science fiction is an amazing genre for anything. Future science, technology,
       time travel, FTL travel, they're all such interesting concepts.
@@ -243,7 +242,6 @@ acts:
       Ancients and most exist within the city built by the Ancients known as Atlantis.
 
       '
-    label_candidates: []
     labels:
     - Awesome! I really love how sci-fi storytellers focus on political/social/philosophical
       issues that would still be around even in the future. Makes them relatable.
@@ -489,7 +487,6 @@ acts:
       composed by Tyler and Michael Giacchino, respectively.
 
       '
-    label_candidates: []
     labels:
     - It's not quite sci-fi, but my favorite version of time travel is in Harry Potter
       and the Prisoner of Azkaban. Breaks zero logical rules.
@@ -721,7 +718,6 @@ acts:
       leading characters: Harry Potter, Ron Weasley, and Hermione Granger.
 
       '
-    label_candidates: []
     labels:
     - If you really want a look at the potential negative consequences of scientific
       innovation, what you should check out is the TV show Fringe. Incredibly well
@@ -868,7 +864,6 @@ acts:
       are often also assumed or defined as requirements.
 
       '
-    label_candidates: []
     labels:
     - No I could not! I couldn't imagine living when internet access was rare and
       very few people had it!
