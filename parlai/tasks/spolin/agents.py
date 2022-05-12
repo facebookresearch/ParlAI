@@ -5,13 +5,9 @@ from parlai.core.opt import Opt
 from typing import Optional
 
 from .build import build
-from pathlib import Path
 import random
 import json
-import copy
 import os
-
-from .build import build
 
 
 class SPOLINDialogueTeacher(DialogTeacher):
@@ -58,12 +54,12 @@ class SPOLINDialogueTeacher(DialogTeacher):
 
         processed_data = []
         yesands_dict = self.data_['yesands']
-        for source, yas in yesands_dict.items():
+        for _source, yas in yesands_dict.items():
             processed_data += yas
 
         if self.opt.get("include_nonyesands"):
             non_yesands_dict = self.data['non-yesands']
-            for source, nyas in non_yesands_dict.items():
+            for _source, nyas in non_yesands_dict.items():
                 processed_data += nyas
 
         self.processed_data = processed_data
