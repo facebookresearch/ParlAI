@@ -49,6 +49,13 @@ class _BaseSafetyTeacher(FixedDialogTeacher, ABC):
             help='if False, includes all rounds up to including the specified '
             'round; if True, only includes data from the specified round',
         )
+
+        parser.add_argument(
+            '--notok_only',
+            type='bool',
+            default=False,
+            help=f'if True, only shows those with label {NOT_OK_CLASS}',
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -97,6 +104,9 @@ class _BaseSafetyTeacher(FixedDialogTeacher, ABC):
             self.data += self.data_dump[d_type][str(self.round)][x]
 
         self.fixed_random.shuffle(self.data)
+
+        if self.opt['notok_only']: 
+            self.data = [d for d in self.data if d['labels'][0] == NOT_OK_CLASS] 
 
     def get(self, episode_idx, entry_idx):
         return Message(self.data[episode_idx])

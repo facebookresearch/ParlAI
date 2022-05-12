@@ -96,6 +96,12 @@ class MultiturnTeacher(FixedDialogTeacher):
             default=False,
             help='only include the single turn data and not the context info',
         )
+        parser.add_argument(
+            '--notok_only',
+            type='bool',
+            default=False,
+            help=f'if True, only shows those with label {NOT_OK_CLASS}',
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -140,6 +146,9 @@ class MultiturnTeacher(FixedDialogTeacher):
             self.data = new_data
         else:
             self.data = data
+
+        if self.opt['notok_only']: 
+            self.data = [d for d in self.data if d['labels'][0] == NOT_OK_CLASS] 
 
     def get(self, episode_idx, entry_idx):
         return Message(self.data[episode_idx])
