@@ -148,3 +148,8 @@ _generated/
 
 # npm compilation
 parlai/crowdsourcing/**/package-lock.json
+crowdsourcing/**/package-lock.json
+
+# our own 
+parlai/crowdsourcing/tasks/darma_chat/model_chat/
+

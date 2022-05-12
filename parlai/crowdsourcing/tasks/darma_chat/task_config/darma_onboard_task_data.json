@@ -1,0 +1,24 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Dummy",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Do you agree to the informed consent?",
+                "agent_idx": 0,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "agree"
+                ]
+            }
+        ]
+    ],
+    "min_correct": 1,
+    "max_incorrect": 1,
+    "max_failures_allowed": 3
+}

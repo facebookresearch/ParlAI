@@ -1560,4 +1560,11 @@ task_list = [
             "website": "https://github.com/thu-coai/CDial-GPT",
         },
     },
+    {
+        "id": "InfGuidedDialogue",
+        "display_name": "InfGuidedDialogue",
+        "task": "inference_guided_dialogue",
+        "tags": [ "all", "commonsense" ],
+        "description": "Task which requires agents to respond with commonsense-based inference in question and answering format."
+    },
 ]

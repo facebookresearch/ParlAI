@@ -1,0 +1,75 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Do you agree to the informed consent form?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "bucket_0"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select bucket_1.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "bucket_1"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select bucket_2.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "bucket_2"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select bucket_3.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "bucket_3"
+                ]
+            }
+        ]
+    ],
+    "min_correct": 4,
+    "max_incorrect": 3,
+    "max_failures_allowed": 10
+}
