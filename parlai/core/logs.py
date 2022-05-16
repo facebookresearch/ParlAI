@@ -181,25 +181,27 @@ class WandbLogger(object):
             entity=opt.get('wandb_entity'),
             reinit=True,  # in case of preemption
             resume=True,  # requeued runs should be treated as single run
-            allow_val_change=True,
         )
         # suppress wandb's output
         logging.getLogger("wandb").setLevel(logging.ERROR)
 
-        def set_config_value(self, key, value):
-            if self.run.config.get(key, None) != None:
-                setattr(self.run.config, k, v)
-
         if not self.run.resumed:
-            for key, value in opt.items():
-                if value is None or isinstance(value, (str, numbers.Number, tuple)):
-                    set_config_value(self, key, value)
-                if key == "task":  # For ags specified in the task argument
-                    maybe_task_opts = value.split(":")
+            task_arg = opt.get("task", None)
+            if task_arg:
+                if (
+                    len(task_arg.split(",")) == 1
+                ):  # It gets confusing to parse these args for multitask teachers, so don't.
+                    maybe_task_opts = task_arg.split(":")
                     for task_opt in maybe_task_opts:
                         if len(task_opt.split("=")) == 2:
                             k, v = task_opt.split("=")
-                            set_config_value(self, k, v)
+                            setattr(self.run.config, k, v)
+
+            for key, value in opt.items():
+                if key not in self.run.config:  # set by task logic
+                    if value is None or isinstance(value, (str, numbers.Number, tuple)):
+                        setattr(self.run.config, key, value)
+
         if model is not None:
             self.run.watch(model)
 
