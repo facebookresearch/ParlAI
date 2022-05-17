@@ -23,6 +23,7 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
+from base64 import encode
 import copy
 from fileinput import close
 import json
@@ -668,9 +669,7 @@ class TrainLoop:
             if world_logger is not None:
                 world_logger.log(valid_world)
             if cnt == 0 and opt['display_examples']:
-                # print(valid_world.display() + '\n~~')
-                for i in valid_world.display():
-                    print(i)
+                print(valid_world.display() + '\n~~')
 
                 # Report Test/Validation Samples as debug samples
                 self.clearml_task.get_logger().report_media(
@@ -1109,7 +1108,7 @@ if __name__ == '__main__':
         # train on empathetic dialogues
         task='empathetic_dialogues',
         # limit training time to 2 minutes, and a batchsize of 16
-        max_train_time=10,
+        max_train_time=1,
         batchsize=16,
         # we specify the model type as seq2seq
         model='seq2seq',
