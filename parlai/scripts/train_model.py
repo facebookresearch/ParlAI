@@ -24,11 +24,17 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 import copy
+from fileinput import close
 import json
 import os
 import numpy as np
 import signal
 from typing import Tuple
+import six
+import pandas as pd
+
+# Import ClearML
+from clearml import Task
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
@@ -341,7 +347,9 @@ class TrainLoop:
     TrainLoop contains the core training loop logic.
     """
 
-    def __init__(self, opt):
+    def __init__(self, opt, clearml_task):
+        # Create a ClearML Task
+        self.clearml_task = clearml_task
         # if python is called from a non-interactive shell, like a bash script,
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
         # not produced. This line brings them back
@@ -355,6 +363,7 @@ class TrainLoop:
         ):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
+
         # Possibly build a dictionary (not all models do this).
         if not (opt.get('dict_file') or opt.get('model_file')):
             raise RuntimeError(
@@ -523,6 +532,21 @@ class TrainLoop:
                 indent=4,
             )
 
+        # ClearML-Report Validation and Test Report
+        self.clearml_task.get_logger().report_table(
+            "TrainModel Performance Evaluation Report",
+            "Validation Report",
+            iteration=0,
+            table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]),
+        )
+
+        self.clearml_task.get_logger().report_table(
+            "TrainModel Performance Evaluation Report",
+            "Test Report",
+            iteration=0,
+            table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]),
+        )
+
     def validate(self):
         """
         Perform a validation run, checking whether we should stop training.
@@ -547,6 +571,7 @@ class TrainLoop:
         v['total_exs'] = self._total_exs
         v['total_epochs'] = self._total_epochs
         self.valid_reports.append(v)
+
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
             valid_report['total_exs'] = self._total_exs
@@ -619,7 +644,9 @@ class TrainLoop:
             return True
         return False
 
-    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
+    def _run_single_eval(
+        self, opt, valid_world, max_exs, datatype, is_multitask, task, index
+    ):
 
         # run evaluation on a single world
         valid_world.reset()
@@ -635,12 +662,25 @@ class TrainLoop:
 
         cnt = 0
         max_cnt = max_exs if max_exs > 0 else float('inf')
+
         while not valid_world.epoch_done() and cnt < max_cnt:
             valid_world.parley()
             if world_logger is not None:
                 world_logger.log(valid_world)
             if cnt == 0 and opt['display_examples']:
-                print(valid_world.display() + '\n~~')
+                # print(valid_world.display() + '\n~~')
+                for i in valid_world.display():
+                    print(i)
+
+                # Report Test/Validation Samples as debug samples
+                self.clearml_task.get_logger().report_media(
+                    title="dialogues",
+                    series=datatype,
+                    iteration=index,
+                    stream=six.StringIO(valid_world.display()),
+                    file_extension=".txt",
+                )
+
                 print(valid_world.report())
             cnt = valid_world.report().get('exs') or 0
 
@@ -697,12 +737,13 @@ class TrainLoop:
             else:
                 task = opt['task'].split(',')[index]
             task_report = self._run_single_eval(
-                opt, v_world, max_exs_per_worker, datatype, is_multitask, task
+                opt, v_world, max_exs_per_worker, datatype, is_multitask, task, index
             )
             reports.append(task_report)
 
         tasks = [world.getID() for world in valid_worlds]
         named_reports = dict(zip(tasks, reports))
+
         report = aggregate_named_reports(
             named_reports, micro_average=self.opt.get('aggregate_micro', False)
         )
@@ -1008,6 +1049,7 @@ class TrainLoop:
             valid_worlds, opt, 'valid', max_exs, write_log=True
         )
         test_worlds = load_eval_worlds(self.agent, opt, 'test')
+
         self.final_test_report = self._run_eval(
             test_worlds, opt, 'test', max_exs, write_log=True
         )
@@ -1034,6 +1076,12 @@ class TrainLoop:
 
         self._save_train_stats()
 
+        # Report Artifacts
+        self.clearml_task.upload_artifact('dictionary', opt['dict_file'])
+
+        # Close ClearML Task Reporting
+        self.clearml_task.close()
+
         return self.final_valid_report, self.final_test_report
 
 
@@ -1044,9 +1092,35 @@ class TrainModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        self.train_loop = TrainLoop(self.opt)
+        self.clearml_task = Task.init(
+            project_name="ParAI", task_name="TrainModel", auto_connect_arg_parser=False
+        )
+
+        # Report Options (Hyper-parameters)
+        self.clearml_task.connect(self.opt)
+
+        self.train_loop = TrainLoop(self.opt, self.clearml_task)
         return self.train_loop.train()
 
 
 if __name__ == '__main__':
-    TrainModel.main()
+    TrainModel.main(  # we MUST provide a filename
+        model_file='from_scratch_model/model',
+        # train on empathetic dialogues
+        task='empathetic_dialogues',
+        # limit training time to 2 minutes, and a batchsize of 16
+        max_train_time=10,
+        batchsize=16,
+        # we specify the model type as seq2seq
+        model='seq2seq',
+        # some hyperparamter choices. We'll use attention. We could use pretrained
+        # embeddings too, with embedding_type='fasttext', but they take a long
+        # time to download.
+        attention='dot',
+        # tie the word embeddings of the encoder/decoder/softmax.
+        lookuptable='all',
+        # truncate text and labels at 64 tokens, for memory and time savings
+        truncate=64,
+        tensorboard_log=True,
+        display_examples=True,
+    )
