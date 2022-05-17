@@ -161,7 +161,9 @@ def prepare_tb_logger(opt):
 
 def get_n_parleys(opt):
     trainstats_suffix = '.trainstats'
-    if opt.get('model_file') and PathManager.exists(opt['model_file'] + trainstats_suffix):
+    if opt.get('model_file') and PathManager.exists(
+        opt['model_file'] + trainstats_suffix
+    ):
         with PathManager.open(opt['model_file'] + trainstats_suffix) as ts:
             obj = json.load(ts)
             parleys = obj.get('parleys', 0)
