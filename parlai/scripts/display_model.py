@@ -24,8 +24,9 @@ import parlai.utils.logging as logging
 
 import random
 
+from clearml import Task
 
-def simple_display(opt, world, turn):
+def simple_display(opt, world, turn, clearml_task, _k):
     if opt['batchsize'] > 1:
         raise RuntimeError('Simple view only support batchsize=1')
     teacher, response = world.get_acts()
@@ -37,6 +38,14 @@ def simple_display(opt, world, turn):
     response_text = response.get('text', 'No response')
     labels = teacher.get('labels', teacher.get('eval_labels', ['[no labels field]']))
     labels = '|'.join(labels)
+    debug_sample = text + "\n" + '    labels: ' + labels + "\n" + ' model: ' + response_text
+    clearml_task.get_logger().report_media(
+                    title="Dialogues",
+                    series=opt['task'],
+                    iteration=_k,
+                    stream= debug_sample,
+                    file_extension=".txt",
+                    )
     print(colorize('    labels: ' + labels, 'labels'))
     print(colorize('     model: ' + response_text, 'text2'))
 
@@ -55,7 +64,7 @@ def setup_args():
     return parser
 
 
-def display_model(opt):
+def display_model(opt, clearml_task):
     random.seed(42)
 
     # Create model and assign it to the specified task
@@ -70,8 +79,16 @@ def display_model(opt):
             world.parley()
             if opt['verbose'] or opt.get('display_add_fields', ''):
                 print(world.display() + "\n~~")
+
+                clearml_task.get_logger().report_media(
+                    title="Dialogues",
+                    series=opt['task'],
+                    iteration=_k,
+                    stream= world.display(),
+                    file_extension=".txt",
+                    )
             else:
-                simple_display(opt, world, turn)
+                simple_display(opt, world, turn, clearml_task, _k)
             turn += 1
             if world.get_acts()[0]['episode_done']:
                 turn = 0
@@ -88,8 +105,16 @@ class DisplayModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        display_model(self.opt)
+        self.clearml_task = Task.init(project_name="ParAI", task_name= "DisplayModel")
+        display_model(self.opt, self.clearml_task)
+        self.clearml_task.close()
 
 
 if __name__ == '__main__':
-    DisplayModel.main()
+    DisplayModel.main(
+    task='empathetic_dialogues',
+    model_file='from_scratch_model/model',
+    num_examples=4,
+    skip_generation=False,
+    verbose=False
+)
