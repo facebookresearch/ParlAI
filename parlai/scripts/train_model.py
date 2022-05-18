@@ -538,14 +538,14 @@ class TrainLoop:
             "TrainModel Performance Evaluation Report",
             "Validation Report",
             iteration=0,
-            table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]),
+            table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]).T,
         )
 
         self.clearml_task.get_logger().report_table(
             "TrainModel Performance Evaluation Report",
             "Test Report",
             iteration=0,
-            table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]),
+            table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]).T,
         )
 
     def validate(self):
