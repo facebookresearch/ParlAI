@@ -54,12 +54,12 @@ class TestBertModel(unittest.TestCase):
                 model='bert_classifier/bert_classifier',
                 num_epochs=2,
                 batchsize=2,
-                learningrate=1e-3,
+                learningrate=1e-2,
                 gradient_clip=1.0,
                 classes=["zero", "one"],
             )
         )
-        self.assertGreaterEqual(test['accuracy'], 0.6)
+        self.assertGreaterEqual(test['accuracy'], 0.9)
 
     def test_bertclassifier_with_relu(self):
         valid, test = testing_utils.train_model(
@@ -68,13 +68,13 @@ class TestBertModel(unittest.TestCase):
                 model='bert_classifier/bert_classifier',
                 num_epochs=2,
                 batchsize=2,
-                learningrate=1e-3,
+                learningrate=1e-2,
                 gradient_clip=1.0,
                 classes=["zero", "one"],
                 classifier_layers=["linear,64", "linear,2", "relu"],
             )
         )
-        self.assertGreaterEqual(test['accuracy'], 0.7)
+        self.assertGreaterEqual(test['accuracy'], 0.9)
 
 
 if __name__ == '__main__':
