@@ -54,9 +54,15 @@ def export_model(opt: Opt):
     instantiated = script_class(agent)
     if not opt["no_cuda"]:
         instantiated = instantiated.cuda()
-    scripted_module = torch.jit.script(instantiated)
+    if opt.get("enable_inference_optimizations"):
+        scripted_model = torch.jit.optimize_for_inference(
+            torch.jit.script(instantiated.eval())
+        )
+    else:
+        scripted_model = torch.jit.script(instantiated)
+
     with PathManager.open(opt["scripted_model_file"], "wb") as f:
-        torch.jit.save(scripted_module, f)
+        torch.jit.save(scripted_model, f)
 
     # Compare the original module to the scripted module against the test inputs
     if len(opt["input"]) > 0:
@@ -64,7 +70,7 @@ def export_model(opt: Opt):
         print("\nGenerating given the original unscripted module:")
         _run_conversation(module=original_module, inputs=inputs)
         print("\nGenerating given the scripted module:")
-        _run_conversation(module=scripted_module, inputs=inputs)
+        _run_conversation(module=scripted_model, inputs=inputs)
 
 
 def setup_args() -> ParlaiParser:
@@ -89,6 +95,13 @@ def setup_args() -> ParlaiParser:
         type=str,
         default="parlai.torchscript.modules:TorchScriptGreedySearch",
         help="module to TorchScript. Example: parlai.torchscript.modules:TorchScriptGreedySearch",
+    )
+    parser.add_argument(
+        "-eio",
+        "--enable-inference-optimization",
+        type=bool,
+        default=False,
+        help="Enable inference optimizations on the scripted model.",
     )
     return parser
 
