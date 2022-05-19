@@ -63,20 +63,6 @@ def add_common_args(parser):
         ' with distributed training',
     )
     parser.add_argument(
-        '--type-optimization',
-        type=str,
-        default='all_encoder_layers',
-        choices=[
-            'additional_layers',
-            'top_layer',
-            'top4_layers',
-            'all_encoder_layers',
-            'all',
-        ],
-        help='Which part of the encoders do we optimize. '
-        '(Default: all_encoder_layers.)',
-    )
-    parser.add_argument(
         '--bert-aggregation',
         type=str,
         default='first',
@@ -112,10 +98,10 @@ class BertWrapper(torch.nn.Module):
         self,
         bert_model: BertModel,
         output_dim: int = -1,
-        classifier_layer: torch.nn.Module = None,
         add_transformer_layer: bool = False,
         layer_pulled: int = -1,
         aggregation: str = "first",
+        classifier_layer: torch.nn.Module = None,
     ):
         super(BertWrapper, self).__init__()
         self.layer_pulled = layer_pulled

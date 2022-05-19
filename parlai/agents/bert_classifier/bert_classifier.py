@@ -173,10 +173,10 @@ class BertClassifierAgent(TorchClassifierAgent):
 
         if ind < len(dimensions):
             raise Exception(
-                "Output layer's dimension does not match number of classes. Found {dimensions[ind][1]}, expected {output_dimension}"
+                f"Output layer's dimension does not match number of classes. Found {dimensions[ind][1]}, expected {output_dimension}"
             )
         raise Exception(
-            "Output layer's dimension does not match number of classes. Found {prev_dimension}, expected {output_dimension}"
+            f"Output layer's dimension does not match number of classes. Found {prev_dimension}, expected {output_dimension}"
         )
 
     def _map_layer(self, layer: str, dim=None):
