@@ -6,9 +6,10 @@ import json
 
 RESOURCES = [
     DownloadableFile(
-        'https://cloud.tsinghua.edu.cn/f/f131a4d259184566a29c/?dl=1',
-        'LCCC.zip',
+        '1oobhYW_S_vPPzP5bLAUTIm7TaRzryxgW',
+        'LCCC-base-split.zip',
         'f5203511cd8d6a608008af0aa290aa516d983abc16aa510471e3c4ee6bca7886',
+        from_google=True,
     )
 ]
 

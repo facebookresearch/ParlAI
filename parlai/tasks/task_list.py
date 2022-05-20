@@ -1560,4 +1560,15 @@ task_list = [
             "website": "https://github.com/thu-coai/CDial-GPT",
         },
     },
+    {
+        "id": "SPOLIN",
+        "display_name": "SPOLIN",
+        "task": "spolin",
+        "tags": ["all", "engaging", "improv", "open-ended", "common ground"],
+        "description": "Conversation pairs from the SPOLIN dataset. The pairs abide by the Yes-and principle of improvisational theatre (improv).",
+        "links": {
+            "arXiv": "https://arxiv.org/abs/2004.09544",
+            "website": "https://justin-cho.com/spolin",
+        },
+    },
 ]
