@@ -29,7 +29,7 @@ _ = BLUEPRINT_TYPE
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
 
-defaults = ['_self_', {"conf": "example"}]
+defaults = ['_self_', {"conf": "example_model_comparison"}]
 
 
 @dataclass
