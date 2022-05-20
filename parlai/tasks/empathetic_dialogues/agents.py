@@ -14,15 +14,16 @@ from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
 from .build import build
-
+from clearml_scripts.get_data import get_data_from_clearml
 
 DEFAULT_TRAIN_EXPERIENCER_ONLY = False
 
 
 class EmpatheticDialoguesTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
-        build(opt)
+        # build(opt)
         opt['datafile'] = self._get_datafile(opt)
+        get_data_from_clearml(opt)
         self.id = 'empathetic_dialogues'
         self.experiencer_side_only = self._get_experiencer_side_only(opt)
         super().__init__(opt, shared)

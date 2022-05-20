@@ -105,7 +105,9 @@ class DisplayModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        self.clearml_task = Task.init(project_name="ParAI", task_name= "DisplayModel")
+        self.clearml_task = Task.init(project_name="ParAI", task_name= "DisplayModel", auto_connect_arg_parser=True)
+        # Report Options (Hyper-parameters)
+        self.clearml_task.connect(self.opt)
         display_model(self.opt, self.clearml_task)
         self.clearml_task.close()
 
@@ -116,5 +118,5 @@ if __name__ == '__main__':
     model_file='from_scratch_model/model',
     num_examples=4,
     skip_generation=False,
-    verbose=False
+    verbose=True
 )

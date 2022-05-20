@@ -1092,7 +1092,7 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.clearml_task = Task.init(
-            project_name="ParAI", task_name="TrainModel", auto_connect_arg_parser=False
+            project_name="ParAI", task_name="TrainModel", auto_connect_arg_parser=True
         )
 
         # Report Options (Hyper-parameters)
