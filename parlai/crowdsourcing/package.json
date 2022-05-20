@@ -24,5 +24,8 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "dependencies": {
+    "mephisto-task": "^2.0.1"
   }
 }

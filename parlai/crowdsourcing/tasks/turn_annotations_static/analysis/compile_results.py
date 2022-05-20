@@ -24,11 +24,8 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     you are asking crowdsource workers to annotate with.
     """
 
-    NUM_SUBTASKS = 7
-    LIVE_ONBOARDING_IS_LAST_SUBTASK = True
     LIVE_ONBOARDING_THRESHOLD = 0.5
     INFLIGHT_ONBOARDING_DATA = None
-    NUM_ANNOTATIONS = 5
 
     FILENAME_STUB = 'results'
     CALCULATE_STATS_INTERANNOTATOR_AGREEMENT = True
@@ -37,9 +34,22 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
+            '--num-subtasks',
+            type=int,
+            default=7,
+            help='Number of subtasks run per HIT',
+        )
+        parser.add_argument(
+            '--num-annotations',
+            type=int,
+            default=5,
+            help='Minimum number of annotations required per utterance',
+        )
+        parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
-            help='Path to JSONL file containing onboarding in-flight conversations',
+            default=None,
+            help='Path to JSONL file containing onboarding in-flight conversations. Unset if no in-flight conversations.',
         )
         parser.add_argument(
             '--gold-annotations-file',
@@ -51,14 +61,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
-        # Validate problem buckets
-        if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
-            # The code relies on a catchall "none" category if the user selects no other
-            # annotation bucket
-            raise ValueError(
-                'There must be a "none_all_good" category in self.problem_buckets!'
-            )
-        self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
+        self.use_none_all_good = 'none_all_good' in self.problem_buckets
+        self.num_subtasks = opt['num_subtasks']
+        self.num_annotations = opt['num_annotations']
+        self.onboarding_in_flight_data_file = opt['onboarding_in_flight_data_file']
+        self.live_onboarding_is_last_subtask = (
+            self.onboarding_in_flight_data_file is not None
+        )
         self.gold_annotations_file = opt.get('gold_annotations_file')
         if not self.use_problem_buckets:
             raise ValueError(
@@ -130,7 +139,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             return False, 'Malformed HIT'
 
         subtasks = hit_data['outputs']['final_data']
-        if len(subtasks) != self.NUM_SUBTASKS:
+        if len(subtasks) != self.num_subtasks:
             return False, f'Incomplete HIT with subtask length {len(subtasks)}.'
 
         return True, None
@@ -229,7 +238,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             print(task_completion_time_seconds)
 
             subtasks = data['outputs']['final_data']
-            if self.LIVE_ONBOARDING_IS_LAST_SUBTASK:
+            if self.live_onboarding_is_last_subtask:
                 qc_success_pct = self._get_inflight_onboarding_success_from_subtask(
                     subtasks[-1]
                 )
@@ -238,7 +247,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             for subtask_idx, d in enumerate(subtasks):
                 if (
                     subtask_idx == (len(subtasks) - 1)
-                    and self.LIVE_ONBOARDING_IS_LAST_SUBTASK
+                    and self.live_onboarding_is_last_subtask
                 ):
                     # Last subtask is inflight onboarding; don't include it
                     continue
@@ -300,7 +309,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     row[k] = utt[k] if utt['agent_idx'] == 1 else ''
                 rows.append(row)
         df = pd.DataFrame(rows)
-        print(f'Returning dataframe with {len(df)} annotations.')
+        print(f'Returning dataframe with {len(df):d} conversation turns.')
         return df
 
     def _add_additional_columns(self, row: Dict[str, Any], utt: dict) -> Dict[str, Any]:
@@ -324,22 +333,23 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         bot_only_df = bot_only_df.fillna(value=np.nan)
         bot_only_df = bot_only_df.dropna()
 
-        bot_only_df = self._problem_bucket_specific_filtering(bot_only_df)
+        if self.use_none_all_good:
+            bot_only_df = self._problem_bucket_specific_filtering(bot_only_df)
 
         # Group at the utterance level (summing across workers)
         bot_only_df = bot_only_df.replace(True, 1)
         bot_only_df = bot_only_df.replace(False, 0)
         all_bot_annotations_count = len(bot_only_df)
 
-        # Remove utterances that don't have self.NUM_ANNOTATIONS annotations
+        # Remove utterances that don't have self.num_annotations annotations
         counted_df = bot_only_df.groupby(['utterance_id']).count()
-        counted_df = counted_df[counted_df == self.NUM_ANNOTATIONS].dropna()
+        counted_df = counted_df[counted_df == self.num_annotations].dropna()
         bot_only_df = bot_only_df[bot_only_df['utterance_id'].isin(counted_df.index)]
         print(
-            f'Removed {all_bot_annotations_count - len(bot_only_df)} that did not have annotations by {self.NUM_ANNOTATIONS} workers. {len(bot_only_df)} annotations remaining.'
+            f'Removed {all_bot_annotations_count - len(bot_only_df)} that did not have annotations by {self.num_annotations} workers. {len(bot_only_df)} annotations remaining.'
         )
 
-        if self.LIVE_ONBOARDING_IS_LAST_SUBTASK:
+        if self.live_onboarding_is_last_subtask:
             # Remove those that didn't get enough right on live onboarding
             bot_only_df = bot_only_df[
                 bot_only_df['qc_success_pct'] >= self.LIVE_ONBOARDING_THRESHOLD
@@ -482,7 +492,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             )
             try:
                 fleiss_kappa = self.compute_fleiss_kappa(
-                    kappa_df, [True, False], self.NUM_ANNOTATIONS
+                    kappa_df, [True, False], self.num_annotations
                 )
             except Exception as exc:
                 print(f'Exception calculating Fleiss Kappa: {exc}. Skipping.')
