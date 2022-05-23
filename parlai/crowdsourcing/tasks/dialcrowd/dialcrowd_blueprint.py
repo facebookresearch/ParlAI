@@ -99,7 +99,7 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
             {
                 "task_description": self.args.task.get('task_description', None),
                 "task_title": self.args.task.get('task_title', None),
-                "frame_height": '100%',
+                "frame_height": 650,
                 "num_subtasks": self.args.blueprint.subtasks_per_unit,
                 "block_mobile": True,
             }
