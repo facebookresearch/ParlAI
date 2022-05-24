@@ -127,6 +127,9 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         if self.CALCULATE_STATS_INTERANNOTATOR_AGREEMENT:
             self.calculate_stats_interannotator_agreement(main_dataframe)
 
+        if (~main_dataframe['other_metadata'].isna()).sum() == 0:
+            pass  # TODO NOW: replace with analysis code!
+
         return main_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
@@ -264,8 +267,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 subtask_data['hit_id'] = hit_id
                 subtask_data['folder'] = dp
                 subtask_data['subtask_idx'] = subtask_idx
-                experimental_design = 'self_chat'
-                subtask_data['model_nickname'] = experimental_design + '/' + 'TODO'
                 subtask_data['qc_success_pct'] = qc_success_pct
                 conversations.append(subtask_data)
 
@@ -300,7 +301,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     'folder': convo['folder'],
                     'worker_id': convo['worker_id'],
                     'hit_id': convo['hit_id'],
-                    'model_nickname': convo['model_nickname'],
+                    'other_metadata': utt.get('other_metadata'),
                     'qc_success_pct': convo['qc_success_pct'],
                     'text': utt['text'],
                 }
