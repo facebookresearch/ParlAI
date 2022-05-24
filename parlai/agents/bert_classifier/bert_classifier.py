@@ -6,6 +6,8 @@
 
 """
 BERT classifier agent uses bert embeddings to make an utterance-level classification.
+
+This implementation allows to customize classifier layers with input arguments.
 """
 
 import os
@@ -30,6 +32,12 @@ except ImportError:
         "BERT rankers needs pytorch-pretrained-BERT installed. \n "
         "pip install pytorch-pretrained-bert"
     )
+
+
+LINEAR = "linear"
+RELU = "relu"
+
+SUPPORTED_LAYERS = [LINEAR, RELU]
 
 
 class BertClassifierHistory(History):
@@ -72,6 +80,7 @@ class BertClassifierAgent(TorchClassifierAgent):
         opt["pretrained_path"] = self.pretrained_path
         self.add_cls_token = opt.get("add_cls_token", True)
         self.sep_last_utt = opt.get("sep_last_utt", False)
+        self.classifier_layers = opt.get("classifier_layers", None)
         super().__init__(opt, shared)
 
     @classmethod
@@ -91,20 +100,6 @@ class BertClassifierAgent(TorchClassifierAgent):
         super().add_cmdline_args(parser, partial_opt=partial_opt)
         parser = parser.add_argument_group("BERT Classifier Arguments")
         parser.add_argument(
-            "--type-optimization",
-            type=str,
-            default="all_encoder_layers",
-            choices=[
-                "additional_layers",
-                "top_layer",
-                "top4_layers",
-                "all_encoder_layers",
-                "all",
-            ],
-            help="which part of the encoders do we optimize "
-            "(defaults to all layers)",
-        )
-        parser.add_argument(
             "--add-cls-token",
             type="bool",
             default=True,
@@ -116,6 +111,13 @@ class BertClassifierAgent(TorchClassifierAgent):
             default=False,
             help="separate the last utterance into a different"
             "segment with [SEP] token in between",
+        )
+        parser.add_argument(
+            "--classifier-layers",
+            nargs='+',
+            type=str,
+            default=None,
+            help="list of classifier layers comma-separated with layer's dimension where applicable. For example: linear,64 linear,32 relu",
         )
         parser.set_defaults(dict_maxexs=0)  # skip building dictionary
         return parser
@@ -142,12 +144,71 @@ class BertClassifierAgent(TorchClassifierAgent):
 
         return opt_on_disk
 
+    def _get_layer_parameters(self, prev_dimension, output_dimension):
+        """
+        Parse layer definitions from the input.
+        """
+        layers = []
+        dimensions = []
+        no_dimension = -1
+        for layer in self.classifier_layers:
+            if ',' in layer:
+                l, d = layer.split(',')
+                layers.append(l)
+                dimensions.append((prev_dimension, int(d)))
+                prev_dimension = int(d)
+            else:
+                layers.append(layer)
+                dimensions.append(no_dimension)
+        ind = 0
+        while (
+            ind < len(dimensions)
+            and dimensions[len(dimensions) - ind - 1] == no_dimension
+        ):
+            ind += 1
+        if (ind == len(dimensions) and prev_dimension == output_dimension) or (
+            ind < len(dimensions) and dimensions[ind][1] == output_dimension
+        ):
+            return layers, dimensions
+
+        if ind < len(dimensions):
+            raise Exception(
+                f"Output layer's dimension does not match number of classes. Found {dimensions[ind][1]}, expected {output_dimension}"
+            )
+        raise Exception(
+            f"Output layer's dimension does not match number of classes. Found {prev_dimension}, expected {output_dimension}"
+        )
+
+    def _map_layer(self, layer: str, dim=None):
+        """
+        Get torch wrappers for nn layers.
+        """
+        if layer == LINEAR:
+            return torch.nn.Linear(dim[0], dim[1])
+        elif layer == RELU:
+            return torch.nn.ReLU(inplace=False)
+        raise Exception(
+            "Unrecognized network layer {}. Available options are: {}".format(
+                layer, ", ".join(SUPPORTED_LAYERS)
+            )
+        )
+
     def build_model(self):
         """
         Construct the model.
         """
         num_classes = len(self.class_list)
-        return BertWrapper(BertModel.from_pretrained(self.pretrained_path), num_classes)
+        bert_model = BertModel.from_pretrained(self.pretrained_path)
+        if self.classifier_layers is not None:
+            prev_dimension = bert_model.embeddings.word_embeddings.weight.size(1)
+            layers, dims = self._get_layer_parameters(
+                prev_dimension=prev_dimension, output_dimension=num_classes
+            )
+            decoders = torch.nn.Sequential()
+            for l, d in zip(layers, dims):
+                decoders.append(self._map_layer(l, d))
+            return BertWrapper(bert_model=bert_model, classifier_layer=decoders)
+        return BertWrapper(bert_model=bert_model, output_dim=num_classes)
 
     def _set_text_vec(self, *args, **kwargs):
         obs = super()._set_text_vec(*args, **kwargs)
