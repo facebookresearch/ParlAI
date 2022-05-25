@@ -2,7 +2,7 @@
 boto3==1.17.95
 botocore==1.20.95
 coloredlogs==14.0
-datasets>=1.4.1
+datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
 emoji==0.5.4
 fairscale~=0.4.1
@@ -57,4 +57,3 @@ jsonlines==1.2.0
 numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
 markdown<=3.3.2 # Pin to something that works so tests are happy
 jinja2==3.0.3
-dill>=0.3.5.1 # dill>=0.3.5.1 is required by {'multiprocess'}
