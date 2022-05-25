@@ -127,10 +127,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         if self.CALCULATE_STATS_INTERANNOTATOR_AGREEMENT:
             self.calculate_stats_interannotator_agreement(main_dataframe)
 
-        if (~main_dataframe['other_metadata'].isna()).sum() == 0:
-            metadata_grouped = main_dataframe.groupby('other_metadata')[
-                self.problem_buckets
-            ].mean()
+        if (~main_dataframe['other_metadata'].isna()).sum() > 0:
+            metadata_grouped = main_dataframe.groupby('other_metadata').agg(
+                {
+                    bucket: (lambda sr: sr[~(sr == '')].astype(int).mean())
+                    for bucket in self.problem_buckets
+                }
+            )
             print('\nMean bucket selection rates grouped by metadata value:')
             print(metadata_grouped)
             output_path = self.get_results_path_base() + '.metadata_grouped.csv'
