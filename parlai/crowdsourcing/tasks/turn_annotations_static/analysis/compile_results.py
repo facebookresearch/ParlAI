@@ -128,7 +128,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             self.calculate_stats_interannotator_agreement(main_dataframe)
 
         if (~main_dataframe['other_metadata'].isna()).sum() == 0:
-            pass  # TODO NOW: replace with analysis code!
+            metadata_grouped = main_dataframe.groupby('other_metadata')[
+                self.problem_buckets
+            ].mean()
+            print('\nMean bucket selection rates grouped by metadata value:')
+            print(metadata_grouped)
+            output_path = self.get_results_path_base() + '.metadata_grouped.csv'
+            metadata_grouped.to_csv(output_path)
 
         return main_dataframe
 
