@@ -749,7 +749,7 @@ class MultitaskFrontend extends React.Component {
     let passed_props = {
       onValidDataChange: (valid, data) => this.onValidData(valid, data),
       nextButtonCallback: () => this.nextButtonCallback(),
-      allDoneCallback: () => this.props.onSubmit(this.state.response_data),
+      allDoneCallback: () => this.props.onSubmit({final_data: this.state.response_data}),
       show_next_task_button: this.state.show_next_task_button,
       frame_height: frame_height,
       task_config: task_config,
