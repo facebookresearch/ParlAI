@@ -693,7 +693,6 @@ class TrainLoop:
                 outfile = task_opt['world_logs']
             world_logger.write(outfile, valid_world, file_format=opt['save_format'])
 
-
         valid_report = valid_world.report()
         if opt.get('validation_share_agent', False):
             valid_world.reset()  # make sure world doesn't remember valid data
@@ -1106,7 +1105,7 @@ if __name__ == '__main__':
     TrainModel.main(  # we MUST provide a filename
         model_file='from_scratch_model/model',
         # train on empathetic dialogues
-        task='clearmldata',
+        task='empathetic_dialogues',
         # limit training time to 2 minutes, and a batchsize of 16
         max_train_time=60,
         batchsize=16,
@@ -1122,5 +1121,4 @@ if __name__ == '__main__':
         truncate=64,
         tensorboard_log=True,
         display_examples=True
-        # log_every_n_secs=0.5,
     )

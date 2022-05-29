@@ -45,7 +45,7 @@ def simple_display(opt, world, turn, clearml_task, _k):
         series=opt['task'],
         iteration=_k,
         stream=debug_sample,
-        file_extension=".txt",
+        file_extension=".txt"
     )
     print(colorize('    labels: ' + labels, 'labels'))
     print(colorize('     model: ' + response_text, 'text2'))
@@ -122,5 +122,5 @@ if __name__ == '__main__':
         task='clearmldata',
         model_file='from_scratch_model/model',
         num_examples=5,
-        verbose=False,
+        verbose=False
     )

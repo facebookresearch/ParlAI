@@ -1,6 +1,5 @@
 import parlai.core.build_data as build_data
 import os
-from parlai.core.build_data import DownloadableFile
 from clearml import Dataset
 
 
