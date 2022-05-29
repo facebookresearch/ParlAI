@@ -16,9 +16,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the data from ClearML.
+        # Download the data from ClearML
         clearml_dataset = Dataset.get(
-            dataset_name='empatheticdialogues', dataset_project="ParAI"
+            dataset_name='clearmldata', dataset_project="ParlAI"
         )
         clearml_dataset.get_mutable_local_copy(target_folder=dpath, overwrite=True)
 
