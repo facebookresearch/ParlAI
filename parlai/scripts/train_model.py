@@ -31,7 +31,6 @@ import os
 import numpy as np
 import signal
 from typing import Tuple
-import six
 import pandas as pd
 
 # Import ClearML
@@ -535,14 +534,14 @@ class TrainLoop:
 
         # ClearML-Report Validation and Test Report
         self.clearml_task.get_logger().report_table(
-            "TrainModel Performance Evaluation Report",
+            "Validation Report",
             "Validation Report",
             iteration=0,
             table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]).T,
         )
 
         self.clearml_task.get_logger().report_table(
-            "TrainModel Performance Evaluation Report",
+            "Test Report",
             "Test Report",
             iteration=0,
             table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]).T,
@@ -676,7 +675,7 @@ class TrainLoop:
                     title="dialogues",
                     series=datatype,
                     iteration=index,
-                    stream=six.StringIO(valid_world.display()),
+                    stream=valid_world.display(),
                     file_extension=".txt",
                 )
 
@@ -693,6 +692,7 @@ class TrainLoop:
             else:
                 outfile = task_opt['world_logs']
             world_logger.write(outfile, valid_world, file_format=opt['save_format'])
+
 
         valid_report = valid_world.report()
         if opt.get('validation_share_agent', False):
@@ -1075,7 +1075,7 @@ class TrainLoop:
 
         self._save_train_stats()
 
-        # Report Artifacts
+        # Report Artifacts (Token)
         self.clearml_task.upload_artifact('dictionary', opt['dict_file'])
 
         # Close ClearML Task Reporting
@@ -1092,7 +1092,7 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.clearml_task = Task.init(
-            project_name="ParAI", task_name="TrainModel", auto_connect_arg_parser=True
+            project_name="ParlAI", task_name="TrainModel", auto_connect_arg_parser=False
         )
 
         # Report Options (Hyper-parameters)
@@ -1106,9 +1106,9 @@ if __name__ == '__main__':
     TrainModel.main(  # we MUST provide a filename
         model_file='from_scratch_model/model',
         # train on empathetic dialogues
-        task='empathetic_dialogues',
+        task='clearmldata',
         # limit training time to 2 minutes, and a batchsize of 16
-        max_train_time=1,
+        max_train_time=60,
         batchsize=16,
         # we specify the model type as seq2seq
         model='seq2seq',
@@ -1121,5 +1121,6 @@ if __name__ == '__main__':
         # truncate text and labels at 64 tokens, for memory and time savings
         truncate=64,
         tensorboard_log=True,
-        display_examples=True,
+        display_examples=True
+        # log_every_n_secs=0.5,
     )

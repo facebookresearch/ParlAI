@@ -22,7 +22,7 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = self._get_datafile(opt)
-        self.id = 'empathetic_dialogues'
+        self.id = 'clearmldata'
         self.experiencer_side_only = self._get_experiencer_side_only(opt)
         super().__init__(opt, shared)
 
@@ -55,8 +55,7 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
         base_datatype = self._get_base_datatype(opt)
         return os.path.join(
             opt['datapath'],
-            'empatheticdialogues',
-            'empatheticdialogues',
+            'ClearMLData',
             base_datatype + '.csv',
         )
 
