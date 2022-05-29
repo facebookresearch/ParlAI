@@ -1,0 +1,33 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Are you sure we can stay for this? I know I've got some white people in my family
+      somewhere.
+    id: SPOLIN
+    text: Alright, guys. Let's get into some more white history.
+- - episode_done: true
+    eval_labels:
+    - Sorry, the coleslaw is definitely giving off a lot of glare.
+    id: SPOLIN
+    text: Alright, pull up that plate so I can take a picture.
+- - episode_done: true
+    eval_labels:
+    - 'Of course it is. That''s classic sociopathy. '
+    id: SPOLIN
+    text: I guess that's why you wanted to invest in a civil war reenactment company.
+- - episode_done: true
+    eval_labels:
+    - Oh, great! Then I can have something to barf up.
+    id: SPOLIN
+    text: If you buy three pills, you get a churro.
+- - episode_done: true
+    eval_labels:
+    - And the long hair just above the shoulders, what a look for a man. A timeless
+      look.
+    id: SPOLIN
+    text: Growing up, everyone told me I looked like an accountant. They just said
+      oh, good luck counting numbers, nerd. And hey, why don't you crunch this report
+      with numbers on it, nerd. I said "I don't look like an accountant. I can be
+      anything I want." And that's why I started saying man a lot and doing comedy.
+num_episodes: 1000
+num_examples: 1000
