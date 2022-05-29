@@ -27,4 +27,5 @@ DisplayModel.main(
     task='clearmldata',
     model_file='from_scratch_model/model',
     num_examples=4,
+    skip_generation=False,
 )
