@@ -18,7 +18,7 @@ from .build import build
 DEFAULT_TRAIN_EXPERIENCER_ONLY = False
 
 
-class EmpatheticDialoguesTeacher(DialogTeacher):
+class ClearMLTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = self._get_datafile(opt)
@@ -172,5 +172,5 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
         return selected_dialogues
 
 
-class DefaultTeacher(EmpatheticDialoguesTeacher):
+class DefaultTeacher(ClearMLTeacher):
     pass
