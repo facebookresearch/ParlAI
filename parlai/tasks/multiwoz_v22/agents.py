@@ -15,6 +15,7 @@ import pandas as pd
 from parlai.core.opt import Opt
 import parlai.core.tod.tod_core as tod
 import json
+import pickle
 from typing import Optional
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
@@ -262,10 +263,20 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                                     )
                                 if not valid:
                                     continue
+
                             call = maybe_call
-                            resp = self._get_find_api_response(
-                                intent, frame["state"]["slot_values"], sys_dialog_act
-                            )
+                            call_key = frozenset(call.items())
+
+                            if call_key not in self.call_response_cache:
+                                resp = self._get_find_api_response(
+                                    intent,
+                                    frame["state"]["slot_values"],
+                                    sys_dialog_act,
+                                )
+                                self.call_response_cache[call_key] = resp
+                            else:
+                                resp = self.call_response_cache[call_key]
+
                 elif "book" in intent:
                     for key in sys_dialog_act:
                         if "Book" in key:  # and "Inform" not in key:
@@ -300,8 +311,23 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
         """
         Parses into TodStructuredEpisode.
         """
-        self.dbs = self.load_dbs()
         self.schemas = self.load_schemas()
+        valid_path = self.dpath + "/valid_call_response_cache"
+        train_path = self.dpath + "/train_call_response_cache"
+        test_path = self.dpath + "/test_call_response_cache"
+        if fold == "valid" and os.path.isfile(valid_path):
+            self.call_response_cache = pickle.load(open(valid_path, "rb"))
+            self.dbs = None
+        elif fold == "train" and os.path.isfile(train_path):
+            self.call_response_cache = pickle.load(open(train_path, "rb"))
+            self.dbs = None
+        elif fold == "test" and os.path.isfile(test_path):
+            self.call_response_cache = pickle.load(open(test_path, "rb"))
+            self.dbs = None
+        else:
+            self.call_response_cache = {}
+            self.dbs = self.load_dbs()
+
         with PathManager.open(os.path.join(self.dpath, "dialog_acts.json")) as f:
             self.dialog_acts = json.load(f)
 
@@ -345,6 +371,17 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                 rounds=rounds,
             )
             episodes.append(episode)
+
+        if fold == "valid":
+            with (open(valid_path, "wb")) as openfile:
+                pickle.dump(self.call_response_cache, openfile)
+        if fold == "train":
+            with (open(train_path, "wb")) as openfile:
+                pickle.dump(self.call_response_cache, openfile)
+        if fold == "test":
+            with (open(test_path, "wb")) as openfile:
+                pickle.dump(self.call_response_cache, openfile)
+
         return episodes
 
     def get_id_task_prefix(self):
