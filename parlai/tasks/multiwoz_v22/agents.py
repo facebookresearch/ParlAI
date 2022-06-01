@@ -306,15 +306,15 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
         return result
 
     def setup_episodes(self, fold):
-        """
+        """s
         Parses into TodStructuredEpisode.
         """
         self.schemas = self.load_schemas()
         cache_path = os.path.join(self.dpath, f"{fold}_call_response_cache.json")
 
         if PathManager.exists(cache_path):
-            with PathManager.open(cache_path) as f:
-                self.call_response_cache = json.load(open(cache_path, "rb"))
+            with PathManager.open(cache_path, 'r') as f:
+                self.call_response_cache = json.load(f)
             self.dbs = None
         else:
             self.call_response_cache = {}
@@ -365,8 +365,7 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
             episodes.append(episode)
 
         with PathManager.open(cache_path, 'w') as f:
-            json_cache_data = json.dumps(self.call_response_cache)
-            f.write(json_cache_data)
+            json.dump(self.call_response_cache, f)
 
         return episodes
 
