@@ -250,8 +250,7 @@ class ConversionScript(ParlaiScript):
                 state = torch.load(
                     f, map_location=lambda s, l: default_restore_location(s, "cpu")
                 )
-            except ModuleNotFoundError as e:
-                print(e)
+            except ModuleNotFoundError:
                 raise RuntimeError(
                     "Please install fairseq: https://github.com/pytorch/fairseq#requirements-and-installation"
                 )

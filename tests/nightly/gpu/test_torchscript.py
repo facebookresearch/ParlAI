@@ -236,7 +236,6 @@ class TestTorchScript(unittest.TestCase):
         test_phrase = "Don't have a cow, man!"  # From test_bart.py
 
         with testing_utils.tempdir() as tmpdir:
-            print(tmpdir)
             scripted_model_file = os.path.join(tmpdir, 'scripted_model.pt')
 
             # Export the BART model for GPU
