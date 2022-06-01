@@ -75,9 +75,9 @@ class TorchScriptGreedySearch(nn.Module):
             bpe_byte_encoder=orig_bpe.byte_encoder,
             fused_key_bpe_ranks=fused_key_bpe_ranks,
             special_tokens=agent._get_special_tokens(),
-            subword_bpe_version=None,
-            fused_bpe_codes=None,
-            subword_bpe_separator=None
+            subword_bpe_version=(0, 0),
+            fused_bpe_codes={},
+            subword_bpe_separator=''
         )
 
         # History tracking and start/end tokens
@@ -181,7 +181,7 @@ class TorchScriptGreedySearch(nn.Module):
                 break
             elif i != self.start_idx:
                 new_vec.append(i)
-        return self.dict.vec2txt(new_vec)
+        return self.dict.vec2txt(new_vec, dict_tokenizer='gpt2')
 
     def forward(self, context: str, max_len: int = 128) -> str:
 
@@ -778,16 +778,10 @@ class ScriptableSubwordBpeHelper(object):
                     last_matching_idx = idx + 1
                 else:
                     last_matching_idx = idx
-                if text[last_matching_idx].isalpha():
+                if text[last_matching_idx].isalnum() or text[last_matching_idx] == '_':
                     while (
                         last_matching_idx + 1 < len(text)
-                        and text[last_matching_idx + 1].isalpha()
-                    ):
-                        last_matching_idx += 1
-                elif text[last_matching_idx].isnumeric():
-                    while (
-                        last_matching_idx + 1 < len(text)
-                        and text[last_matching_idx + 1].isnumeric()
+                        and (text[last_matching_idx + 1].isalnum() or text[last_matching_idx + 1] == '_')
                     ):
                         last_matching_idx += 1
                 tokens.append(text[idx : last_matching_idx + 1])
@@ -1019,13 +1013,13 @@ class ScriptableDictionaryAgent:
         """
         Tokenize using Gpt2 BPE tokenizer.
         """
-        return self.gpt2_bpe.encode(text.lower())
+        return self.gpt2_bpe.encode(text)
 
     def bpe_tokenize(self, text: str) -> List[str]:
         """
         Return a sequence of BPE-tokens from the text.
         """
-        return self.subword_bpe.encode(text.lower())
+        return self.subword_bpe.encode(text)
 
     def txt2vec(self, text: str, dict_tokenizer: str) -> List[int]:
         """
