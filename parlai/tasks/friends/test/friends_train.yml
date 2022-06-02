@@ -1,0 +1,57 @@
+acts:
+- - episode_done: false
+    id: friends
+    labels:
+    - C'mon, you're going out with the guy! There's gotta be something wrong with
+      him!
+    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!'
+- - episode_done: false
+    id: friends
+    labels:
+    - All right Joey, be nice. So does he have a hump? A hump and a hairpiece?
+    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+
+      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
+      wrong with him!'
+- - episode_done: false
+    id: friends
+    labels:
+    - Wait, does he eat chalk?
+    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+
+      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
+      wrong with him!
+
+      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
+      hairpiece?'
+- - episode_done: false
+    id: friends
+    labels:
+    - <SILENCE>
+    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+
+      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
+      wrong with him!
+
+      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
+      hairpiece?
+
+      Phoebe Buffay: Wait, does he eat chalk?'
+- - episode_done: false
+    id: friends
+    labels:
+    - Just, 'cause, I don't want her to go through what I went through with Carl-
+      oh!
+    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+
+      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
+      wrong with him!
+
+      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
+      hairpiece?
+
+      Phoebe Buffay: Wait, does he eat chalk?
+
+      TRANSCRIPT_NOTE: '
+num_episodes: 3093
+num_examples: 64266
