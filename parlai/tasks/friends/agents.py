@@ -24,6 +24,14 @@ def _path(opt, *additions):
 class DefaultTeacher(DialogTeacher):
     START_TOKEN = '<START>'
     SILENCE_TOKEN = '<SILENCE>'
+    MAIN_CHARACTERS = [
+        'Rachel Green',
+        'Monica Geller',
+        'Phoebe Buffay',
+        'Joey Tribbiani',
+        'Chandler Bing',
+        'Ross Geller',
+    ]
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
@@ -74,7 +82,11 @@ class DefaultTeacher(DialogTeacher):
 
                 isConversationDone = index == last_utterance_index
 
-                if speaker == self.character:
+                # By default, generate training examples for all 6 main characters.
+                # Otherwise only generate training examples for the chosen character.
+                if (
+                    self.character == 'All' and speaker in self.MAIN_CHARACTERS
+                ) or speaker == self.character:
                     yield {"text": prev_context, "label": text}, isConversationDone
                 elif self.use_silence_token:
                     yield {
@@ -91,8 +103,9 @@ class DefaultTeacher(DialogTeacher):
         agent.add_argument(
             '--character',
             type=str,
-            default='Rachel Green',
+            default='All',
             choices=[
+                'All',
                 'Rachel Green',
                 'Monica Geller',
                 'Phoebe Buffay',
