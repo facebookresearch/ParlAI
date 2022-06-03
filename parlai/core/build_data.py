@@ -380,6 +380,8 @@ def _unzip(path, fname, delete=True):
                 PathManager.mkdirs(outpath)
                 continue
             logging.debug(f"Extracting to {outpath}")
+            if '__MACOSX' in member:
+                continue
             with zf.open(member, 'r') as inf, PathManager.open(outpath, 'wb') as outf:
                 shutil.copyfileobj(inf, outf)
     if delete:
