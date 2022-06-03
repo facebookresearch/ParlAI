@@ -1,58 +1,63 @@
 acts:
 - - episode_done: false
     eval_labels:
-    - 'Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!'
+    - 'Joey Tribbiani: Chandler, if it really hurts that bad you should just tell
+      her.'
     id: friends
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!'
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!'
 - - episode_done: false
     eval_labels:
-    - 'Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and
-      a hairpiece?'
+    - 'Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.'
     id: friends
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!'
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.'
 - - episode_done: false
     eval_labels:
-    - 'Phoebe Buffay: Wait, does he eat chalk?'
+    - 'Ross Geller: Hey.'
     id: friends
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
 
-      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
-      hairpiece?'
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.'
 - - episode_done: false
     eval_labels:
-    - <SILENCE>
+    - 'Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!'
     id: friends
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
 
-      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
-      hairpiece?
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
 
-      Phoebe Buffay: Wait, does he eat chalk?'
+      Ross Geller: Hey.'
 - - episode_done: false
     eval_labels:
-    - 'Phoebe Buffay: Just, ''cause, I don''t want her to go through what I went through
-      with Carl- oh!'
+    - 'Ross Geller: Sorry.'
     id: friends
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
 
-      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
-      hairpiece?
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
 
-      Phoebe Buffay: Wait, does he eat chalk?
+      Ross Geller: Hey.
 
-      TRANSCRIPT_NOTE: '
-num_episodes: 3093
-num_examples: 64266
+      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!'
+num_episodes: 308
+num_examples: 5855

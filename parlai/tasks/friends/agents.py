@@ -9,21 +9,23 @@ from parlai.core.opt import Opt
 from parlai.core.teachers import DialogTeacher
 from parlai.core.params import ParlaiParser
 from .build import build
+from collections import defaultdict
+import jsonlines
+from parlai.utils.data import DatatypeHelper
 
 import copy
 import os
-import json
+
+START_TOKEN = '__START__'
+SILENCE_TOKEN = '__SILENCE__'
 
 
-def _path(opt, *additions):
-    return os.path.join(
-        opt['datapath'], 'Friends', 'friends-corpus/utterances.jsonl', *additions
-    )
+def _path(opt, filename):
+    return os.path.join(opt['datapath'], 'Friends', filename)
 
 
 class DefaultTeacher(DialogTeacher):
-    START_TOKEN = '<START>'
-    SILENCE_TOKEN = '<SILENCE>'
+
     MAIN_CHARACTERS = [
         'Rachel Green',
         'Monica Geller',
@@ -36,25 +38,24 @@ class DefaultTeacher(DialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         build(opt)
-        opt['datafile'] = _path(opt)
+        self.fold = DatatypeHelper.fold(opt['datatype'])
+        opt['datafile'] = _path(opt, self.fold + '.jsonl')
         self.character = opt['character']
         self.use_silence_token = opt['use_silence_token']
+        self.silence_token = opt['silence_token']
         self.use_start_token = opt['use_start_token']
+        self.start_token = opt['start_token']
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
-        conversations = {}
+        conversations = defaultdict(list)
 
-        with open(datafile, 'r') as json_file:
-            for json_str in json_file:
-                utterance = json.loads(json_str)
-
+        with jsonlines.open(datafile) as reader:
+            for utterance in reader:
                 text = utterance['text']
                 speaker = utterance['speaker']
                 conversation_id = utterance['conversation_id']
 
-                if conversation_id not in conversations:
-                    conversations[conversation_id] = []
                 conversations[conversation_id].append(
                     {"text": text, "speaker": speaker}
                 )
@@ -66,7 +67,7 @@ class DefaultTeacher(DialogTeacher):
             for index, utterance in enumerate(utterances):
                 if index == 0:
                     if self.use_start_token:
-                        context = self.START_TOKEN
+                        context = self.start_token
 
                     else:  # skip the first utterance since there's no context
                         speaker = utterance['speaker']
@@ -94,7 +95,7 @@ class DefaultTeacher(DialogTeacher):
                 elif self.use_silence_token:
                     yield {
                         "text": prev_context,
-                        "label": self.SILENCE_TOKEN,
+                        "label": f'{self.character}: {self.silence_token}',
                     }, isConversationDone
 
     @classmethod
@@ -119,15 +120,27 @@ class DefaultTeacher(DialogTeacher):
             help='Which speaker labels to train on',
         )
         agent.add_argument(
-            '--use_silence_token',
+            '--use-silence-token',
             type='bool',
             default=True,
-            help='Use silence token <SILENCE> to generate training example for sentences where the chosen speaker is not speaking',
+            help='Use silence token to generate training example for sentences where the chosen speaker is not speaking. Defaults to True.',
         )
         agent.add_argument(
-            '--use_start_token',
+            '--silence-token',
+            type=str,
+            default=SILENCE_TOKEN,
+            help='The token to use to indicate the chosen speaker is silent. Defaults to __SILENCE__',
+        )
+        agent.add_argument(
+            '--use-start-token',
             type='bool',
             default=False,
-            help='Use start token <START> at the beginning of each conversation, and include the first sentence as a training example',
+            help='Use start token at the beginning of each conversation, and include the first sentence as a training example. Defaults to False.',
+        )
+        agent.add_argument(
+            '--start-token',
+            type=str,
+            default=START_TOKEN,
+            help='The token to use to indicate the beginning of a conversation. Defaults to __START__',
         )
         return parser

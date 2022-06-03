@@ -2,57 +2,54 @@ acts:
 - - episode_done: false
     id: friends
     labels:
-    - 'Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!'
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!'
+    - 'Ross Geller: Hi!'
+    text: 'Phoebe Buffay: Oh hey! Wait up!'
 - - episode_done: false
     id: friends
     labels:
-    - 'Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and
-      a hairpiece?'
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    - 'Phoebe Buffay: Congratulations! I didn''t want to say anything in front of
+      Joey ''cause I didn''t know if he knew yet.'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!'
+      Ross Geller: Hi!'
 - - episode_done: false
     id: friends
     labels:
-    - 'Phoebe Buffay: Wait, does he eat chalk?'
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    - 'Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!
+      Ross Geller: Hi!
 
-      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
-      hairpiece?'
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.'
 - - episode_done: false
     id: friends
     labels:
-    - <SILENCE>
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    - 'Phoebe Buffay: No! No, that you and Rachel are engaged!'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!
+      Ross Geller: Hi!
 
-      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
-      hairpiece?
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
 
-      Phoebe Buffay: Wait, does he eat chalk?'
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.'
 - - episode_done: false
     id: friends
     labels:
-    - 'Phoebe Buffay: Just, ''cause, I don''t want her to go through what I went through
-      with Carl- oh!'
-    text: 'Monica Geller: There''s nothing to tell! He''s just some guy I work with!
+    - 'Ross Geller: What?'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
 
-      Joey Tribbiani: C''mon, you''re going out with the guy! There''s gotta be something
-      wrong with him!
+      Ross Geller: Hi!
 
-      Chandler Bing: All right Joey, be nice. So does he have a hump? A hump and a
-      hairpiece?
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
 
-      Phoebe Buffay: Wait, does he eat chalk?
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.
 
-      TRANSCRIPT_NOTE: '
-num_episodes: 3093
-num_examples: 64266
+      Phoebe Buffay: No! No, that you and Rachel are engaged!'
+num_episodes: 2427
+num_examples: 46610
