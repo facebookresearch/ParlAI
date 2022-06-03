@@ -25,9 +25,9 @@ RESOURCES = [
 
 
 def generate_folds(dpath):
-    '''
-    Generate Data Folds based on the scene id
-    '''
+    """
+    Generate Data Folds based on the scene id.
+    """
     datafile = os.path.join(dpath, 'friends-corpus/utterances.jsonl')
     train_datafile = os.path.join(dpath, 'train.jsonl')
     valid_datafile = os.path.join(dpath, 'valid.jsonl')
