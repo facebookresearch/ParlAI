@@ -87,7 +87,10 @@ class DefaultTeacher(DialogTeacher):
                 if (
                     self.character == 'All' and speaker in self.MAIN_CHARACTERS
                 ) or speaker == self.character:
-                    yield {"text": prev_context, "label": text}, isConversationDone
+                    yield {
+                        "text": prev_context,
+                        "label": f'{speaker}: {text}',
+                    }, isConversationDone
                 elif self.use_silence_token:
                     yield {
                         "text": prev_context,
