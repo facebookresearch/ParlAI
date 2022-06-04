@@ -25,21 +25,12 @@ def _path(opt, filename):
 
 
 class DefaultTeacher(DialogTeacher):
-
-    MAIN_CHARACTERS = [
-        'Rachel Green',
-        'Monica Geller',
-        'Phoebe Buffay',
-        'Joey Tribbiani',
-        'Chandler Bing',
-        'Ross Geller',
-    ]
-
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         build(opt)
         self.fold = DatatypeHelper.fold(opt['datatype'])
         opt['datafile'] = _path(opt, self.fold + '.jsonl')
+        self.characters = opt['characters'].split(',')
         self.character = opt['character']
         self.use_silence_token = opt['use_silence_token']
         self.silence_token = opt['silence_token']
@@ -86,7 +77,7 @@ class DefaultTeacher(DialogTeacher):
                 # By default, generate training examples for all 6 main characters.
                 # Otherwise only generate training examples for the chosen character.
                 if (
-                    self.character == 'All' and speaker in self.MAIN_CHARACTERS
+                    self.character == 'All' and speaker in self.characters
                 ) or speaker == self.character:
                     yield {
                         "text": prev_context,
@@ -118,6 +109,12 @@ class DefaultTeacher(DialogTeacher):
                 'Ross Geller',
             ],
             help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--characters',
+            type=str,
+            default='Rachel Green,Monica Geller,Phoebe Buffay,Joey Tribbiani,Chandler Bing,Ross Geller',
+            help='A comma-separated list of characters to train on when `--character` == `All`',
         )
         agent.add_argument(
             '--use-silence-token',
