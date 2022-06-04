@@ -144,3 +144,45 @@ class DefaultTeacher(DialogTeacher):
             help='The token to use to indicate the beginning of a conversation. Defaults to __START__',
         )
         return parser
+
+
+class AllCharactersTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'All'
+
+
+class RachelTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'Rachel Green'
+
+
+class MonicaTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'Monica Geller'
+
+
+class PhoebeTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'Phoebe Buffay'
+
+
+class JoeyTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'Joey Tribbiani'
+
+
+class ChandlerTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'Chandler Bing'
+
+
+class RossTeacher(DefaultTeacher):
+    def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        self.character = 'Ross Geller'
