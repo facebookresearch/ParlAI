@@ -380,8 +380,13 @@ def _unzip(path, fname, delete=True):
                 PathManager.mkdirs(outpath)
                 continue
             logging.debug(f"Extracting to {outpath}")
-            with zf.open(member, 'r') as inf, PathManager.open(outpath, 'wb') as outf:
-                shutil.copyfileobj(inf, outf)
+            try:
+                with zf.open(member, 'r') as inf, PathManager.open(
+                    outpath, 'wb'
+                ) as outf:
+                    shutil.copyfileobj(inf, outf)
+            except:
+                logging.error(f"Failed to open ${member} and extract to ${outpath}")
     if delete:
         try:
             PathManager.rm(fullpath)
