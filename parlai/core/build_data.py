@@ -385,7 +385,7 @@ def _unzip(path, fname, delete=True):
                     outpath, 'wb'
                 ) as outf:
                     shutil.copyfileobj(inf, outf)
-            except:
+            except FileNotFoundError:
                 logging.error(f"Failed to open ${member} and extract to ${outpath}")
     if delete:
         try:
