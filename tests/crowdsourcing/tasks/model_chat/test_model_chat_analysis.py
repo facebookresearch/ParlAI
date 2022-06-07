@@ -31,18 +31,18 @@ try:
             fake_jsons = []
             read_folders = []
             date_strings = []
-            for folder in self.results_folders:
-                # Load paths
-                date_strings = sorted(
-                    [
-                        obj
-                        for obj in os.listdir(folder)
-                        if os.path.isdir(os.path.join(folder, obj))
-                        and re.fullmatch(r'\d\d\d\d_\d\d_\d\d', obj)
-                    ]
-                )
-                folders = [os.path.join(folder, str_) for str_ in date_strings]
-                read_folders.extend(folders)
+
+            # Load paths
+            date_strings = sorted(
+                [
+                    obj
+                    for obj in os.listdir(self.results_folder)
+                    if os.path.isdir(os.path.join(self.results_folder, obj))
+                    and re.fullmatch(r'\d\d\d\d_\d\d_\d\d', obj)
+                ]
+            )
+            folders = [os.path.join(self.results_folder, str_) for str_ in date_strings]
+            read_folders.extend(folders)
 
             for read_folder in read_folders:
                 for file_name in sorted(os.listdir(read_folder)):
@@ -101,16 +101,12 @@ try:
 
                     # Run analysis
                     with testing_utils.capture_output() as output:
-                        arg_string = f"""\
---results-folders {analysis_samples_folder}
---output-folder {tmpdir} \
-{flag_string}
-"""
+                        arg_string = f"""--output-folder {tmpdir} {flag_string}"""
                         parser_ = TestModelChatResultsCompiler.setup_args()
                         args_ = parser_.parse_args(arg_string.split())
-                        TestModelChatResultsCompiler(
-                            vars(args_)
-                        ).compile_and_save_results()
+                        compiler = TestModelChatResultsCompiler(vars(args_))
+                        compiler.results_folder = analysis_samples_folder
+                        compiler.compile_and_save_results()
                         stdout = output.getvalue()
 
                     # Define output structure
