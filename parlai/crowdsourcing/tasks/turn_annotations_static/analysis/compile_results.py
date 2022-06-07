@@ -310,7 +310,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     'folder': convo['folder'],
                     'worker_id': convo['worker_id'],
                     'hit_id': convo['hit_id'],
-                    'other_metadata': utt.get('other_metadata'),
+                    'other_metadata': utt.get('other_metadata') or '(none)',
                     'qc_success_pct': convo['qc_success_pct'],
                     'text': utt['text'],
                 }
@@ -371,23 +371,24 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         utterance_ids = bot_only_df['utterance_id'].unique()
         print(f'Number of unique utterance_ids: {len(utterance_ids)}.')
 
-        if 'any_problem' in summed_df:
-            # We've computed a column marking if any problem exists, so include this
-            extended_problem_buckets = self.problem_buckets + ['any_problem']
-        else:
-            extended_problem_buckets = self.problem_buckets
-        for k in extended_problem_buckets:
-            one_annotator = len(summed_df[summed_df[k] == 1])
-            two_annotators = len(summed_df[summed_df[k] == 2])
-            three_annotators = len(summed_df[summed_df[k] >= 3])
-            total_problem_annotations = (
-                one_annotator + two_annotators + three_annotators
-            )
-            total_utterances = len(summed_df[k])
-            if total_problem_annotations > 0:
-                print(
-                    f'Bucket: {k}, total unique problem utterances: {total_problem_annotations} ({total_problem_annotations/total_utterances:.1%} of all), one annotator: {one_annotator} ({one_annotator/total_problem_annotations:.1%}), two_annotators: {two_annotators} ({two_annotators/total_problem_annotations:.1%}), three+ annotators: {three_annotators} ({three_annotators/total_problem_annotations:.1%})'
+        if len(utterance_ids) > 0:
+            if 'any_problem' in summed_df:
+                # We've computed a column marking if any problem exists, so include this
+                extended_problem_buckets = self.problem_buckets + ['any_problem']
+            else:
+                extended_problem_buckets = self.problem_buckets
+            for k in extended_problem_buckets:
+                one_annotator = len(summed_df[summed_df[k] == 1])
+                two_annotators = len(summed_df[summed_df[k] == 2])
+                three_annotators = len(summed_df[summed_df[k] >= 3])
+                total_problem_annotations = (
+                    one_annotator + two_annotators + three_annotators
                 )
+                total_utterances = len(summed_df[k])
+                if total_problem_annotations > 0:
+                    print(
+                        f'Bucket: {k}, total unique problem utterances: {total_problem_annotations} ({total_problem_annotations/total_utterances:.1%} of all), one annotator: {one_annotator} ({one_annotator/total_problem_annotations:.1%}), two_annotators: {two_annotators} ({two_annotators/total_problem_annotations:.1%}), three+ annotators: {three_annotators} ({three_annotators/total_problem_annotations:.1%})'
+                    )
 
     def _problem_bucket_specific_filtering(
         self, bot_only_df: pd.DataFrame
