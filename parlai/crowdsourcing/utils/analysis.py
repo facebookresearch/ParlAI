@@ -217,9 +217,6 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
-            '--results-folders', type=str, help='Comma-separated list of result folders'
-        )
-        parser.add_argument(
             '--problem-buckets',
             type=str,
             help='Comma-separated list of buckets used for annotation. Set to an empty string to not analyze problem buckets.',
@@ -232,10 +229,6 @@ class AbstractTurnAnnotationResultsCompiler(AbstractResultsCompiler):
         super().__init__(opt)
 
         # Handle inputs
-        if 'results_folders' in opt:
-            self.results_folders = opt['results_folders'].split(',')
-        else:
-            self.results_folders = None
         if opt['problem_buckets'].lower() not in ['', 'none']:
             self.use_problem_buckets = True
             self.problem_buckets = opt['problem_buckets'].split(',')
