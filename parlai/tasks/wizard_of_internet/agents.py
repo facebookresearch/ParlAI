@@ -378,6 +378,10 @@ class WizardDialogTeacher(WizardOfInternetBaseTeacher):
         labels: Optional[Tuple[str]],
         model_response: Message,
     ) -> None:
+        if not isinstance(teacher_action, Message):
+            teacher_action = Message(teacher_action)
+        if not isinstance(model_response, Message):
+            model_response = Message(model_response)
         if (
             (
                 teacher_action[CONST.SELECTED_SENTENCES][0]
