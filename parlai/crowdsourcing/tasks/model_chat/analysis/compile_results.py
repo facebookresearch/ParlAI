@@ -15,6 +15,8 @@ from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import BLUEPRINT_TYPE
 
+_ = BLUEPRINT_TYPE
+
 
 class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     """
@@ -27,12 +29,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
     @classmethod
     def setup_args(cls):
         parser = super().setup_args()
-        parser.add_argument(
-            '--start-date',
-            type=str,
-            default='',
-            help='The earliest date to analyze results from',
-        )
         parser.add_argument(
             '--max-convos-per-worker',
             type=int,
@@ -75,7 +71,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         for folder in self.results_folders:
             assert os.path.isdir(folder), f'{folder} is not a valid folder!'
         os.makedirs(self.output_folder, exist_ok=True)
-        self.start_date = opt['start_date']
         self.max_convos_per_worker = opt['max_convos_per_worker']
         self.min_word_count = opt['min_word_count']
         self.hit_block_list = opt['hit_block_list'].split(',')
