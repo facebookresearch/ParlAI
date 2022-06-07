@@ -3,239 +3,136 @@
     "outputs": {
         "messages": [
             {
-                "data": {
-                    "message_id": "3a289317-8519-4da8-be8f-9a515a6ec3da",
-                    "state": {
-                        "agent_display_name": "Speaker 1"
+                "agent_idx": 0,
+                "episode_done": false,
+                "fake_start": true,
+                "id": "Speaker 1",
+                "text": "Hi!",
+                "task_data": {
+                    "human_persona_string_1": "",
+                    "human_persona_string_2": ""
+                }
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
                     }
                 },
-                "packet_type": "update_status",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748716.1582668
+                "text": "What are you nervous about?"
             },
             {
-                "data": {
-                    "agent_idx": 0,
-                    "episode_done": false,
-                    "fake_start": true,
-                    "id": "Speaker 1",
-                    "message_id": "4f72800c-e1ff-4411-8ee5-286336c27859",
-                    "text": "Hi!",
-                    "task_data": {
-                        "human_persona_string_1": "",
-                        "human_persona_string_2": ""
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
                     }
                 },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748716.1952436
+                "text": "Do you have any plans for the weekend?"
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 2",
-                    "message_id": "43ef23af-a9fc-4f67-bd06-6e083ba45678",
-                    "text": "I don't know."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748719.289413
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 1",
-                    "message_id": "fb168956-cfe1-40e2-b28b-1ca66207a39e",
-                    "task_data": {
-                        "problem_data_for_prior_message": {
-                            "bucket_0": false,
-                            "bucket_1": false,
-                            "bucket_2": true,
-                            "bucket_3": false,
-                            "bucket_4": true,
-                            "none_all_good": false
-                        }
-                    },
-                    "text": "What are you nervous about?"
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
                 },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748750.6269932
+                "text": "Yeah that sounds great! I like to bike and try new restaurants."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 2",
-                    "message_id": "05fefda5-dfa0-44e2-81ad-ba9ca203ed1d",
-                    "text": "I don't know."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748754.1622028
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 1",
-                    "message_id": "49740817-1443-47b4-b91d-3260fd12bf7d",
-                    "task_data": {
-                        "problem_data_for_prior_message": {
-                            "bucket_0": false,
-                            "bucket_1": false,
-                            "bucket_2": true,
-                            "bucket_3": false,
-                            "bucket_4": true,
-                            "none_all_good": false
-                        }
-                    },
-                    "text": "Do you have any plans for the weekend?"
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
                 },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748767.7324872
+                "text": "Oh, Italian food is great. I also love Thai and Indian."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 2",
-                    "message_id": "6a52d8ee-1955-4d08-a7f8-007feea3ecfd",
-                    "text": "I don't know."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748770.6286461
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 1",
-                    "message_id": "db9a475a-a47f-4328-92f4-130f2227dfbb",
-                    "task_data": {
-                        "problem_data_for_prior_message": {
-                            "bucket_0": false,
-                            "bucket_1": false,
-                            "bucket_2": true,
-                            "bucket_3": false,
-                            "bucket_4": true,
-                            "none_all_good": false
-                        }
-                    },
-                    "text": "Yeah that sounds great! I like to bike and try new restaurants."
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
                 },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748790.1551545
+                "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 2",
-                    "message_id": "550f71a4-f441-4546-bd73-45313932ec3c",
-                    "text": "I don't know."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748793.6703372
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
             },
             {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 1",
-                    "message_id": "9dc9241c-73f6-4724-bad6-50038ab64522",
-                    "task_data": {
-                        "problem_data_for_prior_message": {
-                            "bucket_0": false,
-                            "bucket_1": false,
-                            "bucket_2": true,
-                            "bucket_3": false,
-                            "bucket_4": true,
-                            "none_all_good": false
-                        }
-                    },
-                    "text": "Oh, Italian food is great. I also love Thai and Indian."
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "final_rating": 4,
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
                 },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748803.546519
-            },
-            {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 2",
-                    "message_id": "3a046372-6204-452d-8877-88a1d1a9583a",
-                    "text": "I don't know."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748806.4725926
-            },
-            {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 1",
-                    "message_id": "64816a92-5e8a-4ab9-b194-2a93499f47dc",
-                    "task_data": {
-                        "problem_data_for_prior_message": {
-                            "bucket_0": false,
-                            "bucket_1": false,
-                            "bucket_2": true,
-                            "bucket_3": false,
-                            "bucket_4": true,
-                            "none_all_good": false
-                        }
-                    },
-                    "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748820.3473911
-            },
-            {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 2",
-                    "message_id": "f68faec0-b2c2-434d-98a6-b4cc9f1f42b3",
-                    "text": "I don't know."
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748822.6552174
-            },
-            {
-                "data": {
-                    "episode_done": false,
-                    "id": "Speaker 1",
-                    "message_id": "524d5a56-71a5-4b00-8595-0df720004eb6",
-                    "task_data": {
-                        "final_rating": 4,
-                        "problem_data_for_prior_message": {
-                            "bucket_0": false,
-                            "bucket_1": false,
-                            "bucket_2": true,
-                            "bucket_3": false,
-                            "bucket_4": true,
-                            "none_all_good": false
-                        }
-                    },
-                    "text": ""
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748839.8552907
+                "text": ""
             },
             {
                 "final_chat_data": {
@@ -254,7 +151,6 @@
                             "episode_done": false,
                             "fake_start": true,
                             "id": "Speaker 1",
-                            "message_id": "4f72800c-e1ff-4411-8ee5-286336c27859",
                             "text": "Hi!",
                             "task_data": {
                                 "human_persona_string_1": "",
@@ -392,7 +288,6 @@
                             "verbose": false,
                             "datapath": "/private/home/ems/GitHub/facebookresearch/ParlAI/data",
                             "model": "fixed_response",
-                            "model_file": null,
                             "init_model": null,
                             "dict_class": null,
                             "image_size": 256,
@@ -408,209 +303,187 @@
                         }
                     },
                     "workers": [
-                        "--NOT-MTURK-AGENT-MOCK_WORKER_0"
+                        "--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"
                     ]
                 },
                 "data": {},
-                "packet_type": null,
-                "timestamp": null
+                "packet_type": null
             },
             {
-                "data": {
-                    "WORLD_DATA": {
-                        "custom_data": {
-                            "dialog": [
-                                {
-                                    "episode_done": false,
-                                    "id": "Speaker 1",
-                                    "text": "Hi!",
-                                    "fake_start": true,
-                                    "agent_idx": 0,
-                                    "task_data": {
-                                        "human_persona_string_1": "",
-                                        "human_persona_string_2": ""
-                                    }
-                                },
-                                {
-                                    "agent_idx": 1,
-                                    "text": "I don't know.",
-                                    "id": "Speaker 2",
-                                    "problem_data": {
-                                        "bucket_0": false,
-                                        "bucket_1": false,
-                                        "bucket_2": true,
-                                        "bucket_3": false,
-                                        "bucket_4": true,
-                                        "none_all_good": false
-                                    }
-                                },
-                                {
-                                    "agent_idx": 0,
-                                    "text": "What are you nervous about?",
-                                    "id": "Speaker 1"
-                                },
-                                {
-                                    "agent_idx": 1,
-                                    "text": "I don't know.",
-                                    "id": "Speaker 2",
-                                    "problem_data": {
-                                        "bucket_0": false,
-                                        "bucket_1": false,
-                                        "bucket_2": true,
-                                        "bucket_3": false,
-                                        "bucket_4": true,
-                                        "none_all_good": false
-                                    }
-                                },
-                                {
-                                    "agent_idx": 0,
-                                    "text": "Do you have any plans for the weekend?",
-                                    "id": "Speaker 1"
-                                },
-                                {
-                                    "agent_idx": 1,
-                                    "text": "I don't know.",
-                                    "id": "Speaker 2",
-                                    "problem_data": {
-                                        "bucket_0": false,
-                                        "bucket_1": false,
-                                        "bucket_2": true,
-                                        "bucket_3": false,
-                                        "bucket_4": true,
-                                        "none_all_good": false
-                                    }
-                                },
-                                {
-                                    "agent_idx": 0,
-                                    "text": "Yeah that sounds great! I like to bike and try new restaurants.",
-                                    "id": "Speaker 1"
-                                },
-                                {
-                                    "agent_idx": 1,
-                                    "text": "I don't know.",
-                                    "id": "Speaker 2",
-                                    "problem_data": {
-                                        "bucket_0": false,
-                                        "bucket_1": false,
-                                        "bucket_2": true,
-                                        "bucket_3": false,
-                                        "bucket_4": true,
-                                        "none_all_good": false
-                                    }
-                                },
-                                {
-                                    "agent_idx": 0,
-                                    "text": "Oh, Italian food is great. I also love Thai and Indian.",
-                                    "id": "Speaker 1"
-                                },
-                                {
-                                    "agent_idx": 1,
-                                    "text": "I don't know.",
-                                    "id": "Speaker 2",
-                                    "problem_data": {
-                                        "bucket_0": false,
-                                        "bucket_1": false,
-                                        "bucket_2": true,
-                                        "bucket_3": false,
-                                        "bucket_4": true,
-                                        "none_all_good": false
-                                    }
-                                },
-                                {
-                                    "agent_idx": 0,
-                                    "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
-                                    "id": "Speaker 1"
-                                },
-                                {
-                                    "agent_idx": 1,
-                                    "text": "I don't know.",
-                                    "id": "Speaker 2",
-                                    "problem_data": {
-                                        "bucket_0": false,
-                                        "bucket_1": false,
-                                        "bucket_2": true,
-                                        "bucket_3": false,
-                                        "bucket_4": true,
-                                        "none_all_good": false
-                                    },
-                                    "final_rating": 4
-                                }
-                            ],
-                            "workers": [
-                                "--NOT-MTURK-AGENT-MOCK_WORKER_0"
-                            ],
-                            "bad_workers": [],
-                            "acceptability_violations": [
-                                null
-                            ],
-                            "hit_ids": [
-                                "1"
-                            ],
-                            "assignment_ids": [
-                                "1"
-                            ],
-                            "task_description": {
-                                "annotations_config": "{\n    \"config\": {\n        \"bucket_0\": {\n            \"name\": \"Bucket 0\",\n            \"description\": \"this response implies something...0\"\n        },\n        \"bucket_1\": {\n            \"name\": \"Bucket 1\",\n            \"description\": \"this response implies something...1\"\n        },\n        \"bucket_2\": {\n            \"name\": \"Bucket 2\",\n            \"description\": \"this response implies something...2\"\n        },\n        \"bucket_3\": {\n            \"name\": \"Bucket 3\",\n            \"description\": \"this response implies something...3\"\n        },\n        \"bucket_4\": {\n            \"name\": \"Bucket 4\",\n            \"description\": \"this response implies something...4\"\n        },\n        \"none_all_good\": {\n            \"name\": \"None, all good\",\n            \"description\": \"This response implies that there are no problems with the data\"\n        }\n    },\n    \"show_line_breaks\": false\n}\n",
-                                "model_nickname": "fixed_response",
-                                "model_file": null,
-                                "model_opt": {
-                                    "init_opt": null,
-                                    "allow_missing_init_opts": false,
-                                    "task": null,
-                                    "download_path": null,
-                                    "loglevel": "info",
-                                    "datatype": "train",
-                                    "image_mode": "raw",
-                                    "hide_labels": false,
-                                    "multitask_weights": [
-                                        1
-                                    ],
-                                    "batchsize": 1,
-                                    "dynamic_batching": null,
-                                    "verbose": false,
-                                    "is_debug": false,
-                                    "model": "fixed_response",
-                                    "model_file": null,
-                                    "init_model": null,
-                                    "dict_class": null,
-                                    "image_size": 256,
-                                    "image_cropsize": 224,
-                                    "fixed_response": "I don't know.",
-                                    "model_parallel": true,
-                                    "override": {
-                                        "model_parallel": true,
-                                        "model": "fixed_response"
-                                    }
+                "WORLD_DATA": {
+                    "custom_data": {
+                        "dialog": [
+                            {
+                                "episode_done": false,
+                                "id": "Speaker 1",
+                                "text": "Hi!",
+                                "fake_start": true,
+                                "agent_idx": 0,
+                                "task_data": {
+                                    "human_persona_string_1": "",
+                                    "human_persona_string_2": ""
                                 }
                             },
-                            "personas": null,
-                            "context_dataset": null,
-                            "person1_seed_utterance": null,
-                            "person2_seed_utterance": null,
-                            "additional_context": null
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "What are you nervous about?",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Do you have any plans for the weekend?",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Yeah that sounds great! I like to bike and try new restaurants.",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Oh, Italian food is great. I also love Thai and Indian.",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                },
+                                "final_rating": 4
+                            }
+                        ],
+                        "workers": [
+                            "--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"
+                        ],
+                        "bad_workers": [],
+                        "acceptability_violations": [
+                            null
+                        ],
+                        "hit_ids": [
+                            "1"
+                        ],
+                        "assignment_ids": [
+                            "1"
+                        ],
+                        "task_description": {
+                            "annotations_config": "{\n    \"config\": {\n        \"bucket_0\": {\n            \"name\": \"Bucket 0\",\n            \"description\": \"this response implies something...0\"\n        },\n        \"bucket_1\": {\n            \"name\": \"Bucket 1\",\n            \"description\": \"this response implies something...1\"\n        },\n        \"bucket_2\": {\n            \"name\": \"Bucket 2\",\n            \"description\": \"this response implies something...2\"\n        },\n        \"bucket_3\": {\n            \"name\": \"Bucket 3\",\n            \"description\": \"this response implies something...3\"\n        },\n        \"bucket_4\": {\n            \"name\": \"Bucket 4\",\n            \"description\": \"this response implies something...4\"\n        },\n        \"none_all_good\": {\n            \"name\": \"None, all good\",\n            \"description\": \"This response implies that there are no problems with the data\"\n        }\n    },\n    \"show_line_breaks\": false\n}\n",
+                            "model_nickname": "fixed_response",
+                            "model_opt": {
+                                "init_opt": null,
+                                "allow_missing_init_opts": false,
+                                "task": null,
+                                "download_path": null,
+                                "loglevel": "info",
+                                "datatype": "train",
+                                "image_mode": "raw",
+                                "hide_labels": false,
+                                "multitask_weights": [
+                                    1
+                                ],
+                                "batchsize": 1,
+                                "dynamic_batching": null,
+                                "verbose": false,
+                                "is_debug": false,
+                                "model": "fixed_response",
+                                "init_model": null,
+                                "dict_class": null,
+                                "image_size": 256,
+                                "image_cropsize": 224,
+                                "fixed_response": "I don't know.",
+                                "model_parallel": true,
+                                "override": {
+                                    "model_parallel": true,
+                                    "model": "fixed_response"
+                                }
+                            }
                         },
-                        "worker_data": {}
+                        "personas": null,
+                        "context_dataset": null,
+                        "person1_seed_utterance": null,
+                        "person2_seed_utterance": null,
+                        "additional_context": null
                     },
-                    "id": "SUBMIT_WORLD_DATA",
-                    "message_id": "b4a0d2d2-1728-468b-a4a4-5589b653a5b8",
-                    "text": ""
+                    "worker_data": {}
                 },
-                "packet_type": "agent_action",
-                "receiver_id": "1",
-                "sender_id": "mephisto",
-                "timestamp": 1606748839.8638673
-            },
-            {
-                "data": {
-                    "MEPHISTO_is_submit": true,
-                    "task_data": {
-                        "final_data": {}
-                    }
-                },
-                "packet_type": "agent_action",
-                "receiver_id": "Mephisto",
-                "sender_id": "1",
-                "timestamp": 1606748846.5838857
+                "id": "SUBMIT_WORLD_DATA",
+                "text": ""
             }
         ]
     }

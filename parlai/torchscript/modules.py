@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from collections import defaultdict
-from typing import List, Dict, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import torch.jit
 from parlai.agents.bart.bart import BartAgent
@@ -218,9 +218,13 @@ class TorchScriptGreedySearch(nn.Module):
         if self.is_bart:
             flattened_text_vec = torch.cat(
                 [
-                    torch.tensor([self.start_idx], dtype=torch.long),
-                    flattened_text_vec,
-                    torch.tensor([self.end_idx], dtype=torch.long),
+                    torch.tensor([self.start_idx], dtype=torch.long).to(
+                        self.get_device()
+                    ),
+                    flattened_text_vec.to(self.get_device()),
+                    torch.tensor([self.end_idx], dtype=torch.long).to(
+                        self.get_device()
+                    ),
                 ],
                 dim=0,
             )
@@ -535,8 +539,8 @@ class ScriptableGpt2BpeHelper(object):
                     for j, piece in enumerate(split):
                         if j > 0:
                             # add the special token as a delimiter
-                            pieces.insert(i + j, (special_token, FINAL))
-                        pieces.insert(i + j + int(j > 0), (piece, SPLITABLE))
+                            pieces.insert(i + (2 * j) - 1, (special_token, FINAL))
+                        pieces.insert(i + (2 * j), (piece, SPLITABLE))
                 else:
                     i += 1
 

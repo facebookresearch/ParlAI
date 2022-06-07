@@ -318,7 +318,7 @@ class Gpt2Agent(TorchGeneratorAgent):
     def _encoder_input(self, batch):
         return (batch.text_vec,)
 
-    def _pad_tensor(self, items):
+    def _pad_tensor(self, items, is_label=False):
         """
         Override to always set fp16friendly to False and left_pad to True.
         """

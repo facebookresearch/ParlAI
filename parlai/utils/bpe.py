@@ -608,10 +608,10 @@ class Gpt2BpeHelper(BPEHelper):
         )
         cs: List[int] = bs[:]
         n = 0
-        for b in range(2 ** 8):
+        for b in range(2**8):
             if b not in bs:
                 bs.append(b)
-                cs.append(2 ** 8 + n)
+                cs.append(2**8 + n)
                 n += 1
         str_cs: List[str] = [chr(n) for n in cs]
         return dict(zip(bs, str_cs))

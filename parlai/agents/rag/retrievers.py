@@ -656,7 +656,7 @@ class DPRRetriever(RagRetriever):
             query.cpu().detach().to(torch.float32).numpy(), n_docs
         )
         ids, np_vectors = zip(*top_docs_and_scores)
-        vectors = torch.tensor(np_vectors).to(query)
+        vectors = torch.tensor(np.array(np_vectors)).to(query)
         if isinstance(self.indexer, DenseHNSWFlatIndexer):
             vectors = vectors[:, :, :-1]
         # recompute exact FAISS scores
@@ -728,12 +728,17 @@ class TFIDFRetriever(RagRetriever):
         assert self.max_doc_paragraphs != 0
         if not shared:
             self.tfidf_retriever = create_agent(tfidf_opt)
+            self.query_encoder = DprQueryEncoder(
+                opt, dpr_model=opt['query_model'], pretrained_path=opt['dpr_model_file']
+            )
         else:
             self.tfidf_retriever = shared['tfidf_retriever']
+            self.query_encoder = shared['query_encoder']
 
     def share(self) -> TShared:
         shared = super().share()
         shared['tfidf_retriever'] = self.tfidf_retriever
+        shared['query_encoder'] = self.query_encoder
         return shared
 
     def retrieve_and_score(
@@ -1305,10 +1310,17 @@ class ObservationEchoRetriever(RagRetriever):
         self.n_docs = opt['n_docs']
         self._query_ids = dict()
         self._saved_docs = dict()
+        self._largest_seen_idx = -1
         super().__init__(opt, dictionary, shared=shared)
 
     def add_retrieve_doc(self, query: str, retrieved_docs: List[Document]):
-        new_idx = len(self._query_ids)
+        self._largest_seen_idx += 1
+        new_idx = self._largest_seen_idx
+        if new_idx in self._query_ids.values() or new_idx in self._saved_docs:
+            raise RuntimeError(
+                "Nonunique new_idx created in add_retrieve_doc in ObservationEchoRetriever \n"
+                "this might return the same set of docs for two distinct queries"
+            )
         self._query_ids[query] = new_idx
         self._saved_docs[new_idx] = retrieved_docs or [
             BLANK_DOC for _ in range(self.n_docs)
@@ -1319,6 +1331,11 @@ class ObservationEchoRetriever(RagRetriever):
 
     def get_delimiter(self) -> str:
         return self._delimiter
+
+    def clear_mapping(self):
+        self._query_ids = dict()
+        self._saved_docs = dict()
+        self._largest_seen_idx = -1
 
     def retrieve_and_score(
         self, query: torch.LongTensor
@@ -1336,6 +1353,7 @@ class ObservationEchoRetriever(RagRetriever):
         retrieved_doc_scores = retrieved_doc_scores.repeat(batch_size, 1).to(
             query.device
         )
+
         return retrieved_docs, retrieved_doc_scores
 
 
@@ -1395,7 +1413,7 @@ class RetrievedChunkRanker(DocumentChunkRanker):
         doc_url: str,
     ):
         """
-        Return chunks according to the woi_chunk_retrieved_docs_mutator
+        Return chunks according to the woi_chunk_retrieved_docs_mutator.
         """
         if isinstance(doc_chunks, list):
             docs = ''.join(doc_chunks)

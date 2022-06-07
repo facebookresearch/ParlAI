@@ -132,6 +132,5 @@ try:
                 outputs = setup_teardown
                 file_regression.check(outputs[prefix], basename=prefix)
 
-
 except ImportError:
     pass

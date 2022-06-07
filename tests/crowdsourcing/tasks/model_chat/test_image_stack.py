@@ -72,6 +72,5 @@ try:
                 # Check the output against what it should be
                 file_regression.check(contents=stdout)
 
-
 except ImportError:
     pass

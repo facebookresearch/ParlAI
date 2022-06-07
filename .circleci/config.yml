@@ -105,7 +105,7 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.10.2+cu113 torchvision==0.11.3+cu113 torchaudio==0.10.2+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+            python -m pip install --progress-bar off torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.3.3'
@@ -124,7 +124,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off 'transformers==4.3.3'
-            python -m pip install --progress-bar off 'torch==1.10.2'
+            python -m pip install --progress-bar off 'torch==1.11.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -134,24 +134,10 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'torch==1.10.2+cpu' 'torchvision==0.11.3+cpu' 'torchaudio==0.10.2+cpu' -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'torch==1.11.0+cpu' 'torchvision==0.12.0+cpu' 'torchaudio==0.11.0+cpu' -f https://download.pytorch.org/whl/torch_stable.html
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
-
-  installdetectrondeps:
-    description: Install opencv, vqa-maskrcnn-benchmark
-    steps:
-      - run:
-          name: Install opencv, vqa-maskrcnn-benchmark
-          command: |
-            if (! python -c 'import maskrcnn_benchmark')
-            then
-                python -m pip install yacs 'opencv-python~=4.3.0.00'
-                git clone https://gitlab.com/vedanuj/vqa-maskrcnn-benchmark.git maskbench
-                cd maskbench; git checkout 4c168a637f45dc69efed384c00a7f916f57b25b8 -b stable
-                python setup.py install; cd -
-            fi
 
   installcrowdsourcingdeps:
     description: Install Mephisto
@@ -161,7 +147,7 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v0.4.2 -b stable
+              cd Mephisto; git checkout v1.0.1 -b stable
               pip install -r requirements.txt
               python setup.py develop
               # `echo` so that ENTER will be pressed at the prompt
@@ -222,26 +208,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220519-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220227-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220519-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220519-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220227-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220519-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -258,12 +244,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220227-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220519-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220227-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220519-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -347,7 +333,6 @@ jobs:
       - runtests:
           more_installs:
             - installtorchgpu
-            - installdetectrondeps
           install_cuda: true
           cachename: gpu18
           marker: unit
@@ -360,7 +345,6 @@ jobs:
       - runtests:
           more_installs:
             - installtorchgpu
-            - installdetectrondeps
           install_cuda: true
           cachename: nightly
           marker: nightly_gpu

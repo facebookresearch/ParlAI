@@ -1,0 +1,7 @@
+{
+"api_schema_grounding_model": "local_human",
+"goal_grounding_model": "local_human",
+"user_model": "local_human",
+"system_model": "local_human",
+"api_resp_model": "local_human"
+}

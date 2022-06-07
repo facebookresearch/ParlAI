@@ -231,7 +231,7 @@ class AUCMetrics(Metric):
         assert self._class_name == class_name
         assert len(true_labels) == len(pos_probs)
 
-        TO_INT_FACTOR = 10 ** self._max_bucket_dec_places
+        TO_INT_FACTOR = 10**self._max_bucket_dec_places
         # add the upper and lower bound of the values
         for label, prob in zip(true_labels, pos_probs):
             # calculate the upper and lower bound of the values

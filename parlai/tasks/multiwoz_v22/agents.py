@@ -210,9 +210,8 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
             return {}
         blob = filtered.head(1).to_dict('records')
 
-        results = {}
+        results = blob[0]
         results["COUNT"] = count
-        results["OPTIONS"] = json.dumps(blob)
         return results
 
     def _slot_in_schema(self, slot, intent):
@@ -263,10 +262,19 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                                     )
                                 if not valid:
                                     continue
+
                             call = maybe_call
-                            resp = self._get_find_api_response(
-                                intent, frame["state"]["slot_values"], sys_dialog_act
-                            )
+                            call_key = str(call)
+                            if call_key not in self.call_response_cache:
+                                resp = self._get_find_api_response(
+                                    intent,
+                                    frame["state"]["slot_values"],
+                                    sys_dialog_act,
+                                )
+                                self.call_response_cache[call_key] = resp
+                            else:
+                                resp = self.call_response_cache[call_key]
+
                 elif "book" in intent:
                     for key in sys_dialog_act:
                         if "Book" in key:  # and "Inform" not in key:
@@ -301,8 +309,17 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
         """
         Parses into TodStructuredEpisode.
         """
-        self.dbs = self.load_dbs()
         self.schemas = self.load_schemas()
+        cache_path = os.path.join(self.dpath, f"{fold}_call_response_cache.json")
+
+        if PathManager.exists(cache_path):
+            with PathManager.open(cache_path, 'r') as f:
+                self.call_response_cache = json.load(f)
+            self.dbs = None
+        else:
+            self.call_response_cache = {}
+            self.dbs = self.load_dbs()
+
         with PathManager.open(os.path.join(self.dpath, "dialog_acts.json")) as f:
             self.dialog_acts = json.load(f)
 
@@ -316,9 +333,7 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                 if raw_episode["dialogue_id"] != self.opt["dialogue_id"]:
                     continue
 
-            skip = (
-                False
-            )  # need to skip outer for loop while in `for domains` inner for loop
+            skip = False  # need to skip outer for loop while in `for domains` inner for loop
             if self.opt.get("well_formatted_domains_only", True):
                 if len(domains) == 0:
                     skip = True
@@ -348,6 +363,10 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
                 rounds=rounds,
             )
             episodes.append(episode)
+
+        with PathManager.open(cache_path, 'w') as f:
+            json.dump(self.call_response_cache, f)
+
         return episodes
 
     def get_id_task_prefix(self):
@@ -359,6 +378,18 @@ class UserSimulatorTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeacher
 
 
 class SystemTeacher(MultiwozV22Parser, tod_agents.TodSystemTeacher):
+    pass
+
+
+class StandaloneApiTeacher(MultiwozV22Parser, tod_agents.TodStandaloneApiTeacher):
+    pass
+
+
+class SingleGoalAgent(MultiwozV22Parser, tod_agents.TodSingleGoalAgent):
+    pass
+
+
+class SingleApiSchemaAgent(MultiwozV22Parser, tod_agents.TodSingleApiSchemaAgent):
     pass
 
 

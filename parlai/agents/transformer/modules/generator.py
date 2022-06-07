@@ -93,6 +93,7 @@ class TransformerGeneratorModel(TorchGeneratorModel):
             opt,
             embedding=self.embeddings,
             decoder_class=self.swappables.decoder,  # type: ignore
+            dictionary=dictionary,
         )
 
     def reorder_encoder_states(self, encoder_states, indices):
@@ -105,7 +106,8 @@ class TransformerGeneratorModel(TorchGeneratorModel):
         if not torch.is_tensor(indices):
             indices = torch.LongTensor(indices).to(enc.device)
         enc = torch.index_select(enc, 0, indices)
-        mask = torch.index_select(mask, 0, indices)
+        if mask is not None:
+            mask = torch.index_select(mask, 0, indices)
         return enc, mask
 
     def reorder_decoder_incremental_state(

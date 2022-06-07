@@ -89,7 +89,10 @@ class RagModel(TorchGeneratorModel):
             padding_idx=self.pad_idx,
         )
         self.seq2seq_decoder = self.build_decoder(
-            opt, embedding=self.embeddings, padding_idx=self.pad_idx
+            opt,
+            embedding=self.embeddings,
+            dictionary=dictionary,
+            padding_idx=self.pad_idx,
         )
 
     @classmethod
@@ -121,7 +124,9 @@ class RagModel(TorchGeneratorModel):
         **kwargs,
     ):
         if decoder_class is None:
-            return RagDecoder(opt=opt, embedding=embedding, n_positions=n_positions)
+            return RagDecoder(
+                opt=opt, embedding=embedding, n_positions=n_positions, **kwargs
+            )
         else:
             return decoder_class(opt, *args, **kwargs)
 
@@ -535,6 +540,7 @@ class T5RagModel(RagModel):
         super().__init__(opt, dictionary, retriever_shared)
         self.embedding_size = opt['t5'].model_dim
         self.t5 = opt.pop('t5', None)
+        self.paralleled = not opt['t5_model_parallel']
 
     @classmethod
     def build_encoder(
@@ -577,6 +583,6 @@ class T5RagModel(RagModel):
 
     @set_device
     def decoder_output(self, latent: torch.Tensor):
-        tensor = latent * (self.t5.model_dim ** -0.5)
+        tensor = latent * (self.t5.model_dim**-0.5)
         logits = self.t5.lm_head(tensor)
         return logits

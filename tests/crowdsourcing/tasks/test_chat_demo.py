@@ -18,142 +18,73 @@ EXPECTED_STATE_AGENT_0 = {
     "outputs": {
         "messages": [
             {
-                "packet_type": "update_status",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {"state": {"agent_display_name": "Chat Agent 1"}},
-                "timestamp": 1604343628.610868,
+                "text": "Hi! How are you?",
+                "task_data": {},
+                "id": "Chat Agent 1",
+                "episode_done": False,
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
-                    "text": "Hi! How are you?",
-                    "task_data": {},
-                    "id": "Chat Agent 1",
-                    "episode_done": False,
-                    "message_id": "cae52060-800a-4f85-b654-03e60755705a",
+                "text": "I'm pretty good - you?",
+                "task_data": {},
+                "id": "Chat Agent 2",
+                "episode_done": False,
+            },
+            {
+                "text": "I'm okay - how was your weekend?",
+                "task_data": {},
+                "id": "Chat Agent 1",
+                "episode_done": False,
+            },
+            {
+                "text": "I was fine. Did you do anything fun?",
+                "task_data": {},
+                "id": "Chat Agent 2",
+                "episode_done": False,
+            },
+            {
+                "id": "Coordinator",
+                "text": "Please fill out the form to complete the chat:",
+                "task_data": {
+                    "respond_with_form": [
+                        {
+                            "type": "choices",
+                            "question": "How much did you enjoy talking to this user?",
+                            "choices": ["Not at all", "A little", "Somewhat", "A lot"],
+                        },
+                        {
+                            "type": "choices",
+                            "question": "Do you think this user is a bot or a human?",
+                            "choices": [
+                                "Definitely a bot",
+                                "Probably a bot",
+                                "Probably a human",
+                                "Definitely a human",
+                            ],
+                        },
+                        {"type": "text", "question": "Enter any comment here"},
+                    ]
                 },
-                "timestamp": 1604343659.7957256,
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
-                    "text": "I'm pretty good - you?",
-                    "task_data": {},
-                    "id": "Chat Agent 2",
-                    "episode_done": False,
-                    "message_id": "7daabd84-96f8-4a5a-a105-c229ec03c871",
+                "text": "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
+                "task_data": {
+                    "form_responses": [
+                        {
+                            "question": "How much did you enjoy talking to this user?",
+                            "response": "A lot",
+                        },
+                        {
+                            "question": "Do you think this user is a bot or a human?",
+                            "response": "Definitely a human",
+                        },
+                        {"question": "Enter any comment here", "response": "Yes"},
+                    ]
                 },
-                "timestamp": 1604343667.6145806,
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
-                    "text": "I'm okay - how was your weekend?",
-                    "task_data": {},
-                    "id": "Chat Agent 1",
-                    "episode_done": False,
-                    "message_id": "b2b4c92d-8b2e-4418-a14a-e1b4dba42a09",
-                },
-                "timestamp": 1604343676.5881488,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
-                    "text": "I was fine. Did you do anything fun?",
-                    "task_data": {},
-                    "id": "Chat Agent 2",
-                    "episode_done": False,
-                    "message_id": "389280ae-4a91-466e-8409-7818a4bcf324",
-                },
-                "timestamp": 1604343688.4189346,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
-                    "id": "Coordinator",
-                    "text": "Please fill out the form to complete the chat:",
-                    "task_data": {
-                        "respond_with_form": [
-                            {
-                                "type": "choices",
-                                "question": "How much did you enjoy talking to this user?",
-                                "choices": [
-                                    "Not at all",
-                                    "A little",
-                                    "Somewhat",
-                                    "A lot",
-                                ],
-                            },
-                            {
-                                "type": "choices",
-                                "question": "Do you think this user is a bot or a human?",
-                                "choices": [
-                                    "Definitely a bot",
-                                    "Probably a bot",
-                                    "Probably a human",
-                                    "Definitely a human",
-                                ],
-                            },
-                            {"type": "text", "question": "Enter any comment here"},
-                        ]
-                    },
-                    "message_id": "c2ec35da-cfb7-447b-9767-5b4fcc9231df",
-                },
-                "timestamp": 1604343688.4194062,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {
-                    "text": "How much did you enjoy talking to this user?: A lot\nDo you think this user is a bot or a human?: Definitely a human\nEnter any comment here: Yes\n",
-                    "task_data": {
-                        "form_responses": [
-                            {
-                                "question": "How much did you enjoy talking to this user?",
-                                "response": "A lot",
-                            },
-                            {
-                                "question": "Do you think this user is a bot or a human?",
-                                "response": "Definitely a human",
-                            },
-                            {"question": "Enter any comment here", "response": "Yes"},
-                        ]
-                    },
-                    "id": "Chat Agent 1",
-                    "episode_done": False,
-                    "message_id": "5b799128-5f8b-440e-8947-aee6113690d2",
-                },
-                "timestamp": 1604343698.391118,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "1",
-                "data": {
-                    "id": "SUBMIT_WORLD_DATA",
-                    "WORLD_DATA": {"example_key": "example_value"},
-                    "text": "",
-                },
-                "timestamp": 1604343706.6179278,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "1",
-                "receiver_id": "Mephisto",
-                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": True},
-                "timestamp": 1604343708.6682835,
+                "id": "SUBMIT_WORLD_DATA",
+                "WORLD_DATA": {"example_key": "example_value"},
+                "text": "",
             },
         ]
     },
@@ -163,142 +94,75 @@ EXPECTED_STATE_AGENT_1 = {
     "outputs": {
         "messages": [
             {
-                "packet_type": "update_status",
-                "sender_id": "mephisto",
-                "receiver_id": "2",
-                "data": {"state": {"agent_display_name": "Chat Agent 2"}},
-                "timestamp": 1604343628.611253,
+                "text": "Hi! How are you?",
+                "task_data": {},
+                "id": "Chat Agent 1",
+                "episode_done": False,
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "2",
-                "data": {
-                    "text": "Hi! How are you?",
-                    "task_data": {},
-                    "id": "Chat Agent 1",
-                    "episode_done": False,
-                    "message_id": "cae52060-800a-4f85-b654-03e60755705a",
+                "text": "I'm pretty good - you?",
+                "task_data": {},
+                "id": "Chat Agent 2",
+                "episode_done": False,
+            },
+            {
+                "text": "I'm okay - how was your weekend?",
+                "task_data": {},
+                "id": "Chat Agent 1",
+                "episode_done": False,
+            },
+            {
+                "text": "I was fine. Did you do anything fun?",
+                "task_data": {},
+                "id": "Chat Agent 2",
+                "episode_done": False,
+            },
+            {
+                "id": "Coordinator",
+                "text": "Please fill out the form to complete the chat:",
+                "task_data": {
+                    "respond_with_form": [
+                        {
+                            "type": "choices",
+                            "question": "How much did you enjoy talking to this user?",
+                            "choices": ["Not at all", "A little", "Somewhat", "A lot"],
+                        },
+                        {
+                            "type": "choices",
+                            "question": "Do you think this user is a bot or a human?",
+                            "choices": [
+                                "Definitely a bot",
+                                "Probably a bot",
+                                "Probably a human",
+                                "Definitely a human",
+                            ],
+                        },
+                        {"type": "text", "question": "Enter any comment here"},
+                    ]
                 },
-                "timestamp": 1604343659.7962258,
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "2",
-                "receiver_id": "Mephisto",
-                "data": {
-                    "text": "I'm pretty good - you?",
-                    "task_data": {},
-                    "id": "Chat Agent 2",
-                    "episode_done": False,
-                    "message_id": "7daabd84-96f8-4a5a-a105-c229ec03c871",
+                "text": "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
+                "task_data": {
+                    "form_responses": [
+                        {
+                            "question": "How much did you enjoy talking to this user?",
+                            "response": "Not at all",
+                        },
+                        {
+                            "question": "Do you think this user is a bot or a human?",
+                            "response": "Definitely a bot",
+                        },
+                        {"question": "Enter any comment here", "response": "No"},
+                    ]
                 },
-                "timestamp": 1604343667.6141868,
+                "id": "Chat Agent 2",
+                "episode_done": False,
             },
             {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "2",
-                "data": {
-                    "text": "I'm okay - how was your weekend?",
-                    "task_data": {},
-                    "id": "Chat Agent 1",
-                    "episode_done": False,
-                    "message_id": "b2b4c92d-8b2e-4418-a14a-e1b4dba42a09",
-                },
-                "timestamp": 1604343676.5885365,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "2",
-                "receiver_id": "Mephisto",
-                "data": {
-                    "text": "I was fine. Did you do anything fun?",
-                    "task_data": {},
-                    "id": "Chat Agent 2",
-                    "episode_done": False,
-                    "message_id": "389280ae-4a91-466e-8409-7818a4bcf324",
-                },
-                "timestamp": 1604343688.4185243,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "2",
-                "data": {
-                    "id": "Coordinator",
-                    "text": "Please fill out the form to complete the chat:",
-                    "task_data": {
-                        "respond_with_form": [
-                            {
-                                "type": "choices",
-                                "question": "How much did you enjoy talking to this user?",
-                                "choices": [
-                                    "Not at all",
-                                    "A little",
-                                    "Somewhat",
-                                    "A lot",
-                                ],
-                            },
-                            {
-                                "type": "choices",
-                                "question": "Do you think this user is a bot or a human?",
-                                "choices": [
-                                    "Definitely a bot",
-                                    "Probably a bot",
-                                    "Probably a human",
-                                    "Definitely a human",
-                                ],
-                            },
-                            {"type": "text", "question": "Enter any comment here"},
-                        ]
-                    },
-                    "message_id": "a8494a4a-1868-4dfb-93ad-2c1bb1574993",
-                },
-                "timestamp": 1604343688.4199135,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "2",
-                "receiver_id": "Mephisto",
-                "data": {
-                    "text": "How much did you enjoy talking to this user?: Not at all\nDo you think this user is a bot or a human?: Definitely a bot\nEnter any comment here: No\n",
-                    "task_data": {
-                        "form_responses": [
-                            {
-                                "question": "How much did you enjoy talking to this user?",
-                                "response": "Not at all",
-                            },
-                            {
-                                "question": "Do you think this user is a bot or a human?",
-                                "response": "Definitely a bot",
-                            },
-                            {"question": "Enter any comment here", "response": "No"},
-                        ]
-                    },
-                    "id": "Chat Agent 2",
-                    "episode_done": False,
-                    "message_id": "13ab6814-cf47-47f7-92c9-d06739918bd7",
-                },
-                "timestamp": 1604343706.509115,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "mephisto",
-                "receiver_id": "2",
-                "data": {
-                    "id": "SUBMIT_WORLD_DATA",
-                    "WORLD_DATA": {"example_key": "example_value"},
-                    "text": "",
-                },
-                "timestamp": 1604343706.6186645,
-            },
-            {
-                "packet_type": "agent_action",
-                "sender_id": "2",
-                "receiver_id": "Mephisto",
-                "data": {"task_data": {"final_data": {}}, "MEPHISTO_is_submit": True},
-                "timestamp": 1604343711.3286684,
+                "id": "SUBMIT_WORLD_DATA",
+                "WORLD_DATA": {"example_key": "example_value"},
+                "text": "",
             },
         ]
     },
@@ -408,7 +272,6 @@ try:
                 form_task_data=FORM_TASK_DATA,
                 expected_states=EXPECTED_STATES,
             )
-
 
 except ImportError:
     pass

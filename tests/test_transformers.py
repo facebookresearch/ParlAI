@@ -1015,5 +1015,84 @@ class TestSwappableComponents(unittest.TestCase):
         model.act()
 
 
+class TestDecoderOnly(unittest.TestCase):
+    """
+    Unit tests for DecoderOnlyAgent.
+    """
+
+    @pytest.mark.nofbcode
+    def test_resize_embeddings(self):
+        model = 'transformer/decoder'
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model_file')
+            _, _ = testing_utils.train_model(
+                dict(
+                    model=model,
+                    task='integration_tests:short_fixed',
+                    n_layers=2,
+                    num_epochs=1,
+                    dict_tokenizer='bytelevelbpe',
+                    bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                    bpe_add_prefix_space=False,
+                    model_file=model_file,
+                    save_after_valid=True,
+                )
+            )
+
+            # now create agent with special tokens
+            parser = ParlaiParser()
+            parser.set_params(
+                model=model,
+                task='integration_tests:short_fixed',
+                n_layers=2,
+                dict_tokenizer='bytelevelbpe',
+                bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                bpe_add_prefix_space=False,
+                model_file=model_file,
+                save_after_valid=True,
+                special_tok_lst='PARTY,PARROT',
+            )
+            opt = parser.parse_args([])
+            agent = create_agent(opt)
+            # assert that the embeddings were resized
+            assert agent.resized_embeddings
+            # assert model has special tokens
+            self.assertEqual(agent.special_toks, ['PARTY', 'PARROT'])
+
+    def _overfit_train(self, **args):
+        args = dict(
+            task='integration_tests:overfit',
+            model='transformer/decoder',
+            optimizer='sgd',
+            learningrate=1,
+            momentum=0.9,
+            batchsize=4,
+            n_layers=2,
+            n_heads=1,
+            ffn_size=32,
+            embedding_size=16,
+            inference='greedy',
+            beam_size=1,
+            skip_generation=True,
+            validation_metric='ppl',
+            validation_every_n_epochs=10,
+            num_epochs=100,
+        )
+        args.update(args)
+        return testing_utils.train_model(args)
+
+    @testing_utils.retry(ntries=3)
+    def test_train(self):
+        """
+        Test basic training.
+        """
+        valid, test = self._overfit_train(variant='prelayernorm', activation='gelu')
+
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertLessEqual(test['ppl'], 1.30)
+
+
 if __name__ == '__main__':
     unittest.main()

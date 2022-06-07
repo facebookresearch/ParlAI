@@ -84,25 +84,24 @@ try:
                 json.dump(config, f)
 
             # Run Fast ACUTEs
-            runner = FastAcuteExecutor(self.config)
-            runner.compile_chat_logs()
-            runner.set_up_acute_eval()
-            self.config.mephisto.blueprint = runner.fast_acute_args
-            self._set_up_server()
-            outputs['state'] = self._get_agent_state(task_data=self.TASK_DATA)
+            try:
+                runner = FastAcuteExecutor(self.config)
+                runner.compile_chat_logs()
+                runner.set_up_acute_eval()
+                self.config.mephisto.blueprint = runner.fast_acute_args
+                self._set_up_server()
+                outputs['state'] = self._get_agent_state(task_data=self.TASK_DATA)
 
-            # Run analysis
-            runner.analyze_results(args=f'--mephisto-root {self.database_path}')
-            outputs['results_folder'] = runner.results_path
+                # Run analysis
+                runner.analyze_results(args=f'--mephisto-root {self.database_path}')
+                outputs['results_folder'] = runner.results_path
 
-            yield outputs
-            # All code after this will be run upon teardown
-
-            self._teardown()
-
-            # Tear down temp file
-            shutil.rmtree(root_dir)
-
+                yield outputs
+            finally:
+                # All code after this will be run upon teardown
+                self._teardown()
+                # Tear down temp file
+                shutil.rmtree(root_dir)
 
 except ImportError:
     pass
