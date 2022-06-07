@@ -30,6 +30,8 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     FILENAME_STUB = 'results'
     CALCULATE_STATS_INTERANNOTATOR_AGREEMENT = True
 
+    NONE_STRING = '(none)'  # Indicates the absence of a field
+
     @classmethod
     def setup_args(cls):
         parser = super().setup_args()
@@ -310,9 +312,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     'folder': convo['folder'],
                     'worker_id': convo['worker_id'],
                     'hit_id': convo['hit_id'],
-                    'other_metadata': utt.get('other_metadata') or '(none)',
+                    'other_metadata': utt.get('other_metadata') or self.NONE_STRING,
                     'qc_success_pct': convo['qc_success_pct'],
                     'text': utt['text'],
+                    'response': utt.get('input_response') or self.NONE_STRING,
                 }
                 row = self._add_additional_columns(row=row, utt=utt)
                 for k in self.problem_buckets:
