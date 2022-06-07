@@ -77,7 +77,7 @@ def generate_folds(dpath):
 
 def build(opt):
     dpath = os.path.join(opt['datapath'], 'Friends')
-    version = '1.02'
+    version = '1.00'
 
     if not build_data.built(dpath, version_string=version):
         print('[building data: ' + dpath + ']')
