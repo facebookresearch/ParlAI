@@ -67,9 +67,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
             )
 
         # Input args
-        assert len(self.results_folders) > 0
-        for folder in self.results_folders:
-            assert os.path.isdir(folder), f'{folder} is not a valid folder!'
         os.makedirs(self.output_folder, exist_ok=True)
         self.max_convos_per_worker = opt['max_convos_per_worker']
         self.min_word_count = opt['min_word_count']
