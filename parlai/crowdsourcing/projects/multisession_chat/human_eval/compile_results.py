@@ -30,6 +30,12 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
+            '--hit-block-list',
+            type=str,
+            default='',
+            help='Comma-separated list of all hits to block',
+        )
+        parser.add_argument(
             '--results-folders', type=str, help='Comma-separated list of result folders'
         )
         parser.add_argument(

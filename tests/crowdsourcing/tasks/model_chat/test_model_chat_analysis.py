@@ -29,9 +29,6 @@ try:
     class TestModelChatResultsCompiler(ModelChatResultsCompiler):
         def get_task_data(self) -> List[Dict[str, Any]]:
             fake_jsons = []
-            read_folders = []
-            date_strings = []
-
             # Load paths
             date_strings = sorted(
                 [
@@ -42,12 +39,11 @@ try:
                 ]
             )
             folders = [os.path.join(self.results_folder, str_) for str_ in date_strings]
-            read_folders.extend(folders)
 
-            for read_folder in read_folders:
-                for file_name in sorted(os.listdir(read_folder)):
+            for folder in folders:
+                for file_name in sorted(os.listdir(folder)):
                     # Read in file
-                    with open(os.path.join(read_folder, file_name), 'rb') as f:
+                    with open(os.path.join(folder, file_name), 'rb') as f:
                         data = json.load(f)
                         worker_id = data['workers'][0]
                         assignment_id = data['assignment_ids'][0]

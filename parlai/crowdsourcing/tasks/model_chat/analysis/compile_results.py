@@ -15,6 +15,7 @@ from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import BLUEPRINT_TYPE
 
+# importing BLUEPRINT_TYPE to force registration of the blueprint, not using this var itself
 _ = BLUEPRINT_TYPE
 
 
@@ -42,12 +43,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
             help='The minimum acceptable mean number of words per human utterance',
         )
         parser.add_argument(
-            '--hit-block-list',
-            type=str,
-            default='',
-            help='Comma-separated list of all hits to block',
-        )
-        parser.add_argument(
             '--worker-block-list',
             type=str,
             default='',
@@ -70,7 +65,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         os.makedirs(self.output_folder, exist_ok=True)
         self.max_convos_per_worker = opt['max_convos_per_worker']
         self.min_word_count = opt['min_word_count']
-        self.hit_block_list = opt['hit_block_list'].split(',')
         self.worker_block_list = opt['worker_block_list'].split(',')
 
         # Setting up problem buckets
