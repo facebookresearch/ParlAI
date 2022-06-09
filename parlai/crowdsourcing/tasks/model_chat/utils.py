@@ -330,7 +330,7 @@ class ImageStack:
             raise ValueError(f'Worker {worker} not found in stack {stack_idx:d}!')
 
 
-class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
+class AbstractModelChatTest(AbstractParlAIChatTest):
     """
     Abstract test class for testing model chat code.
     """

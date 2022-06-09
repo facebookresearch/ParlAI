@@ -13,6 +13,8 @@ import os
 import unittest
 
 import parlai.utils.testing as testing_utils
+import pytest
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
 # Inputs
@@ -71,20 +73,22 @@ try:
         Test the model chat crowdsourcing task.
         """
 
-        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
-        #  regressions. Also use a pytest.fixture to call self._setup() and
-        #  self._teardown(), like the other tests use, instead of calling them with
-        #  self.setUp() and self.tearDown()
-
-        def setUp(self) -> None:
+        @pytest.fixture(scope="function")
+        def setup_teardown(self):
+            """
+            Call code to set up and tear down tests.
+            """
             self._setup()
-
-        def tearDown(self) -> None:
+            yield self.operator
+            # All code after this will be run upon teardown
             self._teardown()
 
         @testing_utils.retry(ntries=3)
-        def test_base_task(self):
+        def test_base_task(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
 
+            self.operator = setup_teardown
             with testing_utils.tempdir() as tmpdir:
 
                 # Paths
@@ -131,6 +135,7 @@ fixed_response: >
                     form_task_data=FORM_TASK_DATA,
                     expected_states=(expected_state,),
                     agent_task_data=AGENT_TASK_DATA,
+                    data_regression=data_regression,
                 )
 
         def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:

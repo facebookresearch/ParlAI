@@ -282,6 +282,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         form_messages: Sequence[str],
         form_task_data: Sequence[Dict[str, Any]],
         expected_states: Sequence[Dict[str, Any]],
+        data_regression: DataRegressionFixture,
         agent_task_data: Optional[List[Sequence[Dict[str, Any]]]] = None,
     ):
         """
@@ -349,28 +350,9 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         for actual_state in actual_states:
             filtered_actual_states.append(self._filter_agent_state_data(actual_state))
 
-        # Check the contents of each message
-        for actual_state, expected_state in zip(
-            filtered_actual_states, expected_states
-        ):
+        for actual_state in filtered_actual_states:
             clean_actual_state = self._remove_non_deterministic_keys(actual_state)
-            assert clean_actual_state['inputs'] == expected_state['inputs']
-            actual_num_messages = len(clean_actual_state['outputs']['messages'])
-            expected_num_messages = len(expected_state['outputs']['messages'])
-            if actual_num_messages != expected_num_messages:
-                raise ValueError(
-                    f'The actual number of messages is {actual_num_messages:d}, instead of {expected_num_messages:d} as expected!'
-                )
-            for actual_message, expected_message in zip(
-                clean_actual_state['outputs']['messages'],
-                expected_state['outputs']['messages'],
-            ):
-                for key, expected_value in expected_message.items():
-                    self._check_output_key(
-                        key=key,
-                        actual_value=actual_message[key],
-                        expected_value=expected_value,
-                    )
+            data_regression.check(clean_actual_state)
 
     def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
         """
