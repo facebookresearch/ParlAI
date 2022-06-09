@@ -337,6 +337,28 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
 
     def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
 
+        for message in actual_state['outputs']['messages']:
+            if 'final_chat_data' in message.keys():
+                value = message['final_chat_data']
+                # delete 'modle_file' from 'task_description'
+                if 'model_file' in value['task_description'].keys():
+                    del value['task_description']['model_file']
+                # deleted unwanted fields from 'task_description''model_opt'
+                for field in [
+                    'datapath',
+                    'dict_file',
+                    'model_file',
+                    'override',
+                    'parlai_home',
+                    'starttime',
+                ]:
+                    if field in value['task_description']['model_opt'].keys():
+                        del value['task_description']['model_opt'][field]
+                # delete 'update_id' from 'dialog'
+                for dialog in value['dialog']:
+                    if 'update_id' in dialog.keys():
+                        del dialog['update_id']
+
         # Remove non-deterministic keys from each message
         for message in actual_state['outputs']['messages']:
             for field in ['update_id', 'timestamp']:
@@ -381,86 +403,6 @@ class AbstractModelChatTest(AbstractParlAIChatTest, unittest.TestCase):
         The last message contains the custom data saved by the model-chat task code.
         """
         return actual_state['outputs']['messages'][-1]['WORLD_DATA']['custom_data']
-
-    def _check_output_key(self, key: str, actual_value: Any, expected_value: Any):
-        """
-        Special logic for handling the 'final_chat_data' key.
-        """
-        if key == 'final_chat_data':
-            self._check_final_chat_data(
-                actual_value=actual_value, expected_value=expected_value
-            )
-        else:
-            super()._check_output_key(
-                key=key, actual_value=actual_value, expected_value=expected_value
-            )
-
-    def _check_final_chat_data(
-        self, actual_value: Dict[str, Any], expected_value: Dict[str, Any]
-    ):
-        """
-        Check the actual and expected values of the final chat data.
-
-        TODO: this is hard to maintain. It'd be better to just delete the non-deterministic keys from actual_value beforehand, inside self._remove_non_deterministic_keys().
-        """
-        for key_inner, expected_value_inner in expected_value.items():
-            if key_inner == 'dialog':
-                assert len(actual_value[key_inner]) == len(expected_value_inner)
-                for actual_message, expected_message in zip(
-                    actual_value[key_inner], expected_value_inner
-                ):
-                    clean_actual_message = {
-                        k: v for k, v in actual_message.items() if k != 'update_id'
-                    }
-                    clean_expected_message = {
-                        k: v for k, v in expected_message.items() if k != 'update_id'
-                    }
-                    self.assertDictEqual(
-                        clean_actual_message,
-                        clean_expected_message,
-                        f'The following dictionaries are different: {clean_actual_message} and {clean_expected_message}',
-                    )
-            elif key_inner == 'task_description':
-                for (key_inner2, expected_value_inner2) in expected_value_inner.items():
-                    if key_inner2 == 'model_file':
-                        pass
-                        # The path to the model file depends on the random
-                        # tmpdir
-                    elif key_inner2 == 'model_opt':
-                        keys_to_ignore = [
-                            'datapath',
-                            'dict_file',
-                            'model_file',
-                            'override',
-                            'parlai_home',
-                            'starttime',
-                        ]
-                        # These paths depend on the random tmpdir and the host
-                        # machine
-                        for (
-                            key_inner3,
-                            expected_value_inner3,
-                        ) in expected_value_inner2.items():
-                            if key_inner3 in keys_to_ignore:
-                                pass
-                            else:
-                                self.assertEqual(
-                                    actual_value[key_inner][key_inner2][key_inner3],
-                                    expected_value_inner3,
-                                    f'Error in key {key_inner3}!',
-                                )
-                    else:
-                        self.assertEqual(
-                            actual_value[key_inner][key_inner2],
-                            expected_value_inner2,
-                            f'Error in key {key_inner2}!',
-                        )
-            else:
-                self.assertEqual(
-                    actual_value[key_inner],
-                    expected_value_inner,
-                    f'Error in key {key_inner}!',
-                )
 
 
 def get_context_generator(
