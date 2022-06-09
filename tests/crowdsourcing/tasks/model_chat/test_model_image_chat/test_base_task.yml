@@ -1,0 +1,501 @@
+inputs: {}
+outputs:
+  final_submission:
+    final_data: {}
+  messages:
+  - agent_idx: null
+    episode_done: false
+    id: SYSTEM
+    task_data:
+      image_src: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQgJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAC4ALkDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD3+iiigAooooAKKKKAEormdf8AHOj6DuieX7RdD/ljFyR9T2rzXWPiVrepFktXWyhPaLlvzpOSR6mFyrE4lXirLuz2W81Ky0+PzLy7hgX1kcCucu/iR4ctCQt09ww/55ISPzOK8OnuJrmQyTyvK56s7Fj+tR1Dme/R4dpJfvZt+mh69N8W9NU/ubC5cepIFVz8XrfP/IKlx/10FeU0UuZnasjwS+zf5s9ch+LmnkjzdOuEHswNatr8TfDtyQJJpoCf+ekfH6Zrw6ijmZnPIcJLZNfP/M+lLDWdN1Nd1lfQT+yOCfyq/Xy9HI8Th43ZHHRlOCK6jSPiDr2lFUa4+1wj+Cfk/n1qlM8uvw7OOtGV/J6HvNFcdoHxG0jWCsNw32K5PASQ/Kx9m/xrsAQwyOnrV3ufO1sPVoS5asbMdRRRQYhRRRQAUUUUAFFFFACUUVna1rVnoWnSXt4+1F+6o6ufQUFQhKclGKu2T3+oWumWj3V5MsUKDJZjXkPin4kXmqM9rpZe1tOhfpI/+ArA8S+KL7xLemW4YpAp/dQA8KP6n3rDrNy7H2uXZLCilUr6y7dEKSWJJJJPUnvSUUVB9EFFFFABRTo0eWRY41LOxwqqMkmu50/wJbWFkuo+Kb5bKEjIgU/O3/1/YU0rnNXxNOglzvV7Lq/kcJRivXfDVx4TvXvYtL0VT9khMvm3Cgl/zzWAfiLauSs3hqwaP0AH+FOy7nFHH1qk5RhRendpbnA0V6umleE/EPh0axc2X9jo8nlrIHwM5xn0xmuP8R+Cr7QoxdxOt5p7crcRc4Hv/jS5TShmVKpP2cvdltr39djmK63wx491HQWSCdmurLoY3PKj/ZP9K5KihOx2V8PTrw5Kiuj6S0fW7HXbJbqxmDp/Ev8AEh9CK0a+btF1y+0G/W7spSrD7yH7rj0Ir3Xwx4ms/EunieA7Jl4lhJ5Q/wCFaRlc+FzLKp4R88dYP8PU3aKKKo8YKKKKACiiigCrfX1vptlLeXUgjhiXcxNeBeKvE1z4l1Np5CVt0JEMWeFHr9a6P4l+KDqF/wD2Rayf6Nbn96QeHf0/D+def1nJ9D7fJcuVGHt6i957eSCiiioPogooooAKKK3vB2kjWfE9pbOMxK3mSf7q8/4ChIzq1I0oSqS2R1GjWdn4J8Ppr+pRCXU7kf6JA38Pv/8AXosPBmteM2/tfWb4wRy8xrtycew6AVieLNYXWvGYDt/ocEqwovYKDg17pEqpCioBsCgKB6VoknofJ43E1sLCNX/l5PW/ZdkcNZeET4P0XW7i3ne7ea3KoNmCMA/4149bW8l3dRW8YzJK4QfU19OsAVIPII5rx7wjpVvJ421PUCALHTnkkB7Zycf1NEkPLMwlyVqtTWWjv+CQz4h3Men2Wl+GrYgR2sQeXHdu39TWR4U8Xz6HL9lus3Gly/LLC/IUHqR/hWPrepSavrN3fSHJlkJHsOw/LFXNZg0GLTNPfSrmWW7df9JVxwpx/jUt63R7VPDQjh44erG/Nv67t36eRo+NfDUWkzw6jpx8zS7wbomHOwnnH+FcnXoXg+X/AISHwlqnhy4O54UM1sT1X2H4/wA68+YFWKkcg4NJ9zXBVJ+9RqO8ode66MStHRNau9B1KO9tGwy8Mp6OvcGs6ikd04RnFxkrpn0joWtWuv6XFfWrfKwwyd0buDWlXg/gTxM3h/WVjmc/YrghZQeins1e7hgyhgQQRkGtk7o/OsywLwlblXwvb+vIdRRRTPNErnvGeujQPDs9whAuJP3cI/2j3/DrXQ14v8UdYN74gWwRsxWi4IH988n+lKTsj0srwv1nExi9lqzhWZnYsxJYnJJ7mkoorE/RwooooAKKKKACvQPhTB5mp6nIpAkW22qT2JP/ANavP6774Z9Nd/69P8aqO55ua/7nNen5ok/4QTSdOka51/xFAq7izRwnk/1/StyL4paLaTLaR2t09pEoRJuCxx7HmvIjySScn1NJRzW2Mp5Wq/8AvM3K3yS+49P8QfFSO4spLbR7eVHkUqZ5cDaPYDvTk0rUNK+FjJZ2sst5qDeZOUGWVD/9b+dcJ4a0ptZ8Q2dkBlXcF/ZRyf5V1ninxxqOn+LJI9KudltaKIfLxlGI65H6fhTv1Zx1MHGlOOGwqWnvO/W21zz5lZGKspVh1BHSkr0RPEvhfxQoi8QaeLO6PH2qHpn3I5H45qjqnw5u0hN3ol1HqdoeRsI3gfyNTbselHHxi+TELkfnt8nsV/hrM0XjO3UHiSN1Ye2P/rVga5EsGvahEv3UuHA/76NdT8N9Pmj8WPNcRPELSF3cOuCOMVyOp3Au9Vu7gdJZncfiafQVJp42bj/LH82VaKKKk9IK9t+G3iA6roX2OdybizwmSeWTsf6V4lXS+BdYOj+KLZ2bEM58mT6HofzxVRep5ea4VYjDNLdao9/ooorU/OiG5nW1tZZ3OEiQuT7AZr5pv7t7/ULi7kJLzSM5/E17x47uzZ+DtQcHBdPLH/Ajj+VfP9RM+w4dpJQnV7uwUUUVmfUhRRRQAUUUUAFeg/DaGRLPXblkKwG22bz0zycVy3hvw9c+I9US1gG2JfmmlPRF/wAa6Hxf4htrWzXw1oZ2WMHyzSKeZW7jPpVLTU8rHSdd/VKe7tfyV/6scN3ooo/HHvUnqnoPgWJdF8O6t4mmXBVDDb57nvj8cCuAkkeaV5ZCS7sWYnuTXr+p+F7nVfAulado91biBAJHLkgSHHqPcmuTX4Xa+W+drRF/vGX/AOtVtPY8DCY7D89SrUmlJv8ABaI4qvQfh7YXVgs2v3lzLa6XApO0sQJT9O4q7pPgrw5peoQR6xrEF1dOwCW6thc+h7n8cVjfELVdUbVDpM8ItLGD/Uwx/ddeze9K1tWXVxSxsvq1HZ7t9vK+/wChcv8A4mte6fqFuNPWOacFIp0PIQ/3vfFefUUUm29z08PhKWHTVJWuFFFFI6QpQxVgynBHII7UlFAH0f4c1H+1fD1jenlpIhu/3hwf1rUxXDfCu7M/hZoCcmCZgPoea7rNbpn5fjKKpYidNdGzhfirKU8KpGD9+dQfyJrxWvY/i1/yL1r/ANfA/ka8crOW59nkKtg/mwoooqD3QooooAKu6Vpd1rOoxWVpGXlkP4KO5PtVe2t5ru5jt7eNpJZGCqqjkmvRZ5bb4daD9mgKS6/eJmR+vlD/AD+dNI4sViXTtTpq85bL9X5Ih8Qapa+ENH/4RvRXBu3H+mXK9fcfX+QrzunSSPLI0kjl3Y5ZieSabQ3cvC4ZUIWveT3fdhRRRSOo9F8EXZ1zw5qPhqaVhKqGW1YHBHsPocfnXCzXl+jvDLdXGUJVlMh4IrS8HX7ab4rsJwcKZBG30bip/HdiNP8AGF9GowkjCVR/vDP881XQ8qlCNLGTp20kub57P9DnAzB94Y7gcg55zXoty48a+ATdOAdV0rhyOrp/9cfqK85rs/hpeeV4layc5hvImjZT3PUf1pR7GmYwape2j8UNV+q+aOMoq5qtr9h1a7tf+eUrJ+RqnSO+MlKKktmFFFFBQUUUUAeqfCCUmHU4c8BkYD8xXp1eVfCD/j41P02J/M16tW0dj89zlWxs/l+Rw3xVhMnhRJB/yznUn8civFa+gPHVp9s8HaggGWRPMH/ATmvn+onufQ8PzTwzj2YUUUVB9CFKqlmCqCWJwAO9JXf+FtFtNA0w+KNdX5VH+iQMOXPY4/l+dNK5zYnExoQ5nq3su7Luj6bF4G0T+17y3afWrlcW1uFJKA/55/KvPNQvLq+v5rm9dmuHYly3UH0rubb4q6i19H9qtLX7OZPmIU7lTPbnrirGt+Apdd1eTVNHu7U2N1iQsXxsJ61TV1oeRQrSw1Vzxis5favdf4fL9TzWitjxJ4euPDep/ZJ3EisoZJVGAw9qy44JpY5JI4ndIxl2VchR71Fj3IVYVIKcXdMjooooNCa0cx3kDjqsikfnXZ/FNB/wkVrL3ktEJ/M1xtlGZr+3jA5eRR+tdj8UpAfEtvCDzFaop/Mmmtjza3++0vSX6HD10PgfcPGembevm/0rnq7D4a2fn+KluW4jtY2kZvTjAoW5tjpKOGqN9mZnjQKPGWq7ennn+QrCq7rF39u1q9us5EszMPpmqVD3NsPFwowi90l+QUUUUjYKKKKAPVPhDERDqU2OCyLn869PxXD/AAsszB4VacjmeZmHuBx/jXcYraOx+cZrU58ZUfnb7iK4gW5tZYJBlJEKEexGK+atQs30/UbmzkGHhkZD+Br6arxj4paObPXk1BF/dXa/MR/fHB/TFKa0PR4fxChWlSf2l+KODooorI+2O38D+Elvy2s6nG39nW2XVNuTKR7dx/Oszxbrl/4g1Ms9vNDaxfLBCUI2j1x61FpfjTXtIhSC1viYUGFjkUMoFbS/FPWcfvLOwkPqYz/jVXVrHjSpYqOIdZxUu2trL7t2cjb6VqF24W3sbiQk4G2M1a1XTdU8PXAsrxmiZlD7Uk4IP0r0nwd4t1jX764multbfTrSMvKY48ZPYZJ+przjXNQufEniC5u445JTI+I1VSxCjgdKGlY0oYmvUryp1IpKK11vq9jobDx7ayaZDY6/pCaiIBiOU43Y981s6J4zhv8AUItJ0jwzElrMcTouM7T3OBj8653SPh7ql6ouNQK6dZjlpJjg4+n+Ndz4cuNAtLbU9P0AM721uXku+7tz3/D6VSv1PLxv1OMZeyjzPyb5Vfrvb7jjfHlh4b0ec2Wl27fbWO6VvNJWIegHrXE06SR5ZWkkcu7HLMxySabUN3PocNRdGmoSk5Puzo/AunHUvF1km3KRN5z+wXn+eKi8Z6gNS8WahOpygk8tfovFdP4cjHhTwTe69cDbd3q+VbKeuO3+P4V52SzuScszH8zT2VjkoP22KnV6R91fmxO9eixRf8IZ8P5Xl+XVNV+VU7on/wBYfzqDw14Wg0m1HiHxJiG2i+aG3f70jdsj+lcz4l8QXHiPVnvJvljHyxR9kX0o2IqS+uVVThrCLvJ92tl/mY9FFFSesFFFFABSqpdgqjJJwAO9JXTeA9HOseKbcMuYbc+dJ+HQfnimlcyr1VRpyqS2R7V4d07+yvD9jZEYaKIBv97qf1JrToorY/LZyc5OUt2Fc/4x0Ia/4entlA+0J+8hP+0O349K6CigqlUlSmpx3R8vOjRuyOCrKcEHsabXoXxM8Lmxvf7YtI/9HnP74Afcf1/H+dee1i1Zn6ZhcTHE0lVh1CiiikdJ2vhzxvZaBobac2kfafMJaZmcYfPtjpip5fidcQxlNL0iysx2OMkfliuDop8zPPlluGlNzlG7fmzU1XxFq2tPm/vZJV7IDhR+A4rqvhn9zXv+vT/GuBrvvhmMrruBn/RP8acdzLMYRhg5RgrLT80cD3rqvBPhKXxFqIlmQrp8JzI/98/3RU3h3wLcX6f2hqzfYNMQbmeT5WYe2en1ruptcsLfwFqNxpcJt7GEGC1YcGQ9Nw/E/pTS6swx+YO3ssPrJu1+iv8AqVfFnhi61u+j+1alZ6fpVqu2FC3OO5x0zWGl/wCDvCHz2CNq+or0lf7in27D8K8+eaWU5kldz6sxNMpXNKWWyVNU6lRuK6LT7+rNXXPEOoeILvz76bIH3I14VB7CsqiipPVp0404qMFZIKKKKCwooooAK9v+HHh86RoX2udNtzeYcgjlV7D+tee+AvDDa/rCzTofsVsQ0hPRj2WvdQAAABgAYxWkF1Pk8/xqt9Wh6v8AyHUUUVZ8kFFFFAFa9srfULOW0uYxJDKpVlPcV4J4s8L3HhrUzE2XtZCTDL6j0PvX0HWfrGj2muadJZXkYaN+h7qfUe9Jq56mW5jLB1NdYvdfqfNlFb/ifwpe+GrwpMpktmP7qcDhvY+hrArHY/QaVWFWCnB3TCiiig0CvQvhXN9nm1mbbuKWytg98E157XoHwvaASaz9plWKJrZQzscAZJ9aqO55ua64Ofy/NGab/XviDrMdk0hWHOTHHxHEvqfWrPjzVrWOK18N6Yw+yWIAkZejv/8AW5/E1Y1TxVpnh/TX0fwqnzOMTXp6t9K4EksSWJJJySe9DZjhqHtJxqOPLCPwx/V/oJRRRUnsBRRRQAUUUUAFaehaHd6/qcdlapyeXc9EXuTRoeg33iC/W1soyf77n7qD1Jr3bw14bs/DenC2txulbmWYjlz/AIVUY3PHzPM4YSHLHWb/AA82WdE0a20LS4rG1XCIPmbux7k1o0UVqfATnKcnKTu2LRRRQSFFFFABRRRQBWvbG21G0e2u4VmhcYZWHWvI/FPw1u9OL3ekBrm16mLq6f4ivZKKTSZ3YPH1sJK9N6duh8usrIxVgVIOCCOlJX0Br3gnR9fBkmh8m4P/AC2i4P49jXmusfDLWbBmeyC30XbZw/5Gs3Fo+ywuc4avpJ8r8/8AM4mlDMFKgkA9QD1qS4tZ7SQx3EEkTjqsikH9aiqT2E01dBRRRQMKKKKACinxxSTOEijd3PRVGSa6vSPh1ruplXlhFnCed03Bx/u9aaTZhWxFKir1JJHI12Phj4fajrhW4ula0suu5h8zj2H9a9E0D4e6PopWaRPtdyv/AC0lHAPsOldaMAYHSrUO58xjc/uuTDL5v9EUdJ0ax0OyW0sYRHGOp7sfUnuav0UVZ8rKTm3KTu2LRRRQIKKKKACiiigAooooAKKKKACiiigCtd2FpfR7Lq2imX0kQNXO3nw78N3hJ+xGFj3hcr+nSiiixtTxFWk/3cmvRmRN8JdJY5ivLqP6kGq//CobLP8AyFJ8f7goopcqO1ZrjEv4j/Ami+Emlqf3l9dOPQYFatp8NvDlqQWtnnI/56yEj9MUUUWRnPMsXPeo/wAjorLSrDTl22dnDAP9hADVyiimcLk5O7YtFFFAgooooAKKKKACiiigD//Z
+    text: 'Welcome! You''ll now have a conversation with your partner.
+
+
+      <-- FIRST, YOUR PARTNER WILL SAY SOMETHING ABOUT THIS IMAGE TO YOUR LEFT.
+
+
+      Be sure to talk about this image a little bit before discussing other things!
+
+      '
+  - episode_done: false
+    id: Speaker 2
+    text: I must learn that bird's name!
+    text_candidates:
+    - I must learn that bird's name!
+    - My, aren't you a pretty bird?
+  - episode_done: false
+    id: Speaker 1
+    task_data: {}
+    text: Response 1
+  - episode_done: false
+    id: Speaker 2
+    text: My, aren't you a pretty bird?
+    text_candidates:
+    - My, aren't you a pretty bird?
+    - I must learn that bird's name!
+  - episode_done: false
+    id: Speaker 1
+    task_data: {}
+    text: Response 2
+  - episode_done: false
+    id: Speaker 2
+    text: My, aren't you a pretty bird?
+    text_candidates:
+    - My, aren't you a pretty bird?
+    - I must learn that bird's name!
+  - episode_done: false
+    id: Speaker 1
+    task_data: {}
+    text: Response 3
+  - episode_done: false
+    id: Speaker 2
+    text: My, aren't you a pretty bird?
+    text_candidates:
+    - My, aren't you a pretty bird?
+    - I must learn that bird's name!
+  - episode_done: false
+    id: Speaker 1
+    task_data: {}
+    text: Response 4
+  - episode_done: false
+    id: Speaker 2
+    text: My, aren't you a pretty bird?
+    text_candidates:
+    - My, aren't you a pretty bird?
+    - I must learn that bird's name!
+  - episode_done: false
+    id: Speaker 1
+    task_data: {}
+    text: Response 5
+  - episode_done: false
+    id: Speaker 2
+    text: My, aren't you a pretty bird?
+    text_candidates:
+    - My, aren't you a pretty bird?
+    - I must learn that bird's name!
+  - episode_done: false
+    id: Speaker 1
+    task_data: {}
+    text: Response 6
+  - episode_done: false
+    id: Speaker 2
+    text: My, aren't you a pretty bird?
+    text_candidates:
+    - My, aren't you a pretty bird?
+    - I must learn that bird's name!
+  - episode_done: false
+    id: Speaker 1
+    task_data:
+      final_rating: 0
+    text: ''
+  - data: {}
+    final_chat_data:
+      acceptability_violations:
+      - null
+      assignment_ids:
+      - '1'
+      bad_workers: []
+      dialog:
+      - agent_idx: null
+        episode_done: false
+        eval_labels:
+        - I must learn that bird's name!
+        id: SYSTEM
+        image_id: 2923e28b6f588aff2d469ab2cccfac57
+        label_candidates:
+        - I must learn that bird's name!
+        - My, aren't you a pretty bird?
+        text: Obsessive
+      - agent_idx: 1
+        episode_done: false
+        id: Speaker 2
+        text: I must learn that bird's name!
+      - agent_idx: 0
+        id: Speaker 1
+        text: Response 1
+      - agent_idx: 1
+        id: Speaker 2
+        text: My, aren't you a pretty bird?
+      - agent_idx: 0
+        id: Speaker 1
+        text: Response 2
+      - agent_idx: 1
+        id: Speaker 2
+        text: My, aren't you a pretty bird?
+      - agent_idx: 0
+        id: Speaker 1
+        text: Response 3
+      - agent_idx: 1
+        id: Speaker 2
+        text: My, aren't you a pretty bird?
+      - agent_idx: 0
+        id: Speaker 1
+        text: Response 4
+      - agent_idx: 1
+        id: Speaker 2
+        text: My, aren't you a pretty bird?
+      - agent_idx: 0
+        id: Speaker 1
+        text: Response 5
+      - agent_idx: 1
+        id: Speaker 2
+        text: My, aren't you a pretty bird?
+      - agent_idx: 0
+        id: Speaker 1
+        text: Response 6
+      - agent_idx: 1
+        final_rating: 0
+        id: Speaker 2
+        text: My, aren't you a pretty bird?
+      hit_ids:
+      - '1'
+      image_idx: 0
+      task_description:
+        annotations_config: null
+        model_nickname: transresnet_multimodal
+        model_opt:
+          activation: relu
+          additional_layer_dropout: 0.2
+          allow_missing_init_opts: false
+          attention_dropout: 0.2
+          batch_length_range: 5
+          batch_sort_cache_type: pop
+          batch_sort_field: text
+          batchsize: 500
+          bpe_add_prefix_space: null
+          bpe_debug: false
+          bpe_dropout: null
+          bpe_merge: null
+          bpe_vocab: null
+          checkpoint_activations: false
+          context_encoder_embedding_type: null
+          datasplit: 200k
+          datatype: train
+          dict_build_first: true
+          dict_class: null
+          dict_endtoken: __end__
+          dict_include_test: false
+          dict_include_valid: false
+          dict_initpath: null
+          dict_language: english
+          dict_loaded: true
+          dict_lower: false
+          dict_max_ngram_size: -1
+          dict_maxexs: -1
+          dict_maxtokens: -1
+          dict_minfreq: 0
+          dict_nulltoken: __null__
+          dict_starttoken: __start__
+          dict_textfields: text,labels
+          dict_tokenizer: re
+          dict_unktoken: __unk__
+          display_examples: false
+          download_path: null
+          dropout: 0.0
+          dynamic_batching: null
+          embedding_size: 300
+          embedding_type: null
+          embeddings_scale: true
+          encode_dialogue_history: true
+          encode_image: true
+          encode_personality: true
+          eval_batchsize: null
+          evaltask: null
+          ffn_size: 1200
+          fixed_cands_path: null
+          freeze_patience: -1
+          full_cand_set: false
+          full_train_file: false
+          hidden_dim: 500
+          hide_labels: false
+          image_cropsize: 224
+          image_features: resnet
+          image_features_dim: 2048
+          image_mode: resnet152
+          image_size: 256
+          include_image: true
+          include_persona: true
+          include_resnet_features: false
+          include_uru_features: false
+          init_model: resnet152
+          init_opt: null
+          is_debug: false
+          learn_positional_embeddings: false
+          learningrate: 0.0005
+          load_context_encoder_from: null
+          load_encoder_from: null
+          log_every_n_secs: 2
+          loglevel: info
+          max_train_time: -1
+          model: projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent
+          model_parallel: false
+          multimodal: false
+          multimodal_combo: sum
+          multitask_weights:
+          - 1
+          n_decoder_layers: -1
+          n_encoder_layers: -1
+          n_heads: 6
+          n_layers: 4
+          n_positions: 1000
+          n_segments: 0
+          no_cuda: false
+          num_cands: '100'
+          num_epochs: -1
+          num_layers_all: 2
+          num_layers_image_encoder: 1
+          num_layers_multimodal_encoder: 1
+          num_layers_text_encoder: 1
+          num_test_labels: 1
+          numthreads: 1
+          numworkers: 4
+          one_cand_set: false
+          output_scaling: 1.0
+          personalities_path: null
+          personality_override: null
+          pretrained: true
+          pytorch_context_length: -1
+          pytorch_datapath: null
+          pytorch_include_labels: true
+          pytorch_preprocess: false
+          pytorch_teacher_batch_sort: false
+          pytorch_teacher_dataset: null
+          pytorch_teacher_task: null
+          relu_dropout: 0.2
+          save_after_valid: false
+          save_every_n_secs: -1
+          share_encoder: false
+          share_word_embeddings: true
+          short_final_eval: false
+          show_advanced_args: false
+          shuffle: false
+          task: internal:comment_battle:imageDialog
+          tensorboard_comment: ''
+          tensorboard_log: false
+          tensorboard_metrics: null
+          tensorboard_tag: null
+          truncate: 64
+          use_provided_candidates: true
+          validation_cutoff: 1.0
+          validation_every_n_epochs: 1.0
+          validation_every_n_secs: -1
+          validation_max_exs: -1
+          validation_metric: accuracy
+          validation_metric_mode: max
+          validation_patience: 10
+          validation_share_agent: false
+          variant: aiayn
+          verbose: false
+      workers:
+      - --NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox
+    packet_type: null
+  - WORLD_DATA:
+      custom_data:
+        acceptability_violations:
+        - null
+        assignment_ids:
+        - '1'
+        bad_workers: []
+        dialog:
+        - agent_idx: null
+          episode_done: false
+          eval_labels:
+          - I must learn that bird's name!
+          id: SYSTEM
+          image_id: 2923e28b6f588aff2d469ab2cccfac57
+          label_candidates:
+          - I must learn that bird's name!
+          - My, aren't you a pretty bird?
+          text: Obsessive
+        - agent_idx: 1
+          episode_done: false
+          id: Speaker 2
+          text: I must learn that bird's name!
+        - agent_idx: 0
+          id: Speaker 1
+          text: Response 1
+        - agent_idx: 1
+          id: Speaker 2
+          text: My, aren't you a pretty bird?
+        - agent_idx: 0
+          id: Speaker 1
+          text: Response 2
+        - agent_idx: 1
+          id: Speaker 2
+          text: My, aren't you a pretty bird?
+        - agent_idx: 0
+          id: Speaker 1
+          text: Response 3
+        - agent_idx: 1
+          id: Speaker 2
+          text: My, aren't you a pretty bird?
+        - agent_idx: 0
+          id: Speaker 1
+          text: Response 4
+        - agent_idx: 1
+          id: Speaker 2
+          text: My, aren't you a pretty bird?
+        - agent_idx: 0
+          id: Speaker 1
+          text: Response 5
+        - agent_idx: 1
+          id: Speaker 2
+          text: My, aren't you a pretty bird?
+        - agent_idx: 0
+          id: Speaker 1
+          text: Response 6
+        - agent_idx: 1
+          final_rating: 0
+          id: Speaker 2
+          text: My, aren't you a pretty bird?
+        hit_ids:
+        - '1'
+        image_idx: 0
+        task_description:
+          annotations_config: null
+          model_nickname: transresnet_multimodal
+          model_opt:
+            activation: relu
+            additional_layer_dropout: 0.2
+            allow_missing_init_opts: false
+            attention_dropout: 0.2
+            batch_length_range: 5
+            batch_sort_cache_type: pop
+            batch_sort_field: text
+            batchsize: 500
+            bpe_add_prefix_space: null
+            bpe_debug: false
+            bpe_dropout: null
+            bpe_merge: null
+            bpe_vocab: null
+            checkpoint_activations: false
+            context_encoder_embedding_type: null
+            datasplit: 200k
+            datatype: train
+            dict_build_first: true
+            dict_class: null
+            dict_endtoken: __end__
+            dict_include_test: false
+            dict_include_valid: false
+            dict_initpath: null
+            dict_language: english
+            dict_loaded: true
+            dict_lower: false
+            dict_max_ngram_size: -1
+            dict_maxexs: -1
+            dict_maxtokens: -1
+            dict_minfreq: 0
+            dict_nulltoken: __null__
+            dict_starttoken: __start__
+            dict_textfields: text,labels
+            dict_tokenizer: re
+            dict_unktoken: __unk__
+            display_examples: false
+            download_path: null
+            dropout: 0.0
+            dynamic_batching: null
+            embedding_size: 300
+            embedding_type: null
+            embeddings_scale: true
+            encode_dialogue_history: true
+            encode_image: true
+            encode_personality: true
+            eval_batchsize: null
+            evaltask: null
+            ffn_size: 1200
+            fixed_cands_path: null
+            freeze_patience: -1
+            full_cand_set: false
+            full_train_file: false
+            hidden_dim: 500
+            hide_labels: false
+            image_cropsize: 224
+            image_features: resnet
+            image_features_dim: 2048
+            image_mode: resnet152
+            image_size: 256
+            include_image: true
+            include_persona: true
+            include_resnet_features: false
+            include_uru_features: false
+            init_model: resnet152
+            init_opt: null
+            is_debug: false
+            learn_positional_embeddings: false
+            learningrate: 0.0005
+            load_context_encoder_from: null
+            load_encoder_from: null
+            log_every_n_secs: 2
+            loglevel: info
+            max_train_time: -1
+            model: projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent
+            model_parallel: false
+            multimodal: false
+            multimodal_combo: sum
+            multitask_weights:
+            - 1
+            n_decoder_layers: -1
+            n_encoder_layers: -1
+            n_heads: 6
+            n_layers: 4
+            n_positions: 1000
+            n_segments: 0
+            no_cuda: false
+            num_cands: '100'
+            num_epochs: -1
+            num_layers_all: 2
+            num_layers_image_encoder: 1
+            num_layers_multimodal_encoder: 1
+            num_layers_text_encoder: 1
+            num_test_labels: 1
+            numthreads: 1
+            numworkers: 4
+            one_cand_set: false
+            output_scaling: 1.0
+            override:
+              attention_dropout: 0.2
+              ffn_size: 1200
+              image_mode: resnet152
+              model_parallel: false
+              n_positions: 1000
+              relu_dropout: 0.2
+            personalities_path: null
+            personality_override: null
+            pretrained: true
+            pytorch_context_length: -1
+            pytorch_datapath: null
+            pytorch_include_labels: true
+            pytorch_preprocess: false
+            pytorch_teacher_batch_sort: false
+            pytorch_teacher_dataset: null
+            pytorch_teacher_task: null
+            relu_dropout: 0.2
+            save_after_valid: false
+            save_every_n_secs: -1
+            share_encoder: false
+            share_word_embeddings: true
+            short_final_eval: false
+            show_advanced_args: false
+            shuffle: false
+            task: internal:comment_battle:imageDialog
+            tensorboard_comment: ''
+            tensorboard_log: false
+            tensorboard_metrics: null
+            tensorboard_tag: null
+            truncate: 64
+            use_provided_candidates: true
+            validation_cutoff: 1.0
+            validation_every_n_epochs: 1.0
+            validation_every_n_secs: -1
+            validation_max_exs: -1
+            validation_metric: accuracy
+            validation_metric_mode: max
+            validation_patience: 10
+            validation_share_agent: false
+            variant: aiayn
+            verbose: false
+        workers:
+        - --NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox
+      worker_data: {}
+    id: SUBMIT_WORLD_DATA
+    text: ''

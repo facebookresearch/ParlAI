@@ -21,6 +21,9 @@ from parlai.zoo.image_chat.transresnet_multimodal import (
     download as download_transresnet,
 )
 
+import pytest
+from pytest_regressions.data_regression import DataRegressionFixture
+
 
 # Inputs
 AGENT_DISPLAY_IDS = ('Speaker 1',)
@@ -52,22 +55,22 @@ try:
         Test the model image chat crowdsourcing task.
         """
 
-        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
-        #  regressions. Also use a pytest.fixture to call self._setup() and
-        #  self._teardown(), like the other tests use, instead of calling them with
-        #  self.setUp() and self.tearDown()
-
-        def setUp(self) -> None:
+        @pytest.fixture(scope="function")
+        def setup_teardown(self):
+            """
+            Call code to set up and tear down tests.
+            """
             self._setup()
-            self.message_sleep_time = 20
-            # Wait for the message with the encoded image to arrive
-
-        def tearDown(self) -> None:
+            yield self.operator
+            # All code after this will be run upon teardown
             self._teardown()
 
         @testing_utils.retry(ntries=3)
-        def test_base_task(self):
+        def test_base_task(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
 
+            self.operator = setup_teardown
             with testing_utils.tempdir() as tmpdir:
 
                 # Paths
@@ -149,6 +152,7 @@ try:
                     form_messages=FORM_MESSAGES,
                     form_task_data=FORM_TASK_DATA,
                     expected_states=(expected_state,),
+                    data_regression=data_regression,
                 )
 
 except ImportError:
