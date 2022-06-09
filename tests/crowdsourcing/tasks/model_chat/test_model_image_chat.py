@@ -151,18 +151,6 @@ try:
                     expected_states=(expected_state,),
                 )
 
-                # Check that the contents of the chat data file are as expected
-                # with open(expected_chat_data_path) as f:
-                #     expected_chat_data = json.load(f)
-                # results_path = list(
-                #     glob.glob(os.path.join(chat_data_folder, '*/*_*_*_sandbox.json'))
-                # )[0]
-                # with open(results_path) as f:
-                #     actual_chat_data = json.load(f)
-                # self._check_final_chat_data(
-                #     actual_value=actual_chat_data, expected_value=expected_chat_data
-                # )
-
 except ImportError:
     pass
 
