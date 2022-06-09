@@ -312,6 +312,7 @@
                             "bpe_merge": null,
                             "bpe_add_prefix_space": null,
                             "bpe_dropout": null,
+                            "checkpoint_activations": false,
                             "dict_loaded": true
                         }
                     },
