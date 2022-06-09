@@ -91,9 +91,6 @@ try:
                 expected_states_folder = os.path.join(
                     os.path.dirname(os.path.abspath(__file__)), 'expected_states'
                 )
-                expected_chat_data_path = os.path.join(
-                    expected_states_folder, 'final_chat_data.json'
-                )
                 expected_state_path = os.path.join(expected_states_folder, 'state.json')
                 model_opt_path = os.path.join(tmpdir, 'model_opts.yaml')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
@@ -134,18 +131,6 @@ fixed_response: >
                     form_task_data=FORM_TASK_DATA,
                     expected_states=(expected_state,),
                     agent_task_data=AGENT_TASK_DATA,
-                )
-
-                # Check that the contents of the chat data file are as expected
-                with open(expected_chat_data_path) as f:
-                    expected_chat_data = json.load(f)
-                results_path = list(
-                    glob.glob(os.path.join(chat_data_folder, '*/*_*_*_sandbox.json'))
-                )[0]
-                with open(results_path) as f:
-                    actual_chat_data = json.load(f)
-                self._check_final_chat_data(
-                    actual_value=actual_chat_data, expected_value=expected_chat_data
                 )
 
         def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
