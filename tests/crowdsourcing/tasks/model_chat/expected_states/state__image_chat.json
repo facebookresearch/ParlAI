@@ -312,14 +312,6 @@
                             "bpe_merge": null,
                             "bpe_add_prefix_space": null,
                             "bpe_dropout": null,
-                            "override": {
-                                "ffn_size": 1200,
-                                "attention_dropout": 0.2,
-                                "relu_dropout": 0.2,
-                                "n_positions": 1000,
-                                "image_mode": "resnet152",
-                                "model_parallel": false
-                            },
                             "dict_loaded": true
                         }
                     },
@@ -528,6 +520,14 @@
                                     "bpe_merge": null,
                                     "bpe_add_prefix_space": null,
                                     "bpe_dropout": null,
+                                    "override": {
+                                        "model_parallel": false,
+                                        "ffn_size": 1200,
+                                        "attention_dropout": 0.2,
+                                        "relu_dropout": 0.2,
+                                        "n_positions": 1000,
+                                        "image_mode": "resnet152"
+                                    },
                                     "dict_loaded": true
                                 }
                             },
