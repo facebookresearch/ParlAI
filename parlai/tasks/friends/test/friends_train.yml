@@ -1,0 +1,60 @@
+acts:
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends
+    labels:
+    - 'Ross Geller: Hi!'
+    text: 'Phoebe Buffay: Oh hey! Wait up!'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends
+    labels:
+    - 'Phoebe Buffay: Congratulations! I didn''t want to say anything in front of
+      Joey ''cause I didn''t know if he knew yet.'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends
+    labels:
+    - 'Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends
+    labels:
+    - 'Phoebe Buffay: No! No, that you and Rachel are engaged!'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends
+    labels:
+    - 'Ross Geller: What?'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.
+
+      Phoebe Buffay: No! No, that you and Rachel are engaged!'
+num_episodes: 2427
+num_examples: 46610
