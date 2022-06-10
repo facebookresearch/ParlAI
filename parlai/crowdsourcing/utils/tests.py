@@ -344,6 +344,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         for actual_state in actual_states:
             filtered_actual_states.append(self._filter_agent_state_data(actual_state))
 
+        # we save one yml file per unit test, thus we want to concat all of the
+        # chat data into one file to be checked at once
         actual_states_concat = []
         for actual_state in filtered_actual_states:
             actual_states_concat.append(
