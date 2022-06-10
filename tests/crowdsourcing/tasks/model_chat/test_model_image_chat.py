@@ -70,6 +70,7 @@ try:
             self.operator = setup_teardown
             with testing_utils.tempdir() as tmpdir:
 
+                # Paths
                 parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
                 sample_image_path = os.path.join(
