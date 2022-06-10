@@ -281,7 +281,6 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         agent_messages: List[Sequence[str]],
         form_messages: Sequence[str],
         form_task_data: Sequence[Dict[str, Any]],
-        expected_states: Sequence[Dict[str, Any]],
         data_regression: DataRegressionFixture,
         agent_task_data: Optional[List[Sequence[Dict[str, Any]]]] = None,
     ):
@@ -342,23 +341,29 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         # Get and filter actual messages
         time.sleep(self.message_sleep_time)
         actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
-        if len(actual_states) != len(expected_states):
-            raise ValueError(
-                f'There are {len(actual_states):d} agent states, instead of {len(expected_states):d} as expected!'
-            )
         filtered_actual_states = []
         for actual_state in actual_states:
             filtered_actual_states.append(self._filter_agent_state_data(actual_state))
 
+        actual_states_concat = []
         for actual_state in filtered_actual_states:
-            clean_actual_state = self._remove_non_deterministic_keys(actual_state)
-            data_regression.check(clean_actual_state)
+            actual_states_concat.append(
+                self._remove_non_deterministic_keys(actual_state)
+            )
+
+        data_regression.check(actual_states_concat)
 
     def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
         """
         Allow for subclasses to delete certain keys in the actual state that will change
         on each run.
         """
+        # Remove non-deterministic keys from each message
+        for message in actual_state['outputs']['messages']:
+            for field in ['update_id', 'timestamp']:
+                if field in message:
+                    del message[field]
+
         return actual_state
 
     def _filter_agent_state_data(self, agent_state: dict) -> dict:
@@ -374,27 +379,6 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             'outputs': {**agent_state['outputs'], 'messages': filtered_messages},
         }
         return filtered_agent_state
-
-    def _check_output_key(
-        self: Union['AbstractParlAIChatTest', unittest.TestCase],
-        key: str,
-        actual_value: Any,
-        expected_value: Any,
-    ):
-        # TODO: remove typing of self after switching to pytest regressions, in which we
-        #  no longer inherit from TestCase
-        """
-        Check the actual and expected values, given that they come from the specified
-        key of the output message dictionary.
-
-        This function can be extended to handle special cases for subclassed Mephisto
-        tasks.
-        """
-        if actual_value != expected_value:
-            raise ValueError(
-                f'The value of ["{key}"] is supposed to be {expected_value} but is '
-                f'actually {actual_value}!'
-            )
 
     def _send_agent_message(
         self, agent_id: str, agent_display_id: str, text: str, task_data: Dict[str, Any]
