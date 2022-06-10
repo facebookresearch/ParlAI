@@ -73,16 +73,6 @@ try:
             self.operator = setup_teardown
             with testing_utils.tempdir() as tmpdir:
 
-                # Paths
-                expected_states_folder = os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), 'expected_states'
-                )
-                expected_chat_data_path = os.path.join(
-                    expected_states_folder, 'final_chat_data__image_chat.json'
-                )
-                expected_state_path = os.path.join(
-                    expected_states_folder, 'state__image_chat.json'
-                )
                 parlai_data_folder = os.path.join(tmpdir, 'parlai_data')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
                 sample_image_path = os.path.join(
@@ -142,16 +132,12 @@ try:
                 self._get_live_run().task_runner.task_run.get_blueprint().use_onboarding = (
                     False
                 )
-                # Don't require onboarding for this test agent
-                with open(expected_state_path) as f:
-                    expected_state = json.load(f)
                 self._test_agent_states(
                     num_agents=1,
                     agent_display_ids=AGENT_DISPLAY_IDS,
                     agent_messages=AGENT_MESSAGES,
                     form_messages=FORM_MESSAGES,
                     form_task_data=FORM_TASK_DATA,
-                    expected_states=(expected_state,),
                     data_regression=data_regression,
                 )
 

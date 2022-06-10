@@ -133,7 +133,6 @@ fixed_response: >
                     agent_messages=AGENT_MESSAGES,
                     form_messages=FORM_MESSAGES,
                     form_task_data=FORM_TASK_DATA,
-                    expected_states=(expected_state,),
                     agent_task_data=AGENT_TASK_DATA,
                     data_regression=data_regression,
                 )
