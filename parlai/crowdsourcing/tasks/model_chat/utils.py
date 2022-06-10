@@ -339,7 +339,7 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
         actual_state = super()._remove_non_deterministic_keys(actual_state)
 
         for message in actual_state['outputs']['messages']:
-            if 'final_chat_data' in message.keys():
+            if 'final_chat_data' in message:
                 value = message['final_chat_data']
                 # delete 'modle_file' from 'task_description'
                 if 'model_file' in value['task_description'].keys():
