@@ -7,10 +7,7 @@
 End-to-end testing for the model chat crowdsourcing task.
 """
 
-import glob
-import json
 import os
-import unittest
 
 import parlai.utils.testing as testing_utils
 import pytest
@@ -124,9 +121,6 @@ fixed_response: >
                 self._get_live_run().task_runner.task_run.get_blueprint().use_onboarding = (
                     False
                 )
-                # Don't require onboarding for this test agent
-                with open(expected_state_path) as f:
-                    expected_state = json.load(f)
                 self._test_agent_states(
                     num_agents=1,
                     agent_display_ids=AGENT_DISPLAY_IDS,
@@ -148,6 +142,3 @@ fixed_response: >
 
 except ImportError:
     pass
-
-if __name__ == "__main__":
-    unittest.main()

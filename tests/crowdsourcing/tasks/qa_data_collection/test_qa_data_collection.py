@@ -7,9 +7,6 @@
 End-to-end testing for the QA data collection crowdsourcing task.
 """
 
-import json
-import os
-import unittest
 import pytest
 from pytest_regressions.data_regression import DataRegressionFixture
 
@@ -82,6 +79,3 @@ try:
 
 except ImportError:
     pass
-
-if __name__ == "__main__":
-    unittest.main()

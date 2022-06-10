@@ -8,7 +8,6 @@ End-to-end testing for the chat demo crowdsourcing task.
 """
 
 import os
-import unittest
 
 import parlai.utils.testing as testing_utils
 import pytest
@@ -49,7 +48,6 @@ FORM_RESPONSES = (
     ],
 )
 FORM_TASK_DATA = [{'form_responses': responses} for responses in FORM_RESPONSES]
-# TODO: move this all to a YAML file given the upcoming pytest regressions framework
 
 
 try:
@@ -123,6 +121,3 @@ try:
 
 except ImportError:
     pass
-
-if __name__ == "__main__":
-    unittest.main()

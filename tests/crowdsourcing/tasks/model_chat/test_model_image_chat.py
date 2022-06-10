@@ -7,11 +7,8 @@
 End-to-end testing for the model image chat crowdsourcing task.
 """
 
-import glob
-import json
 import os
 import pickle
-import unittest
 
 from PIL import Image
 
@@ -143,6 +140,3 @@ try:
 
 except ImportError:
     pass
-
-if __name__ == "__main__":
-    unittest.main()
