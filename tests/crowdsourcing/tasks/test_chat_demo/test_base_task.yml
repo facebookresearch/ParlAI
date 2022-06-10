@@ -1,0 +1,124 @@
+- inputs: {}
+  outputs:
+    final_submission:
+      final_data: {}
+    messages:
+    - episode_done: false
+      id: Chat Agent 1
+      task_data: {}
+      text: Hi! How are you?
+    - episode_done: false
+      id: Chat Agent 2
+      task_data: {}
+      text: I'm pretty good - you?
+    - episode_done: false
+      id: Chat Agent 1
+      task_data: {}
+      text: I'm okay - how was your weekend?
+    - episode_done: false
+      id: Chat Agent 2
+      task_data: {}
+      text: I was fine. Did you do anything fun?
+    - id: Coordinator
+      task_data:
+        respond_with_form:
+        - choices:
+          - Not at all
+          - A little
+          - Somewhat
+          - A lot
+          question: How much did you enjoy talking to this user?
+          type: choices
+        - choices:
+          - Definitely a bot
+          - Probably a bot
+          - Probably a human
+          - Definitely a human
+          question: Do you think this user is a bot or a human?
+          type: choices
+        - question: Enter any comment here
+          type: text
+      text: 'Please fill out the form to complete the chat:'
+    - episode_done: false
+      id: Chat Agent 1
+      task_data:
+        form_responses:
+        - question: How much did you enjoy talking to this user?
+          response: A lot
+        - question: Do you think this user is a bot or a human?
+          response: Definitely a human
+        - question: Enter any comment here
+          response: 'Yes'
+      text: 'How much did you enjoy talking to this user?: A lot
+
+        Do you think this user is a bot or a human?: Definitely a human
+
+        Enter any comment here: Yes
+
+        '
+    - WORLD_DATA:
+        example_key: example_value
+      id: SUBMIT_WORLD_DATA
+      text: ''
+- inputs: {}
+  outputs:
+    final_submission:
+      final_data: {}
+    messages:
+    - episode_done: false
+      id: Chat Agent 1
+      task_data: {}
+      text: Hi! How are you?
+    - episode_done: false
+      id: Chat Agent 2
+      task_data: {}
+      text: I'm pretty good - you?
+    - episode_done: false
+      id: Chat Agent 1
+      task_data: {}
+      text: I'm okay - how was your weekend?
+    - episode_done: false
+      id: Chat Agent 2
+      task_data: {}
+      text: I was fine. Did you do anything fun?
+    - id: Coordinator
+      task_data:
+        respond_with_form:
+        - choices:
+          - Not at all
+          - A little
+          - Somewhat
+          - A lot
+          question: How much did you enjoy talking to this user?
+          type: choices
+        - choices:
+          - Definitely a bot
+          - Probably a bot
+          - Probably a human
+          - Definitely a human
+          question: Do you think this user is a bot or a human?
+          type: choices
+        - question: Enter any comment here
+          type: text
+      text: 'Please fill out the form to complete the chat:'
+    - episode_done: false
+      id: Chat Agent 2
+      task_data:
+        form_responses:
+        - question: How much did you enjoy talking to this user?
+          response: Not at all
+        - question: Do you think this user is a bot or a human?
+          response: Definitely a bot
+        - question: Enter any comment here
+          response: 'No'
+      text: 'How much did you enjoy talking to this user?: Not at all
+
+        Do you think this user is a bot or a human?: Definitely a bot
+
+        Enter any comment here: No
+
+        '
+    - WORLD_DATA:
+        example_key: example_value
+      id: SUBMIT_WORLD_DATA
+      text: ''
