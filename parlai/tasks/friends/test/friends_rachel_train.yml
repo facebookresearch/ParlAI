@@ -1,17 +1,20 @@
 acts:
-- - episode_done: false
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
     id: friends:rachel
     labels:
     - 'Rachel Green: __SILENCE__'
     text: 'Phoebe Buffay: Oh hey! Wait up!'
-- - episode_done: false
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
     id: friends:rachel
     labels:
     - 'Rachel Green: __SILENCE__'
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!'
-- - episode_done: false
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
     id: friends:rachel
     labels:
     - 'Rachel Green: __SILENCE__'
@@ -21,7 +24,8 @@ acts:
 
       Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
       ''cause I didn''t know if he knew yet.'
-- - episode_done: false
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
     id: friends:rachel
     labels:
     - 'Rachel Green: __SILENCE__'
@@ -34,7 +38,8 @@ acts:
 
       Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
       although, he did eat a piece of plastic fruit earlier.'
-- - episode_done: false
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
     id: friends:rachel
     labels:
     - 'Rachel Green: __SILENCE__'

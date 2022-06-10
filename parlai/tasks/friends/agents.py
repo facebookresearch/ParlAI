@@ -51,8 +51,14 @@ class DefaultTeacher(DialogTeacher):
                     {"text": text, "speaker": speaker}
                 )
 
-        for conversation in conversations:
-            utterances = conversations[conversation]
+        for conversation_id in conversations:
+            utterances = conversations[conversation_id]
+            characters = set(
+                [u['speaker'] for u in utterances if u['speaker'] in self.characters]
+            )
+            characters_string = ','.join(
+                sorted(list(characters))
+            )  # sorted to ensure same order across runs
             last_utterance_index = len(utterances) - 1
 
             for index, utterance in enumerate(utterances):
@@ -82,11 +88,13 @@ class DefaultTeacher(DialogTeacher):
                     yield {
                         "text": prev_context,
                         "label": f'{speaker}: {text}',
+                        "characters": characters_string,
                     }, isConversationDone
                 elif self.use_silence_token:
                     yield {
                         "text": prev_context,
                         "label": f'{self.character}: {self.silence_token}',
+                        "characters": characters_string,
                     }, isConversationDone
 
     @classmethod
@@ -145,41 +153,41 @@ class DefaultTeacher(DialogTeacher):
 
 class AllCharactersTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'All'
         super().__init__(opt, shared)
-        self.character = 'All'
 
 
 class RachelTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'Rachel Green'
         super().__init__(opt, shared)
-        self.character = 'Rachel Green'
 
 
 class MonicaTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'Monica Geller'
         super().__init__(opt, shared)
-        self.character = 'Monica Geller'
 
 
 class PhoebeTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'Phoebe Buffay'
         super().__init__(opt, shared)
-        self.character = 'Phoebe Buffay'
 
 
 class JoeyTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'Joey Tribbiani'
         super().__init__(opt, shared)
-        self.character = 'Joey Tribbiani'
 
 
 class ChandlerTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'Chandler Bing'
         super().__init__(opt, shared)
-        self.character = 'Chandler Bing'
 
 
 class RossTeacher(DefaultTeacher):
     def __init__(self, opt, shared=None):
+        opt['character'] = 'Ross Geller'
         super().__init__(opt, shared)
-        self.character = 'Ross Geller'
