@@ -89,10 +89,6 @@ try:
             with testing_utils.tempdir() as tmpdir:
 
                 # Paths
-                expected_states_folder = os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)), 'expected_states'
-                )
-                expected_state_path = os.path.join(expected_states_folder, 'state.json')
                 model_opt_path = os.path.join(tmpdir, 'model_opts.yaml')
                 chat_data_folder = os.path.join(tmpdir, 'final_chat_data')
 
