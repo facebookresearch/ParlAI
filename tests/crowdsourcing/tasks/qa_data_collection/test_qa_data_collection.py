@@ -10,6 +10,8 @@ End-to-end testing for the QA data collection crowdsourcing task.
 import json
 import os
 import unittest
+import pytest
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
 # Inputs
@@ -31,29 +33,26 @@ try:
     from parlai.crowdsourcing.utils.frontend import build_task
     from parlai.crowdsourcing.utils.tests import AbstractParlAIChatTest
 
-    class TestQADataCollection(AbstractParlAIChatTest, unittest.TestCase):
+    class TestQADataCollection(AbstractParlAIChatTest):
         """
         Test the QA data collection crowdsourcing task.
         """
 
-        # TODO: remove the inheritance from unittest.TestCase once this test uses pytest
-        #  regressions. Also use a pytest.fixture to call self._setup() and
-        #  self._teardown(), like the other tests use, instead of calling them with
-        #  self.setUp() and self.tearDown()
-
-        def setUp(self) -> None:
+        @pytest.fixture(scope="function")
+        def setup_teardown(self):
+            """
+            Call code to set up and tear down tests.
+            """
             self._setup()
-
-        def tearDown(self) -> None:
+            yield self.operator
+            # All code after this will be run upon teardown
             self._teardown()
 
-        def test_base_task(self):
+        def test_base_task(
+            self, setup_teardown, data_regression: DataRegressionFixture
+        ):
 
-            # Paths
-            expected_states_folder = os.path.join(
-                os.path.dirname(os.path.abspath(__file__)), 'expected_states'
-            )
-            expected_state_path = os.path.join(expected_states_folder, 'state.json')
+            self.operator = setup_teardown
 
             # # Setup
 
@@ -72,16 +71,13 @@ try:
             )
             self._set_up_server(shared_state=shared_state)
 
-            # Check that the agent states are as they should be
-            with open(expected_state_path) as f:
-                expected_state = json.load(f)
             self._test_agent_states(
                 num_agents=1,
                 agent_display_ids=AGENT_DISPLAY_IDS,
                 agent_messages=AGENT_MESSAGES,
                 form_messages=FORM_MESSAGES,
                 form_task_data=FORM_TASK_DATA,
-                expected_states=(expected_state,),
+                data_regression=data_regression,
             )
 
 except ImportError:
