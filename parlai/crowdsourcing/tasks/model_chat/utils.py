@@ -341,8 +341,8 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
         for message in actual_state['outputs']['messages']:
             if 'final_chat_data' in message:
                 value = message['final_chat_data']
-                # delete 'modle_file' from 'task_description'
-                if 'model_file' in value['task_description'].keys():
+                # delete 'model_file' from 'task_description'
+                if 'model_file' in value['task_description']:
                     del value['task_description']['model_file']
                 # deleted unwanted fields from 'task_description''model_opt'
                 for field in [
@@ -353,11 +353,11 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
                     'parlai_home',
                     'starttime',
                 ]:
-                    if field in value['task_description']['model_opt'].keys():
+                    if field in value['task_description']['model_opt']:
                         del value['task_description']['model_opt'][field]
                 # delete 'update_id' from 'dialog'
                 for dialog in value['dialog']:
-                    if 'update_id' in dialog.keys():
+                    if 'update_id' in dialog:
                         del dialog['update_id']
 
         # TODO: in `self._check_output_key()`, there is other logic for ignoring
