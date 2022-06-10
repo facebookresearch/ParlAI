@@ -337,6 +337,8 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
 
     def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
 
+        actual_state = super()._remove_non_deterministic_keys(actual_state)
+
         for message in actual_state['outputs']['messages']:
             if 'final_chat_data' in message.keys():
                 value = message['final_chat_data']
@@ -358,12 +360,6 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
                 for dialog in value['dialog']:
                     if 'update_id' in dialog.keys():
                         del dialog['update_id']
-
-        # Remove non-deterministic keys from each message
-        for message in actual_state['outputs']['messages']:
-            for field in ['update_id', 'timestamp']:
-                if field in message:
-                    del message[field]
 
         # TODO: in `self._check_output_key()`, there is other logic for ignoring
         #  keys with non-deterministic values. Consolidate all of that logic here!
