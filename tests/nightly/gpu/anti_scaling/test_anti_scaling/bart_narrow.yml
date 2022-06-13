@@ -1,5 +1,5 @@
 dec_emb_loss: 0.0151884
-dec_hid_loss: 0.662957
+dec_hid_loss: 0.662956
 dec_self_attn_loss: 497.628
 enc_dec_attn_loss: 230.709
 enc_emb_loss: 0.0109334

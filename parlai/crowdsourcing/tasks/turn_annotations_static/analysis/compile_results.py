@@ -36,6 +36,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
+            '--results-folders', type=str, help='Comma-separated list of result folders'
+        )
+        # TODO: remove when switching to Mephisto's DataBrowser
+        parser.add_argument(
             '--num-subtasks',
             type=int,
             default=7,
@@ -63,7 +67,19 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
+
         self.use_none_all_good = 'none_all_good' in self.problem_buckets
+        if not self.use_problem_buckets:
+            raise ValueError(
+                'Problem buckets must be used when analyzing results from the static turn annotations task!'
+            )
+
+        if 'results_folders' in opt:
+            # TODO: remove when switching to Mephisto's DataBrowser
+            self.results_folders = opt['results_folders'].split(',')
+        else:
+            self.results_folders = None
+
         self.num_subtasks = opt['num_subtasks']
         self.num_annotations = opt['num_annotations']
         self.onboarding_in_flight_data_file = opt['onboarding_in_flight_data_file']
@@ -71,10 +87,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             self.onboarding_in_flight_data_file is not None
         )
         self.gold_annotations_file = opt.get('gold_annotations_file')
-        if not self.use_problem_buckets:
-            raise ValueError(
-                'Problem buckets must be used when analyzing results from the static turn annotations task!'
-            )
 
     def get_data_paths_mephisto(self, task_run_id_folder):
         """
