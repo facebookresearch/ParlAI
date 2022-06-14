@@ -8,12 +8,22 @@ import copy
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
 
+from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
+    STATIC_BLUEPRINT_TYPE,
+    STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
+)
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
+
+
+# Importing blueprint type strings to force registration of the blueprints; we're not
+# using the strings themselves
+_ = STATIC_BLUEPRINT_TYPE
+_ = STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE
 
 
 class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler):
@@ -35,10 +45,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     @classmethod
     def setup_args(cls):
         parser = super().setup_args()
-        parser.add_argument(
-            '--results-folders', type=str, help='Comma-separated list of result folders'
-        )
-        # TODO: remove when switching to Mephisto's DataBrowser
         parser.add_argument(
             '--num-subtasks',
             type=int,
@@ -74,12 +80,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 'Problem buckets must be used when analyzing results from the static turn annotations task!'
             )
 
-        if 'results_folders' in opt:
-            # TODO: remove when switching to Mephisto's DataBrowser
-            self.results_folders = opt['results_folders'].split(',')
-        else:
-            self.results_folders = None
-
         self.num_subtasks = opt['num_subtasks']
         self.num_annotations = opt['num_annotations']
         self.onboarding_in_flight_data_file = opt['onboarding_in_flight_data_file']
@@ -87,39 +87,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             self.onboarding_in_flight_data_file is not None
         )
         self.gold_annotations_file = opt.get('gold_annotations_file')
-
-    def get_data_paths_mephisto(self, task_run_id_folder):
-        """
-        Get all the individual folders with data from the <task_run_id> path we are
-        given as input.
-
-        In Mephisto the structure is:
-        /<project_id>/<task_run_id>/<assignment_id>/<agent_id>/
-
-        Side note: assignment_id == HIT ID
-        """
-        # TODO: replace direct folder access with a call to
-        #  mephisto.tools.data_browser.DataBrowser
-        read_folders = []
-        for assignment_id in os.listdir(task_run_id_folder):
-            if assignment_id in ['onboarding', 'reservations', 'build', '.', '..']:
-                continue
-            assignment_folder = os.path.join(task_run_id_folder, assignment_id)
-            if os.path.isdir(assignment_folder):
-                if len(os.listdir(assignment_folder)) > 2:
-                    print(
-                        f'Had more than one HIT in folder: {assignment_folder}, had {len(os.listdir(assignment_folder))} folders.'
-                    )
-                for agent_id in os.listdir(assignment_folder):
-                    if os.path.isdir(os.path.join(assignment_folder, agent_id)):
-                        full_path = os.path.join(
-                            task_run_id_folder,
-                            assignment_id,
-                            agent_id,
-                            'agent_data.json',
-                        )
-                        read_folders.append(full_path)
-        return read_folders
 
     def get_results_path_base(self) -> str:
         now = datetime.now()
@@ -129,7 +96,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
-        conversations = self.compile_initial_results(self.results_folders)
+        conversations = self.compile_initial_results()
         main_dataframe = self.process_data_into_dataframe(conversations)
         self.calculate_basic_interannotator_agreement(main_dataframe)
         if self.gold_annotations_file is not None:
@@ -220,40 +187,32 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                         num_incorrect += 1
         return num_correct / num_answers
 
-    def compile_initial_results(self, results_folders) -> list:
+    def compile_initial_results(self) -> List[dict]:
         """
-        Do initial loading and processing of crowdsource data Loads data from all the
-        worker ID files and gets rid of incomplete or malformed convos.
+        Do initial loading and processing of crowdsource data. Loads data from
+        DataBrowser and gets rid of incomplete or malformed convos.
 
-        Also adds fields such as worker_id, assignment_id, etc for convenience
+        Also adds fields such as worker_id, assignment_id, etc. for convenience
         :return: list of JSON objects which represent a conversation with
         annotations d["data"] of each has an array of utterance level data
         """
         print('Starting compile_initial_results...')
-        all_data_paths = []
-        for f in results_folders:
-            # Each one is a HIT completed by a given worker (so if
-            # units-per-assignment > 1), then will include the same conversations
-            # multiple times annotated by different workers
-            data_paths = self.get_data_paths_mephisto(f)
-            all_data_paths.extend(data_paths)
-        print(f'Got {len(all_data_paths)} folders to read.')
+        task_units_data = self.get_task_data()
 
         conversations = []
         task_completion_times = []
-        for dp in all_data_paths:
-            # Read in file
-            with open(os.path.join(dp), 'rb') as f:
-                data = json.load(f)
+        for task_unit in task_units_data:
 
-            worker_id = dp.split('/')[-2]
-            hit_id = dp.split('/')[-3]
-            _ = dp.split('/')[-4]  # Task run
+            worker_id = task_unit['worker_id']
+            assignment_id = task_unit['assignment_id']
+
+            breakpoint()
+            # {{{TODO NOW: add me}}}
 
             (is_valid_hit, reason) = self._validate_hit(data)
             if not is_valid_hit:
                 print(
-                    f'Skipping invalid HIT {hit_id}, worker_id: {worker_id} for reason: {reason}.'
+                    f'Skipping invalid HIT {assignment_id}, worker_id: {worker_id} for reason: {reason}.'
                 )
                 continue
 
@@ -282,13 +241,12 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 (is_valid_subtask, reason) = self._validate_subtask(d['data'])
                 if not is_valid_subtask:
                     print(
-                        f'Skipping invalid subtask within HIT: {hit_id}, worker_id: {worker_id} for reason: {reason}.'
+                        f'Skipping invalid subtask within HIT: {assignment_id}, worker_id: {worker_id} for reason: {reason}.'
                     )
                     continue
 
                 subtask_data['worker_id'] = worker_id
-                subtask_data['hit_id'] = hit_id
-                subtask_data['folder'] = dp
+                subtask_data['assignment_id'] = assignment_id
                 subtask_data['subtask_idx'] = subtask_idx
                 subtask_data['qc_success_pct'] = qc_success_pct
                 conversations.append(subtask_data)
@@ -316,14 +274,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         for _, convo in enumerate(conversations):
             for turn_idx, utt in enumerate(convo['data']):
                 row = {
-                    'annotation_id': f'{convo["hit_id"]}_{convo["subtask_idx"]}_{turn_idx}_{convo["worker_id"]}',
-                    'conversation_id': f'{convo["hit_id"]}_{convo["subtask_idx"]}',
-                    'utterance_id': f'{convo["hit_id"]}_{convo["subtask_idx"]}_{turn_idx}',
+                    'annotation_id': f'{convo["assignment_id"]}_{convo["subtask_idx"]}_{turn_idx}_{convo["worker_id"]}',
+                    'conversation_id': f'{convo["assignment_id"]}_{convo["subtask_idx"]}',
+                    'utterance_id': f'{convo["assignment_id"]}_{convo["subtask_idx"]}_{turn_idx}',
                     'turn_idx': turn_idx,
                     'agent_idx': utt['agent_idx'],
-                    'folder': convo['folder'],
                     'worker_id': convo['worker_id'],
-                    'hit_id': convo['hit_id'],
+                    'assignment_id': convo['assignment_id'],
                     'other_metadata': utt.get('other_metadata') or self.NONE_STRING,
                     'qc_success_pct': convo['qc_success_pct'],
                     'text': utt['text'],
