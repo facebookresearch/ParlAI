@@ -7,10 +7,10 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 from abc import ABC, abstractmethod
 from datetime import datetime
-import json
 from typing import Any, Dict, List, Union
 
 import pandas as pd
@@ -61,6 +61,7 @@ class AbstractResultsCompiler(ABC):
     def __init__(self, opt: Opt):
         self.task_name = opt['task_name']
         self.output_folder = opt['output_folder']
+        os.makedirs(self.output_folder, exist_ok=True)
         self.results_format = opt.get('results_format', 'json')
         self.database_path = opt['database_path']
 

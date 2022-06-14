@@ -205,9 +205,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
             worker_id = task_unit['worker_id']
             assignment_id = task_unit['assignment_id']
-
-            breakpoint()
-            # {{{TODO NOW: add me}}}
+            data = task_unit['data']
 
             (is_valid_hit, reason) = self._validate_hit(data)
             if not is_valid_hit:
