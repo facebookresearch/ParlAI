@@ -12,6 +12,4 @@ parlai train_model -m bert_classifier -t snli --classes 'entailment' 'contradict
 ```
 
 In the example above, tokenized input sentence will look as following:
-```bash
-'[CLS] premise : motor ##cy ##cl ##ists racing on a track . hypothesis : people are racing . [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD]'
-```
+`[CLS] premise : motor ##cy ##cl ##ists racing on a track . hypothesis : people are racing . [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD]`
