@@ -10,3 +10,8 @@ Train a classifier on the SNLI tas.
 ```bash
 parlai train_model -m bert_classifier -t snli --classes 'entailment' 'contradiction' 'neutral' -mf /tmp/BERT_snli -bs 20
 ```
+
+In the example above, tokenized input sentence will look as following:
+```bash
+'[CLS] premise : motor ##cy ##cl ##ists racing on a track . hypothesis : people are racing . [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD] [PAD]'
+```
