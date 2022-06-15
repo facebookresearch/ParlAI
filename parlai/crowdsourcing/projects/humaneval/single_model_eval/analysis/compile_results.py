@@ -63,10 +63,6 @@ class ModelChatResultsCompiler(AbstractResultsCompiler):
 
         self.acceptability_checker = AcceptabilityChecker()
 
-    def get_results_path_base(self) -> str:
-        return os.path.join(self.output_folder, 'results')
-        # TODO: see if this can be moved to the superclass
-
     def compile_results(self) -> pd.DataFrame:
 
         # Load task data

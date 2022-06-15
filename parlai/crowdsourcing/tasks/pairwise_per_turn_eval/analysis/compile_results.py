@@ -87,9 +87,6 @@ class PerTurnEvalResultsCompiler(AbstractResultsCompiler):
         self.mean_completion_time = None
         # Useful for subclasses, to compare with other eval techniques
 
-    def get_results_path_base(self) -> str:
-        return os.path.join(self.output_folder, 'results')
-
     def compile_results(self) -> pd.DataFrame:
 
         # Load task data

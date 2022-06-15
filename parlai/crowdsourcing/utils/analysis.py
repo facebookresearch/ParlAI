@@ -34,11 +34,18 @@ class AbstractResultsCompiler(ABC):
     Currently only provides utility attributes/methods for analyzing turn annotations.
     """
 
+    FILENAME_STUB = 'results'
+
     @classmethod
     def setup_args(cls):
         parser = argparse.ArgumentParser('Compile crowdsourcing results')
         parser.add_argument(
             '--output-folder', type=str, help='Folder to save output files to'
+        )
+        parser.add_argument(
+            '--save-datetime',
+            action='store_true',
+            help='Include a datetime string in the results save path',
         )
         parser.add_argument(
             '--results-format',
@@ -59,10 +66,14 @@ class AbstractResultsCompiler(ABC):
         return parser
 
     def __init__(self, opt: Opt):
+
         self.task_name = opt['task_name']
+
         self.output_folder = opt['output_folder']
         os.makedirs(self.output_folder, exist_ok=True)
+        self.save_datetime = opt['save_datetime']
         self.results_format = opt.get('results_format', 'json')
+
         self.database_path = opt['database_path']
 
         # We lazily load these later, or inject their mock version during testing.
@@ -79,16 +90,6 @@ class AbstractResultsCompiler(ABC):
         if not self._mephisto_db:
             self._mephisto_db = LocalMephistoDB(self.database_path)
         return self._mephisto_db
-
-    def get_results_path_base(self) -> str:
-        """
-        Return the save path for the results file, not including the file extension.
-        """
-        now = datetime.now()
-        return os.path.join(
-            self.output_folder,
-            f'{self.__class__.__name__}__{now.strftime("%Y%m%d_%H%M%S")}',
-        )
 
     def get_worker_name(self, worker_id: str) -> str:
         """
@@ -173,9 +174,15 @@ class AbstractResultsCompiler(ABC):
         """
         compiled_results = self.compile_results()
         self._validate_compiled_result_type(compiled_results)
-        results_path_base = self.get_results_path_base()
-        results_path = f'{results_path_base}.{self.results_format}'
-        os.makedirs(self.output_folder, exist_ok=True)
+
+        # Get the save path
+        if self.save_datetime:
+            now = datetime.now()
+            results_filename = f'{self.FILENAME_STUB}__{now.strftime("%Y%m%d_%H%M%S")}.{self.results_format}'
+        else:
+            results_filename = f'{self.FILENAME_STUB}.{self.results_format}'
+        results_path = os.path.join(self.output_folder, results_filename)
+
         if self.results_format == 'csv':
             if not isinstance(compiled_results, pd.DataFrame):
                 logging.warning(

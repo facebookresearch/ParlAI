@@ -106,12 +106,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         self.unacceptable_workers = set()
         # Will contain all workers delivering unacceptable responses
 
-    def get_results_path_base(self) -> str:
-        now = datetime.now()
-        return os.path.join(
-            self.output_folder, f'{self.FILENAME_STUB}_{now.strftime("%Y%m%d_%H%M%S")}'
-        )
-
     def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
         conversations = self.compile_initial_results()
@@ -135,7 +129,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             )
             print('\nMean bucket selection rates grouped by metadata value:')
             print(metadata_grouped)
-            output_path = self.get_results_path_base() + '.metadata_grouped.csv'
+            output_path = os.path.join(
+                self.output_folder,
+                self.FILENAME_STUB + '.metadata_grouped.csv',
+            )
             metadata_grouped.to_csv(output_path)
 
         if self.remove_unacceptable_responses:
