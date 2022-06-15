@@ -32,6 +32,7 @@ import numpy as np
 import signal
 from typing import Tuple
 import pandas as pd
+import io
 
 # Import ClearML
 from clearml import Task
@@ -675,7 +676,7 @@ class TrainLoop:
                     title="dialogues",
                     series=datatype,
                     iteration=index,
-                    stream=valid_world.display(),
+                    stream=io.StringIO(valid_world.display()),
                     file_extension=".txt",
                 )
 
