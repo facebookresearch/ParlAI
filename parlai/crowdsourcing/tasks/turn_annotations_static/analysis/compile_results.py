@@ -259,7 +259,6 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             task_completion_time_seconds = (
                 data['times']['task_end'] - data['times']['task_start']
             )
-            print(task_completion_time_seconds)
 
             subtasks = data['outputs']['final_data']
             if self.live_onboarding_is_last_subtask:
