@@ -27,8 +27,9 @@ import parlai.utils.logging as logging
 
 
 class DirectorModel(TransformerGeneratorModel):
-    """Director model that extends TransformerGeneratorModel and
-    adds |V| binary classifier heads.
+    """
+    Director model that extends TransformerGeneratorModel and adds |V| binary classifier
+    heads.
     """
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, **kwargs):
@@ -75,7 +76,8 @@ class DirectorModel(TransformerGeneratorModel):
 
     def load_state_dict(self, state_dict):
         """
-        Overrided to load only the generator weights from the state dict and leaving the classifier head weights untouched.
+        Overrided to load only the generator weights from the state dict and leaving the
+        classifier head weights untouched.
         """
         for k, v in self.state_dict().items():
             if k not in state_dict:
@@ -94,7 +96,8 @@ class DirectorModel(TransformerGeneratorModel):
         Any,
     ]:
         """
-        Nearly copied verbatim, except for return type to return the latent state and the classifier scores.
+        Nearly copied verbatim, except for return type to return the latent state and
+        the classifier scores.
         """
         assert ys is not None, "Greedy decoding in TGModel.forward no longer supported."
         self.longest_label = max(self.longest_label, ys.size(1))
@@ -188,8 +191,8 @@ class DirectorAgent(TransformerGeneratorAgent):
         """
         Load the state dict into model.
 
-        This copies the classifier specific params to init_model and then
-        calls the load_state_dict method of TorchAgent.
+        This copies the classifier specific params to init_model and then calls the
+        load_state_dict method of TorchAgent.
         """
         for k, v in self.model.state_dict().items():
             if k not in state_dict:
@@ -285,8 +288,9 @@ class DirectorAgent(TransformerGeneratorAgent):
 
     def _v2t(self, vec):
         """
-        This method is copied from TFGA but wraps the vec2txt call
-        in a try catch to ensure that sequences with generation errors are ignored.
+        This method is copied from TFGA but wraps the vec2txt call in a try catch to
+        ensure that sequences with generation errors are ignored.
+
         We return a empty string instead in that scenario.
         """
         new_vec = []
