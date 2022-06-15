@@ -105,9 +105,6 @@ class ModelChatResultsCompiler(AbstractTurnAnnotationResultsCompiler):
         conversation_dfs = []
         for task_unit in task_units_data:
 
-            worker_id = task_unit['worker_id']
-            assignment_id = task_unit['assignment_id']
-
             # Determining whether the task unit should be skipped
             # Extract out custom data
             if task_unit['data']['save_data'] is None:

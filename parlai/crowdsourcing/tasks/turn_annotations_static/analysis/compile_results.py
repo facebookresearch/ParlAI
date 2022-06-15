@@ -12,11 +12,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+from mephisto.data_model.worker import Worker
 
 from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
     STATIC_BLUEPRINT_TYPE,
     STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
 )
+from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
 
 
@@ -58,6 +60,11 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             help='Minimum number of annotations required per utterance',
         )
         parser.add_argument(
+            '--remove-unacceptable-responses',
+            action='store_true',
+            help='Check quality of responses and filter out unacceptable ones',
+        )
+        parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
             default=None,
@@ -82,11 +89,22 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
         self.num_subtasks = opt['num_subtasks']
         self.num_annotations = opt['num_annotations']
+        self.remove_unacceptable_responses = opt['remove_unacceptable_responses']
         self.onboarding_in_flight_data_file = opt['onboarding_in_flight_data_file']
         self.live_onboarding_is_last_subtask = (
             self.onboarding_in_flight_data_file is not None
         )
         self.gold_annotations_file = opt.get('gold_annotations_file')
+
+        # Set up acceptability checking of responses
+        self.acceptability_checker = AcceptabilityChecker()
+        self.violation_types = ['min_words', 'exact_match']
+        # Crowdsourcing workers have been known to give too few words or repeat their
+        # reason on every turn
+        self.acceptability_violations_warning = 'Acceptability violation(s)'
+        # Include this at the start of an acceptability violation warning
+        self.unacceptable_workers = set()
+        # Will contain all workers delivering unacceptable responses
 
     def get_results_path_base(self) -> str:
         now = datetime.now()
@@ -120,6 +138,12 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             output_path = self.get_results_path_base() + '.metadata_grouped.csv'
             metadata_grouped.to_csv(output_path)
 
+        if self.remove_unacceptable_responses:
+            print(
+                f'{len(self.unacceptable_workers):d} workers with unacceptable responses found:'
+            )
+            for mturk_worker_id in sorted(list(self.unacceptable_workers)):
+                print(mturk_worker_id)
         return main_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
@@ -168,7 +192,27 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     f'Bot utterance was malformed and had no problem annotation fields (Failed to find key: {self.problem_buckets[0]}).',
                 )
 
-        return True, None
+        # Check the responses for acceptability
+        if self.remove_unacceptable_responses:
+            responses = [
+                utt['input_response'] for utt in subtask_data if utt['agent_idx'] == 1
+            ]
+            acceptability_violations_0 = self.acceptability_checker.check_messages(
+                messages=responses,
+                is_worker_0=False,
+                violation_types=self.violation_types,
+            )
+            # `is_worker_0` only applies to the 'penalize_greetings' violation, which
+            # we're not using anyway
+            if acceptability_violations_0 == '':
+                return True, None
+            else:
+                return (
+                    False,
+                    f'{self.acceptability_violations_warning}: {acceptability_violations_0}',
+                )
+        else:
+            return True, None
 
     def _get_inflight_onboarding_success_from_subtask(self, subtask):
         if self.INFLIGHT_ONBOARDING_DATA is None:
@@ -237,6 +281,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 subtask_data = copy.deepcopy(d)
                 # Structure of each subtask is {'subtask_index': XX, 'data': [...]}
                 (is_valid_subtask, reason) = self._validate_subtask(d['data'])
+                if reason is not None and reason.startswith(
+                    self.acceptability_violations_warning
+                ):
+                    mturk_worker_id = Worker.get(
+                        self.get_mephisto_db(), worker_id
+                    ).worker_name
+                    self.unacceptable_workers.add(mturk_worker_id)
                 if not is_valid_subtask:
                     print(
                         f'Skipping invalid subtask within HIT: {assignment_id}, worker_id: {worker_id} for reason: {reason}.'
@@ -278,6 +329,9 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     'turn_idx': turn_idx,
                     'agent_idx': utt['agent_idx'],
                     'worker_id': convo['worker_id'],
+                    'mturk_worker_id': Worker.get(
+                        self.get_mephisto_db(), convo['worker_id']
+                    ).worker_name,
                     'assignment_id': convo['assignment_id'],
                     'other_metadata': utt.get('other_metadata') or self.NONE_STRING,
                     'qc_success_pct': convo['qc_success_pct'],

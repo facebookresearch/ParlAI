@@ -167,6 +167,9 @@ class PerTurnEvalResultsCompiler(AbstractResultsCompiler):
             )
             # TODO: figure out why --NOT-MTURK-AGENT appears at the beginning of this
             #  field, and remove it; then, remove this re.fullmatch() call
+            # TODO: actually, it's probably worth checking that data['workers'] even
+            #  *contains* the MTurk worker ID: I don't think it does. It doesn't in
+            #  static turn annotations, for instance
             if mturk_worker_id_match is not None:
                 mturk_worker_id = mturk_worker_id_match.group(1)
             else:
