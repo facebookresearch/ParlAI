@@ -3,7 +3,7 @@
 
 Kushal Arora, Kurt Shuster, Sainbayar Sukhbaatar, Jason Weston
 
-<!-- Paper: https://arxiv.org/2206. -->
+<b>Paper Link</b>: [https://arxiv.org/2206](https://arxiv.org/abs/2206.07694)
 
 
 ## Abstract
