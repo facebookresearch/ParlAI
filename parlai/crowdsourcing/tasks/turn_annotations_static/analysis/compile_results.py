@@ -97,10 +97,13 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         self.gold_annotations_file = opt.get('gold_annotations_file')
 
         # Set up acceptability checking of responses
-        self.acceptability_checker = AcceptabilityChecker()
-        self.violation_types = ['min_words', 'exact_match']
-        # Crowdsourcing workers have been known to give too few words or repeat their
-        # reason on every turn
+        self.acceptability_checker = AcceptabilityChecker(min_words=5)
+        # EMS: from inspection, it's hard to consistently give good justifications in
+        # less than 5 words
+        self.violation_types = ['min_words', 'all_caps', 'exact_match']
+        # EMS: crowdsourcing workers have been known to give too few words, use all
+        # caps, or repeat their reason on every turn. I haven't seen an issue with
+        # obscene responses yet
         self.acceptability_violations_warning = 'Acceptability violation(s)'
         # Include this at the start of an acceptability violation warning
         self.unacceptable_workers = set()
