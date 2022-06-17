@@ -81,17 +81,17 @@ def add_common_args(parser):
 
 class BertWrapper(torch.nn.Module):
     """
-    Adds a optional transformer layer and a linear layer on top of BERT.
+    Adds a optional transformer layer and classification layers on top of BERT.
     Args:
         bert_model: pretrained BERT model
         output_dim: dimension of the output layer for defult 1 linear layer classifier. Either output_dim or classifier_layer must be specified
-        classifier_layer: classification layers, can be a signle layer, or list of layers (for ex, ModuleList)
         add_transformer_layer: if additional transformer layer should be added on top of the pretrained model
         layer_pulled: which layer should be pulled from pretrained model
         aggregation: embeddings aggregation (pooling) strategy. Available options are:
             (default)"first" - [CLS] representation,
             "mean" - average of all embeddings except CLS,
             "max" - max of all embeddings except CLS
+        classifier_layer: classification layers, can be a signle layer, or list of layers (for ex, torch.nn.Sequential)
     """
 
     def __init__(
