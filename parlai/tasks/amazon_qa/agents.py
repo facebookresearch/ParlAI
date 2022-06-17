@@ -9,7 +9,6 @@ from parlai.utils.io import PathManager
 from .build import build, RESOURCES
 import os
 import json
-import re
 
 
 EXISTING_KEYS = [
