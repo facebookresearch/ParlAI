@@ -4,6 +4,7 @@ __Authors__: Jack Urbanek, Emily Dinan, Will Feng, Eric Smith
 
 :::{warning}
 ParlAI's MTurk functionality has expanded out of this project to become [Mephisto](https://github.com/facebookresearch/Mephisto), and the ParlAI crowdsourcing code has moved from `parlai.mturk` to [`parlai.crowdsourcing`](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing). Before reading this tutorial, it may be useful to read the [crowdsourcing README](https://github.com/facebookresearch/ParlAI/blob/main/parlai/crowdsourcing/README.md) for a concise guide on how to run crowdsourcing tasks in the current version of ParlAI. This tutorial provides more in-depth information on setting up and configuring crowdsourcing tasks.
+It is recomended to install Mephisto via poetry to avoid dependecy conflits with ParlAI.
 
 If you wish to access the old version of this tutorial for pre-Mephisto crowdsourcing tasks, switch to the `final_mturk` tag of ParlAI:
 ```bash
