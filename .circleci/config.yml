@@ -91,7 +91,7 @@ commands:
       - run:
           name: Installs basic dependencies
           command: |
-            python -m pip install --progress-bar off pip setuptools==62.3.2
+            python -m pip install --progress-bar off pip setuptools==62.3.4
             python -m pip install --progress-bar off coverage
             python -m pip install --progress-bar off codecov
             mkdir -p ~/ParlAI/test-results
@@ -301,7 +301,7 @@ jobs:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
-            python -m pip install --progress-bar off pip setuptools==62.3.2
+            python -m pip install --progress-bar off pip setuptools==62.3.4
             python setup.py develop
             parlai display_data -t integration_tests
 
