@@ -91,7 +91,7 @@ commands:
       - run:
           name: Installs basic dependencies
           command: |
-            python -m pip install --progress-bar off setuptools==62.3.2
+            python -m pip install --progress-bar off pip setuptools==62.3.2
             python -m pip install --progress-bar off coverage
             python -m pip install --progress-bar off codecov
             mkdir -p ~/ParlAI/test-results
