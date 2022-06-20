@@ -17,8 +17,20 @@ def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    if opt['bad'] and dt == 'test':
-        dt = 'test_bad'
+    print("BOOO")
+    return os.path.join(
+        opt['datapath'], 'saferdialogues', 'saferdialogues_dataset', dt + '.txt'
+    )
+
+
+def _bad_path(opt):
+    # Build the data if it doesn't exist.
+    build(opt)
+    dt = opt['datatype'].split(':')[0]
+    print("YAYY")
+
+    if dt == 'valid' or dt == 'test':
+        dt += '_bad'
     return os.path.join(
         opt['datapath'], 'saferdialogues', 'saferdialogues_dataset', dt + '.txt'
     )
@@ -37,17 +49,41 @@ class SaferDialoguesTeacher(ParlAIDialogTeacher):
             default=True,
             help="Whether or not to include the recovery utterance",
         )
-        agent.add_argument(
-            '--bad',
-            type=bool,
-            default=False,
-            help="Whether or not to use the extra test set parallel with BAD dataset",
-        )
         return parser
 
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['parlaidialogteacher_datafile'] = _path(opt)
+        super().__init__(opt, shared)
+
+    def _setup_data(self, path):
+        super()._setup_data(path)
+        if not self.opt['recovery']:
+            for i, ep in enumerate(self.episodes):
+                # make the signaling msg the label and remove the recovery msg
+                texts = ep[0]['text'].split('\n')
+                self.episodes[i][0].force_set('text', '\n'.join(texts[:-1]))
+                self.episodes[i][0].force_set('labels', [texts[-1]])
+
+
+class SaferDialoguesBADTeacher(ParlAIDialogTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('SaFeRDialogues options')
+        agent.add_argument(
+            '--recovery',
+            type=bool,
+            default=True,
+            help="Whether or not to include the recovery utterance",
+        )
+        return parser
+
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt['parlaidialogteacher_datafile'] = _bad_path(opt)
         super().__init__(opt, shared)
 
     def _setup_data(self, path):

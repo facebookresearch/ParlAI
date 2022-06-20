@@ -10,13 +10,13 @@ from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-SAFERDIALOGUES_VERSION = "v0.2"
+SAFERDIALOGUES_VERSION = "v0.3"
 
 RESOURCES = [
     DownloadableFile(
         f'http://parl.ai/downloads/saferdialogues/saferdialogues_{SAFERDIALOGUES_VERSION}.tar.gz',
         f'saferdialogues_{SAFERDIALOGUES_VERSION}.tar.gz',
-        '9358814457f264b4e693eb1a3a71916d5a3fe179c2bdc1c3cb93305b0ea2a983',
+        '3d1bc731fb0c63d9f61a52b3d5f1aab0911cda1ca38f49822c79c18a2dc8e834',
     )
 ]
 
