@@ -289,6 +289,17 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1706.05125"},
     },
     {
+        "id": "Friends",
+        "display_name": "Friends",
+        "task": "friends",
+        "tags": ["MultiPartyConvo"],
+        "description": (
+            "Multi-party conversation dataset modified from the 10 seasons "
+            "of the popular American sitcom that ran in the 90s, Friends."
+        ),
+        "links": {"website": "https://convokit.cornell.edu/documentation/friends.html"},
+    },
+    {
         "id": "Glue",
         "display_name": "Glue",
         "task": "glue",

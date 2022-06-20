@@ -30,6 +30,15 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
+            '--hit-block-list',
+            type=str,
+            default='',
+            help='Comma-separated list of all hits to block',
+        )
+        parser.add_argument(
+            '--results-folders', type=str, help='Comma-separated list of result folders'
+        )
+        parser.add_argument(
             '--model-nickname', type=str, default='', help='name of the model'
         )
         parser.add_argument(
@@ -43,6 +52,10 @@ class ModelChatResultsCompiler(BaseModelChatResultsCompiler):
     def __init__(self, opt: Dict[str, Any]):
 
         AbstractTurnAnnotationResultsCompiler.__init__(self, opt)
+        if 'results_folders' in opt:
+            self.results_folders = opt['results_folders'].split(',')
+        else:
+            self.results_folders = None
 
         # Input args
         self.model_nickname = opt['model_nickname']

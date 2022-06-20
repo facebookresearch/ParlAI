@@ -1,9 +1,9 @@
-Date folders: 2020_12_29
 Got 3 complete conversation(s) for model: blender_90M
 3 complete conversation(s) collected.
 0 bad conversation(s).
 3 approved conversation(s).
-(0 incomplete conversation(s) collected.)
+(0 wrong status conversation(s) collected.)
+(0 conversation(s) collected with no saved data.)
 ---blender_90M---
 human_utterance_count: 18
 human_word_count: 78 (4.33)
