@@ -217,7 +217,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             "annotation_buckets": annotation_buckets,
             "ask_reason": self.args.blueprint.ask_reason,
             "response_field": self.args.blueprint.response_field,
-            "frame_height": 650,
+            "frame_height": 0,
             "num_subtasks": self.args.blueprint.subtasks_per_unit,
             "block_mobile": True,
         }
