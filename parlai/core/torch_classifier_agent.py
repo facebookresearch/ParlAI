@@ -712,8 +712,11 @@ class TorchClassifierAgent(TorchAgent):
                 ordered_list = [self.class_list[i] for i in ranks[i]]
                 text_cands.append(ordered_list)
             return Output(
-                preds, text_candidates=text_cands, sorted_scores=sorted_scores
+                preds,
+                text_candidates=text_cands,
+                sorted_scores=sorted_scores.numpy().tolist(),
             )
+
         else:
             return Output(preds)
 
