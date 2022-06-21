@@ -9,3 +9,7 @@ from parlai.utils.testing import AutoTeacherTest  # noqa: F401
 
 class TestDefaultTeacher(AutoTeacherTest):
     task = 'saferdialogues'
+
+
+class TestSaferDialoguesBADTeacher(AutoTeacherTest):
+    task = "saferdialogues:SaferDialoguesBAD"
