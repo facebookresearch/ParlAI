@@ -2251,7 +2251,7 @@ class TorchAgent(ABC, Agent):
         for k, values in self._local_metrics.items():
             if len(values) != len(batch.valid_indices):
                 raise IndexError(
-                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"Batchsize mismatch on metric {k} got {len(values)}, "
                     f"expected {len(batch.valid_indices)}"
                 )
             for i, value in zip(batch.valid_indices, values):

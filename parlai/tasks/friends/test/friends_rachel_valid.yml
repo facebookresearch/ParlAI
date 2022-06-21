@@ -1,0 +1,71 @@
+acts:
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - 'Rachel Green: __SILENCE__'
+    id: friends:rachel
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - 'Rachel Green: __SILENCE__'
+    id: friends:rachel
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - 'Rachel Green: __SILENCE__'
+    id: friends:rachel
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
+
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - 'Rachel Green: __SILENCE__'
+    id: friends:rachel
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
+
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
+
+      Ross Geller: Hey.'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - 'Rachel Green: __SILENCE__'
+    id: friends:rachel
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
+
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
+
+      Ross Geller: Hey.
+
+      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!'
+num_episodes: 308
+num_examples: 5855

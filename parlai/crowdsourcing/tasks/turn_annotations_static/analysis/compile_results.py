@@ -37,6 +37,9 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
+            '--results-folders', type=str, help='Comma-separated list of result folders'
+        )
+        parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
             help='Path to JSONL file containing onboarding in-flight conversations',
@@ -51,6 +54,12 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
+
+        if 'results_folders' in opt:
+            self.results_folders = opt['results_folders'].split(',')
+        else:
+            self.results_folders = None
+
         # Validate problem buckets
         if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
             # The code relies on a catchall "none" category if the user selects no other

@@ -1,0 +1,58 @@
+acts:
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:chandler
+    labels:
+    - 'Chandler Bing: __SILENCE__'
+    text: 'Phoebe Buffay: Oh hey! Wait up!'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:chandler
+    labels:
+    - 'Chandler Bing: __SILENCE__'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:chandler
+    labels:
+    - 'Chandler Bing: __SILENCE__'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:chandler
+    labels:
+    - 'Chandler Bing: __SILENCE__'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:chandler
+    labels:
+    - 'Chandler Bing: __SILENCE__'
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.
+
+      Phoebe Buffay: No! No, that you and Rachel are engaged!'
+num_episodes: 2427
+num_examples: 46610
