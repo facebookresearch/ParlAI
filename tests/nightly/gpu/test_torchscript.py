@@ -32,7 +32,7 @@ class TestTorchScript(unittest.TestCase):
         """
 
         from parlai.scripts.torchscript import TorchScript
-        from parlai.torchscript.modules import ScriptableGpt2BpeHelper
+        from parlai.torchscript.tokenizer import ScriptableGpt2BpeHelper
 
         # Params
         tasks = ['taskmaster2', 'convai2']
@@ -66,7 +66,7 @@ class TestTorchScript(unittest.TestCase):
         """
 
         from parlai.scripts.torchscript import TorchScript
-        from parlai.torchscript.modules import ScriptableSubwordBpeHelper
+        from parlai.torchscript.tokenizer import ScriptableSubwordBpeHelper
 
         # Params
         tasks = ['dialogue_safety:standard']
@@ -96,7 +96,7 @@ class TestTorchScript(unittest.TestCase):
     def test_special_tokenization(self):
         from parlai.core.dict import DictionaryAgent
         from parlai.core.params import ParlaiParser
-        from parlai.torchscript.modules import ScriptableDictionaryAgent
+        from parlai.torchscript.tokenizer import ScriptableDictionaryAgent
 
         SPECIAL = ['Q00', 'Q01']
         text = "Don't have a Q00, man! Have a Q01 instead."
@@ -130,7 +130,7 @@ class TestTorchScript(unittest.TestCase):
                 special_tokens=[],
                 subword_bpe_version=(0, 0),
                 fused_bpe_codes={},
-                subword_bpe_separator=''
+                subword_bpe_separator='',
             )
 
             tokenized = sda.txt2vec(text, dict_tokenizer='gpt2')
@@ -155,7 +155,7 @@ class TestTorchScript(unittest.TestCase):
                 special_tokens=SPECIAL,
                 subword_bpe_version=(0, 0),
                 fused_bpe_codes={},
-                subword_bpe_separator=''
+                subword_bpe_separator='',
             )
 
             special_tokenized = sda.txt2vec(text, dict_tokenizer='gpt2')
@@ -211,7 +211,7 @@ class TestTorchScript(unittest.TestCase):
                 model_file='zoo:dialogue_safety/single_turn/model',
                 script_module='parlai.torchscript.modules:TorchScriptTransformerClassifier',
                 scripted_model_file=scripted_model_file,
-                no_cuda=True
+                no_cuda=True,
             )
             TorchScript(export_opt).run()
 
@@ -236,6 +236,7 @@ class TestTorchScript(unittest.TestCase):
         test_phrase = "Don't have a cow, man!"  # From test_bart.py
 
         with testing_utils.tempdir() as tmpdir:
+
             scripted_model_file = os.path.join(tmpdir, 'scripted_model.pt')
 
             # Export the BART model for GPU
