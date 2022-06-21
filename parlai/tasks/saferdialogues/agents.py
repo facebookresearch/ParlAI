@@ -17,7 +17,6 @@ def _path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    print("BOOO")
     return os.path.join(
         opt['datapath'], 'saferdialogues', 'saferdialogues_dataset', dt + '.txt'
     )
@@ -27,8 +26,6 @@ def _bad_path(opt):
     # Build the data if it doesn't exist.
     build(opt)
     dt = opt['datatype'].split(':')[0]
-    print("YAYY")
-
     if dt == 'valid' or dt == 'test':
         dt += '_bad'
     return os.path.join(
