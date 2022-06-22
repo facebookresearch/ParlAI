@@ -1,0 +1,59 @@
+acts:
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - 'Joey Tribbiani: __SILENCE__'
+    id: friends:joey
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.'
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - 'Joey Tribbiani: __SILENCE__'
+    id: friends:joey
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.'
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - 'Joey Tribbiani: __SILENCE__'
+    id: friends:joey
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.
+
+      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
+      life without love?'
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - 'Joey Tribbiani: __SILENCE__'
+    id: friends:joey
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.
+
+      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
+      life without love?
+
+      Rachel Green: Oh my god, are we supposed to answer?'
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - 'Joey Tribbiani: Dude, are you okay?'
+    id: friends:joey
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.
+
+      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
+      life without love?
+
+      Rachel Green: Oh my god, are we supposed to answer?
+
+      Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
+      which I''m still fine with by the way. E is for how extremely normal I find
+      it. That you two are together. And now one day you might get married and have
+      children of your own.'
+num_episodes: 302
+num_examples: 5774

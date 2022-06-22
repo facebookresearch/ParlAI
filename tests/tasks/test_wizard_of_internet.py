@@ -7,6 +7,8 @@ import unittest
 from parlai.scripts.display_data import setup_args
 from parlai.utils.testing import display_data
 import parlai.tasks.wizard_of_internet.constants as CONST
+from parlai.core.message import Message
+from parlai.core.teachers import create_task_agent_from_taskname
 
 
 class TestApprenticeDialogTeacher(unittest.TestCase):
@@ -45,6 +47,24 @@ class TestWizardDialogTeacher(unittest.TestCase):
                     started_knowledge_span = False
 
             self.assertFalse(started_knowledge_span)
+
+
+class TestWizardDialogTeacherCustomEval(unittest.TestCase):
+    def test_custom_eval(self):
+        opt = setup_args().parse_args(
+            ['--task', 'wizard_of_internet', '--datatype', 'valid']
+        )
+        teacher = create_task_agent_from_taskname(opt)[0]
+        teacher_action_message = Message(teacher.get(0))
+        teacher_action_nonmessage = {k: v for k, v in teacher_action_message.items()}
+        labels = teacher_action_message.get(
+            'labels', teacher_action_message.get('eval_labels')
+        )
+        agent_nonmessage = {'text': labels[0], 'episode_done': False}
+        agent_message = Message(agent_nonmessage)
+        for t_act in [teacher_action_nonmessage, teacher_action_message]:
+            for m_act in [agent_nonmessage, agent_message]:
+                teacher.custom_evaluation(t_act, labels, m_act)
 
 
 class TestSearchQueryTeacher(unittest.TestCase):
