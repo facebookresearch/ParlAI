@@ -272,14 +272,6 @@ class ClearMLLogger(object):
             hidden=False,
         )
 
-        # logger.add_argument(
-        #     '--clearml-task-name',
-        #     type=str,
-        #     default="Training",
-        #     help='Clearml Task name. Defaults to Training.',
-        #     hidden=False,
-        # )
-
         return logger
 
     def __init__(self, opt: Opt, clearml_task_name: str):
@@ -288,9 +280,8 @@ class ClearMLLogger(object):
         except ImportError:
             raise ImportError('Please run `pip install clearml`.')
 
-        # Initialize ClearML Project Name and Task Name
+        # Initialize ClearML Project Name
         project_name = opt.get('clearml_project_name')
-        # task_name = opt.get('clearml_task_name')
 
         # Instantiate CleaML Task
         self.clearml_Task = Task.init(

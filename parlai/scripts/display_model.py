@@ -6,9 +6,8 @@
 """
 Basic example which iterates through the tasks specified and runs the given model on
 them.
-## Examples
-```shell
-parlai display_model --task babi:task1k:1 --model repeat_label
+
+## Examples ```shell parlai display_model --task babi:task1k:1 --model repeat_label
 parlai display_model --task convai2 --model-file "/path/to/model_file"  --datatype test
 ```
 """  # noqa: E501
@@ -43,7 +42,7 @@ def simple_display(opt, world, turn, cml_logger, _k):
     debug_sample = (
         text + "\n" + '    labels: ' + labels + "\n" + ' model: ' + response_text
     )
-    if opt['clearml_log'] == True:
+    if opt['clearml_log']:
         cml_logger.log_debug_samples(opt['task'], debug_sample, _k)
 
     print(colorize('    labels: ' + labels, 'labels'))
@@ -77,7 +76,7 @@ def display_model(opt):
     agent.opt.log()
 
     if opt['clearml_log'] and is_primary_worker():
-        cml_logger = ClearMLLogger(self.opt, "Display Model")
+        cml_logger = ClearMLLogger(opt, "Display Model Predictions")
     else:
         cml_logger = None
 
@@ -104,6 +103,7 @@ def display_model(opt):
             # Close ClearML Task
             cml_logger.close()
 
+
 @register_script('display_model', aliases=['dm'])
 class DisplayModel(ParlaiScript):
     @classmethod
@@ -120,6 +120,6 @@ if __name__ == '__main__':
         model_file='from_scratch_model/model',
         num_examples=5,
         verbose=True,
-        clearml_log=False,
+        clearml_log=True,
         clearml_project_name="ParlAI Project",
     )

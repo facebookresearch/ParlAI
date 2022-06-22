@@ -342,13 +342,7 @@ class TrainLoop:
     TrainLoop contains the core training loop logic.
     """
 
-    def __init__(
-        self,
-        opt
-        # clearml_task
-    ):
-        # # Create a ClearML Task
-        # self.clearml_task = clearml_task
+    def __init__(self, opt):
         # if python is called from a non-interactive shell, like a bash script,
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
         # not produced. This line brings them back
@@ -473,7 +467,7 @@ class TrainLoop:
             model = self.agent.model if hasattr(self.agent, 'model') else None
             self.wb_logger = WandbLogger(opt, model)
         if opt['clearml_log'] and is_primary_worker():
-            self.cml_logger = ClearMLLogger(opt, "Train Model")
+            self.cml_logger = ClearMLLogger(opt, "Training A Model")
 
     def save_model(self, suffix=None):
         """

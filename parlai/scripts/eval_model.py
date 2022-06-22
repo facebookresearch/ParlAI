@@ -18,7 +18,7 @@ parlai eval_model --task convai2 --model-file "/path/to/model_file"
 
 from parlai.core.params import ParlaiParser, print_announcements
 from parlai.core.agents import create_agent
-from parlai.core.logs import TensorboardLogger
+from parlai.core.logs import TensorboardLogger, ClearMLLogger
 from parlai.core.metrics import (
     aggregate_named_reports,
     aggregate_unnamed_reports,
@@ -110,6 +110,7 @@ def setup_args(parser=None):
     )
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
+    ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
     parser.set_params(datatype='valid')
     return parser
 
@@ -157,6 +158,21 @@ def prepare_tb_logger(opt):
     else:
         setting = 'test'
     return tb_logger, setting
+
+
+def prepare_cml_logger(opt):
+    if opt['clearml_log'] and is_primary_worker():
+        cml_logger = ClearMLLogger(opt, "Evaluation of Model Predictions")
+    else:
+        cml_logger = None
+
+    if 'train' in opt['datatype']:
+        datatype = 'Training Report'
+    elif 'valid' in opt['datatype']:
+        datatype = 'Validation Report'
+    else:
+        datatype = 'Test Report'
+    return cml_logger, datatype
 
 
 def get_n_parleys(opt):
@@ -263,7 +279,9 @@ def eval_model(opt):
 
     tb_logger, setting = prepare_tb_logger(opt)
 
-    if tb_logger:
+    cml_logger, datatype = prepare_cml_logger(opt)
+
+    if tb_logger or cml_logger:
         n_parleys = get_n_parleys(opt)
 
     tasks = opt['task'].split(',')
@@ -288,6 +306,10 @@ def eval_model(opt):
     if tb_logger:
         tb_logger.log_metrics(setting, n_parleys, report)
         tb_logger.flush()
+
+    if cml_logger:
+        cml_logger.log_final(datatype, report)
+
     return report
 
 
@@ -302,4 +324,10 @@ class EvalModel(ParlaiScript):
 
 
 if __name__ == '__main__':
-    EvalModel.main()
+    EvalModel.main(
+        model_file='from_scratch_model/model',
+        # train on empathetic dialogues
+        task='empathetic_dialogues',
+        clearml_log=True,
+        clearml_project_name="ParlAI Project",
+    )
