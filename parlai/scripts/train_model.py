@@ -23,24 +23,17 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
-from base64 import encode
 import copy
-from fileinput import close
 import json
 import os
 import numpy as np
 import signal
 from typing import Tuple
-import pandas as pd
-import io
-
-# Import ClearML
-from clearml import Task
 
 from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
-from parlai.core.logs import TensorboardLogger, WandbLogger
+from parlai.core.logs import ClearMLLogger, TensorboardLogger, WandbLogger
 from parlai.core.metrics import (
     aggregate_named_reports,
     aggregate_unnamed_reports,
@@ -284,6 +277,7 @@ def setup_args(parser=None) -> ParlaiParser:
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
+    ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
 
     parser = setup_dict_args(parser)
     return parser
@@ -348,9 +342,13 @@ class TrainLoop:
     TrainLoop contains the core training loop logic.
     """
 
-    def __init__(self, opt, clearml_task):
-        # Create a ClearML Task
-        self.clearml_task = clearml_task
+    def __init__(
+        self,
+        opt
+        # clearml_task
+    ):
+        # # Create a ClearML Task
+        # self.clearml_task = clearml_task
         # if python is called from a non-interactive shell, like a bash script,
         # it will by-default ignore SIGINTs, and KeyboardInterrupt exceptions are
         # not produced. This line brings them back
@@ -474,6 +472,8 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             model = self.agent.model if hasattr(self.agent, 'model') else None
             self.wb_logger = WandbLogger(opt, model)
+        if opt['clearml_log'] and is_primary_worker():
+            self.cml_logger = ClearMLLogger(opt, "Train Model")
 
     def save_model(self, suffix=None):
         """
@@ -533,20 +533,20 @@ class TrainLoop:
                 indent=4,
             )
 
-        # ClearML-Report Validation and Test Report
-        self.clearml_task.get_logger().report_table(
-            "Validation Report",
-            "Validation Report",
-            iteration=0,
-            table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]).T,
-        )
+        # # ClearML-Report Validation and Test Report
+        # self.clearml_task.get_logger().report_table(
+        #     "Validation Report",
+        #     "Validation Report",
+        #     iteration=0,
+        #     table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]).T,
+        # )
 
-        self.clearml_task.get_logger().report_table(
-            "Test Report",
-            "Test Report",
-            iteration=0,
-            table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]).T,
-        )
+        # self.clearml_task.get_logger().report_table(
+        #     "Test Report",
+        #     "Test Report",
+        #     iteration=0,
+        #     table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]).T,
+        # )
 
     def validate(self):
         """
@@ -579,9 +579,15 @@ class TrainLoop:
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
             # flush on a validation
             self.tb_logger.flush()
+
         if opt['wandb_log'] and is_primary_worker():
             valid_report['total_exs'] = self._total_exs
             self.wb_logger.log_metrics('valid', self.parleys, valid_report)
+
+        if opt['clearml_log'] and is_primary_worker():
+            valid_report['total_exs'] = self._total_exs
+            self.cml_logger.log_metrics('valid', self.parleys, valid_report)
+            self.cml_logger.flush()
 
         # send valid metrics to agent if the agent wants them
         if hasattr(self.agent, 'receive_metrics'):
@@ -671,14 +677,10 @@ class TrainLoop:
             if cnt == 0 and opt['display_examples']:
                 print(valid_world.display() + '\n~~')
 
-                # Report Test/Validation Samples as debug samples
-                self.clearml_task.get_logger().report_media(
-                    title="dialogues",
-                    series=datatype,
-                    iteration=index,
-                    stream=io.StringIO(valid_world.display()),
-                    file_extension=".txt",
-                )
+                if opt['clearml_log'] and is_primary_worker():
+                    self.cml_logger.log_debug_samples(
+                        datatype, valid_world.display(), index
+                    )
 
                 print(valid_world.report())
             cnt = valid_world.report().get('exs') or 0
@@ -787,6 +789,9 @@ class TrainLoop:
         )
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_final(final_datatype, final_valid_report)
+
+        if opt['clearml_log'] and is_primary_worker():
+            self.cml_logger.log_final(final_datatype, final_valid_report)
 
         return final_valid_report
 
@@ -928,6 +933,8 @@ class TrainLoop:
             self.tb_logger.log_metrics('train', self.parleys, train_report)
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_metrics('train', self.parleys, train_report)
+        if opt['clearml_log'] and is_primary_worker():
+            self.cml_logger.log_metrics('train', self.parleys, train_report)
 
         return train_report
 
@@ -1058,6 +1065,10 @@ class TrainLoop:
             self.wb_logger.log_final('test', self.final_test_report)
             self.wb_logger.finish()
 
+        if opt['clearml_log'] and is_primary_worker():
+            self.cml_logger.log_final('Validation Report', self.final_valid_report)
+            self.cml_logger.log_final('Test Report', self.final_test_report)
+
         if valid_worlds:
             for valid_world in valid_worlds:
                 valid_world.shutdown()
@@ -1073,13 +1084,11 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.finish()
 
+        if opt['clearml_log'] and is_primary_worker():
+            self.cml_logger.upload_artifact('dictionary', opt['dict_file'])
+            self.cml_logger.close()
+
         self._save_train_stats()
-
-        # Report Artifacts (Token)
-        self.clearml_task.upload_artifact('dictionary', opt['dict_file'])
-
-        # Close ClearML Task Reporting
-        self.clearml_task.close()
 
         return self.final_valid_report, self.final_test_report
 
@@ -1091,14 +1100,7 @@ class TrainModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        self.clearml_task = Task.init(
-            project_name="ParlAI", task_name="TrainModel", auto_connect_arg_parser=False
-        )
-
-        # Report Options (Hyper-parameters)
-        self.clearml_task.connect(self.opt)
-
-        self.train_loop = TrainLoop(self.opt, self.clearml_task)
+        self.train_loop = TrainLoop(self.opt)
         return self.train_loop.train()
 
 
@@ -1108,7 +1110,7 @@ if __name__ == '__main__':
         # train on empathetic dialogues
         task='empathetic_dialogues',
         # limit training time to 2 minutes, and a batchsize of 16
-        max_train_time=60,
+        max_train_time=2 * 60,
         batchsize=16,
         # we specify the model type as seq2seq
         model='seq2seq',
@@ -1120,6 +1122,9 @@ if __name__ == '__main__':
         lookuptable='all',
         # truncate text and labels at 64 tokens, for memory and time savings
         truncate=64,
-        tensorboard_log=True,
-        display_examples=True
+        tensorboard_log=False,
+        display_examples=False,
+        clearml_log=True,
+        clearml_project_name="ParlAI Project",
+        # clearml_task_name="TrainModel",
     )
