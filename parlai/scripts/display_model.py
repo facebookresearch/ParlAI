@@ -19,13 +19,16 @@ from parlai.core.worlds import create_task
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.strings import colorize
 import parlai.utils.logging as logging
+from parlai.core.logs import ClearMLLogger
+
+from parlai.utils.distributed import is_primary_worker
 
 import random
 
-from clearml import Task
+# from clearml import Task
 
 
-def simple_display(opt, world, turn, clearml_task, _k):
+def simple_display(opt, world, turn, cml_logger, _k):
     if opt['batchsize'] > 1:
         raise RuntimeError('Simple view only support batchsize=1')
     teacher, response = world.get_acts()
@@ -40,13 +43,9 @@ def simple_display(opt, world, turn, clearml_task, _k):
     debug_sample = (
         text + "\n" + '    labels: ' + labels + "\n" + ' model: ' + response_text
     )
-    clearml_task.get_logger().report_media(
-        title="Dialogues",
-        series=opt['task'],
-        iteration=_k,
-        stream=debug_sample,
-        file_extension=".txt"
-    )
+    if opt['clearml_log'] == True:
+        cml_logger.log_debug_samples(opt['task'], debug_sample, _k)
+
     print(colorize('    labels: ' + labels, 'labels'))
     print(colorize('     model: ' + response_text, 'text2'))
 
@@ -60,18 +59,27 @@ def setup_args():
         default='',
         help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
+
+    ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
+
     # by default we want to display info about the validation set
     parser.set_defaults(datatype='valid')
+
     return parser
 
 
-def display_model(opt, clearml_task):
+def display_model(opt):
     random.seed(42)
 
     # Create model and assign it to the specified task
     agent = create_agent(opt)
     world = create_task(opt, agent)
     agent.opt.log()
+
+    if opt['clearml_log'] and is_primary_worker():
+        cml_logger = ClearMLLogger(self.opt, "Display Model")
+    else:
+        cml_logger = None
 
     # Show some example dialogs.
     turn = 0
@@ -80,16 +88,10 @@ def display_model(opt, clearml_task):
             world.parley()
             if opt['verbose'] or opt.get('display_add_fields', ''):
                 print(world.display() + "\n~~")
-
-                clearml_task.get_logger().report_media(
-                    title="Dialogues",
-                    series=opt['task'],
-                    iteration=_k,
-                    stream=world.display(),
-                    file_extension=".txt",
-                )
+                if opt['clearml_log'] and is_primary_worker():
+                    cml_logger.log_debug_samples(opt['task'], world.display(), _k)
             else:
-                simple_display(opt, world, turn, clearml_task, _k)
+                simple_display(opt, world, turn, cml_logger, _k)
             turn += 1
             if world.get_acts()[0]['episode_done']:
                 turn = 0
@@ -98,6 +100,9 @@ def display_model(opt, clearml_task):
                 turn = 0
                 break
 
+        if opt['clearml_log'] and is_primary_worker():
+            # Close ClearML Task
+            cml_logger.close()
 
 @register_script('display_model', aliases=['dm'])
 class DisplayModel(ParlaiScript):
@@ -106,15 +111,7 @@ class DisplayModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        self.clearml_task = Task.init(
-            project_name="ParlAI",
-            task_name="DisplayModel",
-            auto_connect_arg_parser=False,
-        )
-        # Report Options (Hyper-parameters)
-        self.clearml_task.connect(self.opt)
-        display_model(self.opt, self.clearml_task)
-        self.clearml_task.close()
+        display_model(self.opt)
 
 
 if __name__ == '__main__':
@@ -122,5 +119,7 @@ if __name__ == '__main__':
         task='clearmldata',
         model_file='from_scratch_model/model',
         num_examples=5,
-        verbose=False
+        verbose=True,
+        clearml_log=False,
+        clearml_project_name="ParlAI Project",
     )
