@@ -25,6 +25,7 @@ from parlai.core.opt import Opt
 from parlai.core.metrics import Metric, dict_report, get_metric_display_data
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
+import pandas as pd
 
 
 _TB_SUMMARY_INVALID_TAG_CHARACTERS = re.compile(r'[^-/\w\.]')
@@ -240,3 +241,139 @@ class WandbLogger(object):
 
     def flush(self):
         pass
+
+
+class ClearMLLogger(object):
+    """
+    Log objects to ClearML.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add ClearML CLI args.
+        """
+        logger = parser.add_argument_group('ClearML Arguments')
+        logger.add_argument(
+            '-cmllog',
+            '--clearml-log',
+            type='bool',
+            default=False,
+            help="Enable ClearML Task",
+        )
+
+        logger.add_argument(
+            '--clearml-project-name',
+            type=str,
+            default="ParlAI",
+            help='ClearML project name. If not set, default will set to ParlAI.',
+            hidden=False,
+        )
+
+        # logger.add_argument(
+        #     '--clearml-task-name',
+        #     type=str,
+        #     default="Training",
+        #     help='Clearml Task name. Defaults to Training.',
+        #     hidden=False,
+        # )
+
+        return logger
+
+    def __init__(self, opt: Opt, clearml_task_name: str):
+        try:
+            from clearml import Task, Logger
+        except ImportError:
+            raise ImportError('Please run `pip install clearml`.')
+
+        # Initialize ClearML Project Name and Task Name
+        project_name = opt.get('clearml_project_name')
+        # task_name = opt.get('clearml_task_name')
+
+        # Instantiate CleaML Task
+        self.clearml_Task = Task.init(
+            project_name=project_name,
+            task_name=clearml_task_name,
+            auto_connect_arg_parser=False,
+            auto_connect_frameworks=False,
+        )
+
+        # Report Hyperparameter Configurations
+        self.clearml_Task.connect(opt)
+
+        # Initialize ClearML Logger
+        self.clearml_Logger = Logger.current_logger()
+
+    def log_metrics(self, setting, step, report):
+        """
+        Log all metrics to ClearML WebUI.
+
+        :param setting:
+            One of train/valid/test. Will be used as the title for the graph/table/chart.
+        :param step:
+            Number of parleys
+        :param report:
+            The report to log
+        """
+        for k, v in report.items():
+            v = v.value() if isinstance(v, Metric) else v
+            if not isinstance(v, numbers.Number):
+                logging.error(f'k {k} v {v} is not a number')
+                continue
+            display = get_metric_display_data(metric=k)
+
+            try:
+                self.clearml_Logger.report_scalar(
+                    title=f"{display.title} ({k})",
+                    series=f'{setting}',
+                    value=v,
+                    iteration=step,
+                )
+
+            except Exception as exception:
+                print(exception)
+
+    def log_final(self, setting, report):
+        """
+        Log final metrics to ClearML WebUI.
+
+        :param setting:
+            One of train/valid/test. Will be used as the title for the graph/table/chart.
+        :param report:
+            The report to log
+        """
+        report = dict_report(report)
+        report = {
+            f'{get_metric_display_data(metric=k).title}': v
+            for k, v in report.items()
+            if isinstance(v, numbers.Number)
+        }
+
+        # ClearML Final Reporting
+        self.clearml_Task.get_logger().report_table(
+            f'{setting}',
+            f'{setting}',
+            iteration=0,
+            table_plot=pd.DataFrame(report, index=[0]).T,
+        )
+
+    def log_debug_samples(self, datatype, debug_samples, index=0):
+        # Report Test/Validation Samples as debug samples
+        self.clearml_Logger.report_media(
+            title="dialogues",
+            series=datatype,
+            iteration=index,
+            stream=debug_samples,
+            file_extension=".txt",
+        )
+
+    def upload_artifact(self, artifact_name, artifact_path):
+        self.clearml_Task.upload_artifact(artifact_name, artifact_path)
+
+    def flush(self):
+        self.clearml_Logger.flush()
+
+    def close(self):
+        self.clearml_Task.close()
