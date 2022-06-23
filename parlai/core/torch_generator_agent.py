@@ -43,6 +43,7 @@ from parlai.utils.torch import (
     trainable_parameters,
     PipelineHelper,
 )
+from parlai.ops.ngram_repeat_block import NGramRepeatBlock
 
 
 class SearchBlocklist(object):
@@ -1185,7 +1186,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 score[prefix_mask] = neginf(score.dtype)
             for i, b in enumerate(beams):
                 if not b.is_done():
-                    b.advance(score[i])
+                    b.advance(score[i], _ts)
             incr_state_inds = torch.cat(
                 [
                     beam_size * i + b.get_backtrack_from_current_step()
@@ -1357,7 +1358,9 @@ class TreeSearch(object):
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
-        self.partial_hyps = [[self.bos] for i in range(beam_size)]
+        self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
+        # self.partial_hyps = [[self.bos] for i in range(beam_size)]
+        self.no_repeat_ngram_op = NGramRepeatBlock()
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
         """
@@ -1448,10 +1451,18 @@ class TreeSearch(object):
                 continue
             source_ = hyp if source is None else source
             ngrams = self._find_ngrams(source_, ngram_size)
+            print(ngrams)
             prefix = hyp[-(ngram_size - 1) :]
             for ngram in ngrams:
-                if ngram_size == 1 or prefix == list(ngram[:-1]):
+                # when doing context blocking, ngram is tuple where prefix is tensor
+                # need to cast both into lists for comparison
+                if ngram_size == 1 or list(prefix) == list(ngram[:-1]):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
+                    # if source != None:
+                    #     print("context blocking: going to ban stuff!")
+                    # else:
+                    #     print("self blocking: going to ban stuff!")
+
         return logprobs
 
     def _block_block_list(self, logprobs: torch.Tensor) -> torch.Tensor:
@@ -1466,7 +1477,7 @@ class TreeSearch(object):
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
-    def advance(self, logprobs):
+    def advance(self, logprobs, step):
         """
         Advance the beam one step.
         """
@@ -1487,7 +1498,20 @@ class TreeSearch(object):
 
         # beam blocking
         if self.block_ngram > 0:
-            logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
+            # self blocking
+            if not self.partial_hyps.is_cuda:
+                self.partial_hyps = self.partial_hyps.cuda()
+            if not logprobs.is_cuda:
+                logprobs = logprobs.cuda()
+            # logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
+            logprobs = self.no_repeat_ngram_op(
+                tokens=self.partial_hyps,
+                lprobs=logprobs,
+                bsz=1,
+                step=step,
+                beam_size=self.beam_size,
+                no_repeat_ngram_size=self.block_ngram,
+            )
 
         logprobs = self._block_block_list(logprobs)
 
@@ -1496,6 +1520,7 @@ class TreeSearch(object):
                 raise ValueError(
                     "Must use TreeSearch.set_context to use context blocking."
                 )
+            # context blocking
             logprobs = self._block_ngrams(
                 self.context_block_ngram, logprobs, self.context
             )
@@ -1508,11 +1533,21 @@ class TreeSearch(object):
 
         self.outputs.append(path_selection.token_ids)
         self.bookkeep.append(path_selection.hypothesis_ids)
-        tok_id_list = path_selection.token_ids.tolist()
-        self.partial_hyps = [
-            self.partial_hyps[path_selection.hypothesis_ids[i]] + [tok_id_list[i]]
-            for i in range(self.beam_size)
-        ]
+
+        # list
+        # self.partial_hyps = [
+        #     self.partial_hyps[path_selection.hypothesis_ids[i]] +
+        #     [path_selection.token_ids.tolist()[i]]
+        #     for i in range(self.beam_size)]
+
+        # tensor
+        self.partial_hyps = torch.cat(
+            (
+                self.partial_hyps[path_selection.hypothesis_ids.long()],
+                path_selection.token_ids.view(path_selection.token_ids.shape[0], -1),
+            ),
+            1,
+        )
 
         if self.verbose:
             assert path_selection.token_details
