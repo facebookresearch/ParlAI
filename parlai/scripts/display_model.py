@@ -77,6 +77,8 @@ def display_model(opt):
 
     if opt['clearml_log'] and is_primary_worker():
         cml_logger = ClearMLLogger(opt, "Display Model Predictions")
+        # Upload the trained model as artifact in ClearML
+        cml_logger.upload_artifact("Model", opt["model_file"])
     else:
         cml_logger = None
 
