@@ -163,6 +163,8 @@ def prepare_tb_logger(opt):
 def prepare_cml_logger(opt):
     if opt['clearml_log'] and is_primary_worker():
         cml_logger = ClearMLLogger(opt, "Evaluation of Model Predictions")
+        # Upload the trained model as artifact in ClearML
+        cml_logger.upload_artifact("Model", opt["model_file"])
     else:
         cml_logger = None
 
