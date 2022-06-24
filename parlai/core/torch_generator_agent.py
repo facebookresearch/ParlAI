@@ -454,6 +454,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             default=False,
             help='if true, compute tokenized bleu scores',
         )
+        parser.add_argument(
+            '--gpu-beam-blocking',
+            type='bool',
+            help='Set to use CUDA kernel for beam search ngram blocking',
+            default=False,
+        )
 
         super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
@@ -957,6 +963,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             )
         elif method == 'beam':
             return BeamSearch(
+                self.opt['gpu_beam_blocking'],
                 beam_size,
                 min_length=self.beam_min_length,
                 block_ngram=self.beam_block_ngram,
@@ -1359,7 +1366,6 @@ class TreeSearch(object):
         self.eos_top_ts = None
         self.n_best_counter = 0
         self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
-        # self.partial_hyps = [[self.bos] for i in range(beam_size)]
         self.no_repeat_ngram_op = NGramRepeatBlock()
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
@@ -1370,7 +1376,7 @@ class TreeSearch(object):
             a LongTensor representing the input context; used for context
             ngram blocking, if supplied
         """
-        self.context = context.tolist()
+        self.context = torch.Tensor(context.tolist()).long()
         return self
 
     def set_batch_context(
@@ -1386,7 +1392,7 @@ class TreeSearch(object):
         :param batch_idx:
             index of the batch
         """
-        self.context = batch_context_list[batch_idx]
+        self.context = torch.Tensor(batch_context_list[batch_idx]).long()
         return self
 
     def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
@@ -1432,7 +1438,12 @@ class TreeSearch(object):
         pass
 
     def _block_ngrams(
-        self, ngram_size: int, logprobs: torch.Tensor, source: torch.LongTensor = None
+        self,
+        ngram_size: int,
+        logprobs: torch.Tensor,
+        step: int,
+        GPU_BEAM_BLOCKING: bool = True,
+        if_context_blocking=False,
     ):
         """
         Hard block ngrams from the logprobs, based on the source.
@@ -1446,23 +1457,36 @@ class TreeSearch(object):
             Source text to grab ngrams from. If None, it uses the current
             hypothesis (i.e. self-blocking).
         """
+        context = None
+        if self.gpu_beam_blocking:
+            if if_context_blocking:
+                if not self.context.is_cuda:
+                    self.context = self.context.cuda()
+                context = self.context
+
+            logprobs = self.no_repeat_ngram_op(
+                hypothesis=self.partial_hyps,
+                context=context,
+                lprobs=logprobs,
+                bsz=1,
+                step=step,
+                beam_size=self.beam_size,
+                no_repeat_ngram_size=self.block_ngram,
+                if_context_blocking=if_context_blocking,
+            )
+            return logprobs
+
         for beam_id, hyp in enumerate(self.partial_hyps):
             if len(hyp) < ngram_size - 1:
                 continue
-            source_ = hyp if source is None else source
+            source_ = hyp if if_context_blocking is False else self.context
             ngrams = self._find_ngrams(source_, ngram_size)
-            print(ngrams)
             prefix = hyp[-(ngram_size - 1) :]
             for ngram in ngrams:
                 # when doing context blocking, ngram is tuple where prefix is tensor
                 # need to cast both into lists for comparison
                 if ngram_size == 1 or list(prefix) == list(ngram[:-1]):
-                    logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
-                    # if source != None:
-                    #     print("context blocking: going to ban stuff!")
-                    # else:
-                    #     print("self blocking: going to ban stuff!")
-
+                    logprobs[beam_id][ngram[-1].long()] = neginf(logprobs.dtype)
         return logprobs
 
     def _block_block_list(self, logprobs: torch.Tensor) -> torch.Tensor:
@@ -1497,20 +1521,16 @@ class TreeSearch(object):
                 self.scores[hyp_id] = neginf(self.scores.dtype)
 
         # beam blocking
+        if not self.partial_hyps.is_cuda:
+            self.partial_hyps = self.partial_hyps.cuda()
+
         if self.block_ngram > 0:
             # self blocking
-            if not self.partial_hyps.is_cuda:
-                self.partial_hyps = self.partial_hyps.cuda()
-            if not logprobs.is_cuda:
-                logprobs = logprobs.cuda()
-            # logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
-            logprobs = self.no_repeat_ngram_op(
-                tokens=self.partial_hyps,
-                lprobs=logprobs,
-                bsz=1,
+            logprobs = self._block_ngrams(
+                ngram_size=self.block_ngram,
+                logprobs=logprobs,
                 step=step,
-                beam_size=self.beam_size,
-                no_repeat_ngram_size=self.block_ngram,
+                if_context_blocking=False,
             )
 
         logprobs = self._block_block_list(logprobs)
@@ -1522,7 +1542,10 @@ class TreeSearch(object):
                 )
             # context blocking
             logprobs = self._block_ngrams(
-                self.context_block_ngram, logprobs, self.context
+                ngram_size=self.block_ngram,
+                logprobs=logprobs,
+                step=step,
+                if_context_blocking=True,
             )
 
         path_selection = self.select_paths(logprobs, self.scores, current_length)
@@ -1534,13 +1557,6 @@ class TreeSearch(object):
         self.outputs.append(path_selection.token_ids)
         self.bookkeep.append(path_selection.hypothesis_ids)
 
-        # list
-        # self.partial_hyps = [
-        #     self.partial_hyps[path_selection.hypothesis_ids[i]] +
-        #     [path_selection.token_ids.tolist()[i]]
-        #     for i in range(self.beam_size)]
-
-        # tensor
         self.partial_hyps = torch.cat(
             (
                 self.partial_hyps[path_selection.hypothesis_ids.long()],
@@ -1744,6 +1760,10 @@ class BeamSearch(TreeSearch):
     """
     Beam search.
     """
+
+    def __init__(self, gpu_beam_blocking, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.gpu_beam_blocking = gpu_beam_blocking
 
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         """
