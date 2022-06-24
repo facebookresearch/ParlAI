@@ -16,7 +16,9 @@ parlai verify_data --task convai2 --datatype valid
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
+from parlai.utils.distributed import is_primary_worker
 from parlai.utils.misc import TimeLogger, warn_once
+from parlai.core.logs import ClearMLLogger
 from parlai.core.worlds import create_task
 from parlai.core.script import ParlaiScript, register_script
 import parlai.utils.logging as logging
@@ -29,6 +31,7 @@ def setup_args(parser=None):
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.set_defaults(datatype='train:stream:ordered')
+    ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 
@@ -138,6 +141,10 @@ def verify(opt):
 def verify_data(opt):
     counts = verify(opt)
     print(counts)
+    if opt["clearml_log"] and is_primary_worker():
+        task_name = opt["task"]
+        cml_logger = ClearMLLogger(opt, f"Verify Data : {task_name}")
+        cml_logger.log_final(opt["datatype"], counts)
     return counts
 
 
