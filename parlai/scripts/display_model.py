@@ -24,8 +24,6 @@ from parlai.utils.distributed import is_primary_worker
 
 import random
 
-# from clearml import Task
-
 
 def simple_display(opt, world, turn, cml_logger, _k):
     if opt['batchsize'] > 1:
@@ -39,10 +37,11 @@ def simple_display(opt, world, turn, cml_logger, _k):
     response_text = response.get('text', 'No response')
     labels = teacher.get('labels', teacher.get('eval_labels', ['[no labels field]']))
     labels = '|'.join(labels)
-    debug_sample = (
-        text + "\n" + '    labels: ' + labels + "\n" + ' model: ' + response_text
-    )
-    if opt['clearml_log']:
+
+    if opt['clearml_log'] and is_primary_worker():
+        debug_sample = (
+            text + "\n" + '    labels: ' + labels + "\n" + ' model: ' + response_text
+        )
         cml_logger.log_debug_samples(opt['task'], debug_sample, _k)
 
     print(colorize('    labels: ' + labels, 'labels'))
@@ -101,9 +100,9 @@ def display_model(opt):
                 turn = 0
                 break
 
-        if opt['clearml_log'] and is_primary_worker():
-            # Close ClearML Task
-            cml_logger.close()
+    if opt['clearml_log'] and is_primary_worker():
+        # Close ClearML Task
+        cml_logger.close()
 
 
 @register_script('display_model', aliases=['dm'])
