@@ -29,9 +29,10 @@ from parlai.core.params import ParlaiParser
 from parlai.core.dict import DictionaryAgent
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.utils.distributed import is_primary_worker
 from parlai.utils.misc import TimeLogger
 from parlai.core.metrics import normalize_answer
-from parlai.core.logs import TensorboardLogger
+from parlai.core.logs import TensorboardLogger, ClearMLLogger
 from collections import Counter
 from parlai.core.script import ParlaiScript, register_script
 from parlai.utils.io import PathManager
@@ -78,6 +79,7 @@ def setup_args(parser=None):
     )
     parser.set_defaults(datatype='valid')
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
+    ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 
@@ -117,6 +119,9 @@ def eval_wordstat(opt):
     agent = create_agent(opt, requireModelExists=True)
     world = create_task(opt, agent)
     agent.opt.log()
+
+    if opt["clearml_log"]:
+        cml_logger = ClearMLLogger(opt, "Evaluation of Word Statistics")
 
     if opt.get('external_dict'):
         print('[ Using external dictionary from: {} ]'.format(opt['external_dict']))
@@ -271,6 +276,11 @@ def eval_wordstat(opt):
 
     report = world.report()
     print(report)
+
+    if opt["clearml_log"] and is_primary_worker():
+        cml_logger.upload_artifact("Model", opt["model_file"])
+        cml_logger.log_final(opt["datatype"], report)
+
     return report
 
 
