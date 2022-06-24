@@ -51,26 +51,35 @@ class DownloadableFile:
 
     This class provides the following functionality:
 
-    - Download a file from a URL / Google Drive
+    - Download a file from a URL / Google Drive / ClearML Data
     - Untar the file if zipped
     - Checksum for the downloaded file
     - Send HEAD request to validate URL or Google Drive link
 
     An object of this class needs to be created with:
 
-    - url <string> : URL or Google Drive id to download from
+    - url <string> : URL or Google Drive id or Clearml Dataset ID to download from
     - file_name <string> : File name that the file should be named
     - hashcode <string> : SHA256 hashcode of the downloaded file
     - zipped <boolean> : False if the file is not compressed
     - from_google <boolean> : True if the file is from Google Drive
     """
 
-    def __init__(self, url, file_name, hashcode, zipped=True, from_google=False):
+    def __init__(
+        self,
+        url,
+        file_name,
+        hashcode,
+        zipped=True,
+        from_google=False,
+        from_clearml=False,
+    ):
         self.url = url
         self.file_name = file_name
         self.hashcode = hashcode
         self.zipped = zipped
         self.from_google = from_google
+        self.from_clearml = from_clearml
 
     def checksum(self, dpath):
         """
@@ -93,9 +102,11 @@ class DownloadableFile:
             else:
                 logging.debug("Checksum Successful")
 
-    def download_file(self, dpath):
+    def download_file(self, dpath, overwrite=True):
         if self.from_google:
             download_from_google_drive(self.url, os.path.join(dpath, self.file_name))
+        elif self.from_clearml:
+            download_from_clearml(self.url, dpath, overwrite)
         else:
             download(self.url, dpath, self.file_name)
 
@@ -425,6 +436,21 @@ def download_from_google_drive(gd_id, destination):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
         response.close()
+
+
+def download_from_clearml(dataset_id, destination, overwrite=True):
+    try:
+        from clearml import Dataset
+    except ImportError:
+        raise ImportError('Please run `pip install clearml`.')
+
+    try:
+        # Download the data from ClearML
+        Dataset.get(dataset_id=dataset_id).get_mutable_local_copy(
+            target_folder=destination, overwrite=overwrite
+        )
+    except Exception as exception:
+        print(exception)
 
 
 def get_model_dir(datapath):
