@@ -326,10 +326,4 @@ class EvalModel(ParlaiScript):
 
 
 if __name__ == '__main__':
-    EvalModel.main(
-        model_file='from_scratch_model/model',
-        # train on empathetic dialogues
-        task='empathetic_dialogues',
-        clearml_log=True,
-        clearml_project_name="ParlAI Project",
-    )
+    EvalModel.main()

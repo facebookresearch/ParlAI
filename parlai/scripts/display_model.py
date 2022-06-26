@@ -116,11 +116,4 @@ class DisplayModel(ParlaiScript):
 
 
 if __name__ == '__main__':
-    DisplayModel.main(
-        task='clearmldata',
-        model_file='from_scratch_model/model',
-        num_examples=5,
-        verbose=True,
-        clearml_log=True,
-        clearml_project_name="ParlAI Project",
-    )
+    DisplayModel.main()
