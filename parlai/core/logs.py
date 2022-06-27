@@ -246,7 +246,10 @@ class WandbLogger(object):
 
 class ClearMLLogger(object):
     """
-    Log objects to ClearML. To log all the necessary details for a ParlAI experiment using MLOps. After logging, details can be viewed in ClearML Experiment Manager Web UI.
+    Log objects to ClearML.
+
+    To log all the necessary details for a ParlAI experiment using MLOps. After logging,
+    details can be viewed in ClearML Experiment Manager Web UI.
     """
 
     @classmethod
@@ -395,5 +398,7 @@ class ClearMLLogger(object):
         self.clearml_Logger.flush()
 
     def close(self):
-        """Close current ClearML Task after completing the experiment."""
+        """
+        Close current ClearML Task after completing the experiment.
+        """
         self.clearml_Task.close()
