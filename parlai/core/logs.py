@@ -14,6 +14,7 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
+from asyncio import FastChildWatcher
 import os
 import re
 from typing import Optional
@@ -245,7 +246,7 @@ class WandbLogger(object):
 
 class ClearMLLogger(object):
     """
-    Log objects to ClearML.
+    Log objects to ClearML. To log all the necessary details for a ParlAI experiment using MLOps. After logging, details can be viewed in ClearML Experiment Manager Web UI.
     """
 
     @classmethod
@@ -261,15 +262,16 @@ class ClearMLLogger(object):
             '--clearml-log',
             type='bool',
             default=False,
-            help="Create a ClearML Task",
+            help="Creates a ClearML Task. Default: False. If True, ClearML logging will be enabled.",
+            hidden=False,
         )
 
         logger.add_argument(
-            '-cmlproj',
+            '-cmlproject',
             '--clearml-project-name',
             type=str,
             default="ParlAI",
-            help='ClearML project name. If not set, default will set to ParlAI.',
+            help='ClearML Project Name. All the logs will be stored under this project in ClearML WebUI. If not set, default will set to ParlAI.',
             hidden=False,
         )
 
@@ -351,21 +353,47 @@ class ClearMLLogger(object):
             table_plot=pd.DataFrame(report, index=[0]).T,
         )
 
-    def log_debug_samples(self, datatype, debug_samples, index=0):
+    def log_debug_samples(self, series, debug_samples, index=0, title="dialogues"):
+        """
+        Log/Report Test/Validation Samples as debug samples in ClearML WebUI.
+
+        :param series:
+            Name of series to show on WebUI. One of train/valid/test  or similar.
+        :param debug_samples:
+            The sample to log.
+        :param index:
+            Specifies iteration number. Default: 0.
+        :param title:
+            Type of metric (For ClearML WebUI). Default set to "dialouges".
+        """
+
         # Report Test/Validation Samples as debug samples
         self.clearml_Logger.report_media(
-            title="dialogues",
-            series=datatype,
+            title=title,
+            series=series,
             iteration=index,
             stream=debug_samples,
             file_extension=".txt",
         )
 
     def upload_artifact(self, artifact_name, artifact_path):
+        """
+        Upload custom artifacts to ClearML.
+
+        :param artifact_name:
+            Name of artifact to log or display in ClearML WebUI
+        :param artifact_path:
+            The disk location of the artifact for uploading.
+        """
+
         self.clearml_Task.upload_artifact(artifact_name, artifact_path)
 
     def flush(self):
+        """
+        Flush logger manually.
+        """
         self.clearml_Logger.flush()
 
     def close(self):
+        """Close current ClearML Task after completing the experiment."""
         self.clearml_Task.close()
