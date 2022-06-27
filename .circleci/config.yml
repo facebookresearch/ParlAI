@@ -375,7 +375,7 @@ jobs:
           pytest_flags: -v -s
 
   build_website:
-    executor: small_cpu38
+    executor: gpu_small
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
