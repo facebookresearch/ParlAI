@@ -18,7 +18,6 @@ from parlai.utils import logging
 
 
 CONTENT = 'content'
-RETRIEVER_TIMEOUT = 'retriever-timeout'
 DEFAULT_NUM_TO_RETRIEVE = 5
 
 
