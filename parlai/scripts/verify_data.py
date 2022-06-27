@@ -145,6 +145,7 @@ def verify_data(opt):
         task_name = opt["task"]
         cml_logger = ClearMLLogger(opt, f"Verify Data : {task_name}")
         cml_logger.log_final(opt["datatype"], counts)
+        cml_logger.close()
     return counts
 
 

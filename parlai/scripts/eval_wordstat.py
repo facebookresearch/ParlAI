@@ -277,9 +277,14 @@ def eval_wordstat(opt):
     report = world.report()
     print(report)
 
+    # Log final reports to ClearML
     if opt["clearml_log"] and is_primary_worker():
         cml_logger.upload_artifact("Model", opt["model_file"])
         cml_logger.log_final(opt["datatype"], report)
+
+    # Close ClearML Task
+    if opt["clearml_log"] and is_primary_worker():
+        cml_logger.close()
 
     return report
 

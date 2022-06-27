@@ -310,7 +310,8 @@ def eval_model(opt):
         tb_logger.flush()
 
     if cml_logger:
-        cml_logger.log_final(datatype, report)
+        cml_logger.log_final(datatype, report)  # Log final report to ClearML
+        cml_logger.close()  # Close ClearML Task
 
     return report
 
