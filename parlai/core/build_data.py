@@ -447,7 +447,6 @@ def download_from_clearml(dataset_id, destination, overwrite=True):
     :param destination: Specified location to save data into disk after downloading.
     :param overwrite: If True, overwrite the existing data in the same location. Default: True.
     :return: Does not return anything.
-
     """
 
     try:
