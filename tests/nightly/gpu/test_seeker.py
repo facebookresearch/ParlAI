@@ -6,6 +6,7 @@
 import unittest
 
 import parlai.scripts.eval_model as ems
+from parlai.scripts.self_chat import SelfChat
 import parlai.utils.testing as testing_utils
 
 R2C2_BASE_400M = 'zoo:seeker/r2c2_base_400M/model'
@@ -111,3 +112,14 @@ class TestR2C2Zoo(unittest.TestCase):
             'datatype': 'valid',
         }
         ems.EvalModel.main(**opt)
+
+
+class TestSeekerSelfChat(unittest.TestCase):
+    def test_400m(self):
+        SelfChat.main(
+            model_file='zoo:seeker/seeker_dialogue_400M/model',
+            num_self_chats=1,
+            init_opt='gen/seeker_dialogue',
+            search_decision='never',
+            search_server='none',
+        )
