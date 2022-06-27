@@ -1466,7 +1466,7 @@ class TreeSearch(object):
             hypothesis (i.e. self-blocking).
         """
         context = None
-        if self.gpu_beam_blocking == True:
+        if self.gpu_beam_blocking:
             if not self.partial_hyps.is_cuda:
                 self.partial_hyps = self.partial_hyps.cuda()
             if if_context_blocking:
