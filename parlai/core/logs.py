@@ -261,10 +261,11 @@ class ClearMLLogger(object):
             '--clearml-log',
             type='bool',
             default=False,
-            help="Enable ClearML Task",
+            help="Create a ClearML Task",
         )
 
         logger.add_argument(
+            '-cmlproj',
             '--clearml-project-name',
             type=str,
             default="ParlAI",
