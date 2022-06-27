@@ -81,12 +81,17 @@ class SearchEngineRetriever(RetrieverAPI):
     def __init__(self, opt: Opt):
         super().__init__(opt=opt)
         self.server_address = self._validate_server(opt.get('search_server'))
+        self._server_timeout = (
+            opt['search_server_timeout']
+            if opt.get('search_server_timeout', 0) > 0
+            else None
+        )
 
     def _query_search_server(self, query_term, n):
         server = self.server_address
         req = {'q': query_term, 'n': n}
         logging.debug(f'sending search request to {server}')
-        server_response = requests.post(server, data=req)
+        server_response = requests.post(server, data=req, timeout=self._server_timeout)
         resp_status = server_response.status_code
         if resp_status == 200:
             return server_response.json().get('response', None)
