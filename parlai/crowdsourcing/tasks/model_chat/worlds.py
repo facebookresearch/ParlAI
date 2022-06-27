@@ -198,6 +198,8 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                     'BlenderBot2WizIntGoldDocRetrieverFiD',
                     'BlenderBot2SearchQueryFiD',
                     'KdComboSearchQuery',
+                    'ComboFidSearchQuery',
+                    'BlenderBot3',
                 ]:
                     acts[idx]['id'] = THEM
                 print(
