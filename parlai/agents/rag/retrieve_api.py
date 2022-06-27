@@ -18,6 +18,7 @@ from parlai.utils import logging
 
 
 CONTENT = 'content'
+RETRIEVER_TIMEOUT = 'retriever-timeout'
 DEFAULT_NUM_TO_RETRIEVE = 5
 
 
@@ -86,17 +87,29 @@ class SearchEngineRetriever(RetrieverAPI):
             if opt.get('search_server_timeout', 0) > 0
             else None
         )
+        self._max_num_retries = opt.get('max_num_retries', 0)
 
     def _query_search_server(self, query_term, n):
         server = self.server_address
         req = {'q': query_term, 'n': n}
-        logging.debug(f'sending search request to {server}')
-        server_response = requests.post(server, data=req, timeout=self._server_timeout)
-        resp_status = server_response.status_code
-        if resp_status == 200:
-            return server_response.json().get('response', None)
+        trials = []
+        while True:
+            try:
+                logging.debug(f'sending search request to {server}')
+                server_response = requests.post(
+                    server, data=req, timeout=self._server_timeout
+                )
+                resp_status = server_response.status_code
+                trials.append(f'Response code: {resp_status}')
+                if resp_status == 200:
+                    return server_response.json().get('response', None)
+            except requests.exceptions.Timeout:
+                if len(trials) > self._max_num_retries:
+                    break
+                trials.append(f'Timeout after {self._server_timeout} seconds.')
         logging.error(
-            f'Failed to retrieve data from server! Search server returned status {resp_status}'
+            f'Failed to retrieve data from server after  {len(trials)+1} trials.'
+            f'\nFailed responses: {trials}'
         )
 
     def _validate_server(self, address):
