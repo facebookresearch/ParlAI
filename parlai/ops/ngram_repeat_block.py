@@ -7,16 +7,17 @@ import torch
 from torch import nn
 from torch.autograd import Function
 
-# import ngram_repeat_block_cuda
-from torch.utils.cpp_extension import load
+import ngram_repeat_block_cuda
 
-ngram_repeat_block_cuda = load(
-    name='ngram_repeat_block_cuda',
-    sources=[
-        '../../parlai/clib/cuda/ngram_repeat_block_cuda.cpp',
-        '../../parlai/clib/cuda/ngram_repeat_block_cuda_kernel.cu',
-    ],
-)
+# from torch.utils.cpp_extension import load
+
+# ngram_repeat_block_cuda = load(
+#     name='ngram_repeat_block_cuda',
+#     sources=[
+#         'parlai/clib/cuda/ngram_repeat_block_cuda.cpp',
+#         'parlai/clib/cuda/ngram_repeat_block_cuda_kernel.cu',
+#     ],
+# )
 
 
 class NGramRepeatBlockFunction(Function):
