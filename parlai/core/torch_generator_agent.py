@@ -43,7 +43,9 @@ from parlai.utils.torch import (
     trainable_parameters,
     PipelineHelper,
 )
-from parlai.ops.ngram_repeat_block import NGramRepeatBlock
+
+if torch.cuda.is_available():
+    from parlai.ops.ngram_repeat_block import NGramRepeatBlock
 
 
 class SearchBlocklist(object):
@@ -1764,6 +1766,7 @@ class BeamSearch(TreeSearch):
     def __init__(self, gpu_beam_blocking, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gpu_beam_blocking = gpu_beam_blocking
+        print('using gpu beam blocking!')
 
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         """
