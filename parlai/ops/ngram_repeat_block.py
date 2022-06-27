@@ -13,8 +13,8 @@ from torch.utils.cpp_extension import load
 ngram_repeat_block_cuda = load(
     name='ngram_repeat_block_cuda',
     sources=[
-        'parlai/clib/cuda/ngram_repeat_block_cuda.cpp',
-        'parlai/clib/cuda/ngram_repeat_block_cuda_kernel.cu',
+        '../../parlai/clib/cuda/ngram_repeat_block_cuda.cpp',
+        '../../parlai/clib/cuda/ngram_repeat_block_cuda_kernel.cu',
     ],
 )
 
