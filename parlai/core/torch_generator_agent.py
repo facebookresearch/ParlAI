@@ -962,10 +962,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'beam':
             return BeamSearch(
-                self.opt.get('gpu_beam_blocking', False),
                 beam_size,
                 min_length=self.beam_min_length,
                 block_ngram=self.beam_block_ngram,
@@ -976,6 +976,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'delayedbeam':
             return DelayedBeamSearch(
@@ -991,6 +992,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'topk':
             return TopKSampling(
@@ -1005,6 +1007,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'nucleus':
             return NucleusSampling(
@@ -1019,6 +1022,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         else:
             raise ValueError(f"Can't use inference method {method}")
@@ -1311,6 +1315,7 @@ class TreeSearch(object):
         device='cpu',
         length_penalty=0.65,
         verbose=False,
+        gpu_beam_blocking=False,
     ):
         """
         Instantiate Beam object.
@@ -1370,6 +1375,7 @@ class TreeSearch(object):
         self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
         if torch.cuda.is_available():
             self.no_repeat_ngram_op = NGramRepeatBlock()
+        self.gpu_beam_blocking = gpu_beam_blocking
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
         """
@@ -1501,7 +1507,7 @@ class TreeSearch(object):
             for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
-                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
+                    if (ngram_size == 1) or list(prefix) == list(ngram[:-1]):
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
@@ -1544,7 +1550,7 @@ class TreeSearch(object):
                 )
             # context blocking
             logprobs = self._block_ngrams(
-                ngram_size=self.block_ngram,
+                ngram_size=self.context_block_ngram,
                 logprobs=logprobs,
                 step=step,
                 if_context_blocking=True,
@@ -1559,10 +1565,16 @@ class TreeSearch(object):
         self.outputs.append(path_selection.token_ids)
         self.bookkeep.append(path_selection.hypothesis_ids)
 
+        # this checking for device seems suboptimal
+        # might need to change later
+        if not self.gpu_beam_blocking:
+            hyp_device = 'cpu'
         self.partial_hyps = torch.cat(
             (
                 self.partial_hyps[path_selection.hypothesis_ids.long()],
-                path_selection.token_ids.view(path_selection.token_ids.shape[0], -1),
+                path_selection.token_ids.view(path_selection.token_ids.shape[0], -1).to(
+                    hyp_device
+                ),
             ),
             1,
         )
@@ -1762,10 +1774,6 @@ class BeamSearch(TreeSearch):
     """
     Beam search.
     """
-
-    def __init__(self, gpu_beam_blocking=False, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.gpu_beam_blocking = gpu_beam_blocking
 
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         """
