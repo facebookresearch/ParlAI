@@ -122,4 +122,5 @@ class TestSeekerSelfChat(unittest.TestCase):
             init_opt='gen/seeker_dialogue',
             search_decision='never',
             search_server='none',
+            force_skip_retrieval=True,
         )
