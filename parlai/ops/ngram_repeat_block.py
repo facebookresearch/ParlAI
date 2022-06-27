@@ -2,7 +2,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-""" Wrapper for ngram_repeat_block cuda extension """
+"""
+Wrapper for ngram_repeat_block cuda extension.
+"""
 import torch
 from torch import nn
 from torch.autograd import Function
@@ -31,9 +33,7 @@ os.chdir(current)
 
 class NGramRepeatBlockFunction(Function):
     """
-    forward inputs to ngram_repeat_block cuda extension
-    backward method not needed.
-
+    forward inputs to ngram_repeat_block cuda extension backward method not needed.
     """
 
     def forward(
@@ -75,7 +75,9 @@ class NGramRepeatBlockFunction(Function):
 
 
 class NGramRepeatBlock(nn.Module):
-    """Wrapper class for calling ngram_repeat_block cuda extension"""
+    """
+    Wrapper class for calling ngram_repeat_block cuda extension.
+    """
 
     def __init__(self):
         super(NGramRepeatBlock, self).__init__()
