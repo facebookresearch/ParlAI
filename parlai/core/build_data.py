@@ -63,6 +63,7 @@ class DownloadableFile:
     - hashcode <string> : SHA256 hashcode of the downloaded file
     - zipped <boolean> : False if the file is not compressed
     - from_google <boolean> : True if the file is from Google Drive
+    - from_clearml <boolean> : True if the file is from ClearML Data
     """
 
     def __init__(
@@ -439,6 +440,16 @@ def download_from_google_drive(gd_id, destination):
 
 
 def download_from_clearml(dataset_id, destination, overwrite=True):
+    """
+    Downloads dataset specified by user from ClearML Data.
+
+    :param dataset_id: Dataset ID, as denoted by ClearML Data. It can be found in ClearML WebUI under dataset description.
+    :param destination: Specified location to save data into disk after downloading.
+    :param overwrite: If True, overwrite the existing data in the same location. Default: True.
+    :return: Does not return anything.
+
+    """
+
     try:
         from clearml import Dataset
     except ImportError:
