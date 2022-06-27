@@ -965,7 +965,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             )
         elif method == 'beam':
             return BeamSearch(
-                self.opt['gpu_beam_blocking'],
+                self.opt.get('gpu_beam_blocking', False),
                 beam_size,
                 min_length=self.beam_min_length,
                 block_ngram=self.beam_block_ngram,
@@ -1368,7 +1368,8 @@ class TreeSearch(object):
         self.eos_top_ts = None
         self.n_best_counter = 0
         self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
-        self.no_repeat_ngram_op = NGramRepeatBlock()
+        if torch.cuda.is_available():
+            self.no_repeat_ngram_op = NGramRepeatBlock()
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
         """
@@ -1444,7 +1445,6 @@ class TreeSearch(object):
         ngram_size: int,
         logprobs: torch.Tensor,
         step: int,
-        GPU_BEAM_BLOCKING: bool = True,
         if_context_blocking=False,
     ):
         """
@@ -1460,7 +1460,7 @@ class TreeSearch(object):
             hypothesis (i.e. self-blocking).
         """
         context = None
-        if self.gpu_beam_blocking:
+        if self.gpu_beam_blocking == True:
             if if_context_blocking:
                 if not self.context.is_cuda:
                     self.context = self.context.cuda()
@@ -1763,10 +1763,9 @@ class BeamSearch(TreeSearch):
     Beam search.
     """
 
-    def __init__(self, gpu_beam_blocking, *args, **kwargs):
+    def __init__(self, gpu_beam_blocking=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.gpu_beam_blocking = gpu_beam_blocking
-        print('using gpu beam blocking!')
 
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         """
