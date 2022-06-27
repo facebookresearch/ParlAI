@@ -1461,6 +1461,8 @@ class TreeSearch(object):
         """
         context = None
         if self.gpu_beam_blocking == True:
+            if not self.partial_hyps.is_cuda:
+                self.partial_hyps = self.partial_hyps.cuda()
             if if_context_blocking:
                 if not self.context.is_cuda:
                     self.context = self.context.cuda()
@@ -1523,8 +1525,6 @@ class TreeSearch(object):
                 self.scores[hyp_id] = neginf(self.scores.dtype)
 
         # beam blocking
-        if not self.partial_hyps.is_cuda:
-            self.partial_hyps = self.partial_hyps.cuda()
 
         if self.block_ngram > 0:
             # self blocking
