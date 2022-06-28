@@ -422,12 +422,16 @@ class TestTransformerGenerator(TestTransformerBase):
             assert '34 34' not in text
 
     @pytest.mark.nofbcode
+    @testing_utils.skipUnlessGPU
     def test_beamsearch_blocking_gpu(self):
         """
         Test beamsearch blocking.
         """
         with testing_utils.tempdir() as tmpdir:
-            agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model')
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(gpu_beam_blocking=True),
+            )
             agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
             assert agent.act()['text'] == '5 5 5 5 5 5 5'
 
@@ -500,12 +504,16 @@ class TestTransformerGenerator(TestTransformerBase):
         assert '3 2' not in text
 
     @pytest.mark.nofbcode
+    @testing_utils.skipUnlessGPU
     def test_beamsearch_contextblocking_gpu(self):
         """
         Test beamsearch context blocking.
         """
 
-        agent = create_agent_from_model_file('zoo:unittest/context_blocking/model')
+        agent = create_agent_from_model_file(
+            'zoo:unittest/context_blocking/model',
+            Opt(gpu_beam_blocking=True),
+        )
         agent.observe({'text': '5 4 3 2', 'episode_done': True})
         assert agent.act()['text'] == '5 4 3 2'
 
