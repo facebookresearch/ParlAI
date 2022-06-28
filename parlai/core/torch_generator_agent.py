@@ -1450,7 +1450,7 @@ class TreeSearch(object):
         self,
         ngram_size: int,
         logprobs: torch.Tensor,
-        step: int,
+        step: int = 0,
         if_context_blocking=False,
     ):
         """
@@ -1495,7 +1495,7 @@ class TreeSearch(object):
             for ngram in ngrams:
                 # when doing context blocking, ngram is tuple where prefix is tensor
                 # need to cast both into lists for comparison
-                if ngram_size == 1 or list(prefix) == list(ngram[:-1]):
+                if ngram_size == 1 or prefix.tolist() == list(ngram[:-1]):
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
@@ -1507,7 +1507,7 @@ class TreeSearch(object):
             for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
-                    if (ngram_size == 1) or list(prefix) == list(ngram[:-1]):
+                    if (ngram_size == 1) or prefix.tolist() == list(ngram[:-1]):
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
