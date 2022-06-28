@@ -379,7 +379,7 @@ class TestTransformerGenerator(TestTransformerBase):
         self.assertEqual(len(response["beam_texts"]), size)
 
     @pytest.mark.nofbcode
-    def test_beamsearch_blocking(self):
+    def test_beamsearch_blocking_cpu(self):
         """
         Test beamsearch blocking.
         """
@@ -422,7 +422,55 @@ class TestTransformerGenerator(TestTransformerBase):
             assert '34 34' not in text
 
     @pytest.mark.nofbcode
-    def test_beamsearch_contextblocking(self):
+    def test_beamsearch_blocking_gpu(self):
+        """
+        Test beamsearch blocking.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            agent = create_agent_from_model_file('zoo:unittest/beam_blocking/model')
+            agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+            assert agent.act()['text'] == '5 5 5 5 5 5 5'
+
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(beam_block_ngram=1, gpu_beam_blocking=True),
+            )
+            agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+            assert '5 5' not in agent.act()['text']
+
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(beam_block_ngram=2, gpu_beam_blocking=True),
+            )
+            agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+            assert '5 5 5' not in agent.act()['text']
+
+            with open(os.path.join(tmpdir, 'blocklist.txt'), 'w') as f:
+                f.write("38\n62\n34 34\n")
+
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(
+                    beam_block_list_filename=os.path.join(tmpdir, 'blocklist.txt'),
+                    gpu_beam_blocking=True,
+                ),
+            )
+            agent.observe({'text': '4 4 4', 'episode_done': True})
+            assert agent.act()['text'] == '4 4 4'
+
+            agent.observe({'text': '38 38 38', 'episode_done': True})
+            assert '38' not in agent.act()['text']
+
+            agent.observe({'text': '62 62 62', 'episode_done': True})
+            assert '62' not in agent.act()['text']
+
+            agent.observe({'text': '34 34 34', 'episode_done': True})
+            text = agent.act()['text']
+            assert '34' in text
+            assert '34 34' not in text
+
+    @pytest.mark.nofbcode
+    def test_beamsearch_contextblocking_cpu(self):
         """
         Test beamsearch context blocking.
         """
@@ -443,6 +491,38 @@ class TestTransformerGenerator(TestTransformerBase):
 
         agent = create_agent_from_model_file(
             'zoo:unittest/context_blocking/model', Opt(beam_context_block_ngram=2)
+        )
+        agent.observe({'text': '5 4 3 2', 'episode_done': True})
+        text = agent.act()['text']
+        assert '5' in text
+        assert '5 4' not in text
+        assert '4 3' not in text
+        assert '3 2' not in text
+
+    @pytest.mark.nofbcode
+    def test_beamsearch_contextblocking_gpu(self):
+        """
+        Test beamsearch context blocking.
+        """
+
+        agent = create_agent_from_model_file('zoo:unittest/context_blocking/model')
+        agent.observe({'text': '5 4 3 2', 'episode_done': True})
+        assert agent.act()['text'] == '5 4 3 2'
+
+        agent = create_agent_from_model_file(
+            'zoo:unittest/context_blocking/model',
+            Opt(beam_context_block_ngram=1, gpu_beam_blocking=True),
+        )
+        agent.observe({'text': '5 4 3 2', 'episode_done': True})
+        text = agent.act()['text']
+        assert '5' not in text
+        assert '4' not in text
+        assert '3' not in text
+        assert '2' not in text
+
+        agent = create_agent_from_model_file(
+            'zoo:unittest/context_blocking/model',
+            Opt(beam_context_block_ngram=2, gpu_beam_blocking=True),
         )
         agent.observe({'text': '5 4 3 2', 'episode_done': True})
         text = agent.act()['text']
