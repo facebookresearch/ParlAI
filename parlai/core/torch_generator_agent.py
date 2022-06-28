@@ -1496,7 +1496,7 @@ class TreeSearch(object):
                 # when doing context blocking, ngram is tuple where prefix is tensor
                 # need to cast both into lists for comparison
                 if ngram_size == 1 or list(prefix) == list(ngram[:-1]):
-                    logprobs[beam_id][ngram[-1].long()] = neginf(logprobs.dtype)
+                    logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
     def _block_block_list(self, logprobs: torch.Tensor) -> torch.Tensor:
@@ -1569,6 +1569,8 @@ class TreeSearch(object):
         # might need to change later
         if not self.gpu_beam_blocking:
             hyp_device = 'cpu'
+        else:
+            hyp_device = 'cuda'
         self.partial_hyps = torch.cat(
             (
                 self.partial_hyps[path_selection.hypothesis_ids.long()],
