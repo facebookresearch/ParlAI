@@ -50,7 +50,6 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
     def _get_datafile(self, opt) -> str:
         """
         Get the datafile path.
-
         Useful for subclassed teachers.
         """
         base_datatype = self._get_base_datatype(opt)
@@ -161,7 +160,6 @@ class EmpatheticDialoguesTeacher(DialogTeacher):
     ) -> List[List[Message]]:
         """
         Return conversation halves to add to self.data.
-
         Given lists corresponding to the conversation turns from both sides of the
         conversation, return only the list(s) that will be used by the teacher.
         Optionally include both sides of the conversation.
