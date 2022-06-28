@@ -81,6 +81,12 @@ class ComboFidAgent(FidAgent):
             default=False,
             help='Whether to make model act output fully serializable.',
         )
+        combo_fid.add_argument(
+            '--force-skip-retrieval',
+            type='bool',
+            default=False,
+            help='If True, we force skip retrieval on any/all incoming examples',
+        )
 
     def build_model(self) -> ComboFidModel:
         """
@@ -107,9 +113,12 @@ class ComboFidAgent(FidAgent):
         batch = super().batchify(obs_batch, sort)
         valid_exs = [ex for ex in obs_batch if self.is_valid(ex)]
         if valid_exs:
-            skip_retrieval = [
-                ex.get(self.opt['skip_retrieval_key'], False) for ex in valid_exs
-            ]
+            if self.opt.get('force_skip_retrieval', False):
+                skip_retrieval = [True] * len(valid_exs)
+            else:
+                skip_retrieval = [
+                    ex.get(self.opt['skip_retrieval_key'], False) for ex in valid_exs
+                ]
             batch.skip_retrieval_vec = torch.BoolTensor(skip_retrieval)
             if any(ex.get('prior_knowledge_responses') for ex in valid_exs):
                 vecs, _lens = self._pad_tensor(
@@ -563,7 +572,9 @@ class SeekerAgent(Agent):
         for key in ['label_candidates', 'knowledge']:
             # Delete unnecessarily large keys
             observation.pop(key, '')
-        observation['knowledge_response'] = observation.get('checked_sentence', '')
+        observation.force_set(
+            'knowledge_response', observation.get('checked_sentence', '')
+        )
 
         raw_observation = copy.deepcopy(observation)
         # This part is *specifically* for document chunking.
