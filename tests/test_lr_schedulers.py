@@ -141,7 +141,7 @@ class TestLRSchedulers(unittest.TestCase):
                 'max_train_steps': total_steps,
                 'warmup_updates': warmup_updates,
                 'learningrate': max_lr,
-                **kwargs
+                **kwargs,
             }
         )
 
@@ -165,11 +165,15 @@ class TestLRSchedulers(unittest.TestCase):
         self._run_end2end(lr_scheduler='invsqrt', warmup_updates=50)
 
     def test_end2end_early_stopping(self):
-        _, train_metrics = self._run_end2end(lr_scheduler='linear', warmup_updates=0, early_stop_at_n_steps=75)
+        _, train_metrics = self._run_end2end(
+            lr_scheduler='linear', warmup_updates=0, early_stop_at_n_steps=75
+        )
         self.assertEquals(train_metrics["total_train_updates"].value(), 75)
         # Similarly, here training to 75 steps from LR 1.0 to 0.0 ends at 0.25 LR.
         self.assertAlmostEquals(train_metrics["lr"].value(), 0.25)
-        _, train_metrics = self._run_end2end(lr_scheduler='linear', warmup_updates=50, early_stop_at_n_steps=75)
+        _, train_metrics = self._run_end2end(
+            lr_scheduler='linear', warmup_updates=50, early_stop_at_n_steps=75
+        )
         self.assertEquals(train_metrics["total_train_updates"].value(), 75)
         # ...but with the first 50 steps being warmup, training for 25/50 additional steps
         # from LR 1.0 to 0.0 ends at 0.48, which again is offset forward by 1 step.

@@ -393,7 +393,7 @@ class TrainLoop:
             opt, 'max_train_time', distributed_warn=True
         )
         self.max_train_steps = _num_else_inf(opt, 'max_train_steps')
-        self.early_stop_at_n_steps =  _num_else_inf(opt, 'early_stop_at_n_steps')
+        self.early_stop_at_n_steps = _num_else_inf(opt, 'early_stop_at_n_steps')
         self.log_every_n_secs = _num_else_inf(
             opt, 'log_every_n_secs', distributed_warn=True
         )
