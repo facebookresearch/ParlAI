@@ -28,7 +28,7 @@ __global__ void banRepeatedTokens(long* __restrict__ hypothesis_ptr,
   auto index = row * current_seq_length + col;
   // start of last ngram of hypothesis
   auto start_of_ngram = current_seq_length - no_repeat_ngram_size + 1;
-  long* previous_ngram_ptr;
+  long* __restrict__ previous_ngram_ptr;
 
   if (if_context_blocking) {
     previous_ngram_ptr = &context_ptr[col];
@@ -44,7 +44,7 @@ __global__ void banRepeatedTokens(long* __restrict__ hypothesis_ptr,
   // final thread writes the end of previous ngram array to tokens_shm
   if (col == blockDim.x - 1) {
     for (int i=1; i<no_repeat_ngram_size; i++){
-      tokens_shm[col + i] = *(previous_ngram_ptr + sizeof(long) * i);
+      tokens_shm[col + i] = previous_ngram_ptr[i];
     }
   }
   __syncthreads();

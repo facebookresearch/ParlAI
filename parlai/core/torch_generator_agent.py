@@ -1481,7 +1481,7 @@ class TreeSearch(object):
                 bsz=1,
                 step=step,
                 beam_size=self.beam_size,
-                no_repeat_ngram_size=self.block_ngram,
+                no_repeat_ngram_size=ngram_size,
                 if_context_blocking=if_context_blocking,
             )
             return logprobs
@@ -1567,7 +1567,7 @@ class TreeSearch(object):
 
         # this checking for device seems suboptimal
         # might need to change later
-        if not self.gpu_beam_blocking:
+        if self.partial_hyps.get_device() == -1:
             hyp_device = 'cpu'
         else:
             hyp_device = 'cuda'
