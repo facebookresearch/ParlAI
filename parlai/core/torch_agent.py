@@ -560,6 +560,12 @@ class TorchAgent(ABC, Agent):
             ),
         )
         optim_group.add_argument(
+            "--preserve-optimizer-for-finetuning",
+            default=False,
+            type='bool',
+            help='When starting a finetuning run, preserve the optimizer state from the prior run'
+        )
+        optim_group.add_argument(
             '-lr', '--learningrate', type=float, default=1, help='Learning rate'
         )
         optim_group.add_argument(
@@ -1071,9 +1077,14 @@ class TorchAgent(ABC, Agent):
                     self.optimizer, should_sync_gradnorm(opt)
                 )
 
+        is_finetune_preserving_optimizer = False
         if is_finetune:
-            logging.warning('Detected a fine-tune run. Resetting the optimizer.')
-            return True
+            if opt.get("preserve_optimizer_for_finetuning", False):
+                logging.warning('Detected a fine-tune run. But NOT resetting the optimizer since -preserve-optimizer-for-finetuning was set.')
+                is_finetune_preserving_optimizer = True
+            else:
+                logging.warning('Detected a fine-tune run. Resetting the optimizer.')
+                return True
 
         if optim_states and saved_optim_type != opt['optimizer']:
             # we changed from adam to adamax, or sgd to adam, or similar
@@ -1097,6 +1108,14 @@ class TorchAgent(ABC, Agent):
                 # this is a bit clunky, but alternatives are worse
                 try:
                     self.optimizer.load_state_dict(optim_states)
+                    # If we're preserving the optimizer state but still starting
+                    # a new finetuning run, we need to change the learning rate 
+                    # of the optimizer over to the learning rate of the new run.
+                    if is_finetune_preserving_optimizer:
+                        logging.warning("Overriding old optimizer state lr to {opt['learningrate']}")
+                        for group in self.optimizer.param_groups:
+                            group['lr'] = opt['learningrate']
+                            group['initial_lr'] = opt['learningrate']
                     return False
                 except ValueError:
                     warn_once(
@@ -1111,6 +1130,14 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
+                # If we're preserving the optimizer state but still starting
+                # a new finetuning run, we need to change the learning rate 
+                # of the optimizer over to the learning rate of the new run.
+                if is_finetune_preserving_optimizer:
+                    logging.warning("Overriding old optimizer state lr to {opt['learningrate']}")
+                    for group in self.optimizer.param_groups:
+                        group['lr'] = opt['learningrate']
+                        group['initial_lr'] = opt['learningrate']
                 return False
             except (ValueError, KeyError):
                 warn_once(

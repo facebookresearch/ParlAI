@@ -131,6 +131,12 @@ def setup_args(parser=None) -> ParlaiParser:
         default=-1,
         help='End training after n model updates',
     )
+    train.add_argument(
+        '--early-stop-at-n-steps',
+        type=int,
+        default=-1,
+        help='End training after n model updates, while still using --max-lr-steps to set lr scheduler',
+    )
     train.add_argument('-ltim', '--log-every-n-secs', type=float, default=-1)
     train.add_argument(
         '-lstep',
@@ -387,6 +393,7 @@ class TrainLoop:
             opt, 'max_train_time', distributed_warn=True
         )
         self.max_train_steps = _num_else_inf(opt, 'max_train_steps')
+        self.early_stop_at_n_steps =  _num_else_inf(opt, 'early_stop_at_n_steps')
         self.log_every_n_secs = _num_else_inf(
             opt, 'log_every_n_secs', distributed_warn=True
         )
@@ -795,7 +802,7 @@ class TrainLoop:
 
         return eta
 
-    def _get_time(self, world: World) -> Tuple[float, float, float]:
+    def _get_time(self, world: World) -> Tuple[float, float, float, float]:
         """
         Return train, log, and validate timing.
 
@@ -932,6 +939,12 @@ class TrainLoop:
                 if self._train_steps >= self.max_train_steps:
                     logging.info(
                         f'max_train_steps elapsed:{self._train_steps} '
+                        f'time elapsed:{train_time}s'
+                    )
+                    break
+                if self._train_steps >= self.early_stop_at_n_steps:
+                    logging.info(
+                        f'early_stop_at_n_steps elapsed:{self.early_stop_at_n_steps} '
                         f'time elapsed:{train_time}s'
                     )
                     break
