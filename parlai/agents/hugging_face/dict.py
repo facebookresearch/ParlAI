@@ -34,6 +34,7 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
     """
 
     def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
         if not shared:
             self.hf_tokenizer = self.get_tokenizer(opt)
             self.tok2ind = self.hf_tokenizer.get_vocab()

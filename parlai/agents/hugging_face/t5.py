@@ -206,6 +206,15 @@ class T5Agent(TorchGeneratorAgent):
         outputs = [(outputs[i], 0, None) for i in range(outputs.size(0))]
         return outputs, []
 
+    @staticmethod
+    def dictionary_class():
+        """
+        Return the dictionary class that this agent expects to use.
+
+        Can be overridden if a more complex dictionary is required.
+        """
+        return T5DictionaryAgent
+
 
 ##############
 # T5 Modules #
