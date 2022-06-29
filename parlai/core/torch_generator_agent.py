@@ -1153,7 +1153,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         bsz = batch.batchsize
         if batch.text_vec is not None:
             batchsize = batch.batchsize
-            batch_context_list = self._get_batch_context(batch)
+            batch_context_list = self._get_batch_context(batch).tolist()
             beams = [
                 self._treesearch_factory(dev, verbose=self.show_token_details)
                 .set_batch_context(batch_context_list, batch_idx)
@@ -1372,7 +1372,7 @@ class TreeSearch(object):
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
-        self.partial_hyps = torch.full((self.beam_size, 1), self.bos)
+        self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
         if torch.cuda.is_available():
             self.no_repeat_ngram_op = NGramRepeatBlock()
         self.gpu_beam_blocking = gpu_beam_blocking
@@ -1385,11 +1385,11 @@ class TreeSearch(object):
             a LongTensor representing the input context; used for context
             ngram blocking, if supplied
         """
-        self.context = context
+        self.context = torch.Tensor(context.tolist()).long()
         return self
 
     def set_batch_context(
-        self: TSType, batch_context_list: torch.LongTensor, batch_idx: int
+        self: TSType, batch_context_list: List[List[int]], batch_idx: int
     ) -> TSType:
         """
         Version of .set_context() that operates on a single element of a batch.
@@ -1401,7 +1401,7 @@ class TreeSearch(object):
         :param batch_idx:
             index of the batch
         """
-        self.context = batch_context_list[batch_idx]
+        self.context = torch.Tensor(batch_context_list[batch_idx]).long()
         return self
 
     def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
@@ -1465,12 +1465,18 @@ class TreeSearch(object):
             Source text to grab ngrams from. If None, it uses the current
             hypothesis (i.e. self-blocking).
         """
+        context = None
         if self.gpu_beam_blocking:
             if not self.partial_hyps.is_cuda:
                 self.partial_hyps = self.partial_hyps.cuda()
+            if if_context_blocking:
+                if not self.context.is_cuda:
+                    self.context = self.context.cuda()
+                context = self.context
+
             logprobs = self.no_repeat_ngram_op(
                 hypothesis=self.partial_hyps,
-                context=self.context,
+                context=context,
                 lprobs=logprobs,
                 bsz=1,
                 step=step,
