@@ -34,6 +34,9 @@ torch::Tensor ngram_repeat_block_forward(const torch::Tensor hypothesis, const t
                                          int no_repeat_ngram_size,
                                          bool if_context_blocking) {
   CHECK_INPUT(hypothesis);
+  if(if_context_blocking) {
+    CHECK_INPUT(context);
+  }
   CHECK_INPUT(lprobs);
   assert(bsz > 0);
   assert(step >= 0);

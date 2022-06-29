@@ -108,6 +108,7 @@ class NGramRepeatBlock(nn.Module):
         if_context_blocking(bool): whether to use context-blocking
         """
         # placeholder tensor to pass in to pass type check, won't be used
+        # TODO: find a better way to do this?
         if not if_context_blocking:
             context = torch.Tensor([0]).long()
         assert hypothesis.size(0) == bsz * beam_size
