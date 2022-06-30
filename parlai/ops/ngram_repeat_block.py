@@ -31,49 +31,6 @@ ngram_repeat_block_cuda = load(
 os.chdir(current)
 
 
-class NGramRepeatBlockFunction(Function):
-    """
-    forward inputs to ngram_repeat_block cuda extension backward method not needed.
-    """
-
-    def forward(
-        self,
-        hypothesis,
-        context,
-        lprobs,
-        bsz,
-        step,
-        beam_size,
-        no_repeat_ngram_size,
-        if_context_blocking,
-    ):
-        """
-        Args:
-        hypothesis(Tensor): (beam*bsz, current_sequence_length)
-        context(Tensor): context for context-blocking
-        lprobs(Tensor): likelihood probability(beam, vocab_size)
-        bsz(int): batch size
-        step(int): current step
-        beam_size(int): beam size
-        no_repeat_ngram_size(int): Ngram size
-        if_context_blocking(bool): whether to use context-blocking
-        """
-        outputs = ngram_repeat_block_cuda.forward(
-            hypothesis,
-            context,
-            lprobs,
-            bsz,
-            step,
-            beam_size,
-            no_repeat_ngram_size,
-            if_context_blocking,
-        )
-        return outputs
-
-    def backward(*args):
-        raise NotImplementedError
-
-
 class NGramRepeatBlock(nn.Module):
     """
     Wrapper class for calling ngram_repeat_block cuda extension.
@@ -81,9 +38,6 @@ class NGramRepeatBlock(nn.Module):
 
     def __init__(self):
         super(NGramRepeatBlock, self).__init__()
-
-    def reset_parameters(self):
-        pass
 
     def forward(
         self,
@@ -115,7 +69,7 @@ class NGramRepeatBlock(nn.Module):
         hypothesis = hypothesis.contiguous()
         context = context.contiguous()
         lprobs = lprobs.contiguous()
-        return NGramRepeatBlockFunction.apply(
+        return ngram_repeat_block_cuda.forward(
             hypothesis,
             context,
             lprobs,

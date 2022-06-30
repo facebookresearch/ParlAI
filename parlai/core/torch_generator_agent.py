@@ -1153,10 +1153,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         bsz = batch.batchsize
         if batch.text_vec is not None:
             batchsize = batch.batchsize
-            batch_context_list = self._get_batch_context(batch).tolist()
+            batch_context_list = self._get_batch_context(batch)
             beams = [
                 self._treesearch_factory(dev, verbose=self.show_token_details)
-                .set_batch_context(batch_context_list, batch_idx)
+                .set_batch_context(
+                    batch_context_list,
+                    batch_idx,
+                    self.opt.get('gpu_beam_blocking', False),
+                )
                 .set_block_list(self.beam_block_list)
                 for batch_idx in range(batchsize)
             ]
@@ -1372,10 +1376,12 @@ class TreeSearch(object):
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
+        self.gpu_beam_blocking = gpu_beam_blocking
         self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
+        if self.gpu_beam_blocking:
+            self.partial_hyps = self.partial_hyps.cuda()
         if torch.cuda.is_available():
             self.no_repeat_ngram_op = NGramRepeatBlock()
-        self.gpu_beam_blocking = gpu_beam_blocking
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
         """
@@ -1389,7 +1395,10 @@ class TreeSearch(object):
         return self
 
     def set_batch_context(
-        self: TSType, batch_context_list: List[List[int]], batch_idx: int
+        self: TSType,
+        batch_context_list: torch.LongTensor,
+        batch_idx: int,
+        gpu_beam_blocking: bool,
     ) -> TSType:
         """
         Version of .set_context() that operates on a single element of a batch.
@@ -1401,7 +1410,8 @@ class TreeSearch(object):
         :param batch_idx:
             index of the batch
         """
-        self.context = torch.Tensor(batch_context_list[batch_idx]).long()
+        context = batch_context_list[batch_idx]
+        self.context = context if gpu_beam_blocking else context.tolist()
         return self
 
     def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
@@ -1465,15 +1475,8 @@ class TreeSearch(object):
             Source text to grab ngrams from. If None, it uses the current
             hypothesis (i.e. self-blocking).
         """
-        context = None
         if self.gpu_beam_blocking:
-            if not self.partial_hyps.is_cuda:
-                self.partial_hyps = self.partial_hyps.cuda()
-            if if_context_blocking:
-                if not self.context.is_cuda:
-                    self.context = self.context.cuda()
-                context = self.context
-
+            context = self.context if if_context_blocking else None
             logprobs = self.no_repeat_ngram_op(
                 hypothesis=self.partial_hyps,
                 context=context,
@@ -1486,16 +1489,14 @@ class TreeSearch(object):
             )
             return logprobs
 
-        for beam_id, hyp in enumerate(self.partial_hyps):
+        for beam_id, hyp in enumerate(self.partial_hyps.tolist()):
             if len(hyp) < ngram_size - 1:
                 continue
-            source_ = hyp if if_context_blocking is False else self.context
-            ngrams = self._find_ngrams(source_, ngram_size)
+            source = hyp if if_context_blocking is False else self.context
             prefix = hyp[-(ngram_size - 1) :]
-            for ngram in ngrams:
-                # when doing context blocking, ngram is tuple where prefix is tensor
-                # need to cast both into lists for comparison
-                if ngram_size == 1 or prefix.tolist() == list(ngram[:-1]):
+            for i in range(len(source) - ngram_size + 1):
+                ngram = source[i : i + ngram_size]
+                if ngram_size == 1 or prefix == ngram[:-1]:
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
@@ -1503,11 +1504,11 @@ class TreeSearch(object):
         if self.block_list is None:
             return logprobs
 
-        for beam_id, hyp in enumerate(self.partial_hyps):
+        for beam_id, hyp in enumerate(self.partial_hyps.tolist()):
             for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
-                    if (ngram_size == 1) or prefix.tolist() == list(ngram[:-1]):
+                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
@@ -1531,7 +1532,6 @@ class TreeSearch(object):
                 self.scores[hyp_id] = neginf(self.scores.dtype)
 
         # beam blocking
-
         if self.block_ngram > 0:
             # self blocking
             logprobs = self._block_ngrams(
@@ -1570,7 +1570,7 @@ class TreeSearch(object):
         if self.partial_hyps.get_device() == -1:
             hyp_device = 'cpu'
         else:
-            hyp_device = 'cuda'
+            hyp_device = self.partial_hyps.get_device()
         self.partial_hyps = torch.cat(
             (
                 self.partial_hyps[path_selection.hypothesis_ids.long()],
