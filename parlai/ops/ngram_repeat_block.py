@@ -9,7 +9,6 @@ Wrapper for ngram_repeat_block cuda extension.
 """
 import torch
 from torch import nn
-from torch.autograd import Function
 
 import os
 from torch.utils.cpp_extension import load
