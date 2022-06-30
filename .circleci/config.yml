@@ -318,7 +318,7 @@ jobs:
   unittests_38:
     executor: standard_cpu38
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 2
     steps:
       - runtests:
           more_installs:
