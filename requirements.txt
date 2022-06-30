@@ -1,6 +1,6 @@
 # comment just to bump caches
 boto3==1.17.95
-botocore==1.27.21
+botocore>=1.27.21
 coloredlogs==14.0
 datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
