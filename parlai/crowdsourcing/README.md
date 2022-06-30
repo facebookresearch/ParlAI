@@ -1,6 +1,13 @@
 # Crowdsourcing tasks
 
-Code for crowdsourcing tasks that use Mephisto. See the [Mephisto quick start guide](https://mephisto.ai/docs/guides/quickstart/) to quickly get started with Mephisto. **Please install Mephisto via poetry to avoid depdency conflits with ParlAI.** This README provides a quick overview of how to run crowdsourcing tasks in ParlAI: see the [tutorial](https://github.com/facebookresearch/ParlAI/blob/main/docs/source/tutorial_crowdsourcing.md) for a deeper guide on how to set up and configure new crowdsourcing tasks.
+Code for crowdsourcing tasks that use Mephisto. See the [Mephisto quick start guide](https://mephisto.ai/docs/guides/quickstart/) to quickly get started with Mephisto. **Please install Mephisto via poetry to avoid depdency conflits with ParlAI.**
+```
+# install poetry
+$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+# from the root dir, install Mephisto:
+$ poetry install
+```
+This README provides a quick overview of how to run crowdsourcing tasks in ParlAI: see the [tutorial](https://github.com/facebookresearch/ParlAI/blob/main/docs/source/tutorial_crowdsourcing.md) for a deeper guide on how to set up and configure new crowdsourcing tasks.
 
 **NOTE:** `parlai/crowdsourcing/` has taken the place of `parlai/mturk/` as the home for ParlAI crowdsourcing tasks. Information on how to find the old code in `parlai/mturk/` can be find [here](https://github.com/facebookresearch/ParlAI/tree/main/parlai/mturk/README.md).
 
