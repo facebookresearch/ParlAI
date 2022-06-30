@@ -318,7 +318,7 @@ jobs:
   unittests_38:
     executor: standard_cpu38
     working_directory: ~/ParlAI
-    parallelism: 2
+    parallelism: 8
     steps:
       - runtests:
           more_installs:
@@ -341,7 +341,7 @@ jobs:
   long_gpu_tests:
     executor: gpu_medium
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 32
     steps:
       - runtests:
           more_installs:
