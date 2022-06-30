@@ -14,10 +14,10 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
-from asyncio import FastChildWatcher
 import os
 import re
 from typing import Optional
+
 from parlai.core.params import ParlaiParser
 import json
 import numbers
@@ -261,7 +261,7 @@ class ClearMLLogger(object):
         """
         logger = parser.add_argument_group('ClearML Arguments')
         logger.add_argument(
-            '-cmllog',
+            '-clearmllog',
             '--clearml-log',
             type='bool',
             default=False,
@@ -270,7 +270,7 @@ class ClearMLLogger(object):
         )
 
         logger.add_argument(
-            '-cmlproject',
+            '-clearmlproject',
             '--clearml-project-name',
             type=str,
             default="ParlAI",
@@ -278,23 +278,34 @@ class ClearMLLogger(object):
             hidden=False,
         )
 
+        logger.add_argument(
+            '-clearmltask',
+            '--clearml-task-name',
+            type=str,
+            default="Default Task",
+            help='ClearML Task Name. All the logs will be stored under this task in ClearML WebUI. If not set, default will set to "Default Task".',
+            hidden=False,
+        )
+
         return logger
 
-    def __init__(self, opt: Opt, clearml_task_name: str):
+    def __init__(self, opt: Opt):
         try:
             from clearml import Task, Logger
         except ImportError:
             raise ImportError('Please run `pip install clearml`.')
 
-        # Initialize ClearML Project Name
+        # Set ClearML Project Name
         project_name = opt.get('clearml_project_name')
+        # Set ClearML Task Name
+        task_name = opt.get('clearml_task_name')
 
         # Instantiate CleaML Task
         self.clearml_Task = Task.init(
             project_name=project_name,
-            task_name=clearml_task_name,
+            task_name=task_name,
             auto_connect_arg_parser=False,
-            auto_connect_frameworks=False,
+            auto_connect_frameworks={'tensorboard': False},
         )
 
         # Report Hyperparameter Configurations

@@ -160,13 +160,11 @@ def prepare_tb_logger(opt):
     return tb_logger, setting
 
 
-def prepare_cml_logger(opt):
+def prepare_clearml_logger(opt):
     if opt['clearml_log'] and is_primary_worker():
-        cml_logger = ClearMLLogger(opt, "Evaluation of Model Predictions")
-        # Upload the trained model as artifact in ClearML
-        cml_logger.upload_artifact("Model", opt["model_file"])
+        clearml_logger = ClearMLLogger(opt)
     else:
-        cml_logger = None
+        clearml_logger = None
 
     if 'train' in opt['datatype']:
         datatype = 'Training Report'
@@ -174,7 +172,7 @@ def prepare_cml_logger(opt):
         datatype = 'Validation Report'
     else:
         datatype = 'Test Report'
-    return cml_logger, datatype
+    return clearml_logger, datatype
 
 
 def get_n_parleys(opt):
@@ -281,9 +279,9 @@ def eval_model(opt):
 
     tb_logger, setting = prepare_tb_logger(opt)
 
-    cml_logger, datatype = prepare_cml_logger(opt)
+    clearml_logger, datatype = prepare_clearml_logger(opt)
 
-    if tb_logger or cml_logger:
+    if tb_logger or clearml_logger:
         n_parleys = get_n_parleys(opt)
 
     tasks = opt['task'].split(',')
@@ -309,9 +307,12 @@ def eval_model(opt):
         tb_logger.log_metrics(setting, n_parleys, report)
         tb_logger.flush()
 
-    if cml_logger:
-        cml_logger.log_final(datatype, report)  # Log final report to ClearML
-        cml_logger.close()  # Close ClearML Task
+    if clearml_logger:
+        clearml_logger.upload_artifact(
+            "Model", opt["model_file"]
+        )  # Upload Model as Artifact
+        clearml_logger.log_final(datatype, report)  # Log final report to ClearML
+        clearml_logger.close()  # Close ClearML Task
 
     return report
 

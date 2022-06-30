@@ -25,7 +25,7 @@ from parlai.utils.distributed import is_primary_worker
 import random
 
 
-def simple_display(opt, world, turn, cml_logger, _k):
+def simple_display(opt, world, turn, clearml_logger, _k):
     if opt['batchsize'] > 1:
         raise RuntimeError('Simple view only support batchsize=1')
     teacher, response = world.get_acts()
@@ -42,7 +42,7 @@ def simple_display(opt, world, turn, cml_logger, _k):
         debug_sample = (
             text + "\n" + '    labels: ' + labels + "\n" + ' model: ' + response_text
         )
-        cml_logger.log_debug_samples(opt['task'], debug_sample, _k)
+        clearml_logger.log_debug_samples(opt['task'], debug_sample, _k)
 
     print(colorize('    labels: ' + labels, 'labels'))
     print(colorize('     model: ' + response_text, 'text2'))
@@ -75,11 +75,9 @@ def display_model(opt):
     agent.opt.log()
 
     if opt['clearml_log'] and is_primary_worker():
-        cml_logger = ClearMLLogger(opt, "Display Model Predictions")
-        # Upload the trained model as artifact in ClearML
-        cml_logger.upload_artifact("Model", opt["model_file"])
+        clearml_logger = ClearMLLogger(opt)
     else:
-        cml_logger = None
+        clearml_logger = None
 
     # Show some example dialogs.
     turn = 0
@@ -89,9 +87,9 @@ def display_model(opt):
             if opt['verbose'] or opt.get('display_add_fields', ''):
                 print(world.display() + "\n~~")
                 if opt['clearml_log'] and is_primary_worker():
-                    cml_logger.log_debug_samples(opt['task'], world.display(), _k)
+                    clearml_logger.log_debug_samples(opt['task'], world.display(), _k)
             else:
-                simple_display(opt, world, turn, cml_logger, _k)
+                simple_display(opt, world, turn, clearml_logger, _k)
             turn += 1
             if world.get_acts()[0]['episode_done']:
                 turn = 0
@@ -101,8 +99,10 @@ def display_model(opt):
                 break
 
     if opt['clearml_log'] and is_primary_worker():
+        # Upload the Model as artifact
+        clearml_logger.upload_artifact("Model", opt["model_file"])
         # Close ClearML Task
-        cml_logger.close()
+        clearml_logger.close()
 
 
 @register_script('display_model', aliases=['dm'])

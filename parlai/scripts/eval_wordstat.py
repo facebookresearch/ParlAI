@@ -121,7 +121,7 @@ def eval_wordstat(opt):
     agent.opt.log()
 
     if opt["clearml_log"]:
-        cml_logger = ClearMLLogger(opt, "Evaluation of Word Statistics")
+        clearml_logger = ClearMLLogger(opt)
 
     if opt.get('external_dict'):
         print('[ Using external dictionary from: {} ]'.format(opt['external_dict']))
@@ -279,12 +279,14 @@ def eval_wordstat(opt):
 
     # Log final reports to ClearML
     if opt["clearml_log"] and is_primary_worker():
-        cml_logger.upload_artifact("Model", opt["model_file"])
-        cml_logger.log_final(opt["datatype"], report)
+        clearml_logger.log_final(opt["datatype"], report)  # Log the report
+        clearml_logger.upload_artifact(
+            "Model", opt["model_file"]
+        )  # Upload Model as Artifact
 
     # Close ClearML Task
     if opt["clearml_log"] and is_primary_worker():
-        cml_logger.close()
+        clearml_logger.close()
 
     return report
 

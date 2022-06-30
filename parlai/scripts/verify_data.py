@@ -13,6 +13,7 @@ candidates.
 parlai verify_data --task convai2 --datatype valid
 ```
 """
+
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
@@ -142,10 +143,9 @@ def verify_data(opt):
     counts = verify(opt)
     print(counts)
     if opt["clearml_log"] and is_primary_worker():
-        task_name = opt["task"]
-        cml_logger = ClearMLLogger(opt, f"Verify Data : {task_name}")
-        cml_logger.log_final(opt["datatype"], counts)
-        cml_logger.close()
+        clearml_logger = ClearMLLogger(opt)
+        clearml_logger.log_final(opt["datatype"], counts)
+        clearml_logger.close()
     return counts
 
 
