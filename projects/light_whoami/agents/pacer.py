@@ -197,7 +197,10 @@ class PacerTreeSearchMixin(TreeSearch):
         return extract_characters(self.context_str)['_self_name']
 
     def set_batch_context(
-        self: TSType, batch_context_list: List[List[int]], batch_idx: int
+        self: TSType,
+        batch_context_list: List[List[int]],
+        batch_idx: int,
+        gpu_beam_blocking: bool,
     ) -> TSType:
         """
         Override to save de-tokenized version of context.
