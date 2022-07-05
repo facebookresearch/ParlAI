@@ -9,8 +9,6 @@ import sys
 
 from setuptools import setup, find_packages
 
-# from torch.utils.cpp_extension import BuildExtension, CUDAExtension
-
 VERSION = '1.6.0'  # if you update, update parlai/__init__.py too!
 
 if sys.version_info < (3, 8):
@@ -28,15 +26,6 @@ with open('requirements.txt') as f:
 
 
 if __name__ == '__main__':
-    # extensions = [
-    #     CUDAExtension(
-    #         'ngram_repeat_block_cuda',
-    #         [
-    #             'parlai/clib/cuda/ngram_repeat_block_cuda.cpp',
-    #             'parlai/clib/cuda/ngram_repeat_block_cuda_kernel.cu',
-    #         ],
-    #     ),
-    # ]
     setup(
         name='parlai',
         version=VERSION,
@@ -49,12 +38,10 @@ if __name__ == '__main__':
         install_requires=reqs,
         include_package_data=True,
         package_data={'': ['*.txt', '*.md', '*.opt']},
-        # ext_modules=extensions,
         entry_points={
             "flake8.extension": ["PAI = parlai.utils.flake8:ParlAIChecker"],
             "console_scripts": ["parlai=parlai.__main__:main"],
         },
-        # cmdclass={'build_ext': BuildExtension},
         classifiers=[
             "Programming Language :: Python :: 3",
             "License :: OSI Approved :: MIT License",

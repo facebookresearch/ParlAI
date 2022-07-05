@@ -1391,7 +1391,7 @@ class TreeSearch(object):
             a LongTensor representing the input context; used for context
             ngram blocking, if supplied
         """
-        self.context = torch.Tensor(context.tolist()).long()
+        self.context = context.tolist()
         return self
 
     def set_batch_context(
@@ -1792,7 +1792,6 @@ class BeamSearch(TreeSearch):
         voc_size = logprobs.size(-1)
 
         # get the backtracking hypothesis id as a multiple of full voc_sizes
-        # hyp_ids = best_idxs // voc_size
         hyp_ids = torch.div(best_idxs, voc_size, rounding_mode='trunc')
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size

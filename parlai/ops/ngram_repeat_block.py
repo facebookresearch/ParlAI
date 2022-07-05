@@ -18,8 +18,6 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-# import ngram_repeat_block_cuda
-
 ngram_repeat_block_cuda = load(
     name='ngram_repeat_block_cuda',
     sources=[
