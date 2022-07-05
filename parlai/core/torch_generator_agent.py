@@ -1409,6 +1409,9 @@ class TreeSearch(object):
             a list of lists, each one containing the context for one member of the batch
         :param batch_idx:
             index of the batch
+        :param gpu_beam_blocking:
+            whether we are using gpu kernel for beam blocking, if so return a tensor,
+            else return a list.
         """
         context = batch_context_list[batch_idx]
         self.context = context if gpu_beam_blocking else context.tolist()
@@ -1464,17 +1467,19 @@ class TreeSearch(object):
         if_context_blocking=False,
     ):
         """
-        Hard block ngrams from the logprobs, based on the source.
+        Hard block ngrams from the logprobs.
 
         :param ngram_size:
             The length of ngrams to block. Must be > 0.
         :param logprobs:
             Float or HalfTensor, representing the log-probabilities. This is
             modified in place.
-        :param source:
-            Source text to grab ngrams from. If None, it uses the current
-            hypothesis (i.e. self-blocking).
+        :param step:
+            current step on generating utterances
+        :param if_context_blocking:
+            whether we are doing context blocking
         """
+        # gpu beam blocking
         if self.gpu_beam_blocking:
             context = self.context if if_context_blocking else None
             logprobs = self.no_repeat_ngram_op(
@@ -1489,6 +1494,7 @@ class TreeSearch(object):
             )
             return logprobs
 
+        # cpu beam blocking
         for beam_id, hyp in enumerate(self.partial_hyps.tolist()):
             if len(hyp) < ngram_size - 1:
                 continue
@@ -1508,7 +1514,7 @@ class TreeSearch(object):
             for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
-                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
+                    if (ngram_size == 1) or prefix == ngram[:-1]:
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 

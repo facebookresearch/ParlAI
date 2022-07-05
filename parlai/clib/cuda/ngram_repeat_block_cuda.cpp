@@ -1,7 +1,9 @@
 /*
 Copyright (c) Facebook, Inc. and its affiliates.
+Copyright (c) Microsoft Corporation.
 This source code is licensed under the MIT license found in the
 LICENSE file in the root directory of this source tree.
+Code adapted from https://github.com/microsoft/fastseq/blob/main/fastseq/clib/cuda/ngram_repeat_block_cuda.cpp.
 */
 
 #include <torch/extension.h>

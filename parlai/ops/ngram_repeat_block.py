@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
+# Copyright (c) Microsoft Corporation.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+# Code adapted from https://github.com/microsoft/fastseq/blob/main/fastseq/ops/ngram_repeat_block.py.
 
 """
 Wrapper for ngram_repeat_block cuda extension.
