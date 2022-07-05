@@ -34,7 +34,8 @@ torch::Tensor ngram_repeat_block_forward(const torch::Tensor hypothesis, const t
                                          torch::Tensor lprobs, int bsz,
                                          int step, int beam_size,
                                          int no_repeat_ngram_size,
-                                         bool if_context_blocking) {
+                                         bool if_context_blocking)
+{
   CHECK_INPUT(hypothesis);
   CHECK_INPUT(lprobs);
   assert(bsz > 0);
@@ -46,7 +47,8 @@ torch::Tensor ngram_repeat_block_forward(const torch::Tensor hypothesis, const t
                                          no_repeat_ngram_size, if_context_blocking);
 }
 
-PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
+PYBIND11_MODULE(TORCH_EXTENSION_NAME, m)
+{
   m.def("forward", &ngram_repeat_block_forward,
         "No Repeat Ngram Block forward (CUDA)");
 }
