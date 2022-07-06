@@ -1665,10 +1665,11 @@ class TorchAgent(ABC, Agent):
 
     def _pad_dictionary_fp16(self):
         """
-        Volta cores revert to FP32 hardware if tensors are not multiples
-        of 8 in all dimensions. This INCLUDES the embeddings layer! As
-        such, we need some extra magic to ensure the dictionary is padded
-        with extra tokens to make it a multiple of 8.
+        Volta cores revert to FP32 hardware if tensors are not multiples of 8 in all
+        dimensions.
+
+        This INCLUDES the embeddings layer! As such, we need some extra magic to ensure
+        the dictionary is padded with extra tokens to make it a multiple of 8.
         """
         from parlai.utils.torch import FP16_PAD_SIZE
 
@@ -2318,7 +2319,7 @@ class TorchAgent(ABC, Agent):
         for k, values in self._local_metrics.items():
             if len(values) != len(batch.valid_indices):
                 raise IndexError(
-                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
+                    f"Batchsize mismatch on metric {k} got {len(values)}, "
                     f"expected {len(batch.valid_indices)}"
                 )
             for i, value in zip(batch.valid_indices, values):
