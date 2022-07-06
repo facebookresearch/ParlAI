@@ -452,8 +452,9 @@ class MultiAgentDialogWorld(World):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         """
-        Add an option for parley mode (round-robin v.s. async).
-        Defaults to round-robin for backward-compatability.
+        Add an option for parley mode (round-robin v.s.
+
+        async). Defaults to round-robin for backward-compatability.
         """
         world = parser.add_argument_group('MultiAgentDialogWorld Arguments')
         world.add_argument(
@@ -486,8 +487,8 @@ class MultiAgentDialogWorld(World):
         """
         Perform a turn for every agent.
 
-        Agents act either in a round-robin fashion (default) or asynchronously, depending
-        on the command line argument `parley-mode`.
+        Agents act either in a round-robin fashion (default) or asynchronously,
+        depending on the command line argument `parley-mode`.
         """
         if self.parley_mode == 'round-robin':
             self._parley_round_robin()

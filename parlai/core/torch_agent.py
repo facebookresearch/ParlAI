@@ -239,11 +239,11 @@ class History(object):
         sets the maximum number of tunrs
 
     :param p1_token:
-        token indicating 'person 1'; opt must have 'person_tokens' set to True
+        token indicating 'person 1' (teacher/ others); opt must have 'person_tokens' set to True
         for this to be added
 
-    :param p1_token:
-        token indicating 'person 2'; opt must have 'person_tokens' set to True
+    :param p2_token:
+        token indicating 'person 2' (self); opt must have 'person_tokens' set to True
         for this to be added
 
     :param dict_agent:
@@ -284,6 +284,8 @@ class History(object):
         self.add_p1_after_newln = opt.get('add_p1_after_newln', False)
         self.p1_token = p1_token
         self.p2_token = p2_token
+        self.speaker_field = opt.get('speaker_field', None)
+        self.speakers = set([p1_token, p2_token])
 
     def parse(self, text):
         """
@@ -349,8 +351,17 @@ class History(object):
             for text in next_texts:
                 self._update_raw_strings(text)
                 if self.add_person_tokens:
+                    # Use obs[self.speaker_field] as token if present,
+                    # otherwise use self.p1_token as default
+                    if self.speaker_field:
+                        speaker = obs.get(self.speaker_field, self.p1_token)
+                    else:
+                        speaker = self.p1_token
+                    # Keep track of new speaker
+                    if speaker not in self.speakers:
+                        self.speakers.add(speaker)
                     text = self._add_person_tokens(
-                        obs[self.field], self.p1_token, self.add_p1_after_newln
+                        obs[self.field], speaker, self.add_p1_after_newln
                     )
                 # update history string
                 self._update_strings(text)
@@ -500,6 +511,13 @@ class TorchAgent(ABC, Agent):
             ' set to off.'
             ' Typically, scripts can set their preferred default behavior at the start,'
             ' e.g. eval scripts.',
+        )
+        agent.add_argument(
+            '--allow-multiple-observe',
+            type='bool',
+            default=False,
+            help='Allow multiple rounds of observations before the agent takes an action itself.'
+            ' (defaults to False)',
         )
         # pretrained embedding arguments
         agent.add_argument(
@@ -669,6 +687,15 @@ class TorchAgent(ABC, Agent):
             'the dictionary during initialization.',
         )
         agent.add_argument(
+            '-spkr',
+            '--speaker-field',
+            type='nonestr',
+            default=None,
+            help="field in the observation to track indicating the id of the speaker "
+            "over the course of the episode (defaults to None); `observation['speaker_field']` "
+            "overrides `__p1__` in `--person-tokens` if field is not None and is present in the observation.",
+        )
+        agent.add_argument(
             '--split-lines',
             type='bool',
             default=False,
@@ -745,6 +772,7 @@ class TorchAgent(ABC, Agent):
         opt = self.opt
 
         # Safety checkers to ensure TorchAgent assumptions aren't being violated.
+        self.allow_multiple_observe = opt['allow_multiple_observe']
         self.__expecting_clear_history = False
         self.__expecting_to_reply = False
 
@@ -783,15 +811,7 @@ class TorchAgent(ABC, Agent):
             self.dict = self.build_dictionary()
 
             if opt.get('fp16') or opt.get('force_fp16_tokens'):
-                # Volta cores revert to FP32 hardware if tensors are not multiples
-                # of 8 in all dimensions. This INCLUDES the embeddings layer! As
-                # such, we need some extra magic to ensure the dictionary is padded
-                # with extra tokens to make it a multiple of 8.
-                from parlai.utils.torch import FP16_PAD_SIZE
-
-                if len(self.dict) % FP16_PAD_SIZE != 0:
-                    for i in range(FP16_PAD_SIZE - len(self.dict) % FP16_PAD_SIZE):
-                        self.dict['__FP16_PAD_{}__'.format(i)] = 1
+                self._pad_dictionary_fp16()
 
             # global_metrics keeps track of batch-level or global-level metrics
             self.global_metrics = Metrics(shared=None)
@@ -868,6 +888,22 @@ class TorchAgent(ABC, Agent):
             d[self.P1_TOKEN] = 999_999_999
             d[self.P2_TOKEN] = 999_999_998
         return d
+
+    def _add_speaker_to_dictionary(self, speaker: str):
+        d = self.dict
+        if speaker not in d:
+            d[speaker] = 999_999_999 - len(self.history.speakers)
+            # Re-pad dictionary if necessary
+            if self.opt.get('fp16') or self.opt.get('force_fp16_tokens'):
+                self._pad_dictionary_fp16()
+
+    def _get_speaker_from_observation(self, observation: Message):
+        speaker_field = self.opt.get("speaker_field", None)
+        if speaker_field:
+            speaker = observation.get(speaker_field, self.P1_TOKEN)
+        else:
+            speaker = self.P1_TOKEN
+        return speaker
 
     def _resize_token_embeddings(self, state_dict, msg=None):
         """
@@ -1627,6 +1663,26 @@ class TorchAgent(ABC, Agent):
         """
         return padded_tensor(items, pad_idx=self.NULL_IDX, fp16friendly=self.fp16)
 
+    def _pad_dictionary_fp16(self):
+        """
+        Volta cores revert to FP32 hardware if tensors are not multiples
+        of 8 in all dimensions. This INCLUDES the embeddings layer! As
+        such, we need some extra magic to ensure the dictionary is padded
+        with extra tokens to make it a multiple of 8.
+        """
+        from parlai.utils.torch import FP16_PAD_SIZE
+
+        # First get rid of all the paddings
+        for i in range(FP16_PAD_SIZE):
+            key = f'__FP16_PAD_{i}__'
+            if key in self.dict:
+                del self.dict[key]
+
+        # Re-pad the dictionary
+        if len(self.dict) % FP16_PAD_SIZE != 0:
+            for i in range(FP16_PAD_SIZE - len(self.dict) % FP16_PAD_SIZE):
+                self.dict['__FP16_PAD_{}__'.format(i)] = 1
+
     def is_valid(self, obs):
         """
         Determine if an observation is valid or not.
@@ -1831,7 +1887,7 @@ class TorchAgent(ABC, Agent):
         observation = Message(observation)
 
         # Sanity check everything is in order
-        self._validate_observe_invariants()
+        self._validate_observe_invariants(observation)
 
         if observation.get('episode_done'):
             self.__expecting_clear_history = True
@@ -1850,6 +1906,13 @@ class TorchAgent(ABC, Agent):
                 self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
             else:
                 self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
+
+        # If we are tracking speaker id and a new speaker appears, update dictionary
+        # Since self.history is sharing the same dictionary, it will be aware of the update too,
+        # and
+        if self.add_person_tokens:
+            speaker = self._get_speaker_from_observation(observation)
+            self._add_speaker_to_dictionary(speaker)
 
         # Update the history using the observation.
         # We may also consider adding a temporary string to the history
@@ -1930,11 +1993,11 @@ class TorchAgent(ABC, Agent):
 
         raise RuntimeError("Unexpected case in self_observe.")
 
-    def _validate_observe_invariants(self):
+    def _validate_observe_invariants(self, observation: Message = None):
         """
         Check that we properly called self_observe after the last batch_act.
         """
-        if self.__expecting_to_reply:
+        if not self.allow_multiple_observe and self.__expecting_to_reply:
             raise RuntimeError(
                 "Last observe() had a label, but no call to self_observe ever "
                 "happened. You are likely making multiple observe() calls without "
@@ -1942,7 +2005,11 @@ class TorchAgent(ABC, Agent):
                 "issue if you require assistance."
             )
 
-        if self.__expecting_clear_history:
+        if (not self.allow_multiple_observe and self.__expecting_clear_history) or (
+            self.__expecting_clear_history
+            and observation is not None
+            and not observation.get('episode_done')
+        ):
             raise RuntimeError(
                 "Last observe() was episode_done, but we never saw a corresponding "
                 "self_observe to clear the history, probably because you missed an "
