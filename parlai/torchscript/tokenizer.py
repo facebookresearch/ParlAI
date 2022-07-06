@@ -524,7 +524,9 @@ class ScriptableSubwordBpeHelper(object):
         return word
 
     def segment_tokens(self, tokens: List[str]) -> List[str]:
-        """segment a sequence of tokens with BPE encoding"""
+        """
+        segment a sequence of tokens with BPE encoding.
+        """
         output: List[str] = []
         for word in tokens:
             # eliminate double spaces

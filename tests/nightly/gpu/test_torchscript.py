@@ -62,7 +62,8 @@ class TestTorchScript(unittest.TestCase):
 
     def test_subword_bpe_token_splitter(self):
         """
-        Test TorchScriptable code for splitting tokens against reference subword BPE version.
+        Test TorchScriptable code for splitting tokens against reference subword BPE
+        version.
         """
 
         from parlai.scripts.torchscript import TorchScript
@@ -194,7 +195,8 @@ class TestTorchScript(unittest.TestCase):
 
     def test_torchscript_transformer_classifier_agent(self):
         """
-        Test exporting a Transformer classifier model to TorchScript and then testing it on sample data.
+        Test exporting a Transformer classifier model to TorchScript and then testing it
+        on sample data.
         """
 
         from parlai.scripts.torchscript import TorchScript
