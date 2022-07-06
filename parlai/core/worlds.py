@@ -6,16 +6,23 @@
 """
 Worlds are the basic environments which define how agents interact with one another.
 
-``World(object)`` provides a generic parent class, including ``__enter__``
+    ``World(object)`` provides a generic parent class, including ``__enter__``
     and ``__exit__`` statements which allow you to guarantee that the shutdown
     method is called.
+
     ``DialogPartnerWorld(World)`` provides a two-agent turn-based dialog setting.
+
     ``MultiAgentDialogWorld(World)`` provides a multi-agent setting.
+
     ``MultiWorld(World)`` creates a set of environments (worlds) for the same agent
     to multitask over, a different environment will be chosen per episode.
+
     ``BatchWorld(World)`` is a container for doing minibatch training over a world by
     collecting batches of N copies of the environment (each with different state).
+
+
 All worlds are initialized with the following parameters:
+
     ``opt`` -- contains any options needed to set up the agent. This generally contains
         all command-line arguments recognized from core.params, as well as other
         options that might be set through the framework to enable certain modes.
@@ -210,8 +217,11 @@ class World(object):
     def __enter__(self):
         """
         Empty enter provided for use with ``with`` statement.
+
         e.g:
+
         .. code-block:: python
+
             with World() as world:
                 for n in range(10):
                     n.parley()
@@ -504,12 +514,14 @@ class MultiAgentDialogWorld(World):
         """
         Perform a turn for every agent (each turn is one clock tick).
 
-        For each agent, take an action for this turn simultaneously. Since they all
-        speak at the same time, they must first act before getting to observe others --
+        For each agent, take an action for this turn simultaneously.
+        Since they all speak at the same time,
+        they must first act before getting to observe others --
         utterances spoken this round should not influence their decisions this round..
-        Once every agent has taken an action, make each agent observe the actions taken
-        by all the other agents this turn. This information can then can used in their
-        decision next round.
+
+        Once every agent has taken an action, make each agent
+        observe the actions taken by all the other agents this turn.
+        This information can then can used in their decision next round.
         """
         acts = self.acts
         for index, agent in enumerate(self.agents):
@@ -828,9 +840,11 @@ class BatchWorld(World):
     """
     BatchWorld contains many copies of the same world.
 
-    Create a separate world for each item in the batch, sharing the parameters for each.
-    The underlying world(s) it is batching can be either ``DialogPartnerWorld``,
-    ``MultiAgentWorld``, or ``MultiWorld``.
+    Create a separate world for each item in the batch, sharing
+    the parameters for each.
+
+    The underlying world(s) it is batching can be either
+    ``DialogPartnerWorld``, ``MultiAgentWorld``, or ``MultiWorld``.
     """
 
     def __init__(self, opt: Opt, world):
@@ -1147,6 +1161,7 @@ class DynamicBatchWorld(World):
         TensorCores only work when a tensor is a multiple of 8 in almost all
         dimensions. This means all examples cost is related to their nearest
         multiple of 8.
+
         See https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for
         more information.
         """

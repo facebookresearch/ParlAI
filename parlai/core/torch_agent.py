@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-General utility code for building PyTorch-based agents in ParlAI. Contains the following
-main utilities:
+General utility code for building PyTorch-based agents in ParlAI.
+
+Contains the following main utilities:
 
 * TorchAgent class which serves as a useful parent class for other model agents
 * Batch namedtuple which is the input type of the main abstract methods of
@@ -13,6 +14,8 @@ main utilities:
 * Output namedtuple which is the expected output type of the main abstract
   methods of the TorchAgent class
 * History class which handles tracking the dialogue state over the course of an episode.
+
+
 See below for documentation on each specific tool.
 """
 
@@ -54,37 +57,50 @@ from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor, atomic
 
 class Batch(AttrDict):
     """
-    Batch is a namedtuple containing data being sent to an agent. This is the input type
-    of the train_step and eval_step functions. Agents can override the batchify function
-    to return a Batch with additional fields if they would like, though we recommend
-    calling the parent function to set up these fields as a base. Batch objects contain
-    some magic semantics when dealing with CUDA. Namely, Batch objects have a to()
-    method that can be used to send all tensors to a particular device (GPU). This is
-    undesireable in some instances, as some fields may be used only for accumulating
-    metrics, or are only used on CPU. Prefixing a field with an underscore will prevent
-    it from being transferred to GPU. Note that in upcoming versions of ParlAI, we will
-    enable features for getting speedups in training which work best when the number of
-    non-Tensor objects in a batch is minimal.
+    Batch is a namedtuple containing data being sent to an agent.
+
+    This is the input type of the train_step and eval_step functions. Agents
+    can override the batchify function to return a Batch with additional fields
+    if they would like, though we recommend calling the parent function to set
+    up these fields as a base.
+
+    Batch objects contain some magic semantics when dealing with CUDA. Namely,
+    Batch objects have a to() method that can be used to send all tensors to
+    a particular device (GPU). This is undesireable in some instances, as some
+    fields may be used only for accumulating metrics, or are only used on CPU.
+    Prefixing a field with an underscore will prevent it from being transferred
+    to GPU.
+
+    Note that in upcoming versions of ParlAI, we will enable features for getting
+    speedups in training which work best when the number of non-Tensor objects
+    in a batch is minimal.
 
     :param text_vec:
         bsz x seqlen tensor containing the parsed text data.
+
     :param label_vec:
         bsz x seqlen tensor containing the parsed label (one per batch row).
+
     :param labels:
         list of length bsz containing the selected label for each batch row (some
         datasets have multiple labels per input example).
+
     :param valid_indices:
         tensor of length bsz containing the original indices of each example in the
         batch. we use these to map predictions back to their proper row, since e.g.
         we may sort examples by their length or some examples may be invalid.
+
     :param candidates:
         list of lists of text. outer list has size bsz, inner lists vary in size
         based on the number of candidates for each row in the batch.
+
     :param candidate_vecs:
         list of lists of tensors. outer list has size bsz, inner lists vary in size
         based on the number of candidates for each row in the batch.
+
     :param image:
         list of image features in the format specified by the --image-mode arg.
+
     :param reward:
         Tensor containing the "reward" field of observations, if present
     """
@@ -148,8 +164,12 @@ class Batch(AttrDict):
 
     def to(self, dev):
         """
-        Move all tensors in the batch to a device. NOT in place. Note that valid_indices
-        and fields starting with an underscore are always kept on CPU.
+        Move all tensors in the batch to a device.
+
+        NOT in place.
+
+        Note that valid_indices and fields starting with an underscore are
+        always kept on CPU.
 
         :return:
             self
@@ -188,12 +208,14 @@ class Batch(AttrDict):
 
 class Output(AttrDict):
     """
-    Output is an object containing agent predictions. This is the expected return type
-    of the train_step and eval_step functions, though agents can choose to return None
-    if they do not want to answer.
+    Output is an object containing agent predictions.
+
+    This is the expected return type of the train_step and eval_step functions,
+    though agents can choose to return None if they do not want to answer.
 
     :param List[str] text:
         list of strings of length bsz containing the predictions of the model
+
     :param List[List[str]] text_candidates:
         list of lists of length bsz containing ranked predictions of the model.
         each sub-list is an ordered ranking of strings, of variable length.
@@ -205,20 +227,25 @@ class Output(AttrDict):
 
 class History(object):
     """
-    History handles tracking the dialogue state over the course of an episode. History
-    may also be used to track the history of any field.
+    History handles tracking the dialogue state over the course of an episode.
+
+    History may also be used to track the history of any field.
 
     :param field:
         field in the observation to track over the course of the episode
         (defaults to 'text')
+
     :param maxlen:
         sets the maximum number of tunrs
+
     :param p1_token:
         token indicating 'person 1' (teacher/ others); opt must have 'person_tokens' set to True
         for this to be added
+
     :param p2_token:
         token indicating 'person 2' (self); opt must have 'person_tokens' set to True
         for this to be added
+
     :param dict_agent:
         DictionaryAgent object for tokenizing the history
     """
@@ -402,11 +429,15 @@ class TorchAgent(ABC, Agent):
     """
     A provided abstract base agent for any model that wants to use Torch.
 
-    Exists to make it easier to implement a new agent. Not necessary, but reduces
-    duplicated code. Many methods are intended to be either used as is when the default
-    is acceptable, or to be overriden and called with super(), with the extra
-    functionality added to the initial result. See the method comment for recommended
-    behavior. This agent serves as a common framework for all ParlAI models which want
+    Exists to make it easier to implement a new agent.
+    Not necessary, but reduces duplicated code.
+
+    Many methods are intended to be either used as is when the default is
+    acceptable, or to be overriden and called with super(), with the extra
+    functionality added to the initial result. See the method comment for
+    recommended behavior.
+
+    This agent serves as a common framework for all ParlAI models which want
     to use PyTorch.
     """
 
@@ -416,10 +447,11 @@ class TorchAgent(ABC, Agent):
     @classmethod
     def optim_opts(cls):
         """
-        Fetch optimizer selection. By default, collects everything in torch.optim, as
-        well as importing:
+        Fetch optimizer selection.
 
+        By default, collects everything in torch.optim, as well as importing:
         - qhm / qhmadam if installed from github.com/facebookresearch/qhoptim
+
         Override this (and probably call super()) to add your own optimizers.
         """
         # first pull torch.optim in
@@ -888,9 +920,10 @@ class TorchAgent(ABC, Agent):
 
     def _get_init_model(self, opt: Opt, shared):
         """
-        Get model file to initialize with. If `init_model` exits, we will return the
-        path to that file and maybe load dict file from that path. Otherwise, use
-        `model_file.`
+        Get model file to initialize with.
+
+        If `init_model` exits, we will return the path to that file and maybe
+        load dict file from that path. Otherwise, use `model_file.`
 
         :return:  path to load model from, whether we loaded from `init_model`
                   or not
@@ -926,13 +959,14 @@ class TorchAgent(ABC, Agent):
 
     def _get_special_tokens(self) -> List[str]:
         """
-        Return list of special tokens. Made easily overridable for special cases. Note
-        that in the case of ambiguity of special-token parsing, the precedence is set by
-        the ordering returned in this method.  For example, if special tokens are.
+        Return list of special tokens.
 
-        ["OHB", "BOY"], parsing "OHBOY" will become (special)OHB and (normal)OY. But
-        with special tokens.
+        Made easily overridable for special cases.
 
+        Note that in the case of ambiguity of special-token parsing, the
+        precedence is set by the ordering returned in this method.  For
+        example, if special tokens are ["OHB", "BOY"], parsing "OHBOY" will
+        become (special)OHB and (normal)OY. But with special tokens
         ["BOY", "OHB"], then we will get (normal)OH and (special)BOY.
         """
         if self.opt.get('special_tok_lst'):
@@ -970,13 +1004,17 @@ class TorchAgent(ABC, Agent):
 
         :param params:
             parameters from the model
+
         :param optim_states:
             optional argument providing states of optimizer to load
+
         :param saved_optim_type:
             type of optimizer being loaded, if changed will skip loading
             optimizer states
+
         :param is_finetune:
             bool indicating whether this training run is a fine-tune or not
+
         :returns:
             boolean indicating whether the optimizer failed to initialize with
             optim_states.
@@ -1145,10 +1183,12 @@ class TorchAgent(ABC, Agent):
         """
         Used to temporarily disable local metrics.
 
-        This is useful for things like when you need to call super(), but prevent the
-        parent from recording some metric. For example, if you're forwarding a dummy
-        batch or calling super() but still want to modify the output. You can compare
-        this to torch.no_grad in its goal.
+        This is useful for things like when you need to call super(), but
+        prevent the parent from recording some metric. For example, if you're
+        forwarding a dummy batch or calling super() but still want to modify
+        the output.
+
+        You can compare this to torch.no_grad in its goal.
         """
         if not (enabled ^ disabled):
             raise ValueError(
@@ -1162,9 +1202,12 @@ class TorchAgent(ABC, Agent):
         Record an example-level metric for all items in the batch.
 
         Local metrics are maybe recorded anywhere within batch act. They will
-        automatically be collated and returned at the end of batch_act. The beginning of
-        batch_act resets these, so you may not use them during observe. Example local
-        metrics include ppl, token_acc, any other agent-specific metrics.
+        automatically be collated and returned at the end of batch_act. The
+        beginning of batch_act resets these, so you may not use them during
+        observe.
+
+        Example local metrics include ppl, token_acc, any other agent-specific
+        metrics.
         """
         if not self.__local_metrics_enabled:
             return
@@ -1199,10 +1242,12 @@ class TorchAgent(ABC, Agent):
 
     def _gpu_usage(self):
         """
-        Compute GPU memory usage. Includes both allocated and cached memory; this should
-        be close to the output of nvidia-smi, but not reflect of how much is currently
-        demanded by the program. It may be viewed as a rough approximation of worst-
-        case-until-now.
+        Compute GPU memory usage.
+
+        Includes both allocated and cached memory; this should be close to the
+        output of nvidia-smi, but not reflect of how much is currently demanded
+        by the program. It may be viewed as a rough approximation of
+        worst-case-until-now.
 
         :return: Percent of allocated GPU memory as a fraction of available.
         """
@@ -1254,14 +1299,18 @@ class TorchAgent(ABC, Agent):
 
     def _project_vec(self, vec, target_dim, method='random'):
         """
-        If needed, project vector to target dimensionality. Projection methods
-        implemented are the following:
+        If needed, project vector to target dimensionality.
+
+        Projection methods implemented are the following:
 
         random - random gaussian matrix multiplication of input vector
+
         :param vec:
             one-dimensional vector
+
         :param target_dim:
             dimension of returned vector
+
         :param method:
             projection method. will be used even if the dim is not changing if
             method ends in "-force".
@@ -1292,6 +1341,7 @@ class TorchAgent(ABC, Agent):
 
         :param weight:
             weights of lookup table (nn.Embedding/nn.EmbeddingBag)
+
         :param emb_type:
             pretrained embedding type
         """
@@ -1371,12 +1421,16 @@ class TorchAgent(ABC, Agent):
 
         :param text:
             String to vectorize.
+
         :param add_start:
             Add the start token to the front of the tensor.
+
         :param add_end:
             Add the end token to the end of the tensor.
+
         :param truncate:
             Truncate to this many tokens >= 0, or None.
+
         :param truncate_left:
             Truncate from the left side (keep the rightmost tokens). You
             probably want this True for inputs, False for targets.
@@ -1397,12 +1451,16 @@ class TorchAgent(ABC, Agent):
 
         :param text:
             String to vectorize.
+
         :param add_start:
             Add the start token to the front of the tensor.
+
         :param add_end:
             Add the end token to the end of the tensor.
+
         :param truncate:
             Truncate to this many tokens >= 0, or None.
+
         :param truncate_left:
             Truncate from the left side (keep the rightmost tokens). You
             probably want this True for inputs, False for targets.
@@ -1540,30 +1598,43 @@ class TorchAgent(ABC, Agent):
         label_truncate=None,
     ):
         """
-        Make vectors out of observation fields and store in the observation. In
-        particular, the 'text' and 'labels'/'eval_labels' fields are processed and a new
-        field is added to the observation with the suffix '_vec'. If you want to use
-        additional fields on your subclass, you can override this function, call
-        super().vectorize(...) to process the text and labels, and then process the
-        other fields in your subclass. Additionally, if you want to override some of
-        these default parameters, then we recommend using a pattern like:
+        Make vectors out of observation fields and store in the observation.
+
+        In particular, the 'text' and 'labels'/'eval_labels' fields are
+        processed and a new field is added to the observation with the suffix
+        '_vec'.
+
+        If you want to use additional fields on your subclass, you can override
+        this function, call super().vectorize(...) to process the text and
+        labels, and then process the other fields in your subclass.
+
+        Additionally, if you want to override some of these default parameters,
+        then we recommend using a pattern like:
 
         .. code-block:: python
+
           def vectorize(self, *args, **kwargs):
               kwargs['add_start'] = False
               return super().vectorize(*args, **kwargs)
+
+
         :param obs:
             Single observation from observe function.
+
         :param add_start:
             default True, adds the start token to each label.
+
         :param add_end:
             default True, adds the end token to each label.
+
         :param text_truncate:
             default None, if set truncates text vectors to the specified
             length.
+
         :param label_truncate:
             default None, if set truncates label vectors to the specified
             length.
+
         :return:
             the input observation, with 'text_vec', 'label_vec', and
             'cands_vec' fields added.
@@ -1577,14 +1648,16 @@ class TorchAgent(ABC, Agent):
         self, items: List[Union[List[int], torch.LongTensor]], is_label: bool = False
     ) -> Tuple[torch.LongTensor, List[int]]:
         """
-        Create a right padded matrix from an uneven list of lists. Returns (padded,
-        lengths), where padded is the padded matrix, and lengths is a list containing
-        the lengths of each row.
+        Create a right padded matrix from an uneven list of lists.
+
+        Returns (padded, lengths), where padded is the padded matrix, and lengths
+        is a list containing the lengths of each row.
 
         :param list[iter[int]] items: List of items
         :param bool is_label: True if items are labels, False if contexts.
         :returns: (padded, lengths) tuple
         :rtype: (Tensor[int64], list[int])
+
         This is intentionally overridable so that models can control how
         to pad their input.
         """
@@ -1592,11 +1665,10 @@ class TorchAgent(ABC, Agent):
 
     def _pad_dictionary_fp16(self):
         """
-        Volta cores revert to FP32 hardware if tensors are not multiples of 8 in all
-        dimensions.
-
-        This INCLUDES the embeddings layer! As such, we need some extra magic to ensure
-        the dictionary is padded with extra tokens to make it a multiple of 8.
+        Volta cores revert to FP32 hardware if tensors are not multiples
+        of 8 in all dimensions. This INCLUDES the embeddings layer! As
+        such, we need some extra magic to ensure the dictionary is padded
+        with extra tokens to make it a multiple of 8.
         """
         from parlai.utils.torch import FP16_PAD_SIZE
 
@@ -1619,20 +1691,26 @@ class TorchAgent(ABC, Agent):
 
     def batchify(self, obs_batch, sort=False):
         """
-        Create a batch of valid observations from an unchecked batch. A valid
-        observation is one that passes the lambda provided to the function, which
-        defaults to checking if the preprocessed 'text_vec' field is present which would
-        have been set by this agent's 'vectorize' function. Returns a namedtuple Batch.
-        See original definition above for in-depth explanation of each field. If you
-        want to include additional fields in the batch, you can subclass this function
-        and return your own "Batch" namedtuple: copy the Batch namedtuple at the top of
-        this class, and then add whatever additional fields that you want to be able to
-        access. You can then call super().batchify(...) to set up the original fields
-        and then set up the additional fields in your subclass and return that batch
-        instead.
+        Create a batch of valid observations from an unchecked batch.
+
+        A valid observation is one that passes the lambda provided to the
+        function, which defaults to checking if the preprocessed 'text_vec'
+        field is present which would have been set by this agent's 'vectorize'
+        function.
+
+        Returns a namedtuple Batch. See original definition above for in-depth
+        explanation of each field.
+
+        If you want to include additional fields in the batch, you can subclass
+        this function and return your own "Batch" namedtuple: copy the Batch
+        namedtuple at the top of this class, and then add whatever additional
+        fields that you want to be able to access. You can then call
+        super().batchify(...) to set up the original fields and then set up the
+        additional fields in your subclass and return that batch instead.
 
         :param obs_batch:
             List of vectorized observations
+
         :param sort:
             Default False, orders the observations by length of vectors. Set to
             true when using torch.nn.utils.rnn.pack_padded_sequence.  Uses the text
@@ -1745,22 +1823,30 @@ class TorchAgent(ABC, Agent):
 
     def match_batch(self, batch_reply, valid_inds, output=None):
         """
-        Match sub-batch of predictions to the original batch indices. Batches may be
-        only partially filled (i.e when completing the remainder at the end of the
-        validation or test set), or we may want to sort by e.g the length of the input
-        sequences if using pack_padded_sequence. This matches rows back with their
-        original row in the batch for calculating metrics like accuracy. If output is
-        None (model choosing not to provide any predictions), we will just return the
-        batch of replies. Otherwise, output should be a parlai.core.torch_agent.Output
-        object. This is a namedtuple, which can provide text predictions and/or
-        text_candidates predictions. If you would like to map additional fields into the
-        batch_reply, you can override this method as well as providing your own
-        namedtuple with additional fields.
+        Match sub-batch of predictions to the original batch indices.
+
+        Batches may be only partially filled (i.e when completing the remainder
+        at the end of the validation or test set), or we may want to sort by
+        e.g the length of the input sequences if using pack_padded_sequence.
+
+        This matches rows back with their original row in the batch for
+        calculating metrics like accuracy.
+
+        If output is None (model choosing not to provide any predictions), we
+        will just return the batch of replies.
+
+        Otherwise, output should be a parlai.core.torch_agent.Output object.
+        This is a namedtuple, which can provide text predictions and/or
+        text_candidates predictions. If you would like to map additional
+        fields into the batch_reply, you can override this method as well as
+        providing your own namedtuple with additional fields.
 
         :param batch_reply:
             Full-batchsize list of message dictionaries to put responses into.
+
         :param valid_inds:
             Original indices of the predictions.
+
         :param output:
             Output namedtuple which contains sub-batchsize list of text outputs
             from model. May be None (default) if model chooses not to answer.
@@ -1783,6 +1869,7 @@ class TorchAgent(ABC, Agent):
         *NOTE*: This does NOT attempt to provide any sort of delimiter or spacing
         between the original history and the temporary history. If you require
         such delimiter or spacing, you should include it in the temp history.
+
         Intentionally overridable so more complex models can insert temporary history
         strings, i.e. strings that are removed from the history after a single turn.
         """
@@ -1850,9 +1937,11 @@ class TorchAgent(ABC, Agent):
 
     def self_observe(self, self_message: Message) -> None:
         """
-        Observe one's own utterance. This is used so that the agent can incorporate its
-        own response into the dialogue history after a batch_act. Failure to implement
-        this will result in an agent that cannot hear itself speak.
+        Observe one's own utterance.
+
+        This is used so that the agent can incorporate its own response into
+        the dialogue history after a batch_act. Failure to implement this will
+        result in an agent that cannot hear itself speak.
 
         :param self_message:
             The message corresponding to the output from batch_act.
@@ -2131,11 +2220,12 @@ class TorchAgent(ABC, Agent):
         """
         Process a batch of observations (batchsize list of message dicts).
 
-        These observations have been preprocessed by the observe method. Subclasses can
-        override this for special functionality, but if the default behaviors are fine
-        then just override the ``train_step`` and ``eval_step`` methods instead. The
-        former is called when labels are present in the observations batch; otherwise,
-        the latter is called.
+        These observations have been preprocessed by the observe method.
+
+        Subclasses can override this for special functionality, but if the
+        default behaviors are fine then just override the ``train_step`` and
+        ``eval_step`` methods instead. The former is called when labels are
+        present in the observations batch; otherwise, the latter is called.
         """
         # clear local metrics before anything else
         self._local_metrics.clear()
@@ -2305,11 +2395,12 @@ class TorchAgent(ABC, Agent):
 
     def update_params(self):
         """
-        Perform step of optimization. Handles clipping gradients and adjusting LR
-        schedule if needed. Gradient accumulation is also performed if agent is called
-        with.
+        Perform step of optimization.
 
+        Handles clipping gradients and adjusting LR schedule if needed.
+        Gradient accumulation is also performed if agent is called with
         --update-freq.
+
         It is recommended (but not forced) that you call this in train_step.
         """
         update_freq = self.opt.get('update_freq', 1)
