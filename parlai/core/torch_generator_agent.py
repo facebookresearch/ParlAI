@@ -1154,6 +1154,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.text_vec is not None:
             batchsize = batch.batchsize
             batch_context_list = self._get_batch_context(batch)
+
+            # beams_batch = self._treesearch_factory(dev, verbose=self.show_token_details).set_block_list(self.beam_block_list)
+            # self.context = batch_context_list
+
             beams = [
                 self._treesearch_factory(dev, verbose=self.show_token_details)
                 .set_batch_context(
@@ -1521,6 +1525,9 @@ class TreeSearch(object):
     def advance(self, logprobs, step):
         """
         Advance the beam one step.
+
+        :param logprobs:
+            shape: (bsz, beam_size, vocab_size)
         """
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -1613,6 +1620,7 @@ class TreeSearch(object):
                 self.n_best_counter += 1
 
         if self.outputs[-1][0] == self.eos:
+            breakpoint()
             self.eos_top = True
             if self.eos_top_ts is None:
                 self.eos_top_ts = len(self.outputs) - 1
