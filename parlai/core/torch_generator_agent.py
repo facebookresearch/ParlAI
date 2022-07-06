@@ -994,6 +994,22 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 verbose=verbose,
                 gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
+        elif method == 'nucleusbeam':
+            return NucleusBeamSearch(
+                self.opt['topp'],
+                self.opt['beam_delay'],
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+                verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
+            )
         elif method == 'topk':
             return TopKSampling(
                 self.opt['topk'],
@@ -1858,6 +1874,19 @@ class DelayedBeamSearch(TreeSearch):
             return TopKSampling.select_paths(
                 self, logprobs, prior_scores, current_length
             )
+        else:
+            return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
+
+
+class NucleusBeamSearch(TreeSearch):
+    def __init__(self, p, delay, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.p = p
+        self.delay = delay
+
+    def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
+        if current_length < self.delay:
+            return NucleusSampling.select_paths(self, logprobs, prior_scores, current_length)
         else:
             return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
 
