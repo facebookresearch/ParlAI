@@ -481,7 +481,7 @@ class MultiAgentDialogWorld(World):
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
-        self.parley_mode = opt['parley_mode']
+        self.parley_mode = opt.get('parley_mode', 'round-robin')
 
     def parley(self):
         """
