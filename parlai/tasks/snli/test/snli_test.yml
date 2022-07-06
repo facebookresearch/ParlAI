@@ -1,0 +1,61 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: This church choir sings to the masses as they sing joyous songs
+      from the book at a church.
+
+      Hypothesis: The church has cracks in the ceiling.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: This church choir sings to the masses as they sing joyous songs
+      from the book at a church.
+
+      Hypothesis: The church is filled with song.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: This church choir sings to the masses as they sing joyous songs
+      from the book at a church.
+
+      Hypothesis: A choir singing at a baseball game.'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: A woman with a green headscarf, blue shirt and a very big grin.
+
+      Hypothesis: The woman is young.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: A woman with a green headscarf, blue shirt and a very big grin.
+
+      Hypothesis: The woman is very happy.'
+num_episodes: 9824
+num_examples: 9824

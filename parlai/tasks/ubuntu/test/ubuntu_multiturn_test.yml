@@ -1,0 +1,35 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - 'looks like it used to be exported by lightdm, but the line had the comment
+      "// FIXME: Is this required?" so I guess it isn''t surprising it is gone'
+    id: ubuntu:multiturn
+    text: anyone knows why my stock oneiric exports env var 'USERNAME'?  I mean what
+      is that used for?  I know of $USER but not $USERNAME .  My precise install doesn't
+      export USERNAME
+- - episode_done: true
+    eval_labels:
+    - https://bugs.launchpad.net/lightdm/+bug/864109/comments/3
+    id: ubuntu:multiturn
+    text: thanks!  How the heck did you figure that out?
+- - episode_done: false
+    eval_labels:
+    - thanks!  How the heck did you figure that out?
+    id: ubuntu:multiturn
+    text: 'looks like it used to be exported by lightdm, but the line had the comment
+      "// FIXME: Is this required?" so I guess it isn''t surprising it is gone'
+- - episode_done: true
+    eval_labels:
+    - nice thanks! .
+    id: ubuntu:multiturn
+    text: https://bugs.launchpad.net/lightdm/+bug/864109/comments/3
+- - episode_done: true
+    eval_labels:
+    - backup your data, and re-install without encryption "might" be the easiest method
+    id: ubuntu:multiturn
+    text: i set up my hd such that i have to type a passphrase to access it at boot.
+      how can i remove that passwrd, and just boot up normal. i did this at install,
+      it works fine, just tired of having reboots where i need to be at terminal to
+      type passwd in. help?
+num_episodes: 37840
+num_examples: 91680

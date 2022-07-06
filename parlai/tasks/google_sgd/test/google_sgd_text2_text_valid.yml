@@ -1,0 +1,35 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - What city do you want to dine in? Do you have a preferred restaurant?
+    id: google_sgd:text2_text
+    text: I want to make a restaurant reservation for 2 people at half past 11 in
+      the morning.
+    type: text
+- - episode_done: false
+    eval_labels:
+    - 'Confirming: I will reserve a table for 2 people at Sino in San Jose. The reservation
+      time is 11:30 am today.'
+    id: google_sgd:text2_text
+    text: Please find restaurants in San Jose. Can you try Sino?
+    type: text
+- - episode_done: false
+    eval_labels:
+    - Your reservation has been made. Their phone number is 408-247-8880.
+    id: google_sgd:text2_text
+    text: Yes, thanks. What's their phone number?
+    type: text
+- - episode_done: false
+    eval_labels:
+    - 'The street address is 377 Santana Row #1000. They have good vegetarian options.'
+    id: google_sgd:text2_text
+    text: What's their address? Do they have vegetarian options on their menu?
+    type: text
+- - episode_done: false
+    eval_labels:
+    - Is there anything else I can help you with?
+    id: google_sgd:text2_text
+    text: Thanks very much.
+    type: text
+num_episodes: 2482
+num_examples: 31825

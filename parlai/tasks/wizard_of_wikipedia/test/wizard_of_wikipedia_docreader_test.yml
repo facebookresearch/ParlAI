@@ -1,0 +1,100 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Blue is one of the three primary colours of pigments in painting and traditional
+      colour theory, as well as in the RGB colour model.
+    id: wizard_of_wikipedia:docreader
+    text: 'Blue is one of the three primary colours of pigments in painting and traditional
+      colour theory, as well as in the RGB colour model. It lies between violet and
+      green on the spectrum of visible light. The eye perceives blue when observing
+      light with a dominant wavelength between approximately 450 and 495 nanometres.
+      Most blues contain a slight mixture of other colors; azure contains some green,
+      while ultramarine contains some violet. The clear daytime sky and the deep sea
+      appear blue because of an optical effect known as Rayleigh scattering. An optical
+      effect called Tyndall scattering explains blue eyes. Distant objects appear
+      more blue because of another optical effect called atmospheric perspective.
+      Blue has been an important colour in art and decoration since ancient times.
+      The semi-precious stone lapis lazuli was used in ancient Egypt for jewellery
+      and ornament and later, in The Renaissance, to make the pigment ultramarine,
+      the most expensive of all pigments. In the eighth century Chinese artists used
+      cobalt blue to colour fine blue and white porcelain. In the Middle Ages, European
+      artists used it in the windows of Cathedrals. Europeans wore clothing coloured
+      with the vegetable dye woad until it was replaced by the finer indigo from America.
+
+      Blue'
+- - episode_done: false
+    eval_labels:
+    - The Royal Blue was the Baltimore and Ohio Railroad (B&O)'s flagship passenger
+      train between New York City and Washington, D.C., in the United States, beginning
+      in 1890.
+    id: wizard_of_wikipedia:docreader
+    text: 'The Royal Blue was the Baltimore and Ohio Railroad (B&O)''s flagship passenger
+      train between New York City and Washington, D.C., in the United States, beginning
+      in 1890. The Baltimore-based B&O also used the name between 1890 and 1917 for
+      its improved passenger service between New York and Washington launched in the
+      1890s, collectively dubbed the Royal Blue Line. Using variants such as the "Royal
+      Limited" and "Royal Special" for individual "Royal Blue" trains, the B&O operated
+      the service in partnership with the Reading Railroad and the Central Railroad
+      of New Jersey. Principal intermediate cities served were Philadelphia, Wilmington,
+      and Baltimore.
+
+      Blue is always nice. I like royal blue.'
+- - episode_done: false
+    eval_labels:
+    - Blue Skies is a 1946 American musical comedy film directed by Stuart Heisler
+      and starring Bing Crosby, Fred Astaire, and Joan Caulfield.
+    id: wizard_of_wikipedia:docreader
+    text: 'Blue Skies is a 1946 American musical comedy film directed by Stuart Heisler
+      and starring Bing Crosby, Fred Astaire, and Joan Caulfield. Based on a story
+      by Irving Berlin, the film is about a dancer who loves a showgirl who loves
+      a compulsive nightclub-opener who can''t stay committed to anything in life
+      for very long. Produced by Sol C. Siegel, "Blue Skies" was filmed in Technicolor
+      and released by Paramount Pictures. The music, lyrics, and story were written
+      by Irving Berlin, with most of the songs recycled from earlier works. As in
+      "Holiday Inn" (1942), the film is designed to showcase Berlin''s songs.
+
+      Oh that sounds really nice. I bet there was a lot of scenery and blue skies.'
+- - episode_done: true
+    eval_labels:
+    - Harry Lillis "Bing" Crosby Jr. (; May 3, 1903 – October 14, 1977) was an American
+      singer and actor.
+    id: wizard_of_wikipedia:docreader
+    text: 'Harry Lillis "Bing" Crosby Jr. (; May 3, 1903 – October 14, 1977) was an
+      American singer and actor. Crosby''s trademark warm bass-baritone voice made
+      him one of the best-selling recording artists of all time, having sold over
+      one billion analog records and tapes, and digital compact discs and downloads
+      around the world. The first multimedia star, from 1931 to 1954 Crosby was a
+      leader in record sales, radio ratings, and motion picture grosses. His early
+      career coincided with technical recording innovations such as the microphone.
+      This allowed him to develop a laid-back, intimate singing style that influenced
+      many of the popular male singers who followed him, including Perry Como, Frank
+      Sinatra, Dick Haymes, and Dean Martin.
+
+      Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?'
+- - episode_done: false
+    eval_labels:
+    - Cinematography (also called "Direction of Photography") is the science or art
+      of motion-picture photography by recording light or other electromagnetic radiation,
+      either electronically by means of an image sensor, or chemically by means of
+      a light-sensitive material such as film stock.
+    id: wizard_of_wikipedia:docreader
+    text: 'Cinematography (also called "Direction of Photography") is the science
+      or art of motion-picture photography by recording light or other electromagnetic
+      radiation, either electronically by means of an image sensor, or chemically
+      by means of a light-sensitive material such as film stock. Typically, a lens
+      is used to repeatedly focus the light reflected from objects into real images
+      on the light-sensitive surface inside a camera during a questioned exposure,
+      creating multiple images. With an electronic image sensor, this produces an
+      electrical charge at each pixel, which is electronically processed and stored
+      in a video file for subsequent display or processing. The result with photographic
+      emulsion is a series of invisible latent images on the film stock, which are
+      later chemically "developed" into a visible image. The images on the film stock
+      are played back at a rapid speed and projected onto a screen, creating the illusion
+      of motion. Cinematography finds uses in many fields of science and business
+      as well as for entertainment purposes and mass communication. The word "cinematography"
+      was created from the Greek words ("kinema"), meaning "movement, motion" and
+      ("graphein") meaning "to record", together meaning "recording motion."
+
+      Cinematography'
+num_episodes: 965
+num_examples: 4087

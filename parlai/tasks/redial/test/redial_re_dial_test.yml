@@ -1,0 +1,30 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - 'You should watch Police Academy '
+    id: redial
+    text: Hi I am looking for a movie like Super Troopers
+- - episode_done: false
+    eval_labels:
+    - 'Yes Police Academy  is very funny and so is Police Academy 2: Their First Assignment'
+    id: redial
+    text: 'Is that a great one? I have never seen it. I have seen American Pie  I
+      mean American Pie '
+- - episode_done: false
+    eval_labels:
+    - yes you will enjoy them
+    id: redial
+    text: It sounds like I need to check them out
+- - episode_done: false
+    eval_labels:
+    - yes Lethal Weapon
+    id: redial
+    text: I appreciate your time. I will need to check those out. Are there any others
+      you would recommend?
+- - episode_done: false
+    eval_labels:
+    - and also Beverly Hills Cop
+    id: redial
+    text: Thank you i will watch that too
+num_episodes: 1342
+num_examples: 7505

@@ -1,0 +1,65 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: The new rights are nice enough
+
+      Hypothesis: Everyone really likes the newest benefits '
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: This site includes a list of all award winners and a searchable
+      database of Government Executive articles.
+
+      Hypothesis: The Government Executive articles housed on the website are not
+      able to be searched.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: uh i don''t know i i have mixed emotions about him uh sometimes
+      i like him but at the same times i love to see somebody beat him
+
+      Hypothesis: I like him for the most part, but would still enjoy seeing someone
+      beat him.'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: yeah i i think my favorite restaurant is always been the one closest  you
+      know the closest as long as it''s it meets the minimum criteria you know of
+      good food
+
+      Hypothesis: My favorite restaurants are always at least a hundred miles away
+      from my house. '
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: i don''t know um do you do a lot of camping
+
+      Hypothesis: I know exactly.'
+num_episodes: 9815
+num_examples: 9815

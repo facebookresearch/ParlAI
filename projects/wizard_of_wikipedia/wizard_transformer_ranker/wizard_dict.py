@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
@@ -58,8 +59,13 @@ class WizardDictAgent(DictionaryAgent):
             if opt.get('dict_file'):
                 self.save_path = opt['dict_file']
 
+        # cache unk token for later
+        self._unk_token_idx = self.tok2ind.get(self.unk_token)
+
     def tokenize(self, text, building=False):
-        """Returns a sequence of tokens from the iterable."""
+        """
+        Returns a sequence of tokens from the iterable.
+        """
         if self.lower:
             text = text.lower()
 
@@ -86,7 +92,8 @@ class WizardDictAgent(DictionaryAgent):
         return word_tokens
 
     def re_tokenize(self, text):
-        """This splits along whitespace and punctuation and keeps the newline
-        as a token in the returned list.
+        """
+        This splits along whitespace and punctuation and keeps the newline as a token in
+        the returned list.
         """
         return RETOK.findall(text)

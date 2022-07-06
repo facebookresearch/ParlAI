@@ -3,18 +3,23 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Transresnet Multimodal Model (https://arxiv.org/abs/1811.00945)."""
+"""
+Transresnet Multimodal Model (https://arxiv.org/abs/1811.00945).
+"""
 
-from parlai.core.dict import DictionaryAgent
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.utils.misc import round_sigfigs
 from parlai.core.message import Message
 from .modules import TransresnetMultimodalModel
 from projects.personality_captions.transresnet.transresnet import TransresnetAgent
+from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
 
 import torch
 from torch import optim
 import random
-import os
 import numpy as np
 import tqdm
 from collections import deque
@@ -35,27 +40,30 @@ class TransresnetMultimodalAgent(TransresnetAgent):
     # Initialization and argument parsers
     ######################################
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        """Override to add personality-override option."""
-        TransresnetMultimodalModel.add_cmdline_args(argparser)
-        TransresnetAgent.add_cmdline_args(argparser)
-        arg_group = argparser.add_argument_group("TransresnetMultimodal Arguments")
-        argparser.add_argument(
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Override to add personality-override option.
+        """
+        TransresnetMultimodalModel.add_cmdline_args(parser, partial_opt=partial_opt)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        arg_group = parser.add_argument_group("TransresnetMultimodal Arguments")
+        parser.add_argument(
             "--personality-override",
             type=str,
             default=None,
             help="for use in other tasks where no personality "
             "is given. This will give the model a personality "
-            "(whichever is specifed).",
+            "(whichever is specified).",
         )
-        argparser.add_argument(
+        parser.add_argument(
             "--personalities-path",
             type=str,
             default=None,
             help="Path to personalities list",
         )
-        DictionaryAgent.add_cmdline_args(argparser)
         return arg_group
 
     def __init__(self, opt, shared=None):
@@ -77,9 +85,9 @@ class TransresnetMultimodalAgent(TransresnetAgent):
 
     def _build_model(self, path=None):
         init_model_path = None
-        if self.opt.get("init_model") and os.path.isfile(self.opt["init_model"]):
+        if self.opt.get("init_model") and PathManager.exists(self.opt["init_model"]):
             init_model_path = self.opt["init_model"]
-        elif self.opt.get("model_file") and os.path.isfile(self.opt["model_file"]):
+        elif self.opt.get("model_file") and PathManager.exists(self.opt["model_file"]):
             init_model_path = self.opt["model_file"]
         elif path is not None:
             init_model_path = path
@@ -93,18 +101,21 @@ class TransresnetMultimodalAgent(TransresnetAgent):
             self.model.cuda()
 
     def _setup_cands(self):
-        """Override for different call to model."""
+        """
+        Override for different call to model.
+        """
         self.fixed_cands = None
         self.fixed_cands_enc = None
         if self.fcp is not None:
-            with open(self.fcp) as f:
+            with PathManager.open(self.fcp) as f:
                 self.fixed_cands = [c.replace("\n", "") for c in f.readlines()]
             cands_enc_file = "{}.cands_enc".format(self.fcp)
             print("loading saved cand encodings")
-            if os.path.isfile(cands_enc_file):
-                self.fixed_cands_enc = torch.load(
-                    cands_enc_file, map_location=lambda cpu, _: cpu
-                )
+            if PathManager.exists(cands_enc_file):
+                with PathManager.open(cands_enc_file, 'rb') as f:
+                    self.fixed_cands_enc = torch.load(
+                        f, map_location=lambda cpu, _: cpu
+                    )
             else:
                 print("Extracting cand encodings")
                 self.model.eval()
@@ -125,10 +136,12 @@ class TransresnetMultimodalAgent(TransresnetAgent):
                     fixed_cands_enc.append(embedding)
                     pbar.update(50)
                 self.fixed_cands_enc = torch.cat(fixed_cands_enc, 0)
-                torch.save(self.fixed_cands_enc, cands_enc_file)
+                torch_utils.atomic_save(self.fixed_cands_enc, cands_enc_file)
 
     def share(self):
-        """Override to share optimizer."""
+        """
+        Override to share optimizer.
+        """
         shared = super().share()
         shared["optimizer"] = self.optimizer
         return shared
@@ -336,7 +349,7 @@ class TransresnetMultimodalAgent(TransresnetAgent):
         """
         Update Metrics.
 
-        Overriden to include dialogue round
+        Overridden to include dialogue round
 
         :param loss:
             float loss
@@ -394,12 +407,16 @@ class TransresnetMultimodalAgent(TransresnetAgent):
                     print("Done")
 
     def reset(self):
-        """Override to reset dialogue history."""
+        """
+        Override to reset dialogue history.
+        """
         super().reset()
         self.history.clear()
 
     def reset_metrics(self):
-        """Reset per-dialogue round metrics."""
+        """
+        Reset per-dialogue round metrics.
+        """
         for v in self.metrics.values():
             v["hits@1/100"] = 0.0
             v["loss"] = 0.0
@@ -408,14 +425,20 @@ class TransresnetMultimodalAgent(TransresnetAgent):
                 v["med_rank"] = []
 
     def report(self):
-        """Report per-dialogue round metrics."""
-        m = {k: {} for k in ["first_round", "second_round", "third_round+"]}
+        """
+        Report per-dialogue round metrics.
+        """
+        m = {}
         for k, v in self.metrics.items():
+            if "num_samples" not in v:
+                print(self.metrics)
+                print(k)
+                __import__("ipdb").set_trace()  # FIXME
             if v["num_samples"] > 0:
-                m[k]["hits@1/100"] = round_sigfigs(
+                m[f"{k}/hits@1/100"] = round_sigfigs(
                     v["hits@1/100"] / v["num_samples"], 4
                 )
-                m[k]["loss"] = round_sigfigs(v["loss"] / v["num_samples"], 4)
+                m[f"{k}/loss"] = round_sigfigs(v["loss"] / v["num_samples"], 4)
                 if "med_rank" in v:
-                    m[k]["med_rank"] = np.median(v["med_rank"])
+                    m[f"{k}/med_rank"] = np.median(v["med_rank"])
         return m

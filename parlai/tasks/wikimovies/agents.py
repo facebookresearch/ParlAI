@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher
 from .build import build
 
 import copy
@@ -32,7 +32,7 @@ def _path(opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         task = opt.get('task')
@@ -54,7 +54,7 @@ class KBTeacher(FbDialogTeacher):
         super().__init__(opt, shared)
 
 
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt = copy.deepcopy(opt)

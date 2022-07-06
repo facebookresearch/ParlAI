@@ -5,12 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 """
 Pretrained model allowing to get the same performances as in
-https://arxiv.org/abs/1905.01969
+https://arxiv.org/abs/1905.01969.
 """
 from parlai.core.build_data import built, download_models, get_model_dir
 import os
 import os.path
-import torch
 
 
 def download(datapath):

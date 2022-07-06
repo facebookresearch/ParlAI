@@ -3,16 +3,19 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from abc import ABC, abstractmethod
-import copy
 import os
-import json
 import random
 
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
 
-from .build import build, SINGLE_TURN_DATA
+from .build import build
+
+SINGLE_TURN_DATA = 'single_turn_safety.json'
 
 
 OK_CLASS = '__ok__'
@@ -22,11 +25,15 @@ NOT_OK_CLASS = '__notok__'
 class _BaseSafetyTeacher(FixedDialogTeacher, ABC):
     """
     Abstract parent class for single turn safety teachers.
+
     Not meant to be a standalone teacher.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('Safety Teacher Args')
         parser.add_argument(
             '--round',

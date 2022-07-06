@@ -1,0 +1,233 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - what are you missing in apt ?
+    id: dstc7
+    label_candidates:
+    - do you have synaptic package manager open?
+    - what laptop?
+    - what vmware are you installing btw? workstation or server, i usually use the
+      .sh script they have
+    - export http_proxy=http://proxy:port export ftp_proxy=http://proxy:port
+    - get rid of extensions and plugins, see if it still crashes
+    - yeah
+    - '<> AmaroqWolf: alias=''sudo admincommand''.  <AmaroqWolf>  aw, can''t make
+      myself type sudo? I like it better that way.'
+    - boot the old kernel first from grub menu and make sure it solves the problem.
+      Then purge the new one. and pin the old
+    - well, you _should_ have a backup anyway :p
+    - paste.ubuntu.com
+    - yes.. so ctrl+alt+F2.. login then type the line listed above
+    - what's the error?
+    - at a prompt sudo cp /etc/X11/xorg.conf /etc/X11xorg.conf.old && sudo dpkg-reconfigufe
+      xserver-xorg
+    - that could be the problem, did you use the ones from nVidia webpage or in apt
+      ?
+    - i believe in your tomcat.conf in catalina_opts (or java_opts, i'm not sure)
+    - huh.. what is the F9 key supposed to do?
+    - 'Change both Sound In and Sound Out on the sound devices option to: HDA Intel
+      (hw:intel,0).  Then do a test call'
+    - thought so...hm..do you think if I put symlink that points to a direction would
+      help? My original install is in /usr/share/xbmc and new one (with .deb) is in
+      /usr/local/share/xbmc
+    - simple solutions are always nice :-)
+    - '''man smb.conf'' lists a server option "unix extensions" (enabled by default)..  However,
+      if the server is Windows...'
+    text: 'participant 1: hey guys, does your livecd have chroot installed? and bash?
+
+      participant 2: sure
+
+      participant 1: does it have everything I need to format a partition ext2?. and
+      ext3?
+
+      participant 2: yep
+
+      participant 1: yay I can use it to install gentoo. !
+
+      participant 2: lol. LOL
+
+      participant 1: =-). brb rebooting into ubuntu
+
+      participant 2: form last week:. 04:21:47] <findme> this is a big crowd here.
+      [04:21:53] <findme> have all gentoo users moved here ?
+
+      participant 1: to bad its still using apt I would switch in a heart beat if
+      it had its own package manager
+
+      '
+- - episode_done: true
+    eval_labels:
+    - well its not really a normal port... and i dont normaly see those kind of port
+      numbers unless it p2p traffic or a server or sime kind.  what was the port again?
+    id: dstc7
+    label_candidates:
+    - HEELO!
+    - 'no'
+    - no change
+    - What's up?
+    - you have to select the drivers manually from the list of models and you have
+      to select the correct model otherwise it will not work.  did you install the
+      deb using sudo dpkg
+    - i did that. followed by iwconfig wlan0 commit as well
+    - be sure your system is up-to-date, then look in System / Admin / Hardware Drivers
+    - change the resolution
+    - edit your menu.lst and change the timeout value
+    - very little if any.
+    - it's a duplicate , change that parameter in the line above.  you got two 'GRUB_CMDLINE_LINUX_DEFAULT'
+    - remove them from groups
+    - totem crashes on launch :@.  when i started using ubuntu it was nice, it didnt
+      have a lot of bugs, these days its starting to get redicoules, im starting to
+      feel like im working on a windows box again
+    - I think "sabayon" wants to achieve that, i.e. locking down users.
+    - we see you
+    - google to start.  or your local college.  or a book
+    - don't - it will break things
+    - you mean lazy as in "doesnt chew up time"
+    - don't configure manually.  sudo nvidia-xconfig
+    - aircrack-ng or coWPAtty ?
+    text: 'participant 1: Hey. Does anyone have any knownledge what could run on port
+      number 64200? Theres something running there on a mate''s PC, but he have no
+      idea what it is. Its ubuntu 9.04. I think this sounds very strange, nmap says
+      it doesnt know either. Have set it under wireshark surveilance now. Could this
+      possible be an rogue Remote Access daemon?
+
+      participant 2: it might be p2p traffic
+
+      participant 1: ok. why''d think that? i currently dont have any p2p servers
+      of any kind open.  as i know of..
+
+      '
+- - episode_done: true
+    eval_labels:
+    - brb
+    id: dstc7
+    label_candidates:
+    - you can also take your pick from apt-cache search hex editor , that is if ghex
+      doesn't appeal to you.  np
+    - man chmod for more detail on how that command works
+    - waiting. hello randall
+    - the ffmpeg version provided by ubuntu might be out of date... it *might* help
+      to compile ffmpeg yourself...
+    - not really
+    - not if there is a bug in the amd drivers
+    - I would start over create manually two ext3 and a swap and Personally I would
+      move cables and move sdb to sda and go for iut
+    - sounds like you ran emacs as root  ?
+    - They usually are CNAMEs..  $ dig it.archive.ubuntu.com CNAME.  Compare with
+      se., fr., de., etc.
+    - yeah, why?
+    - When the official is released.. it will be available as normal package.
+    - very strange indeed
+    - is there a proxy on the wifi network ?
+    - then probably not
+    - welcome
+    - click on top right edge of the screen.. then System Settings..
+    - is that the latest version thats in the repos ?
+    - told you so :) and at the same time you became more attractive to women - *INSTANTLY*
+      !!!1!1!!!ONE!
+    - reinstall the ati drivers from apt and then reconfigure your xorg.conf
+    - why not just use pidgin
+    text: 'participant 1: Has anyone seen the new 911 movie? United 93 I think it''s
+      called?. I am. for my 9700 Pro
+
+      participant 2: when I was using Gentoo, there was an eselect command to switch
+      from Mesa to ATI OpenGL
+
+      participant 1: I get half the fps in Tremelous compared to Windows
+
+      participant 2: do I have to do something similiar. ?
+
+      participant 1: edit /etc/X11/xorg.conf. replace ati with fglrx. restart x. I
+      don''t know the command but there is probally one
+
+      '
+- - episode_done: true
+    eval_labels:
+    - kalarm is in the karmic repos
+    id: dstc7
+    label_candidates:
+    - your PCM is too high
+    - but . how do i activate it
+    - then how do you know it was complete and consistent?
+    - I'm using an ASUS with a synaptics touchpad, works great. although IIRC I had
+      to tweak it.  look for guides on tweaking the ASUS Zenbook for Ubuntu. there's
+      a few, and I know the touchpad was addresse
+    - if you really want help you might start by telling us what is wrong with file-roller
+    - 'try rebooting and updating again. if this doesn''t work then execute: "sudo
+      rm /var/lib/apt/lists/* -vf "and then update again'
+    - then, the driver for your touchpad is broken. I don't think that they do know
+      which keys they have given to which computer. anyone has a hint for builtin
+      webcam which does not work? (lsusb shows it, yet there is no /dev/video)
+    - ask your question
+    - would be interesting if someone has the same with warty final.  did you try
+      playing araound with edit/preferences/appearance/fonts ?
+    - wtg! :D
+    - I don't know if it can hook up to an airport card since I haven't tried wireless
+      on it, but the site says that it works.
+    - when asking questions like that, you need to be a lot more specific.  how is
+      irssi asking for a password? what did you do to get it to do that?
+    - 'tekoholic: And then runt he aforementioned command?. Ok.  I''m getting this
+      error with no other apt-get processes running: http://paste.ubuntu.com/767030/'
+    - '!sudo'
+    - i started like that not long ago. i am kinda noob aswell
+    - https://wiki.ubuntu.com/LaptopTestingTeam
+    - Otherwise restart the computer and tryto find the errors in the mentioned logfiles.
+      Problem is, that your present boot is also log. You will have to search a bit.
+      Look at the timestamps..  ..and don't repet your question just after 10' ;)
+    - only one way to find out :)
+    - its definatly worth it im using a broken install because i didnt realise how
+      much better the alt cd is
+    - yes!
+    text: 'participant 1: Does anyone know of a good alarm clock for KDE?:)
+
+      participant 2: try #kubuntu
+
+      participant 1: sudo apt-get install kalarm failed. o.o q.q
+
+      participant 2: which version of ubuntu are you running?
+
+      participant 1: 9.10. Yeah, I saw that, doing it now.
+
+      '
+- - episode_done: true
+    eval_labels:
+    - i think so tho I havn't done that
+    id: dstc7
+    label_candidates:
+    - 8.8.8.8 is valid, but you should probably use the one provided by your isp..  Your
+      isp probably sets the nameserver via dhcp when you connect directly.
+    - you sure compiz is on
+    - control-alt-f1, login and do a reboot
+    - leave the term open or do the & thing at the end. but it is not a good idea
+      to leave open for long
+    - you logged in as ttt then changed your nick to  that requires /nick newnick
+    - apparently a reboot sorts it
+    - i'm not 100% sure on that "dns-nameservers" choice.  does it fail trying "nslookup
+      google.com" ?
+    - i think gnome is crappy with twin displays, you may want to try kde
+    - um. would that need any restricted codecs installed?. https://help.ubuntu.com/ubuntu/desktopguide/C/codecs.html.
+      i think. :)
+    - only if you add it to /etc/sysctl.conf.  net.ipv6.conf.all.autoconf = 0 i think
+    - I don't know, could you explain it?
+    - 'np.  also try #blender :)'
+    - this is the xbox 360, right? fully updated?
+    - what do you think about aMSN or emesene?. pidgin seems similar to empathy
+    - 'Bugger all, i dunno, '
+    - it's s shell
+    - you would know if you had installed it - read the link ubotu spat out above
+    - yes, but when Warty was frozen, it was a snapshot of sid
+    - its easiest that way its clean of any non needed crap.  when the install screen
+      comes up type server than hit enter
+    - yeah zwei, it should be
+    text: 'participant 1: Iam building a new computer and Iamthinking about turning
+      my old system into a server/router is this possible and if so anyone know of
+      a guide for doing such?
+
+      participant 2: it is possible and the best guide i know is the ubuntu server
+      guide
+
+      participant 1: can it also be set up as a router for my home network?
+
+      '
+num_episodes: 5000
+num_examples: 5000

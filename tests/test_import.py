@@ -7,7 +7,9 @@ import unittest
 
 
 class TestImport(unittest.TestCase):
-    """Make sure the package is alive."""
+    """
+    Make sure the package is alive.
+    """
 
     def test_import_agent(self):
         from parlai.core.agents import Agent
@@ -15,7 +17,7 @@ class TestImport(unittest.TestCase):
         assert Agent
 
     def test_import_teacher(self):
-        from parlai.core.agents import Teacher
+        from parlai.core.teachers import Teacher
 
         assert Teacher
 
@@ -24,20 +26,15 @@ class TestImport(unittest.TestCase):
 
         assert World
 
-    def test_import_threadutils(self):
-        from parlai.utils.thread import SharedTable
-
-        assert SharedTable
-
     def test_import_dialog(self):
         from parlai.core.teachers import DialogTeacher
 
         assert DialogTeacher
 
     def test_import_fbdialog(self):
-        from parlai.core.teachers import FbDialogTeacher
+        from parlai.core.teachers import FbDeprecatedDialogTeacher
 
-        assert FbDialogTeacher
+        assert FbDeprecatedDialogTeacher
 
 
 if __name__ == '__main__':

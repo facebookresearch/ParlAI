@@ -4,22 +4,30 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-    A dataset with conversations directly grounded with knowledge
-    retrieved from Wikipedia. Contains 201k utterances from 22k
-    dialogues spanning over 1300 diverse topics, split into train,
-    test, and valid sets. The test and valid sets are split
-    into two sets each: one with overlapping topics with the train
-    set, and one with unseen topics.
+A dataset with conversations directly grounded with knowledge retrieved from Wikipedia.
+Contains 201k utterances from 22k dialogues spanning over 1300 diverse topics, split
+into train, test, and valid sets. The test and valid sets are split into two sets each:
+one with overlapping topics with the train set, and one with unseen topics.
 
-    To access the different valid/test splits (unseen/seen), specify
-    the corresponding split (`random_split` for seen, `topic_split`
-    for unseen) after the last colon in the task.
-    E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
+To access the different valid/test splits (unseen/seen), specify
+the corresponding split (`random_split` for seen, `topic_split`
+for unseen) after the last colon in the task.
+E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
-from parlai.core.agents import create_task_agent_from_taskname
-from parlai.core.teachers import FixedDialogTeacher
+from __future__ import annotations
+from typing import Iterable, Optional, Tuple, Dict, Any
+from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
+import copy
+from parlai.core.teachers import DialogTeacher, MultiTaskTeacher
+from parlai.utils.io import PathManager
+from parlai.utils import logging
+from parlai.utils.misc import warn_once
 from .build import build
+import parlai.tasks.wizard_of_internet.mutators  # type: ignore
 
 import json
 import os
@@ -28,6 +36,9 @@ import random
 
 TOKEN_NOCHOSEN = 'no_passages_used'
 TOKEN_KNOWLEDGE = '__knowledge__'
+TOKEN_END_KNOWLEDGE = '__endknowledge__'
+TOKEN_LABEL = '__label__'
+TOKEN_END_LABEL = '__endlabel__'
 
 
 def _first_val(dictionary):
@@ -47,6 +58,7 @@ def _first_key(dictionary):
 def _get_chosen_title_and_sent(wizard_entry, k_dict):
     """
     Return a nicely extracted title and chosen sentence.
+
     :return: pair (title, sentence)
     """
     title_dict = wizard_entry.get('checked_passage', 'none')
@@ -94,78 +106,152 @@ def _path(opt, split='random_split'):
     return os.path.join(dp, df)
 
 
-class WizardOfWikipediaTeacher(FixedDialogTeacher):
-    """The default teacher; essentially reads the json file and outputs the
-       raw data.
+class RareWordF1Calculator:
+    """
+    Helper class for computing F1 with an emphasis on infrequent words.
+    """
 
-       Actions have the following form:
-       {
-           'wizard_eval': <evaluation of wizard>,
-           'chosen_topic': <chosen_topic>,
-           'chosen_topic_passage': <chosen topic passage>,
-           'mtdo': <whether the conversation had sufficient overlap>,
-           'text': <text>
-           'retrieved_topics': <topics retrieved for text>
-           'full_retrieved_passages': <full retrieved passages>
-           'retrieved_passages': <passages shown to turker>
-           'checked_sentence': <checked sentence if wizard, else None>
-           'checked_passage': <checked_passage if wizard, else None>
-       }
+    def __init__(self, corpus: str, top_p: float = 0.5):
+        try:
+            import nltk
+        except ImportError:
+            raise ImportError('Please install nltk (e.g. pip install nltk).')
+        words = normalize_answer(corpus).split()
+        self._freq_dist = nltk.FreqDist(words)
+        self._cutoff_count = RareWordF1Calculator._find_cutoff_count(
+            self._freq_dist, top_p
+        )
 
-       The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
+    @property
+    def freq_dist(self):
+        return self._freq_dist
 
-       Specify the valid/test split after the last colon in the task, e.g.
-       wizard_of_wikipedia:<teacher>:random_split
+    @staticmethod
+    def _find_cutoff_count(freq_dist, top_p: float) -> int:
+        """
+        Finds the word occurance for which the cumulative occurances are `top_p` of the
+        overall word count.
+        """
+        assert top_p < 1
+        target = sum(freq_dist.values()) * top_p
+        cumul = 0
+        for _, v in freq_dist.most_common():
+            cumul += v
+            if cumul > target:
+                return v
+        raise RuntimeError(f"Invalid top {top_p*100}% of the corpus distribution")
+
+    @staticmethod
+    def _filter(freq_dist, cutoff: int, text: str) -> str:
+        """
+        For words that are found in the reference distribution, filters those with an
+        occurrence count less than the cutoff.
+        """
+        words = normalize_answer(text).split()
+        return " ".join([w for w in words if freq_dist.get(w, cutoff) < cutoff])
+
+    def compute(self, guess: str, answers: Iterable[str]) -> F1Metric:
+        if guess is None or answers is None:
+            return F1Metric(0, 0)
+        guess = RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, guess)
+        answers = [
+            RareWordF1Calculator._filter(self._freq_dist, self._cutoff_count, a)
+            for a in answers
+        ]
+        if not any(len(a) for a in answers):
+            # no rare words in labels, set denominator to zero
+            return F1Metric(0, 0)
+        return F1Metric.compute(guess, answers)
+
+
+def _build_rare_word_f1(datapath: str) -> RareWordF1Calculator:
+    all_text = ''
+    data_path = os.path.join(datapath, 'wizard_of_wikipedia', 'data.json')
+    with PathManager.open(data_path) as f:
+        data = json.load(f)
+        all_text += ' '.join(m['text'] for d in data for m in d['dialog']) + ' '
+    return RareWordF1Calculator(all_text, top_p=0.5)
+
+
+def _get_datafile(opt: Opt) -> str:
+    """
+    Extract datafile from opt.
+    """
+    task = opt.get('task', 'wizard_of_wikipedia:WizardOfWikipedia:random_split')
+    split = task.split(':')
+    split = split[2] if len(split) == 3 else 'random_split'
+    return _path(opt, split=split)
+
+
+class WizardOfWikipediaTeacher(DialogTeacher):
+    """
+    The default teacher; essentially reads the json file and outputs the raw data.
+
+    Actions have the following form:
+    {
+        'wizard_eval': <evaluation of wizard>,
+        'chosen_topic': <chosen_topic>,
+        'chosen_topic_passage': <chosen topic passage>,
+        'mtdo': <whether the conversation had sufficient overlap>,
+        'text': <text>
+        'retrieved_topics': <topics retrieved for text>
+        'full_retrieved_passages': <full retrieved passages>
+        'retrieved_passages': <passages shown to turker>
+        'checked_sentence': <checked sentence if wizard, else None>
+        'checked_passage': <checked_passage if wizard, else None>
+    }
+
+    The 'passages' are lists of 1 entry dicts, mapping a topic to the sentences
+
+    Specify the valid/test split after the last colon in the task, e.g.
+    wizard_of_wikipedia:<teacher>:random_split
     """
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
-        self.opt = opt
         task = opt.get('task', 'wizard_of_wikipedia:WizardOfWikipedia:random_split')
-        split = task.split(':')
-        split = split[2] if len(split) == 3 else 'random_split'
-        opt['task'] = 'wizard_of_wikipedia'
-        if shared and 'data' in shared:
-            self.data = shared['data']
-        else:
-            self.data_path = _path(opt, split=split)
-            self._setup_data()
-        self.num_exs = sum(len(d['dialog']) for d in self.data)
-        self.reset()
+        opt['datafile'] = _get_datafile(opt)
+        opt['length_datafile'] = f"{opt['datafile']}_{task.split(':')[:2][-1]}"
+        super().__init__(opt, shared)
 
-    def _setup_data(self):
-        print('loading: ' + self.data_path)
-        with open(self.data_path) as f:
-            self.data = json.load(f)
+    def setup_data(self, datafile):
+        logging.info(f'loading {datafile}')
+        with PathManager.open(datafile) as f:
+            self.raw_data = json.load(f)
+        for episode_idx in range(len(self.raw_data)):
+            for entry_idx in range(self.len_episode(episode_idx)):
+                ex = self._format_example(episode_idx, entry_idx)
+                ex.pop('episode_done', '')
+                if 'label_candidates' in ex and not ex['label_candidates']:
+                    ex.pop('label_candidates')
+                yield ex, entry_idx == 0
 
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return self.num_exs
-
-    def get(self, episode_idx, entry_idx=0):
-        d = self.data[episode_idx]
-        dialog_entry = d['dialog'][entry_idx]
-        episode_done = entry_idx == len(d['dialog']) - 1
-        action = {
-            'wizard_eval': d['wizard_eval'],
-            'chosen_topic': d['chosen_topic'],
-            'chosen_topic_passage': d['chosen_topic_passage'],
-            'text': dialog_entry['text'],
-            'retrieved_topics': dialog_entry['retrieved_topics'],
-            'retrieved_passages': dialog_entry['retrieved_passages'],
-            'checked_sentence': dialog_entry.get('checked_sentence', None),
-            'checked_passage': dialog_entry.get('checked_passage', None),
-            'episode_done': episode_done,
-        }
+    def _format_example(self, episode_idx: int, entry_idx: int) -> Message:
+        episode = self.raw_data[episode_idx]
+        dialog_entry = episode['dialog'][entry_idx]
+        episode_done = entry_idx == len(episode['dialog']) - 1
+        action = Message(
+            {
+                'wizard_eval': episode['wizard_eval'],
+                'chosen_topic': episode['chosen_topic'],
+                'chosen_topic_passage': episode['chosen_topic_passage'],
+                'text': dialog_entry['text'],
+                'retrieved_topics': dialog_entry['retrieved_topics'],
+                'retrieved_passages': dialog_entry['retrieved_passages'],
+                'checked_sentence': dialog_entry.get('checked_sentence', None),
+                'checked_passage': dialog_entry.get('checked_passage', None),
+                'episode_done': episode_done,
+            }
+        )
 
         return action
 
-    def share(self):
-        shared = super().share()
-        shared['data'] = self.data
-        return shared
+    def len_episode(self, ep: int) -> int:
+        """
+        Length of an episode.
+
+        Optionally overrideable.
+        """
+        return len(self.raw_data[ep]['dialog'])
 
 
 ###############################################################
@@ -177,36 +263,41 @@ class WizardOfWikipediaTeacher(FixedDialogTeacher):
 
 class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
     """
-        Teacher that returns the following action dict:
-        {
-            'text': chosen_topic\n # if first ex in ep
-                    last_apprentice_message\n # if possible
-                    wizard_message # if --label-type is chosen_sent
+    Teacher that returns the following action dict:
+    {
+        'text': chosen_topic\n # if first ex in ep
+                last_apprentice_message\n # if possible
+                wizard_message # if --label-type is chosen_sent
 
-            'knowledge': title_1 sentence_1\n
-                                .
-                                .
-                                .
-                         title_m sentence_n # all knowledge available to wizard
-            'labels': [title_checked sentence_checked] # default
-                                        OR
-                      [wizard_response] # if --label-type set to 'response'
+        'knowledge': title_1 sentence_1\n
+                            .
+                            .
+                            .
+                     title_m sentence_n # all knowledge available to wizard
+        'labels': [title_checked sentence_checked] # default
+                                    OR
+                  [wizard_response] # if --label-type set to 'response'
 
-            'label_candidates': knowledge + [no_passages_used no_passages_used]
-        }
+        'label_candidates': knowledge + [no_passages_used no_passages_used]
+    }
     """
 
     def __init__(self, opt, shared=None):
+        self._init_attributes(opt)
+        if shared is None:
+            build(opt)
+        if shared and 'rare_word_f1' in shared:
+            self.rare_word_f1 = shared['rare_word_f1']
+        elif self.label_type == 'response':
+            self.rare_word_f1 = _build_rare_word_f1(opt['datapath'])
         super().__init__(opt, shared)
-        self.label_type = opt.get('label_type', 'response')
-        self.include_knowledge = opt.get('include_knowledge', True)
-        self.include_checked_sentence = opt.get('include_checked_sentence', False)
-        self.knowledge_separator = opt.get('include_knowledge_separator', False)
-        self.num_exs = sum(self.len_episode(i) for i in range(len(self.data)))
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Wizard Dialog Knowledge arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('Wizard Dialog Knowledge arguments')
         agent.add_argument(
             '--label-type',
             type=str,
@@ -234,25 +325,66 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             help='include special __knowledge__ token between ' 'title and passage',
         )
         agent.add_argument(
+            '--chosen-topic-delimiter',
+            type=str,
+            default='\n',
+            help='delimiter used when including chosen topic',
+        )
+        agent.add_argument(
             '--num-topics',
             type=int,
             default=5,
             help='in interactive mode, this is the number of topic choices'
             'the human will have',
         )
+        agent.add_argument(
+            '--add-missing-turns',
+            type=str,
+            choices=['none', 'train', 'all'],
+            default='none',
+            help='For reproducibility, the default "none" is the previous version which misssing some data.'
+            'When "train" is chosen, only the training set is supplemented.'
+            'When "all" is chosen, all data are supplemented.',
+        )
+        return parser
+
+    def _init_attributes(self, opt: Opt):
+        """
+        Initialize teacher attributes.
+        """
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
+        self.label_type = opt.get('label_type', 'response')
+        self.include_knowledge = opt.get('include_knowledge', True)
+        self.include_checked_sentence = opt.get('include_checked_sentence', False)
+        self.knowledge_separator = opt.get('include_knowledge_separator', False)
+        self.chosen_topic_delimiter = opt.get('chosen_topic_delimiter', '\n')
+
+    def share(self):
+        shared = super().share()
+        if hasattr(self, 'rare_word_f1'):
+            shared['rare_word_f1'] = self.rare_word_f1
+        return shared
 
     def len_episode(self, ep):
-        d = self.data[ep]
+        d = self.raw_data[ep]
         wizard_first = 'Wizard' in d['dialog'][0]['speaker']
         if wizard_first:
-            return (len(d['dialog']) - 1) // 2
+            if self.add_missing_turns == 'none':
+                warn_once(
+                    'Some data not being used. If you are not trying to reproduce '
+                    'the previous results, it is recommended that you run with the '
+                    'flag --add-missing-turns train or --add-missing-turns all.'
+                )
+                len_ep = (len(d['dialog']) - 1) // 2
+            elif self.add_missing_turns == 'train' and 'train' not in self.datatype:
+                len_ep = (len(d['dialog']) - 1) // 2
+            else:
+                len_ep = (len(d['dialog']) - 1) // 2 + 1
+            return len_ep
         return len(d['dialog']) // 2
 
-    def num_examples(self):
-        return self.num_exs
-
-    def get(self, episode_idx, entry_idx=0):
-        d = self.data[episode_idx]
+    def _format_example(self, episode_idx, entry_idx=0):
+        d = self.raw_data[episode_idx]
         episode_done = entry_idx == (self.len_episode(episode_idx) - 1)
 
         wizard_first = 'Wizard' in d['dialog'][0]['speaker']
@@ -285,7 +417,9 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             text = chosen_topic
         elif idx == 1:
             # first response - only have the first message
-            text = '{}\n{}'.format(chosen_topic, apprentice_entry['text'])
+            text = (
+                f"{chosen_topic}{self.chosen_topic_delimiter}{apprentice_entry['text']}"
+            )
         else:
             text = ''
             if self.label_type == 'chosen_sent':
@@ -299,10 +433,13 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             labels = [wizard_entry['text']]
         else:
             title, sentence = _get_chosen_title_and_sent(wizard_entry, knowledge_dict)
-            labels = ['{} {}'.format(title, sentence)]
+            if self.knowledge_separator and title != TOKEN_NOCHOSEN:
+                labels = ['{} {} {}'.format(title, TOKEN_KNOWLEDGE, sentence)]
+            else:
+                labels = ['{} {}'.format(title, sentence)]
 
         # finally, get label_candidates
-        label_cands = [TOKEN_NOCHOSEN + ' ' + TOKEN_NOCHOSEN]
+        label_cands = ['{} {}'.format(TOKEN_NOCHOSEN, TOKEN_NOCHOSEN)]
         knowledge_str = ''
         for title, passage in knowledge_dict.items():
             for p in passage:
@@ -318,14 +455,16 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             else:
                 label_cands = wizard_entry.get('candidate_responses', [])
 
-        action = {
-            'id': 'WizardDialogKnowledgeTeacher',
-            'text': text,
-            'labels': labels,
-            'chosen_topic': chosen_topic,
-            'episode_done': episode_done,
-            'label_candidates': label_cands,
-        }
+        action = Message(
+            {
+                'id': 'WizardDialogKnowledgeTeacher',
+                'text': text,
+                'labels': labels,
+                'chosen_topic': chosen_topic,
+                'episode_done': episode_done,
+                'label_candidates': label_cands,
+            }
+        )
         if self.include_knowledge:
             action['knowledge'] = knowledge_str
         if self.include_checked_sentence:
@@ -334,42 +473,153 @@ class WizardDialogKnowledgeTeacher(WizardOfWikipediaTeacher):
             action['checked_sentence'] = sentence
         return action
 
+    def custom_evaluation(
+        self,
+        teacher_action: Message,
+        labels: Optional[Tuple[str]],
+        model_response: Message,
+    ):
+        """
+        Custom Evaluations for Wizard of Wikipedia.
+
+        When the label is `chosen_sent`, evaluate whether the model response...
+        1) Is the correct document (title)
+        2) _contains_ the correct chosen sentence (even if it's not wholly the answer)
+
+        When the label is `response`, we compute F1 of model generation w.r.t checked sentence.
+
+        :param teacher_action:
+            The message last sent from this teacher.
+        :param labels:
+            The previous correct labels, if there were any.
+        :param model_response:
+            The raw response from the model. Generally you want to rely on the
+            text field, but others may be necessary in specific situations.
+        """
+        if (
+            self.label_type == 'response'
+            and 'text' in model_response
+            and 'checked_sentence' in teacher_action
+        ):
+            self.metrics.add(
+                'knowledge_f1',
+                F1Metric.compute(
+                    model_response['text'], [teacher_action['checked_sentence']]
+                ),
+            )
+            if labels and hasattr(self, 'rare_word_f1'):
+                self.metrics.add(
+                    'rare_word_f1',
+                    self.rare_word_f1.compute(model_response['text'], labels),
+                )
+        elif (
+            self.label_type == 'chosen_sent'
+            and TOKEN_KNOWLEDGE in model_response['text']
+        ):
+            try:
+                correct_title, correct_passage = [
+                    normalize_answer(a) for a in labels[0].split(TOKEN_KNOWLEDGE)
+                ]
+            except ValueError:
+                # Knowledge not chosen
+                correct_title, correct_passage = TOKEN_NOCHOSEN, TOKEN_NOCHOSEN
+            title, passage = [
+                normalize_answer(a)
+                for a in model_response['text'].split(TOKEN_KNOWLEDGE)
+            ]
+
+            self.metrics.add('title_r@1', AverageMetric(int(correct_title == title)))
+            self.metrics.add(
+                'passage_r@1', AverageMetric(int(correct_passage in passage))
+            )
+            if 'title_candidates' in model_response:
+                title_candidates = [
+                    normalize_answer(t) for t in model_response['title_candidates']
+                ][:5]
+                self.metrics.add(
+                    'title_r@5',
+                    AverageMetric(
+                        int(any(correct_title == t for t in title_candidates))
+                    ),
+                )
+            if 'text_candidates' in model_response:
+                text_candidates = [
+                    normalize_answer(t) for t in model_response['text_candidates']
+                ][:5]
+                self.metrics.add(
+                    'passage_r@5',
+                    AverageMetric(
+                        int(any(correct_passage in t for t in text_candidates))
+                    ),
+                )
+
 
 class BasicdialogTeacher(WizardOfWikipediaTeacher):
-    """Teacher that only contains the basic dialog between the wizard and
-    the Apprentice
+    """
+    Teacher that only contains the basic dialog between the wizard and the Apprentice.
     """
 
     def __init__(self, opt, shared=None):
+        self.add_missing_turns = opt.get('add_missing_turns', 'none')
+        self.speaker_label = opt.get('speaker_label', 'both')
+        self.add_topic = opt.get('add_topic', False)
         super().__init__(opt, shared)
-        self.num_exs = sum(len(d['dialog']) // 2 for d in self.data)
-        self.wizard_dialog = opt.get('wizard_dialog', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Basic Dialog Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('Basic Dialog Arguments')
         agent.add_argument(
-            '--wizard-dialog',
+            '--speaker-label',
+            type=str,
+            default='both',
+            choices=['both', 'wizard', 'apprentice'],
+            help='Which speaker labels to train on',
+        )
+        agent.add_argument(
+            '--add-topic',
             type='bool',
             default=False,
-            help='If true, ensures that wizard response ' 'is always the label',
+            help='prepend chosen topic to first turn',
         )
-
-    def num_examples(self):
-        return self.num_exs
+        agent.add_argument(
+            '--add-missing-turns',
+            type=str,
+            choices=['none', 'train', 'all'],
+            default='none',
+            help='For reproducibility, the default "none" is the previous version which missing some data. '
+            'When "train" is chosen, only the training set is supplemented. '
+            'When "all" is chosen, all data are supplemented.',
+        )
+        return parser
 
     def len_episode(self, ep):
-        d = self.data[ep]
-        if self.wizard_dialog and ('Wizard' in d['dialog'][0]['speaker']):
-            return (len(d['dialog']) - 1) // 2
+        d = self.raw_data[ep]
+        first_speaker = d['dialog'][0]['speaker'].lower()
+        if self.speaker_label != 'both' and self.speaker_label in first_speaker:
+            if self.add_missing_turns == 'none':
+                warn_once(
+                    'Some data not being used. If you are not trying to reproduce '
+                    'the previous results, it is recommended that you run with the '
+                    'flag --add-missing-turns train or --add-missing-turns all.'
+                )
+                len_ep = (len(d['dialog']) - 1) // 2
+            elif self.add_missing_turns == 'train' and 'train' not in self.datatype:
+                len_ep = (len(d['dialog']) - 1) // 2
+            else:
+                len_ep = (len(d['dialog']) - 1) // 2 + 1
+            return len_ep
         return len(d['dialog']) // 2
 
-    def get(self, episode_idx, entry_idx=0):
-        d = self.data[episode_idx]
+    def _format_example(self, episode_idx, entry_idx=0):
+        d = self.raw_data[episode_idx]
         episode_done = entry_idx == (self.len_episode(episode_idx) - 1)
 
         idx = entry_idx * 2
-        if self.wizard_dialog and ('Wizard' in d['dialog'][0]['speaker']):
+        first_speaker = d['dialog'][0]['speaker'].lower()
+        if self.speaker_label != 'both' and self.speaker_label in first_speaker:
             idx += 1
 
         dialog_entry_1 = d['dialog'][idx]
@@ -378,17 +628,46 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
         text = dialog_entry_1['text']
         labels = [dialog_entry_2['text']]
 
-        action = {
-            'id': 'WizardBasicDialog',
-            'text': text,
-            'labels': labels,
-            'episode_done': episode_done,
-        }
+        assert isinstance(self.add_topic, bool)
+        if self.add_topic and entry_idx == 0:
+            text = d.get('chosen_topic', '') + '\n' + text
 
-        if self.wizard_dialog:
+        action = Message(
+            {
+                'id': 'WizardBasicDialog',
+                'text': text,
+                'labels': labels,
+                'episode_done': episode_done,
+            }
+        )
+        if 'label_candidates' in d:
+            action['label_candidates'] = d['label_candidates']
+
+        if self.speaker_label == 'wizard':
             action['chosen_topic'] = d.get('chosen_topic', '')
 
         return action
+
+
+class BasicWizardDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt['speaker_label'] = "wizard"
+        super().__init__(opt, shared)
+
+
+class BasicApprenticeDialogTeacher(BasicdialogTeacher):
+    def __init__(self, opt, shared=None):
+        opt['speaker_label'] = 'apprentice'
+        super().__init__(opt, shared)
+
+
+class BasicBothDialogTeacher(MultiTaskTeacher):
+    def __init__(self, opt, shared=None):
+        opt = copy.deepcopy(opt)
+        opt[
+            'task'
+        ] = 'wizard_of_wikipedia:BasicApprenticeDialog,wizard_of_wikipedia:BasicWizardDialog'
+        super().__init__(opt, shared)
 
 
 ###############################################################
@@ -399,24 +678,30 @@ class BasicdialogTeacher(WizardOfWikipediaTeacher):
 
 
 class GeneratorTeacher(WizardDialogKnowledgeTeacher):
-    """Teacher for training a generator. Depending on certain flag
-    configurations, the teacher will include differing amounts of knowledge
+    """
+    Teacher for training a generator.
 
+    Depending on certain flag configurations, the teacher will include differing amounts
+    of knowledge
     """
 
     def __init__(self, opt, shared=None):
         opt['label_type'] = 'response'
         opt['include_checked_sentence'] = True
-        super().__init__(opt, shared)
         self.knowledge_separator = opt.get('include_knowledge_separator', True)
         self.only_checked_knowledge = opt.get('only_checked_knowledge', False)
+        self.prepend_gold_knowledge = opt.get('prepend_gold_knowledge')
+        self.gold_knowledge_delimiter = opt.get('gold_knowledge_delimiter', '\n')
         self.dropout = opt.get('ignorant_dropout', 0.0)
+        super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        argparser.set_defaults(include_knowledge_separator=True)
-        WizardDialogKnowledgeTeacher.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('GeneratorTeacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.set_defaults(include_knowledge_separator=True)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('GeneratorTeacher Arguments')
         agent.add_argument(
             '--only-checked-knowledge',
             type='bool',
@@ -430,44 +715,175 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
             help='Eliminate all knowledge with this probability.'
             'Specify 1 for completely ignorant teacher',
         )
+        agent.add_argument(
+            '--prepend-gold-knowledge',
+            type='bool',
+            default=False,
+            help='If true, prepend text with checked sentence',
+        )
+        agent.add_argument(
+            '--gold-knowledge-delimiter',
+            type=str,
+            default='\n',
+            help='delimiter for prepending gold knowledge',
+        )
+        return parser
 
     def getID(self):
         return "WizTeacher"
 
-    def get(self, episode_idx, entry_idx=0):
-        a = super().get(episode_idx, entry_idx)
+    def _format_example(self, episode_idx, entry_idx=0):
+        a = super()._format_example(episode_idx, entry_idx)
         # zero out the label candidates?
         if 'knowledge' not in a:
             # just a batch padding item
             return a
         # save some memory, we don't need label_candidates
-        a['label_candidates'] = []
+        a.force_set('label_candidates', [])
         if not a['knowledge'].startswith(TOKEN_NOCHOSEN):
             # make sure the token is appearing
-            a['knowledge'] = (
-                TOKEN_NOCHOSEN
-                + ' '
-                + TOKEN_KNOWLEDGE
-                + ' '
-                + TOKEN_NOCHOSEN
-                + '\n'
-                + a['knowledge']
+            a.force_set(
+                'knowledge',
+                (
+                    TOKEN_NOCHOSEN
+                    + ' '
+                    + TOKEN_KNOWLEDGE
+                    + ' '
+                    + TOKEN_NOCHOSEN
+                    + '\n'
+                    + a['knowledge']
+                ),
             )
         if self.only_checked_knowledge:
             # useful for test time evaluation, where it's only ever trained on true
             # knowledge
-            a['knowledge'] = (
-                a['title'] + ' ' + TOKEN_KNOWLEDGE + ' ' + a['checked_sentence']
+            a.force_set(
+                'knowledge',
+                (a['title'] + ' ' + TOKEN_KNOWLEDGE + ' ' + a['checked_sentence']),
             )
 
         if random.random() < self.dropout:
             # Drop the knowledge with some probability
-            a['title'] = TOKEN_NOCHOSEN
-            a['checked_sentence'] = TOKEN_NOCHOSEN
-            a['knowledge'] = (
-                TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN
+            a.force_set('title', TOKEN_NOCHOSEN)
+            a.force_set('checked_sentence', TOKEN_NOCHOSEN)
+            a.force_set(
+                'knowledge',
+                TOKEN_NOCHOSEN + ' ' + TOKEN_KNOWLEDGE + ' ' + TOKEN_NOCHOSEN,
+            )
+        elif self.prepend_gold_knowledge:
+            a.force_set(
+                'text',
+                f"{TOKEN_KNOWLEDGE} {a['checked_sentence']} {TOKEN_END_KNOWLEDGE}{self.gold_knowledge_delimiter}{a['text']}",
             )
         return a
+
+
+class WikiPageTitleTeacher(WizardDialogKnowledgeTeacher):
+    """
+    Generates the title of Wikipedia page used as source of knowledge.
+
+    The context provided by this teacher (`text`) is the conversation history, with
+    chosen topic removed. The label is the title of the Wikipedia page of the passage
+    that wizard selected for crafting the next utterance; in other words, the source of
+    knowledge for this utterance.
+    """
+
+    def __init__(self, opt, shared=None):
+        self.opt = copy.deepcopy(opt)
+        self._init_attributes(opt)
+        self.opt['label_type'] = 'response'
+        self.id = 'WikiPageTitleTeacher'
+        self._conv_history_len = self.opt['conversation_history_length']
+        if not (self._conv_history_len > 0 or self._conv_history_len == -1):
+            logging.warning(
+                f'"{self._conv_history_len}" is an invalid value for --conversation-history-length flag.'
+                ' Changing it to default of -1 (include the entire message history).'
+            )
+            self._conv_history_len = -1
+        self._skip_no_title = self.opt['skip_no_title']
+        super().__init__(self.opt, shared=shared)
+
+    @classmethod
+    def add_cmdline_args(cls, parser, partial_opt=None):
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('Wikipedia Page Title Arguments')
+        agent.add_argument(
+            '--conversation-history-length',
+            type=int,
+            default=-1,
+            help='Number of previous utterances to keep in context, 0 (default) includes all',
+        )
+        agent.add_argument(
+            '--skip-no-title',
+            type='bool',
+            default=True,
+            help=(
+                'Whether to skip the example if no passage was selected. If `false` '
+                f'uses `{TOKEN_NOCHOSEN}` instead of title if no knowledge source was selected.'
+            ),
+        )
+        return parser
+
+    def share(self):
+        shared = super().share()
+        shared['titles_data'] = self.titles_data
+        return shared
+
+    def _generate_messages(self, hist, action):
+        include_hist = (
+            hist[-self._conv_history_len :] if self._conv_history_len > 0 else hist
+        )
+        context = '\n'.join(include_hist)
+        return Message(
+            {
+                'id': "Wikipedia Title Teacher",
+                'text': context,
+                'labels': [action["title"]],
+                'episode_done': True,
+            }
+        )
+
+    def _should_include(self, act):
+        return not (self._skip_no_title and act['labels'][0] == TOKEN_NOCHOSEN)
+
+    def setup_data(self, datafile):
+        logging.info(f'loading {datafile}')
+        with PathManager.open(datafile) as f:
+            self.raw_data = json.load(f)
+        self._preprocess_data()
+        for episode_idx in range(len(self.titles_data)):
+            for entry_idx in range(self.len_episode(episode_idx)):
+                ex = self._format_example(episode_idx, entry_idx)
+                ex.pop('episode_done', '')
+                if 'label_candidates' in ex and not ex['label_candidates']:
+                    ex.pop('label_candidates')
+                yield ex, entry_idx == 0
+
+    def _preprocess_data(self):
+        data = []
+        for episode_idx in range(len(self.raw_data)):
+            dialog_history = []
+            for ex_idx in range(super().len_episode(episode_idx)):
+                a = super()._format_example(episode_idx, ex_idx)
+                text_parts = a['text'].split('\n')
+                if ex_idx == 0:
+                    # throwing away chosen_topic
+                    text_parts = text_parts[1:]
+                if text_parts:
+                    dialog_history.append(text_parts[0])
+                    title_act = self._generate_messages(dialog_history, a)
+                    if self._should_include(title_act):
+                        data.append(title_act)
+                dialog_history.append(a['labels'][0])
+
+        logging.info(f'{len(data)} title generation examples generated ')
+        self.titles_data = data
+
+    def len_episode(self, ep):
+        return 1
+
+    def _format_example(self, episode_idx, entry_idx=0):
+        return self.titles_data[episode_idx]
 
 
 ####################################################
@@ -479,8 +895,8 @@ class GeneratorTeacher(WizardDialogKnowledgeTeacher):
 
 class DocreaderTeacher(WizardOfWikipediaTeacher):
     """
-    Teacher for training a doc reader. One can specify the format of the
-    action via the `--teacher-type` flag.
+    Teacher for training a doc reader. One can specify the format of the action via the
+    `--teacher-type` flag.
 
     docs:
         {
@@ -513,23 +929,10 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
             text: <Sentence for which passage was retrieved>
             label: <Max overlap span between sentence said and sentence retrieved>
         }
-
     """
 
     def __init__(self, opt, shared=None):
-        super().__init__(opt, shared)
 
-        # get number of examples
-        self.num_exs = 0
-        for ep in range(self.num_episodes()):
-            d = self.data[ep]
-            for entry in d['dialog']:
-                if (
-                    entry.get('checked_sentence', None) is not None
-                    and entry.get('checked_sentence') != {}
-                    and TOKEN_NOCHOSEN not in entry.get('checked_sentence')
-                ):
-                    self.num_exs += 1
         self.stop_words = [
             'i',
             'a',
@@ -634,11 +1037,15 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
             self.sent_tok = nltk.data.load(st_path)
 
         self.teacher_type = opt.get('teacher_type')
+        super().__init__(opt, shared)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        WizardDialogKnowledgeTeacher.add_cmdline_args(argparser)
-        argparser.add_argument(
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        WizardDialogKnowledgeTeacher.add_cmdline_args(parser, partial_opt=partial_opt)
+        parser.add_argument(
             '--teacher-type',
             type=str,
             default='docs',
@@ -652,6 +1059,7 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
                 'span_teacher',
             ],
         )
+        return parser
 
     def get_min_stopwords(self, word_set):
         min_count = 1000000000000
@@ -712,9 +1120,6 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
             )
         return max_span
 
-    def num_examples(self):
-        return self.num_exs
-
     def length_episode(self, dialog):
         len_ep = 0
         idxs = []
@@ -731,8 +1136,11 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
 
         return len_ep, idxs
 
-    def get(self, episode_idx, entry_idx=0):
-        d = self.data[episode_idx]
+    def len_episode(self, ep: int) -> int:
+        return self.length_episode(self.raw_data[ep])[0]
+
+    def _format_example(self, episode_idx, entry_idx=0):
+        d = self.raw_data[episode_idx]
         len_ep, idxs = self.length_episode(d)
         idx = idxs[entry_idx]
 
@@ -751,11 +1159,13 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
         # get sentence span
         span_label = self.get_span_label(d, idx)
 
-        action = {
-            'id': 'WizardDocReader:{}'.format(self.teacher_type),
-            'labels': [sentence],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'id': 'WizardDocReader:{}'.format(self.teacher_type),
+                'labels': [sentence],
+                'episode_done': episode_done,
+            }
+        )
 
         if self.teacher_type == 'docs':
             action['text'] = '{}\n{}'.format(passage, text)
@@ -767,6 +1177,9 @@ class DocreaderTeacher(WizardOfWikipediaTeacher):
         elif self.teacher_type == 'more_docs_sentence':
             action['text'] = texts
             action['label_candidates'] = self.sent_tok.tokenize(passages)
+            label = action['labels'][0]
+            if label not in action['label_candidates']:
+                action['label_candidates'].append(label)
         elif self.teacher_type == 'span':
             action['text'] = '{}\n{}'.format(passages, texts)
             action['labels'] = [span_label]
@@ -866,9 +1279,9 @@ class DefaultTeacher(WizardDialogKnowledgeTeacher):
     pass
 
 
-def create_agents(opt, task):
-    if not opt.get('interactive_task', False):
-        return create_task_agent_from_taskname(opt)
-    else:
-        # interactive task has no task agents (they are attached as user agents)
-        return []
+class SelfchatTeacher(BasicBothDialogTeacher):
+    """
+    Teacher used to create candidates for selfchats, if needed.
+    """
+
+    pass

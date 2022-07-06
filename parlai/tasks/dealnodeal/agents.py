@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.agents import Teacher
+from parlai.core.teachers import Teacher
 from .build import build
+from parlai.utils.io import PathManager
 
 import os
 import random
@@ -29,28 +30,32 @@ OUTPUT_TAG = 'output'
 
 
 def get_tag(tokens, tag):
-    """Extracts the value inside the given tag."""
+    """
+    Extracts the value inside the given tag.
+    """
     start = tokens.index('<' + tag + '>') + 1
     stop = tokens.index('</' + tag + '>')
     return tokens[start:stop]
 
 
 class NegotiationTeacher(Teacher):
-    """End-to-end negotiation teacher that loads the data from
+    """
+    End-to-end negotiation teacher that loads the data from
     https://github.com/facebookresearch/end-to-end-negotiator.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
         self.datatype = opt['datatype'].split(':')[0]
-        self.random = self.datatype == 'train'
+        self.datatype_ = opt['datatype']
+        self.random = self.datatype_ == 'train'
         build(opt)
 
         filename = 'val' if self.datatype == 'valid' else self.datatype
         data_path = os.path.join(
             opt['datapath'],
             'negotiation',
-            'end-to-end-negotiator-master',
+            'end-to-end-negotiator-bbb93bbf00f69fced75d5c0d22e855bda07c9b78',
             'src',
             'data',
             'negotiate',
@@ -83,6 +88,9 @@ class NegotiationTeacher(Teacher):
         )
         return num_exs
 
+    def num_episodes(self):
+        return len(self.episodes)
+
     def reset(self):
         super().reset()
         self.episode_idx = self.data_offset - self.step_size
@@ -97,13 +105,15 @@ class NegotiationTeacher(Teacher):
 
     def _setup_data(self, data_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.episodes = data_file.readlines()
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.expected_reponse is not None:
-            self.metrics.update(observation, self.expected_reponse)
+            self.metrics.evaluate_response(observation, self.expected_reponse)
             self.expected_reponse = None
         return observation
 

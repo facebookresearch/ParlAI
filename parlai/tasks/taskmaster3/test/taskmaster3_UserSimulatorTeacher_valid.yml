@@ -1,0 +1,53 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: What new movies are popular with friends on my contact list?'
+    id: Taskmaster3_UserSimulatorTeacher
+    text: 'GOAL: api_name = find_movies ; description.other = new | api_name = find_movies
+      ; description.other = popular with friends | api_name = get_movie_attribute
+      ; attribute = review.audience ; name.movie = Galaxy Man | api_name = get_movie_attribute
+      ; attribute = review.critic ; name.movie = Galaxy Man | api_name = get_movie_attribute
+      ; attribute = review.critic ; name.movie = Galaxy Man | api_name = find_movies
+      ; description.other = most popular | api_name = get_movie_attribute ; attribute
+      = name.genre ; name.movie = Little Monsters | api_name = get_movie_attribute
+      ; attribute = name.person ; name.movie = Little Monsters | api_name = get_movie_attribute
+      ; attribute = description.plot ; name.movie = Little Monsters | api_name = get_movie_attribute
+      ; attribute = review.critic ; name.movie = Little Monsters | api_name = get_movie_attribute
+      ; attribute = review.critic ; name.movie = Galaxy Man'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: __SILENCE__'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: __SILENCE__'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: __SILENCE__'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: __SILENCE__'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: What do the critics say about Galaxy Man?'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Three of the people on your contact list saw Galaxy Man last weekend,
+      for an average rating of 3.5 out of 5 stars.'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: __SILENCE__'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: __SILENCE__'
+    type: 'USER: '
+num_episodes: 2375
+num_examples: 30141

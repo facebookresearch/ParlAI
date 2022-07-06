@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -11,12 +11,15 @@ Builds the ParlAI website.
 import os
 import git
 import markdown
+import shutil
 from mdx_gfm import PartialGithubFlavoredMarkdownExtension
 
 GIT_ROOT_LEVEL = git.Git().rev_parse('--show-toplevel')
 WEBSITE_ROOT = os.path.join(GIT_ROOT_LEVEL, 'website')
 TEMPLATES = os.path.join(WEBSITE_ROOT, 'templates')
 OUT_DIR = os.path.join(WEBSITE_ROOT, 'build')
+
+STATIC_FILE_EXTS = {'.css', '.jpg', '.jpeg', '.png', '.json', '.jsonl', '.html', '.md'}
 
 
 def ghmarkdown(source):
@@ -31,7 +34,9 @@ def _read_file(filename):
 
 
 def _mkdirp(directory):
-    """Equivalent to mkdir -p"""
+    """
+    Equivalent to mkdir -p.
+    """
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -75,11 +80,7 @@ def make_aboutpage():
 
 def make_homepage():
     template = _read_file(os.path.join(TEMPLATES, 'home.html'))
-    news = _read_file(os.path.join(GIT_ROOT_LEVEL, 'NEWS.md'))
-    news = news.replace('## News', '')
-    news_html = ghmarkdown(news)
-    content = template.replace('{{{CONTENT}}}', news_html)
-    html = wrap_base(content, "ParlAI")
+    html = wrap_base(template, "ParlAI")
     _write_file('index.html', html)
 
 
@@ -91,7 +92,7 @@ def make_projects_landing():
         'housed in the ParlAI repo, others are maintained via external websites. '
         'Please also refer',
         'See the [ParlAI projects](https://github.com/facebookresearch/ParlAI/'
-        'tree/master/projects) page on GitHub for more information. Refer',
+        'tree/main/projects) page on GitHub for more information. Refer',
     )
     landing_html = template.replace('{{{CONTENT}}}', ghmarkdown(landing))
     html = wrap_base(landing_html, "Projects | ParlAI")
@@ -108,16 +109,30 @@ def make_projects_individual():
         if os.path.exists(os.path.join(projects_dir, pp, 'README.md'))
     ]
     for p in projects:
-        content = _read_file(os.path.join(projects_dir, p, 'README.md'))
+        project_dir = os.path.join(projects_dir, p)
+        content = _read_file(os.path.join(project_dir, 'README.md'))
         content_html = template.replace('{{{CONTENT}}}', ghmarkdown(content))
         content_html = content_html.replace(
             'src="',
             'src="https://raw.githubusercontent.com/facebookresearch/'
-            'ParlAI/master/projects/{}'.format(p + '/' if p else ''),
+            'ParlAI/main/projects/{}'.format(p + '/' if p else ''),
         )
         title = p.title().replace("_", " ")
         html = wrap_base(content_html, title)
         _write_file(os.path.join('projects', p, 'index.html'), html)
+
+        # if there are any static files in the project folder, copy them over
+        # to the website
+        files = os.listdir(project_dir)
+        for fn in files:
+            _, ext = os.path.splitext(fn.lower())
+            if ext in STATIC_FILE_EXTS:
+                src = os.path.join(project_dir, fn)
+                nice_src = os.path.relpath(src, GIT_ROOT_LEVEL)
+                dest = os.path.join(OUT_DIR, 'projects', p, fn)
+                nice_dest = os.path.relpath(dest, GIT_ROOT_LEVEL)
+                print(f"Copy {nice_src} -> {nice_dest}")
+                shutil.copyfile(src, dest)
 
 
 def main():

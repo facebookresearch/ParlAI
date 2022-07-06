@@ -1,0 +1,54 @@
+acts:
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Can you help me order 5 tickets to a movie this Friday?'
+    id: Taskmaster3_UserSimulatorTeacher
+    text: 'GOAL: api_name = find_movies ; name.theater = Century 16 theater | api_name
+      = get_movie_attribute ; attribute = description.plot ; name.movie = 1917 | api_name
+      = find_movies ; description.other = anything else like 1917 ; location = nearby
+      ; name.theater = Century 16 theater | api_name = get_movie_attribute ; attribute
+      = name.person ; name.movie = Bad Boys For Life | api_name = get_movie_attribute
+      ; attribute = name.person ; name.movie = Bad Boys For Life | api_name = find_showtimes
+      ; date.showing = this Friday ; name.movie = 1917 ; name.theater = Century 16
+      theater ; type.screening = standard | api_name = book_tickets ; date.showing
+      = this Friday ; name.movie = 1917 ; name.theater = Century 16 theater ; num.tickets
+      = 6 ; seating = any ; time.showing = 3:45 PM'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: Something at the Century 16 theater is fine.'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: I can help with that, which theater would you like to attend?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: I don''t know what is playing, can you tell me the three newest releases?'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Alright, checking the Century 16 theater. Did you have a particular
+      film in mind?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: I would like to know more about 1917, what is that about?'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: Sure, Birds of Prey, 1917, and Little Women are the three newest
+      releases at the Century 16 theater.'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    eval_labels:
+    - 'USER: That sounds cool, is there anything else like 1917 playing?'
+    id: Taskmaster3_UserSimulatorTeacher
+    slots: {}
+    text: 'SYSTEM: 1917 is a movie about two soldiers on the front lines in World
+      War 1.'
+    type: 'USER: '
+num_episodes: 2382
+num_examples: 29751

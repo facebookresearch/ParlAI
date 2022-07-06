@@ -45,7 +45,7 @@ As an example, we provide `parlai_internal/agents/parrot/parrot.py`. You could c
 (from the top-level ParlAI folder):
 
 ```bash
-python examples/display_model.py -t babi:task10k:1 -m internal:parrot
+parlai display_model -t babi:task10k:1 -m internal:parrot
 ```
 
 Similarly, you can add private tasks under a tasks folder here and invoke them with `-t internal:taskname`.
@@ -61,5 +61,5 @@ And you can use as many of these in combination as you would like. For instance,
 an internal agent definition on an internal task, you would do:
 
 ```bash
-python examples/eval_model.py -t internal:taskname -m internal:model -mf izoo:model_file/model
+parlai eval_model -t internal:taskname -m internal:model -mf izoo:model_file/model
 ```

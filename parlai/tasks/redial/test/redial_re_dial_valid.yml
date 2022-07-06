@@ -1,0 +1,33 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - I am doing okay. What kind of movies do you like?
+    id: redial
+    text: Hi there, how are you? I'm looking for movie recommendations
+- - episode_done: false
+    eval_labels:
+    - You might like The Boss Baby that was a good movie.
+    id: redial
+    text: I like animations like The Triplets of Belleville and Waking Life I also
+      enjoy Mary and Max Anything artistic
+- - episode_done: false
+    eval_labels:
+    - It has Alec Baldwin it is about a baby that works for a company and gets adopted
+      it is very funny
+    id: redial
+    text: What's it about?
+- - episode_done: false
+    eval_labels:
+    - 'That is a tough one but I will remember something Final Fantasy: The Spirits
+      Within was a good one'
+    id: redial
+    text: That seems like a nice comedy Do you have any animated recommendations that
+      are a bit more dramatic? Like A Scanner Darkly  for example I like comedies
+      but I prefer films with a little more depth
+- - episode_done: false
+    eval_labels:
+    - It is animated, sci fi, and has action Glad I could help
+    id: redial
+    text: Ooh that seems cool! Thanks for the input. I'm ready to submit if you are.
+num_episodes: 1341
+num_examples: 8287

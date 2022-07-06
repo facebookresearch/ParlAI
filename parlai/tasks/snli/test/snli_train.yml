@@ -1,0 +1,58 @@
+acts:
+- - episode_done: true
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: A person on a horse jumps over a broken down airplane.
+
+      Hypothesis: A person is training his horse for a competition.'
+- - episode_done: true
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - contradiction
+    text: 'Premise: A person on a horse jumps over a broken down airplane.
+
+      Hypothesis: A person is at a diner, ordering an omelette.'
+- - episode_done: true
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: A person on a horse jumps over a broken down airplane.
+
+      Hypothesis: A person is outdoors, on a horse.'
+- - episode_done: true
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: Children smiling and waving at camera
+
+      Hypothesis: They are smiling at their parents'
+- - episode_done: true
+    id: SNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: Children smiling and waving at camera
+
+      Hypothesis: There are children present'
+num_episodes: 549367
+num_examples: 549367

@@ -5,6 +5,11 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
+
+import os
+from parlai.tasks.dialogue_qe.build import build
 
 
 class DefaultTeacher(DialogTeacher):
@@ -18,10 +23,6 @@ class DefaultTeacher(DialogTeacher):
 
     @staticmethod
     def _path(opt):
-        import os
-        import sys
-        from parlai.tasks.dialogue_qe.build import build
-
         build(opt)
         dt = opt['datatype'].split(':')[0]
 
@@ -30,8 +31,10 @@ class DefaultTeacher(DialogTeacher):
         elif dt == 'test':
             path = os.path.join(opt['datapath'], 'DialogueQE', 'test.json')
         elif dt == 'valid':
-            print('warning: validation is not supporting', file=sys.stderr)
-            path = None
+            logging.error(
+                'warning: validation is not supported in dialogue_qe. Using test'
+            )
+            path = os.path.join(opt['datapath'], 'DialogueQE', 'test.json')
         else:
             raise RuntimeError('Not valid datatype.')
 
@@ -47,12 +50,12 @@ class DefaultTeacher(DialogTeacher):
         import json
         from functools import reduce
 
-        print('loading: ' + path)
+        logging.info('loading: ' + path)
 
         if path is None:
             return iter(())
 
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.dialogs = json.load(data_file)
 
         for dialog in self.dialogs:

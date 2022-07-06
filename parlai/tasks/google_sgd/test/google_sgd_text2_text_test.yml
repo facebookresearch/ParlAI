@@ -1,0 +1,38 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Any preference on the restaurant, location and time?
+    id: google_sgd:text2_text
+    text: Hi, could you get me a restaurant booking on the 8th please?
+    type: text
+- - episode_done: false
+    eval_labels:
+    - Please confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for
+      2 on March 8th.
+    id: google_sgd:text2_text
+    text: Could you get me a reservation at P.f. Chang's in Corte Madera at afternoon
+      12?
+    type: text
+- - episode_done: false
+    eval_labels:
+    - Sorry, your reservation could not be made. Could I help you with something else?
+    id: google_sgd:text2_text
+    text: Sure, that is great.
+    type: text
+- - episode_done: false
+    eval_labels:
+    - Sure, please confirm your reservation at Benissimo Restaurant & Bar in Corte
+      Madera at 12 pm for 2 on March 8th.
+    id: google_sgd:text2_text
+    text: Could you try booking a table at Benissimo instead?
+    type: text
+- - episode_done: false
+    eval_labels:
+    - Your reservation has been made. Unfortunately, they do not serve vegetarian
+      options, although they are moderate priced.
+    id: google_sgd:text2_text
+    text: Sure, may I know if they have vegetarian options and how expensive is their
+      food?
+    type: text
+num_episodes: 4201
+num_examples: 54970

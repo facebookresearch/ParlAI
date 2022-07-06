@@ -1,0 +1,36 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - I live on a farm, we garden all year long, it is very relaxing.
+    id: wizard_of_wikipedia:basicdialog
+    text: I like Gardening, even when I've only been doing it for a short time.
+- - episode_done: false
+    eval_labels:
+    - I have planted several fruits trees, tomatoes, jalepenos, bell peppers, onions,
+      Garlic, and potatoes mostly.
+    id: wizard_of_wikipedia:basicdialog
+    text: That sounds great.  I've always thought that I would love living in a farm,
+      but I;ve always lived in the city.  What do you mostly plant?
+- - episode_done: false
+    eval_labels:
+    - yes i do. Cows, chickens, Micro pigs, Guinneas, We also do forest growing also.
+      we plants large pine trees.
+    id: wizard_of_wikipedia:basicdialog
+    text: Great, I love the idea of growing my own vegetables and fruits! Do you have
+      animals in the farm?
+- - episode_done: true
+    eval_labels:
+    - yes they are. they are extremely smart. most people buy them for inside pets.
+      you can train the to use a litter box just like a cat. When families started
+      using vines and trees to build their houses out of there was several species
+      of trees and vines that were eliminated by them.
+    id: wizard_of_wikipedia:basicdialog
+    text: Wow, it sounds amazing, the Micro-pigs are so cute! are they trainable to
+      be well behaved?
+- - episode_done: false
+    eval_labels:
+    - Ross was an American painter and television host
+    id: wizard_of_wikipedia:basicdialog
+    text: I would like to know more about bob ross
+num_episodes: 981
+num_examples: 4434

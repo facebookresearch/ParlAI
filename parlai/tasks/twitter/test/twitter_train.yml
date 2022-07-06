@@ -1,0 +1,32 @@
+acts:
+- - episode_done: true
+    id: twitter
+    labels:
+    - before you go to work open each episode up in its own tab
+    text: psych is being taken off of netflix tomorrow and i have 8 episodes left
+      and i work tonight kill me
+- - episode_done: true
+    id: twitter
+    labels:
+    - would you have sat and waited to see if he had a gun or would you have saved
+      your own life
+    text: car door was clearly not open if you look at the video . you can see blood
+      on the driver seat window
+- - episode_done: true
+    id: twitter
+    labels:
+    - aww thanks chalupa i know i can trust your taste @OK_hand@
+    text: i read the book also ! don't worry i'll be a good critic babe !
+- - episode_done: true
+    id: twitter
+    labels:
+    - the nats used to be canadian . try again .
+    text: no were at the nats game like true patriots
+- - episode_done: true
+    id: twitter
+    labels:
+    - ', please , please ! the confirm that you will honor this promise :'
+    text: my twitter mentions are flying by like a 60 fps movie ever since i busted
+      hillary for the teleprompter . someone is scared .
+num_episodes: 2580433
+num_examples: 2580433

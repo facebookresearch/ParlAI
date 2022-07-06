@@ -1,0 +1,36 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - For those interested, in 1568, they decided the Case of Mines, or "R v Earl
+      of Northumberland"
+    id: funpedia:lm
+    reward: 0
+    text: ''
+- - episode_done: true
+    eval_labels:
+    - The population of Wailuku in Hawaii was 15313 in 2010
+    id: funpedia:lm
+    reward: 0
+    text: ''
+- - episode_done: true
+    eval_labels:
+    - Hmmm yes Horacio Calcaterra is a sportsman that currently is playing for Sporting
+      Cristal which is located in Torneo Descentralizado.
+    id: funpedia:lm
+    reward: 0
+    text: ''
+- - episode_done: true
+    eval_labels:
+    - Ceglusa is a species that is endemic in Burma
+    id: funpedia:lm
+    reward: 0
+    text: ''
+- - episode_done: true
+    eval_labels:
+    - South Africans have a name for certain types of fish, they refer to them as
+      "Kurper."
+    id: funpedia:lm
+    reward: 0
+    text: ''
+num_episodes: 10184
+num_examples: 10184

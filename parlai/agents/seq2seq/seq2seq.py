@@ -4,8 +4,12 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.torch_generator_agent import TorchGeneratorAgent
 from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
 from .modules import Seq2seq, opt_to_kwargs
 
 import torch
@@ -13,7 +17,8 @@ import torch.nn as nn
 
 
 class Seq2seqAgent(TorchGeneratorAgent):
-    """Agent which takes an input sequence and produces an output sequence.
+    """
+    Agent which takes an input sequence and produces an output sequence.
 
     This model supports encoding the input and decoding the output via one of
     several flavors of RNN. It then uses a linear layer (whose weights can
@@ -23,6 +28,7 @@ class Seq2seqAgent(TorchGeneratorAgent):
     search.
 
     For more information, see the following papers:
+
     - Neural Machine Translation by Jointly Learning to Align and Translate
       `(Bahdanau et al. 2014) <arxiv.org/abs/1409.0473>`_
     - Sequence to Sequence Learning with Neural Networks
@@ -32,9 +38,13 @@ class Seq2seqAgent(TorchGeneratorAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        """Add command-line arguments specifically for this agent."""
-        agent = argparser.add_argument_group('Seq2Seq Arguments')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command-line arguments specifically for this agent.
+        """
+        agent = parser.add_argument_group('Seq2Seq Arguments')
         agent.add_argument(
             '-hs',
             '--hiddensize',
@@ -132,29 +142,20 @@ class Seq2seqAgent(TorchGeneratorAgent):
             help='Probability of replacing tokens with UNK in training.',
         )
 
-        super(Seq2seqAgent, cls).add_cmdline_args(argparser)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
 
-    @staticmethod
-    def model_version():
-        """Return current version of this model, counting up from 0.
-
-        Models may not be backwards-compatible with older versions.
-        Version 1 split from version 0 on Aug 29, 2018.
-        Version 2 split from version 1 on Nov 13, 2018
-        To use version 0, use --model legacy:seq2seq:0
-        To use version 1, use --model legacy:seq2seq:1
-        (legacy agent code is located in parlai/agents/legacy_agents).
-        """
-        return 2
-
     def __init__(self, opt, shared=None):
-        """Set up model."""
+        """
+        Set up model.
+        """
         super().__init__(opt, shared)
         self.id = 'Seq2Seq'
 
     def build_model(self, states=None):
-        """Initialize model, override to change model setup."""
+        """
+        Initialize model, override to change model setup.
+        """
         opt = self.opt
         if not states:
             states = {}
@@ -199,17 +200,26 @@ class Seq2seqAgent(TorchGeneratorAgent):
     def build_criterion(self):
         # set up criteria
         if self.opt.get('numsoftmax', 1) > 1:
-            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.NLLLoss(ignore_index=self.NULL_IDX, reduction='none')
         else:
-            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='sum')
+            return nn.CrossEntropyLoss(ignore_index=self.NULL_IDX, reduction='none')
 
     def batchify(self, *args, **kwargs):
-        """Override batchify options for seq2seq."""
+        """
+        Override batchify options for seq2seq.
+        """
         kwargs['sort'] = True  # need sorted for pack_padded
+        # TODO: Sorting the batch will result in various local metrics being broadcasted
+        # back to individual examples in the wrong order, such as the lengths of
+        # the context and labels. Aggregate metric reports will still be accurate.
         return super().batchify(*args, **kwargs)
 
     def state_dict(self):
-        """Get the model states for saving. Overriden to include longest_label"""
+        """
+        Get the model states for saving.
+
+        Overridden to include longest_label
+        """
         states = super().state_dict()
         if hasattr(self.model, 'module'):
             states['longest_label'] = self.model.module.longest_label
@@ -219,8 +229,11 @@ class Seq2seqAgent(TorchGeneratorAgent):
         return states
 
     def load(self, path):
-        """Return opt and model states."""
-        states = torch.load(path, map_location=lambda cpu, _: cpu)
+        """
+        Return opt and model states.
+        """
+        with PathManager.open(path, 'rb') as f:
+            states = torch.load(f, map_location=lambda cpu, _: cpu)
         # set loaded states if applicable
         self.model.load_state_dict(states['model'])
         if 'longest_label' in states:

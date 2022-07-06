@@ -1,0 +1,30 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - You're sweet.
+    id: cornell_movie:double
+    text: You have my word.  As a gentleman
+- - episode_done: false
+    eval_labels:
+    - What crap?
+    id: cornell_movie:double
+    text: do you listen to this crap?
+- - episode_done: true
+    eval_labels:
+    - Thank God!  If I had to hear one more story about your coiffure...
+    id: cornell_movie:double
+    text: Me.  This endless ...blonde babble. I'm like, boring myself.
+- - episode_done: true
+    eval_labels:
+    - Me.  This endless ...blonde babble. I'm like, boring myself.
+    id: cornell_movie:double
+    text: What crap?
+- - episode_done: true
+    eval_labels:
+    - Sometimes I wonder if the guys we're supposed to want to go out with are the
+      ones we actually want to go out with, you know?
+    id: cornell_movie:double
+    text: Bianca, I don't think the highlights of dating Joey Dorsey are going to
+      include door-opening and coat-holding.
+num_episodes: 8309
+num_examples: 13725

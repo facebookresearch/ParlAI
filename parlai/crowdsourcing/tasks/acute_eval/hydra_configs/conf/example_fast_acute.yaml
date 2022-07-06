@@ -1,0 +1,12 @@
+#@package _global_
+defaults:
+  - base_fast_acute
+mephisto:
+  blueprint:
+    acute_eval_type: engaging
+    config_path: ${task_dir}/task_config/model_config_self_chat.json
+    models: model1,model2
+    num_self_chats: 5
+    root_dir: ${task_dir}/task_config
+    task: blended_skill_talk
+    randomize_conversations: True

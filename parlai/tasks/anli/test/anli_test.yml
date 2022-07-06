@@ -1,0 +1,79 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Ernest Jones is a British jeweller and watchmaker. Established
+      in 1949, its first store was opened in Oxford Street, London. Ernest Jones specialises
+      in diamonds and watches, stocking brands such as Gucci and Emporio Armani. Ernest
+      Jones is part of the Signet Jewelers group.
+
+      Hypothesis: The first Ernest Jones store was opened on the continent of Europe.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: There is a little Shia community in El Salvador. There is an Islamic
+      Library operated by the Shia community, named "Fatimah Az-Zahra". They published
+      the first Islamic magazine in Central America: "Revista Biblioteca Islámica".
+      Additionally, they are credited with providing the first and only Islamic library
+      dedicated to spreading Islamic culture in the country.
+
+      Hypothesis: The community is south of the United States.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: ANLI:R3
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: It is Sunday today, let''s take a look at the most popular posts
+      of the last couple of days. Most of the articles this week deal with the iPhone,
+      its future version called the iPhone 8 or iPhone Edition, and new builds of
+      iOS and macOS. There are also some posts that deal with the iPhone rival called
+      the Galaxy S8 and some other interesting stories. The list of the most interesting
+      articles is available below. Stay tuned for more rumors and don''t forget to
+      follow us on Twitter.
+
+      Hypothesis: The day of the passage is usually when Christians praise the lord
+      together'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Old Trafford is a football stadium in Old Trafford, Greater Manchester,
+      England, and the home of Manchester United. With a capacity of 75,643, it is
+      the largest club football stadium in the United Kingdom, the second-largest
+      football stadium, and the eleventh-largest in Europe. It is about 0.5 mi from
+      Old Trafford Cricket Ground and the adjacent tram stop.
+
+      Hypothesis: There are only 10 larger football stadiums in Europe.'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: "Look at Me (When I Rock Wichoo)" is a song by American indie
+      rock band Black Kids, taken from their debut album "Partie Traumatic". It was
+      released in the UK by Almost Gold Recordings on September 8, 2008 and debuted
+      on the Top 200 UK Singles Chart at number 175.
+
+      Hypothesis: The song was released in America in September 2008'
+num_episodes: 3200
+num_examples: 3200

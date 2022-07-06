@@ -1,0 +1,43 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: model_chat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    world_file: ${task_dir}/worlds.py
+    custom_source_dir: ${task_dir}/frontend
+    task_config_path: ${task_dir}/task_config
+    block_qualification: bq-test
+    chat_data_folder: ${task_dir}/model_chat/BST90M/
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: true
+    include_persona: true
+    conversation_start_mode: 'msc'
+    annotation_question: What piece of previous chat history does this comment from your parnter (THEY) correctly recall or pay attention to? And is it engaging? (Check all that apply)
+    conversations_needed_string: "BST90M:100"
+    task_description_file: ${task_dir}/task_config/task_description.html
+    left_pane_text_path: ${task_dir}/task_config/task_description.html
+    final_rating_question: How interesting overall do you find talking to your partner (THEY)? (1=very boring, 5=very interesting)
+    max_resp_time: 360
+    override_opt:
+      completed_run_stats: ${task_dir}/task_config/completed_run_stats.json
+  task:
+    allowed_concurrent: 2
+    assignment_duration_in_seconds: 1200
+    max_num_concurrent_units: 20
+    maximum_units_per_worker: 5
+    task_description: |
+      <b><h4>Task Description</h4></b>
+      <br>
+      Chat with a Fellow on An Engaging Topic
+
+      Lorem ipsum.
+      <br><br>
+    task_name: mock
+    task_reward: 3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a Fellow on An Engaging Topic"

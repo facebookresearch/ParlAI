@@ -1,14 +1,16 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Dict
+
 import numpy as np
 import torch as th
 import torch.nn as nn
 
-from parlai.utils.misc import neginf
+from parlai.utils.torch import neginf
 from parlai.agents.transformer.modules import TransformerGeneratorModel
 
 
@@ -32,6 +34,8 @@ def universal_sentence_embedding(sentences, mask, sqrt=True):
     divisor = mask.sum(dim=1).view(-1, 1).float()
     if sqrt:
         divisor = divisor.sqrt()
+
+    divisor[divisor < 1] = 1
     sentence_sums /= divisor
     return sentence_sums
 
@@ -50,6 +54,22 @@ class EndToEndModel(TransformerGeneratorModel):
         mask = th.index_select(mask, 0, indices)
         ckattn = th.index_select(ckattn, 0, indices)
         return enc, mask, ckattn
+
+    def reorder_decoder_incremental_state(
+        self, incremental_state: Dict[int, dict], inds: th.Tensor
+    ) -> Dict[int, dict]:
+        """
+        Reorder the decoder incremental state.
+
+        See ``TorchGeneratorModel.reorder_decoder_incremental_state`` for a description.
+
+        Here, incremental_state is a dict whose keys are layer indices and whose values
+        are dicts containing the incremental state for that layer.
+        """
+        return {
+            idx: layer.reorder_incremental_state(incremental_state[idx], inds)
+            for idx, layer in enumerate(self.decoder.transformer.layers)
+        }
 
 
 class ContextKnowledgeEncoder(nn.Module):

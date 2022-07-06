@@ -1,0 +1,98 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - France
+    - France
+    - France
+    - France
+    id: squad2
+    text: 'The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were
+      the people who in the 10th and 11th centuries gave their name to Normandy, a
+      region in France. They were descended from Norse ("Norman" comes from "Norseman")
+      raiders and pirates from Denmark, Iceland and Norway who, under their leader
+      Rollo, agreed to swear fealty to King Charles III of West Francia. Through generations
+      of assimilation and mixing with the native Frankish and Roman-Gaulish populations,
+      their descendants would gradually merge with the Carolingian-based cultures
+      of West Francia. The distinct cultural and ethnic identity of the Normans emerged
+      initially in the first half of the 10th century, and it continued to evolve
+      over the succeeding centuries.
+
+      In what country is Normandy located?'
+- - episode_done: true
+    eval_labels:
+    - 10th and 11th centuries
+    - in the 10th and 11th centuries
+    - 10th and 11th centuries
+    - 10th and 11th centuries
+    id: squad2
+    text: 'The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were
+      the people who in the 10th and 11th centuries gave their name to Normandy, a
+      region in France. They were descended from Norse ("Norman" comes from "Norseman")
+      raiders and pirates from Denmark, Iceland and Norway who, under their leader
+      Rollo, agreed to swear fealty to King Charles III of West Francia. Through generations
+      of assimilation and mixing with the native Frankish and Roman-Gaulish populations,
+      their descendants would gradually merge with the Carolingian-based cultures
+      of West Francia. The distinct cultural and ethnic identity of the Normans emerged
+      initially in the first half of the 10th century, and it continued to evolve
+      over the succeeding centuries.
+
+      When were the Normans in Normandy?'
+- - episode_done: true
+    eval_labels:
+    - Denmark, Iceland and Norway
+    - Denmark, Iceland and Norway
+    - Denmark, Iceland and Norway
+    - Denmark, Iceland and Norway
+    id: squad2
+    text: 'The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were
+      the people who in the 10th and 11th centuries gave their name to Normandy, a
+      region in France. They were descended from Norse ("Norman" comes from "Norseman")
+      raiders and pirates from Denmark, Iceland and Norway who, under their leader
+      Rollo, agreed to swear fealty to King Charles III of West Francia. Through generations
+      of assimilation and mixing with the native Frankish and Roman-Gaulish populations,
+      their descendants would gradually merge with the Carolingian-based cultures
+      of West Francia. The distinct cultural and ethnic identity of the Normans emerged
+      initially in the first half of the 10th century, and it continued to evolve
+      over the succeeding centuries.
+
+      From which countries did the Norse originate?'
+- - episode_done: true
+    eval_labels:
+    - Rollo
+    - Rollo
+    - Rollo
+    - Rollo
+    id: squad2
+    text: 'The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were
+      the people who in the 10th and 11th centuries gave their name to Normandy, a
+      region in France. They were descended from Norse ("Norman" comes from "Norseman")
+      raiders and pirates from Denmark, Iceland and Norway who, under their leader
+      Rollo, agreed to swear fealty to King Charles III of West Francia. Through generations
+      of assimilation and mixing with the native Frankish and Roman-Gaulish populations,
+      their descendants would gradually merge with the Carolingian-based cultures
+      of West Francia. The distinct cultural and ethnic identity of the Normans emerged
+      initially in the first half of the 10th century, and it continued to evolve
+      over the succeeding centuries.
+
+      Who was the Norse leader?'
+- - episode_done: true
+    eval_labels:
+    - 10th century
+    - the first half of the 10th century
+    - 10th
+    - 10th
+    id: squad2
+    text: 'The Normans (Norman: Nourmands; French: Normands; Latin: Normanni) were
+      the people who in the 10th and 11th centuries gave their name to Normandy, a
+      region in France. They were descended from Norse ("Norman" comes from "Norseman")
+      raiders and pirates from Denmark, Iceland and Norway who, under their leader
+      Rollo, agreed to swear fealty to King Charles III of West Francia. Through generations
+      of assimilation and mixing with the native Frankish and Roman-Gaulish populations,
+      their descendants would gradually merge with the Carolingian-based cultures
+      of West Francia. The distinct cultural and ethnic identity of the Normans emerged
+      initially in the first half of the 10th century, and it continued to evolve
+      over the succeeding centuries.
+
+      What century did the Normans first gain their separate identity?'
+num_episodes: 11873
+num_examples: 11873

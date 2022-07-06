@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -8,102 +8,67 @@
 """
 Main launch script for single-host, multi-GPU training.
 
-This is a drop-in replacement for train_model.py.  This script will launch N
-subprocess, each which runs the full training loop independently.
+This is a drop-in replacement for [train_model]. This script will
+launch N subprocess, each which runs the full training loop
+independently.
 
-Uses torch.nn.parallel.DistributedDataParallel for its main uses.  Agents must
-specifically implement the wrapper of DistributedDatParallel, but all
-TorchRankerAgents and TorchGeneratorAgents support this.
+Uses torch.nn.parallel.DistributedDataParallel for its main uses. Agents
+must specifically implement the wrapper of DistributedDatParallel, but
+all TorchRankerAgents and TorchGeneratorAgents support this.
+
+## Examples
+
+```shell
+parlai multiprocessing_train -m transformer/generator --batchsize 16 --task convai2 --model-file /tmp/mymodel
+```
 """
 
 import torch
-
-try:
-    # We need to run this *very first*, but subprocesses will throw an
-    # exception when running it
-    torch.multiprocessing.set_start_method("spawn")
-except RuntimeError:
-    pass
-import random
-import copy
 import os
 import signal
-import torch.distributed as dist
+import traceback
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
+from parlai.core.script import ParlaiScript, register_script
 
 
 def multiprocess_train(
     rank, opt, port=61337, rank_offset=0, gpu=None, hostname='localhost'
 ):
-    """
-    Subprocess which initializes distributed training, and begins training.
-
-    This should be launched n times for n GPUs; this is handled either in main
-    or via srun.
-
-    :param int rank: This process's rank - 1. (Starts at -1 ... n - 2). See comments.
-    :param opt: command line options
-    :param int port: A TCP port to use. This will need to be changed to run
-        multiple distributed training setups on the same machine.
-    :param int gpu: Which GPU to use. Defaults to using rank and local devices,
-        but must be manually specified when using many-hosts.
-    :param str hostname: Hostname of the main server.
-    """
-    # Set per-host options
-    opt = copy.deepcopy(opt)
-    # we need to manually adjust the rank differently in multiprocessing
-    # and distributed train
-    rank = rank + rank_offset
-    opt['rank'] = rank
-    if gpu is None:
-        # default assumption is local GPUs
-        gpu = rank % torch.cuda.device_count()
-    opt['gpu'] = gpu
-    # make sure we don't just use whatever GPU was saved in the model file
-    if 'override' not in opt:
-        opt['override'] = {}
-    opt['override']['gpu'] = gpu
-
-    # Suppress output of workers except the main host.
-    if opt.get('verbose') or rank != 0:
-        print_prefix = '[rank:{:3d}]'.format(rank)
-    else:
-        print_prefix = None
-    suppress_output = not opt.get('verbose') and rank != 0
-
-    with distributed_utils.override_print(suppress_output, print_prefix):
-        # perform distributed setup, ensuring all hosts are ready
-        torch.cuda.set_device(opt['gpu'])
-        dist.init_process_group(
-            backend="nccl",
-            init_method="tcp://{}:{}".format(hostname, port),
-            world_size=opt['distributed_world_size'],
-            rank=rank,
-        )
-        print("Distributed group initialized")
-
-        # manual_seed can be a noop without this
-        torch.cuda.init()
-        # make sure all parameters will be in sync
-        torch.manual_seed(42)
-        # force a sync so that no one gets ahead, and all are seeded together
-        distributed_utils.sync_object(None)
-
+    init_method = f"tcp://{hostname}:{port}"
+    with distributed_utils.distributed_context(
+        rank, opt, rank_offset, gpu, init_method=init_method
+    ) as opt:
         # Run the actual training
-        return single_train.TrainLoop(opt).train()
+        opt['multiprocessing'] = True
+        try:
+            return single_train.TrainLoop(opt).train()
+        except Exception:
+            import parlai.utils.logging as logging
+
+            logging.critical(traceback.format_exc())
+            logging.critical(
+                f"Got the above exception on worker {rank + rank_offset}. "
+                "This may cause hangs requiring manual killing of processes."
+            )
+            raise
 
 
-def launch_and_train(opt, port):
-    """Perform a fork() to many processes."""
+def launch_and_train(opt, port=None):
+    """
+    Perform a fork() to many processes.
+    """
+    if port is None:
+        port = distributed_utils.find_free_port()
     # Launch multiple subprocesses
-    spawncontext = torch.multiprocessing.spawn(
+    spawncontext = torch.multiprocessing.start_processes(
         multiprocess_train,
         # need to give rank offset as 1 to cover the fact that the main
         # process is rank 0, but that spawn() doesn't let you control rank
         (opt, port, 1),
         nprocs=opt['distributed_world_size'] - 1,  # main proc will also run loop
         join=False,
+        start_method='spawn',
     )
 
     try:
@@ -125,11 +90,21 @@ def setup_args():
     return parser
 
 
-def main():
-    opt = setup_args().parse_args()
-    port = random.randint(32000, 48000)
-    return launch_and_train(opt, port)
+@register_script("multiprocessing_train", aliases=["mp_train"], hidden=True)
+class MultiProcessTrain(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        argparser = setup_args()
+        argparser.add_argument('--port', type=int, default=None)
+        return argparser
+
+    def run(self):
+        if self.opt['port'] is None:
+            port = None
+        else:
+            port = self.opt['port']
+        return launch_and_train(self.opt, port)
 
 
 if __name__ == '__main__':
-    main()
+    MultiProcessTrain.main()

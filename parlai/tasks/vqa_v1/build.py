@@ -7,6 +7,35 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/Questions_Train_mscoco.zip',
+        'Questions_Train_mscoco.zip',
+        'c3b2bb6155528eeae95e0a914af394d6f0d98f8f2b51012c44b27778e1a96707',
+    ),
+    DownloadableFile(
+        'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/Questions_Val_mscoco.zip',
+        'Questions_Val_mscoco.zip',
+        'e8839be5de2d711989bf0adc82e6717d1ce307d27c9b1dfb0abf413b79a5d4d0',
+    ),
+    DownloadableFile(
+        'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/Questions_Test_mscoco.zip',
+        'Questions_Test_mscoco.zip',
+        'bd080c297fc863bf8258caa4864d3b5afab29373375a6637f8546338291e28c0',
+    ),
+    DownloadableFile(
+        'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/Annotations_Val_mscoco.zip',
+        'Annotations_Val_mscoco.zip',
+        '29377c35186d90aeab3e61bdad890f51215d1f88b700bd22ef19004d73bf284f',
+    ),
+    DownloadableFile(
+        'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/Annotations_Train_mscoco.zip',
+        'Annotations_Train_mscoco.zip',
+        'a5f5f97c162a4ad44896be08bac6deaa258aa3fec281afcc84fe85ae44cb1ebc',
+    ),
+]
 
 
 def build(opt):
@@ -21,25 +50,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = 'Questions_Train_mscoco.zip'
-        fname2 = 'Questions_Val_mscoco.zip'
-        fname3 = 'Questions_Test_mscoco.zip'
-
-        fname4 = 'Annotations_Val_mscoco.zip'
-        fname5 = 'Annotations_Train_mscoco.zip'
-
-        url = 'https://s3.amazonaws.com/cvmlp/vqa/mscoco/vqa/'
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-        build_data.download(url + fname3, dpath, fname3)
-        build_data.download(url + fname4, dpath, fname4)
-        build_data.download(url + fname5, dpath, fname5)
-
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
-        build_data.untar(dpath, fname3)
-        build_data.untar(dpath, fname4)
-        build_data.untar(dpath, fname5)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

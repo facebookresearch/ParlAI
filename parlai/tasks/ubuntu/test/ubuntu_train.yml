@@ -1,0 +1,110 @@
+acts:
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - basically each xfree86 upload will NOT force users to upgrade 100Mb of fonts
+      for nothing . no something i did in my spare time. .
+    text: "i think we could import the old comments via rsync, but from there we need\
+      \ to go via email. I think it is easier than caching the status on each bug\
+      \ and than import bits here and there . \n it would be very easy to keep a hash\
+      \ db of message-ids  . sounds good . \n ok . perhaps we can ship an ad-hoc apt_prefereces\
+      \ . \n version? . \n thanks . \n not yet . it is covered by your insurance?\
+      \ . \n yes . but it's really not the right time :/ . with a changing house upcoming\
+      \ in 3 weeks . \n you will be moving into your house soon? . posted a message\
+      \ recently which explains what to do if the autoconfiguration does not do what\
+      \ you expect . \n how urgent is #896? . \n not particularly urgent, but a policy\
+      \ violation . \n i agree that we should kill the -novtswitch . \n ok . \n would\
+      \ you consider a package split a feature? . \n context? . \n splitting xfonts*\
+      \ out of xfree86*. one upload for the rest of the life and that's it . \n splitting\
+      \ the source package you mean? . \n yes. same binary packages. . \n I would\
+      \ prefer to avoid it at this stage.  this is something that has gone into XSF\
+      \ svn, I assume? ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - oh? oops. .
+    text: "I'm not suggesting all - only the ones you modify. . \n ok, it sounds like\
+      \ you're agreeing with me, then . though rather than \"the ones we modify\"\
+      , my idea is \"the ones we need to merge\" ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - we'll have a BOF about this . so you're coming tomorrow ? .
+    text: "afternoon all . not entirely related to warty, but if grub-install takes\
+      \ 5 minutes to install, is this a sign that i should just retry the install\
+      \ :) . \n here  . \n you might want to know that thinice in warty is buggy compared\
+      \ to that in sid . \n and apparently GNOME is suddently almost perfect (out\
+      \ of the thinice problem), nobody report bugs :-P . I don't get your question,\
+      \ where do you want to paste ? . \n can i file the panel not linking to eds?\
+      \ :) . \n are you using alt ? or the windows key ? . wait for the gnome-themes,\
+      \ component will be added . \n i just restarted X and now nautilus won't show\
+      \ the desktop :( . hal isn't starting :( . \n do you think we have any interest\
+      \ to have hal support turned on in gnome-vfs at this point ? It increases the\
+      \ sources of problems for no real benefit imho ... . \n is it a known bug that\
+      \ g-s-t doesn't know what distribution its running on? . are there any changes\
+      \ to desktop-file-utils you've got hidden away? . \n somebody should really\
+      \ kick that guy *hard* . I've added a build-dep on libxt-dev in warty for zenity\
+      \ . \n arse. xt-dev? i added libx11-dev . so just libxt-dev or libxt and libx11?\
+      \ . for future note, the xmodmap line in that X sticky-super fixes the problem\
+      \ for me . \n we have planned to speak about menu organisation during the 2\
+      \ weeks . I need we don't need to force it . ? . \n was away, you said ? . nope\
+      \ . \n the warty repository . ok, fine. Thanks . nice to get packages update\
+      \ every 30min instead once a day, isn't it :) . \n you'll be glad to know i've\
+      \ fixed my missing arrows in thinice bug . \n I've uploaded the gnome-vfs without\
+      \ hal support should be available rsn . \n should g2 in ubuntu do the magic\
+      \ dont-focus-window tricks? . join the gang, get an x-series thinkpad . sj has\
+      \ hung on my box, again. . what is monday mornings discussion actually about?\
+      \ ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - i fully endorse this suggestion </quimby> . how did your reinstall go? .
+    text: "interesting . grub-install worked with / being ext3, failed when it was\
+      \ xfs . i thought d-i installed the relevant kernel for your machine. i have\
+      \ a p4 and its installed the 386 kernel . holy crap a lot of stuff gets installed\
+      \ by default :) . YOU ARE INSTALLING VIM ON A BOX OF MINE . ;) . \n more like\
+      \ osx than debian ;) . we have a selection of python modules available for great\
+      \ justice (and python development) . \n 2.8 is fixing them iirc . \n pong .\
+      \ vino will be in . enjoying ubuntu? . \n told me to come here . suggested thursday\
+      \ as a good day to come . \n we froze versions a while back :) . you coming\
+      \ today or thursday? . we're considering shifting it . yay . enjoying ubuntu?\
+      \ . usplash! . \n thats the one . \n so i saw your email with the mockup at\
+      \ the airport, but it hasn't appeared now that i've pulled my mail :| . \n i've\
+      \ got a better one now too, give me a minute . we've got rh9 installed on most\
+      \ desktops. you want me to look at up2date, right? . \n aha! no, the gui thingy\
+      \ . it's more wizardy . so the first page is okayish . we can do a whole load\
+      \ better on the second page (icons, translated descriptions) . but that's the\
+      \ kind of thing i was thinking about . (a single big treeview would get very\
+      \ scary, very quickly) . sure it's not a hurricane? . \n i think experimental\
+      \ is getting 2.8 too . let him work on #1217 :) . \n we call it 'universe' ;)\
+      \ . haha . ooh, totally . \n i want it on in sarge too but nobody else agrees\
+      \ ."
+- - episode_done: true
+    id: ubuntu
+    labels:
+    - (i thought someone was going to make a joke about .au bandwidth...) . especially
+      not if you're using screen ;) .
+    text: "and because Python gives Mark a woody . \n i'm not sure if we're meant\
+      \ to talk about that publically yet. . \n and I thought we were a \"pants off\"\
+      \ kind of company ... :p . you need new glasses . \n mono 1.0? dude, that's\
+      \ going to be a barrel of laughs for totally non-release related reasons during\
+      \ hoary . read bryan clark's entry about NetworkManager? . \n there was an accompanying\
+      \ IRC conversation to that one <g> . explain ? . I guess you could ship the\
+      \ new png in the debian/ directory and copy them over in your rules . \n but\
+      \ debian/ is also part of diff.gz... . you can fix this for the common people,\
+      \ dude! multiple tarballs in source! . \n NOTWARTY, HTH, HAND, KTHXBYE <g> .\
+      \ everyone else had their macs stolen, so can't really comment . that picture\
+      \ of you is a classic . \n which? . the best feature of the new imac is that\
+      \ the old imacs are going to be cheaper! . ooh, can you add that to the wiki?\
+      \ . \n k. . you getting two-weeks-to-release edginess? . http://descent.netsplit.com/~scott/kids.mp3\
+      \ -- but for releases . I played with an x300 about the time I bought my new\
+      \ laptop, it didn't feel solid at all . \n which series is yours again? . nc8000?\
+      \ . mmm . \n you have my sympathy . I'm trying to *find* the definition I wrote\
+      \ . \n it'd be on Glossary . i know i wrote one there . \n I'm trying to find\
+      \ the one with mdz's l33t dot madness . that would be a pretty good look for\
+      \ you :p . bandwidth bills? . \n i'm reverting the wifi change; i don't think\
+      \ the bars are the right thing, but they're better than the current one. . ooh,\
+      \ that'd be rad . \n not about waiting?  clearly you haven't tried to read a\
+      \ site that's just made slashdot? ."
+num_episodes: 1000000
+num_examples: 1000000

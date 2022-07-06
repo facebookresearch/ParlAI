@@ -1,0 +1,69 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    sentence1: The drain is clogged with hair. It has to be cleaned.
+    sentence2: The hair has to be cleaned.
+    text: 'The drain is clogged with hair. It has to be cleaned.
+
+      The hair has to be cleaned.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    sentence1: Jane knocked on Susan's door but she did not answer.
+    sentence2: Susan did not answer.
+    text: 'Jane knocked on Susan''s door but she did not answer.
+
+      Susan did not answer.'
+- - episode_done: true
+    eval_labels:
+    - not_entailment
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    sentence1: Beth didn't get angry with Sally, who had cut her off, because she
+      stopped and counted to ten.
+    sentence2: Sally stopped and counted to ten.
+    text: 'Beth didn''t get angry with Sally, who had cut her off, because she stopped
+      and counted to ten.
+
+      Sally stopped and counted to ten.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    sentence1: No one joins Facebook to be sad and lonely. But a new study from the
+      University of Wisconsin psychologist George Lincoln argues that that's exactly
+      how it makes us feel.
+    sentence2: That's exactly how Facebook makes us feel.
+    text: 'No one joins Facebook to be sad and lonely. But a new study from the University
+      of Wisconsin psychologist George Lincoln argues that that''s exactly how it
+      makes us feel.
+
+      That''s exactly how Facebook makes us feel.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: huggingface
+    label_candidates:
+    - not_entailment
+    - entailment
+    sentence1: The man couldn't lift his son because he was so heavy.
+    sentence2: The son was so heavy.
+    text: 'The man couldn''t lift his son because he was so heavy.
+
+      The son was so heavy.'
+num_episodes: 71
+num_examples: 71

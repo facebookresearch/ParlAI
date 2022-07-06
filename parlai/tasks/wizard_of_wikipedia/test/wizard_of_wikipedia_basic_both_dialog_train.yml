@@ -1,0 +1,36 @@
+acts:
+- - episode_done: false
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    labels:
+    - 'I''m a huge fan of science fiction myself! '
+    text: I think science fiction is an amazing genre for anything. Future science,
+      technology, time travel, FTL travel, they're all such interesting concepts.
+- - episode_done: false
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    labels:
+    - I agree. One of my favorite forms of science fiction is anything related to
+      time travel! I find it fascinating.
+    text: Awesome! I really love how sci-fi storytellers focus on political/social/philosophical
+      issues that would still be around even in the future. Makes them relatable.
+- - episode_done: false
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    labels:
+    - And that's difficult to do when dealing with time travel. I actually haven't
+      seen the latest Harry Potter movies. Guess it's time to check them out!
+    text: It's not quite sci-fi, but my favorite version of time travel is in Harry
+      Potter and the Prisoner of Azkaban. Breaks zero logical rules.
+- - episode_done: false
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    labels:
+    - Thank you for the suggestion, I will definitely check it out!
+    text: If you really want a look at the potential negative consequences of scientific
+      innovation, what you should check out is the TV show Fringe. Incredibly well
+      written.
+- - episode_done: true
+    id: wizard_of_wikipedia:BasicApprenticeDialog
+    labels:
+    - Always looking for more science fiction to digest!
+    text: It blends science fiction and paranormal/psychological/MK Ultra type stuff
+      together, but it's science fiction at its core.
+num_episodes: 36860
+num_examples: 148357

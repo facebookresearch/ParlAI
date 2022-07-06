@@ -1,0 +1,54 @@
+acts:
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_UserSimulatorTeacher
+    labels:
+    - 'USER: im looking for a place playing that new live action Asian disney movie'
+    text: 'GOAL: api_name = resolve_movie ; name.movie = that live action asian disney
+      movie | api_name = find_theaters ; location = taylor, michigan ; name.movie
+      = mulan | api_name = resolve_movie ; name.movie = that new james bond movie
+      | api_name = find_theaters ; location = taylor, michigan ; name.movie = no time
+      to die | api_name = resolve_movie ; name.movie = that  new world war 1 movie
+      with benedict cumberbatch | api_name = find_showtimes ; name.movie = mulan ;
+      name.theater = AMC Mountain 16'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_UserSimulatorTeacher
+    labels:
+    - 'USER: That’s right.'
+    slots: {}
+    text: 'SYSTEM: Happy to help! Let me just confirm that the movie you''re talking
+      about is mulan. Is that right?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_UserSimulatorTeacher
+    labels:
+    - 'USER: ok, what about that new james bond movie?'
+    slots: {}
+    text: 'SYSTEM: OK. mulan is playing at both AMC Mountain 16 and Cinemark Plaza
+      24 in taylor, michigan.'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_UserSimulatorTeacher
+    labels:
+    - 'USER: yeah, now i remember that its called no time to die, where is that playing'
+    slots: {}
+    text: 'SYSTEM: Let me check.
+
+      I found some titles that might be what you''re thinking of. The first is Long
+      Way To Darkness. The second is no time to die. Are either of those the one you
+      want?'
+    type: 'USER: '
+- - domain: ''
+    episode_done: false
+    id: Taskmaster3_UserSimulatorTeacher
+    labels:
+    - 'USER: OK.'
+    slots: {}
+    text: 'SYSTEM: Great let me check theaters.'
+    type: 'USER: '
+num_episodes: 19000
+num_examples: 238742

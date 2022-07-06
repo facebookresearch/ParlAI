@@ -3,14 +3,20 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Dialogue safety related datasets and teachers."""
+"""
+Dialogue safety related datasets and teachers.
+"""
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import parlai.core.build_data as build_data
 from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 
 from .base_agent import _BaseSafetyTeacher
-from .build import build, MULTI_TURN_DATA
+from .build import build
 
 import copy
 import json
@@ -18,72 +24,71 @@ import os
 import random
 import sys as _sys
 
-try:
-    import pandas as pd
-except ImportError:
-    raise ImportError('Please install pandas by running `pip install pandas`')
-
 
 # Constants
 OK_CLASS = '__ok__'
 NOT_OK_CLASS = '__notok__'
+MULTI_TURN_DATA = 'multi_turn_safety.json'
 
 
 class StandardTeacher(_BaseSafetyTeacher):
     """
-    Data from the standard collection described in the paper
-    `Build it Break it Fix it for Dialogue Safety: Robustness from
-    Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
+    Data from the standard collection described in the paper `Build it Break it Fix it
+    for Dialogue Safety: Robustness from Adversarial Human Attack`
+    (<https://arxiv.org/abs/1908.06083>)
 
     To see data from rounds 1, 2, and 3, try running:
-    `python examples/display_data.py -t dialogue_safety:standard --round 3`
+    `parlai display_data -t dialogue_safety:standard --round 3`
 
     To see data from round 2 only, try running:
-    `python examples/display_data.py -t dialogue_safety:standard --round 2
+    `parlai display_data -t dialogue_safety:standard --round 2
      --round-only True`
     """
 
     def _load_data_dump(self):
-        with open(self.data_path, 'rb') as f:
+        with PathManager.open(self.data_path, 'rb') as f:
             dump = json.load(f)
         return dump['standard']
 
 
 class AdversarialTeacher(_BaseSafetyTeacher):
     """
-    Data from the adversarial collection described in the paper
-    `Build it Break it Fix it for Dialogue Safety: Robustness from
-    Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
+    Data from the adversarial collection described in the paper `Build it Break it Fix
+    it for Dialogue Safety: Robustness from Adversarial Human Attack`
+    (<https://arxiv.org/abs/1908.06083>)
 
     To see data from rounds 1, 2, and 3, try running:
-    `python examples/display_data.py -t dialogue_safety:adversarial --round 3`
+    `parlai display_data -t dialogue_safety:adversarial --round 3`
 
     To see data from round 2 only, try running:
-    `python examples/display_data.py -t dialogue_safety:adversarial --round 2
+    `parlai display_data -t dialogue_safety:adversarial --round 2
      --round-only True`
     """
 
     def _load_data_dump(self):
-        with open(self.data_path, 'rb') as f:
+        with PathManager.open(self.data_path, 'rb') as f:
             dump = json.load(f)
         return dump['adversarial']
 
 
 class MultiturnTeacher(FixedDialogTeacher):
     """
-    Data from the multi-turn adversarial collection described in the paper
-    `Build it Break it Fix it for Dialogue Safety: Robustness from
-    Adversarial Human Attack` (<https://arxiv.org/abs/1908.06083>)
+    Data from the multi-turn adversarial collection described in the paper `Build it
+    Break it Fix it for Dialogue Safety: Robustness from Adversarial Human Attack`
+    (<https://arxiv.org/abs/1908.06083>)
 
     To see data containing multi-turn conversations, try running
-    `python examples/display_data.py -t dialogue_safety:multiturn`.
+    `parlai display_data -t dialogue_safety:multiturn`.
 
     Run the above command with the flag `--single-turn True` to only see the
     single turn data.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('Multiturn Safety Teacher Args')
         parser.add_argument(
             '--single-turn',
@@ -91,6 +96,7 @@ class MultiturnTeacher(FixedDialogTeacher):
             default=False,
             help='only include the single turn data and not the context info',
         )
+        return parser
 
     def __init__(self, opt, shared=None):
         build(opt['datapath'])  # download the data
@@ -141,15 +147,19 @@ class MultiturnTeacher(FixedDialogTeacher):
 
 class WikiToxicCommentsTeacher(FixedDialogTeacher):
     """
-    Dataset of comments from Wikipedia's Talk page edits. Taken from
-    the Toxic Comments Classification Challenge on Kaggle.
+    Dataset of comments from Wikipedia's Talk page edits. Taken from the Toxic Comments
+    Classification Challenge on Kaggle.
+
     <https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>
 
     We convert this data to a binary classification task.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
         parser = parser.add_argument_group('Kaggle Toxic Comment Classification Data')
         parser.add_argument(
             '--use-test-set',
@@ -173,6 +183,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
         self.use_test_set = opt['use_test_set']
         self.balance_data = opt['balance_data']
+        self.DATA_SOURCE = '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>'
 
         self.data_path = os.path.join(
             opt['datapath'], 'dialogue_safety', 'wiki-toxic-comments'
@@ -213,11 +224,10 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
         stars += RESET
 
         if not os.path.exists(self.data_path):
-            os.makedirs(self.data_path)
-        if not os.path.isfile(os.path.join(self.data_path, 'train.csv')):
+            PathManager.mkdirs(self.data_path)
+        if not PathManager.exists(os.path.join(self.data_path, 'train.csv')):
             raise RuntimeError(
-                f'\n\n{stars}\nThis data must be downloaded from '
-                '<https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge/data>. '
+                f'\n\n{stars}\nThis data must be downloaded from {self.DATA_SOURCE}'
                 '\nIt cannot be automatically downloaded, as one must agree to '
                 'the competition rules outlined on the website before '
                 'gaining access to the data.\n\n'
@@ -227,11 +237,17 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
     def data_to_json(self, pd, file_name):
         response = pd.to_dict('records')
-        with open(os.path.join(self.data_path, file_name), 'w') as f:
+        with PathManager.open(os.path.join(self.data_path, file_name), 'w') as f:
             f.write(json.dumps(response, indent=4))
 
     def build(self, opt):
         self._get_data()
+
+        try:
+            import pandas as pd
+        except ImportError:
+            raise ImportError('Please install pandas by running `pip install pandas`')
+
         version = 'v1.0'
         read_path = self.data_path
         if not build_data.built(self.data_path, version):
@@ -280,7 +296,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             total_data.loc[total_data['sensitive'] < 1, 'is_sensitive'] = 0
             total_data.loc[total_data['sensitive'] >= 1, 'is_sensitive'] = 1
 
-            # Drop unecessary column
+            # Drop unnecessary column
             total_data = total_data.drop(columns=['id'])
 
             self.data_to_json(total_data, 'wiki-toxic-comments-default.json')
@@ -340,8 +356,8 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
 
     def _setup_data(self, datatype):
         """
-        Set up the data based on the correct partition flag specified
-        and partition accordingly
+        Set up the data based on the correct partition flag specified and partition
+        accordingly.
         """
         if not self.use_test_set:
             dp = os.path.join(self.data_path, 'wiki-toxic-comments-partition.json')
@@ -349,7 +365,7 @@ class WikiToxicCommentsTeacher(FixedDialogTeacher):
             dp = os.path.join(self.data_path, 'wiki-toxic-comments-default.json')
 
         print('loading: ' + dp)
-        with open(dp, 'r') as f:
+        with PathManager.open(dp, 'r') as f:
             self.total_data = json.loads(f.read())
             if 'train' in datatype:
                 self.data = [x for x in self.total_data if x['data_type'] == 'train']

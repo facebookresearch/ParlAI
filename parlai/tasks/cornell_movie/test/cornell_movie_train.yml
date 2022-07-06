@@ -1,0 +1,30 @@
+acts:
+- - episode_done: true
+    id: cornell_movie
+    labels:
+    - Forget it.
+    text: You're asking me out.  That's so cute. What's your name again?
+- - episode_done: false
+    id: cornell_movie
+    labels:
+    - Cameron.
+    text: No, no, it's my fault -- we didn't have a proper introduction ---
+- - episode_done: true
+    id: cornell_movie
+    labels:
+    - Seems like she could get a date easy enough...
+    text: The thing is, Cameron -- I'm at the mercy of a particularly hideous breed
+      of loser.  My sister.  I can't date until she does.
+- - episode_done: true
+    id: cornell_movie
+    labels:
+    - Unsolved mystery.  She used to be really popular when she started high school,
+      then it was just like she got sick of it or something.
+    text: Why?
+- - episode_done: true
+    id: cornell_movie
+    labels:
+    - Let me see what I can do.
+    text: Gosh, if only we could find Kat a boyfriend...
+num_episodes: 66478
+num_examples: 110496

@@ -4,9 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.agents import Teacher
 from parlai.core.image_featurizers import ImageLoader
-from parlai.core.metrics import Metrics
+from parlai.core.metrics import TeacherMetrics
+from parlai.core.teachers import Teacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -29,11 +30,12 @@ def _path(opt):
 
 
 class SplitTeacher(Teacher):
-    """FVQA Teacher, which loads the json VQA data and implements its own
-    `act` method for interacting with student agent.
+    """
+    FVQA Teacher, which loads the json VQA data and implements its own `act` method for
+    interacting with student agent.
 
-    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just
-    "fvqa" to use the default split (0).
+    Use "fvqa:split:X" to choose between splits 0-4 (inclusive), or just "fvqa" to use
+    the default split (0).
     """
 
     def __init__(self, opt, shared=None):
@@ -55,7 +57,7 @@ class SplitTeacher(Teacher):
             if shared and shared.get('factmetrics'):
                 self.factmetrics = shared['factmetrics']
             else:
-                self.factmetrics = Metrics(opt)
+                self.factmetrics = TeacherMetrics(opt.get('metrics', 'default'))
             self.datatype = opt['datatype']
         questions_path, trainset_path, self.image_path = _path(opt)
 
@@ -83,7 +85,8 @@ class SplitTeacher(Teacher):
 
     def report(self):
         r = super().report()
-        r['factmetrics'] = self.factmetrics.report()
+        for k, v in self.factmetrics.report().items():
+            r[f'factmetrics_{k}'] = v
         return r
 
     def reset(self):
@@ -99,12 +102,14 @@ class SplitTeacher(Teacher):
         self.factmetrics.clear()
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         if self.lastY is not None:
             if self.asked_question:
-                self.metrics.update(observation, self.lastY[0])
+                self.metrics.evaluate_response(observation, self.lastY[0])
             else:
-                self.factmetrics.update(observation, self.lastY[1])
+                self.factmetrics.evaluate_response(observation, self.lastY[1])
                 self.lastY = None
         return observation
 
@@ -155,11 +160,11 @@ class SplitTeacher(Teacher):
 
     def _setup_data(self, questions_path, trainset_path, datatype, task_num):
         print('loading: ' + questions_path)
-        with open(questions_path) as questions_file:
+        with PathManager.open(questions_path) as questions_file:
             questions = json.load(questions_file)
         train_test_images = set()
         fn = os.path.join(trainset_path, '{}_list_{}.txt'.format(datatype, task_num))
-        with open(fn) as imageset:
+        with PathManager.open(fn) as imageset:
             for line in imageset:
                 train_test_images.add(line.strip())
         self.ques = [

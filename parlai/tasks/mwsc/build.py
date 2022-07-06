@@ -10,6 +10,17 @@ import parlai.core.build_data as build_data
 import os
 import json
 import re
+from parlai.utils.io import PathManager
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'https://raw.githubusercontent.com/salesforce/decanlp/d594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/schema.txt',
+        'schema.txt',
+        '31da9bee05796bbe0f6c957f54d1eb82eb5c644a8ee59f2ff1fa890eff3885dd',
+        zipped=False,
+    )
+]
 
 
 def build(opt):
@@ -24,12 +35,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'schema.txt'
-        url = (
-            'https://raw.githubusercontent.com/salesforce/decanlp/'
-            'd594b2bf127e13d0e61151b6a2af3bf63612f380/local_data/' + fname
-        )
-        build_data.download(url, dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         pattern = '\\[.*\\]'
 
@@ -48,7 +55,9 @@ def build(opt):
             return results
 
         schemas = []
-        with open(os.path.join(dpath, fname)) as schema_file:
+        with PathManager.open(
+            os.path.join(dpath, RESOURCES[0].file_name)
+        ) as schema_file:
             schema = []
             for line in schema_file:
                 if len(line.split()) == 0:
@@ -79,7 +88,7 @@ def build(opt):
         splits = ['train', 'validation', 'test']
         for split, examples in zip(splits, [train, dev, test]):
             split_fname = '{}.json'.format(split)
-            with open(os.path.join(dpath, split_fname), 'a') as split_file:
+            with PathManager.open(os.path.join(dpath, split_fname), 'a') as split_file:
                 for ex in examples:
                     split_file.write(json.dumps(ex) + '\n')
 

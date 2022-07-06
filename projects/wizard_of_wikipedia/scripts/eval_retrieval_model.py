@@ -28,7 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', '--num-examples', default=100000000)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
-    WizardTransformerRankerAgent.add_cmdline_args(parser)
+    WizardTransformerRankerAgent.add_cmdline_args(parser, partial_opt=None)
     parser.set_params(
         task='wizard_of_wikipedia',
         model='projects:wizard_of_wikipedia:wizard_transformer_ranker',

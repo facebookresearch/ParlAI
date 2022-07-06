@@ -1,0 +1,114 @@
+acts:
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Alice:1;Bob:0
+    text: 'Alice(Bot): Hello. I am professional teacher about reading comprehension.
+      Let''s compete! You give me questions, and I will answer all of your questions.
+      XD
+
+      Bob(Human): Okay, lets go!
+
+      Bob(Human): What is the percentege of Kurds?
+
+      Alice(Bot): Go, go, go, go, go, go, go, go, go !
+
+      Alice(Bot): I don''t know.
+
+      Bob(Human): So you are not professional teacher in reading comprehension!
+
+      Bob(Human): Can you ask me a question?
+
+      Alice(Bot): No, no, no, no, no, no, no, no, no.
+
+      Bob(Human): why not?
+
+      Alice(Bot): Sure.
+
+      Bob(Human): good bye
+
+      Alice(Bot): I don''t know.'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Alice:0;Bob:1
+    text: 'Alice(Human): It''s really interesting
+
+      Alice(Human): Did you know that?
+
+      Alice(Human): Are you here?'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Bob:1;Alice:0
+    text: 'Bob(Bot): Do you know what happened in the 1950s?
+
+
+      Bob(Bot): Hello! I hope you''re doing well. I am doing fantastic today! Let
+      me go through the article real quick and we will start talking about it.
+
+      Alice(Human): Hello, I''m fine thanks; )
+
+      Bob(Bot): i''m sorry . i''m just saying .
+
+      Alice(Human): 1950 hmm, I do not know about that year something interesting
+
+      Bob(Bot): interesting :
+
+      Alice(Human): What is interesting for you?
+
+      Bob(Bot): 🇲 🇿
+
+      Alice(Human): Bad answer =/
+
+      Bob(Bot): i think it was a joke .
+
+      Alice(Human): Ok, it was joke. Tell me about you some details
+
+      Bob(Bot): You you''t ?
+
+      Alice(Human): Sorry, but I think you are a bot
+
+      Bob(Bot): i''m a bot, and i''m a bot .'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Bob:5;Alice:3
+    text: 'Bob(Human): What do you think about Hayek''s theory?
+
+      Alice(Human): Ты говоришь по русски?
+
+      Bob(Human): Pardon?
+
+      Alice(Human): Do you speak Russian
+
+      Alice(Human): ?
+
+      Bob(Human): ?
+
+      Bob(Human): Let''s troll each other.
+
+      Alice(Human): Sorry what?
+
+      Bob(Human): What? What? WHAT?
+
+      Bob(Human): no, no, no, no, no, no
+
+      Alice(Human): WTF?
+
+      Bob(Human): Be polite, pal. Impolite guys are beaten hard.
+
+      Alice(Human): What do you think about computer science? Do you know c++ language?
+
+      Bob(Human): Please speak about the fragment. Any side talks will not be tolerated.
+
+      Alice(Human): Ok'
+- - episode_done: true
+    id: DialogueQE
+    labels:
+    - Alice:1;Bob:0
+    text: 'Bob(Human): Hi!
+
+      Bob(Human): Do you like wrestling?'
+num_episodes: 2396
+num_examples: 2396

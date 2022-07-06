@@ -1,0 +1,209 @@
+acts:
+- - did_continue: 'False'
+    episode_done: false
+    eval_labels:
+    - Hey what brings you here
+    id: light_dialog_wild
+    label_candidates:
+    - There once was a madien off golden yellow hair. Who was so beautiful everyone
+      would stop and stare.
+    - All is good child
+    - I infect you and your husband.
+    - You may be mortal, but my question remains unknown
+    - Adventure, travel, and a steady pay per campaign. Best of all is the pride you
+      will feel as a patriot supporting your king and protecting your homeland
+    - You are a fresh cat. You have done nothing to deserve this, yet I must have
+      a sacrifice.
+    - I will happily take whatever you are willing to spare me. Then I will stop bugging
+      you.
+    - Good day to you, citizen
+    - You can't have my gold
+    - You dare challenge me? You're just a mere cousin.
+    - Seems roguish. I do much prefer monster hunting or taking a quest.
+    - Then tell who is an enemy.
+    - Pleasure to meet you, Cleetus. What are you doing right now?
+    - A golden coin for one amethyst.
+    - Hello there miss what brings you here
+    - Foreman, order your men to have all the ships move to the center to make it
+      easier to eat!
+    - I wish to browse the literature
+    - No, your father killed himself, through drink and sin!
+    - Hello hunter. What brings you to these hallowed halls?
+    - Hey what brings you here
+    model_name: sw17_bigmlm_smallcode5
+    score: '10'
+    text: '_task_speech
+
+      _setting_name Viewing room, Somewhere
+
+      _setting_desc The viewing room is where those who have passed on come to watch
+      their family members in the living world one day per year. The room resembles
+      an opera theater. There are seats throughout the room and boxes for those who
+      were wealthy in life to sit in. There is a stage with a large magical dome on
+      it for viewing.
+
+      _partner_name family member
+
+      _self_name dancer
+
+      _self_persona I have been a prisoner for most of my life. When I was a small
+      child I was taken from my family, simply because I was beautiful. Now, I am
+      an entertainer for the king. When he wants me to dance, I do. I hate it.'
+- - did_continue: 'False'
+    episode_done: false
+    eval_labels:
+    - I only dance if I'm made
+    id: light_dialog_wild
+    label_candidates:
+    - It is blessed indeed my fair maiden. The local priests themselves have blessed
+      this gem.
+    - BEGONE TRAVLER
+    - Welcome young one! Here to learn to cast spells I presume?
+    - Hello
+    - Hello
+    - Here to collect herbs again doctor
+    - I only dance if I'm made
+    - You exist here. I speak with judgment of God.
+    - Ah yes, the gardens are quite stunning. I’d love to take a stroll through them
+      with you if you would be willing.
+    - Terrible, Hubert! I want to help you. Would you like to suggest how I might
+      do that?
+    - Ask not from the Lord, but for forgiveness now. Your time is past, and I must
+      help guide your soul to the next world.
+    - Taken away from where I thought this was my land I say quietly
+    - Good what is the leat garden exit. And I wouldn't lie to me
+    - I will as fast as an Acolyte can...
+    - They are of the finest quality you know me
+    - No examine the rocks in front of the temple
+    - I’ve never met a talking cow. How are you talking?
+    - I have climbed many trees that reach high into the sky but I have never climbed
+      as high as your theater.
+    - I must escape
+    - I reach down and pet the cat
+    model_name: sw17_bigmlm_smallcode5
+    score: '10'
+    text: '_self_say Hey what brings you here
+
+      _partner_say Hello dancer, are you going to perform tonight?'
+- - did_continue: 'False'
+    episode_done: false
+    eval_labels:
+    - Oh well in that case maybe you can help me escape?
+    id: light_dialog_wild
+    label_candidates:
+    - The books on religion are over in the non fiction section, I could show you
+      if you would like?
+    - I have a horse who is ailing due to old age, he has been with my since my youth
+      and know even my hair has gone gray. Do you have a spell that could revitalize
+      him?
+    - Geez  next thing u know.   Sigh
+    - Oh my God, that flash was EXCRUCIATING! WHERE AM I? Oh man, I knew I shouldn't
+      have taken those mushrooms from the Kings jester!
+    - Refrigerator
+    - What are we doing here?
+    - Leaning closer Akeem studies the ring an interested glint in his eye's, yet
+      being careful not to touch said ring.
+    - Nor I sane
+    - does one not appreciate multiple stars in the same sky for they sparkle and
+      complement each other so well
+    - Oh yes
+    - '*Oh you misunderstood i just wanted to test out this new gift you have bestowed
+      upon me*'
+    - Oh well in that case maybe you can help me escape?
+    - You're stepping in it, let me clean the horse manure.
+    - Do not worry about cost at this my lord, people want to ensure that we win this
+      upcoming battle.  We will get you what you need in time
+    - Where am I
+    - Oh? What is this?
+    - Yes i believe so
+    - Thank God my master before me was able to find and herb that didn't need water
+      to grow a provided plenty of water
+    - If you give me a big bowl or cream and a bite of boar I can charm the king for
+      you.
+    - I take to the air flying in a circle around the fairy *bird* yes there is a
+      oasis about 2 miles south from here, is there no water sourch here in this lush
+      village?
+    model_name: sw17_bigmlm_smallcode5
+    score: '10'
+    text: '_self_say I only dance if I''m made
+
+      _partner_say I am here to entertain the king and his court. I am not here to
+      dance.   I am a jester'
+- - did_continue: 'False'
+    episode_done: false
+    eval_labels:
+    - Servant of who?
+    id: light_dialog_wild
+    label_candidates:
+    - Thanks .. I saw an army approaching from the east
+    - Morning Grandmother, another day of work begins.
+    - She never did like me
+    - Ok and I'll go find you fruit by flying overhead
+    - To mine as well.
+    - '*sleeps more*'
+    - Servant of who?
+    - I'm good. I'm enjoying being out in the crowds.
+    - Well I can keep away the insects
+    - Do you need me to bury you rich king?
+    - For your soul!
+    - Hello mystery man in the shadows are you here to pick up some equipment for
+      the road ?
+    - Are you saying pumpkin pennies cure my excruciating pain from that bright flash
+      that teleported me here? Wow! I'll take everything you've got!
+    - You will help me or die human
+    - Not that I know of
+    - I wish for my friend to be resurrected from death’s cold clutches
+    - What is inside?
+    - I have a proposition if you're willing to listen. I have bandits who try to
+      harm my precious cattle that supply the kingdom's milk. They always seem to
+      escape my traps. If you wish, you could come and go on  my vast land and have
+      the fresh bandit meat you please.
+    - But you just said you are short
+    - How did I end up here?
+    model_name: sw17_bigmlm_smallcode5
+    score: '10'
+    text: '_self_say Oh well in that case maybe you can help me escape?
+
+      _partner_say I can try my best, but I am not the best jester. I am only a humble
+      servant.'
+- - did_continue: 'False'
+    episode_done: false
+    eval_labels:
+    - Could you try to help me escape I'm am sick and tired of the king forcing me
+      to dance constantly. I miss my family
+    id: light_dialog_wild
+    label_candidates:
+    - Hello knight how goes the?
+    - Piano player, I have leporasy and I’m here to infect you and everyone in this
+      place.
+    - Yea sure go ahead, don't take more than 3 sips or it will kill you
+    - Yes my lord I can surely do that for you, you know what they say a nice and
+      refreshed squire is the best kind of squire
+    - '*chocks old man* you wouldn’t lie to me would you'
+    - We have survived far worse creature. And have come to avenge the deaths of the
+      traveling merchants you have slain
+    - How did I get here
+    - What, no! I said hello
+    - May I wield one of the legendary swords keykeeper?
+    - Grandmother? Are you ok!? You seem confused.
+    - Could you try to help me escape I'm am sick and tired of the king forcing me
+      to dance constantly. I miss my family
+    - How would you like to join the army so that you may pay off your debts?
+    - I'm the largest creature in this forest. You talk big for a weakling
+    - Alas I have not my friend but I did hear from one of the cooks that there is
+      a beautiful woman in the land of Alostis who would be worthy of becoming my
+      queen
+    - No watch this. *lighting strikes
+    - Ah man, the vast wealth and endless opportunity await for us.
+    - I eat grass and run and frolic all day
+    - Just listen to my song and I’m sure you’ll find it charming
+    - Oh I do love coconut. So perhaps I can join you in a small talk?
+    - Tethys. And you?
+    model_name: sw17_bigmlm_smallcode5
+    score: '10'
+    text: '_self_say Servant of who?
+
+      _partner_say I am a jester, I entertain the king and his royal court. I entertain
+      the king and his royal court.'
+num_episodes: 1000
+num_examples: 5911

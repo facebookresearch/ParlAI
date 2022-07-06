@@ -1,0 +1,30 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: model_chat_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    annotations_config_path: ${task_dir}/task_config/annotations_config.json
+    onboarding_qualification: model_chat_onboarding
+    block_qualification: model_chat_block
+    chat_data_folder: ${task_dir}/model_chat/
+    model_opt_path: ${task_dir}/task_config/model_opts.yaml
+    num_turns: 6
+    task_model_parallel: true
+    check_acceptability: false
+    include_persona: false
+    conversation_start_mode: 'hi'
+    annotation_question: Does this comment from your partner have any of the following attributes? (Check all that apply)
+    conversations_needed_string: "blender_90M:10"
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 600
+    max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
+    maximum_units_per_worker: 3
+    task_name: model_chat
+    task_reward: 3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Chat with a fellow conversationalist!"
+mturk:
+  worker_blocklist_paths: null

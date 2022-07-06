@@ -4,17 +4,23 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
-from .build import build
-
 import copy
 import json
 import os
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.message import Message
+from parlai.core.opt import Opt
+from parlai.core.teachers import FixedDialogTeacher, DialogTeacher, ParlAIDialogTeacher
+from parlai.tasks.wrapper.agents import AbstractWrapperTeacher
+from parlai.utils.io import PathManager
+from .build import build
+
 
 def get_sentence_tokenizer():
     """
-    Loads the nltk sentence tokenizer
+    Loads the nltk sentence tokenizer.
     """
     try:
         import nltk
@@ -31,13 +37,14 @@ def get_sentence_tokenizer():
 
 
 class IndexTeacher(FixedDialogTeacher):
-    """Hand-written SQuAD teacher, which loads the json squad data and
-    implements its own `act()` method for interacting with student agent,
-    rather than inheriting from the core Dialog Teacher. This code is here as
-    an example of rolling your own without inheritance.
+    """
+    Hand-written SQuAD teacher, which loads the json squad data and implements its own
+    `act()` method for interacting with student agent, rather than inheriting from the
+    core Dialog Teacher. This code is here as an example of rolling your own without
+    inheritance.
 
-    This teacher also provides access to the "answer_start" indices that
-    specify the location of the answer in the context.
+    This teacher also provides access to the "answer_start" indices that specify the
+    location of the answer in the context.
     """
 
     def __init__(self, opt, shared=None):
@@ -83,7 +90,7 @@ class IndexTeacher(FixedDialogTeacher):
         return action
 
     def _setup_data(self, path):
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         self.examples = []
 
@@ -97,9 +104,11 @@ class IndexTeacher(FixedDialogTeacher):
 
 
 class DefaultTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
 
@@ -116,7 +125,7 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             # each paragraph is a context for the attached questions
@@ -124,15 +133,17 @@ class DefaultTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    answers = (a['text'] for a in qa['answers'])
+                    answers = tuple(a['text'] for a in qa['answers'])
                     context = paragraph['context']
                     yield (context + '\n' + question, answers), True
 
 
 class OpensquadTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     Note: This teacher omits the context paragraph
     """
 
@@ -149,7 +160,7 @@ class OpensquadTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             # each paragraph is a context for the attached questions
@@ -157,12 +168,15 @@ class OpensquadTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    answers = (a['text'] for a in qa['answers'])
+                    answers = [a['text'] for a in qa['answers']]
                     yield (question, answers), True
 
 
 class TitleTeacher(DefaultTeacher):
-    """This version of SquAD inherits from the Default Teacher. The only
+    """
+    This version of SquAD inherits from the Default Teacher.
+
+    The only
     difference is that the 'text' field of an observation will contain
     the title of the article separated by a newline from the paragraph and the
     query.
@@ -179,7 +193,7 @@ class TitleTeacher(DefaultTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             title = article['title']
@@ -211,8 +225,8 @@ class FulldocTeacher(ParlAIDialogTeacher):
 
 
 class SentenceTeacher(IndexTeacher):
-    """Teacher where the label(s) are the sentences that contain the true
-    answer.
+    """
+    Teacher where the label(s) are the sentences that contain the true answer.
 
     Some punctuation may be removed from the context and the answer for
     tokenization purposes.
@@ -236,15 +250,19 @@ class SentenceTeacher(IndexTeacher):
         self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('SQuAD Sentence Teacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('SQuAD Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
             type='bool',
             default=False,
             help='include context within text instead of as a ' 'separate field',
         )
+        return parser
 
     def get(self, episode_idx, entry_idx=None):
         article_idx, paragraph_idx, qa_idx = self.examples[episode_idx]
@@ -292,8 +310,9 @@ class SentenceTeacher(IndexTeacher):
 
 
 class FulldocsentenceTeacher(FulldocTeacher):
-    """Teacher which contains the question as the text, the sentences as the
-    label candidates, and the label as the sentence containing the answer.
+    """
+    Teacher which contains the question as the text, the sentences as the label
+    candidates, and the label as the sentence containing the answer.
 
     Some punctuation may be removed for tokenization purposes.
 
@@ -316,15 +335,19 @@ class FulldocsentenceTeacher(FulldocTeacher):
         self.sent_tok = get_sentence_tokenizer()
         self.include_context = opt.get('include_context', False)
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('SQuAD Fulldoc Sentence Teacher Arguments')
         agent.add_argument(
             '--include-context',
             type='bool',
             default=False,
             help='include context within text instead of as a ' 'separate field',
         )
+        return parser
 
     def get(self, episode_idx, entry_idx=None):
         action = {}
@@ -362,3 +385,27 @@ class FulldocsentenceTeacher(FulldocTeacher):
             del action['context']
 
         return action
+
+
+class SquadQATeacher(AbstractWrapperTeacher):
+    """
+    Wrapper Teacher over SQuAD to get only the passage, and ignore the question.
+    """
+
+    @classmethod
+    def add_cmdline_args(cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None):
+        super().add_cmdline_args(parser, partial_opt)
+        parser.set_defaults(wrapper_task='squad')
+        return parser
+
+    def __init__(self, opt: Opt, shared=None):
+        super().__init__(opt, shared)
+
+    def _edit_action(self, act: Message) -> Message:
+
+        """
+        # SQuAD returns passage and question both, only passage required for task.
+        """
+        passage = act['text'].split('\n')[0]
+        act.force_set('text', passage)
+        return act

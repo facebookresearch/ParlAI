@@ -1,0 +1,51 @@
+acts:
+- - episode_done: false
+    labels:
+    - 'Hello!, how are you doing? '
+    meta-info:
+      firewood_argument: It gets cold at night where I am going camping, so I will
+        need additional firewood
+      firewood_val: 5
+      food_argument: I am going with a big family and any extra food will be helpful.
+      food_val: 4
+      water_argument: It is hot and dry during the day and I don't want to be dehydrated.
+      water_val: 3
+    text: "Negotiate with your opponent to decide who gets how many items of each\
+      \ kind. There are three kinds of packages: Food, Water, and Firewood. Each has\
+      \ a quantity of 3. Try hard to get as much value as you can, while still leaving\
+      \ your partner satisfied and with a positive perception about you. If you fail\
+      \ to come to an agreement, both parties get 5 points. Refer to the following\
+      \ preference order and arguments for your negotiation: \n\nFood\nValue: 4 points\
+      \ for each package\nArgument: I am going with a big family and any extra food\
+      \ will be helpful.\n\nWater\nValue: 3 points for each package\nArgument: It\
+      \ is hot and dry during the day and I don't want to be dehydrated.\n\nFirewood\n\
+      Value: 5 points for each package\nArgument: It gets cold at night where I am\
+      \ going camping, so I will need additional firewood\n"
+- - episode_done: false
+    labels:
+    - '🙂 super!, ... so you are going camping too? '
+    text: I'm good - and you?
+- - episode_done: false
+    labels:
+    - 'oh, I''m sorry to hear about that... I think I can help with the water, but
+      you need firewood as well? '
+    text: Yep - I'm hoping you can help me out here.  I've just finished my last round
+      of chemo and really need to flush my systm out.  I'd love it if I could take
+      all 3 waters and 1 firewood.  You can have the rest.
+- - episode_done: false
+    labels:
+    - 'The reason I am asking, is because it gets very cold in the desert at night...and
+      I may need that... but if all you need is one, I don''t see why we couldn''t
+      make a deal '
+    text: Well, just one would be beneficial.  I don't regulate my body heat as much
+      as I used to.
+- - episode_done: false
+    labels:
+    - 'Once again, really sad to hear about your condition☹️..., but perhaps being
+      in the great outdoors would be beneficial for your immune system?😮... So you
+      need 3 water and 1 firewood? '
+    text: that would be amazing - I know it does get cold so I definitely don't want
+      you to be cold either.  I don't need any of the food - not much of an appetite
+      right now anyway.
+num_episodes: 1800
+num_examples: 14301

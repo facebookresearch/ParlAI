@@ -1,0 +1,10 @@
+{
+    "convai2_logs": {
+        "task": "convai2",
+        "prepended_context": true
+    },
+    "ed_logs": {
+        "task": "empathetic_dialogues",
+        "prepended_context": true
+    }
+}

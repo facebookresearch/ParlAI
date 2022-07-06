@@ -1,0 +1,60 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: we did too but working in real estate for 12 years sucked up a
+      lot of time .
+
+      Hypothesis: we did too but working in real estate for fifteen years sucked up
+      a lot of time .'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i work with a lot of kids in the healthcare industry .
+
+      Hypothesis: i work in the healthcare industry .'
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i work in sales .
+
+      Hypothesis: i work as a kindergarten teacher .'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: i work as a secretary .
+
+      Hypothesis: i work in an office as a secretary .'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: DNLI
+    label_candidates:
+    - entailment
+    - contradiction
+    - neutral
+    text: 'Premise: my three dogs love to cheese pizza too .
+
+      Hypothesis: my favorite food is cheese pizza .'
+num_episodes: 16500
+num_examples: 16500

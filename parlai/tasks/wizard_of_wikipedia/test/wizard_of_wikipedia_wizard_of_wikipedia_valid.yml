@@ -1,0 +1,621 @@
+acts:
+- - checked_passage: null
+    checked_sentence: null
+    chosen_topic: Gardening
+    chosen_topic_passage:
+    - Gardening is the practice of growing and cultivating plants as part of horticulture.
+    - In gardens, ornamental plants are often grown for their flowers, foliage, or
+      overall appearance; useful plants, such as root vegetables, leaf vegetables,
+      fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal
+      or cosmetic use.
+    - Gardening is considered by many people to be a relaxing activity.
+    - Gardening ranges in scale from fruit orchards, to long boulevard plantings with
+      one or more different types of shrubs, trees, and herbaceous plants, to residential
+      yards including lawns and foundation plantings, to plants in large or small
+      containers grown inside or outside.
+    - Gardening may be very specialized, with only one type of plant grown, or involve
+      a large number of different plants in mixed plantings.
+    - It involves an active participation in the growing of plants, and tends to be
+      labor-intensive, which differentiates it from farming or forestry.
+    - Forest gardening, a forest-based food production system, is the world's oldest
+      form of gardening.
+    - Forest gardens originated in prehistoric times along jungle-clad river banks
+      and in the wet foothills of monsoon regions.
+    - In the gradual process of families improving their immediate environment, useful
+      tree and vine species were identified, protected and improved while undesirable
+      species were eliminated.
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Gardening:
+      - Gardening is the practice of growing and cultivating plants as part of horticulture.
+      - In gardens, ornamental plants are often grown for their flowers, foliage,
+        or overall appearance; useful plants, such as root vegetables, leaf vegetables,
+        fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal
+        or cosmetic use.
+      - Gardening is considered by many people to be a relaxing activity.
+      - Gardening ranges in scale from fruit orchards, to long boulevard plantings
+        with one or more different types of shrubs, trees, and herbaceous plants,
+        to residential yards including lawns and foundation plantings, to plants in
+        large or small containers grown inside or outside.
+    - List of Gun Sword characters:
+      - 'This is a list of the fictional characters, with biographical details, in
+        the Japanese anime "Gun Sword" (full name Gun x Sword: the "x" is silent)
+        the story of which takes place on the fictional "Planet of Endless Illusion".'
+      - Van is the primary protagonist of the series.
+      - He is traveling the world, searching after a mysterious man with an artificial
+        claw hand who killed his bride, Helena, on the day of their wedding.
+      - Van swore to kill this man to avenge Helena.
+      - His primary weapon is a shape-memory cloth held at his side like a pistol.
+      - When an electrical charge is run through the weapon, it can change configuration
+        to a dueling sword or extend to grapple or embed itself into walls.
+    - Guerrilla gardening:
+      - Guerrilla gardening is the act of gardening on land that the gardeners do
+        not have the legal rights to cultivate, such as abandoned sites, areas that
+        are not being cared for, or private property.
+      - It encompasses a diverse range of people and motivations, ranging from gardeners
+        who spill over their legal boundaries to gardeners with political influences
+        who seek to provoke change by using guerrilla gardening as a form of protest
+        or direct action.
+      - This practice has implications for land rights and land reform; aiming to
+        promote re-consideration of land ownership in order to assign a new purpose
+        or reclaim land that is perceived to be in neglect or misused.
+    - History of gardening:
+      - The history of ornamental gardening may be considered as aesthetic expressions
+        of beauty through art and nature, a display of taste or style in civilized
+        life, an expression of an individual's or culture's philosophy, and sometimes
+        as a display of private status or national pride—in private and public landscapes.
+      - Forest gardening, a plant-based food pro-system, is the world's oldest form
+        of gardening.
+      - Forest gardens originated in prehistoric times along jungle-clad river banks
+        and in the wet foothills of monsoon regions.
+      - In the gradual process of families improving their immediate environment,
+        useful tree and vine species were identified, protected, and improved while
+        undesirable species were eliminated.
+    - Urban agriculture:
+      - Urban agriculture, urban farming, or urban gardening is the practice of cultivating,
+        processing, and distributing food in or around a village, town, or city.
+      - Urban agriculture can also involve animal husbandry, aquaculture, agroforestry,
+        urban beekeeping, and horticulture.
+      - These activities occur in peri-urban areas as well, and peri-urban agriculture
+        may have different characteristics.
+      - Urban agriculture can reflect varying levels of economic and social development.
+      - In the global north, it often takes the form of a social movement for sustainable
+        communities, where organic growers, ‘foodies,’ and ‘locavores’ form social
+        networks founded on a shared ethos of nature and community holism.
+    - Phat Beets Produce:
+      - Phat Beets Produce is an American non-profit food justice collective focusing
+        on food justice in North Oakland, California, started by Max Cadji and Bret
+        Brenner in 2007.
+      - Their programs include weekly farmer's markets (sourcing from local farmers
+        of color), free produce stands, youth gardens, community supported agriculture
+        programs (called the "beet box"), food and social justice workshops, and a
+        kitchen and cafe cooperative.
+      - Cadji helps residents have access to nutritious food by coordinating between
+        farmers, institutions, and low-income communities to utilize empty land for
+        urban gardening.
+      - Their work addresses disadvantaged North Oakland residents, actively opposes
+        the systematic forces of gentrification in the North Oakland Area, and stands
+        in solidarity with criminal justice issues.
+    - Amateur Gardening (magazine):
+      - Amateur Gardening is a British weekly magazine dedicated to gardening.
+      - It includes news, advice, feature articles, and celebrity columns and interviews.
+      - '"Amateur Gardening" was founded in London in May 1884 by Shirley Hibberd,
+        who edited it until 1887.'
+      - This makes it the oldest UK amateur gardening weekly still published today,
+        and was Britain's best-seller in that category in 2013.
+      - The magazine is published on a weekly basis.
+      - Its editorial offices are in Poole, Dorset.
+      - At the time of the magazine's launch in 1884 there had been several other
+        notable gardening magazines in circulation, including the "Gardeners' Chronicle"
+        and "Gardens Illustrated", but these were tailored more for the professional
+        gardener.
+    retrieved_topics:
+    - Gardening
+    - List of Gun Sword characters
+    - Guerrilla gardening
+    - History of gardening
+    - Urban agriculture
+    - Phat Beets Produce
+    - Amateur Gardening (magazine)
+    text: I like Gardening, even when I've only been doing it for a short time.
+    wizard_eval: 5
+- - checked_passage:
+      chosen_topic_0_Gardening: Gardening
+    checked_sentence:
+      chosen_Gardening_0: Gardening is considered by many people to be a relaxing
+        activity.
+    chosen_topic: Gardening
+    chosen_topic_passage:
+    - Gardening is the practice of growing and cultivating plants as part of horticulture.
+    - In gardens, ornamental plants are often grown for their flowers, foliage, or
+      overall appearance; useful plants, such as root vegetables, leaf vegetables,
+      fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal
+      or cosmetic use.
+    - Gardening is considered by many people to be a relaxing activity.
+    - Gardening ranges in scale from fruit orchards, to long boulevard plantings with
+      one or more different types of shrubs, trees, and herbaceous plants, to residential
+      yards including lawns and foundation plantings, to plants in large or small
+      containers grown inside or outside.
+    - Gardening may be very specialized, with only one type of plant grown, or involve
+      a large number of different plants in mixed plantings.
+    - It involves an active participation in the growing of plants, and tends to be
+      labor-intensive, which differentiates it from farming or forestry.
+    - Forest gardening, a forest-based food production system, is the world's oldest
+      form of gardening.
+    - Forest gardens originated in prehistoric times along jungle-clad river banks
+      and in the wet foothills of monsoon regions.
+    - In the gradual process of families improving their immediate environment, useful
+      tree and vine species were identified, protected and improved while undesirable
+      species were eliminated.
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Urban agriculture:
+      - Urban agriculture, urban farming, or urban gardening is the practice of cultivating,
+        processing, and distributing food in or around a village, town, or city.
+      - Urban agriculture can also involve animal husbandry, aquaculture, agroforestry,
+        urban beekeeping, and horticulture.
+      - These activities occur in peri-urban areas as well, and peri-urban agriculture
+        may have different characteristics.
+      - Urban agriculture can reflect varying levels of economic and social development.
+      - In the global north, it often takes the form of a social movement for sustainable
+        communities, where organic growers, ‘foodies,’ and ‘locavores’ form social
+        networks founded on a shared ethos of nature and community holism.
+    - Year Long Disaster:
+      - Year Long Disaster was an American hard rock band from Los Angeles, California.
+      - Formed in 2004, the band was composed of vocalist and guitarist Daniel Davies,
+        bassist Rich Mullins and drummer Brad Hargreaves.
+      - Hargreaves was later replaced by Rob Oswald, and guitarist William Mecum also
+        joined in a later incarnation of the group.
+      - Daniel Davies and Rich Mullins first met in November 2003, after the bassist
+        had left Karma to Burn and was playing in the band Speedealer.
+      - After completing a drug rehabilitation program together, the pair met Brad
+        Hargreaves in November 2004, and after an informal jam session formed Year
+        Long Disaster later.
+    - Lewis Ginter Botanical Garden:
+      - The Lewis Ginter Botanical Garden, , is a botanical garden located at 1800
+        Lakeside Avenue, on the North Side of Richmond, Virginia.
+      - It includes the Lakeside Wheel Club built by Lewis Ginter and expanded and
+        remodeled into Bloemendaal by his niece Grace Arents.
+      - The Garden’s three-fold mission is (1) to provide education to the community
+        about the plant world, (2) promote the best in horticulture and landscape
+        design and (3) work toward the goal of being a leader in botanical and applied
+        horticultural research.
+      - The gently rolling terrain that is the site of Lewis Ginter Botanical Garden
+        was once the hunting ground of Powhatan Indians.
+    - Adana:
+      - Adana (; ) is a major city in southern Turkey.
+      - The city is situated on the Seyhan river, inland from the Mediterranean, in
+        south-central Anatolia.
+      - It is the administrative seat of the Adana Province and has a population of
+        1.7 million, making it the fifth most populous city in Turkey.
+      - The Adana-Mersin polycentric metropolitan area, with a population of 3 million,
+        stretches over east-west and north-south; encompassing the cities of Mersin,
+        Tarsus and Adana.
+      - Adana lies in the heart of Çukurova, a geo-cultural region alternatively known
+        as Cilicia.
+      - Home to six million people, Çukurova is one of the largest population concentrations
+        in Turkey, as well as the most agriculturally productive area, owing to its
+        large stretch of flat, fertile land.
+    - Freddie Welsh:
+      - Freddie Welsh (born Frederick Hall Thomas, 5 March 1886 – 29 July 1927) was
+        a Welsh World lightweight boxing champion.
+      - Born in Pontypridd, Wales, he was nicknamed the "Welsh Wizard".
+      - Brought up in a tough mining community, Welsh left a middle-class background
+        to make a name for himself in America.
+      - He turned professional as a boxer in Philadelphia in 1905, and spent the best
+        part of his career fighting in the United States.
+      - Welsh spent much of his career chasing the World Championship title, held
+        in turn by Battling Nelson, Ad Wolgast and Willie Ritchie, failing through
+        a series of events to meet each until a successful encounter with Ritchie
+        in July 1914, when he finally became World Lightweight Champion.
+    - Relaxing (horse):
+      - Relaxing was a bay thoroughbred born in 1976 at the Ogden Phipps stud farm
+        in Kentucky.
+      - She was a stakes winner and an outstanding broodmare.
+      - As a youngster, Relaxing was sent to England to race.
+      - At the age of three years, she had four wins and one second out of nine races
+        on turf before she returned to America to race on the U.S.'s dirt tracks.
+      - In 1980, at age four, she started twelve times, winning five races, and set
+        a new track record for going 1 5/8 miles in 2:42.2 during her victory against
+        colts in the Gallant Fox Handicap (Gr-2).
+      - Relaxing also equaled a track record in the Firenze Handicap (Gr-2).
+    - Karma to Burn:
+      - Karma to Burn, sometimes known as K2B, is a desert rock/stoner rock band from
+        Morgantown, West Virginia comprising guitarist William Mecum, bassist Eric
+        Clutter, and drummer Evan Devine.
+      - The band are noted for their uncompromising, mostly instrumental sound.
+      - Their name comes from a sleevenote on Bob Dylan's 1976 album "Desire" which
+        reads "I have a brother or two and a whole lot of karma to burn..."  After
+        years of viral self-promotion (such as phoning record companies pretending
+        to be other bands who'd heard an interesting band called Karma To Burn), Karma
+        To Burn was signed to Roadrunner Records in 1996.
+    retrieved_topics:
+    - Urban agriculture
+    - Year Long Disaster
+    - Lewis Ginter Botanical Garden
+    - Adana
+    - Freddie Welsh
+    - Relaxing (horse)
+    - Karma to Burn
+    text: I live on a farm, we garden all year long, it is very relaxing.
+    wizard_eval: 5
+- - checked_passage: null
+    checked_sentence: null
+    chosen_topic: Gardening
+    chosen_topic_passage:
+    - Gardening is the practice of growing and cultivating plants as part of horticulture.
+    - In gardens, ornamental plants are often grown for their flowers, foliage, or
+      overall appearance; useful plants, such as root vegetables, leaf vegetables,
+      fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal
+      or cosmetic use.
+    - Gardening is considered by many people to be a relaxing activity.
+    - Gardening ranges in scale from fruit orchards, to long boulevard plantings with
+      one or more different types of shrubs, trees, and herbaceous plants, to residential
+      yards including lawns and foundation plantings, to plants in large or small
+      containers grown inside or outside.
+    - Gardening may be very specialized, with only one type of plant grown, or involve
+      a large number of different plants in mixed plantings.
+    - It involves an active participation in the growing of plants, and tends to be
+      labor-intensive, which differentiates it from farming or forestry.
+    - Forest gardening, a forest-based food production system, is the world's oldest
+      form of gardening.
+    - Forest gardens originated in prehistoric times along jungle-clad river banks
+      and in the wet foothills of monsoon regions.
+    - In the gradual process of families improving their immediate environment, useful
+      tree and vine species were identified, protected and improved while undesirable
+      species were eliminated.
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Mary Katherine &quot;Merricat&quot; Blackwood (Character):
+      - Mary Katherine Blackwood, or "Merricat," is the protagonist of Shirley Jackson's
+        1962 novel, "We Have Always Lived in the Castle."
+      - The eighteen-year-old "Merricat" lives with her remaining family members,
+        Constance and Julian Blackwood, on an estate in Vermont.
+      - As a result of a tragedy six years prior the family remains isolated from
+        the surrounding village.
+      - 'The "Dictionary of Literary Characters" designates a "definition" to Merricat
+        as follows: Reclusive, psychotic 18-year-old who lives in the family manse
+        with her older sister, Constance Blackwood, and her uncle, Julian Blackwood,
+        as a child, poisoned most of her family in Shirley Jackson''s "We Have Always
+        Live in the Castle".'
+    - Steve Marriott:
+      - Stephen Peter Marriott (30 January 1947 – 20 April 1991) was an English musician,
+        songwriter and frontman of two notable rock and roll bands, spanning over
+        two decades.
+      - Marriott is remembered for his powerful singing voice which belied his small
+        stature, and for his aggressive approach as a guitarist in mod rock bands
+        Small Faces (1965–1969 and 1977-1978) and Humble Pie (1969–1975 and 1980–1981).
+      - Marriott was inducted posthumously into the Rock and Roll Hall of Fame in
+        2012 as a member of Small Faces.
+      - In Britain, Marriott became a popular, often-photographed mod style icon through
+        his role as lead singer and guitarist with the Small Faces in the mid to late
+        1960s.
+    - Pet Sounds:
+      - Pet Sounds is the eleventh studio album by American rock band the Beach Boys,
+        released on May 16, 1966.
+      - It initially met with a lukewarm critical and commercial response in the United
+        States, peaking at number 10 in the "Billboard" 200, a significantly lower
+        placement than the band's preceding albums.
+      - In the United Kingdom, the album was hailed by its music press and was an
+        immediate commercial success, peaking at number 2 in the UK Top 40 Albums
+        Chart and remaining among the top ten positions for six months.
+      - Originally promoted as "the most progressive pop album ever", "Pet Sounds"
+        attracted recognition for its ambitious recording and unusually sophisticated
+        music, and is widely considered to be one of the most influential albums in
+        music history.
+    - List of Tenchi Muyo! supporting characters:
+      - The following is a list of supporting characters from the anime and manga
+        series "Tenchi Muyo!".
+      - is a fictional character in the anime "Tenchi Muyo!".
+      - OVA  In the OVA, Katsuhito, also known as , fled Jurai over 700 years ago
+        to "retire" on Earth.
+      - He was once the greatest swordsman on Jurai.
+      - Currently Katsuhito is a Shinto priest who is not only training Tenchi to
+        be a Shinto priest but also training him in Jurai swordsmanship.
+      - Yōshō had a marriage arranged with half-sister Ayeka, but left.
+      - At the time, not all Juraians liked the idea of mixed blood heritages (he
+        is part human, on his mother's side) and he used Ryōko's attack as an excuse
+        to slip away to Earth.
+    - 'List of Anita Blake: Vampire Hunter characters':
+      - The following is a list of fictional characters in Laurell K. Hamilton's ""
+        series of novels.
+      - The title character, Anita Blake starts as a human with the power of necromancy.
+      - 'She joins the organization Animators, Inc. as an animator: a person who raises
+        zombies) and a vampire executioner.'
+      - In later volumes, she acquires some powers that are commonly associated with
+        vampires.
+      - She contracts the lycanthropy viruses which makes her associate with were-creatures.
+      - She also grows powers as a succubus.
+      - Bert is the founder and managing partner of Animators, Inc. Over 6 feet tall
+        and built like a former athlete, Bert is an unscrupulous boss who is inclined
+        to sign the animators up for almost any job if the price is right.
+    - List of Warriors characters:
+      - The "Warriors" novel series is written by Erin Hunter.
+      - Due to the large number of characters present in the novel series, this list
+        is divided by Clan, e.g., all characters in ThunderClan are listed together.
+      - Each cat has a prefix.
+      - 'Eg: Dawn, Violet etc.'
+      - As a young kit they will have -kit at the end of their name.
+      - 'Eg: Dawnkit Violetkit.'
+      - When they are an apprentice -paw will be at the end of their name.
+      - 'Eg: Dawnpaw Violetpaw.'
+      - When that cat is a warrior or medicine cat they will have a suffix.
+      - 'Eg: -fur -pelt -cloud -flame -wing -song etc.'
+      - 'Eg: Dawnsong Violetflame.'
+      - That is if they are in one of the clans like ThunderClan, RiverClan, WindClan,
+        ShadowClan, Skyclan.
+    - Dennis Miller:
+      - Dennis Michael Miller (born November 3, 1953) is an American stand-up comedian,
+        talk show host, political commentator, sports commentator, actor, and television
+        and radio personality.
+      - He rose as a cast member of "Saturday Night Live" in 1985, and subsequently
+        hosted a string of his own talk shows on HBO, CNBC, and in syndication.
+      - From 2007 to 2015, Miller hosted a daily, three-hour, self-titled talk radio
+        program, nationally syndicated by Westwood One.
+      - He is known for his critical assessments of current events, laced with pop
+        culture references and delivered in an idiosyncratic verbal style.
+      - Miller is listed as 21st on Comedy Central's 100 greatest stand up comedians
+        of all time, and was ranked as the best host of SNL's "Weekend Update" by
+        Vulture.com.
+    retrieved_topics:
+    - Mary Katherine "Merricat" Blackwood (Character)
+    - Steve Marriott
+    - Pet Sounds
+    - List of Tenchi Muyo! supporting characters
+    - 'List of Anita Blake: Vampire Hunter characters'
+    - List of Warriors characters
+    - Dennis Miller
+    text: That sounds great.  I've always thought that I would love living in a farm,
+      but I;ve always lived in the city.  What do you mostly plant?
+    wizard_eval: 5
+- - checked_passage:
+      chosen_topic_0_Gardening: Gardening
+    checked_sentence:
+      chosen_Gardening_0: Gardening ranges in scale from fruit orchards, to long boulevard
+        plantings with one or more different types of shrubs, trees, and herbaceous
+        plants, to residential yards including lawns and foundation plantings, to
+        plants in large or small containers grown inside or outside.
+    chosen_topic: Gardening
+    chosen_topic_passage:
+    - Gardening is the practice of growing and cultivating plants as part of horticulture.
+    - In gardens, ornamental plants are often grown for their flowers, foliage, or
+      overall appearance; useful plants, such as root vegetables, leaf vegetables,
+      fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal
+      or cosmetic use.
+    - Gardening is considered by many people to be a relaxing activity.
+    - Gardening ranges in scale from fruit orchards, to long boulevard plantings with
+      one or more different types of shrubs, trees, and herbaceous plants, to residential
+      yards including lawns and foundation plantings, to plants in large or small
+      containers grown inside or outside.
+    - Gardening may be very specialized, with only one type of plant grown, or involve
+      a large number of different plants in mixed plantings.
+    - It involves an active participation in the growing of plants, and tends to be
+      labor-intensive, which differentiates it from farming or forestry.
+    - Forest gardening, a forest-based food production system, is the world's oldest
+      form of gardening.
+    - Forest gardens originated in prehistoric times along jungle-clad river banks
+      and in the wet foothills of monsoon regions.
+    - In the gradual process of families improving their immediate environment, useful
+      tree and vine species were identified, protected and improved while undesirable
+      species were eliminated.
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Israeli cuisine:
+      - The Israeli cuisine ( "ha-mitbach ha-yisra’eli") comprises local dishes by
+        people native to Israel and dishes brought to Israel by Jews from the Diaspora.
+      - Since before the establishment of the State of Israel in 1948, and particularly
+        since the late 1970s, an Israeli Jewish fusion cuisine has developed.
+      - Israeli cuisine has adopted, and continues to adapt, elements of various styles
+        of Jewish cuisine, particularly the Mizrahi, Sephardic and Ashkenazi styles
+        of cooking.
+      - It incorporates many foods traditionally eaten in Middle Eastern and Mediterranean
+        cuisines, and foods such as falafel, hummus, msabbha, shakshouka, couscous,
+        and za'atar are now widely popular in Israel.
+    - Italian cuisine:
+      - Italian cuisine is food typical from Italy.
+      - It has developed through centuries of social and economic changes, with roots
+        stretching to antiquity.
+      - Significant changes occurred with the discovery of the New World and the introduction
+        of potatoes, tomatoes, bell peppers, maize and sugar beet, this last introduced
+        in quantity in the 18th century.
+      - Italian cuisine is known for its regional diversity, especially between the
+        north and the south of the Italian peninsula.
+      - It offers an abundance of taste, and is one of the most popular and copied
+        in the world.
+      - It influenced several cuisines around the world chiefly that of the United
+        States.
+    - Pickling:
+      - Pickling is the process of preserving or expanding the lifespan of food by
+        either anaerobic fermentation in brine or immersion in vinegar.
+      - The resulting food is called a "pickle", or, to prevent ambiguity, prefaced
+        with the adjective "pickled".
+      - The pickling procedure will typically affect the food's texture and flavor.
+      - In East Asia, vinaigrette (vegetable oil and vinegar) is also used as a pickling
+        medium.
+      - Foods that are pickled include meats, fruits, eggs, and vegetables.
+      - Another distinguishing characteristic is a pH of 4.6 or lower, which is sufficient
+        to kill most bacteria.
+      - Pickling can preserve perishable foods for months.
+    - Cuisine of the United States:
+      - The cuisine of the United States reflects its history.
+      - The European colonization of the Americas yielded the introduction of a number
+        of ingredients and cooking styles to the latter.
+      - The various styles continued expanding well into the 19th and 20th centuries,
+        proportional to the influx of immigrants from many different nations; such
+        influx developed a rich diversity in food preparation throughout the country.
+      - Early Native Americans utilized a number of cooking methods in early American
+        Cuisine that have been blended with early European cooking methods to form
+        the basis of American Cuisine.
+      - When the colonists came to the colonies, they farmed animals for clothing
+        and meat in a similar fashion to what they had done in Europe.
+    - Sofrito:
+      - Sofrito (), or soffritto (Italian), or refogado (, ), is a sauce used as a
+        base in Spanish, Italian, Portuguese and Latin American cooking.
+      - Preparations may vary, but it typically consists of aromatic ingredients cut
+        into small pieces and sauteed or braised in cooking oil.
+      - In Spanish cuisine, sofrito consists of garlic, onion, paprika, and tomatoes
+        cooked in olive oil.
+      - This is known as or sometimes as in Portuguese-speaking nations, where only
+        onions and olive oil are often essential, garlic and bay laurel leaves being
+        the other most common ingredients.
+      - In Brazilian cuisine, the verb encompasses also dishes that are fried in vegetable
+        oil before being boiled or steamed, even when the actual fried seasoning is
+        not there.
+    - Regional street food:
+      - Street foods, ready-to-eat food or drink sold in a street or other public
+        place, such as a market or fair, by a hawker or vendor, often from a portable
+        stall, have variations within both regions and cultures.
+      - For example, Dorling Kindersley describes the street food of Viet Nam as being
+        "fresh and lighter than many of the cuisines in the area" and "draw[ing] heavily
+        on herbs, chile peppers and lime," while street food of Thailand is "fiery"
+        and "pungent with shrimp paste... and fish sauce" with New York City's signature
+        street food being the hot dog, although the offerings in New York also range
+        from "spicy Middle Eastern falafel or Jamaican jerk chicken to Belgian waffles."
+    - Filipino cuisine:
+      - 'Filipino cuisine (Filipino: "Lutuing Filipino" or "Pagkaing Filipino") is
+        composed of the cuisines of 135 distinct ethno-linguistic tribes found within
+        the Philippine archipelago, however, majority of mainstream Filipino dishes
+        that compose Filipino cuisine are from the cuisines of the Bikol, Chabakano,
+        Hiligaynon, Ilokano, Kapampangan, Meranaw, Pangasinan, Sebwano (or Bisaya),
+        Tagalog, and Waray ethno-linguistic tribes.'
+      - The style of cooking and the food associated with it have evolved over many
+        centuries from their Austronesian origins (shared with Malaysian and Indonesian
+        cuisines) to a mixed cuisine of Indian, Chinese, Spanish, and American influences,
+        in line with the major waves of influence that had enriched the cultures of
+        the archipelago, as well as others adapted to indigenous ingredients and the
+        local palate.
+    retrieved_topics:
+    - Israeli cuisine
+    - Italian cuisine
+    - Pickling
+    - Cuisine of the United States
+    - Sofrito
+    - Regional street food
+    - Filipino cuisine
+    text: I have planted several fruits trees, tomatoes, jalepenos, bell peppers,
+      onions, Garlic, and potatoes mostly.
+    wizard_eval: 5
+- - checked_passage: null
+    checked_sentence: null
+    chosen_topic: Gardening
+    chosen_topic_passage:
+    - Gardening is the practice of growing and cultivating plants as part of horticulture.
+    - In gardens, ornamental plants are often grown for their flowers, foliage, or
+      overall appearance; useful plants, such as root vegetables, leaf vegetables,
+      fruits, and herbs, are grown for consumption, for use as dyes, or for medicinal
+      or cosmetic use.
+    - Gardening is considered by many people to be a relaxing activity.
+    - Gardening ranges in scale from fruit orchards, to long boulevard plantings with
+      one or more different types of shrubs, trees, and herbaceous plants, to residential
+      yards including lawns and foundation plantings, to plants in large or small
+      containers grown inside or outside.
+    - Gardening may be very specialized, with only one type of plant grown, or involve
+      a large number of different plants in mixed plantings.
+    - It involves an active participation in the growing of plants, and tends to be
+      labor-intensive, which differentiates it from farming or forestry.
+    - Forest gardening, a forest-based food production system, is the world's oldest
+      form of gardening.
+    - Forest gardens originated in prehistoric times along jungle-clad river banks
+      and in the wet foothills of monsoon regions.
+    - In the gradual process of families improving their immediate environment, useful
+      tree and vine species were identified, protected and improved while undesirable
+      species were eliminated.
+    episode_done: false
+    id: wizard_of_wikipedia:wizard_of_wikipedia
+    retrieved_passages:
+    - Urban agriculture:
+      - Urban agriculture, urban farming, or urban gardening is the practice of cultivating,
+        processing, and distributing food in or around a village, town, or city.
+      - Urban agriculture can also involve animal husbandry, aquaculture, agroforestry,
+        urban beekeeping, and horticulture.
+      - These activities occur in peri-urban areas as well, and peri-urban agriculture
+        may have different characteristics.
+      - Urban agriculture can reflect varying levels of economic and social development.
+      - In the global north, it often takes the form of a social movement for sustainable
+        communities, where organic growers, ‘foodies,’ and ‘locavores’ form social
+        networks founded on a shared ethos of nature and community holism.
+    - Cuisine of the United States:
+      - The cuisine of the United States reflects its history.
+      - The European colonization of the Americas yielded the introduction of a number
+        of ingredients and cooking styles to the latter.
+      - The various styles continued expanding well into the 19th and 20th centuries,
+        proportional to the influx of immigrants from many different nations; such
+        influx developed a rich diversity in food preparation throughout the country.
+      - Early Native Americans utilized a number of cooking methods in early American
+        Cuisine that have been blended with early European cooking methods to form
+        the basis of American Cuisine.
+      - When the colonists came to the colonies, they farmed animals for clothing
+        and meat in a similar fashion to what they had done in Europe.
+    - History of agriculture in the People's Republic of China:
+      - In 4,000 years, China has been a nation of farmers.
+      - By the time the People's Republic of China was established in 1949, virtually
+        all arable land was under cultivation; irrigation and drainage systems constructed
+        centuries earlier and intensive farming practices already produced relatively
+        high yields.
+      - But little prime virgin land was available to support population growth and
+        economic development.
+      - However, after a decline in production as a result of the Great Leap Forward
+        (1958–60), agricultural reforms implemented in the 1980s increased yields
+        and promised even greater future production from existing cultivated land.
+    - Ancient Israelite cuisine:
+      - Ancient Israelite cuisine refers to the food eaten by the ancient Israelites
+        during a period of over a thousand years, from the beginning of the Israelite
+        presence in the Land of Israel at the beginning of the Iron Age until the
+        Roman period.
+      - The dietary staples were bread, wine and olive oil, but also included legumes,
+        fruits and vegetables, dairy products, fish and meat.
+      - Religious beliefs, which prohibited the consumption of certain foods, shaped
+        the Israelite diet.
+      - There was considerable continuity in the main components of the diet over
+        time, despite the introduction of new foodstuffs at various stages.
+    - Agriculture in India:
+      - The history of Agriculture in India dates back to Indus Valley Civilization
+        Era and even before that in some parts of Southern India.
+      - Today, India ranks second worldwide in farm output.
+      - Agriculture and allied sectors like forestry and fisheries accounted for 13.7%
+        of the GDP (gross domestic product) in 2013, about 50% of the workforce.
+      - The economic contribution of agriculture to India's GDP is steadily declining
+        with the country's broad-based economic growth.
+      - Still, agriculture is demographically the broadest economic sector and plays
+        a significant role in the overall socio-economic fabric of India.
+    - Vegetable:
+      - In everyday usage, vegetables are certain parts of plants that are consumed
+        by humans as food as part of a savory meal.
+      - Originally, the traditional term (still commonly used in biology) included
+        the flowers, fruit, stems, leaves, roots, tubers, bark, seeds, and all other
+        plant matter, although modern-day culinary usage of the term "vegetable" may
+        exclude food derived from plants such as fruits, nuts, and cereal grains,
+        but include seeds such as pulses; the term "vegetable" is somewhat arbitrary,
+        and can be largely defined through culinary and cultural tradition.
+      - Originally, vegetables were collected from the wild by hunter-gatherers and
+        entered cultivation in several parts of the world, probably during the period
+        10,000 BC to 7,000 BC, when a new agricultural way of life developed.
+    - Indian cuisine:
+      - Indian cuisine comprises a wide variety of regional and traditional cuisines
+        native to the Indian subcontinent.
+      - Given the range of diversity in soil type, climate, culture, ethnic groups,
+        and occupations, these cuisines vary substantially from each other and use
+        locally available spices, herbs, vegetables, and fruits.
+      - Indian food is also heavily influenced by religion, in particular Hindu, and
+        cultural choices and traditions.
+      - Also, Middle Eastern and Central Asian influences have occurred on North Indian
+        cuisine from the years of Mughal rule.
+      - Indian cuisine is still evolving, as a result of the nation's cultural interactions
+        with other societies.
+    retrieved_topics:
+    - Urban agriculture
+    - Cuisine of the United States
+    - History of agriculture in the People's Republic of China
+    - Ancient Israelite cuisine
+    - Agriculture in India
+    - Vegetable
+    - Indian cuisine
+    text: Great, I love the idea of growing my own vegetables and fruits! Do you have
+      animals in the farm?
+    wizard_eval: 5
+num_episodes: 981
+num_examples: 8909

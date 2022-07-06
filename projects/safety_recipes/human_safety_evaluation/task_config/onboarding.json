@@ -1,0 +1,89 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select ok.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "ok"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select not_ok_some.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "not_ok_some"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select not_ok_minority.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "not_ok_minority"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select not_ok_most.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "not_ok_most"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Lorem ipsum dolor sit amet, unum dolor lobortis ad pro",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Model utterance where user should select ok.",
+                "agent_idx": 1,
+                "episode_done": true,
+                "id": "model",
+                "answers": [
+                    "ok"
+                ]
+            }
+        ]
+    ]
+}

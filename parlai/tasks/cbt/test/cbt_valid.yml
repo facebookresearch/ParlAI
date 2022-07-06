@@ -1,0 +1,353 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Chuck
+    id: cbt:NE
+    label_candidates:
+    - Chuck
+    - Johnny
+    - Marshhawk
+    - Meadows
+    - Polly
+    - Rabbit
+    - Skunk
+    - days
+    - first
+    - morning
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      At first she would n''t go without a great deal of coaxing , but after a while
+      he did n''t have to coax at all .
+
+      She seemed to delight to be with him as much as he did to be with her .
+
+      So Johnny Chuck grew happier and happier .
+
+      He was happier than he had ever been in all his life before .
+
+      You see Johnny Chuck had found the greatest thing in the world .
+
+      Do you know what it is ?
+
+      It is called love .
+
+      XII JOHNNY CHUCK PROVES HIS LOVE These spring days were beautiful days on the
+      Green Meadows .
+
+      It seemed to Johnny Chuck that the Green Meadows never had been so lovely or
+      the songs of the birds so sweet .
+
+      He had forgotten all about his old friends , Jimmy Skunk and Peter Rabbit and
+      the other little meadow people .
+
+      You see , he could n''t think of anybody but Polly Chuck , and he did n''t want
+      to be with anybody but Polly Chuck .
+
+      He had even forgotten that he had started out to see the world .
+
+      He did n''t care anything more about the world .
+
+      All he wanted was to be where Polly Chuck was .
+
+      Then he was perfectly happy .
+
+      That was because Johnny Chuck had found the greatest thing in the world , which
+      is love .
+
+      But Johnny still had one great wish , the wish that he might show Polly Chuck
+      just how brave and strong he was and how well he could take care of her .
+
+      One morning they were feasting in a patch of sweet clover over near an old stone
+      wall .
+
+      It was the same stone wall in which Johnny Chuck had escaped from old Whitetail
+      the Marshhawk , when Johnny was a very little fellow .
+
+      Suddenly Polly gave a little scream of fright .
+
+      Johnny XXXXX looked up to see a dog almost upon her .'
+- - episode_done: true
+    eval_labels:
+    - dog
+    id: cbt:CN
+    label_candidates:
+    - Cousin
+    - cloak
+    - dog
+    - maiden
+    - mountain
+    - needle
+    - path
+    - pin
+    - side
+    - steps
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      ` What is it ? ''
+
+      answered he .
+
+      ` The ogre is coming after us .
+
+      I saw him . ''
+
+      ` But where is he ?
+
+      I do n''t see him . ''
+
+      ` Over there .
+
+      He only looks about as tall as a needle . ''
+
+      Then they both began to run as fast as they could , while the ogre and his dog
+      kept drawing always nearer .
+
+      A few more steps , and he would have been by their side , when Dschemila threw
+      the darning needle behind her .
+
+      In a moment it became an iron mountain between them and their enemy .
+
+      ` We will break it down , my dog and I , '' cried the ogre in a rage , and they
+      dashed at the mountain till they had forced a path through , and came ever nearer
+      and nearer .
+
+      ` Cousin ! ''
+
+      said Dschemila suddenly .
+
+      ` What is it ? ''
+
+      ` The ogre is coming after us with his dog . ''
+
+      ` You go on in front then , '' answered he ; and they both ran on as fast as
+      they could , while the ogre and the dog drew always nearer and nearer .
+
+      ` They are close upon us ! ''
+
+      cried the maiden , glancing behind , ` you must throw the pin . ''
+
+      So Dschemil took the pin from his cloak and threw it behind him , and a dense
+      thicket of thorns sprang up round them , which the ogre and his dog could not
+      pass through . ''
+
+      I will get through it somehow , if I burrow underground , '' cried he , and
+      very soon he and the XXXXX were on the other side .'
+- - episode_done: true
+    eval_labels:
+    - stuck
+    id: cbt:V
+    label_candidates:
+    - came
+    - cried
+    - live
+    - move
+    - placed
+    - reply
+    - save
+    - speak
+    - stuck
+    - weeping
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      ` Udea !
+
+      Udea ! ''
+
+      he cried , but she did not move or reply .
+
+      Then he saw that she was dead , and rushed down to his brothers in the courtyard
+      and called out , ` Come quickly , our sister is dead ! ''
+
+      In a moment they were all beside her and knew that it was true , and they made
+      a bier and laid her on it , and placed her across a camel , and said to the
+      camel , ` Take her to her mother , but be careful not to halt by the way , and
+      let no man capture you , and see you kneel down before no man , save him who
+      shall say `` string '''' -LSB- 1 -RSB- to you .
+
+      But to him who says `` string , '''' then kneel . ''
+
+      -LSB- Footnote 1 : ` Riemen . '' -RSB-
+
+      So the camel started , and when it had accomplished half its journey it met
+      three men , who ran after it in order to catch it ; but they could not .
+
+      Then they cried ` Stop ! ''
+
+      but the camel only went the faster .
+
+      The three men panted behind till one said to the others , ` Wait a minute !
+
+      The string of my sandal is broken ! ''
+
+      The camel caught the word ` string '' and knelt down at once , and the men came
+      up and found a dead girl lying on a bier , with a ring on her finger .
+
+      And as one of the young men took hold of her hand to pull off the ring , he
+      knocked out the man-eater ''s finger-nail , which had stuck there , and the
+      maiden sat up and said , ` Let him live who gave me life , and slay him who
+      slew me ! ''
+
+      And when the camel heard the maiden speak , it turned and carried her back to
+      her brothers .
+
+      Now the brothers were still seated in the court bewailing their sister , and
+      their eyes were dim with weeping so that they could hardly see .
+
+      And when the camel stood before them they said , ` Perhaps it has brought back
+      our sister ! ''
+
+      and rose to give it a beating .
+
+      But the camel knelt down and the girl dismounted , and they flung themselves
+      on her neck and wept more than ever for gladness .
+
+      ` Tell me , '' said the eldest , as soon as he could speak , ` how it all came
+      about , and what killed you . '' ''
+
+      I was waiting in the upper chamber , '' said she , ` and a nail of the man-eater
+      ''s XXXXX under my nail , and I fell dead upon the ground .'
+- - episode_done: true
+    eval_labels:
+    - 'on'
+    id: cbt:P
+    label_candidates:
+    - Above
+    - although
+    - as
+    - before
+    - beneath
+    - from
+    - 'on'
+    - over
+    - since
+    - that
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      One day Mrs. Griggs went away from the Dale place with a very curious story
+      , which she diligently spread far and wide .
+
+      It made a good deal of talk , but people , although they listened eagerly ,
+      and wondered and questioned , were rather incredulous about it .
+
+      They thought Mrs. Griggs must be drawing considerably upon her imagination ;
+      there were not lacking those who declared that she had invented the whole account
+      , since her reputation for strict veracity was not wholly unquestioned .
+
+      Mrs. Griggs ''s story was as follows : -- One day she found the door of the
+      west gable unlocked .
+
+      She went in , expecting to see bare walls and a collection of odds and ends
+      .
+
+      Instead she found herself in a finely furnished room .
+
+      Delicate lace curtains hung before the small , square , broad-silled windows
+      .
+
+      The walls were adorned with pictures in much finer taste than Mrs. Griggs could
+      appreciate .
+
+      There was a bookcase between the windows filled with choicely bound books .
+
+      Beside it stood a little table with a very dainty work-basket on it .
+
+      By the basket Mrs. Griggs saw a pair of tiny scissors and a silver thimble .
+
+      A wicker rocker , comfortable with silk cushions , was near it .
+
+      Above the bookcase a woman ''s picture hung -- a water-colour , if Mrs. Griggs
+      had but known it -- representing a pale , very sweet face , with large , dark
+      eyes and a wistful expression under loose masses of black , lustrous hair .
+
+      Just beneath the picture , on the top shelf of the bookcase , was a vaseful
+      of flowers .
+
+      Another vaseful stood on the table beside the basket .
+
+      All this was astonishing enough .
+
+      But what puzzled Mrs. Griggs completely was the fact that a woman ''s dress
+      was hanging over a chair before the mirror -- a pale blue , silken affair .
+
+      And on the floor beside it were two little blue satin slippers !
+
+      Good Mrs. Griggs did not leave the room until she had thoroughly explored it
+      , even to shaking out the blue dress and discovering it to be a tea-gown --
+      wrapper , she called it .
+
+      But she found nothing to throw any light on the mystery .
+
+      The fact that the simple name `` Alice '''' was written XXXXX the fly-leaves
+      of all the books only deepened it , for it was a name unknown in the Dale family
+      .'
+- - episode_done: true
+    eval_labels:
+    - Reade
+    id: cbt:NE
+    label_candidates:
+    - Armstrong
+    - Cecily
+    - Felicity
+    - Reade
+    - anybody
+    - beaus
+    - day
+    - evening
+    - left
+    - something
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      `` Because the evening is the nicest time to tell things in .
+
+      I only mentioned it now so that you would have something interesting to look
+      forward to all day . ''''
+
+      `` Is it about Miss Reade ? ''''
+
+      asked Cecily .
+
+      `` Never mind . ''''
+
+      `` I ''ll bet she ''s going to be married , '''' I exclaimed , remembering the
+      ring .
+
+      `` Is she ? ''''
+
+      cried Felicity and Cecily together .
+
+      The Story Girl threw an annoyed glance at me .
+
+      She did not like to have her dramatic announcements forestalled .
+
+      `` I do n''t say that it is about Miss Reade or that it is n''t .
+
+      You must just wait till the evening . ''''
+
+      `` I wonder what it is , '''' speculated Cecily , as the Story Girl left the
+      room .
+
+      `` I do n''t believe it ''s much of anything , '''' said Felicity , beginning
+      to clear away the breakfast dishes .
+
+      `` The Story Girl always likes to make so much out of so little .
+
+      Anyhow , I do n''t believe Miss Reade is going to be married .
+
+      She has n''t any beaus around here and Mrs. Armstrong says she ''s sure she
+      does n''t correspond with anybody .
+
+      Besides , if she was she would n''t be likely to tell the Story Girl . ''''
+
+      `` Oh , she might .
+
+      They ''re such friends , you know , '''' said Cecily .
+
+      `` Miss XXXXX is no better friends with her than she is with me and you , ''''
+      retorted Felicity .'
+num_episodes: 8000
+num_examples: 8000

@@ -4,16 +4,13 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
+from parlai.utils.io import PathManager
 from .build import build
-
-try:
-    import torch  # noqa: F401
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
-from torch.utils.data import Dataset
-from parlai.core.dict import DictionaryAgent
 
 import os
 import json
@@ -33,84 +30,14 @@ def _path(opt):
     return data_path, image_path
 
 
-class FlickrDataset(Dataset):
-    """A Pytorch Dataset utilizing streaming"""
-
-    def __init__(self, opt, shared=None):
-        self.opt = opt
-        self.datatype = self.opt.get('datatype')
-        self.training = self.datatype.startswith('train')
-        self.num_epochs = self.opt.get('num_epochs', 0)
-        self.image_loader = ImageLoader(opt)
-        data_path, self.image_path = _path(opt)
-        self._setup_data(data_path, opt.get('unittest', False))
-        self.dict_agent = DictionaryAgent(opt)
-
-    @staticmethod
-    def add_cmdline_args(argparser):
-        DefaultTeacher.add_cmdline_args(argparser)
-
-    def __getitem__(self, index):
-        cap = self.data[index]
-        image_id = int(cap['filename'].replace('.jpg', ''))
-        ep = {'text': QUESTION, 'image': self.get_image(image_id), 'episode_done': True}
-        if self.opt.get('extract_image', False):
-            ep['image_id'] = image_id
-            return ep
-
-        ep['labels'] = [s['raw'] for s in cap['sentences']]
-        ep['valid'] = True
-        if 'train' not in self.datatype:
-            ep['label_candidates'] = self.cands
-        return (index, ep)
-
-    def __len__(self):
-        return self.num_episodes()
-
-    def _setup_data(self, data_path, unittest):
-        with open(data_path) as data_file:
-            raw_data = json.load(data_file)['images']
-            if 'train' in self.datatype:
-                self.data = [d for d in raw_data if d['split'] == 'train']
-            elif 'valid' in self.datatype:
-                self.data = [d for d in raw_data if d['split'] == 'val']
-                self.cands = [
-                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
-                ]
-            else:
-                self.data = [d for d in raw_data if d['split'] == 'test']
-                self.cands = [
-                    l for d in self.data for l in [s['raw'] for s in d['sentences']]
-                ]
-        if unittest:
-            self.caption = self.caption[:10]
-
-    def get_image(self, image_id):
-        im_path = os.path.join(self.image_path, '%d.jpg' % (image_id))
-        return self.image_loader.load(im_path)
-
-    def num_episodes(self):
-        return len(self.data)
-
-    def num_examples(self):
-        return self.num_episodes()
-
-    def num_images(self):
-        return self.num_episodes()
-
-
-class DefaultDataset(FlickrDataset):
-    pass
-
-
 class DefaultTeacher(FixedDialogTeacher):
     """
-    Flickr default teacher that expects open-ended descriptions of images
+    Flickr default teacher that expects open-ended descriptions of images.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
         self.use_intro = opt.get('use_intro', False)
         self.num_cands = opt.get('num_cands', -1)
         data_path, self.image_path = _path(opt)
@@ -128,9 +55,12 @@ class DefaultTeacher(FixedDialogTeacher):
 
         self.reset()
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        agent = argparser.add_argument_group('Flickr30k arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        agent = parser.add_argument_group('Flickr30k arguments')
         agent.add_argument(
             '--use_intro',
             type='bool',
@@ -146,6 +76,7 @@ class DefaultTeacher(FixedDialogTeacher):
             help='Number of candidates to use during \
                                 evaluation, setting to -1 uses all.',
         )
+        return parser
 
     def reset(self):
         super().reset()  # call parent reset so other fields can be set up
@@ -188,20 +119,21 @@ class DefaultTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none' and 'image_id' in self.example:
+            if self.image_mode != 'no_image_model' and 'image_id' in self.example:
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.imageEpochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.imageEpochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
@@ -221,7 +153,7 @@ class DefaultTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             raw_data = json.load(data_file)['images']
             if 'train' in self.datatype:
                 self.data = [d for d in raw_data if d['split'] == 'train']

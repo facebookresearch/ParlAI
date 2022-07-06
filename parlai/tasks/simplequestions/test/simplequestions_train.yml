@@ -1,0 +1,33 @@
+acts:
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - spiritualism
+    reward: 0
+    text: what is the book e about
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - complete madness
+    reward: 0
+    text: to what release does the release track cardiac arrest come from
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - united kingdom
+    reward: 0
+    text: what country was the film the debt from
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - the oath (arranged version) [ffviii]
+    reward: 0
+    text: what songs have nobuo uematsu produced?
+- - episode_done: true
+    id: simplequestions
+    labels:
+    - swizz beatz
+    reward: 0
+    text: Who produced eve-olution?
+num_episodes: 75910
+num_examples: 75910

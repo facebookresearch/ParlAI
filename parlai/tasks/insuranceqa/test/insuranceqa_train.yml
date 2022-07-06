@@ -1,0 +1,65 @@
+acts:
+- - episode_done: true
+    id: insuranceqa
+    labels:
+    - provided that you have name a primarybeneficiary in your life policy then yes
+      the proceeds from that policy upon your death will pass directly to your beneficiary
+      without any trouble from creditor in addition to name a beneficiary it be also
+      a very good idea name a contingient beneficiary who will receive the proceeds
+      if the primary benficiary can not for some reason receive them
+    - life insurance be exempt from creditor in Connecticut if the beneficiary on
+      the policy be not the estate if the insured person pass away with debt and the
+      proceeds of his / her policy go to the estate either because the policy be set
+      up that way or because the beneficiary be no longer live , then the life insurance
+      money will go through probate where creditor can go after it if the beneficiary
+      be a person they not can take it away from that person
+    reward: 0
+    text: be Life Insurance exempt from creditor in Connecticut
+- - episode_done: true
+    id: insuranceqa
+    labels:
+    - not many sovereign nation have retirement plan some have supplemental retirement
+      benefit declare 1 good than another attempt make too broad a statement about
+      the program feature since everyone vary with respect to need its very difficult
+      say 1 country program if 1 exist at all be good than another
+    reward: 0
+    text: which country have the good retirement plan
+- - episode_done: true
+    id: insuranceqa
+    labels:
+    - it simple really contact a broker like myself who be license in your state and
+      start the process you will need all the information on your home such as square
+      footage , foundation type , year build , security system , how many fireplace
+      , story attach garage , etc and your agent or broker will help guide you the
+      rest of the way
+    reward: 0
+    text: how do I purchase homeowner insurance
+- - episode_done: true
+    id: insuranceqa
+    labels:
+    - the factor that determine whether Medicare be primary or secondary be involved
+      e.g. for a business that have over 20 employee eligible for health insurance
+      Medicare be usually primary for those age 65 old if the business have under
+      20 employee the employer plan be primary you can go to this website find out
+      if Medicare be primary secondary payer in your situation WEBSITELINK you can
+      also call 1-800-MEDICARE ask about specific situation
+    reward: 0
+    text: when be Medicare primary or secondary
+- - episode_done: true
+    id: insuranceqa
+    labels:
+    - if you buy a life insurance policy as a nonsmoker legitimately meet the nonsmoker
+      guideline for the rating that you get and then start smoke later your policy
+      will not be voided in fact you will want hang onto it for as long as you can
+      because the rate will be a lot low than the smoker rate you will get on your
+      next policy
+    - do smoking void life insurance it can in 1 way that I know of if you state you
+      be a nonsmoker when actually you be a smoker in my state insurance be regulate
+      state by state , your state may be different if you misstate your smoking status
+      it can void the policy even after 2 year the state consider the contract null
+      and void so just a refund of premium if you decide start smoke after you have
+      purchase life insurance no penalty apply
+    reward: 0
+    text: do smoking void Life Insurance
+num_episodes: 12887
+num_examples: 12887

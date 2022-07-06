@@ -1,0 +1,44 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - area:east
+    - price range:cheap
+    - request:phone
+    - request:postcode
+    id: woz
+    text: 'What is the phone number and postcode of a cheap restaurant in the east
+      part of town?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - price range:moderate
+    id: woz
+    text: 'hello, i''m looking for a restaurant with fair prices
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - area:north
+    id: woz
+    text: 'well I want to eat in the North, what''s up that way?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - food:chinese
+    - request:phone
+    - request:address
+    id: woz
+    text: 'Can I have the address and phone number for the Golden Wok chinese restaurant?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    eval_labels:
+    - request:address
+    id: woz
+    text: 'thank you. what is the address?
+
+      What is the change in the dialogue state?'
+num_episodes: 1117
+num_examples: 1117

@@ -1,0 +1,70 @@
+acts:
+- - context_dataset: empathetic_dialogues
+    convai2: i love acting ! i'll be famous someday . what do you do ?
+    empathetic_dialogues: Any favorite actors?
+    episode_done: false
+    free_message: I like acting, I hope to be an actor, what about you?
+    guided_chosen_suggestion: ' '
+    id: blended_skill_talk
+    labels:
+    - that is ok.  have any kids?
+    text: 'your persona: i''ve 2 kids.
+
+      your persona: i love flowers.
+
+      I love live music, that''s why I try to go to concerts
+
+      I do too. Wat do you like?
+
+      I like acting, I hope to be an actor, what about you?'
+    wizard_of_wikipedia: I would like to develop my acting skills. What are some tips
+      you have to not get nervous?
+- - context_dataset: empathetic_dialogues
+    convai2: no no kids , might get some though . one day
+    empathetic_dialogues: One day.
+    episode_done: false
+    free_message: No, but someday.
+    guided_chosen_suggestion: ' '
+    id: blended_skill_talk
+    labels:
+    - that is good. I have 2
+    text: No, but someday.
+    wizard_of_wikipedia: I will still wimp out. i want to be famous like the rolling
+      stones  though.
+- - context_dataset: empathetic_dialogues
+    convai2: that is great . i am going to a concert later
+    empathetic_dialogues: How long must you attend school?
+    episode_done: false
+    free_message: After I am done with school I plan to have a family.
+    guided_chosen_suggestion: ' '
+    id: blended_skill_talk
+    labels:
+    - that is great! you will be ready
+    text: After I am done with school I plan to have a family.
+    wizard_of_wikipedia: good
+- - context_dataset: empathetic_dialogues
+    convai2: 15 and 17 , two boys sooo fun
+    empathetic_dialogues: 4 and 5 and I have a teenager
+    episode_done: false
+    free_message: I hope so, how old are your kids?
+    guided_chosen_suggestion: ' '
+    id: blended_skill_talk
+    labels:
+    - 5 & 7.  they take up a lot of my time
+    text: I hope so, how old are your kids?
+    wizard_of_wikipedia: Close to 30! I just always have to put in a ton of work when
+      mother's day comes around haha
+- - context_dataset: empathetic_dialogues
+    convai2: they really are . and a handful at times
+    empathetic_dialogues: They are most of the time!
+    episode_done: false
+    free_message: I would imagine. I am sure they a great kids.
+    guided_chosen_suggestion: ' '
+    id: blended_skill_talk
+    labels:
+    - luckily, they love flowers just as much as I do.  we spend a lot of time in
+      the garden
+    text: I would imagine. I am sure they a great kids.
+    wizard_of_wikipedia: They are actually very good with kids!
+num_episodes: 4819
+num_examples: 27018

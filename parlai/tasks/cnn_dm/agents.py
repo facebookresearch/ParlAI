@@ -8,13 +8,16 @@
 
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import unicodedata
 
 
 def _fix_missing_period(line):
-    """Adds a period to a line that is missing a period"""
+    """
+    Adds a period to a line that is missing a period.
+    """
     dm_single_close_quote = u'\u2019'
     dm_double_close_quote = u'\u201d'
     END_TOKENS = [
@@ -60,7 +63,7 @@ class CNNDMTeacher(DialogTeacher):
 
         print('loading: ' + input_path)
 
-        with open(input_path) as stories_file:
+        with PathManager.open(input_path) as stories_file:
             for story in stories_file:
                 try:
                     story_file = open(os.path.join(self.datapath, story.strip()))

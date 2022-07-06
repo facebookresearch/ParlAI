@@ -1,0 +1,138 @@
+acts:
+- - episode_done: false
+    id: dialog_babi_plus
+    label_candidates:
+    - any preference on a type of cuisine
+    - api_call british bombay eight cheap
+    - api_call british bombay eight expensive
+    - api_call british bombay eight moderate
+    - api_call british bombay four cheap
+    - api_call british bombay four expensive
+    - api_call british bombay four moderate
+    - api_call british bombay six cheap
+    - api_call british bombay six expensive
+    - api_call british bombay six moderate
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_2stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_3stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_4stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_5stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_6stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_7stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_8stars'
+    - where should it be
+    - which price range are looking for
+    - you're welcome
+    labels:
+    - hello what can i help you with today
+    reward: 0
+    text: hi
+- - episode_done: false
+    id: dialog_babi_plus
+    label_candidates:
+    - any preference on a type of cuisine
+    - api_call british bombay eight cheap
+    - api_call british bombay eight expensive
+    - api_call british bombay eight moderate
+    - api_call british bombay four cheap
+    - api_call british bombay four expensive
+    - api_call british bombay four moderate
+    - api_call british bombay six cheap
+    - api_call british bombay six expensive
+    - api_call british bombay six moderate
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_2stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_3stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_4stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_5stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_6stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_7stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_8stars'
+    - where should it be
+    - which price range are looking for
+    - you're welcome
+    labels:
+    - i'm on it
+    reward: 0
+    text: can uhm yeah can you book a table
+- - episode_done: false
+    id: dialog_babi_plus
+    label_candidates:
+    - any preference on a type of cuisine
+    - api_call british bombay eight cheap
+    - api_call british bombay eight expensive
+    - api_call british bombay eight moderate
+    - api_call british bombay four cheap
+    - api_call british bombay four expensive
+    - api_call british bombay four moderate
+    - api_call british bombay six cheap
+    - api_call british bombay six expensive
+    - api_call british bombay six moderate
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_2stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_3stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_4stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_5stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_6stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_7stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_8stars'
+    - where should it be
+    - which price range are looking for
+    - you're welcome
+    labels:
+    - any preference on a type of cuisine
+    reward: 0
+    text: <SILENCE>
+- - episode_done: false
+    id: dialog_babi_plus
+    label_candidates:
+    - any preference on a type of cuisine
+    - api_call british bombay eight cheap
+    - api_call british bombay eight expensive
+    - api_call british bombay eight moderate
+    - api_call british bombay four cheap
+    - api_call british bombay four expensive
+    - api_call british bombay four moderate
+    - api_call british bombay six cheap
+    - api_call british bombay six expensive
+    - api_call british bombay six moderate
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_2stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_3stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_4stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_5stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_6stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_7stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_8stars'
+    - where should it be
+    - which price range are looking for
+    - you're welcome
+    labels:
+    - where should it be
+    reward: 0
+    text: i love italian food
+- - episode_done: false
+    id: dialog_babi_plus
+    label_candidates:
+    - any preference on a type of cuisine
+    - api_call british bombay eight cheap
+    - api_call british bombay eight expensive
+    - api_call british bombay eight moderate
+    - api_call british bombay four cheap
+    - api_call british bombay four expensive
+    - api_call british bombay four moderate
+    - api_call british bombay six cheap
+    - api_call british bombay six expensive
+    - api_call british bombay six moderate
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_2stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_3stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_4stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_5stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_6stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_7stars'
+    - 'what do you think of this option: resto_tokyo_moderate_vietnamese_8stars'
+    - where should it be
+    - which price range are looking for
+    - you're welcome
+    labels:
+    - how many people would be in your party
+    reward: 0
+    text: in paris
+num_episodes: 1000
+num_examples: 6024

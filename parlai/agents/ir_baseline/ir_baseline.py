@@ -16,50 +16,58 @@ Given an input message, either:
 
 Currently only (iii) is used.
 
-Additonally, TFIDF is either used (requires building a dictionary) or not,
+Additionally, TFIDF is either used (requires building a dictionary) or not,
 depending on whether you train on the train set first, or not.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import math
 from collections.abc import Sequence
 import heapq
 import json
-import torch
 
+import parlai.utils.torch as torch_utils
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
+from parlai.utils.io import PathManager
 
 
 class MaxPriorityQueue(Sequence):
-    """Fixed-size priority queue keeping the max_size largest items."""
+    """
+    Fixed-size priority queue keeping the max_size largest items.
+    """
 
     def __init__(self, max_size):
-        """Initialize priority queue.
+        """
+        Initialize priority queue.
 
         :param max_size: maximum capacity of priority queue.
         """
         self.capacity = max_size
         self.lst = []
 
-    def add(self, item, priority=None):
-        """Add element to the queue, with a separate priority if desired.
+    def add(self, item, priority):
+        """
+        Add element to the queue, with a separate priority if desired.
 
         Element will not be added if the queue is at capacity and the element
         has lower priority than the lowest currently in the queue.
 
-        :param item: item to add to queue.
-        :param priority: priority to use for item. if None (default), will use
-                         the item itself to calculate its own priority.
+        :param item:
+            item to add to queue.
+        :param priority:
+            priority to use for item.
         """
-        if priority is None:
-            priority = item
         if len(self.lst) < self.capacity:
             heapq.heappush(self.lst, (priority, item))
         elif priority > self.lst[0][0]:
             heapq.heapreplace(self.lst, (priority, item))
 
     def __getitem__(self, key):
-        """Get item at specified index.
+        """
+        Get item at specified index.
 
         :param key: integer index into priority queue, 0 <= index < max_size.
 
@@ -68,16 +76,10 @@ class MaxPriorityQueue(Sequence):
         return sorted(self.lst)[key][1]
 
     def __len__(self):
-        """Return length of priority queue."""
+        """
+        Return length of priority queue.
+        """
         return len(self.lst)
-
-    def __str__(self):
-        """Return str representation of the priority queue in list form."""
-        return str([v for _, v in sorted(self.lst)])
-
-    def __repr__(self):
-        """Return repr representation of the priority queue in list form."""
-        return repr([v for _, v in sorted(self.lst)])
 
 
 stopwords = {
@@ -147,31 +149,31 @@ stopwords = {
 }
 
 
-def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
-    """Calculate the score match between the query representation the text.
+def score_match(query_rep, text, length_penalty, dictionary=None):
+    """
+    Calculate the score match between the query representation the text.
 
-    :param query_rep: base query representation to match text again.
-    :param text: string to comapre against query_rep for matching tokens
-    :param length_penalty: scores are divided by the norm taken to this power
-    :dictionary: optional dictionary to use to tokenize text
-    :debug: flag to enable printing every match
+    :param query_rep:
+        base query representation to match text again.
+    :param text:
+        string to compare against query_rep for matching tokens
+    :param length_penalty:
+        scores are divided by the norm taken to this power
+    :param dictionary:
+        optional dictionary to use to tokenize text
 
-    :returns: float score of match
+    :returns:
+        float score of match
     """
     if text == "":
         return 0
-    if not dictionary:
-        words = text.lower().split(' ')
-    else:
-        words = [w for w in dictionary.tokenize(text.lower())]
+    words = [w for w in dictionary.tokenize(text.lower())]
     score = 0
     rw = query_rep['words']
     used = {}
     for w in words:
         if w in rw and w not in used:
             score += rw[w]
-            if debug:
-                print("match: " + w)
         used[w] = True
     norm = math.sqrt(len(used))
     norm = math.pow(norm * query_rep['norm'], length_penalty)
@@ -180,15 +182,21 @@ def score_match(query_rep, text, length_penalty, dictionary=None, debug=False):
     return score
 
 
-def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
-    """Rank candidates given representation of query.
+def rank_candidates(query_rep, cands, length_penalty, dictionary):
+    """
+    Rank candidates given representation of query.
 
-    :param query_rep: base query representation to match text again.
-    :param cands: strings to compare against query_rep for matching tokens
-    :param length_penalty: scores are divided by the norm taken to this power
-    :dictionary: optional dictionary to use to tokenize text
+    :param query_rep:
+        base query representation to match text again.
+    :param cands:
+        strings to compare against query_rep for matching tokens
+    :param length_penalty:
+        scores are divided by the norm taken to this power
+    :dictionary:
+        dictionary to use to tokenize text
 
-    :returns: ordered list of candidate strings in score-ranked order
+    :returns:
+        ordered list of candidate strings in score-ranked order
     """
     if True:
         mpq = MaxPriorityQueue(100)
@@ -209,11 +217,17 @@ def rank_candidates(query_rep, cands, length_penalty, dictionary=None):
 
 
 class IrBaselineAgent(Agent):
-    """Information Retrieval baseline."""
+    """
+    Information Retrieval baseline.
+    """
 
-    @staticmethod
-    def add_cmdline_args(parser):
-        """Add command line args specific to this agent."""
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command line args specific to this agent.
+        """
         parser = parser.add_argument_group('IrBaseline Arguments')
         parser.add_argument(
             '-lp',
@@ -236,9 +250,17 @@ class IrBaselineAgent(Agent):
             default=None,
             help='file of candidate responses to choose from',
         )
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
+
+    @classmethod
+    def dictionary_class(cls):
+        return DictionaryAgent
 
     def __init__(self, opt, shared=None):
-        """Initialize agent."""
+        """
+        Initialize agent.
+        """
         super().__init__(opt)
         self.id = 'IRBaselineAgent'
         self.length_penalty = float(opt['length_penalty'])
@@ -251,13 +273,17 @@ class IrBaselineAgent(Agent):
             self.label_candidates = f.read().split('\n')
 
     def reset(self):
-        """Reset agent properties."""
+        """
+        Reset agent properties.
+        """
         self.observation = None
         self.history = []
         self.episodeDone = True
 
     def observe(self, obs):
-        """Store and remember incoming observation message dict."""
+        """
+        Store and remember incoming observation message dict.
+        """
         self.observation = obs
         self.dictionary.observe(obs)
         if self.episodeDone:
@@ -268,7 +294,9 @@ class IrBaselineAgent(Agent):
         return obs
 
     def act(self):
-        """Generate a response to the previously seen observation(s)."""
+        """
+        Generate a response to the previously seen observation(s).
+        """
         if self.opt.get('datatype', '').startswith('train'):
             self.dictionary.act()
 
@@ -292,28 +320,24 @@ class IrBaselineAgent(Agent):
                 rep, cands, self.length_penalty, self.dictionary
             )
             reply['text'] = reply['text_candidates'][0]
-        else:
-            reply['text'] = "I don't know."
         return reply
 
     def save(self, path=None):
-        """Save dictionary tokenizer if available."""
+        """
+        Save dictionary tokenizer if available.
+        """
         path = self.opt.get('model_file', None) if path is None else path
         if path:
             self.dictionary.save(path + '.dict')
             data = {}
             data['opt'] = self.opt
-            with open(path, 'wb') as handle:
-                torch.save(data, handle)
-            with open(path + '.opt', 'w') as handle:
+            torch_utils.atomic_save(data, path)
+            with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
-    def load(self, fname):
-        """Load internal dictionary."""
-        self.dictionary.load(fname + '.dict')
-
     def build_query_representation(self, query):
-        """Build representation of query, e.g. words or n-grams.
+        """
+        Build representation of query, e.g. words or n-grams.
 
         :param query: string to represent.
 
@@ -326,11 +350,8 @@ class IrBaselineAgent(Agent):
         rw = rep['words']
         used = {}
         for w in words:
-            if len(self.dictionary.freqs()) > 0:
-                rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freqs()[w]))
-            else:
-                if w not in stopwords:
-                    rw[w] = 1
+            assert len(self.dictionary.freq) > 0
+            rw[w] = 1.0 / (1.0 + math.log(1.0 + self.dictionary.freq[w]))
             used[w] = True
         rep['norm'] = math.sqrt(len(words))
         return rep

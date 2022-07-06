@@ -4,7 +4,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from parlai.core.agents import Teacher
+from parlai.core.teachers import Teacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -31,10 +32,12 @@ def _path(opt, task_size='small'):
     return data_path
 
 
-class TaskNTalkTeacher(Teacher):
-    """TaskNTalk basic teacher, it picks a random image and associates
-    a random task with it. Metric updates and observation are to be
-    implemented.
+class AbstractTaskNTalk(Teacher):
+    """
+    TaskNTalk basic teacher, it picks a random image and associates a random task with
+    it.
+
+    Metric updates and observation are to be implemented.
     """
 
     def __init__(self, opt, shared=None):
@@ -48,9 +51,11 @@ class TaskNTalkTeacher(Teacher):
             self.task_index = shared['task_index']
 
     def _setup_data(self, data_path):
-        """Read the json file and store images and task definitions."""
+        """
+        Read the json file and store images and task definitions.
+        """
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             json_data = json.load(data_file)
             self.data = json_data['data']
             self.task_defn = json_data['task_defn']
@@ -59,7 +64,9 @@ class TaskNTalkTeacher(Teacher):
         random.shuffle(self.data)
 
     def share(self):
-        """Share images and task definitions with other teachers."""
+        """
+        Share images and task definitions with other teachers.
+        """
         shared = super().share()
         shared['data'] = self.data
         shared['task_defn'] = self.task_defn
@@ -70,13 +77,17 @@ class TaskNTalkTeacher(Teacher):
         return len(self.data)
 
     def observe(self, observation):
-        """Process observation for metrics."""
+        """
+        Process observation for metrics.
+        """
         self.observation = observation
         # TODO(kd): update metrics
         return observation
 
     def act(self):
-        """Select random image and associate random task with it."""
+        """
+        Select random image and associate random task with it.
+        """
         image = random.choice(self.data)
         task = random.choice(self.task_defn)
         labels = [image[self.task_index[attr]] for attr in task]
@@ -90,16 +101,20 @@ class TaskNTalkTeacher(Teacher):
         return action
 
 
-class SmallTeacher(TaskNTalkTeacher):
-    """Teacher for small dataset, invoked by ``taskntalk:small``."""
+class SmallTeacher(AbstractTaskNTalk):
+    """
+    Teacher for small dataset, invoked by ``taskntalk:small``.
+    """
 
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path(opt, 'small')
         super().__init__(opt, shared)
 
 
-class LargeTeacher(TaskNTalkTeacher):
-    """Teacher for large dataset, invoked by ``taskntalk:large``."""
+class LargeTeacher(AbstractTaskNTalk):
+    """
+    Teacher for large dataset, invoked by ``taskntalk:large``.
+    """
 
     def __init__(self, opt, shared=None):
         opt['datafile'] = _path(opt, 'large')
@@ -107,6 +122,8 @@ class LargeTeacher(TaskNTalkTeacher):
 
 
 class DefaultTeacher(SmallTeacher):
-    """Default teacher for small dataset, invoked by ``taskntalk``."""
+    """
+    Default teacher for small dataset, invoked by ``taskntalk``.
+    """
 
     pass

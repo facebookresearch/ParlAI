@@ -22,7 +22,7 @@ def _path(opt):
     elif dt != 'train' and dt != 'test':
         raise RuntimeError('Not valid datatype.')
 
-    prefix = os.path.join(opt['datapath'], 'nlvr', 'nlvr-master')
+    prefix = os.path.join(opt['datapath'], 'nlvr', 'nlvr-master', 'nlvr')
     questions_path = os.path.join(prefix, dt, dt + '.json')
     images_path = os.path.join(prefix, dt, 'images')
 

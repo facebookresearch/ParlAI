@@ -8,10 +8,16 @@
 # See: https://arxiv.org/abs/1709.03856
 # TODO: move this over to TorchRankerAgent when it is ready.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from parlai.utils.misc import maintain_dialog_history, load_cands
 from parlai.core.torch_agent import TorchAgent
+from parlai.utils.io import PathManager
+import parlai.utils.torch as torch_utils
+import parlai.utils.logging as logging
 from .modules import Starspace
 
 import torch
@@ -20,24 +26,24 @@ import torch.nn as nn
 from collections import deque
 
 import copy
-import os
 import random
 import json
 
 
 class StarspaceAgent(Agent):
-    """Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856
+    """
+    Simple implementation of the starspace algorithm: https://arxiv.org/abs/1709.03856.
     """
 
     OPTIM_OPTS = {
-        'adadelta': optim.Adadelta,
-        'adagrad': optim.Adagrad,
+        'adadelta': optim.Adadelta,  # type: ignore
+        'adagrad': optim.Adagrad,  # type: ignore
         'adam': optim.Adam,
-        'adamax': optim.Adamax,
-        'asgd': optim.ASGD,
-        'lbfgs': optim.LBFGS,
-        'rmsprop': optim.RMSprop,
-        'rprop': optim.Rprop,
+        'adamax': optim.Adamax,  # type: ignore
+        'asgd': optim.ASGD,  # type: ignore
+        'lbfgs': optim.LBFGS,  # type: ignore
+        'rmsprop': optim.RMSprop,  # type: ignore
+        'rprop': optim.Rprop,  # type: ignore
         'sgd': optim.SGD,
     }
 
@@ -45,10 +51,14 @@ class StarspaceAgent(Agent):
     def dictionary_class():
         return DictionaryAgent
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        """Add command-line arguments specifically for this agent."""
-        agent = argparser.add_argument_group('StarSpace Arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command-line arguments specifically for this agent.
+        """
+        agent = parser.add_argument_group('StarSpace Arguments')
         agent.add_argument(
             '-emb',
             '--embedding-type',
@@ -57,7 +67,6 @@ class StarspaceAgent(Agent):
                 'random',
                 'glove',
                 'glove-fixed',
-                'glove-twitter-fixed',
                 'fasttext',
                 'fasttext-fixed',
                 'fasttext_cc',
@@ -171,10 +180,13 @@ class StarspaceAgent(Agent):
             type=str,
             help='File of cands to use for prediction',
         )
-        StarspaceAgent.dictionary_class().add_cmdline_args(argparser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def __init__(self, opt, shared=None):
-        """Set up model if shared params not set, otherwise no work to do."""
+        """
+        Set up model if shared params not set, otherwise no work to do.
+        """
         super().__init__(opt, shared)
         opt = self.opt
         self.reset_metrics()
@@ -185,17 +197,15 @@ class StarspaceAgent(Agent):
         self.ys_cache_sz = opt['cache_size']
         self.truncate = opt['truncate'] if opt['truncate'] > 0 else None
         self.history = {}
-        self.debugMode = False
         if shared:
-            torch.set_num_threads(1)
             # set up shared properties
             self.dict = shared['dict']
             self.model = shared['model']
         else:
-            print("[ creating StarspaceAgent ]")
+            logging.info("creating StarspaceAgent")
             # this is not a shared instance of this class, so do full init
             if opt.get('model_file') and (
-                os.path.isfile(opt.get('model_file') + '.dict')
+                PathManager.exists(opt.get('model_file') + '.dict')
                 or (opt['dict_file'] is None)
             ):
                 # set default dict-file if not set
@@ -204,7 +214,7 @@ class StarspaceAgent(Agent):
             self.dict = DictionaryAgent(opt)
 
             self.model = Starspace(opt, len(self.dict), self.dict)
-            if opt.get('model_file') and os.path.isfile(opt['model_file']):
+            if opt.get('model_file') and PathManager.exists(opt['model_file']):
                 self.load(opt['model_file'])
             else:
                 self._init_embeddings()
@@ -223,10 +233,11 @@ class StarspaceAgent(Agent):
             for c in self.fixedCands_txt:
                 fcs.append(torch.LongTensor(self.parse(c)).unsqueeze(0))
             self.fixedCands = fcs
-            print("[loaded candidates]")
+            logging.info("loaded candidates")
 
-    def _init_embeddings(self, log=True):
-        """Copy embeddings from the pretrained embeddings to the lookuptable.
+    def _init_embeddings(self):
+        """
+        Copy embeddings from the pretrained embeddings to the lookuptable.
 
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
@@ -244,14 +255,15 @@ class StarspaceAgent(Agent):
                 )
                 weight.data[i] = vec
                 cnt += 1
-        if log:
-            print(
-                'Initialized embeddings for {} tokens ({}%) from {}.'
-                ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
-            )
+        logging.info(
+            'Initialized embeddings for {} tokens ({}%) from {}.'
+            ''.format(cnt, round(cnt * 100 / len(self.dict), 1), name)
+        )
 
     def reset(self):
-        """Reset observation and episode_done."""
+        """
+        Reset observation and episode_done.
+        """
         self.observation = None
         self.episode_done = True
         # set up optimizer
@@ -261,17 +273,20 @@ class StarspaceAgent(Agent):
         self.optimizer = optim_class(self.model.parameters(), **kwargs)
 
     def share(self):
-        """Share internal states between parent and child instances."""
+        """
+        Share internal states between parent and child instances.
+        """
         shared = super().share()
         shared['dict'] = self.dict
         shared['model'] = self.model
         return shared
 
     def override_opt(self, new_opt):
-        """Set overridable opts from loaded opt file.
+        """
+        Set overridable opts from loaded opt file.
 
-        Print out each added key and each overriden key.
-        Only override args specific to the model.
+        Print out each added key and each overridden key. Only override args specific to
+        the model.
         """
         model_args = {'embeddingsize', 'optimizer'}
         for k, v in new_opt.items():
@@ -279,9 +294,9 @@ class StarspaceAgent(Agent):
                 # skip non-model args
                 continue
             if k not in self.opt:
-                print('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
+                logging.warning('Adding new option [ {k}: {v} ]'.format(k=k, v=v))
             elif self.opt[k] != v:
-                print(
+                logging.warning(
                     'Overriding option [ {k}: {old} => {v}]'.format(
                         k=k, old=self.opt[k], v=v
                     )
@@ -290,18 +305,18 @@ class StarspaceAgent(Agent):
         return self.opt
 
     def parse(self, text):
-        """Convert string to token indices."""
+        """
+        Convert string to token indices.
+        """
         vec = self.dict.txt2vec(text)
         if vec == []:
             vec = [self.dict[self.dict.null_token]]
         return vec
 
-    def t2v(self, text):
-        p = self.dict.txt2vec(text)
-        return torch.LongTensor(p).unsqueeze(1)
-
     def v2t(self, vec):
-        """Convert token indices to string of tokens."""
+        """
+        Convert token indices to string of tokens.
+        """
         new_vec = []
         for i in vec:
             new_vec.append(i)
@@ -349,25 +364,6 @@ class StarspaceAgent(Agent):
                 negs.append(query)
         return negs
 
-    def dict_neighbors(self, word, useRHS=False):
-        input = self.t2v(word)
-        W = self.model.encoder.lt.weight
-        q = W[input.data[0][0]]
-        if useRHS:
-            W = self.model.encoder2.lt.weight
-        score = torch.Tensor(W.size(0))
-        for i in range(W.size(0)):
-            score[i] = torch.nn.functional.cosine_similarity(q, W[i], dim=0).item()
-        val, ind = score.sort(descending=True)
-        for i in range(20):
-            print(
-                str(ind[i])
-                + " ["
-                + str(val[i])
-                + "]: "
-                + self.v2t(torch.Tensor([ind[i]]))
-            )
-
     def compute_metrics(self, loss, scores):
         metrics = {}
         pos = scores[0]
@@ -399,10 +395,11 @@ class StarspaceAgent(Agent):
         return xs2, ys2, negs2
 
     def predict(self, xs, ys=None, cands=None, cands_txt=None, obs=None):
-        """Produce a prediction from our model.
+        """
+        Produce a prediction from our model.
 
-        Update the model using the targets if available, otherwise rank
-        candidates as well if they are available and param is set.
+        Update the model using the targets if available, otherwise rank candidates as
+        well if they are available and param is set.
         """
         is_training = ys is not None
         if is_training:
@@ -413,14 +410,7 @@ class StarspaceAgent(Agent):
                 if self.opt.get('input_dropout', 0) > 0:
                     xs, ys, negs = self.input_dropout(xs, ys, negs)
                 xe, ye = self.model(xs, ys, negs)
-                if self.debugMode:
-                    # print example
-                    print("inp: " + self.v2t(xs.squeeze()))
-                    print("pos: " + self.v2t(ys.squeeze()))
-                    for c in negs:
-                        print("neg: " + self.v2t(c.squeeze()))
-                    print("---")
-                y = -torch.ones(xe.size(0))
+                y = -(torch.ones(xe.size(0)))
                 y[0] = 1
                 loss = self.criterion(xe, ye, y)
                 loss.backward()
@@ -442,7 +432,7 @@ class StarspaceAgent(Agent):
                     xe, ye = self.model(xs, ys, self.fixedCands)
                     self.fixedX = ye
                 else:
-                    # fixed candidate embed vectors are cached, dont't recompute
+                    # fixed candidate embed vectors are cached, don't recompute
                     blah = torch.LongTensor([1])
                     xe, ye = self.model(xs, ys, [blah])
                     ye = self.fixedX
@@ -450,7 +440,7 @@ class StarspaceAgent(Agent):
                 # test set prediction uses candidates
                 xe, ye = self.model(xs, ys, cands[0])
             pred = nn.CosineSimilarity().forward(xe, ye)
-            # This is somewhat costly which we could avoid if we do not evalute ranking.
+            # This is somewhat costly which we could avoid if we do not evaluate ranking.
             # i.e. by only doing: val,ind = pred.max(0)
             val, ind = pred.sort(descending=True)
             # predict the highest scoring candidate, and return it.
@@ -463,7 +453,9 @@ class StarspaceAgent(Agent):
         return [{'id': self.getID()}]
 
     def vectorize(self, observations):
-        """Convert a list of observations into input & target tensors."""
+        """
+        Convert a list of observations into input & target tensors.
+        """
 
         def valid(obs):
             # check if this is an example our model should actually process
@@ -555,27 +547,31 @@ class StarspaceAgent(Agent):
         # call batch_act with this batch of one
         return self.batch_act([self.observation])[0]
 
-    def shutdown(self):
-        # """Save the state of the model when shutdown."""
-        super().shutdown()
-
     def save(self, path=None):
-        """Save model parameters if model_file is set."""
+        """
+        Save model parameters if model_file is set.
+        """
         path = self.opt.get('model_file', None) if path is None else path
         if path and hasattr(self, 'model'):
             data = {}
             data['model'] = self.model.state_dict()
             data['optimizer'] = self.optimizer.state_dict()
             data['opt'] = self.opt
-            with open(path, 'wb') as handle:
-                torch.save(data, handle)
-            with open(path + '.opt', 'w') as handle:
+            torch_utils.atomic_save(data, path)
+            with PathManager.open(path + '.opt', 'w') as handle:
                 json.dump(self.opt, handle)
 
     def load(self, path):
-        """Return opt and model states."""
+        """
+        Return opt and model states.
+        """
         print('Loading existing model params from ' + path)
-        data = torch.load(path, map_location=lambda cpu, _: cpu)
+        import parlai.utils.pickle
+
+        with PathManager.open(path, 'rb') as f:
+            data = torch.load(
+                f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
+            )
         self.model.load_state_dict(data['model'])
         self.reset()
         self.optimizer.load_state_dict(data['optimizer'])

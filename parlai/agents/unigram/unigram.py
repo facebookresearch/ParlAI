@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 """
-Baseline model which always emits the N most common non-punctuation
-unigrams. Typically this is mostly stopwords. This model is a poor
-conversationalist, but may get reasonable F1.
+Baseline model which always emits the N most common non-punctuation unigrams. Typically
+this is mostly stopwords. This model is a poor conversationalist, but may get reasonable
+F1.
 
 UnigramAgent has one option, --num-words, which controls the unigrams
 outputted.
@@ -15,23 +15,30 @@ outputted.
 This also makes a nice reference for a simple, minimalist agent.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import json
 import re
 from parlai.core.agents import Agent
 from parlai.core.dict import DictionaryAgent
 from itertools import islice
+from parlai.utils.io import PathManager
 
 
 class UnigramAgent(Agent):
     @classmethod
-    def add_cmdline_args(cls, parser):
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         """
-        Adds command line arguments
+        Adds command line arguments.
         """
         parser.add_argument(
             '--num-words', type=int, default=10, help='Number of unigrams to output.'
         )
-        cls.dictionary_class().add_cmdline_args(parser)
+        cls.dictionary_class().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     @classmethod
     def dictionary_class(cls):
@@ -58,17 +65,22 @@ class UnigramAgent(Agent):
             self.dict = self.dictionary_class()(opt)
 
     def share(self):
-        """Basic sharing function."""
+        """
+        Basic sharing function.
+        """
         return {'dict': self.dict}
 
     def observe(self, obs):
-        """Stub observe method."""
+        """
+        Stub observe method.
+        """
         self.observation = obs
 
     def is_valid_word(self, word):
         """
-        Marks whether a string may be included in the unigram list. Used to
-        filter punctuation and special tokens.
+        Marks whether a string may be included in the unigram list.
+
+        Used to filter punctuation and special tokens.
         """
         return (
             not word.startswith('__') and word != '\n' and not re.match(r'[^\w]', word)
@@ -97,22 +109,23 @@ class UnigramAgent(Agent):
 
     def save(self, path=None):
         """
-        Stub save which dumps options. Necessary for evaluation scripts to
-        load the model.
+        Stub save which dumps options.
+
+        Necessary for evaluation scripts to load the model.
         """
         if not path:
             return
 
-        with open(path, 'w') as f:
+        with PathManager.open(path, 'w') as f:
             f.write(self.get_prediction() + '\n')
 
-        with open(path + '.opt', 'w') as f:
+        with PathManager.open(path + '.opt', 'w') as f:
             json.dump(self.opt, f)
 
     def load(self, path):
         """
-        Stub load which ignores the model on disk, as UnigramAgent depends
-        on the dictionary, which is saved elsewhere.
+        Stub load which ignores the model on disk, as UnigramAgent depends on the
+        dictionary, which is saved elsewhere.
         """
         # we rely on the dict, so we don't actually need to load anything
         pass

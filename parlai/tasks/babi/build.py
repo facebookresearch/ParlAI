@@ -6,8 +6,17 @@
 #
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/babi/babi.tar.gz',
+        'babi.tar.gz',
+        'f7f0bee187efca0d81c3daac1b162cda4eb7f9505dee5ad6846eabbed3dbf92e',
+    )
+]
 
 
 def build(opt):
@@ -22,10 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'babi.tar.gz'
-        url = 'http://parl.ai/downloads/babi/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

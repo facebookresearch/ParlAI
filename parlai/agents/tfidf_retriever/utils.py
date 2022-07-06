@@ -4,18 +4,15 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""Various retriever utilities."""
+"""
+Various retriever utilities.
+"""
 
 import regex
 import unicodedata
 import numpy as np
 import scipy.sparse as sp
 from sklearn.utils import murmurhash3_32
-
-try:
-    import torch
-except ImportError:
-    raise ImportError('Need to install Pytorch: go to pytorch.org')
 
 
 # ------------------------------------------------------------------------------
@@ -34,16 +31,6 @@ def save_sparse_csr(filename, matrix, metadata=None):
     np.savez(filename, **data)
 
 
-def save_sparse_tensor(filename, matrix, metadata=None):
-    data = {
-        'indices': matrix._indices(),
-        'values': matrix._values(),
-        'size': matrix.size(),
-        'metadata': metadata,
-    }
-    torch.save(data, filename)
-
-
 def load_sparse_csr(filename):
     loader = np.load(filename + '.npz', allow_pickle=True)
     matrix = sp.csr_matrix(
@@ -52,21 +39,15 @@ def load_sparse_csr(filename):
     return matrix, loader['metadata'].item(0) if 'metadata' in loader else None
 
 
-def load_sparse_tensor(filename):
-    loader = torch.load(filename)
-    matrix = torch.sparse.FloatTensor(
-        loader['indices'], loader['values'], loader['size']
-    )
-    return matrix, loader['metadata'] if 'metadata' in loader else None
-
-
 # ------------------------------------------------------------------------------
 # Token hashing.
 # ------------------------------------------------------------------------------
 
 
 def hash(token, num_buckets):
-    """Unsigned 32 bit murmurhash for feature hashing."""
+    """
+    Unsigned 32 bit murmurhash for feature hashing.
+    """
     return murmurhash3_32(token, positive=True) % num_buckets
 
 
@@ -242,14 +223,18 @@ STOPWORDS = {
 
 
 def normalize(text):
-    """Resolve different type of unicode encodings."""
+    """
+    Resolve different type of unicode encodings.
+    """
     if type(text) != str:
         return text
     return unicodedata.normalize('NFD', text)
 
 
 def filter_word(text):
-    """Take out english stopwords, punctuation, and compound endings."""
+    """
+    Take out english stopwords, punctuation, and compound endings.
+    """
     text = normalize(text)
     if regex.match(r'^\p{P}+$', text):
         return True
@@ -259,21 +244,19 @@ def filter_word(text):
 
 
 def filter_ngram(gram, mode='any'):
-    """Decide whether to keep or discard an n-gram.
-
-    Args:
-        gram: list of tokens (length N)
-        mode: Option to throw out ngram if
-          'any': any single token passes filter_word
-          'all': all tokens pass filter_word
-          'ends': book-ended by filterable tokens
     """
-    filtered = [filter_word(w) for w in gram]
-    if mode == 'any':
-        return any(filtered)
-    elif mode == 'all':
-        return all(filtered)
-    elif mode == 'ends':
-        return filtered[0] or filtered[-1]
-    else:
-        raise ValueError('Invalid mode: %s' % mode)
+    Decide whether to keep or discard an n-gram.
+
+    :param gram:
+        list of tokens (length N)
+    """
+    return any(filter_word(w) for w in gram)
+
+
+def cosine_similarity(vec1, vec2) -> float:
+    """
+    Cosine similarity between two scipy sparse row matricies.
+    """
+    numerator = np.dot(vec1, vec2.transpose())[0, 0]
+    denominator = np.linalg.norm(vec1.data) * np.linalg.norm(vec2.data)
+    return numerator / max(denominator, 1e-8)

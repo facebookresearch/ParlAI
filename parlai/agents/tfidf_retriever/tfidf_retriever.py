@@ -4,25 +4,20 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-try:
-    import regex  # noqa: F401
-    import scipy  # noqa: F401
-    import sklearn  # noqa: F401
-    import unicodedata  # noqa: F401
-    import pexpect  # noqa: F401
-except ImportError:
-    raise ImportError(
-        'Please `pip install regex scipy scikit-learn pexpect`'
-        ' to use the tfidf_retriever agent.'
-    )
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
+import regex  # noqa: F401
+import scipy  # noqa: F401
+import sklearn  # noqa: F401
+import unicodedata  # noqa: F401
 
 from parlai.core.agents import Agent
+from parlai.utils.io import PathManager
 from parlai.utils.misc import AttrDict
 from .doc_db import DocDB
 from .tfidf_doc_ranker import TfidfDocRanker
 from .build_tfidf import run as build_tfidf
-from .build_tfidf import live_count_matrix, get_tfidf_matrix
-from numpy.random import choice
 from collections import deque
 import math
 import random
@@ -32,7 +27,8 @@ import sqlite3
 
 
 class TfidfRetrieverAgent(Agent):
-    """TFIDF-based retriever agent.
+    """
+    TFIDF-based retriever agent.
 
     If given a task to specify, will first store entries of that task into
     a SQLite database and then build a sparse tfidf matrix of those entries.
@@ -50,8 +46,10 @@ class TfidfRetrieverAgent(Agent):
     '--retriever-task' argument and switch '--retriever-mode' to 'keys'.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         parser = parser.add_argument_group('Retriever Arguments')
         parser.add_argument(
             '--retriever-numworkers',
@@ -75,19 +73,13 @@ class TfidfRetrieverAgent(Agent):
             '--retriever-tokenizer',
             type=str,
             default='simple',
-            help='String option specifying tokenizer type to use ' '(e.g. "corenlp")',
+            help='String option specifying tokenizer type to use.',
         )
         parser.add_argument(
             '--retriever-num-retrieved',
             default=5,
             type=int,
             help='How many docs to retrieve.',
-        )
-        parser.add_argument(
-            '--retriever-mode',
-            choices=['keys', 'values'],
-            default='values',
-            help='Whether to retrieve the stored key or the stored value.',
         )
         parser.add_argument(
             '--remove-title',
@@ -107,10 +99,10 @@ class TfidfRetrieverAgent(Agent):
             '--index-by-int-id',
             type='bool',
             default=True,
-            help='Whether to index into database by doc id as an integer. This \
-                  defaults to true for DBs built using ParlAI; for the DrQA \
-                  wiki dump, it is necessary to set this to False to \
-                  index into the DB appropriately',
+            help=(
+                'Whether to index into database by doc id as an integer. This '
+                'defaults to true for DBs built using ParlAI.'
+            ),
         )
         parser.add_argument(
             '--tfidf-context-length',
@@ -189,12 +181,6 @@ class TfidfRetrieverAgent(Agent):
         self.current = []
         self.context = deque(maxlen=self.context_length)
 
-    def train(self, mode=True):
-        self.training = mode
-
-    def eval(self):
-        self.training = False
-
     def doc2txt(self, docid):
         if not self.opt.get('index_by_int_id', True):
             docid = self.ranker.get_doc_id(docid)
@@ -217,21 +203,19 @@ class TfidfRetrieverAgent(Agent):
 
     def save(self, path=None):
         self.rebuild()
-        with open(self.opt['model_file'] + '.opt', 'w') as handle:
+        with PathManager.open(self.opt['model_file'] + '.opt', 'w') as handle:
             json.dump(self.opt, handle)
-        with open(self.opt['model_file'], 'w') as f:
+        with PathManager.open(self.opt['model_file'], 'w') as f:
             f.write('\n')
 
     def train_act(self):
         if (
             'ordered' not in self.opt.get('datatype', 'train:ordered')
             or self.opt.get('batchsize', 1) != 1
-            or self.opt.get('numthreads', 1) != 1
             or self.opt.get('num_epochs', 1) != 1
         ):
             raise RuntimeError(
-                'Need to set --batchsize 1, --numthreads 1, \
-            --datatype train:ordered, --num_epochs 1'
+                'Need to set --batchsize 1, --datatype train:ordered, --num_epochs 1'
             )
         obs = self.observation
         self.current.append(obs)
@@ -273,39 +257,7 @@ class TfidfRetrieverAgent(Agent):
             doc_ids, doc_scores = self.ranker.closest_docs(
                 obs['text'], self.opt.get('retriever_num_retrieved', 5)
             )
-
-            if False and obs.get('label_candidates'):  # TODO: Alex (doesn't work)
-                # these are better selection than stored facts
-                # rank these options instead
-                cands = obs['label_candidates']
-                cands_id = id(cands)
-                if cands_id not in self.cands_hash:
-                    # cache candidate set
-                    # will not update if cand set changes contents
-                    c_list = list(cands)
-                    self.cands_hash[cands_id] = (
-                        get_tfidf_matrix(live_count_matrix(self.tfidf_args, c_list)),
-                        c_list,
-                    )
-                c_ids, c_scores = self.ranker.closest_docs(
-                    obs['text'],
-                    self.opt.get('retriever_num_retrieved', 5),
-                    matrix=self.cands_hash[cands_id][0],
-                )
-                reply['text_candidates'] = [
-                    self.cands_hash[cands_id][1][cid] for cid in c_ids
-                ]
-                reply['candidate_scores'] = c_scores
-                if len(reply['text_candidates']) > 0:
-                    reply['text'] = reply['text_candidates'][0]
-                else:
-                    reply['text'] = ''
-            elif len(doc_ids) > 0:
-                # return stored fact
-                # total = sum(doc_scores)
-                # doc_probs = [d / total for d in doc_scores]
-
-                # returned
+            if len(doc_ids) > 0:
                 picks = [self.doc2txt(int(did)) for did in doc_ids]
                 pick = self.doc2txt(int(doc_ids[0]))  # select best response
 
@@ -313,20 +265,9 @@ class TfidfRetrieverAgent(Agent):
                     picks = ['\n'.join(p.split('\n')[1:]) for p in picks]
                     pick = '\n'.join(pick.split('\n')[1:])
                 reply['text_candidates'] = picks
-                reply['candidate_scores'] = doc_scores
+                reply['candidate_scores'] = doc_scores.tolist()
 
-                # could pick single choice based on probability scores?
-                # pick = int(choice(doc_ids, p=doc_probs))
                 reply['text'] = pick
-            else:
-                # no cands and nothing found, return generic response
-                reply['text'] = choice(
-                    [
-                        'Can you say something more interesting?',
-                        'Why are you being so short with me?',
-                        'What are you really thinking?',
-                        'Can you expand on that?',
-                    ]
-                )
+                reply['candidate_ids'] = doc_ids.tolist()
 
         return reply

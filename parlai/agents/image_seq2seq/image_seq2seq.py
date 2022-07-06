@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+"""
+Image+Seq2Seq Agent.
+"""
+
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
+from typing import Dict, List, Tuple
+
+import torch
+
+from .modules import ImageSeq2seqModel, FusionType
+from parlai.agents.transformer.transformer import TransformerGeneratorAgent
+from parlai.core.dict import DictionaryAgent
+from parlai.core.torch_agent import Batch
+from parlai.core.torch_image_agent import TorchImageAgent
+
+
+TOKEN_IMAGE = '__image__'
+TOKEN_NO_IMAGE = '__no_image__'
+
+
+class ImageSeq2seqAgent(TransformerGeneratorAgent, TorchImageAgent):
+    """
+    ImageSeq2seqAgent Agent.
+
+    Combines a transformer generator with images.
+    """
+
+    def build_model(self) -> ImageSeq2seqModel:  # type: ignore
+        """
+        Override to build appropriate model.
+        """
+        self.model = ImageSeq2seqModel(self.opt, self.dict)
+        if self.opt['embedding_type'] != 'random':
+            self._copy_embeddings(
+                self.model.embeddings.weight, self.opt['embedding_type']
+            )
+        return self.model
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Override to add one arg.
+        """
+        TransformerGeneratorAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        TorchImageAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group('Image Encoder Args')
+        group.add_argument(
+            '--include-image-token',
+            type='bool',
+            default=True,
+            recommended=True,
+            help='if true, include image token (or no image token) for each example',
+        )
+        group.add_argument(
+            '--image-fusion-type',
+            type=str,
+            default='late',
+            choices=[f.value for f in FusionType],
+            help='which fusion type to use',
+        )
+        return group
+
+    def build_dictionary(self) -> DictionaryAgent:
+        """
+        Override to include image tokens.
+        """
+        self.dict = super().build_dictionary()
+        if self.opt.get('include_image_token') and TOKEN_IMAGE not in self.dict:
+            self.dict[TOKEN_IMAGE] = 1
+            self.dict[TOKEN_NO_IMAGE] = 1
+
+        return self.dict
+
+    def _set_text_vec(self, *args, **kwargs) -> dict:
+        """
+        Override to include image token.
+        """
+        obs = super()._set_text_vec(*args, **kwargs)
+        if 'text' not in obs or 'text_vec' not in obs:
+            return obs
+        if self.opt.get('include_image_token', False):
+            # `truncate` is the third arg to this function
+            truncate = args[2] - 1 if args[2] is not None else None
+            vec = torch.LongTensor(  # type: ignore
+                self._check_truncate(obs['text_vec'], truncate, True)
+            )
+            token = TOKEN_NO_IMAGE
+            if obs.get('image', None) is not None:
+                token = TOKEN_IMAGE
+            obs.force_set(
+                'text_vec',
+                torch.cat([vec, vec.new_tensor(self.dict[token]).unsqueeze(0)], 0),
+            )
+        return obs
+
+    def batchify_image_features(self, batch: Batch) -> Batch:
+        """
+        Format and return the batched image features.
+
+        Image features represented by tensors will set to the right type.
+        """
+        if type(batch.image) == list and any(b is not None for b in batch.image):
+            images = []
+            for img in batch.image:
+                if isinstance(img, torch.Tensor):
+                    img = self._process_image_features(img)
+                images.append(img)
+            batch.image = images
+        else:
+            images = [None] * len(batch.valid_indices)
+            batch.image = images
+        return batch
+
+    def _process_image_features(self, features: torch.Tensor) -> torch.Tensor:
+        """
+        Format shape and type of input image-feature tensor.
+
+        Override TorchImageAgent._process_image_features to handle multi-dimensional
+        images.
+        """
+        features = features.view(-1, self.image_features_dim)
+        return torch.stack(
+            [
+                TorchImageAgent._process_image_features(self, features[i])
+                for i in range(features.size(0))
+            ]
+        )
+
+    def _model_input(self, batch: Batch) -> Tuple[torch.Tensor, List[object]]:
+        return (batch.text_vec, batch.image)
+
+    def load_state_dict(self, state_dict: Dict[str, torch.Tensor]):
+        """
+        Override for custom loading.
+
+        Reasons:
+            1. When using an init model without an image encoder
+            2. We decide to add segment embeddings after the fact.
+            3. When using an init model with only an encoder provided
+                In this case, we may need to add the START token to the state_dict
+            4. When using an init model without image tokens in the embeddings.
+                This is only the case if the embs differ by 2 in dimension 0
+        """
+        state_dict['encoder.dummy_image_enc'] = self.model.encoder.dummy_image_enc
+        state_dict['encoder.ones_mask'] = self.model.encoder.ones_mask
+        # Case 1 -> No Image Encoder
+        if 'encoder.image_encoder.0.weight' not in state_dict:
+            for k, v in self.model.encoder.image_encoder.state_dict().items():
+                state_dict[f'encoder.image_encoder.{k}'] = v
+
+        # case 2 -> Segment embeddings in new model
+        if (
+            self.opt.get('n_segments', 0) >= 1
+            and 'encoder.segment_embeddings.weight' not in state_dict
+        ):
+            state_dict[
+                'encoder.segment_embeddings.weight'
+            ] = self.model.encoder.segment_embeddings.weight
+
+        # Case 3 -> Only an Encoder provided
+        if not (any('decoder' in state_key for state_key in state_dict)):
+            for k, v in self.model.decoder.state_dict().items():
+                state_dict[f'decoder.{k}'] = v
+            state_dict['decoder.embeddings.weight'] = state_dict['embeddings.weight']
+            if 'START' not in state_dict:
+                state_dict['START'] = self.model.START
+
+        if self.opt['init_model'] is not None:
+            try:
+                self.model.load_state_dict(state_dict)
+                return
+            except RuntimeError as e:
+                # Case 4 --> Check for Embedding Diffs. Make sure dims match up
+                embs = state_dict['embeddings.weight']
+                enc_embs = state_dict['encoder.embeddings.weight']
+                dec_embs = state_dict['decoder.embeddings.weight']
+                init_embs = self.model.embeddings.weight
+                if (
+                    embs.shape[0] + 2 != init_embs.shape[0]
+                    or embs.shape[1] != init_embs.shape[1]
+                ):
+                    raise e
+
+                state_dict.update(
+                    {
+                        'embeddings.weight': torch.cat(
+                            (
+                                embs.to(init_embs.device, dtype=init_embs.dtype),
+                                init_embs[-2:, :],
+                            )
+                        ),
+                        'encoder.embeddings.weight': torch.cat(
+                            (
+                                enc_embs.to(init_embs.device, dtype=init_embs.dtype),
+                                init_embs[-2:, :],
+                            )
+                        ),
+                        'decoder.embeddings.weight': torch.cat(
+                            (
+                                dec_embs.to(init_embs.device, dtype=init_embs.dtype),
+                                init_embs[-2:, :],
+                            )
+                        ),
+                    }
+                )
+                pct_init = round(embs.shape[0] / len(self.dict) * 100, 1)
+                print(
+                    f'Initialized embeddings for {embs.shape[0]} tokens ({pct_init}%)'
+                )
+
+        self.model.load_state_dict(state_dict)

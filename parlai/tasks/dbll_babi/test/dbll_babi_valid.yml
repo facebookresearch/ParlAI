@@ -1,0 +1,96 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - garden
+    id: dbll_babi
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 0.0
+    text: 'Mary travelled to the garden.
+
+      Daniel went to the kitchen.
+
+      Where is Mary?'
+- - episode_done: false
+    eval_labels:
+    - garden
+    id: dbll_babi
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 1.0
+    text: 'Correct!
+
+      Sandra went back to the bathroom.
+
+      Sandra moved to the garden.
+
+      Where is Sandra?'
+- - episode_done: false
+    eval_labels:
+    - kitchen
+    id: dbll_babi
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 1.0
+    text: 'That''s correct.
+
+      John travelled to the office.
+
+      Mary journeyed to the kitchen.
+
+      Where is Daniel?'
+- - episode_done: false
+    eval_labels:
+    - bathroom
+    id: dbll_babi
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 1.0
+    text: 'Yes, that''s right.
+
+      John went back to the bedroom.
+
+      Daniel went back to the bathroom.
+
+      Where is Daniel?'
+- - episode_done: false
+    eval_labels:
+    - hallway
+    id: dbll_babi
+    label_candidates:
+    - bathroom
+    - bedroom
+    - garden
+    - hallway
+    - kitchen
+    - office
+    reward: 1.0
+    text: 'That''s correct.
+
+      John travelled to the bathroom.
+
+      John journeyed to the hallway.
+
+      Where is John?'
+num_episodes: 20
+num_examples: 120

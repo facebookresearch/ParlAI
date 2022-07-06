@@ -5,8 +5,22 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/COCO-IMG/test2015.zip',
+        'test2015.zip',
+        '52d45179bbe4fcc41ba16550b3df532fc9d0a0084b2afaeb6a3ae396032aaf14',
+    ),
+    DownloadableFile(
+        'http://images.cocodataset.org/annotations/image_info_test2015.zip',
+        'image_info_test2015.zip',
+        'cf400242f8497257fb8a3e369bc766491f4a7e42625fb3d72555504e9a8c3b18',
+    ),
+]
 
 
 def buildImage(opt):
@@ -20,14 +34,9 @@ def buildImage(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # Download the image data.
-        fname = 'test2015.zip'
-
-        url = 'http://parl.ai/downloads/COCO-IMG/'
-
-        build_data.download(url + fname, dpath, fname)
-
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES[:1]:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)
@@ -47,16 +56,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-
-        fname = 'image_info_test2015.zip'
-        # dataset URL
-        url = 'http://images.cocodataset.org/annotations/'
-
-        build_data.download(url + fname, dpath, fname)
-
-        # uncompress it
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES[1:]:
+            downloadable_file.download_file(dpath)
 
         # mark the data as built
         build_data.mark_done(dpath, version_string=version)

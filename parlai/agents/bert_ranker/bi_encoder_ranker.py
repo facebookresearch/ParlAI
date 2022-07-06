@@ -3,20 +3,16 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from parlai.utils.distributed import is_distributed
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.torch_ranker_agent import TorchRankerAgent
-from parlai.utils.misc import padded_3d
+from parlai.utils.torch import padded_3d
 from parlai.zoo.bert.build import download
+from parlai.utils.io import PathManager
 
 from .bert_dictionary import BertDictionaryAgent
-from .helpers import (
-    get_bert_optimizer,
-    BertWrapper,
-    BertModel,
-    add_common_args,
-    surround,
-    MODEL_PATH,
-)
+from .helpers import BertWrapper, BertModel, add_common_args, surround, MODEL_PATH
 
 import os
 import torch
@@ -24,14 +20,21 @@ from tqdm import tqdm
 
 
 class BiEncoderRankerAgent(TorchRankerAgent):
-    """ TorchRankerAgent implementation of the biencoder.
-        It is a standalone Agent. It might be called by the Both Encoder.
+    """
+    TorchRankerAgent implementation of the biencoder.
+
+    It is a standalone Agent. It might be called by the Both Encoder.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         add_common_args(parser)
-        parser.set_defaults(encode_candidate_vecs=True)
+        parser.set_defaults(
+            encode_candidate_vecs=True, dict_maxexs=0  # skip building dictionary
+        )
+        return parser
 
     def __init__(self, opt, shared=None):
         # download pretrained models
@@ -45,11 +48,6 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
         super().__init__(opt, shared)
         # it's easier for now to use DataParallel when
-        self.data_parallel = opt.get('data_parallel') and self.use_cuda
-        if self.data_parallel and shared is None:
-            self.model = torch.nn.DataParallel(self.model)
-        if is_distributed():
-            raise ValueError('Cannot combine --data-parallel and distributed mode')
         self.NULL_IDX = self.dict.pad_idx
         self.START_IDX = self.dict.start_idx
         self.END_IDX = self.dict.end_idx
@@ -63,16 +61,9 @@ class BiEncoderRankerAgent(TorchRankerAgent):
     def dictionary_class():
         return BertDictionaryAgent
 
-    def init_optim(self, params, optim_states=None, saved_optim_type=None):
-        self.optimizer = get_bert_optimizer(
-            [self.model],
-            self.opt['type_optimization'],
-            self.opt['learningrate'],
-            fp16=self.opt.get('fp16'),
-        )
-
     def set_vocab_candidates(self, shared):
-        """Load the tokens from the vocab as candidates
+        """
+        Load the tokens from the vocab as candidates.
 
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
@@ -104,7 +95,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                     "".format(len(self.vocab_candidates))
                 )
                 enc_path = self.opt.get('model_file') + '.vocab.encs'
-                if os.path.isfile(enc_path):
+                if PathManager.exists(enc_path):
                     self.vocab_candidate_encs = self.load_candidates(
                         enc_path, cand_type='vocab encodings'
                     )
@@ -133,7 +124,8 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                 self.vocab_candidate_encs = None
 
     def vectorize_fixed_candidates(self, cands_batch):
-        """Override from TorchRankerAgent.
+        """
+        Override from TorchRankerAgent.
         """
         return [
             self._vectorize_text(
@@ -215,14 +207,17 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         return embedding_ctxt.mm(cand_vecs.t())
 
     def share(self):
-        """Share model parameters."""
+        """
+        Share model parameters.
+        """
         shared = super().share()
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
         return shared
 
 
 class BiEncoderModule(torch.nn.Module):
-    """ Groups context_encoder and cand_encoder together.
+    """
+    Groups context_encoder and cand_encoder together.
     """
 
     def __init__(self, opt):
@@ -265,8 +260,10 @@ class BiEncoderModule(torch.nn.Module):
 
 
 def to_bert_input(token_idx, null_idx):
-    """ token_idx is a 2D tensor int.
-        return token_idx, segment_idx and mask
+    """
+    token_idx is a 2D tensor int.
+
+    return token_idx, segment_idx and mask
     """
     segment_idx = token_idx * 0
     mask = token_idx != null_idx

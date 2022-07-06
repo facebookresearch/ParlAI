@@ -1,0 +1,189 @@
+acts:
+- - did_continue: 'True'
+    episode_done: false
+    id: light_dialog_wild
+    label_candidates:
+    - Hello good sir do you have any wares I could have?
+    - What issue of that is mine I am lord zuric
+    - How did I get here?
+    - You could dye it with bones yes
+    - Why would you not be? Are you the king? The most honorable of the land?
+    - I have no other choice. How else would I get to the beyond? Do you really think
+      I'm with the brits? They took my eye. Ill kill those whoresons if I had the
+      chance
+    - Are humans hostile toward you? I heard there are many good bacteria
+    - sir I am a chef and i will work my craft to serve the people food
+    - Grrrrrrr
+    - Oh, purple is the rarest color. This fine purple silk is easily worth more than
+      the rest of my stock combined. I only came by it by a stroke of good fortune,
+      and I had hoped to bring it before the King.
+    - My name is ratimus, and I’m going to help you, as I feel it is my destiny
+    - What good is a might king, such as yourself, without people to rule and lead?
+    - How did you acquire such a item?
+    - I will eat you.
+    - Okay... a swamp... At least I have water.
+    - Helps the swimmer out the water
+    - Well hello how my I assist thee?
+    - Hello assistant chef
+    - get adornment
+    - You will become a prince again
+    labels:
+    - Hello assistant chef
+    model_name: light_large_with_neg?block_ngrams=0,boring_alpha=-10,fixed_candidates_path=filtered_light_cands.txt,from_speaker_bonus=50,normalized=none,to_speaker_bonus=50
+    score: '13'
+    text: '_task_speech
+
+      _setting_name bedrooms, Somewhere
+
+      _setting_desc this bedroom is for the young prince. it is blue in color and
+      the floors are a royal purple. the walls are covered in display swords and shields,
+      all painted with unique colors.
+
+      _partner_name assistant chef
+
+      _self_name serving boy
+
+      _self_persona I am the son of the butler in the castle. I assist my father in
+      serving the King and Queen. I live in the servant''s quarters of the castle
+      along with my mother and 2 sisters.'
+- - did_continue: 'True'
+    episode_done: false
+    id: light_dialog_wild
+    label_candidates:
+    - Ok I would be glad to let me know when your ready to set forth so we can speak
+      to the knight
+    - Thanks  for your kindness
+    - Please do.
+    - Where is the prince?
+    - All hope is lost for these poor souls in the market today
+    - Why did you stow upon the king’s ship jimmy?
+    - But I am the jester!
+    - He
+    - Wh-wh-who do you speak of my lady?
+    - I’d like a banana, mister squirrel. Come over here. I want you to feel my soft
+      fox tail. I’m sure you will absolutely enjoy the feel of my soft fox fur while
+      you hand me the banana you offered me. Thank you again, by the way, mister squirrel.
+    - Well, farmers love me for keeping the bugsies out of their crops, so there's
+      that.
+    - What are you?
+    - You're not fooling me, Mr. Boar. You are a boar with plenty of meat. You are
+      no woodpecker.
+    - wear clothing
+    - I never lie. I will be queen.
+    - Your name is Frank, madam?
+    - Yes chef I did my tasks
+    - '*Queen* Wonderful! Thank you my boy.'
+    - I killed you!
+    - Ah, I happened to have stumbled upon a rather rare thread in my travels, and
+      wished to present it to the ruler of this land
+    labels:
+    - Yes chef I did my tasks
+    model_name: light_large_with_neg?block_ngrams=0,boring_alpha=-10,fixed_candidates_path=filtered_light_cands.txt,from_speaker_bonus=50,normalized=none,to_speaker_bonus=50
+    score: '13'
+    text: '_self_say Hello assistant chef
+
+      _partner_say Tell me boy, did you get done with your tasks?'
+- - did_continue: 'True'
+    episode_done: false
+    id: light_dialog_wild
+    label_candidates:
+    - I am in need of a home
+    - Yes, I agree. The bathing chamber is a little to extravagant. My father went
+      over-the-top when designing it.
+    - Thank you!
+    - I don't demand it I am a horse
+    - Honey, I’ve bested them all. Knights, barons, sailors of the seven seas and
+      everything in between.
+    - I am going to open the drawbridge to the castle so we can leave
+    - Could it be new ingredients?
+    - Me too! Would you be willing to join forces?
+    - Thank you assistant chef
+    - A bottle of wine my good sir!
+    - Should be
+    - Is that so? The marigolds over there are especially lovely this time of year.
+    - I need to have a sword of fire
+    - Fifteen per ounce
+    - I’m not a big, as you can see I am a mere fishing beaver
+    - How will you celebrate?
+    - 'Yes'
+    - Good day
+    - Come with me
+    - What.. queens aren't good enough  to rule, reaper? Are you being rude?
+    labels:
+    - Thank you assistant chef
+    model_name: light_large_with_neg?block_ngrams=0,boring_alpha=-10,fixed_candidates_path=filtered_light_cands.txt,from_speaker_bonus=50,normalized=none,to_speaker_bonus=50
+    score: '13'
+    text: '_self_say Yes chef I did my tasks
+
+      _partner_say Why yes I did I wish all my students were as good as you!'
+- - did_continue: 'True'
+    episode_done: false
+    id: light_dialog_wild
+    label_candidates:
+    - You may
+    - What are you doing here alone
+    - There are bandits everywhere on the roads into the village. I just pray for
+      their safety
+    - I have many enemies, I don’t learn their names anymore
+    - What a glorious cake filled kingdom we live in!
+    - There’s the book how did you like it
+    - How do ye fair brother?
+    - Dragon!
+    - The SQUIRRELS have always held a cold place in my heart. Which one do you speak
+      of? Dont talk to many
+    - What are we doing now?
+    - I suppose so, but when you’re being chased by bandits and wild beasts and sorcerers,
+      you live faster than most folk
+    - 'No'
+    - May I buy some supplies for my journey?
+    - I’ll explain what Midgard is later! We must get to Odin before the wolf Fenrir!
+    - Snake, I am no human, and have seen no fowl for miles and miles. Why do you
+      ask? Are you making merry?
+    - Why is a horse that belongs to the king, doing here with a bunch of thieves?
+    - 12pounds of roast.
+    - Can i have some meat?
+    - Fair but I am in the mood for an adventure.  Any suggestions?
+    - If he is not a threat, let's invite him to come with
+    labels:
+    - What are we doing now?
+    model_name: light_large_with_neg?block_ngrams=0,boring_alpha=-10,fixed_candidates_path=filtered_light_cands.txt,from_speaker_bonus=50,normalized=none,to_speaker_bonus=50
+    score: '13'
+    text: '_self_say Thank you assistant chef
+
+      _partner_say You''re welcome.'
+- - did_continue: 'True'
+    episode_done: false
+    id: light_dialog_wild
+    label_candidates:
+    - We can’t grow any food here
+    - I want to be my own
+    - Go now, my child
+    - I cannot see why. I believe you all could be helpful members of society, possibly
+      using your webbing to make clothing for those in the village, and your many
+      legs to assist the villagers in multi-tasking
+    - I’m sorry, I don’t have a job to give you.
+    - A talking camel, unless you're blind too. Or maybe you're deaf?
+    - It’s not a blade, it’s a hammer.
+    - Tell him to go home. Your husband is a guard and will keep us safe on our quest.
+    - yes i can
+    - I dont know I'm baby
+    - I ask the sailor if I can buy a woman
+    - My boy, you said I need only ask and I shall find him! What foul trickery is
+      this?
+    - Frankincense or myrrh.
+    - Never my Queen. What do you need of a humble servant
+    - Greetings
+    - Do you want to play checkers?
+    - This is for swinging!
+    - Two hundred gold
+    - Yes, she’s buried here in this graveyard. I’m surprised you didn’t know.
+    - I am learning from the tomes every day
+    labels:
+    - Do you want to play checkers?
+    model_name: light_large_with_neg?block_ngrams=0,boring_alpha=-10,fixed_candidates_path=filtered_light_cands.txt,from_speaker_bonus=50,normalized=none,to_speaker_bonus=50
+    score: '13'
+    text: '_self_say What are we doing now?
+
+      _partner_say Playing.'
+num_episodes: 41131
+num_examples: 230992

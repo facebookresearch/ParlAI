@@ -7,6 +7,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import json
@@ -58,7 +59,7 @@ class WoZTeacher(DialogTeacher):
 
         new_episode = True
 
-        with open(input_path) as file:
+        with PathManager.open(input_path) as file:
             data = json.load(file)
 
         for dialogue in data:

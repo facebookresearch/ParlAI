@@ -1,0 +1,55 @@
+acts:
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: Taskmaster2_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = nfl ; name.team = Denver Broncos'
+    id: Taskmaster2_SystemTeacher
+    slots:
+      api_name: nfl
+      name.team: Denver Broncos
+    text: 'USER: Hey, what''s the Denver Broncos record?'
+    type: 'APICALL: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: The Denver Broncos are in currently fourth in the AFC West with a record
+      of four wins and nine losses.'
+    id: Taskmaster2_SystemTeacher
+    slots:
+      api_name: nfl
+      name.team: Denver Broncos
+      record.team: four wins and nine losses
+    text: 'APIRESP: api_name = nfl ; name.team = Denver Broncos ; record.team = four
+      wins and nine losses'
+    type: 'SYSTEM: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'APICALL: api_name = nfl ; name.team = Denver Broncos'
+    id: Taskmaster2_SystemTeacher
+    slots:
+      api_name: nfl
+      name.team: Denver Broncos
+    text: 'USER: What Conference are they in?'
+    type: 'APICALL: '
+- - domain: sports
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: The Denver Broncos played in the American Football Conference in the
+      west division.'
+    id: Taskmaster2_SystemTeacher
+    slots:
+      api_name: nfl
+      name.team: Denver Broncos
+    text: 'APIRESP: api_name = nfl ; name.team = Denver Broncos'
+    type: 'SYSTEM: '
+num_episodes: 1734
+num_examples: 36584

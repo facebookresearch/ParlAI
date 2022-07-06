@@ -1,0 +1,43 @@
+acts:
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'USER: i''m looking to move house so i''m after some options'
+    type: 'APICALL: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Are you looking to rent or buy? How many room will you need?'
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'USER: Umm three bedrooms would be good and i want to buy'
+    type: 'APICALL: '
+- - domain: Homes, Messaging, RideSharing
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: What are are you interested in?'
+    id: GoogleSgdOutDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 768
+num_examples: 20324

@@ -1,11 +1,40 @@
 ## News
+
+**Archive Information**
+We are now making most of our major announcements on [Twitter](https://twitter.com/parlai_parley) and in our
+[Release Notes](https://github.com/facebookresearch/ParlAI/releases).
+
+### Older news
+
+2020-07-21: We have added a new `parlai` super command, complete with [autocompletion](https://parl.ai/docs/tutorial_tipsntricks.html#command-line-tool).
+
+2020-07-17: We've added a new tutorial showing how to [speed up training](https://parl.ai/docs/tutorial_fast.html).
+
+2020-04-28: [BlenderBot](https://parl.ai/projects/recipes/) has been released, including 2.7B and 9.4B parameter models. It received some attention in the media, including [Engadget](https://www.engadget.com/facebook-chatbot-ai-open-source-blender-150001320.html), [Technology Review](https://www.technologyreview.com/2020/04/29/1000795/facebook-ai-chatbot-blender-beats-google-meena/), [Fortune](https://fortune.com/2020/04/29/facebook-creates-the-most-human-chatbot-yet/), and [Wired](https://www.wired.com/story/new-chatbot-tries-artificial-empathy/).
+
+2020-02-04: [GPT2 fine-tuning for dialogue](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/hugging_face)  now supported in ParlAI!
+
+2020-01-17: [All-in-One Image-Grounded Conversational Agents project](https://twitter.com/parlai_parley/status/1218204771859017732) built in ParlAI 
+
+2020-01-15: [Seb Ruder's 10 ML & NLP Research Highlights of 2019 post](https://ruder.io/research-highlights-2019/) mentions at least two works built with ParlAI.
+
+2019-12-19: [Amazon's TopicChat dataset uses ParlAI](https://twitter.com/parlai_parley/status/1207716855525367808).
+
+2019-12-11: [OneCommon Corpus is now available in ParlAI](https://twitter.com/futsaludy/status/1204661465967259648). Thanks to our colleague Takato Yamazaki
+
+2019-11-10: [Dialogue unlikelihood project](https://parl.ai/projects/dialogue_unlikelihood/) for improving consistency in dialogue generation. 
+
+2019-11-09: The [Gender bias project page](https://parl.ai/projects/genderation_bias/) mitigates bias in dialogue generation.
+
+2019-11-09: The [Dodeca dialogue project page](https://parl.ai/projects/dodecadialogue/) is up with paper and leaderboard -- multi-tasking on many dialogue tasks with strong results!
+
 2019-09-16: The [Dialogue Safety project page](https://parl.ai/projects/dialogue_safety/) is updated with pretrained models, data, and an interactive demonstration.
 
 2019-06-12: The [Personality-Captions project page](http://parl.ai/projects/personality_captions/) is updated with pretrained models, specialized model code, and an interactive demo.
 
-2019-06-12: Added [HotpotQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac) as another dataset.
+2019-06-12: Added [HotpotQA](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks/quac) as another dataset.
 
-2019-05-15: Added [QuAC](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/quac), Question Answering in Context dataset, and [COQA](https://github.com/facebookresearch/ParlAI/tree/master/parlai/tasks/coqa), Conversational Question Answering Challenge datasets.
+2019-05-15: Added [QuAC](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks/quac), Question Answering in Context dataset, and [COQA](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks/coqa), Conversational Question Answering Challenge datasets.
 
 2019-05-03: The [What makes a good Conversation project page](https://parl.ai/projects/controllable_dialogue/) is now available with pretrained models.
 
@@ -15,11 +44,11 @@
 
 2019-03-06: Added [Self-feeding Chatbot](http://parl.ai/projects/self_feeding) for leveraging user textual feedback to improve the chatbot's abilities. [[press]](https://venturebeat.com/2019/01/17/facebook-and-stanford-researchers-design-a-chatbot-that-learns-from-its-mistakes/)
 
-2019-02-07: Added [BERT Ranker agents](https://github.com/facebookresearch/ParlAI/tree/master/parlai/agents/bert_ranker), several variations of a ranking model based on the pretrained language model BERT.
+2019-02-07: Added [BERT Ranker agents](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents/bert_ranker), several variations of a ranking model based on the pretrained language model BERT.
 
 2019-01-16: ParlAI has been relicensed under the MIT open source license.
 
-2018-12-13: Added [Daily Dialog](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/dailydialog/agents.py), an open-domain daily dialogue dataset.
+2018-12-13: Added [Daily Dialog](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/dailydialog/agents.py), an open-domain daily dialogue dataset.
 
 2018-11-05: Added [Wizard of Wikipedia](http://parl.ai/projects/wizard_of_wikipedia/), a dataset for knowledge-powered conversation.
 
@@ -37,15 +66,13 @@
 
 2018-03-13: Added [ParlAI-Messenger](http://parl.ai/static/docs/messenger.html), a new method for connecting human agents to a world in ParlAI using Facebook Messenger. Host your bots on Facebook Messenger to expose them to a broad audience!
 
-2018-03-05: Added [Multimodal Low-Rank Bilinear Attention Network (MLB)](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/mlb_vqa/mlb_vqa.py) model for VQA V1 and V2 tasks, adapted from an implementation [here](https://github.com/Cadene/vqa.pytorch) based on [this paper](https://arxiv.org/abs/1610.04325). To use it, please follow the instructions [in the agent file](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/mlb_vqa/mlb_vqa.py).
+2018-03-05: Added [Multimodal Low-Rank Bilinear Attention Network (MLB)](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/mlb_vqa/mlb_vqa.py) model for VQA V1 and V2 tasks, adapted from an implementation [here](https://github.com/Cadene/vqa.pytorch) based on [this paper](https://arxiv.org/abs/1610.04325). To use it, please follow the instructions [in the agent file](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/mlb_vqa/mlb_vqa.py).
 
-2018-02-12: Added a [Wikipedia task](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/wikipedia/agents.py), which provides a dump of Wikipedia articles from 2/3/2018.
+2018-02-12: Added a [Wikipedia task](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/wikipedia/agents.py), which provides a dump of Wikipedia articles from 2/3/2018.
 
-2018-02-07: Added a [language model](https://github.com/facebookresearch/ParlAI/blob/master/parlai/agents/language_model/language_model.py) adapted from [this](https://github.com/pytorch/examples/tree/master/word_language_model) Pytorch model to parlai/agents.
+2018-02-07: Added a [language model](https://github.com/facebookresearch/ParlAI/blob/main/parlai/agents/language_model/language_model.py) adapted from [this](https://github.com/pytorch/examples/tree/main/word_language_model) Pytorch model to parlai/agents.
 
 2018-01-23: Several new tasks added: [SNLI](https://nlp.stanford.edu/projects/snli/), [MultiNLI](https://arxiv.org/abs/1704.05426), [COPA](http://people.ict.usc.edu/~gordon/copa.html), [NarrativeQA](https://github.com/deepmind/narrativeqa), Twitter and [Persona-Chat](https://arxiv.org/abs/1801.07243).
-
-2017-12-14: Fast, multiprocessed data loading supported with [Pytorch data loader](https://github.com/facebookresearch/ParlAI/blob/master/parlai/core/pytorch_data_teacher.py)
 
 2017-11-30: Several new tasks added: [SCAN](https://github.com/brendenlake/SCAN), [ConvAI](http://convai.io/data/), [NVLR](http://lic.nlp.cornell.edu/nlvr/) and [ISWLT14](http://wit3.fbk.eu).
 
@@ -61,13 +88,13 @@
 
 2017-08-25: [New task added: Deal or No Deal](https://github.com/facebookresearch/end-to-end-negotiator)
 
-2017-08-15: [New task added: CLEVR](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+2017-08-15: [New task added: CLEVR](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/task_list.py)
 
 2017-07-20: [ParlAI Request For Proposals: Funding university teams - 7 awards are available - deadline Aug 25](https://research.fb.com/programs/research-awards/proposals/parlai/)
 
 2017-07-20: [added building an (seq2seq) agent tutorial](http://www.parl.ai/static/docs/seq2seq_tutorial.html)
 
-2017-07-12: [Several new tasks added: MS Marco, TriviaQA, InsuranceQA, personalized-dialog and MNIST_QA](https://github.com/facebookresearch/ParlAI/blob/master/parlai/tasks/task_list.py)
+2017-07-12: [Several new tasks added: MS Marco, TriviaQA, InsuranceQA, personalized-dialog and MNIST_QA](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/task_list.py)
 
 2017-06-27: [ExecutableWorld class for interactive worlds with dialog](https://github.com/facebookresearch/ParlAI/pull/170)
 

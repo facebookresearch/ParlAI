@@ -1,0 +1,192 @@
+acts:
+- - context_dataset: wizard_of_wikipedia
+    episode_done: false
+    eval_labels:
+    - I received on-the-job training when i first started
+    free_turker_message: Which level are you at?
+    guided_turker_chosen_suggestion: ''
+    id: style_gen:labeled_blended_skill_talk
+    label_candidates:
+    - I haven't managed to find anyone yet, but I think as long as your in love, your
+      legal status doesn't matter
+    - yes i agree . i only like the rain so i can sleep in some days .
+    - 'it did, while i was working at dell yesturday. the person rush and threw a
+      empty soda can at our boss for eating his chocolate chip cookies. '
+    - There's more stuff to do than the beach though!
+    - yeah that's right, they swarm over the tree and 'suffocate' it meaning it doesn't
+      produce any apples.
+    - its also fun at home! i have a game iwth a mic on my xbox and love having a
+      get together and playing with friends
+    - Yes I have its a great movie you should watch it some time.
+    - Do you run solo or with a group?
+    - 'Good for you and yes you do deserve it. '
+    - 'Oh no that''s no good grab a chair. '
+    - 'That is my daughter''s favorite '
+    - Yes, by growing up together it really gives you a chance to get close.
+    - I mean, I get desperate times, but is there not a church or something in your
+      area you could have turned to for help?
+    - it's not always easy. luckily, we've a lot of forest running trails. super relaxing
+      all the green .
+    - 'Yes! He''s a black lab name Scooby. He is my best friend. '
+    - they're nice cars and very fast ! My favorite was the old prelude
+    - Hiking is a wonderful hobby. Have you ever considered doing it in a group?
+    - Didn't Marshmello also feature in that song?
+    - sure, especially arribata, love the spicy taste and red colour lol
+    - 'Is there something in particular you are looking for? '
+    personality: Businesslike
+    text: 'your persona: i work as an electrician.
+
+      your persona: i always sleep 8 hours a day.
+
+      Electrician
+
+      That sounds dangerous. Is it worth doing such a dangerous job?
+
+      Wekk it is okay is you are well trained.  There are three levels: Apprentice,
+      journeyman and Master.
+
+      Which level are you at?'
+- - context_dataset: wizard_of_wikipedia
+    episode_done: false
+    eval_labels:
+    - For a good number of years now.
+    free_turker_message: 'Thats great! How long have you been doing this work? '
+    guided_turker_chosen_suggestion: ''
+    id: style_gen:labeled_blended_skill_talk
+    label_candidates:
+    - Okay! It was nice chatting with you!
+    - no , but i love going to disney world every year . where do you work ?
+    - Converse go with everything too!
+    - Where do you enjoy hiking?
+    - Yeah I saw Halt and Catch Fire on AMC, that was great. I still haven't gotten
+      around to setting up my TV in my new house.
+    - yes i watch movies
+    - sure...anyway thanks..enjoy your trip
+    - i didnt think I could do it, but there are a lot of options around now
+    - 'There''s gotta be. Gotta have a nice place to stay warm at drink at. '
+    - What breed of dog is your favorite?  I like little ones, like Yorkiepoos.
+    - Yeah I have family from there too. I work as a bartender but could imagine retiring
+      there. What do you do for a living?
+    - i love vans
+    - I have red hair!
+    - 'Sometimes technology is a good thing - when it works right!  '
+    - I hear ya, must be careful with so much good food available
+    - Well it is slow to my 170 wmp, it makes me feel like I am talking to a snail.
+    - Sure I do. That's my go to hair style. What else do you love?
+    - Been here all my life. I grew up on a farm outside of Lone Jack.
+    - Also take care. Thank you
+    - 'yes it definitely is ! '
+    personality: Conservative (Traditional, Conventional)
+    text: 'Thats great! How long have you been doing this work? '
+- - context_dataset: wizard_of_wikipedia
+    episode_done: false
+    eval_labels:
+    - That it is,especially if you dont take the proper measures
+    free_turker_message: Sounds like it could be a dangerous job at times.
+    guided_turker_chosen_suggestion: ''
+    id: style_gen:labeled_blended_skill_talk
+    label_candidates:
+    - Yeah, I work my city's community garden group to support urban permaculture
+      -- basically, parks full of free food. How about you? What's your jam?
+    - 'I prefer folk music, i play the violin. '
+    - Seriously!
+    - I'm happy for you! Everyone deserves to be excited about life.
+    - oh gosh no! thats even scarier. have you?
+    - I hope that's the case. I guess you have to keep a positive mindset.
+    - My wife has some health issues and has to limit red meat so I try to do so as
+      well.
+    - So we have something in common.  Favorite color?  My eyes are blue, so I tend
+      to like blue best.
+    - True. That is the best version. George C Scott is a great actor. He brought
+      the character to life.
+    - thanks, yep that would be good
+    - I know many people who get their hair dyed and do it themselves for a cost effective
+      measure.
+    - My favorite color is blue, I think I will be something that color for Halloween
+    - I'm an American and live in washington. I do love eating Indian food though.
+    - mexican is my least favorite
+    - do you like chemistry or biology better
+    - it's been about 2 years now or more. when i got my cat speckles i would sit
+      by the window with him for hours on end sometimes. Hows your garden?
+    - I don't really have a favorite. How about you?
+    - That it is,especially if you dont take the proper measures
+    - aww that's pretty, would make a nice tattoo quote. Do you have any tattoo's?
+    - 'I get it. I have taken my share of gym showers after football practice. We
+      all just know not to look down. '
+    personality: Critical
+    text: Sounds like it could be a dangerous job at times.
+- - context_dataset: wizard_of_wikipedia
+    episode_done: false
+    eval_labels:
+    - Thats true,especially in this economy
+    free_turker_message: Well you have entered a trade that will always guarantee
+      you some work.
+    guided_turker_chosen_suggestion: ''
+    id: style_gen:labeled_blended_skill_talk
+    label_candidates:
+    - Sounds really nice, my favorite store there is American eagle
+    - Yes i can now
+    - who is your favorite player
+    - Oh, Italian is good, too. Kinda similar to Spanish though, so if you had hard
+      time with that, Italian won't be much easier probably.
+    - Haha, my shirt is kind of blue, i guess it is a really cool and versatile color.
+      Reminds me of Sonic the Hedgehog
+    - I am very active as well, but still love to read, and watching disney movies
+      with my kids
+    - i know that's so horrible . so many have perished already
+    - I like Dolly Parton. Country music is music of working class Americans, it is
+      not popular right now.
+    - I think it's black or dark brown
+    - How many siblings do you have?
+    - so, what else is going on with you?
+    - and a little cheating....!
+    - Yeah Ive been reading a lot less too. I work long shifts, not much free time.
+    - Why thank you! What kind of dog do you own?
+    - That can be very rough. Maybe you can move there soon!
+    - Mt Kilimajaro. It has many climate zones, so you can see different environments
+      all on one dormant volcano.
+    - You'll love it, pick one or two things to do but make sure you get some exploring
+      time in
+    - some curry, chili powder, garlic powder, pepper, and oregano. my special blend.
+      So yummy!
+    - 'me too, hey! have you ever heard of jim hendrix? '
+    - 'I used to love writing about sports news and current events '
+    personality: Realistic
+    text: Well you have entered a trade that will always guarantee you some work.
+- - context_dataset: wizard_of_wikipedia
+    episode_done: false
+    eval_labels:
+    - Do you enjoy it?
+    free_turker_message: I have a pretty stable job myself, but mostly desk work
+    guided_turker_chosen_suggestion: ''
+    id: style_gen:labeled_blended_skill_talk
+    label_candidates:
+    - Quite expensive, that is why I have to save my money for a few years before
+      taking that trip.
+    - I love pepperoni pizza.
+    - Since I cut out meat, I really miss shrimp.
+    - 'Yes they know they are safe here. '
+    - I love taking vacations to the Caribbean.
+    - 'That it is. We spent most of our time outdoors and now they all live in their
+      phones moreso than anywhere else. Sigh. '
+    - I am going to school. I want to be a museum curator
+    - oh what do you make that you sell?
+    - How many cats do you have? I love cats!
+    - Yeah, it's fun to create things and make them come to life.
+    - 'That is a great thing to do and it is very rewarding. '
+    - I don't know yet, probably a private investigator or a position in the police.
+    - Do you enjoy it?
+    - Pandas are quite fun, but it seems so strange that they only eat bamboo.
+    - enjoy, mostly. first class. how about you and friends that are getting away?
+      for how long? sounds like enjoyment. what do you do for work?
+    - Have you ever been to any of his shows
+    - I think there is such polarization in the climate.  Some kids, especially special
+      needs kids, are really just targets.
+    - Haha yea I imagine! Where would you go
+    - My brother wants to be an auto mechanic.I myself are a plumber.
+    - 'That I totally agree with, there is something soothing and comforting about
+      hearing a cat purring. '
+    personality: Considerate
+    text: I have a pretty stable job myself, but mostly desk work
+num_episodes: 1009
+num_examples: 5651

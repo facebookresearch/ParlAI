@@ -1,0 +1,274 @@
+acts:
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - either way :)
+    - I'm not sure there is one, you may need to just tweak ~/.config/xfce4.
+    - I don't remember though. anyone else? how to get verbose output during a boot?
+      turn of boot splash during live cd?
+    - which error is that?. btw don't make us ask these questions
+    - i think your looking for 0644 not 0755
+    - Try cat /etc/issue.  Sorry, debian_version is for the debian version, not the
+      ubuntu version
+    - 'hey join #.  so i can tell you things that the kiddies won''t latch on to'
+    - -->#sbackup
+    - that won't solve this problem, though. Give me a minute to read that HOWTO thoroughly..  did
+      you actually do the Step 1 of the howto?
+    - '!ccsm'
+    - 'you need the qt -dev package, search for packages with the following words
+      in their name: lib, qt, -dev'
+    - Not sure how to do config files, but I know if you open synaptic you can save
+      a package configuration and load that onto another system.  Best thing you could
+      do is if you have any local config files back them up with your home folder,
+      any global ones you will have to do manually
+    - if you have your zone files there and bind config as well I think you should
+      be fine
+    - 2>/dev/null.  sorry > /dev/null
+    - it fails for me too :). but nevertheless i have X running :)
+    - oh I get it now, it's just like minicom.  pastebin the help.  like irecovery
+      -s , and then help.  also try "(whatever_cmds) | irecovery -s"
+    - you only need the libraries for each.... ... which isn't too expensive
+    - do a lspci
+    - it's em0, not emo
+    - 'there is a subtitle check box.  there is also the #handbrake channel'
+    labels:
+    - are you still running in root terminal? if so, try from a non-root one.. i've
+      got to go prepare dinner so i'll be afk .. ask the channel for help on that,
+      hope you get things up
+    text: 'participant 1: Hi, I want to run a graphical application from the command
+      line, here is the script I wrote: https://paste8.com/4XQiHrXZ - it''s Ubuntu
+      Server 12.04 + Unity. What I get is an error from xhost "unable to open display
+      :0" and from the graphical application I want to use (Sikuli) "Can''t connect
+      to X11 window server using '':0'' as the value of the DISPLAY variable.". I''ve
+      tried using DISPLAY:=1 as I use this number when connecting with a VNC client
+      but it doesn''t wo. rk either...
+
+      participant 2: is X running?
+
+      participant 1: I think so: https://paste8.com/HvhlT6vO.  maybe you prefer this
+      check: https://paste8.com/0OhcBmfB
+
+      participant 2: these days you use lightdm (or gdm, kdm) to start X, so i''d
+      try to kill what''s there but unreachable with "sudo killall X" and then "sudo
+      service lightdm start"
+
+      participant 1: what do I kill precisely? because it says "X: no such process"
+
+      participant 2: nothing, X wasn''t running if you get that, proceed with "sudo
+      service lightdm start" and then test your script
+
+      participant 1: alright but "start: Job is already running: lightdm"
+
+      participant 2: worm: try restart
+
+      participant 1: I did but I get "No protocol specified. " followed by "xhost:
+      unable to open display :0" when executing my script (i.e. https://paste8.com/4XQiHrXZ).
+      does it matter I run everything from a root tty? because that''s what I do
+
+      participant 2: ahh, not a good idea to try to start X as root no.  now your
+      regular users ~/.Xauthority file is probably owned by root, check that.  what
+      does "ls -la ~/.Xauthority" give you?
+
+      participant 1: yes I got /root/.Xauthority I need to append an entry for my
+      regular user right?
+
+      participant 2: check if your regular user still owns his .Xauthority file and
+      remove the one for root
+
+      participant 1: there is no .Xauthority for my regular user I''m afraid
+
+      participant 2: well, copy the one from root to the user /home and make him own
+      it, use the chown command.  sudo chown $USER:$USER $HOME/.Xauthority
+
+      participant 1: done, but running $sudo service lightdm start; returns "Sorry,
+      user <myuser> is not allowed to execute ''/usr/sbin/service lightdm start''
+      as root on <myhost>."
+
+      participant 2: is the regular user in the sudoers?
+
+      participant 1: no, I believe I have to create a file in /etc/sudoers.d but I
+      don''t know the syntax yet
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - uhm... i think that it goes over smb that way.
+    - There's always the daily builds
+    - links2 on the framebuffer. s'what i use... used to sorry :P
+    - and both failed
+    - I went to stupid lengths to use RealPlayer on 32bit. I used to chroot into an
+      old 32bit install of Dapper, but now use a 32bit Debian virtual machine
+    - so your not using Dapper?
+    - why? fluxbox have much eye candy?
+    - '#compiz-fusion probably could explain why, it you''re really interested'
+    - 'yes'
+    - ok, although i dont think that gnome's showtcuts will work on some other wm.  i
+      found something about keyboard shortcuts in wmii
+    - are you using mdadm?
+    - sudo apt-get install nautilus-open-terminal.  then a 'killall nautilus' should
+      do it
+    - Why do you care anyway? :D
+    - it's *not* apache2.sh, it's just apache
+    - In that case, I suggest posing the question to the channel as "how do I access
+      my camera as a generic storage device?". I don't know how to answer that one,
+      but maybe somebody does.
+    - ah well I think just libdvdcss2.  you can get the deb from the repos at medibuntu
+    - 'dougm that would be conky. let me get you a link. http://ubuntuforums.org/showthread.php?p=5436679 '
+    - I think there is something in the Systemy settings window that you click on
+      and it will tell you. I am trying to remember....  it is called "about this
+      computer" I think.
+    - http://www.virtualbox.org/wiki/Linux_Downloads
+    - I did thank you
+    labels:
+    - oh cool :)
+    text: 'participant 1: how do I turn on optical output under gutsy?. (soundcard)
+
+      participant 2: probably check the settings in the mixer
+
+      participant 1: I''ve tried that, speakers still say no incoming signal.
+
+      participant 2: there should be some check box for analog/digital output, but
+      unfortunately I wouldn''t know much more
+
+      participant 1: heh, I had the music player re-open and now I have sound.
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - '... when i used dual boot it didnt recognize my modem too . .. so i used VMware'
+    - does `sudo apt autoremove` remove any kernels?
+    - use the pastebin and paste the whole text please
+    - does it show up in amarok, banshee, etc or on your desktop?
+    - why not a mini mac ;)
+    - wg
+    - <> Have you tried the latest version from Synaptic?
+    - i'll let you know when i get that far
+    - could alwyas check the conky forums.
+    - I don't know :/
+    - ubuntu 7.04 and up has the nvidia driver in its application repository.
+    - I'm not sure but I think you should have ended that line with normal not with
+      insmod. insmod normal, normal
+    - yes i am running screenlets
+    - link me the page
+    - http://www.gnupg.org/gph/en/manual.html#REVOCATION
+    - ???
+    - yeah:/
+    - it should list some resolutions. Just be careful about editing it.
+    - sudo apt-get install wine
+    - i always put a sticker on the keyboard where the key is at... smack ALL the
+      keys as it boots. ;P also if theres a fast boot option. disable that.
+    labels:
+    - yeah:/
+    text: 'participant 1: well, chocolate, is that dsl?. pppoe, like a user name and
+      password?
+
+      participant 2: dont think so . its like a digital line, but old technology
+
+      participant 1: I think so.... :)
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - do you run any update-process at the same time?
+    - it's supposed to be a person with their hands in the air
+    - again install kprinter it has an option to print pdf files. and you can choose
+      it from crossover for i use it too
+    - usb dongle ?
+    - Do you have the VMWare tools (or whatever they are called) installed? They are
+      called Guest Additions in VirtualBox
+    - what happened when you plugged the device in?
+    - 'have you asked in #xchat?. i probably should do the same for my question, but
+      im not sure if the ui colors for xchat were set by ubuntu or if they came with
+      an xchat update'
+    - fascinating!
+    - are you having problems?
+    - it *is* in a library
+    - look for an 'Options' bit or 'Preferences'
+    - ok
+    - '#backtrack-linux for that.  backtrack is not supported here'
+    - proftpd-doc is the name of the doc package regarding to apt-cache search proftpd
+    - apt-get clean and apt-get autoremove.  assuming you installed via apt
+    - Depends on where you set them
+    - when i logged in it stays on the brown screen. the mouse works. but thats it
+    - ahh right. ill pop up my ekiga. its down stairs thol so whats your account?
+    - see what you get
+    - Of course
+    labels:
+    - you have to mount your system partition to the Live environment ... so it'll
+      probably something like /media/disk/boot/grub/menu.lst
+    text: 'participant 1: hello, i have a bit of a problem. I partitioned the hard
+      disk so i''d have a partition for / one for /home and one for /opt. However,
+      after installing i get a gruub error 15, or something like that. First i had
+      gruub installed in the default hdd, after that i tried installing it on my root
+      partition and it still doesn''t work. I am running from the virtual cd right
+      now... how can i get things to work?
+
+      participant 2: would help if you run a ''sudo fdisk -l'' and paste the result
+      to http://paste.ubuntu.com/
+
+      participant 1: one moment.  http://pastebin.com/m537d4e8e
+
+      participant 2: k.  see the ''Partition table entries are not in disk order''
+      ? that might confuse grub
+
+      participant 1: and what might be the solution to that? i partitioned in gparted
+
+      participant 2: to correct that, run sudo fdisk /dev/sda, then ''x'' (expert
+      mode) ''f'' (fix errors), then ''w'' (write corrcted part-table).  the run sudo
+      fdisk -l again and paste result again, along with your /boot/grub/menu.lst (the
+      one from the installed system)
+
+      participant 1: so that''s "sudo fdisk /dev/sda -x -f -w" ?
+
+      participant 2: yup ... but i''d not run that as comand line switches, but pree
+      the keys in the fdisk cli... so you notice if something goes wrong
+
+      participant 1: ok done that, let me get output.  http://pastebin.com/m35f57da2
+
+      participant 2: looks better now... now /boot/grub/menu.lst
+
+      participant 1: i don''t have /boot/grub
+
+      '
+- - episode_done: true
+    id: dstc7
+    label_candidates:
+    - invoke-rc.d ssh restart. it's ssh, not sshd
+    - open home, right click on the documents icon, left click on properties, when
+      the properties windows opens up click on the icon.  final click's left
+    - '?'
+    - totem
+    - I *think* you'll want to apt-get install kubuntu-dektop. then add those lines
+      and apt-get update, and apt-get-upgrade
+    - Ahhh. That might be it =3
+    - '@ / ?.  you use gparted?'
+    - you can also pick the entry on the boot menu of EFI or legacy
+    - does it recognize other sd cards?
+    - cant play what? what did you change about the reinstall?
+    - you probably need some python*-dev package. !vbox
+    - 'youre welcome '
+    - oh, i thought you said the firmware download failed.  are you sure the wifi
+      isn't simply turned off?
+    - Hi . too much people in here
+    - under linux? i tend to use k3b. under windows i tend to use 'burn at once'
+    - I was able to read it in the browser. hip hip
+    - buy me a copy of it? oh and a mac book? and applecare?
+    - you've gotten rid of the bots now?
+    - there are a few docs on that, try google. ubuntu vnc server
+    - there's nothing open source about telemarketing. I know, I used to work for
+      one
+    labels:
+    - not what X is using, what the LCD is made for
+    text: 'participant 1: hmmm. this laptop says the max res for it is 1024x768. but
+      it looks all jagged, likes its streched :\. any ideas on some things i can try
+
+      participant 2: do you know in fact what the LCD resolution is?
+
+      participant 1: the website says 1024x768
+
+      '
+num_episodes: 100000
+num_examples: 100000

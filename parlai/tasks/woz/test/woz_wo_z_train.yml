@@ -1,0 +1,40 @@
+acts:
+- - episode_done: true
+    id: woz
+    labels:
+    - food:eritrean
+    text: 'Are there any eritrean restaurants in town?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    id: woz
+    labels:
+    - food:chinese
+    text: 'How about Chinese food?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    id: woz
+    labels:
+    - area:east
+    text: 'I would like the East part of town.
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    id: woz
+    labels:
+    - request:postcode
+    - request:phone
+    - request:address
+    text: 'Could I get the address, phone number, and postcode of Yu Garden?
+
+      What is the change in the dialogue state?'
+- - episode_done: true
+    id: woz
+    labels:
+    - food:german
+    text: 'Hi, I''m looking for a nice German restaurant.
+
+      What is the change in the dialogue state?'
+num_episodes: 1723
+num_examples: 1723

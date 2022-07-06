@@ -1,0 +1,30 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Well, I thought we'd start with pronunciation, if that's okay with you.
+    id: cornell_movie
+    text: Can we make this quick?  Roxanne Korrine and Andrew Barrett are having an
+      incredibly horrendous public break- up on the quad.  Again.
+- - episode_done: true
+    eval_labels:
+    - Okay... then how 'bout we try out some French cuisine.  Saturday?  Night?
+    id: cornell_movie
+    text: Not the hacking and gagging and spitting part.  Please.
+- - episode_done: true
+    eval_labels:
+    - Eber's Deep Conditioner every two days. And I never, ever use a blowdryer without
+      the diffuser attachment.
+    id: cornell_movie
+    text: How do you get your hair to look like that?
+- - episode_done: false
+    eval_labels:
+    - What good stuff?
+    id: cornell_movie
+    text: I figured you'd get to the good stuff eventually.
+- - episode_done: true
+    eval_labels:
+    - Like my fear of wearing pastels?
+    id: cornell_movie
+    text: The "real you".
+num_episodes: 8310
+num_examples: 13914

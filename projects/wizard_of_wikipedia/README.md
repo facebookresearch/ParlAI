@@ -29,10 +29,10 @@ important research direction.
 
 You can train your own ParlAI agent on the Wizard of Wikipedia task with
 `-t wizard_of_wikipedia`.
-See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
+See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 The ParlAI MTurk collection scripts are also
-[made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/wizard_of_wikipedia),
+[available](https://github.com/facebookresearch/ParlAI/tree/main/parlai/mturk/README.md) in an older release of ParlAI (see the `wizard_of_wikipedia` task),
 for those interested in replication, analysis, or additional data collection.
 The MTurk task for evaluating pre-trained models is made available in this
 directory.
@@ -68,8 +68,8 @@ Vanilla Transformer (no knowledge)   | [Dinan et al. (2019)](https://arxiv.org/a
 
 You can view the standard training set with:
 
-    python examples/display_data.py -t wizard_of_wikipedia -dt train
-    
+    parlai display_data -t wizard_of_wikipedia -dt train
+
 The knowledge returned from a standard IR system appears in the knowledge field (but you can also use your own knowledge system, accessing Wikipedia yourself, we use the dump in "-t wikipedia".
 The field 'checked_sentence' indicates the gold knowledge the annotator labeled.
 
@@ -79,7 +79,7 @@ The field 'checked_sentence' indicates the gold knowledge the annotator labeled.
 
 You can evaluate the pretrained End-to-end generative models via:
 
-    python examples/eval_model.py \
+    parlai eval_model \
         -bs 64 -t wizard_of_wikipedia:generator:random_split \
         -mf models:wizard_of_wikipedia/end2end_generator/model
 
@@ -93,7 +93,7 @@ from scratch for public release.
 
 You can also evaluate the model on the unseen topic split too:
 
-    python examples/eval_model.py \
+    parlai eval_model \
         -bs 64 -t wizard_of_wikipedia:generator:topic_split \
         -mf models:wizard_of_wikipedia/end2end_generator/model
 
@@ -103,7 +103,9 @@ This will produce:
 
 You can also interact with the model with:
 
-    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_end2end -t wizard_of_wikipedia
+    parlai interactive -mf models:wizard_of_wikipedia/end2end_generator/model -t wizard_of_wikipedia
+
+_Note_: an unofficial Tensorflow implementation of the End2End generative model can be found [here](https://lucehe.github.io/wow/).
 
 ## Retrieval Model
 
@@ -114,9 +116,31 @@ following script:
 
 You can run an interactive session with the model with:
 
-    python examples/interactive.py -m projects:wizard_of_wikipedia:interactive_retrieval -t wizard_of_wikipedia
+    python projects/wizard_of_wikipedia/scripts/interactive_retrieval_model.py
 
 Check back later for more pretrained models soon!
+
+## Raw Data
+
+If you want to work with the raw data, we describe the setup of the `json` files.
+
+Each `<train/val/test>.json` file is a list of all dialogues in that split. An entry in the list has the following keys:
+
+- `chosen_topic`: the chosen topic of the conversation
+- `persona`: a corresponding persona that motivated the topic (note this was not used during data collection)
+- `wizard_eval`: an evaluation of the wizard provided by the apprentice at the end of the dialogue
+- `dialog`: the list of dialogue turns
+- `chosen_topic_passage`: a list of sentences from the wiki passage corresponding to the chosen topic
+
+The entries of `dialog` (may) have the following keys; some are omitted for the apprentice:
+
+- `speaker`: either `"wizard"` or `"apprentice"`
+- `text`: what the speaker wrote
+- `retrieved_topics`: the topics retrieved for that utterance
+- `retrieved_passages`: a list of 1 entry dicts, mapping a topic to the sentences in the passage
+- `checked_sentence`: (wizard only) a 1 entry dict mapping the topic to the chosen sentence by the wizard
+- `checked_passage`: (wizard only) a 1 entry dict mapping the topic to the chosen topic by the wizard
+
 
 ## Citation
 

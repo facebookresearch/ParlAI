@@ -1,0 +1,553 @@
+{
+    "outputs": {
+        "messages": [
+            {
+                    "episode_done": false,
+                    "id": "SYSTEM",
+                    "text": "Welcome! You'll now have a conversation with your partner.\n\n<-- FIRST, YOUR PARTNER WILL SAY SOMETHING ABOUT THIS IMAGE TO YOUR LEFT.\n\nBe sure to talk about this image a little bit before discussing other things!\n",
+                    "task_data": {
+                        "image_src": "data:image/jpeg;base64,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"
+                    },
+                    "agent_idx": null
+            },
+            {
+                    "text": "I must learn that bird's name!",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "I must learn that bird's name!",
+                        "My, aren't you a pretty bird?"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "Response 1",
+                    "task_data": {},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                    "text": "My, aren't you a pretty bird?",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "My, aren't you a pretty bird?",
+                        "I must learn that bird's name!"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "Response 2",
+                    "task_data": {},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                    "text": "My, aren't you a pretty bird?",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "My, aren't you a pretty bird?",
+                        "I must learn that bird's name!"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "Response 3",
+                    "task_data": {},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                    "text": "My, aren't you a pretty bird?",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "My, aren't you a pretty bird?",
+                        "I must learn that bird's name!"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "Response 4",
+                    "task_data": {},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                    "text": "My, aren't you a pretty bird?",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "My, aren't you a pretty bird?",
+                        "I must learn that bird's name!"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "Response 5",
+                    "task_data": {},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                    "text": "My, aren't you a pretty bird?",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "My, aren't you a pretty bird?",
+                        "I must learn that bird's name!"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "Response 6",
+                    "task_data": {},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                    "text": "My, aren't you a pretty bird?",
+                    "id": "Speaker 2",
+                    "text_candidates": [
+                        "My, aren't you a pretty bird?",
+                        "I must learn that bird's name!"
+                    ],
+                    "episode_done": false
+            },
+            {
+                    "text": "",
+                    "task_data": {"final_rating": 0},
+                    "id": "Speaker 1",
+                    "episode_done": false
+            },
+            {
+                "final_chat_data": {
+                    "dialog": [
+                        {
+                            "text": "Obsessive",
+                            "image_id": "2923e28b6f588aff2d469ab2cccfac57",
+                            "episode_done": false,
+                            "label_candidates": [
+                                "I must learn that bird's name!",
+                                "My, aren't you a pretty bird?"
+                            ],
+                            "id": "SYSTEM",
+                            "eval_labels": ["I must learn that bird's name!"],
+                            "agent_idx": null
+                        },
+                        {
+                            "episode_done": false,
+                            "id": "Speaker 2",
+                            "text": "I must learn that bird's name!",
+                            "agent_idx": 1
+                        },
+                        {"agent_idx": 0, "text": "Response 1", "id": "Speaker 1"},
+                        {
+                            "agent_idx": 1,
+                            "text": "My, aren't you a pretty bird?",
+                            "id": "Speaker 2"
+                        },
+                        {"agent_idx": 0, "text": "Response 2", "id": "Speaker 1"},
+                        {
+                            "agent_idx": 1,
+                            "text": "My, aren't you a pretty bird?",
+                            "id": "Speaker 2"
+                        },
+                        {"agent_idx": 0, "text": "Response 3", "id": "Speaker 1"},
+                        {
+                            "agent_idx": 1,
+                            "text": "My, aren't you a pretty bird?",
+                            "id": "Speaker 2"
+                        },
+                        {"agent_idx": 0, "text": "Response 4", "id": "Speaker 1"},
+                        {
+                            "agent_idx": 1,
+                            "text": "My, aren't you a pretty bird?",
+                            "id": "Speaker 2"
+                        },
+                        {"agent_idx": 0, "text": "Response 5", "id": "Speaker 1"},
+                        {
+                            "agent_idx": 1,
+                            "text": "My, aren't you a pretty bird?",
+                            "id": "Speaker 2"
+                        },
+                        {"agent_idx": 0, "text": "Response 6", "id": "Speaker 1"},
+                        {
+                            "agent_idx": 1,
+                            "text": "My, aren't you a pretty bird?",
+                            "id": "Speaker 2",
+                            "final_rating": 0
+                        }
+                    ],
+                    "workers": ["--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"],
+                    "bad_workers": [],
+                    "acceptability_violations": [null],
+                    "hit_ids": ["1"],
+                    "assignment_ids": ["1"],
+                    "task_description": {
+                        "annotations_config": null,
+                        "model_nickname": "transresnet_multimodal",
+                        "model_opt": {
+                            "show_advanced_args": false,
+                            "task": "internal:comment_battle:imageDialog",
+                            "datatype": "train",
+                            "image_mode": "resnet152",
+                            "numthreads": 1,
+                            "hide_labels": false,
+                            "multitask_weights": [1],
+                            "batchsize": 500,
+                            "model": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",
+                            "init_model": "resnet152",
+                            "dict_class": null,
+                            "evaltask": null,
+                            "eval_batchsize": null,
+                            "display_examples": false,
+                            "num_epochs": -1,
+                            "max_train_time": -1,
+                            "validation_every_n_secs": -1,
+                            "save_every_n_secs": -1,
+                            "save_after_valid": false,
+                            "validation_every_n_epochs": 1.0,
+                            "validation_max_exs": -1,
+                            "short_final_eval": false,
+                            "validation_patience": 10,
+                            "validation_metric": "accuracy",
+                            "validation_metric_mode": "max",
+                            "validation_cutoff": 1.0,
+                            "dict_build_first": true,
+                            "validation_share_agent": false,
+                            "tensorboard_log": false,
+                            "tensorboard_tag": null,
+                            "tensorboard_metrics": null,
+                            "tensorboard_comment": "",
+                            "pytorch_teacher_task": null,
+                            "pytorch_teacher_dataset": null,
+                            "pytorch_datapath": null,
+                            "numworkers": 4,
+                            "pytorch_preprocess": false,
+                            "pytorch_teacher_batch_sort": false,
+                            "batch_sort_cache_type": "pop",
+                            "batch_length_range": 5,
+                            "shuffle": false,
+                            "batch_sort_field": "text",
+                            "pytorch_context_length": -1,
+                            "pytorch_include_labels": true,
+                            "dict_maxexs": -1,
+                            "dict_include_valid": false,
+                            "dict_include_test": false,
+                            "log_every_n_secs": 2,
+                            "image_size": 256,
+                            "image_cropsize": 224,
+                            "include_uru_features": false,
+                            "datasplit": "200k",
+                            "use_provided_candidates": true,
+                            "include_resnet_features": false,
+                            "image_features": "resnet",
+                            "include_persona": true,
+                            "include_image": true,
+                            "full_cand_set": false,
+                            "num_cands": "100",
+                            "full_train_file": false,
+                            "num_test_labels": 1,
+                            "context_encoder_embedding_type": null,
+                            "load_context_encoder_from": null,
+                            "share_encoder": false,
+                            "num_layers_multimodal_encoder": 1,
+                            "multimodal": false,
+                            "multimodal_combo": "sum",
+                            "encode_image": true,
+                            "encode_dialogue_history": true,
+                            "encode_personality": true,
+                            "embedding_size": 300,
+                            "n_layers": 4,
+                            "ffn_size": 1200,
+                            "dropout": 0.0,
+                            "attention_dropout": 0.2,
+                            "relu_dropout": 0.2,
+                            "n_heads": 6,
+                            "learn_positional_embeddings": false,
+                            "embeddings_scale": true,
+                            "n_positions": 1000,
+                            "n_segments": 0,
+                            "variant": "aiayn",
+                            "activation": "relu",
+                            "truncate": 64,
+                            "image_features_dim": 2048,
+                            "embedding_type": null,
+                            "load_encoder_from": null,
+                            "hidden_dim": 500,
+                            "num_layers_all": 2,
+                            "num_layers_text_encoder": 1,
+                            "num_layers_image_encoder": 1,
+                            "no_cuda": false,
+                            "learningrate": 0.0005,
+                            "additional_layer_dropout": 0.2,
+                            "freeze_patience": -1,
+                            "one_cand_set": false,
+                            "fixed_cands_path": null,
+                            "pretrained": true,
+                            "personality_override": null,
+                            "personalities_path": null,
+                            "dict_initpath": null,
+                            "dict_language": "english",
+                            "dict_max_ngram_size": -1,
+                            "dict_minfreq": 0,
+                            "dict_maxtokens": -1,
+                            "dict_nulltoken": "__null__",
+                            "dict_starttoken": "__start__",
+                            "dict_endtoken": "__end__",
+                            "dict_unktoken": "__unk__",
+                            "dict_tokenizer": "re",
+                            "dict_lower": false,
+                            "bpe_debug": false,
+                            "dict_textfields": "text,labels",
+                            "parlai_home": "/private/home/kshuster/ParlAI",
+                            "starttime": "Jun04_15-01",
+                            "model_parallel": false,
+                            "init_opt": null,
+                            "allow_missing_init_opts": false,
+                            "download_path": null,
+                            "loglevel": "info",
+                            "dynamic_batching": null,
+                            "verbose": false,
+                            "datapath": "/private/home/ems/GitHub/facebookresearch/ParlAI_dev/data",
+                            "output_scaling": 1.0,
+                            "share_word_embeddings": true,
+                            "n_encoder_layers": -1,
+                            "n_decoder_layers": -1,
+                            "bpe_vocab": null,
+                            "bpe_merge": null,
+                            "bpe_add_prefix_space": null,
+                            "bpe_dropout": null,
+                            "override": {
+                                "ffn_size": 1200,
+                                "attention_dropout": 0.2,
+                                "relu_dropout": 0.2,
+                                "n_positions": 1000,
+                                "image_mode": "resnet152",
+                                "model_parallel": false
+                            },
+                            "dict_loaded": true
+                        }
+                    },
+                    "image_idx": 0
+                },
+                "data": {},
+                "packet_type": null
+            },
+            {
+                    "id": "SUBMIT_WORLD_DATA",
+                    "WORLD_DATA": {
+                        "custom_data": {
+                            "dialog": [
+                                {
+                                    "text": "Obsessive",
+                                    "image_id": "2923e28b6f588aff2d469ab2cccfac57",
+                                    "episode_done": false,
+                                    "label_candidates": [
+                                        "I must learn that bird's name!",
+                                        "My, aren't you a pretty bird?"
+                                    ],
+                                    "id": "SYSTEM",
+                                    "eval_labels": ["I must learn that bird's name!"],
+                                    "agent_idx": null
+                                },
+                                {
+                                    "episode_done": false,
+                                    "id": "Speaker 2",
+                                    "text": "I must learn that bird's name!",
+                                    "agent_idx": 1
+                                },
+                                {"agent_idx": 0, "text": "Response 1", "id": "Speaker 1"},
+                                {
+                                    "agent_idx": 1,
+                                    "text": "My, aren't you a pretty bird?",
+                                    "id": "Speaker 2"
+                                },
+                                {"agent_idx": 0, "text": "Response 2", "id": "Speaker 1"},
+                                {
+                                    "agent_idx": 1,
+                                    "text": "My, aren't you a pretty bird?",
+                                    "id": "Speaker 2"
+                                },
+                                {"agent_idx": 0, "text": "Response 3", "id": "Speaker 1"},
+                                {
+                                    "agent_idx": 1,
+                                    "text": "My, aren't you a pretty bird?",
+                                    "id": "Speaker 2"
+                                },
+                                {"agent_idx": 0, "text": "Response 4", "id": "Speaker 1"},
+                                {
+                                    "agent_idx": 1,
+                                    "text": "My, aren't you a pretty bird?",
+                                    "id": "Speaker 2"
+                                },
+                                {"agent_idx": 0, "text": "Response 5", "id": "Speaker 1"},
+                                {
+                                    "agent_idx": 1,
+                                    "text": "My, aren't you a pretty bird?",
+                                    "id": "Speaker 2"
+                                },
+                                {"agent_idx": 0, "text": "Response 6", "id": "Speaker 1"},
+                                {
+                                    "agent_idx": 1,
+                                    "text": "My, aren't you a pretty bird?",
+                                    "id": "Speaker 2",
+                                    "final_rating": 0
+                                }
+                            ],
+                            "workers": ["--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"],
+                            "bad_workers": [],
+                            "acceptability_violations": [null],
+                            "hit_ids": ["1"],
+                            "assignment_ids": ["1"],
+                            "task_description": {
+                                "annotations_config": null,
+                                "model_nickname": "transresnet_multimodal",
+                                "model_opt": {
+                                    "show_advanced_args": false,
+                                    "task": "internal:comment_battle:imageDialog",
+                                    "datatype": "train",
+                                    "image_mode": "resnet152",
+                                    "numthreads": 1,
+                                    "hide_labels": false,
+                                    "multitask_weights": [1],
+                                    "batchsize": 500,
+                                    "model": "projects.image_chat.transresnet_multimodal.transresnet_multimodal:TransresnetMultimodalAgent",
+                                    "init_model": "resnet152",
+                                    "dict_class": null,
+                                    "evaltask": null,
+                                    "eval_batchsize": null,
+                                    "display_examples": false,
+                                    "num_epochs": -1,
+                                    "max_train_time": -1,
+                                    "validation_every_n_secs": -1,
+                                    "save_every_n_secs": -1,
+                                    "save_after_valid": false,
+                                    "validation_every_n_epochs": 1.0,
+                                    "validation_max_exs": -1,
+                                    "short_final_eval": false,
+                                    "validation_patience": 10,
+                                    "validation_metric": "accuracy",
+                                    "validation_metric_mode": "max",
+                                    "validation_cutoff": 1.0,
+                                    "dict_build_first": true,
+                                    "validation_share_agent": false,
+                                    "tensorboard_log": false,
+                                    "tensorboard_tag": null,
+                                    "tensorboard_metrics": null,
+                                    "tensorboard_comment": "",
+                                    "pytorch_teacher_task": null,
+                                    "pytorch_teacher_dataset": null,
+                                    "pytorch_datapath": null,
+                                    "numworkers": 4,
+                                    "pytorch_preprocess": false,
+                                    "pytorch_teacher_batch_sort": false,
+                                    "batch_sort_cache_type": "pop",
+                                    "batch_length_range": 5,
+                                    "shuffle": false,
+                                    "batch_sort_field": "text",
+                                    "pytorch_context_length": -1,
+                                    "pytorch_include_labels": true,
+                                    "dict_maxexs": -1,
+                                    "dict_include_valid": false,
+                                    "dict_include_test": false,
+                                    "log_every_n_secs": 2,
+                                    "image_size": 256,
+                                    "image_cropsize": 224,
+                                    "include_uru_features": false,
+                                    "datasplit": "200k",
+                                    "use_provided_candidates": true,
+                                    "include_resnet_features": false,
+                                    "image_features": "resnet",
+                                    "include_persona": true,
+                                    "include_image": true,
+                                    "full_cand_set": false,
+                                    "num_cands": "100",
+                                    "full_train_file": false,
+                                    "num_test_labels": 1,
+                                    "context_encoder_embedding_type": null,
+                                    "load_context_encoder_from": null,
+                                    "share_encoder": false,
+                                    "num_layers_multimodal_encoder": 1,
+                                    "multimodal": false,
+                                    "multimodal_combo": "sum",
+                                    "encode_image": true,
+                                    "encode_dialogue_history": true,
+                                    "encode_personality": true,
+                                    "embedding_size": 300,
+                                    "n_layers": 4,
+                                    "ffn_size": 1200,
+                                    "dropout": 0.0,
+                                    "attention_dropout": 0.2,
+                                    "relu_dropout": 0.2,
+                                    "n_heads": 6,
+                                    "learn_positional_embeddings": false,
+                                    "embeddings_scale": true,
+                                    "n_positions": 1000,
+                                    "n_segments": 0,
+                                    "variant": "aiayn",
+                                    "activation": "relu",
+                                    "truncate": 64,
+                                    "image_features_dim": 2048,
+                                    "embedding_type": null,
+                                    "load_encoder_from": null,
+                                    "hidden_dim": 500,
+                                    "num_layers_all": 2,
+                                    "num_layers_text_encoder": 1,
+                                    "num_layers_image_encoder": 1,
+                                    "no_cuda": false,
+                                    "learningrate": 0.0005,
+                                    "additional_layer_dropout": 0.2,
+                                    "freeze_patience": -1,
+                                    "one_cand_set": false,
+                                    "fixed_cands_path": null,
+                                    "pretrained": true,
+                                    "personality_override": null,
+                                    "personalities_path": null,
+                                    "dict_initpath": null,
+                                    "dict_language": "english",
+                                    "dict_max_ngram_size": -1,
+                                    "dict_minfreq": 0,
+                                    "dict_maxtokens": -1,
+                                    "dict_nulltoken": "__null__",
+                                    "dict_starttoken": "__start__",
+                                    "dict_endtoken": "__end__",
+                                    "dict_unktoken": "__unk__",
+                                    "dict_tokenizer": "re",
+                                    "dict_lower": false,
+                                    "bpe_debug": false,
+                                    "dict_textfields": "text,labels",
+                                    "model_parallel": false,
+                                    "init_opt": null,
+                                    "allow_missing_init_opts": false,
+                                    "download_path": null,
+                                    "loglevel": "info",
+                                    "dynamic_batching": null,
+                                    "verbose": false,
+                                    "is_debug": false,
+                                    "output_scaling": 1.0,
+                                    "share_word_embeddings": true,
+                                    "n_encoder_layers": -1,
+                                    "n_decoder_layers": -1,
+                                    "checkpoint_activations": false,
+                                    "bpe_vocab": null,
+                                    "bpe_merge": null,
+                                    "bpe_add_prefix_space": null,
+                                    "bpe_dropout": null,
+                                    "override": {
+                                        "model_parallel": false,
+                                        "ffn_size": 1200,
+                                        "attention_dropout": 0.2,
+                                        "relu_dropout": 0.2,
+                                        "n_positions": 1000,
+                                        "image_mode": "resnet152"
+                                    },
+                                    "dict_loaded": true
+                                }
+                            },
+                            "image_idx": 0
+                        },
+                        "worker_data": {}
+                    },
+                    "text": ""
+            }
+        ]
+    },
+    "inputs": {}
+}

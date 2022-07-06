@@ -8,6 +8,15 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/mnist/mnist.tar.gz',
+        'mnist.tar.gz',
+        'c4e2f85cdae81ebf3a76d7ac0f0af8c4d91f4d1fb9bc2fd942b669a72b80585d',
+    )
+]
 
 
 def build(opt):
@@ -22,10 +31,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'mnist.tar.gz'
-        url = 'http://parl.ai/downloads/mnist/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

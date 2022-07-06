@@ -1,0 +1,490 @@
+{
+    "inputs": {},
+    "outputs": {
+        "messages": [
+            {
+                "agent_idx": 0,
+                "episode_done": false,
+                "fake_start": true,
+                "id": "Speaker 1",
+                "text": "Hi!",
+                "task_data": {
+                    "human_persona_string_1": "",
+                    "human_persona_string_2": ""
+                }
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
+                },
+                "text": "What are you nervous about?"
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
+                },
+                "text": "Do you have any plans for the weekend?"
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
+                },
+                "text": "Yeah that sounds great! I like to bike and try new restaurants."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
+                },
+                "text": "Oh, Italian food is great. I also love Thai and Indian."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
+                },
+                "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 2",
+                "text": "I don't know."
+            },
+            {
+                "episode_done": false,
+                "id": "Speaker 1",
+                "task_data": {
+                    "final_rating": 4,
+                    "problem_data_for_prior_message": {
+                        "bucket_0": false,
+                        "bucket_1": false,
+                        "bucket_2": true,
+                        "bucket_3": false,
+                        "bucket_4": true,
+                        "none_all_good": false
+                    }
+                },
+                "text": ""
+            },
+            {
+                "final_chat_data": {
+                    "acceptability_violations": [
+                        null
+                    ],
+                    "additional_context": null,
+                    "assignment_ids": [
+                        "1"
+                    ],
+                    "bad_workers": [],
+                    "context_dataset": null,
+                    "dialog": [
+                        {
+                            "agent_idx": 0,
+                            "episode_done": false,
+                            "fake_start": true,
+                            "id": "Speaker 1",
+                            "text": "Hi!",
+                            "task_data": {
+                                "human_persona_string_1": "",
+                                "human_persona_string_2": ""
+                            }
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "Speaker 2",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true,
+                                "none_all_good": false
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Speaker 1",
+                            "text": "What are you nervous about?"
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "Speaker 2",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true,
+                                "none_all_good": false
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Speaker 1",
+                            "text": "Do you have any plans for the weekend?"
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "Speaker 2",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true,
+                                "none_all_good": false
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Speaker 1",
+                            "text": "Yeah that sounds great! I like to bike and try new restaurants."
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "Speaker 2",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true,
+                                "none_all_good": false
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Speaker 1",
+                            "text": "Oh, Italian food is great. I also love Thai and Indian."
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "Speaker 2",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true,
+                                "none_all_good": false
+                            },
+                            "text": "I don't know."
+                        },
+                        {
+                            "agent_idx": 0,
+                            "id": "Speaker 1",
+                            "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs."
+                        },
+                        {
+                            "agent_idx": 1,
+                            "id": "Speaker 2",
+                            "problem_data": {
+                                "bucket_0": false,
+                                "bucket_1": false,
+                                "bucket_2": true,
+                                "bucket_3": false,
+                                "bucket_4": true,
+                                "none_all_good": false
+                            },
+                            "final_rating": 4,
+                            "text": "I don't know."
+                        }
+                    ],
+                    "hit_ids": [
+                        "1"
+                    ],
+                    "person1_seed_utterance": null,
+                    "person2_seed_utterance": null,
+                    "personas": null,
+                    "task_description": {
+                        "annotations_config": "{\n    \"config\": {\n        \"bucket_0\": {\n            \"name\": \"Bucket 0\",\n            \"description\": \"this response implies something...0\"\n        },\n        \"bucket_1\": {\n            \"name\": \"Bucket 1\",\n            \"description\": \"this response implies something...1\"\n        },\n        \"bucket_2\": {\n            \"name\": \"Bucket 2\",\n            \"description\": \"this response implies something...2\"\n        },\n        \"bucket_3\": {\n            \"name\": \"Bucket 3\",\n            \"description\": \"this response implies something...3\"\n        },\n        \"bucket_4\": {\n            \"name\": \"Bucket 4\",\n            \"description\": \"this response implies something...4\"\n        },\n        \"none_all_good\": {\n            \"name\": \"None, all good\",\n            \"description\": \"This response implies that there are no problems with the data\"\n        }\n    },\n    \"show_line_breaks\": false\n}\n",
+                        "model_nickname": "fixed_response",
+                        "model_opt": {
+                            "init_opt": null,
+                            "allow_missing_init_opts": false,
+                            "task": null,
+                            "download_path": null,
+                            "loglevel": "info",
+                            "datatype": "train",
+                            "image_mode": "raw",
+                            "hide_labels": false,
+                            "multitask_weights": [
+                                1
+                            ],
+                            "batchsize": 1,
+                            "dynamic_batching": null,
+                            "verbose": false,
+                            "datapath": "/private/home/ems/GitHub/facebookresearch/ParlAI/data",
+                            "model": "fixed_response",
+                            "init_model": null,
+                            "dict_class": null,
+                            "image_size": 256,
+                            "image_cropsize": 224,
+                            "fixed_response": "I don't know.",
+                            "model_parallel": true,
+                            "parlai_home": "/private/home/ems/GitHub/facebookresearch/ParlAI",
+                            "override": {
+                                "model_parallel": true,
+                                "model": "fixed_response"
+                            },
+                            "starttime": "Jan08_11-16"
+                        }
+                    },
+                    "workers": [
+                        "--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"
+                    ]
+                },
+                "data": {},
+                "packet_type": null
+            },
+            {
+                "WORLD_DATA": {
+                    "custom_data": {
+                        "dialog": [
+                            {
+                                "episode_done": false,
+                                "id": "Speaker 1",
+                                "text": "Hi!",
+                                "fake_start": true,
+                                "agent_idx": 0,
+                                "task_data": {
+                                    "human_persona_string_1": "",
+                                    "human_persona_string_2": ""
+                                }
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "What are you nervous about?",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Do you have any plans for the weekend?",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Yeah that sounds great! I like to bike and try new restaurants.",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Oh, Italian food is great. I also love Thai and Indian.",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                }
+                            },
+                            {
+                                "agent_idx": 0,
+                                "text": "Hmmm - anything with peanuts? Or I like when they have spicy licorice-like herbs.",
+                                "id": "Speaker 1"
+                            },
+                            {
+                                "agent_idx": 1,
+                                "text": "I don't know.",
+                                "id": "Speaker 2",
+                                "problem_data": {
+                                    "bucket_0": false,
+                                    "bucket_1": false,
+                                    "bucket_2": true,
+                                    "bucket_3": false,
+                                    "bucket_4": true,
+                                    "none_all_good": false
+                                },
+                                "final_rating": 4
+                            }
+                        ],
+                        "workers": [
+                            "--NOT-MTURK-AGENT-MOCK_WORKER_0_sandbox"
+                        ],
+                        "bad_workers": [],
+                        "acceptability_violations": [
+                            null
+                        ],
+                        "hit_ids": [
+                            "1"
+                        ],
+                        "assignment_ids": [
+                            "1"
+                        ],
+                        "task_description": {
+                            "annotations_config": "{\n    \"config\": {\n        \"bucket_0\": {\n            \"name\": \"Bucket 0\",\n            \"description\": \"this response implies something...0\"\n        },\n        \"bucket_1\": {\n            \"name\": \"Bucket 1\",\n            \"description\": \"this response implies something...1\"\n        },\n        \"bucket_2\": {\n            \"name\": \"Bucket 2\",\n            \"description\": \"this response implies something...2\"\n        },\n        \"bucket_3\": {\n            \"name\": \"Bucket 3\",\n            \"description\": \"this response implies something...3\"\n        },\n        \"bucket_4\": {\n            \"name\": \"Bucket 4\",\n            \"description\": \"this response implies something...4\"\n        },\n        \"none_all_good\": {\n            \"name\": \"None, all good\",\n            \"description\": \"This response implies that there are no problems with the data\"\n        }\n    },\n    \"show_line_breaks\": false\n}\n",
+                            "model_nickname": "fixed_response",
+                            "model_opt": {
+                                "init_opt": null,
+                                "allow_missing_init_opts": false,
+                                "task": null,
+                                "download_path": null,
+                                "loglevel": "info",
+                                "datatype": "train",
+                                "image_mode": "raw",
+                                "hide_labels": false,
+                                "multitask_weights": [
+                                    1
+                                ],
+                                "batchsize": 1,
+                                "dynamic_batching": null,
+                                "verbose": false,
+                                "is_debug": false,
+                                "model": "fixed_response",
+                                "init_model": null,
+                                "dict_class": null,
+                                "image_size": 256,
+                                "image_cropsize": 224,
+                                "fixed_response": "I don't know.",
+                                "model_parallel": true,
+                                "override": {
+                                    "model_parallel": true,
+                                    "model": "fixed_response"
+                                }
+                            }
+                        },
+                        "personas": null,
+                        "context_dataset": null,
+                        "person1_seed_utterance": null,
+                        "person2_seed_utterance": null,
+                        "additional_context": null
+                    },
+                    "worker_data": {}
+                },
+                "id": "SUBMIT_WORLD_DATA",
+                "text": ""
+            }
+        ]
+    }
+}

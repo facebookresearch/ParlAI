@@ -61,7 +61,7 @@ _penc-${penc}_dr-${dr}_output-${output}_optm-${optm}_task-${task}
         echo "echo $SWEEP_NAME $BSZ " >> ${SCRIPT}
         echo "nvidia-smi" >> ${SCRIPT}
         echo "cd $PARLAI" >> ${SCRIPT}
-        echo python examples/train_model.py \
+        echo parlai train_model \
             -t babi:task1k:${task} \
             -ltim ${ltim} -vtim ${vtim} -vme ${vme} -vp ${vp} -vmt ${vmt} -ttim ${ttim} \
             -bs ${bs} -lr ${lr} --embedding-size ${esz} --hops ${hops} \

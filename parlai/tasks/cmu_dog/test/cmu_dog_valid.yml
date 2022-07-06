@@ -1,0 +1,412 @@
+acts:
+- - available_knowledge_raw:
+      cast:
+      - Leonardo DiCaprio as Frank Abagnale, Jr.
+      - Tom Hanks as Carl Hanratty
+      - Christopher Walken as Frank Abagnale, Sr.
+      - Nathalie Baye as Paula Abagnale.
+      - Amy Adams as Brenda Strong
+      critical_response:
+      - ' This is not a major Spielberg film, although it is an effortlessly watchable
+        one '
+      - the range and ease and cleverness that Martin Scorsese so underutilized in
+        Gangs of New York
+      - ' Catch Me if You Can never takes itself or its subjects too seriously, and
+        contains more genuinely funny material than about 90% of the so-called ''comedies''
+        found in multiplexes these days '
+      - bogged down over 140 minutes. A film that took off like a hare on speed ends
+        like a winded tortoise.
+      director: Steven Spielberg
+      genre: biographical, crime
+      introduction: Catch Me If You Can is a 2002 American biographical crime film
+        directed and co-produced by Steven Spielberg from a screenplay by Jeff Nathanson.
+        The film is based on the life of Frank Abagnale, who, before his 19th birthday,
+        successfully performed cons worth millions of dollars by posing as a Pan American
+        World Airways pilot, a Georgia doctor and a Louisiana parish prosecutor. His
+        primary crime was check fraud; he became so experienced that the FBI eventually
+        turned to him for help in catching other checking forgers. The film stars
+        Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin Sheen, and
+        Nathalie Baye in supporting roles.
+      movieName: Catch me if you can
+      rating:
+      - 'Rotten Tomatoes: 96% and average: 7.9/10'
+      - 'Metacritic Score: 76/100'
+      - 'CinemaScore: A-'
+      year: '2002'
+    available_knowledge_text: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks
+      as Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as
+      Paula Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a
+      major Spielberg film, although it is an effortlessly watchable one ,the range
+      and ease and cleverness that Martin Scorsese so underutilized in Gangs of New
+      York, Catch Me if You Can never takes itself or its subjects too seriously,
+      and contains more genuinely funny material than about 90% of the so-called ''comedies''
+      found in multiplexes these days ,bogged down over 140 minutes. A film that took
+      off like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    checked_sentence: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks as
+      Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as Paula
+      Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a major
+      Spielberg film, although it is an effortlessly watchable one ,the range and
+      ease and cleverness that Martin Scorsese so underutilized in Gangs of New York,
+      Catch Me if You Can never takes itself or its subjects too seriously, and contains
+      more genuinely funny material than about 90% of the so-called ''comedies'' found
+      in multiplexes these days ,bogged down over 140 minutes. A film that took off
+      like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    episode_done: false
+    eval_labels:
+    - Hi there, nhow are you?
+    id: cmu_dog
+    text: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks as Carl Hanratty,Christopher
+      Walken as Frank Abagnale, Sr.,Nathalie Baye as Paula Abagnale.,Amy Adams as
+      Brenda Strong;critical_response: This is not a major Spielberg film, although
+      it is an effortlessly watchable one ,the range and ease and cleverness that
+      Martin Scorsese so underutilized in Gangs of New York, Catch Me if You Can never
+      takes itself or its subjects too seriously, and contains more genuinely funny
+      material than about 90% of the so-called ''comedies'' found in multiplexes these
+      days ,bogged down over 140 minutes. A film that took off like a hare on speed
+      ends like a winded tortoise.;director:Steven Spielberg;genre:biographical, crime;introduction:Catch
+      Me If You Can is a 2002 American biographical crime film directed and co-produced
+      by Steven Spielberg from a screenplay by Jeff Nathanson. The film is based on
+      the life of Frank Abagnale, who, before his 19th birthday, successfully performed
+      cons worth millions of dollars by posing as a Pan American World Airways pilot,
+      a Georgia doctor and a Louisiana parish prosecutor. His primary crime was check
+      fraud; he became so experienced that the FBI eventually turned to him for help
+      in catching other checking forgers. The film stars Leonardo DiCaprio and Tom
+      Hanks, with Christopher Walken, Martin Sheen, and Nathalie Baye in supporting
+      roles.;movieName:Catch me if you can;rating:Rotten Tomatoes: 96% and average:
+      7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    title: Catch me if you can
+- - available_knowledge_raw:
+      cast:
+      - Leonardo DiCaprio as Frank Abagnale, Jr.
+      - Tom Hanks as Carl Hanratty
+      - Christopher Walken as Frank Abagnale, Sr.
+      - Nathalie Baye as Paula Abagnale.
+      - Amy Adams as Brenda Strong
+      critical_response:
+      - ' This is not a major Spielberg film, although it is an effortlessly watchable
+        one '
+      - the range and ease and cleverness that Martin Scorsese so underutilized in
+        Gangs of New York
+      - ' Catch Me if You Can never takes itself or its subjects too seriously, and
+        contains more genuinely funny material than about 90% of the so-called ''comedies''
+        found in multiplexes these days '
+      - bogged down over 140 minutes. A film that took off like a hare on speed ends
+        like a winded tortoise.
+      director: Steven Spielberg
+      genre: biographical, crime
+      introduction: Catch Me If You Can is a 2002 American biographical crime film
+        directed and co-produced by Steven Spielberg from a screenplay by Jeff Nathanson.
+        The film is based on the life of Frank Abagnale, who, before his 19th birthday,
+        successfully performed cons worth millions of dollars by posing as a Pan American
+        World Airways pilot, a Georgia doctor and a Louisiana parish prosecutor. His
+        primary crime was check fraud; he became so experienced that the FBI eventually
+        turned to him for help in catching other checking forgers. The film stars
+        Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin Sheen, and
+        Nathalie Baye in supporting roles.
+      movieName: Catch me if you can
+      rating:
+      - 'Rotten Tomatoes: 96% and average: 7.9/10'
+      - 'Metacritic Score: 76/100'
+      - 'CinemaScore: A-'
+      year: '2002'
+    available_knowledge_text: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks
+      as Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as
+      Paula Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a
+      major Spielberg film, although it is an effortlessly watchable one ,the range
+      and ease and cleverness that Martin Scorsese so underutilized in Gangs of New
+      York, Catch Me if You Can never takes itself or its subjects too seriously,
+      and contains more genuinely funny material than about 90% of the so-called ''comedies''
+      found in multiplexes these days ,bogged down over 140 minutes. A film that took
+      off like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    checked_sentence: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks as
+      Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as Paula
+      Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a major
+      Spielberg film, although it is an effortlessly watchable one ,the range and
+      ease and cleverness that Martin Scorsese so underutilized in Gangs of New York,
+      Catch Me if You Can never takes itself or its subjects too seriously, and contains
+      more genuinely funny material than about 90% of the so-called ''comedies'' found
+      in multiplexes these days ,bogged down over 140 minutes. A film that took off
+      like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    episode_done: false
+    eval_labels:
+    - Good , thanks! You?
+    id: cmu_dog
+    text: hello, how are you?
+    title: Catch me if you can
+- - available_knowledge_raw:
+      cast:
+      - Leonardo DiCaprio as Frank Abagnale, Jr.
+      - Tom Hanks as Carl Hanratty
+      - Christopher Walken as Frank Abagnale, Sr.
+      - Nathalie Baye as Paula Abagnale.
+      - Amy Adams as Brenda Strong
+      critical_response:
+      - ' This is not a major Spielberg film, although it is an effortlessly watchable
+        one '
+      - the range and ease and cleverness that Martin Scorsese so underutilized in
+        Gangs of New York
+      - ' Catch Me if You Can never takes itself or its subjects too seriously, and
+        contains more genuinely funny material than about 90% of the so-called ''comedies''
+        found in multiplexes these days '
+      - bogged down over 140 minutes. A film that took off like a hare on speed ends
+        like a winded tortoise.
+      director: Steven Spielberg
+      genre: biographical, crime
+      introduction: Catch Me If You Can is a 2002 American biographical crime film
+        directed and co-produced by Steven Spielberg from a screenplay by Jeff Nathanson.
+        The film is based on the life of Frank Abagnale, who, before his 19th birthday,
+        successfully performed cons worth millions of dollars by posing as a Pan American
+        World Airways pilot, a Georgia doctor and a Louisiana parish prosecutor. His
+        primary crime was check fraud; he became so experienced that the FBI eventually
+        turned to him for help in catching other checking forgers. The film stars
+        Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin Sheen, and
+        Nathalie Baye in supporting roles.
+      movieName: Catch me if you can
+      rating:
+      - 'Rotten Tomatoes: 96% and average: 7.9/10'
+      - 'Metacritic Score: 76/100'
+      - 'CinemaScore: A-'
+      year: '2002'
+    available_knowledge_text: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks
+      as Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as
+      Paula Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a
+      major Spielberg film, although it is an effortlessly watchable one ,the range
+      and ease and cleverness that Martin Scorsese so underutilized in Gangs of New
+      York, Catch Me if You Can never takes itself or its subjects too seriously,
+      and contains more genuinely funny material than about 90% of the so-called ''comedies''
+      found in multiplexes these days ,bogged down over 140 minutes. A film that took
+      off like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    checked_sentence: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks as
+      Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as Paula
+      Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a major
+      Spielberg film, although it is an effortlessly watchable one ,the range and
+      ease and cleverness that Martin Scorsese so underutilized in Gangs of New York,
+      Catch Me if You Can never takes itself or its subjects too seriously, and contains
+      more genuinely funny material than about 90% of the so-called ''comedies'' found
+      in multiplexes these days ,bogged down over 140 minutes. A film that took off
+      like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    episode_done: false
+    eval_labels:
+    - Have you see this movie before?
+    id: cmu_dog
+    text: i am good thank you for asking
+    title: Catch me if you can
+- - available_knowledge_raw:
+      cast:
+      - Leonardo DiCaprio as Frank Abagnale, Jr.
+      - Tom Hanks as Carl Hanratty
+      - Christopher Walken as Frank Abagnale, Sr.
+      - Nathalie Baye as Paula Abagnale.
+      - Amy Adams as Brenda Strong
+      critical_response:
+      - ' This is not a major Spielberg film, although it is an effortlessly watchable
+        one '
+      - the range and ease and cleverness that Martin Scorsese so underutilized in
+        Gangs of New York
+      - ' Catch Me if You Can never takes itself or its subjects too seriously, and
+        contains more genuinely funny material than about 90% of the so-called ''comedies''
+        found in multiplexes these days '
+      - bogged down over 140 minutes. A film that took off like a hare on speed ends
+        like a winded tortoise.
+      director: Steven Spielberg
+      genre: biographical, crime
+      introduction: Catch Me If You Can is a 2002 American biographical crime film
+        directed and co-produced by Steven Spielberg from a screenplay by Jeff Nathanson.
+        The film is based on the life of Frank Abagnale, who, before his 19th birthday,
+        successfully performed cons worth millions of dollars by posing as a Pan American
+        World Airways pilot, a Georgia doctor and a Louisiana parish prosecutor. His
+        primary crime was check fraud; he became so experienced that the FBI eventually
+        turned to him for help in catching other checking forgers. The film stars
+        Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin Sheen, and
+        Nathalie Baye in supporting roles.
+      movieName: Catch me if you can
+      rating:
+      - 'Rotten Tomatoes: 96% and average: 7.9/10'
+      - 'Metacritic Score: 76/100'
+      - 'CinemaScore: A-'
+      year: '2002'
+    available_knowledge_text: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks
+      as Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as
+      Paula Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a
+      major Spielberg film, although it is an effortlessly watchable one ,the range
+      and ease and cleverness that Martin Scorsese so underutilized in Gangs of New
+      York, Catch Me if You Can never takes itself or its subjects too seriously,
+      and contains more genuinely funny material than about 90% of the so-called ''comedies''
+      found in multiplexes these days ,bogged down over 140 minutes. A film that took
+      off like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    checked_sentence: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks as
+      Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as Paula
+      Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a major
+      Spielberg film, although it is an effortlessly watchable one ,the range and
+      ease and cleverness that Martin Scorsese so underutilized in Gangs of New York,
+      Catch Me if You Can never takes itself or its subjects too seriously, and contains
+      more genuinely funny material than about 90% of the so-called ''comedies'' found
+      in multiplexes these days ,bogged down over 140 minutes. A film that took off
+      like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    episode_done: false
+    eval_labels:
+    - I have seen it one time, back in 2002
+    id: cmu_dog
+    text: 'no'
+    title: Catch me if you can
+- - available_knowledge_raw:
+      cast:
+      - Leonardo DiCaprio as Frank Abagnale, Jr.
+      - Tom Hanks as Carl Hanratty
+      - Christopher Walken as Frank Abagnale, Sr.
+      - Nathalie Baye as Paula Abagnale.
+      - Amy Adams as Brenda Strong
+      critical_response:
+      - ' This is not a major Spielberg film, although it is an effortlessly watchable
+        one '
+      - the range and ease and cleverness that Martin Scorsese so underutilized in
+        Gangs of New York
+      - ' Catch Me if You Can never takes itself or its subjects too seriously, and
+        contains more genuinely funny material than about 90% of the so-called ''comedies''
+        found in multiplexes these days '
+      - bogged down over 140 minutes. A film that took off like a hare on speed ends
+        like a winded tortoise.
+      director: Steven Spielberg
+      genre: biographical, crime
+      introduction: Catch Me If You Can is a 2002 American biographical crime film
+        directed and co-produced by Steven Spielberg from a screenplay by Jeff Nathanson.
+        The film is based on the life of Frank Abagnale, who, before his 19th birthday,
+        successfully performed cons worth millions of dollars by posing as a Pan American
+        World Airways pilot, a Georgia doctor and a Louisiana parish prosecutor. His
+        primary crime was check fraud; he became so experienced that the FBI eventually
+        turned to him for help in catching other checking forgers. The film stars
+        Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin Sheen, and
+        Nathalie Baye in supporting roles.
+      movieName: Catch me if you can
+      rating:
+      - 'Rotten Tomatoes: 96% and average: 7.9/10'
+      - 'Metacritic Score: 76/100'
+      - 'CinemaScore: A-'
+      year: '2002'
+    available_knowledge_text: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks
+      as Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as
+      Paula Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a
+      major Spielberg film, although it is an effortlessly watchable one ,the range
+      and ease and cleverness that Martin Scorsese so underutilized in Gangs of New
+      York, Catch Me if You Can never takes itself or its subjects too seriously,
+      and contains more genuinely funny material than about 90% of the so-called ''comedies''
+      found in multiplexes these days ,bogged down over 140 minutes. A film that took
+      off like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    checked_sentence: 'cast:Leonardo DiCaprio as Frank Abagnale, Jr.,Tom Hanks as
+      Carl Hanratty,Christopher Walken as Frank Abagnale, Sr.,Nathalie Baye as Paula
+      Abagnale.,Amy Adams as Brenda Strong;critical_response: This is not a major
+      Spielberg film, although it is an effortlessly watchable one ,the range and
+      ease and cleverness that Martin Scorsese so underutilized in Gangs of New York,
+      Catch Me if You Can never takes itself or its subjects too seriously, and contains
+      more genuinely funny material than about 90% of the so-called ''comedies'' found
+      in multiplexes these days ,bogged down over 140 minutes. A film that took off
+      like a hare on speed ends like a winded tortoise.;director:Steven Spielberg;genre:biographical,
+      crime;introduction:Catch Me If You Can is a 2002 American biographical crime
+      film directed and co-produced by Steven Spielberg from a screenplay by Jeff
+      Nathanson. The film is based on the life of Frank Abagnale, who, before his
+      19th birthday, successfully performed cons worth millions of dollars by posing
+      as a Pan American World Airways pilot, a Georgia doctor and a Louisiana parish
+      prosecutor. His primary crime was check fraud; he became so experienced that
+      the FBI eventually turned to him for help in catching other checking forgers.
+      The film stars Leonardo DiCaprio and Tom Hanks, with Christopher Walken, Martin
+      Sheen, and Nathalie Baye in supporting roles.;movieName:Catch me if you can;rating:Rotten
+      Tomatoes: 96% and average: 7.9/10,Metacritic Score: 76/100,CinemaScore: A-;year:2002'
+    episode_done: false
+    eval_labels:
+    - Leo DiCaprio is excellent! It's very entertaining and he plays  a con artist
+      that sucessfully performed a great number of scams
+    id: cmu_dog
+    text: was it good?
+    title: Catch me if you can
+num_episodes: 349
+num_examples: 3899

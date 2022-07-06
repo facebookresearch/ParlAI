@@ -1,0 +1,44 @@
+acts:
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Jetzt sollten wir also - und ich möchte von der Frau Kommissarin wissen , ob
+      sie mit mir darin konform geht - Lösungen für die Mängel und Lücken konzipieren
+      , damit die Finanzierbarkeit gesichert ist .
+    reward: 0
+    text: So we should - and I would like to ask the Commissioner if she agrees -
+      come up with solutions for the shortages and gaps in order to achieve proper
+      financeability .
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Alle auf dieser Webseite erwähnten Warenzeichen und Markennamen gehören selbstverständlich
+      ihren jeweiligen Inhabern und werden hier nur aus dokumentatorischen Gründen
+      erwähnt .
+    reward: 0
+    text: All tradmarks and logos mentioned on this website belong to their owners
+      and are included for documentary reasons only .
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Der Zeltplatz muss vor 12.00 Uhr frei verlassen werden .
+    reward: 0
+    text: All the Guest with tents , campers , caravans must leave the place available
+      before 12.00pm on the day of departure .
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Ein erstes Projekt , mit dem eine Bank mit einer Beteiligung von 20 Mio USD
+      gestützt wurde , ist genehmigt worden .
+    reward: 0
+    text: With its promotion of foreign trade and investment the German government
+      supports and accompanies German enterprises in their activities abroad and provides
+      coverage in the form of investment guarantees .
+- - episode_done: true
+    id: wmt:en_de
+    labels:
+    - Bingo ist ein auf 90 Nummern ( 1 bis 90 ) beruhendes Lotterie __AT__ Spiel .
+    reward: 0
+    text: Bingo is a lottery game using 90 numbers ( 1 to 90 ) .
+num_episodes: 4438840
+num_examples: 4438840

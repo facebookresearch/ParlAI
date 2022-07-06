@@ -3,31 +3,32 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Verify data doesn't have basic mistakes, like empty text fields
-or empty label candidates.
+"""
+Verify data doesn't have basic mistakes, like empty text fields or empty label
+candidates.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
-
-  python parlai/scripts/verify_data.py -t convai2 -dt train:ordered
+```shell
+parlai verify_data --task convai2 --datatype valid
+```
 """
 from parlai.agents.repeat_label.repeat_label import RepeatLabelAgent
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.utils.misc import TimeLogger, warn_once
 from parlai.core.worlds import create_task
+from parlai.core.script import ParlaiScript, register_script
+import parlai.utils.logging as logging
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Lint for ParlAI tasks')
-    parser.add_pytorch_datateacher_args()
+        parser = ParlaiParser(True, True, 'Check tasks for common errors')
     # Get command line arguments
     parser.add_argument('-ltim', '--log-every-n-secs', type=float, default=2)
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
-    parser.set_defaults(datatype='train:stream')
+    parser.set_defaults(datatype='train:stream:ordered')
     return parser
 
 
@@ -54,10 +55,11 @@ def warn(txt, act, opt):
         warn_once(txt)
 
 
-def verify(opt, printargs=None, print_parser=None):
+def verify(opt):
     if opt['datatype'] == 'train':
-        print("[ note: changing datatype from train to train:ordered ]")
+        logging.warning("changing datatype from train to train:ordered")
         opt['datatype'] = 'train:ordered'
+    opt.log()
     # create repeat label agent and assign it to the specified task
     agent = RepeatLabelAgent(opt)
     world = create_task(opt, agent)
@@ -84,7 +86,7 @@ def verify(opt, printargs=None, print_parser=None):
         if not isinstance(act, Message):
             counts['did_not_return_message'] += 1
 
-        if 'text' not in act:
+        if 'text' not in act and 'image' not in act:
             warn("warning: missing text field:\n", act, opt)
             counts['missing_text'] += 1
 
@@ -118,25 +120,36 @@ def verify(opt, printargs=None, print_parser=None):
 
         if log_time.time() > log_every_n_secs:
             text, log = report(world, counts, log_time)
-            if print_parser:
-                print(text)
+            print(text)
 
     try:
         # print dataset size if available
-        print(
-            '[ loaded {} episodes with a total of {} examples ]'.format(
-                world.num_episodes(), world.num_examples()
-            )
+        logging.info(
+            f'Loaded {world.num_episodes()} episodes with a '
+            f'total of {world.num_examples()} examples'
         )
-    except Exception:
+    except AttributeError:
         pass
 
-    return report(world, counts, log_time)
+    counts['exs'] = int(world.report()['exs'])
+    return counts
+
+
+def verify_data(opt):
+    counts = verify(opt)
+    print(counts)
+    return counts
+
+
+@register_script('verify_data', hidden=True)
+class VerifyData(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return verify_data(self.opt)
 
 
 if __name__ == '__main__':
-    parser = setup_args()
-    report_text, report_log = verify(
-        parser.parse_args(print_args=False), print_parser=parser
-    )
-    print(report_text)
+    VerifyData.main()

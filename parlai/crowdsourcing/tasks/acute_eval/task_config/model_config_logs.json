@@ -1,0 +1,12 @@
+{
+    "model1": {
+        "log_path": "../../../parlai/crowdsourcing/tasks/acute_eval/task_config/self_chats/model1.blended_skill_talk.jsonl",
+        "is_selfchat": true,
+        "speaker_idx": 0
+    },
+    "model2": {
+        "log_path": "../../../parlai/crowdsourcing/tasks/acute_eval/task_config/self_chats/model2.blended_skill_talk.jsonl",
+        "is_selfchat": true,
+        "speaker_idx": 0
+    }
+}

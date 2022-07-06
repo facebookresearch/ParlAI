@@ -10,16 +10,32 @@ Torch Ranker Agents provide functionality for building ranking models.
 See the TorchRankerAgent tutorial for examples.
 """
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from typing import Dict, Any
 from abc import abstractmethod
 from itertools import islice
 import os
 from tqdm import tqdm
+import random
 
 import torch
 
+
+from parlai.core.opt import Opt
 from parlai.utils.distributed import is_distributed
 from parlai.core.torch_agent import TorchAgent, Output
-from parlai.utils.misc import round_sigfigs, padded_3d, warn_once, padded_tensor
+from parlai.utils.misc import warn_once
+from parlai.utils.io import PathManager
+from parlai.utils.torch import (
+    padded_3d,
+    total_parameters,
+    trainable_parameters,
+    PipelineHelper,
+)
+from parlai.utils.fp16 import FP16SafeCrossEntropy
+from parlai.core.metrics import AverageMetric
+import parlai.utils.logging as logging
 
 
 class TorchRankerAgent(TorchAgent):
@@ -35,10 +51,14 @@ class TorchRankerAgent(TorchAgent):
     """
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        """Add CLI args."""
-        super(TorchRankerAgent, cls).add_cmdline_args(argparser)
-        agent = argparser.add_argument_group('TorchRankerAgent')
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add CLI args.
+        """
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group('TorchRankerAgent')
         agent.add_argument(
             '-cands',
             '--candidates',
@@ -56,6 +76,15 @@ class TorchRankerAgent(TorchAgent):
             choices=['batch', 'inline', 'fixed', 'vocab', 'batch-all-cands'],
             help='The source of candidates during evaluation (defaults to the same'
             'value as --candidates if no flag is given)',
+        )
+        agent.add_argument(
+            '-icands',
+            '--interactive-candidates',
+            type=str,
+            default='fixed',
+            choices=['fixed', 'inline', 'vocab'],
+            help='The source of candidates during interactive mode. Since in '
+            'interactive mode, batchsize == 1, we cannot use batch candidates.',
         )
         agent.add_argument(
             '--repeat-blocking-heuristic',
@@ -93,6 +122,13 @@ class TorchRankerAgent(TorchAgent):
             'the candidates is independent of the input.',
         )
         agent.add_argument(
+            '--encode-candidate-vecs-batchsize',
+            type=int,
+            default=256,
+            hidden=True,
+            help='Batchsize when encoding candidate vecs',
+        )
+        agent.add_argument(
             '--init-model',
             type=str,
             default=None,
@@ -125,49 +161,76 @@ class TorchRankerAgent(TorchAgent):
             help='Ranking returns the top k results of k > 0, otherwise sorts every '
             'single candidate according to the ranking.',
         )
+        agent.add_argument(
+            '--inference',
+            choices={'max', 'topk'},
+            default='max',
+            help='Final response output algorithm',
+        )
+        agent.add_argument(
+            '--topk',
+            type=int,
+            default=5,
+            help='K used in Top K sampling inference, when selected',
+        )
+        agent.add_argument(
+            '--return-cand-scores',
+            type='bool',
+            default=False,
+            help='Return sorted candidate scores from eval_step',
+        )
+        return parser
 
-    def __init__(self, opt, shared=None):
+    def __init__(self, opt: Opt, shared=None):
         # Must call _get_init_model() first so that paths are updated if necessary
         # (e.g., a .dict file)
         init_model, is_finetune = self._get_init_model(opt, shared)
         opt['rank_candidates'] = True
+        self._set_candidate_variables(opt)
         super().__init__(opt, shared)
 
+        states: Dict[str, Any]
         if shared:
-            states = None
+            states = {}
         else:
             # Note: we cannot change the type of metrics ahead of time, so you
             # should correctly initialize to floats or ints here
-            self.metrics['loss'] = 0.0
-            self.metrics['examples'] = 0
-            self.metrics['rank'] = 0.0
-            self.metrics['mrr'] = 0.0
-            self.metrics['train_accuracy'] = 0.0
-
             self.criterion = self.build_criterion()
             self.model = self.build_model()
+
             if self.model is None or self.criterion is None:
                 raise AttributeError(
-                    'build_model() and build_criterion() need to return the model or criterion'
+                    'build_model() and build_criterion() need to return the model '
+                    'or criterion'
                 )
-            if self.use_cuda:
-                self.model.cuda()
-                self.criterion.cuda()
-
-            print("Total parameters: {}".format(self._total_parameters()))
-            print("Trainable parameters:  {}".format(self._trainable_parameters()))
+            train_params = trainable_parameters(self.model)
+            total_params = total_parameters(self.model)
+            logging.info(
+                f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
+            )
 
             if self.fp16:
                 self.model = self.model.half()
             if init_model:
-                print('Loading existing model parameters from ' + init_model)
+                logging.info(f'Loading existing model parameters from {init_model}')
                 states = self.load(init_model)
             else:
                 states = {}
 
+            if self.use_cuda:
+                if self.model_parallel:
+                    ph = PipelineHelper()
+                    ph.check_compatibility(self.opt)
+                    self.model = ph.make_parallel(self.model)
+                else:
+                    self.model.cuda()
+                if self.data_parallel:
+                    self.model = torch.nn.DataParallel(self.model)
+                self.criterion.cuda()
+
         self.rank_top_k = opt.get('rank_top_k', -1)
 
-        # Vectorize and save fixed/vocab candidates once upfront if applicable
+        # Set fixed and vocab candidates if applicable
         self.set_fixed_candidates(shared)
         self.set_vocab_candidates(shared)
 
@@ -175,16 +238,23 @@ class TorchRankerAgent(TorchAgent):
             # We don't use get here because hasattr is used on optimizer later.
             if 'optimizer' in shared:
                 self.optimizer = shared['optimizer']
-        else:
+        elif self._should_initialize_optimizer():
+            # only build an optimizer if we're training
             optim_params = [p for p in self.model.parameters() if p.requires_grad]
-            self.init_optim(
-                optim_params, states.get('optimizer'), states.get('optimizer_type')
+            was_reset = self.init_optim(
+                optim_params,
+                states.get('optimizer'),
+                states.get('optimizer_type'),
+                is_finetune=is_finetune,
             )
-            self.build_lr_scheduler(states, hard_reset=is_finetune)
+            if was_reset:
+                logging.warning("Optimizer was reset. Also resetting LR scheduler.")
+            self.build_lr_scheduler(states, hard_reset=is_finetune or was_reset)
 
         if shared is None and is_distributed():
+            device_ids = None if self.model_parallel else [self.opt['gpu']]
             self.model = torch.nn.parallel.DistributedDataParallel(
-                self.model, device_ids=[self.opt['gpu']], broadcast_buffers=False
+                self.model, device_ids=device_ids, broadcast_buffers=False
             )
 
     def build_criterion(self):
@@ -193,33 +263,66 @@ class TorchRankerAgent(TorchAgent):
 
         By default torch.nn.CrossEntropyLoss.
         """
-        return torch.nn.CrossEntropyLoss(reduction='sum')
+        if self.fp16:
+            return FP16SafeCrossEntropy(reduction='none')
+        else:
+            return torch.nn.CrossEntropyLoss(reduction='none')
+
+    def _set_candidate_variables(self, opt):
+        """
+        Sets candidate variables from opt.
+
+        NOTE: we call this function prior to `super().__init__` so
+        that these variables are set properly during the call to the
+        `set_interactive_mode` function.
+        """
+        # candidate variables
+        self.candidates = opt['candidates']
+        self.eval_candidates = opt['eval_candidates']
+        # options
+        self.fixed_candidates_path = opt['fixed_candidates_path']
+        self.ignore_bad_candidates = opt['ignore_bad_candidates']
+        self.encode_candidate_vecs = opt['encode_candidate_vecs']
 
     def set_interactive_mode(self, mode, shared=False):
+        """
+        Set interactive mode defaults.
+
+        In interactive mode, we set `ignore_bad_candidates` to True.
+        Additionally, we change the `eval_candidates` to the option
+        specified in `--interactive-candidates`, which defaults to False.
+
+        Interactive mode possibly changes the fixed candidates path if it
+        does not exist, automatically creating a candidates file from the
+        specified task.
+        """
         super().set_interactive_mode(mode, shared)
-        self.candidates = self.opt['candidates']
-        self.encode_candidate_vecs = self.opt['encode_candidate_vecs']
-        if mode:
-            self.eval_candidates = 'fixed'
-            self.ignore_bad_candidates = True
-            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+        if not mode:
+            # Not in interactive mode, nothing to do
+            return
+
+        # Override eval_candidates to interactive_candidates
+        self.eval_candidates = self.opt.get('interactive_candidates', 'fixed')
+        if self.eval_candidates == 'fixed':
+            # Set fixed candidates path if it does not exist
             if self.fixed_candidates_path is None or self.fixed_candidates_path == '':
                 # Attempt to get a standard candidate set for the given task
                 path = self.get_task_candidates_path()
                 if path:
                     if not shared:
-                        print("[setting fixed_candidates path to: " + path + " ]")
+                        logging.info(f'Setting fixed_candidates path to: {path}')
                     self.fixed_candidates_path = path
-        else:
-            self.eval_candidates = self.opt['eval_candidates']
-            self.ignore_bad_candidates = self.opt.get('ignore_bad_candidates', False)
-            self.fixed_candidates_path = self.opt['fixed_candidates_path']
+
+        # Ignore bad candidates in interactive mode
+        self.ignore_bad_candidates = True
+
+        return
 
     def get_task_candidates_path(self):
         path = self.opt['model_file'] + '.cands-' + self.opt['task'] + '.cands'
-        if os.path.isfile(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
+        if PathManager.exists(path) and self.opt['fixed_candidate_vecs'] == 'reuse':
             return path
-        print("[ *** building candidates file as they do not exist: " + path + ' *** ]')
+        logging.warning(f'Building candidates file as they do not exist: {path}')
         from parlai.scripts.build_candidates import build_cands
         from copy import deepcopy
 
@@ -247,28 +350,34 @@ class TorchRankerAgent(TorchAgent):
         """
         pass
 
+    def _maybe_invalidate_fixed_encs_cache(self):
+        if self.candidates != 'fixed':
+            self.fixed_candidate_encs = None
+
     def _get_batch_train_metrics(self, scores):
         """
         Get fast metrics calculations if we train with batch candidates.
 
-        Specifically, calculate accuracy ('train_accuracy'), average rank,
-        and mean reciprocal rank.
+        Specifically, calculate accuracy ('train_accuracy'), average rank, and mean
+        reciprocal rank.
         """
         batchsize = scores.size(0)
         # get accuracy
         targets = scores.new_empty(batchsize).long()
         targets = torch.arange(batchsize, out=targets)
-        nb_ok = (scores.max(dim=1)[1] == targets).float().sum().item()
-        self.metrics['train_accuracy'] += nb_ok
+        nb_ok = (scores.max(dim=1)[1] == targets).float()
+        self.record_local_metric('train_accuracy', AverageMetric.many(nb_ok))
         # calculate mean_rank
         above_dot_prods = scores - scores.diag().view(-1, 1)
         ranks = (above_dot_prods > 0).float().sum(dim=1) + 1
         mrr = 1.0 / (ranks + 0.00001)
-        self.metrics['rank'] += torch.sum(ranks).item()
-        self.metrics['mrr'] += torch.sum(mrr).item()
+        self.record_local_metric('rank', AverageMetric.many(ranks))
+        self.record_local_metric('mrr', AverageMetric.many(mrr))
 
     def _get_train_preds(self, scores, label_inds, cands, cand_vecs):
-        """Return predictions from training."""
+        """
+        Return predictions from training.
+        """
         # TODO: speed these calculations up
         batchsize = scores.size(0)
         if self.rank_top_k > 0:
@@ -277,11 +386,15 @@ class TorchRankerAgent(TorchAgent):
             )
         else:
             _, ranks = scores.sort(1, descending=True)
+        ranks_m = []
+        mrrs_m = []
         for b in range(batchsize):
             rank = (ranks[b] == label_inds[b]).nonzero()
             rank = rank.item() if len(rank) == 1 else scores.size(1)
-            self.metrics['rank'] += 1 + rank
-            self.metrics['mrr'] += 1.0 / (1 + rank)
+            ranks_m.append(1 + rank)
+            mrrs_m.append(1.0 / (1 + rank))
+        self.record_local_metric('rank', AverageMetric.many(ranks_m))
+        self.record_local_metric('mrr', AverageMetric.many(mrrs_m))
 
         ranks = ranks.cpu()
         # Here we get the top prediction for each example, but do not
@@ -333,14 +446,12 @@ class TorchRankerAgent(TorchAgent):
         return True
 
     def train_step(self, batch):
-        """Train on a single batch of examples."""
+        """
+        Train on a single batch of examples.
+        """
+        self._maybe_invalidate_fixed_encs_cache()
         if batch.text_vec is None and batch.image is None:
             return
-        batchsize = (
-            batch.text_vec.size(0)
-            if batch.text_vec is not None
-            else batch.image.size(0)
-        )
         self.model.train()
         self.zero_grad()
 
@@ -350,23 +461,21 @@ class TorchRankerAgent(TorchAgent):
         try:
             scores = self.score_candidates(batch, cand_vecs)
             loss = self.criterion(scores, label_inds)
+            self.record_local_metric('mean_loss', AverageMetric.many(loss))
+            loss = loss.mean()
             self.backward(loss)
             self.update_params()
         except RuntimeError as e:
             # catch out of memory exceptions during fwd/bck (skip batch)
             if 'out of memory' in str(e):
-                print(
-                    '| WARNING: ran out of memory, skipping batch. '
+                logging.error(
+                    'Ran out of memory, skipping batch. '
                     'if this happens frequently, decrease batchsize or '
                     'truncate the inputs to the model.'
                 )
                 return Output()
             else:
                 raise e
-
-        # Update loss
-        self.metrics['loss'] += loss.item()
-        self.metrics['examples'] += batchsize
 
         # Get train predictions
         if self.candidates == 'batch':
@@ -381,7 +490,9 @@ class TorchRankerAgent(TorchAgent):
         return self._get_train_preds(scores, label_inds, cands, cand_vecs)
 
     def eval_step(self, batch):
-        """Evaluate a single batch of examples."""
+        """
+        Evaluate a single batch of examples.
+        """
         if batch.text_vec is None and batch.image is None:
             return
         batchsize = (
@@ -399,6 +510,10 @@ class TorchRankerAgent(TorchAgent):
         if self.encode_candidate_vecs and self.eval_candidates in ['fixed', 'vocab']:
             # if we cached candidate encodings for a fixed list of candidates,
             # pass those into the score_candidates function
+            if self.fixed_candidate_encs is None:
+                self.fixed_candidate_encs = self._make_candidate_encs(
+                    cand_vecs
+                ).detach()
             if self.eval_candidates == 'fixed':
                 cand_encs = self.fixed_candidate_encs
             elif self.eval_candidates == 'vocab':
@@ -406,22 +521,30 @@ class TorchRankerAgent(TorchAgent):
 
         scores = self.score_candidates(batch, cand_vecs, cand_encs=cand_encs)
         if self.rank_top_k > 0:
-            _, ranks = scores.topk(
+            sorted_scores, ranks = scores.topk(
                 min(self.rank_top_k, scores.size(1)), 1, largest=True
             )
         else:
-            _, ranks = scores.sort(1, descending=True)
+            sorted_scores, ranks = scores.sort(1, descending=True)
+
+        if self.opt.get('return_cand_scores', False):
+            sorted_scores = sorted_scores.cpu()
+        else:
+            sorted_scores = None
 
         # Update metrics
         if label_inds is not None:
             loss = self.criterion(scores, label_inds)
-            self.metrics['loss'] += loss.item()
-            self.metrics['examples'] += batchsize
+            self.record_local_metric('loss', AverageMetric.many(loss))
+            ranks_m = []
+            mrrs_m = []
             for b in range(batchsize):
                 rank = (ranks[b] == label_inds[b]).nonzero()
                 rank = rank.item() if len(rank) == 1 else scores.size(1)
-                self.metrics['rank'] += 1 + rank
-                self.metrics['mrr'] += 1.0 / (1 + rank)
+                ranks_m.append(1 + rank)
+                mrrs_m.append(1.0 / (1 + rank))
+            self.record_local_metric('rank', AverageMetric.many(ranks_m))
+            self.record_local_metric('mrr', AverageMetric.many(mrrs_m))
 
         ranks = ranks.cpu()
         max_preds = self.opt['cap_num_predictions']
@@ -444,11 +567,20 @@ class TorchRankerAgent(TorchAgent):
         ):
             cand_preds = self.block_repeats(cand_preds)
 
-        preds = [cand_preds[i][0] for i in range(batchsize)]
-        return Output(preds, cand_preds)
+        if self.opt.get('inference', 'max') == 'max':
+            preds = [cand_preds[i][0] for i in range(batchsize)]
+        else:
+            # Top-k inference.
+            preds = []
+            for i in range(batchsize):
+                preds.append(random.choice(cand_preds[i][0 : self.opt['topk']]))
+
+        return Output(preds, cand_preds, sorted_scores=sorted_scores)
 
     def block_repeats(self, cand_preds):
-        """Heuristic to block a model repeating a line from the history."""
+        """
+        Heuristic to block a model repeating a line from the history.
+        """
         history_strings = []
         for h in self.history.history_raw_strings:
             # Heuristic: Block any given line in the history, splitting by '\n'.
@@ -583,12 +715,8 @@ class TorchRankerAgent(TorchAgent):
                         cands.append(cand)
                         cands_to_id[cand] = len(cands_to_id)
                         all_cands_vecs.append(batch.candidate_vecs[i][j])
-            cand_vecs, _ = padded_tensor(
-                all_cands_vecs,
-                self.NULL_IDX,
-                use_cuda=self.use_cuda,
-                fp16friendly=self.fp16,
-            )
+            cand_vecs, _ = self._pad_tensor(all_cands_vecs)
+            cand_vecs = cand_vecs.to(batch.label_vec.device)
             label_inds = label_vecs.new_tensor(
                 [cands_to_id[label] for label in batch.labels]
             )
@@ -608,11 +736,12 @@ class TorchRankerAgent(TorchAgent):
 
             cands = batch.candidates
             cand_vecs = padded_3d(
-                batch.candidate_vecs,
-                self.NULL_IDX,
-                use_cuda=self.use_cuda,
-                fp16friendly=self.fp16,
+                batch.candidate_vecs, self.NULL_IDX, fp16friendly=self.fp16
             )
+            if self.use_cuda:
+                cand_vecs = cand_vecs.to(
+                    0 if self.opt['gpu'] == -1 else self.opt['gpu']
+                )
             if label_vecs is not None:
                 label_inds = label_vecs.new_empty((batchsize))
                 bad_batch = False
@@ -695,47 +824,20 @@ class TorchRankerAgent(TorchAgent):
         return -1
 
     def share(self):
-        """Share model parameters."""
+        """
+        Share model parameters.
+        """
         shared = super().share()
         shared['fixed_candidates'] = self.fixed_candidates
         shared['fixed_candidate_vecs'] = self.fixed_candidate_vecs
         shared['fixed_candidate_encs'] = self.fixed_candidate_encs
+        shared['num_fixed_candidates'] = self.num_fixed_candidates
         shared['vocab_candidates'] = self.vocab_candidates
         shared['vocab_candidate_vecs'] = self.vocab_candidate_vecs
         shared['vocab_candidate_encs'] = self.vocab_candidate_encs
-        shared['optimizer'] = self.optimizer
+        if hasattr(self, 'optimizer'):
+            shared['optimizer'] = self.optimizer
         return shared
-
-    def reset_metrics(self):
-        """Reset metrics."""
-        super().reset_metrics()
-        # Note: we cannot change the type of metrics ahead of time, so you
-        # should correctly initialize to floats or ints here
-        self.metrics['examples'] = 0
-        self.metrics['loss'] = 0.0
-        self.metrics['rank'] = 0.0
-        self.metrics['mrr'] = 0.0
-        self.metrics['train_accuracy'] = 0.0
-
-    def report(self):
-        """Report loss and mean_rank from model's perspective."""
-        base = super().report()
-        m = {}
-        examples = self.metrics['examples']
-        if examples > 0:
-            m['examples'] = examples
-            m['loss'] = self.metrics['loss']
-            m['mean_loss'] = self.metrics['loss'] / examples
-            batch_train = self.candidates == 'batch' and self.is_training
-            if not self.is_training or self.opt.get('train_predict') or batch_train:
-                m['mean_rank'] = self.metrics['rank'] / examples
-                m['mrr'] = self.metrics['mrr'] / examples
-            if batch_train:
-                m['train_accuracy'] = self.metrics['train_accuracy'] / examples
-        for k, v in m.items():
-            # clean up: rounds to sigfigs and converts tensors to floats
-            base[k] = round_sigfigs(v, 4)
-        return base
 
     def set_vocab_candidates(self, shared):
         """
@@ -757,8 +859,8 @@ class TorchRankerAgent(TorchAgent):
                     vecs.append(ind)
                 self.vocab_candidates = cands
                 self.vocab_candidate_vecs = torch.LongTensor(vecs).unsqueeze(1)
-                print(
-                    "[ Loaded fixed candidate set (n = {}) from vocabulary ]"
+                logging.info(
+                    "Loaded fixed candidate set (n = {}) from vocabulary"
                     "".format(len(self.vocab_candidates))
                 )
                 if self.use_cuda:
@@ -802,7 +904,9 @@ class TorchRankerAgent(TorchAgent):
             self.fixed_candidates = shared['fixed_candidates']
             self.fixed_candidate_vecs = shared['fixed_candidate_vecs']
             self.fixed_candidate_encs = shared['fixed_candidate_encs']
+            self.num_fixed_candidates = shared['num_fixed_candidates']
         else:
+            self.num_fixed_candidates = 0
             opt = self.opt
             cand_path = self.fixed_candidates_path
             if 'fixed' in (self.candidates, self.eval_candidates):
@@ -810,15 +914,15 @@ class TorchRankerAgent(TorchAgent):
                     # Attempt to get a standard candidate set for the given task
                     path = self.get_task_candidates_path()
                     if path:
-                        print("[setting fixed_candidates path to: " + path + " ]")
+                        logging.info(f"setting fixed_candidates path to: {path}")
                         self.fixed_candidates_path = path
                         cand_path = self.fixed_candidates_path
                 # Load candidates
-                print("[ Loading fixed candidate set from {} ]".format(cand_path))
-                with open(cand_path, 'r', encoding='utf-8') as f:
+                logging.info(f"Loading fixed candidate set from {cand_path}")
+                with PathManager.open(cand_path, 'r', encoding='utf-8') as f:
                     cands = [line.strip() for line in f.readlines()]
                 # Load or create candidate vectors
-                if os.path.isfile(self.opt['fixed_candidate_vecs']):
+                if PathManager.exists(self.opt['fixed_candidate_vecs']):
                     vecs_path = opt['fixed_candidate_vecs']
                     vecs = self.load_candidates(vecs_path)
                 else:
@@ -829,13 +933,14 @@ class TorchRankerAgent(TorchAgent):
                     vecs_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'vecs'])
                     )
-                    if setting == 'reuse' and os.path.isfile(vecs_path):
+                    if setting == 'reuse' and PathManager.exists(vecs_path):
                         vecs = self.load_candidates(vecs_path)
                     else:  # setting == 'replace' OR generating for the first time
                         vecs = self._make_candidate_vecs(cands)
                         self._save_candidates(vecs, vecs_path)
 
                 self.fixed_candidates = cands
+                self.num_fixed_candidates = len(self.fixed_candidates)
                 self.fixed_candidate_vecs = vecs
                 if self.use_cuda:
                     self.fixed_candidate_vecs = self.fixed_candidate_vecs.cuda()
@@ -845,7 +950,7 @@ class TorchRankerAgent(TorchAgent):
                     enc_path = os.path.join(
                         model_dir, '.'.join([model_name, cands_name, 'encs'])
                     )
-                    if setting == 'reuse' and os.path.isfile(enc_path):
+                    if setting == 'reuse' and PathManager.exists(enc_path):
                         encs = self.load_candidates(enc_path, cand_type='encodings')
                     else:
                         encs = self._make_candidate_encs(self.fixed_candidate_vecs)
@@ -868,26 +973,34 @@ class TorchRankerAgent(TorchAgent):
                 self.fixed_candidate_encs = None
 
     def load_candidates(self, path, cand_type='vectors'):
-        """Load fixed candidates from a path."""
-        print("[ Loading fixed candidate set {} from {} ]".format(cand_type, path))
-        return torch.load(path, map_location=lambda cpu, _: cpu)
+        """
+        Load fixed candidates from a path.
+        """
+        logging.info(f"Loading fixed candidate set {cand_type} from {path}")
+        with PathManager.open(path, 'rb') as f:
+            return torch.load(f, map_location=lambda cpu, _: cpu)
 
     def _make_candidate_vecs(self, cands):
-        """Prebuild cached vectors for fixed candidates."""
+        """
+        Prebuild cached vectors for fixed candidates.
+        """
         cand_batches = [cands[i : i + 512] for i in range(0, len(cands), 512)]
-        print(
-            "[ Vectorizing fixed candidate set ({} batch(es) of up to 512) ]"
-            "".format(len(cand_batches))
+        logging.info(
+            f"Vectorizing fixed candidate set ({len(cand_batches)} batch(es) of up to 512)"
         )
         cand_vecs = []
         for batch in tqdm(cand_batches):
             cand_vecs.extend(self.vectorize_fixed_candidates(batch))
-        return padded_3d([cand_vecs], dtype=cand_vecs[0].dtype).squeeze(0)
+        return padded_3d(
+            [cand_vecs], pad_idx=self.NULL_IDX, dtype=cand_vecs[0].dtype
+        ).squeeze(0)
 
     def _save_candidates(self, vecs, path, cand_type='vectors'):
-        """Save cached vectors."""
-        print("[ Saving fixed candidate set {} to {} ]".format(cand_type, path))
-        with open(path, 'wb') as f:
+        """
+        Save cached vectors.
+        """
+        logging.info(f"Saving fixed candidate set {cand_type} to {path}")
+        with PathManager.open(path, 'wb') as f:
             torch.save(vecs, f)
 
     def encode_candidates(self, padded_cands):
@@ -915,17 +1028,18 @@ class TorchRankerAgent(TorchAgent):
         """
 
         cand_encs = []
-        vec_batches = [vecs[i : i + 256] for i in range(0, len(vecs), 256)]
-        print(
-            "[ Encoding fixed candidates set from ({} batch(es) of up to 256) ]"
-            "".format(len(vec_batches))
+        bsz = self.opt.get('encode_candidate_vecs_batchsize', 256)
+        vec_batches = [vecs[i : i + bsz] for i in range(0, len(vecs), bsz)]
+        logging.info(
+            "Encoding fixed candidates set from ({} batch(es) of up to {}) ]"
+            "".format(len(vec_batches), bsz)
         )
         # Put model into eval mode when encoding candidates
         self.model.eval()
         with torch.no_grad():
             for vec_batch in tqdm(vec_batches):
-                cand_encs.append(self.encode_candidates(vec_batch))
-        return torch.cat(cand_encs, 0)
+                cand_encs.append(self.encode_candidates(vec_batch).cpu())
+        return torch.cat(cand_encs, 0).to(vec_batch.device)
 
     def vectorize_fixed_candidates(self, cands_batch, add_start=False, add_end=False):
         """

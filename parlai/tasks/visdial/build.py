@@ -8,6 +8,21 @@
 import parlai.core.build_data as build_data
 import os
 import json
+from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
+
+RESOURCES = [
+    DownloadableFile(
+        'https://computing.ece.vt.edu/~abhshkdz/data/visdial/visdial_0.9_train.zip',
+        'visdial_0.9_train.zip',
+        'a778d5d39d855b6194272f5800871a4a4b3673b00c9dc28d611443e7ca071290',
+    ),
+    DownloadableFile(
+        'https://computing.ece.vt.edu/~abhshkdz/data/visdial/visdial_0.9_val.zip',
+        'visdial_0.9_val.zip',
+        '08f5ee1d0cb12620b311cb7efbce4bb43a586871f002adba541614877d6f3960',
+    ),
+]
 
 
 def build(opt):
@@ -23,20 +38,13 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname1 = 'visdial_0.9_train.zip'
-        fname2 = 'visdial_0.9_val.zip'
-
-        url = 'https://computing.ece.vt.edu/~abhshkdz/data/visdial/'
-        build_data.download(url + fname1, dpath, fname1)
-        build_data.download(url + fname2, dpath, fname2)
-
-        build_data.untar(dpath, fname1)
-        build_data.untar(dpath, fname2)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         print('processing unpacked files')
         # Use 1000 examples from training set as validation.
-        json1 = os.path.join(dpath, fname1.rsplit('.', 1)[0] + '.json')
-        with open(json1) as t_json:
+        json1 = os.path.join(dpath, RESOURCES[0].file_name.rsplit('.', 1)[0] + '.json')
+        with PathManager.open(json1) as t_json:
             train_data = json.load(t_json)
 
         valid_data = train_data.copy()
@@ -53,13 +61,15 @@ def build(opt):
 
         train_json = json1.rsplit('.', 1)[0] + '_train.json'
         valid_json = json1.rsplit('.', 1)[0] + '_valid.json'
-        with open(train_json, 'w') as t_out, open(valid_json, 'w') as v_out:
+        with PathManager.open(train_json, 'w') as t_out, PathManager.open(
+            valid_json, 'w'
+        ) as v_out:
             json.dump(train_data, t_out)
             json.dump(valid_data, v_out)
-        os.remove(json1)
+        PathManager.rm(json1)
 
         # Use validation data as test.
-        json2 = os.path.join(dpath, fname2.rsplit('.', 1)[0] + '.json')
+        json2 = os.path.join(dpath, RESOURCES[1].file_name.rsplit('.', 1)[0] + '.json')
         test_json = json2.rsplit('.', 1)[0] + '_test.json'
         build_data.move(json2, test_json)
 

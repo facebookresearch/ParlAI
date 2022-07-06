@@ -1,0 +1,29 @@
+acts:
+- - episode_done: false
+    id: airdialogue
+    labels:
+    - Hello. How may I help you?
+    text: Hello.
+- - episode_done: false
+    id: airdialogue
+    labels:
+    - I will help you with that please share your name to proceed further?
+    text: Can you help me to change my recent reservation because my trip dates are
+      got postponed?
+- - episode_done: false
+    id: airdialogue
+    labels:
+    - Please wait for a while.
+    text: Edward hall here.
+- - episode_done: false
+    id: airdialogue
+    labels:
+    - There is no active reservation found under your name to amend it.
+    text: Sure, take your own time.
+- - episode_done: true
+    id: airdialogue
+    labels:
+    - Thank you for choosing us.
+    text: That's ok, thank you for checking.
+num_episodes: 321459
+num_examples: 2042665

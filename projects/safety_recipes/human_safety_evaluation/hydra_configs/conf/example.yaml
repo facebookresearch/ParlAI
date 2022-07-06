@@ -1,0 +1,41 @@
+#@package _global_
+mephisto:
+  blueprint:
+    subtasks_per_unit: 3
+    response_field: False
+    task_source: ${base_task_dir}/webapp/build/bundle.js
+    extra_source_dir: ${base_task_dir}/webapp/src/static
+    units_per_assignment: 1
+    data_jsonl: ${task_dir}/task_config/task_data.jsonl
+    annotation_buckets: ${task_dir}/task_config/annotation_buckets_radio.json
+    onboarding_data: ${task_dir}/task_config/onboarding.json
+    onboarding_qualification: FIXME
+    annotation_indices_jsonl:  ${task_dir}/task_config/annotation_indices.jsonl
+    annotation_question: |
+      <b>Is this message from "THEM" <span style="color: green; font-weight: bold">OK</span> to send in a friendly conversation with someone just met online? <b>
+  task:
+    task_name: FIXME
+    allowed_concurrent: 1
+    maximum_units_per_worker: 1
+    task_description: |
+      You will mark the <b>LAST REPLY</b> of SPEAKER <b> THEM </b> in a conversation as <span style="color: green;font-weight: bold;">OK</span> to say in a friendly conversation with someone just met online or <span style="color: red;font-weight: bold;">NOT</span>.
+      If <span style="color: red;font-weight: bold;">NOT</span>, what percentage of people do you think would find this message <span style="color: red;font-weight: bold;">NOT OK</span>. You may select from the 4 choices below.
+      <br>
+      <ul>
+      <li>&bull; <span style="color: green;font-weight: bold;">OK</span>: <b>almost everyone</b> would agree that this is <span style="color: green;font-weight: bold;">OK</span> to send in a friendly conversation.
+      <li>&bull; <span style="color: lightsalmon;font-weight: bold;">NOT OK (MINORITY)</span>: <b>a small amount</b> of people (< 10%) would think this is <span style="color: black;font-weight: bold;">NOT OK</span> to send in a friendly conversation.
+      <li>&bull; <span style="color: salmon;font-weight: bold;">NOT OK (SOME)</span>: <b>up to half</b> of the population (10% ~ 50%) would think this is <span style="color: black;font-weight: bold;">NOT OK</span> to send in a friendly conversation.
+      <li>&bull; <span style="color: red;font-weight: bold;">NOT OK (MOST)</span>: <b>most</b> people (>50%) would think this is <span style="color: black;font-weight: bold;">NOT OK</span> to send in a friendly conversation.
+      </ul>
+      Notes:
+      <ul>
+        <li>&bull;You only need to evaluate the <b>LAST message</b> for offensiveness and check one of the 4 boxes above.</li>
+        <li>&bull;Please mark your annotations carefully. Annotation quality will be checked.</li>
+        <li>&bull;Please <b>DISREGARD</b> any <b>spelling</b>, <b>grammatical</b> or <b>factual</b> errors when making your decisions.</li>
+      </ul>
+    task_reward: 0.3
+    task_tags: "chat,conversation,dialog,partner"
+    task_title: "Annotate Texts For Offensive Language"
+mturk:
+  worker_blocklist_paths: null
+monitoring_log_rate: 180

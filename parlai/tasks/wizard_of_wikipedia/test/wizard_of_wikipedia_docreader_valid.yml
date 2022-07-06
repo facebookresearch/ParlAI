@@ -1,0 +1,129 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Gardening is considered by many people to be a relaxing activity.
+    id: wizard_of_wikipedia:docreader
+    text: 'Gardening is the practice of growing and cultivating plants as part of
+      horticulture. In gardens, ornamental plants are often grown for their flowers,
+      foliage, or overall appearance; useful plants, such as root vegetables, leaf
+      vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or
+      for medicinal or cosmetic use. Gardening is considered by many people to be
+      a relaxing activity. Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside. Gardening may be very
+      specialized, with only one type of plant grown, or involve a large number of
+      different plants in mixed plantings. It involves an active participation in
+      the growing of plants, and tends to be labor-intensive, which differentiates
+      it from farming or forestry. Forest gardening, a forest-based food production
+      system, is the world''s oldest form of gardening. Forest gardens originated
+      in prehistoric times along jungle-clad river banks and in the wet foothills
+      of monsoon regions. In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Gardening'
+- - episode_done: false
+    eval_labels:
+    - Gardening ranges in scale from fruit orchards, to long boulevard plantings with
+      one or more different types of shrubs, trees, and herbaceous plants, to residential
+      yards including lawns and foundation plantings, to plants in large or small
+      containers grown inside or outside.
+    id: wizard_of_wikipedia:docreader
+    text: 'Gardening is the practice of growing and cultivating plants as part of
+      horticulture. In gardens, ornamental plants are often grown for their flowers,
+      foliage, or overall appearance; useful plants, such as root vegetables, leaf
+      vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or
+      for medicinal or cosmetic use. Gardening is considered by many people to be
+      a relaxing activity. Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside. Gardening may be very
+      specialized, with only one type of plant grown, or involve a large number of
+      different plants in mixed plantings. It involves an active participation in
+      the growing of plants, and tends to be labor-intensive, which differentiates
+      it from farming or forestry. Forest gardening, a forest-based food production
+      system, is the world''s oldest form of gardening. Forest gardens originated
+      in prehistoric times along jungle-clad river banks and in the wet foothills
+      of monsoon regions. In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Gardening'
+- - episode_done: false
+    eval_labels:
+    - Forest gardening, a forest-based food production system, is the world's oldest
+      form of gardening.
+    id: wizard_of_wikipedia:docreader
+    text: 'Gardening is the practice of growing and cultivating plants as part of
+      horticulture. In gardens, ornamental plants are often grown for their flowers,
+      foliage, or overall appearance; useful plants, such as root vegetables, leaf
+      vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or
+      for medicinal or cosmetic use. Gardening is considered by many people to be
+      a relaxing activity. Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside. Gardening may be very
+      specialized, with only one type of plant grown, or involve a large number of
+      different plants in mixed plantings. It involves an active participation in
+      the growing of plants, and tends to be labor-intensive, which differentiates
+      it from farming or forestry. Forest gardening, a forest-based food production
+      system, is the world''s oldest form of gardening. Forest gardens originated
+      in prehistoric times along jungle-clad river banks and in the wet foothills
+      of monsoon regions. In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Gardening'
+- - episode_done: true
+    eval_labels:
+    - In the gradual process of families improving their immediate environment, useful
+      tree and vine species were identified, protected and improved while undesirable
+      species were eliminated.
+    id: wizard_of_wikipedia:docreader
+    text: 'Gardening is the practice of growing and cultivating plants as part of
+      horticulture. In gardens, ornamental plants are often grown for their flowers,
+      foliage, or overall appearance; useful plants, such as root vegetables, leaf
+      vegetables, fruits, and herbs, are grown for consumption, for use as dyes, or
+      for medicinal or cosmetic use. Gardening is considered by many people to be
+      a relaxing activity. Gardening ranges in scale from fruit orchards, to long
+      boulevard plantings with one or more different types of shrubs, trees, and herbaceous
+      plants, to residential yards including lawns and foundation plantings, to plants
+      in large or small containers grown inside or outside. Gardening may be very
+      specialized, with only one type of plant grown, or involve a large number of
+      different plants in mixed plantings. It involves an active participation in
+      the growing of plants, and tends to be labor-intensive, which differentiates
+      it from farming or forestry. Forest gardening, a forest-based food production
+      system, is the world''s oldest form of gardening. Forest gardens originated
+      in prehistoric times along jungle-clad river banks and in the wet foothills
+      of monsoon regions. In the gradual process of families improving their immediate
+      environment, useful tree and vine species were identified, protected and improved
+      while undesirable species were eliminated.
+
+      Gardening'
+- - episode_done: false
+    eval_labels:
+    - Robert Norman Ross (October 29, 1942 – July 4, 1995) was an American painter,
+      art instructor, and television host.
+    id: wizard_of_wikipedia:docreader
+    text: 'Robert Norman Ross (October 29, 1942 – July 4, 1995) was an American painter,
+      art instructor, and television host. He was the creator and host of "The Joy
+      of Painting", an instructional television program that aired from 1983 to 1994
+      on PBS in the United States, and also aired in Canada, Latin America, and Europe.
+      Ross went from being a public-television personality in the 1980s and 1990s
+      to being an Internet celebrity in the 21st century, popular with fans on YouTube
+      and many other websites. Ross was born in Daytona Beach, Florida, to Jack and
+      Ollie Ross (a carpenter and waitress, respectively), and raised in Orlando,
+      Florida. As a child, Ross entertained himself by caring for injured animals,
+      purportedly including an armadillo, snake, and alligator. One of these animals,
+      a squirrel named Peapod, was featured in a few episodes of his show. He had
+      a half-brother, Jim, whom he mentioned in passing on his show. Ross dropped
+      out of high school in the 9th grade to work as a carpenter with his father,
+      Jack Ross, where he lost part of his left index finger. This, however, did not
+      affect the way he held his palette while painting. In 1961, then 18-year-old
+      Ross enlisted in the United States Air Force and was put into service as a medical
+      records technician.
+
+      Bob Ross'
+num_episodes: 981
+num_examples: 4159

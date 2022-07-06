@@ -4,9 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from parlai.utils.io import PathManager
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.core.image_featurizers import ImageLoader
-from parlai.tasks.vqa_v1.agents import VQADataset
 from .build import build
 from parlai.tasks.coco_caption.build_2014 import buildImage as buildImage_2014
 from parlai.tasks.coco_caption.build_2015 import buildImage as buildImage_2015
@@ -53,18 +53,15 @@ def _path(opt):
     return data_path, annotation_path, image_path
 
 
-class DefaultDataset(VQADataset):
-    pass
-
-
 class OeTeacher(FixedDialogTeacher):
-    """VQA v2.0 Open-Ended teacher, which loads the json VQA data and
-    implements the ``get`` method to return additional metadata.
+    """
+    VQA v2.0 Open-Ended teacher, which loads the json VQA data and implements the
+    ``get`` method to return additional metadata.
     """
 
     def __init__(self, opt, shared=None):
         super().__init__(opt)
-        self.image_mode = opt.get('image_mode', 'none')
+        self.image_mode = opt.get('image_mode', 'no_image_model')
 
         if shared and 'ques' in shared:
             # another instance was set up already, just reference its data
@@ -110,20 +107,21 @@ class OeTeacher(FixedDialogTeacher):
         return action
 
     def next_example(self):
-        """Returns the next example from this dataset after starting to queue
-        up the next example.
+        """
+        Returns the next example from this dataset after starting to queue up the next
+        example.
         """
         ready = None
         # pull up the currently queued example
         if self.example is not None:
-            if self.image_mode != 'none':
+            if self.image_mode != 'no_image_model':
                 # move the image we loaded in the background into the example
                 image = self.data_queue.get()
                 self.example['image'] = image
             ready = (self.example, self.epochDone)
         # get the next base example: super().next_example() calls self.get()
         self.example, self.epochDone = super().next_example()
-        if self.image_mode != 'none' and 'image_id' in self.example:
+        if self.image_mode != 'no_image_model' and 'image_id' in self.example:
             # load the next image in the background
             image_id = self.example['image_id']
             self.submit_load_request(image_id)
@@ -143,19 +141,19 @@ class OeTeacher(FixedDialogTeacher):
 
     def _setup_data(self, data_path, annotation_path):
         print('loading: ' + data_path)
-        with open(data_path) as data_file:
+        with PathManager.open(data_path) as data_file:
             self.ques = json.load(data_file)
 
         if not self.datatype.startswith('test'):
             print('loading: ' + annotation_path)
-            with open(annotation_path) as data_file:
+            with PathManager.open(annotation_path) as data_file:
                 self.annotation = json.load(data_file)
 
 
 class AllTeacher(OeTeacher):
     """
-    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and
-    gives access to the multiple choice answer.
+    VQA v2.0 Open-Ended teacher, which inherits from OeTeacher and gives access to the
+    multiple choice answer.
     """
 
     def act(self):

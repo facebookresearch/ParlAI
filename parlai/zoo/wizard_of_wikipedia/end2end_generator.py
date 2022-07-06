@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Pretrained wizard of wikipedia end2end generative model
+Pretrained wizard of wikipedia end2end generative model.
 """
 
 from parlai.core.build_data import download_models

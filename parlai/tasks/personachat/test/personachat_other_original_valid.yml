@@ -1,0 +1,160 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - i am good , i just got off work and tired , i have two jobs .
+    id: personachat:other_original
+    label_candidates:
+    - oh really ? i am actually in high school and i am graduating as class of 2019
+      !
+    - that is an interesting choice . i would have to pick french fries
+    - i just got a pet fish for my 18th birthday yesterday from my parents .
+    - yeah , well what about you ?
+    - my favorite watch is the rolex ? what is yours ?
+    - what is in spain that is so interesting
+    - i do not like clowns . they are scary to a kid like me
+    - poetry . roses are red . violet are . . . ?
+    - my father is a member of the army , served for 10 years now .
+    - oh i like mexican food , but my favorite food are cheeseburgers
+    - hey there , are you a mother ?
+    - it sure is . i would like to see more of the city though .
+    - it is not so fun i have 2 friend who speak a different langues
+    - i would like some honey though . do you sell it ?
+    - i am a recovering heavy drinker . full time . how about you ?
+    - hi ! i have three kids . how many do you have ?
+    - awesome ! i own 2 dogs , love them
+    - yes , my favorite is broccoli and tofu in a garlic sauce . yum !
+    - maybe he can skydive to see a better view
+    - i am good , i just got off work and tired , i have two jobs .
+    reward: 0
+    text: 'partner''s persona: horror movies are my favorites.
+
+      partner''s persona: i am a stay at home dad.
+
+      partner''s persona: my father used to work for home depot.
+
+      partner''s persona: i spent a decade working in the human services field.
+
+      partner''s persona: i have a son who is in junior high school.
+
+      hello what are doing today ?'
+- - episode_done: false
+    eval_labels:
+    - i rather read , i have read about 20 books this year .
+    id: personachat:other_original
+    label_candidates:
+    - why have you not sent help ? ! the scorpions are stinging my legs ! ree ! !
+      ! ! ! ! !
+    - that is great i am expecting twins in two months . will these be your first
+      kids ?
+    - do you live on a farm or ranch ?
+    - hi how are you doing tonight i am fine .
+    - i would love to see her do that .
+    - i do not . but i am so glad you do something that brings you joy
+    - it is hard , buy my dog keeps me company . do you have dogs ?
+    - sounds like a good plan , what would you like to teach ?
+    - i like rap music and i also produce for music artists .
+    - where do you work ?
+    - i broke my arm so i can not drink coffee
+    - i meant mickey . cool i have a lot of friends and love the playground . do you
+      ?
+    - oh , yes . i wish i could skate to school . i ride the bus instead .
+    - that is my idea of heaven . i love bunnies ! i donate to a bunny charity too
+      .
+    - i work on a freelance basis as an author , blogger and affiliate marketer .
+      and you ?
+    - like me ? would you go on vacation to the beach with me
+    - i do not let myself watch tv
+    - we can go for a trade that sounds awesome
+    - what part of the world is bratislava ?
+    - i rather read , i have read about 20 books this year .
+    reward: 0
+    text: i just got done watching a horror movie
+- - episode_done: false
+    eval_labels:
+    - but a good movie is always good .
+    id: personachat:other_original
+    label_candidates:
+    - oh i am sure they are
+    - that would be great ! we just bought a house so no travel soon
+    - lol , i must go too . the imelda marcos shoe collection on qvc is on
+    - i am so sorry to hear that . my father also passed away . he drove for nascar
+      .
+    - yes we do . my hair also goes down to my waist
+    - i am just fine . my name is priya , and you ?
+    - gotta celebrate ! i am so old , i recall when nobody owned a tv .
+    - very carefully , did you get flooded in texas ?
+    - with kids in my house i can not listen to rap anymore .
+    - i am working on both of my vintage mustangs
+    - yes , all descendants from christopher columbus love star wars .
+    - i have a cat mouse and a dog biscuit . what about you ?
+    - yes , you have said that . what do your parents do ?
+    - oh gosh another day just grateful .
+    - good song and what your favorite beverage ?
+    - i work from home doing internet searches
+    - this one time , this guy turned into a alien , and he teleported , nobody believes
+      me
+    - that is a great question , i have never tried ! where are you from ?
+    - that is awesome . are you scared there ? i am so scared of clowns .
+    - but a good movie is always good .
+    reward: 0
+    text: wow ! i do love a good horror movie . loving this cooler weather
+- - episode_done: false
+    eval_labels:
+    - i work in the movies as well .
+    id: personachat:other_original
+    label_candidates:
+    - that is great ! are you going to college ?
+    - ugh . i do not think i could live with them .
+    - i sing folk music . my parents are not supportive .
+    - i love piano music . do you play jazz ?
+    - sure , your parents will have to take you here , i am also a teacher in kindergarten
+    - that is nice , i need a new car , how is the bmw ?
+    - all natural . . . second time . . . twins this time .
+    - one is a tabby yet overweight and the other is a black and white cat
+    - go to national parks . think about what i missed out on in high school . you
+      ?
+    - no . i am too busy with my bees . i wish i had family i was close to .
+    - nothing like a dog and a truck !
+    - nope , i work in a hat shop 24 7 . my name is sophie by the way .
+    - when i take over the world i will grant bacon to everyone
+    - wow that is awesome i am trying to relax having triplets in 90 days
+    - i bet . what will be the first thing you will eat
+    - i like electricity and electronics . i am a bartender
+    - blue , i guess . what is yours ?
+    - i must be too cause i enjoy my activites in the spring more
+    - i do not have any pets , but i may be interested in one
+    - i work in the movies as well .
+    reward: 0
+    text: yes ! my son is in junior high and i just started letting him watch them
+      too
+- - episode_done: false
+    eval_labels:
+    - yes it is neat , i stunt double , it is so much fun and hard work .
+    id: personachat:other_original
+    label_candidates:
+    - big city life to overwhelming too much pressure
+    - frozen food is bad , full of nitrates .
+    - i like to take my dog for walks and sometimes i volunteer .
+    - great i a blue sweater that i love and you sew it for me
+    - i just want to move out . they are always on my back .
+    - oh wow that really sucks . and assistant marketing director
+    - thanks ! i like riding horses .
+    - well at least some good came out of it . hope everything is well for you
+    - amazing . do you study and languages
+    - i am not active but love watching birds from indoors
+    - what do you call your fish ? i am drinking fancy tea
+    - yes , i pray for her . i am helping her paint her kitchen red , my favorite
+      color .
+    - i am from mexico . i am moving into my home soon you ?
+    - nice , i like comic books as well . what position do you play in basketball
+      .
+    - do you have any ? mine is a black lab
+    - out of work right now what do you do ?
+    - they are yummy salty little fish . you should try them .
+    - i prefer my roller coasters and thrills .
+    - what sport do you enjoy ?
+    - yes it is neat , i stunt double , it is so much fun and hard work .
+    reward: 0
+    text: neat ! ! i used to work in the human services field
+num_episodes: 1000
+num_examples: 7801

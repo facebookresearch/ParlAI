@@ -4,13 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Pretrained BERT Classifer model on the multi-turn adversarial
-dialogue safety task.
+Pretrained BERT Classifer model on the multi-turn adversarial dialogue safety task.
 """
 
 from parlai.core.build_data import download_models
-
-import os
 
 
 def download(datapath):

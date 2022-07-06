@@ -5,8 +5,17 @@
 # LICENSE file in the root directory of this source tree.
 # Download and build the data if it does not exist.
 
+from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/dialog_babi/dialog_babi.tar.gz',
+        'dialog_babi.tar.gz',
+        'bb36155ccd41eac91f806446c5728ee90374e5596156a9f7c1b86f8342cfc383',
+    )
+]
 
 
 def build(opt):
@@ -21,10 +30,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'dialog_babi.tar.gz'
-        url = 'http://parl.ai/downloads/dialog_babi/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

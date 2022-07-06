@@ -3,10 +3,16 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Modules for TransresnetMultimodalAgent."""
+"""
+Modules for TransresnetMultimodalAgent.
+"""
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 from torch import nn
+from parlai.utils.io import PathManager
 from parlai.agents.transformer.modules import (
     TransformerEncoder,
     create_position_codes,
@@ -19,13 +25,19 @@ from projects.personality_captions.transresnet.modules import (
 
 
 class TransresnetMultimodalModel(TransresnetModel):
-    """Extension of Transresnet to incorporate dialogue history and multimodality."""
+    """
+    Extension of Transresnet to incorporate dialogue history and multimodality.
+    """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        """Override to include model-specific args."""
-        TransresnetModel.add_cmdline_args(argparser)
-        agent = argparser.add_argument_group("TransresnetMultimodal task arguments")
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Override to include model-specific args.
+        """
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        agent = parser.add_argument_group("TransresnetMultimodal task arguments")
         agent.add_argument(
             "--context-encoder-embedding-type",
             type=str,
@@ -83,6 +95,7 @@ class TransresnetMultimodalModel(TransresnetModel):
             help="Whether to include the personality encoding "
             "when retrieving a candidate response",
         )
+        return parser
 
     def __init__(self, opt, personalities_list, dictionary):
         super().__init__(opt, personalities_list, dictionary)
@@ -145,7 +158,9 @@ class TransresnetMultimodalModel(TransresnetModel):
             )
 
     def _build_context_encoder(self):
-        """Build the context (i.e. dialogue history) encoder."""
+        """
+        Build the context (i.e. dialogue history) encoder.
+        """
         if self.opt.get("share_encoder"):
             self.context_encoder = self.label_encoder
         else:
@@ -161,22 +176,12 @@ class TransresnetMultimodalModel(TransresnetModel):
                     len(self.dictionary), self.opt["embedding_size"]
                 )
             self.context_encoder = TransformerEncoder(
-                n_heads=self.opt["n_heads"],
-                n_layers=self.opt["n_layers"],
-                embedding_size=self.opt["embedding_size"],
-                ffn_size=self.opt["ffn_size"],
-                vocabulary_size=len(self.dictionary),
+                opt=self.opt,
                 embedding=embeddings,
-                dropout=self.opt["dropout"],
-                attention_dropout=self.opt["attention_dropout"],
-                relu_dropout=self.opt["relu_dropout"],
+                vocabulary_size=len(self.dictionary),
                 padding_idx=self.dictionary.tok2ind[self.dictionary.null_token],
-                learn_positional_embeddings=self.opt["learn_positional_embeddings"],
                 embeddings_scale=False,
-                n_positions=self.opt["n_positions"],
-                activation=self.opt["activation"],
-                variant=self.opt["variant"],
-                n_segments=self.opt["n_segments"],
+                output_scaling=1.0,
             )
             if self.opt.get("load_context_encoder_from") is not None:
                 self._load_context_encoder_state()
@@ -462,7 +467,8 @@ class TransresnetMultimodalModel(TransresnetModel):
     def _load_text_encoder_state(self):
         try:
             state_file = self.opt.get("load_encoder_from")
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'rb') as f:
+                model = torch.load(f)
             states = model["model"]
             self.text_encoder.load_state_dict(states)
         except Exception as e:
@@ -476,7 +482,8 @@ class TransresnetMultimodalModel(TransresnetModel):
     def _load_context_encoder_state(self):
         try:
             state_file = self.opt.get("load_context_encoder_from")
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'rb') as f:
+                model = torch.load(f)
             states = model["model"]
             self.context_encoder.load_state_dict(states)
         except Exception as e:
@@ -489,7 +496,9 @@ class TransresnetMultimodalModel(TransresnetModel):
 
 
 class MultimodalCombiner(nn.Module):
-    """Multimodal Combination module."""
+    """
+    Multimodal Combination module.
+    """
 
     def __init__(
         self,
@@ -517,7 +526,7 @@ class MultimodalCombiner(nn.Module):
                 n_positions, hidden_dim, out=self.position_embeddings.weight
             )
         else:
-            nn.init.normal_(self.position_embeddings.weight, 0, hidden_dim ** -0.5)
+            nn.init.normal_(self.position_embeddings.weight, 0, hidden_dim**-0.5)
 
         self.layers = nn.ModuleList()
         for _ in range(self.n_layers):

@@ -11,10 +11,10 @@ Standard image captioning tasks such as COCO and Flickr30k are factual, neutral 
 ## Dataset
 
 The Personality-Captions dataset can be accessed via ParlAI, with `-t personality_captions`. 
-See the [ParlAI quickstart for help](http://www.parl.ai/static/docs/tutorial_quick.html).
+See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
 
 Additionally, the ParlAI MTurk tasks for data collection and human evaluation
-are [made available](https://github.com/facebookresearch/ParlAI/tree/master/parlai/mturk/tasks/personality_captions) in ParlAI.
+are [available](https://github.com/facebookresearch/ParlAI/tree/main/parlai/mturk/README.md) in an older release of ParlAI (see the `personality_captions` task).
 
 ## Leaderboards for Personality-Captions Task
 
@@ -39,7 +39,7 @@ ShotTell, ResNeXt-IG-3.5B            | [Shuster et al. (2019)](https://arxiv.org
 
 We provide our best model trained with ResNet152 image features. To evaluate the model, specify the following command:
 
-      python examples/eval_model.py \
+      parlai eval_model \
           -bs 128 -t personality_captions
           -mf models:personality_captions/transresnet/model
           --num-test-labels 5 -dt test

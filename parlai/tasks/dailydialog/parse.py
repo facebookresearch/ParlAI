@@ -1,17 +1,21 @@
+#!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
 """
-This preprocessing script was used to create ParlAI's version of the
-data. It was run in a script called parse.py inside ijcnlp_dailydialog/ after
-uncompressing the original directory and all subdirectories.
+This preprocessing script was used to create ParlAI's version of the data.
+
+It was run in a script called parse.py inside ijcnlp_dailydialog/ after uncompressing
+the original directory and all subdirectories.
 """
 
 import json
 import os
 import re
 from collections import Counter
+from typing import Counter as TCounter
+from parlai.utils.io import PathManager
 
 BADSENT = r'\.(\w)'
 
@@ -49,7 +53,7 @@ TOPICS = [
     'finance',
 ]
 
-ALL_COUNTS = Counter()
+ALL_COUNTS: TCounter[str] = Counter()
 
 
 def cleanup_text(text):
@@ -82,7 +86,7 @@ f_emotions = open(os.path.join(FOLD, "dialogues_emotion_" + FOLD + ".txt"))
 f_texts = open(os.path.join(FOLD, "dialogues_" + FOLD + ".txt"))
 
 topic_map = {}
-with open('topicmap') as f_tm:
+with PathManager.open('topicmap') as f_tm:
     for line in f_tm:
         text, topic = line.strip().split("\t")
         topic_map[text] = TOPICS[int(topic)]
@@ -91,12 +95,12 @@ with open('topicmap') as f_tm:
 f_out = open('out/' + FOLD_OUT + '.json', 'w')
 
 for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
-    acts = [ACTS[int(x)] for x in acts.strip().split()]
-    emotions = [EMOTIONS[int(x)] for x in emotions.strip().split()]
+    acts_ = [ACTS[int(x)] for x in acts.strip().split()]
+    emotions_ = [EMOTIONS[int(x)] for x in emotions.strip().split()]
     raw_text = raw_text.strip()
     texts = raw_text.split("__eou__")[:-1]
-    assert len(acts) == len(emotions)
-    assert len(texts) == len(emotions)
+    assert len(acts_) == len(emotions_)
+    assert len(texts) == len(emotions_)
     # fix one topic lookup bug
     raw_text = raw_text.replace(
         "one here as well . I've been using",
@@ -109,7 +113,7 @@ for acts, emotions, raw_text in zip(f_acts, f_emotions, f_texts):
         'topic': topic_map[raw_text],
         'dialogue': [
             {'emotion': e, 'act': a, 'text': cleanup_text(t)}
-            for e, a, t in zip(emotions, acts, texts)
+            for e, a, t in zip(emotions_, acts_, texts)
         ],
     }
     outline = json.dumps(record)

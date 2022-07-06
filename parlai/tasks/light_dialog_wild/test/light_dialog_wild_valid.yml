@@ -1,0 +1,206 @@
+acts:
+- - did_continue: 'True'
+    episode_done: false
+    eval_labels:
+    - Hey there young man, where are you off too?
+    id: light_dialog_wild
+    label_candidates:
+    - Ohm
+    - Do you think your friend will help me?
+    - I have traveled many lands, some that have never been seen by other mortal eyes.
+      What I have to give has come from quite the distance. I have a spell which will
+      allows you to find your true purpose.
+    - The goblin army is coming.
+    - Where are my unicorns?
+    - I won't harm you
+    - This is squire Hooligan and you should be polishing my Armor know your place
+      chambermaid
+    - Let us undress and lie together
+    - Would you consider a gift of magic as a form of payment?
+    - Do you think we should go in?
+    - I seem to have lost my favorite bookmark it was the enchanted one made from
+      the bark of the thuulaad tree😔
+    - Hi! I am not here to hurt you, unless you are to hurt me.
+    - Try the wash rooms,
+    - Then may I ask why you are here? Hiding in the walls of this lovley bell tower?
+    - Are they dairy cows?
+    - Tell him it better be good or he will pay with his life
+    - That is a kind gesture, one I'd not take lightly. Blessings upon your home and
+      you bakery too. I bundle up well against the biting snow.
+    - Sage, and Aloe
+    - There’s some outside of the stable.
+    - Hey there young man, where are you off too?
+    model_name: orig_light_poly_boring
+    score: '12'
+    text: '_task_speech
+
+      _setting_name Lakeside House, Somewhere
+
+      _setting_desc Its white and vibrant, certainly a location for some lord, It
+      has 3 floors, and fine gardening surround the house. Its open and breezy this
+      place is calm and peaceful.
+
+      _partner_name stable boy rushing in to alert the knight
+
+      _self_name hostess
+
+      _self_persona I am a hostess who works mainly outside. I enjoy pleasing people.
+      I wish I could afford better clothes.'
+- - did_continue: 'True'
+    episode_done: false
+    eval_labels:
+    - Do you know why that young boy was running? Better not be causing trouble again.
+    id: light_dialog_wild
+    label_candidates:
+    - Why that would be me
+    - Just Goblins leaving the forest.
+    - Do you know why that young boy was running? Better not be causing trouble again.
+    - Hello. Hoe long have you been Starving?
+    - You dont intend to eat me do you?
+    - no im hear to confess my love to you
+    - So I feared. How can we serve the king if in doing his service we challenge
+      His will?
+    - Where are all the Prince Charming I want to be swept off my feet
+    - Thank you again. I'll be off.
+    - That sounds very nice but I am already taken but we can be friends
+    - I hit my head and I got lost. I am not sure where I am. However I dream to become
+      a knight!
+    - Very well, a game of puzzles we shall engage! No toad in Toad Hollow was ever
+      as adept as I. I despair only that I will not bee the Castle Pond one last time
+      before I perish.
+    - It looks a bit like elvish
+    - Yes as long as I can provide the bread
+    - I have only just arrived. They say I'm a witch where I come from, perhaps that's
+      why I was banished here.
+    - Please pluck the strings of your lute dear minstrel. I long to hear the angelic
+      melody of that instrument.
+    - Why yes I do, though they frowned upon my line of work. They suggested I become
+      a knight of sorts but I was meant to paint!
+    - You eat squirrels? Why would you eat my friends?
+    - That poor sap over there
+    - I do love the town but also prefer a quiet space as well
+    model_name: orig_light_poly_boring
+    score: '12'
+    text: '_self_say Hey there young man, where are you off too?
+
+      _partner_say Sorry, mlady, I was talking to the stable boy running in the house.  How
+      may I be of service to you?'
+- - did_continue: 'True'
+    episode_done: false
+    eval_labels:
+    - Oh goodness that reminds me, would you mind giving the king back his shoes for
+      me? I took them and cleaned them for him, I just forgot to return them.
+    id: light_dialog_wild
+    label_candidates:
+    - But are you not a prisoner? You are in shackles.
+    - Pope you want herbs?
+    - That they are and trust me this isn't anything so tell me what are you doing
+      here? Who sent you?
+    - Have you heard any news
+    - You’re so very big compared to me, you might trample me just like you did my
+      daffodils!
+    - 40 coins?
+    - Ah yes everything is fine my young paladin what is the hint young sir?
+    - Go to the church by Lakeside House and repent to the parish.
+    - What is our quest
+    - Tell me more about yourself
+    - Uh, excuse me ghost watch where youre floating.
+    - Ok, what will I be juggling
+    - What role does that old sword have in finding the traitors?
+    - Hello pig friend
+    - Not unless it is chocolate!!!!  Don't make me munch your skull
+    - Here you go!
+    - May I purchase your sword mightt king?
+    - pub I have never seen you here before
+    - Oh goodness that reminds me, would you mind giving the king back his shoes for
+      me? I took them and cleaned them for him, I just forgot to return them.
+    - She is very powerful. The earth mother needs her to help restore a forest
+    model_name: orig_light_poly_boring
+    score: '12'
+    text: '_self_say Do you know why that young boy was running? Better not be causing
+      trouble again.
+
+      _partner_say He probably heard my barks and was scared away. You can never be
+      too careful though. The king is very unforgiving if anything is stolen'
+- - did_continue: 'True'
+    episode_done: false
+    eval_labels:
+    - You really think he does? I don’t know. If only I could get a better job that
+      pays more for better clothes. Then maybe he’d see interest in me
+    id: light_dialog_wild
+    label_candidates:
+    - You really think he does? I don’t know. If only I could get a better job that
+      pays more for better clothes. Then maybe he’d see interest in me
+    - Because you are alone. If you were to slip and hit your head on a stone, who
+      would be here to rescue you?
+    - Yes my good sir I have taken that same oath just slightly different
+    - What have you given me?
+    - i fear we haven't muck longer
+    - How goes your sketching? May I take a look?
+    - No sire merely an observation that's in your best interest. I don't wish to
+      frighten you but as you wish
+    - Looking for fox. Have you seen any fox in the area?
+    - Well just looking for me lost brother
+    - '*looks in amazement*'
+    - Today is your lucky day! I have a wagon of the new corn nearby!
+    - I can agree on that
+    - '*touches fire*'
+    - Good day, I believe I was to be expected. I’ve sent word to a wizard in these
+      parts about purchasing a book. Do you happen to know where I might find him?
+    - I intended on selling them, but for you, I would like to make a deal if you're
+      willing.
+    - You talk too much *smashes fighter into the ground face first*
+    - This dragon, is it dangerous? When was the dragon last seen?
+    - Oi, what are you doing to my babies!
+    - I’m sure I don’t know what you mean  “Hic”! I’ve barely had any at all.
+    - Yes! Onwards!
+    model_name: orig_light_poly_boring
+    score: '12'
+    text: '_self_say Oh goodness that reminds me, would you mind giving the king back
+      his shoes for me? I took them and cleaned them for him, I just forgot to return
+      them.
+
+      _partner_say No, thank you though. You keep it. Never know when you might need
+      some to by yourself something special to wear when that cute neighbor boy asks
+      you out'
+- - did_continue: 'True'
+    episode_done: false
+    eval_labels:
+    - Can you help me find better clothes to wear and Then the knight and I can go
+      on dates
+    id: light_dialog_wild
+    label_candidates:
+    - Do you think your friend will help me?
+    - Where can I find out more about the dragon and how to defend ouselves?
+    - '*eyes widen* Why is there a talking squirrel in my throne room?! *Stands from
+      his seat* what manner of devil are you? You come to feed on my soul?'
+    - “Excuse me pope. I must speak with you”
+    - Thank you very much. I'd like to get some rest now. I appreciate the company.
+    - Can you help me find better clothes to wear and Then the knight and I can go
+      on dates
+    - Sandwich please
+    - Aw that sounds sucky
+    - I think they would mind if I bashed your skull in
+    - yes, my parents taught me the pure art of bakery
+    - Greetings sir
+    - It is but be mindful of the sin of pride me boy
+    - Good evening, soldier!
+    - I shall do that then
+    - That would be interesting so yes do show me
+    - These herbs are hard to find wish I knew more on the subject
+    - What do you want them? You disgusting creature
+    - Thank you. Have you found the girl my father and me are hopeful that my attend
+      bride would return to her home here.
+    - Hello? Is someone there?
+    - What role does that old sword have in finding the traitors?
+    model_name: orig_light_poly_boring
+    score: '12'
+    text: '_self_say You really think he does? I don’t know. If only I could get a
+      better job that pays more for better clothes. Then maybe he’d see interest in
+      me
+
+      _partner_say Dont worry, I know I cant have you just because I am a stable boy
+      but I will tell my master the knight of lakeside house about you. I want to
+      serve you'
+num_episodes: 500
+num_examples: 2968

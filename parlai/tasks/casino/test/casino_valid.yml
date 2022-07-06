@@ -1,0 +1,52 @@
+acts:
+- - episode_done: false
+    labels:
+    - 'Hello there! Are you getting excited for your upcoming trip?! I am so very
+      excited to test my skills! '
+    meta-info:
+      firewood_argument: It is the rainy season where I am traveling, so the abundance
+        of dry firewood to scavenge for is slim.
+      firewood_val: 5
+      food_argument: Due to the rainy season there has been a disease go through the
+        vegetation in the area, so I would like to be prepared in case the same has
+        happened where I am going.
+      food_val: 4
+      water_argument: There is a lot of rain water I can collect and boil down that
+        is safe to drink.
+      water_val: 3
+    text: "Negotiate with your opponent to decide who gets how many items of each\
+      \ kind. There are three kinds of packages: Food, Water, and Firewood. Each has\
+      \ a quantity of 3. Try hard to get as much value as you can, while still leaving\
+      \ your partner satisfied and with a positive perception about you. If you fail\
+      \ to come to an agreement, both parties get 5 points. Refer to the following\
+      \ preference order and arguments for your negotiation: \n\nFood\nValue: 4 points\
+      \ for each package\nArgument: Due to the rainy season there has been a disease\
+      \ go through the vegetation in the area, so I would like to be prepared in case\
+      \ the same has happened where I am going.\n\nWater\nValue: 3 points for each\
+      \ package\nArgument: There is a lot of rain water I can collect and boil down\
+      \ that is safe to drink.\n\nFirewood\nValue: 5 points for each package\nArgument:\
+      \ It is the rainy season where I am traveling, so the abundance of dry firewood\
+      \ to scavenge for is slim.\n"
+- - episode_done: false
+    labels:
+    - 'Great! Have you checked to see what the weather has been like in the area you
+      are going to?? '
+    text: Hi friend! I'm very excited to go to the trip
+- - episode_done: false
+    labels:
+    - 'I have checked and see that it is in the rainy season! I know I need to pack
+      some extra firewood if you can spare me some?? '
+    text: Definitely I will checked. I m eager to prepare each & every things for
+      the trip
+- - episode_done: false
+    labels:
+    - 'Great! Can I take 2 and you can have 1?? I am willing to give you 2 of the
+      water then! '
+    text: yes. I will definitely give you. I bring extra woods.
+- - episode_done: false
+    labels:
+    - 'I suppose I could do that. I am worried a disease has possibly spread to the
+      area due to the very wet weather, but I can sure fish for most of my food then! '
+    text: Its pleasure to me. Will you give food extra 1 to me?
+num_episodes: 60
+num_examples: 462

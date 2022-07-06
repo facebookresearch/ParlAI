@@ -7,12 +7,22 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
+
+RESOURCES = [
+    DownloadableFile(
+        'http://parl.ai/downloads/wikiqa/wikiqa.tar.gz',
+        'wikiqa.tar.gz',
+        '9bb8851dfa8db89a209480e65a3d8967d8bbdf94d5d17a364c0381b0b7609412',
+    )
+]
 
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
     fout = open(os.path.join(outpath, dtype + '.txt'), 'w')
-    with open(inpath) as f:
+    with PathManager.open(inpath) as f:
         lines = [line.strip('\n') for line in f]
     lastqid, lq, ans, cands = None, None, None, None
     for i in range(2, len(lines)):
@@ -49,10 +59,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'wikiqa.tar.gz'
-        url = 'http://parl.ai/downloads/wikiqa/' + fname
-        build_data.download(url, dpath, fname)
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         dpext = os.path.join(dpath, 'WikiQACorpus')
         create_fb_format(dpath, 'train', os.path.join(dpext, 'WikiQA-train.tsv'))

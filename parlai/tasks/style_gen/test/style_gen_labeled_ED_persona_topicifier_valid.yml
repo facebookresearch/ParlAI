@@ -1,0 +1,237 @@
+acts:
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: terrified
+    episode_done: false
+    eval_labels:
+    - Are you fine now?
+    id: style_gen:labeled_ED_persona_topicifier
+    label_candidates:
+    - It's amazing how many feelings and memories mementos like that can bring back.
+    - Good for you! There is nothing wrong or uncool about short hair.
+    - The loss of a pet is heartbreaking. I know how you feel. How old was Trevor.
+    - I guess that was what you call a temporary situation. Sometimes moving on is
+      required.
+    - 'That''s great news, well done. '
+    - Oh nice, where are you going?
+    - Never late you know!
+    - Yes,i am
+    - That sounds amazing. What's your favorite beach to go to?
+    - Oh that sounds even tougher.  It is a long time but I hope it flies by for you
+      and your hubby is back home again.
+    - It is, everything has to be balanced just right, or else we feel it.
+    - Oh my, I hope that doesn't mean more workload for you.
+    - That's too bad. What happened? Is everyone OK?
+    - That is good. Where you running late
+    - 'That makes all the difference. I am glad you were able to get out of that position. '
+    - Yea I know that feel, outside of a few people I knew nearly know one and avoided
+      lots of people cause no one cared
+    - It seems most responsible to alert someone to clean it.
+    - have you asked your friends for family?
+    - I love math, good luck with your exams than.
+    - I am not sure I would do well in that house
+    personality: Questioning
+    prepend_cand: None
+    prepend_ctx: None
+    situation: Today,as i was leaving for work in the morning,i had a tire burst in
+      the middle of a busy road. That scared the hell out of me!
+    text: 'your persona: i''m scared of clowns.
+
+      your persona: i live on the third floor in an apartment.
+
+      your persona: i''ve two roommates.
+
+      your persona: i like to cook.
+
+      your persona: i have two dogs.
+
+      Cooking
+
+      Today,as i was leaving for work in the morning,i had a tire burst in the middle
+      of a busy road. That scared the hell out of me!'
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: terrified
+    episode_done: true
+    eval_labels:
+    - Cool :) Is your car damaged a lot?
+    id: style_gen:labeled_ED_persona_topicifier
+    label_candidates:
+    - I've actually never gone there. What's it like?
+    - College is when the tear will start to flow. I love children.
+    - Ho, I am sorry to hear that.
+    - 'I think it''s very common that we take things for granted. '
+    - That's awesome! I'm very excited for you this is a good event for you!
+    - What kind of con was it
+    - Personally I'm a huge fan of red velvet, but black forest is amazing too!
+    - That's interesting. Are you okay?
+    - A fluffy white one? How amazing!
+    - Thats so awesome! Congrats! I am hoping to get there soon.  I have a lot to
+      be thankful for but I know I need to work on just a little bit before I am fully
+      content.
+    - Well thank you as well.
+    - 'as long as the cake is funfetti i am more than there '
+    - I don't understand the context of this conversation.
+    - well how did it go? did you do well?
+    - It ain't so bad. I'm sure you'll make a few new friends and everything will
+      be just fine.
+    - thats better, but sorry for the disappointment she had caused
+    - Sorry, that was an error! Any way over to your conversation.Who did you cut
+      off that made you feel bad?
+    - Everyone can! Just gotta try.
+    - That's always a good thing. It means you should get on great with your neighbors.
+    - That's always tough. It's so hard to tell what other factors come into play
+      in situations like that. Are you happy where you're currently at, or still looking?
+    personality: Cute
+    prepend_cand: None
+    prepend_ctx: None
+    situation: Today,as i was leaving for work in the morning,i had a tire burst in
+      the middle of a busy road. That scared the hell out of me!
+    text: Yeah,i'm doing alright now, but with minor injuries.
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: surprised
+    episode_done: false
+    eval_labels:
+    - That's funny, hope he didn't give you a heart attack.
+    id: style_gen:labeled_ED_persona_topicifier
+    label_candidates:
+    - o no what did you do?
+    - I definitely recommend getting some mace and a pocket knife. Stay safe out there!
+    - You only get to do it once?
+    - I'm glad you didn't hit the dog!  Did he jump out at you suddenly?
+    - I hate getting pulled over too. Especailly for something silly like being a
+      couple of miles an hour over the speed limit
+    - How'd it go
+    - I agree.. Did something happen?
+    - I agree, you need money for everything these days and it controls us.
+    - 'That does sound like a really fun job. I also work freelance and would also
+      like something more stable. '
+    - Who did you go see? And are you still friends with all the same people? I wonder
+      if any of them kept their ticket stubs too.
+    - how did it go
+    - 'That must be so much fun. I have never surfed but love to be on a boat. '
+    - That's a good idea. I haven't done that in years. I always feel like I barely
+      dodge a bullet by not getting it.
+    - That's great! It's definitely a good thing when you can be yourself.
+    - Congratulations!  I wish I could be published.
+    - I don't know. You should have told hime when it happended. Just do it and get
+      uit out of the way so you both can move past it.
+    - That's great! Are you going to join your friends at the park?
+    - I like my alone time too. What do you enjoy doing by yourself?
+    - I understand but try not to be jealous. Good things will come to you to in its
+      own time
+    - i hope you do really well
+    personality: Humorous
+    prepend_cand: None
+    prepend_ctx: None
+    situation: 'I was walking through my hallway a few week ago, and my son was hiding
+      under the table and grabbed my ankle. I thought i was got. '
+    text: 'your persona: i like to watch make up tutorials in youtube.
+
+      your persona: i started taking beauty classes too.
+
+      your persona: through them i ve learned to make up myself and others.
+
+      your persona: i ve reached 50k subscribers !.
+
+      your persona: recently i started a youtube channel where i share make up tutorials
+      too.
+
+      Influencer marketing
+
+      A few weeks ago, I was walking through my hallway, minding my own business,
+      when all of a sudden a hand reached out from under a table and grabbed my ankle.
+      I was so suprised. I thought i was got. Turns out, it was my son. '
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: surprised
+    episode_done: true
+    eval_labels:
+    - I would probably scream also.
+    id: style_gen:labeled_ED_persona_topicifier
+    label_candidates:
+    - 'That really does make it special. I''m glad you have that. '
+    - It must've have been. Glad they are okay now.
+    - Well sometimes companies make mistakes. I doubt it's anything you did.
+    - Oh no, I'm so so sorry. I've always had at least one pet throughout my life,
+      and they're truly part of the family.
+    - Wow. That must suck. Do you like the band incubus? I missed them a couple of
+      times but I saw them this year
+    - I can't play those kinds of games. Too spooky for me.
+    - I think your boss should give you more recognition in that case!
+    - That's always a good thing. It means you should get on great with your neighbors.
+    - Yeah, I had my Commodore 64 and Amiga in the late 80's. Still, the games were
+      great when they worked!
+    - That's ok, you did the right thing. It probably happens to lots of people.
+    - Awesome! What are you going to see?
+    - What kind of food does it serve? Sounds wonderful!
+    - Oh no! What's wrong with your dad?
+    - oh god yes i know what you mean, any ideas what you wanna do ?
+    - Hopefully you'll able to get it all sorted out soon.  I'm sure when it's done
+      it'll be a beautiful house.
+    - That would be bad you should double check before you leave
+    - I hope he continues to do well.
+    - You can only do so much.  Next time I'd just let him drink on his own.
+    - I am sure you will meet them
+    - Wow thats nice.  What do you drive?
+    personality: Shy
+    prepend_cand: None
+    prepend_ctx: None
+    situation: 'I was walking through my hallway a few week ago, and my son was hiding
+      under the table and grabbed my ankle. I thought i was got. '
+    text: 'I may have let out a scream that will have him question my manhood for
+      the rest of our lives, lol. '
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: excited
+    episode_done: false
+    eval_labels:
+    - 'Wow! That sounds amazing. Where are you going? '
+    id: style_gen:labeled_ED_persona_topicifier
+    label_candidates:
+    - What kind of school was she at before?
+    - Yes, I hate those kind of people. They have nothing to do expect lying about
+      other people.
+    - Aww, you got to admit that is so cute as well
+    - Oh no!! How did you dry them?
+    - I am sorry to hear that, what happened?
+    - Everyone handles stress differently. My anxiety gets so High I sometimes cancel
+      my plans.
+    - That is good, hopefully you find your soulmate.
+    - oh god, what do you do at that time
+    - They really can't. It's still no excuse though.
+    - Yeah, that is a hard one to deal with.  Maybe you should give it back so you
+      will not feel bad about yourself.
+    - what did she get sick off , im sorry to hear that your a great to your wife
+    - Oh my just the opposite LOL
+    - I would make a complaint to the principal if I were you!
+    - Yeah, that feeling will change when you see him coming home with a huge smile
+      on his face!
+    - Where are you located ?
+    - Have you talked to him about it?
+    - 'They say dogs are mans best friend. '
+    - That is terrible. How long have you had this pet?
+    - That's so exciting! Have you run a marathon before?
+    - woohoo! you are one lucky child!
+    personality: Exciting
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I'm overly excited today because will be flying outside the country
+      for the first time tomorrow.
+    text: 'your persona: i''d like to spend more time with my family.
+
+      your persona: i like spending time with friends playing sports and going to
+      country concerts.
+
+      your persona: i graduated with a business degree , and marketing is all that
+      i really enjoyed.
+
+      your persona: unfortunately , my family lives across the country from me.
+
+      Concert
+
+      I''m overly excited because will be flying outside the country for the first
+      time tomorrow.".  Please enter here...'
+num_episodes: 2769
+num_examples: 5738

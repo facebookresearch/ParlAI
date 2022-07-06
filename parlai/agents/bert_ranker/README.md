@@ -1,3 +1,5 @@
+# BERT Ranker
+
 This directory contains several implementations of a ranker based on a pretrained language model BERT (Devlin et al. https://arxiv.org/abs/1810.04805). It relies on the pytorch implementation provided by Hugging Face (https://github.com/huggingface/pytorch-pretrained-BERT).
 
 ## Content
@@ -16,10 +18,10 @@ In order to use those agents you need to install pytorch-pretrained-bert (https:
 
 Train a BiEncoder BERT model on ConvAI2:
 ```bash
-python examples/train_model.py -t convai2 -m bert_ranker/bi_encoder_ranker --batchsize 20 --type-optimization all_encoder_layers -vtim 30 --model-file /tmp/bert_biencoder_test --data-parallel True
+parlai train_model -t convai2 -m bert_ranker/bi_encoder_ranker --batchsize 20 -vtim 30 --model-file /tmp/bert_biencoder_test --data-parallel True
 ```
 
 Train a CrossEncoder BERT model on ConvAI2:
 ```bash
-python examples/train_model.py -t convai2 -m bert_ranker/cross_encoder_ranker --batchsize 2 --type-optimization all_encoder_layers -vtim 30 --model-file /tmp/bert_crossencoder_test --data-parallel True
+parlai train_model -t convai2 -m bert_ranker/cross_encoder_ranker --batchsize 2 -vtim 30 --model-file /tmp/bert_crossencoder_test --data-parallel True
 ```

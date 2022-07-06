@@ -1,0 +1,133 @@
+acts:
+- - episode_done: true
+    id: wikiqa
+    label_candidates:
+    - The ice facade is approximately 60 m high
+    - Ice formations in the Titlis glacier cave
+    - A glacier cave is a cave formed within the ice of a glacier .
+    - Glacier caves are often called ice caves , but this term is properly used to
+      describe bedrock caves that contain year-round ice.
+    labels:
+    - A glacier cave is a cave formed within the ice of a glacier .
+    reward: 0
+    text: how are glacier caves formed?
+- - episode_done: true
+    id: wikiqa
+    label_candidates:
+    - This tablespoon has a capacity of about 15 mL.
+    - Measuring Spoons
+    - In the US and parts of Canada, a tablespoon is the largest type of spoon used
+      for eating from a bowl.
+    - In the UK, Europe and most Commonwealth countries, a tablespoon is a type of
+      large spoon usually used for serving.
+    - In countries where a tablespoon is a serving spoon, the nearest equivalent to
+      the US tablespoon is either the dessert spoon or the soup spoon .
+    - A tablespoonful, nominally the capacity of one tablespoon, is commonly used
+      as a measure of volume in cooking .
+    - It is abbreviated as T, tb, tbs, tbsp, tblsp, or tblspn.
+    - The capacity of ordinary tablespoons is not regulated by law and is subject
+      to considerable variation.
+    - In the USA one tablespoon (measurement unit) is approximately 15 mL; the capacity
+      of an actual tablespoon (dining utensil) ranges from 7 mL to 14 mL.
+    - In Australia one tablespoon (measurement unit) is 20 mL.
+    labels:
+    - This tablespoon has a capacity of about 15 mL.
+    - In the USA one tablespoon (measurement unit) is approximately 15 mL; the capacity
+      of an actual tablespoon (dining utensil) ranges from 7 mL to 14 mL.
+    - In Australia one tablespoon (measurement unit) is 20 mL.
+    reward: 0
+    text: how much is 1 tablespoon of water
+- - episode_done: true
+    id: wikiqa
+    label_candidates:
+    - Harry Potter is a series of seven fantasy novels written by the British author
+      J. K. Rowling .
+    - The books chronicle the adventures of a wizard , Harry Potter , and his friends
+      Ronald Weasley and Hermione Granger , all of whom are students at Hogwarts School
+      of Witchcraft and Wizardry .
+    - The main story arc concerns Harry's quest to overcome the Dark wizard Lord Voldemort
+      , whose aims are to become immortal, conquer the wizarding world , subjugate
+      non-magical people, and destroy all those who stand in his way, especially Harry
+      Potter.
+    - Since the release of the first novel Harry Potter and the Philosopher's Stone
+      on 30 June 1997, the books have gained immense popularity, critical acclaim
+      and commercial success worldwide.
+    - The series has also had some share of criticism, including concern for the increasingly
+      dark tone.
+    - ', the book series has sold about 450 million copies, making it the best-selling
+      book series in history , and has been translated into 67 languages .'
+    - The last four books consecutively set records as the fastest-selling books in
+      history.
+    - A series of many genres , including fantasy and coming of age (with elements
+      of mystery , thriller , adventure , and romance ), it has many cultural meanings
+      and references.
+    - According to Rowling, the main theme is death.
+    - There are also many other themes in the series, such as prejudice and corruption.
+    - The initial major publishers of the books were Bloomsbury in the United Kingdom
+      and Scholastic Press in the United States.
+    - The books have since been published by many publishers worldwide.
+    - The books, with the seventh book split into two parts, have been made into an
+      eight-part film series by Warner Bros. Pictures , the highest-grossing film
+      series of all time.
+    - The series also originated much tie-in merchandise, making the Harry Potter
+      brand worth in excess of $15 billion.
+    - Also due to the success of the books and films, Harry Potter has been used for
+      a theme park, The Wizarding World of Harry Potter in Universal Parks & Resorts
+      's Islands of Adventure .
+    labels:
+    - The series also originated much tie-in merchandise, making the Harry Potter
+      brand worth in excess of $15 billion.
+    reward: 0
+    text: how much are the harry potter movies worth
+- - episode_done: true
+    id: wikiqa
+    label_candidates:
+    - RS-68 being tested at NASA's Stennis Space Center.
+    - The nearly transparent exhaust is due to this engine's exhaust being mostly
+      superheated steam (water vapor from its propellants, hydrogen and oxygen)
+    - Viking 5C rocket engine
+    - A rocket engine, or simply "rocket", is a jet engine that uses only stored propellant
+      mass for forming its high speed propulsive jet .
+    - Rocket engines are reaction engines and obtain thrust in accordance with Newton's
+      third law .
+    - Since they need no external material to form their jet, rocket engines can be
+      used for spacecraft propulsion as well as terrestrial uses, such as missiles
+      .
+    - Most rocket engines are internal combustion engines , although non-combusting
+      forms also exist.
+    - Rocket engines as a group have the highest exhaust velocities, are by far the
+      lightest, but are the least propellant efficient of all types of jet engines.
+    labels:
+    - A rocket engine, or simply "rocket", is a jet engine that uses only stored propellant
+      mass for forming its high speed propulsive jet .
+    reward: 0
+    text: how a rocket engine works
+- - episode_done: true
+    id: wikiqa
+    label_candidates:
+    - Cholera is an infection in the small intestine caused by the bacterium Vibrio
+      cholerae .
+    - The main symptoms are watery diarrhea and vomiting .
+    - Transmission occurs primarily by drinking water or eating food that has been
+      contaminated by the feces (waste product) of an infected person, including one
+      with no apparent symptoms.
+    - The severity of the diarrhea and vomiting can lead to rapid dehydration and
+      electrolyte imbalance, and death in some cases.
+    - The primary treatment is oral rehydration therapy , typically with oral rehydration
+      solution , to replace water and electrolytes.
+    - If this is not tolerated or does not provide improvement fast enough, intravenous
+      fluids can also be used.
+    - Antibacterial drugs are beneficial in those with severe disease to shorten its
+      duration and severity.
+    - Worldwide, it affects 3–5 million people and causes 100,000–130,000 deaths a
+      year .
+    - Cholera was one of the earliest infections to be studied by epidemiological
+      methods.
+    labels:
+    - Transmission occurs primarily by drinking water or eating food that has been
+      contaminated by the feces (waste product) of an infected person, including one
+      with no apparent symptoms.
+    reward: 0
+    text: how are cholera and typhus transmitted and prevented
+num_episodes: 873
+num_examples: 873

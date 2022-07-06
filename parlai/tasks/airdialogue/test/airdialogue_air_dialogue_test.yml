@@ -1,0 +1,29 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Hello.
+    id: airdialogue
+    text: Hello.
+- - episode_done: false
+    eval_labels:
+    - Sure, I am here to day that.
+    id: airdialogue
+    text: I want to travel from New York, LGA to PHL. Can you help me out in booking
+      a flight ticket?
+- - episode_done: false
+    eval_labels:
+    - Can you please tell me your name firstly?
+    id: airdialogue
+    text: Thank you for accepting my request.
+- - episode_done: false
+    eval_labels:
+    - May I know your travelling dates please?
+    id: airdialogue
+    text: Sure, myself Barbara Campbell.
+- - episode_done: false
+    eval_labels:
+    - Let me know about affordable price please.
+    id: airdialogue
+    text: My travelling dates are from Apr 27 to Apr 29.
+num_episodes: 20182
+num_examples: 128404

@@ -1,0 +1,44 @@
+acts:
+- - episode_done: true
+    id: wikisql
+    labels:
+    - SELECT  Notes FROM table WHERE Current slogan = SOUTH AUSTRALIA
+    text: 'The table has column names State/territory, Text/background colour, Format,
+      Current slogan, Current series and Notes.
+
+      Tell me what the notes are for South Australia '
+- - episode_done: true
+    id: wikisql
+    labels:
+    - SELECT  Current series FROM table WHERE Notes = New series began in June 2011
+    text: 'The table has column names State/territory, Text/background colour, Format,
+      Current slogan, Current series and Notes.
+
+      What is the current series where the new series began in June 2011?'
+- - episode_done: true
+    id: wikisql
+    labels:
+    - SELECT  Format FROM table WHERE State/territory = South Australia
+    text: 'The table has column names State/territory, Text/background colour, Format,
+      Current slogan, Current series and Notes.
+
+      What is the format for South Australia?'
+- - episode_done: true
+    id: wikisql
+    labels:
+    - SELECT  Text/background colour FROM table WHERE State/territory = Australian
+      Capital Territory
+    text: 'The table has column names State/territory, Text/background colour, Format,
+      Current slogan, Current series and Notes.
+
+      Name the background colour for the Australian Capital Territory'
+- - episode_done: true
+    id: wikisql
+    labels:
+    - SELECT COUNT Fleet Series (Quantity) FROM table WHERE Fuel Propulsion = CNG
+    text: 'The table has column names Order Year, Manufacturer, Model, Fleet Series
+      (Quantity), Powertrain (Engine/Transmission) and Fuel Propulsion.
+
+      how many times is the fuel propulsion is cng?'
+num_episodes: 56355
+num_examples: 56355

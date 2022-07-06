@@ -1,0 +1,391 @@
+acts:
+- - episode_done: true
+    id: cbt:NE
+    label_candidates:
+    - CHAPTER
+    - Flitter
+    - Prigio
+    - Saracens
+    - lumber-room
+    - ogres
+    - p9.jpg
+    - rustling
+    - speaking-trumpet
+    - wishing-cap
+    labels:
+    - Prigio
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      Some were abroad ; several were ill ; a few were in prison among the Saracens
+      ; others were captives in the dens of ogres .
+
+      The end of it was that the king and queen had to sit down alone , one at each
+      end of a very long table , arrayed with plates and glasses for a hundred guests
+      -- for a hundred guests who never came !
+
+      `` Any soup , my dear ? ''''
+
+      shouted the king , through a speaking-trumpet ; when , suddenly , the air was
+      filled with a sound like the rustling of the wings of birds .
+
+      Flitter , flitter , flutter , went the noise ; and when the queen looked up
+      , lo and behold !
+
+      on every seat was a lovely fairy , dressed in green , each with a most interesting-looking
+      parcel in her hand .
+
+      Do n''t you like opening parcels ?
+
+      The king did , and he was most friendly and polite to the fairies .
+
+      But the queen , though she saw them distinctly , took no notice of them .
+
+      You see , she did not believe in fairies , nor in her own eyes , when she saw
+      them .
+
+      So she talked across the fairies to the king , just as if they had not been
+      there ; but the king behaved as politely as if they were real -- which , of
+      course , they were .
+
+      When dinner was over , and when the nurse had brought in the baby , all the
+      fairies gave him the most magnificent presents .
+
+      One offered a purse which could never be empty ; and one a pair of seven-leagued
+      boots ; and another a cap of darkness , that nobody might see the prince when
+      he put it on ; and another a wishing-cap ; and another a carpet , on which ,
+      when he sat , he was carried wherever he wished to find himself .
+
+      Another made him beautiful for ever ; and another , brave ; and another , lucky
+      : but the last fairy of all , a cross old thing , crept up and said , `` My
+      child , you shall be too clever ! ''''
+
+      This fairy ''s gift would have pleased the queen , if she had believed in it
+      , more than anything else , because she was so clever herself .
+
+      But she took no notice at all ; and the fairies went each to her own country
+      , and none of them stayed there at the palace , where nobody believed in them
+      , except the king , a little .
+
+      But the queen tossed all their nice boots and caps , carpets , purses , swords
+      , and all , away into a dark lumber-room ; for , of course , she thought that
+      they were all nonsense , and merely old rubbish out of books , or pantomime
+      `` properties . ''''
+
+      CHAPTER II .
+
+      -LCB- Chapter heading picture : p9.jpg -RCB- Prince Prigio and his Family .
+
+      Well , the little prince grew up .
+
+      I think I ''ve told you that his name was XXXXX -- did I not ?'
+- - episode_done: true
+    id: cbt:CN
+    label_candidates:
+    - ancestors
+    - baby
+    - boy
+    - everyone
+    - fairies
+    - mother
+    - portrait
+    - queen
+    - time
+    - walls
+    labels:
+    - queen
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      With almost everything else to make them happy , they wanted one thing : they
+      had no children .
+
+      This vexed the king even more than the queen , who was very clever and learned
+      , and who had hated dolls when she was a child .
+
+      However , she , too in spite of all the books she read and all the pictures
+      she painted , would have been glad enough to be the mother of a little prince
+      .
+
+      The king was anxious to consult the fairies , but the queen would not hear of
+      such a thing .
+
+      She did not believe in fairies : she said that they had never existed ; and
+      that she maintained , though The History of the Royal Family was full of chapters
+      about nothing else .
+
+      Well , at long and at last they had a little boy , who was generally regarded
+      as the finest baby that had ever been seen .
+
+      Even her majesty herself remarked that , though she could never believe all
+      the courtiers told her , yet he certainly was a fine child -- a very fine child
+      .
+
+      Now , the time drew near for the christening party , and the king and queen
+      were sitting at breakfast in their summer parlour talking over it .
+
+      It was a splendid room , hung with portraits of the royal ancestors .
+
+      There was Cinderella , the grandmother of the reigning monarch , with her little
+      foot in her glass slipper thrust out before her .
+
+      There was the Marquis de Carabas , who , as everyone knows , was raised to the
+      throne as prince consort after his marriage with the daughter of the king of
+      the period .
+
+      On the arm of the throne was seated his celebrated cat , wearing boots .
+
+      There , too , was a portrait of a beautiful lady , sound asleep : this was Madame
+      La Belle au Bois-dormant , also an ancestress of the royal family .
+
+      Many other pictures of celebrated persons were hanging on the walls .
+
+      `` You have asked all the right people , my dear ? ''''
+
+      said the king .
+
+      `` Everyone who should be asked , '''' answered the queen .
+
+      `` People are so touchy on these occasions , '''' said his majesty .
+
+      `` You have not forgotten any of our aunts ? ''''
+
+      `` No ; the old cats ! ''''
+
+      replied the XXXXX ; for the king ''s aunts were old-fashioned , and did not
+      approve of her , and she knew it .'
+- - episode_done: true
+    id: cbt:V
+    label_candidates:
+    - christening
+    - existed
+    - hear
+    - knows
+    - read
+    - remarked
+    - said
+    - sitting
+    - talking
+    - wearing
+    labels:
+    - said
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      This vexed the king even more than the queen , who was very clever and learned
+      , and who had hated dolls when she was a child .
+
+      However , she , too in spite of all the books she read and all the pictures
+      she painted , would have been glad enough to be the mother of a little prince
+      .
+
+      The king was anxious to consult the fairies , but the queen would not hear of
+      such a thing .
+
+      She did not believe in fairies : she said that they had never existed ; and
+      that she maintained , though The History of the Royal Family was full of chapters
+      about nothing else .
+
+      Well , at long and at last they had a little boy , who was generally regarded
+      as the finest baby that had ever been seen .
+
+      Even her majesty herself remarked that , though she could never believe all
+      the courtiers told her , yet he certainly was a fine child -- a very fine child
+      .
+
+      Now , the time drew near for the christening party , and the king and queen
+      were sitting at breakfast in their summer parlour talking over it .
+
+      It was a splendid room , hung with portraits of the royal ancestors .
+
+      There was Cinderella , the grandmother of the reigning monarch , with her little
+      foot in her glass slipper thrust out before her .
+
+      There was the Marquis de Carabas , who , as everyone knows , was raised to the
+      throne as prince consort after his marriage with the daughter of the king of
+      the period .
+
+      On the arm of the throne was seated his celebrated cat , wearing boots .
+
+      There , too , was a portrait of a beautiful lady , sound asleep : this was Madame
+      La Belle au Bois-dormant , also an ancestress of the royal family .
+
+      Many other pictures of celebrated persons were hanging on the walls .
+
+      `` You have asked all the right people , my dear ? ''''
+
+      said the king .
+
+      `` Everyone who should be asked , '''' answered the queen .
+
+      `` People are so touchy on these occasions , '''' said his majesty .
+
+      `` You have not forgotten any of our aunts ? ''''
+
+      `` No ; the old cats ! ''''
+
+      replied the queen ; for the king ''s aunts were old-fashioned , and did not
+      approve of her , and she knew it .
+
+      `` They are very kind old ladies in their way , '''' XXXXX the king ; `` and
+      were nice to me when I was a boy . '''''
+- - episode_done: true
+    id: cbt:P
+    label_candidates:
+    - With
+    - before
+    - in
+    - of
+    - 'on'
+    - than
+    - that
+    - though
+    - to
+    - upon
+    labels:
+    - of
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      CHAPTER I. -LCB- Chapter heading picture : p1.jpg -RCB- How the Fairies were
+      not Invited to Court .
+
+      Once upon a time there reigned in Pantouflia a king and a queen .
+
+      With almost everything else to make them happy , they wanted one thing : they
+      had no children .
+
+      This vexed the king even more than the queen , who was very clever and learned
+      , and who had hated dolls when she was a child .
+
+      However , she , too in spite of all the books she read and all the pictures
+      she painted , would have been glad enough to be the mother of a little prince
+      .
+
+      The king was anxious to consult the fairies , but the queen would not hear of
+      such a thing .
+
+      She did not believe in fairies : she said that they had never existed ; and
+      that she maintained , though The History of the Royal Family was full of chapters
+      about nothing else .
+
+      Well , at long and at last they had a little boy , who was generally regarded
+      as the finest baby that had ever been seen .
+
+      Even her majesty herself remarked that , though she could never believe all
+      the courtiers told her , yet he certainly was a fine child -- a very fine child
+      .
+
+      Now , the time drew near for the christening party , and the king and queen
+      were sitting at breakfast in their summer parlour talking over it .
+
+      It was a splendid room , hung with portraits of the royal ancestors .
+
+      There was Cinderella , the grandmother of the reigning monarch , with her little
+      foot in her glass slipper thrust out before her .
+
+      There was the Marquis de Carabas , who , as everyone knows , was raised to the
+      throne as prince consort after his marriage with the daughter of the king of
+      the period .
+
+      On the arm of the throne was seated his celebrated cat , wearing boots .
+
+      There , too , was a portrait of a beautiful lady , sound asleep : this was Madame
+      La Belle au Bois-dormant , also an ancestress of the royal family .
+
+      Many other pictures of celebrated persons were hanging on the walls .
+
+      `` You have asked all the right people , my dear ? ''''
+
+      said the king .
+
+      `` Everyone who should be asked , '''' answered the queen .
+
+      `` People are so touchy on these occasions , '''' said his majesty .
+
+      `` You have not forgotten any XXXXX our aunts ? '''''
+- - episode_done: true
+    id: cbt:NE
+    label_candidates:
+    - Prigio
+    - afternoon
+    - course
+    - father
+    - force
+    - lumber-room
+    - nonsense
+    - p9.jpg
+    - palace
+    - wishing-cap
+    labels:
+    - Prigio
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      So she talked across the fairies to the king , just as if they had not been
+      there ; but the king behaved as politely as if they were real -- which , of
+      course , they were .
+
+      When dinner was over , and when the nurse had brought in the baby , all the
+      fairies gave him the most magnificent presents .
+
+      One offered a purse which could never be empty ; and one a pair of seven-leagued
+      boots ; and another a cap of darkness , that nobody might see the prince when
+      he put it on ; and another a wishing-cap ; and another a carpet , on which ,
+      when he sat , he was carried wherever he wished to find himself .
+
+      Another made him beautiful for ever ; and another , brave ; and another , lucky
+      : but the last fairy of all , a cross old thing , crept up and said , `` My
+      child , you shall be too clever ! ''''
+
+      This fairy ''s gift would have pleased the queen , if she had believed in it
+      , more than anything else , because she was so clever herself .
+
+      But she took no notice at all ; and the fairies went each to her own country
+      , and none of them stayed there at the palace , where nobody believed in them
+      , except the king , a little .
+
+      But the queen tossed all their nice boots and caps , carpets , purses , swords
+      , and all , away into a dark lumber-room ; for , of course , she thought that
+      they were all nonsense , and merely old rubbish out of books , or pantomime
+      `` properties . ''''
+
+      CHAPTER II .
+
+      -LCB- Chapter heading picture : p9.jpg -RCB- Prince Prigio and his Family .
+
+      Well , the little prince grew up .
+
+      I think I ''ve told you that his name was Prigio -- did I not ?
+
+      Well , that was his name .
+
+      You can not think how clever he was .
+
+      He argued with his nurse as soon as he could speak , which was very soon .
+
+      He argued that he did not like to be washed , because the soap got into his
+      eyes .
+
+      However , when he was told all about the pores of the skin , and how they could
+      not be healthy if he was not washed , he at once ceased to resist , for he was
+      very reasonable .
+
+      He argued with his father that he did not see why there should be kings who
+      were rich , while beggars were poor ; and why the king -- who was a little greedy
+      -- should have poached eggs and plum-cake at afternoon tea , while many other
+      persons went without dinner .
+
+      The king was so surprised and hurt at these remarks that he boxed the prince
+      ''s ears , saying , `` I ''ll teach you to be too clever , my lad . ''''
+
+      Then he remembered the awful curse of the oldest fairy , and was sorry for the
+      rudeness of the queen .
+
+      And when the prince , after having his ears boxed , said that `` force was no
+      argument , '''' the king went away in a rage .
+
+      -LCB- XXXXX reading a book : p11.jpg -RCB- Indeed , I can not tell you how the
+      prince was hated by all !'
+num_episodes: 669343
+num_examples: 669343

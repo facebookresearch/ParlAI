@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -8,62 +8,69 @@
 Unit tests for general checks of code quality.
 """
 
+import pytest
+import glob
 import unittest
 import os
-import re
 import parlai.utils.testing as testing_utils
-
-FILENAME_EXTENSIONS = r'.*\.(rst|py|sh|js|css)$'
-WHITELIST_PHRASES = [
-    'Moscow Institute of Physics and Technology.',
-    'https://github.com/fartashf/vsepp',
-]
-COPYRIGHT = [
-    "Copyright (c) Facebook, Inc. and its affiliates.",
-    "This source code is licensed under the MIT license found in the",
-    "LICENSE file in the root directory of this source tree.",
-]
+import parlai.opt_presets as opt_presets
 
 
-class TestCopyright(unittest.TestCase):
-    """Make sure all files have the right copyright."""
-
-    def test_copyright(self):
-        for fn in testing_utils.git_ls_files():
-            # only check source files
-            if not re.match(FILENAME_EXTENSIONS, fn):
-                continue
-
-            with open(fn, 'r') as f:
-                src = f.read(512)  # only need the beginning
-
-            if not src.strip():
-                # skip empty files
-                continue
-
-            if any(wl in src for wl in WHITELIST_PHRASES):
-                # skip a few things we don't have the copyright on
-                continue
-
-            for i, msg in enumerate(COPYRIGHT):
-                if "mlb_vqa" in fn and i < 2:
-                    # very special exception for mlb_vqa
-                    continue
-
-                self.assertTrue(msg in src, '{} missing copyright "{}"'.format(fn, msg))
-
-
+@pytest.mark.nofbcode
 class TestInit(unittest.TestCase):
-    """Make sure all python packages have init files."""
+    """
+    Make sure all python packages have init files.
+    """
 
     def test_init_everywhere(self):
-        for folder in testing_utils.git_ls_dirs('parlai'):
-            if 'mturk' in folder:
+        for folder_path in testing_utils.git_ls_dirs('parlai'):
+            excluded_folders = [
+                'conf',
+                'frontend',
+                'mturk',
+                'task_config',
+                'webapp',
+                'opt_presets',
+            ]
+            # conf: contains YAML files for Hydra
+            # frontend, mturk, webapp: contains frontend code for crowdsourcing tasks
+            # task_config: contains JSONs, HTML files, etc. for MTurk/Mephisto tasks
+            if any(folder_name in folder_path for folder_name in excluded_folders):
+                continue
+            if folder_path.endswith("test") and folder_path.startswith("parlai/tasks/"):
+                # yml regression files in parlai/tasks/X/test/
                 continue
             self.assertIn(
                 '__init__.py',
-                os.listdir(folder),
-                '{} does not contain __init__.py'.format(folder),
+                os.listdir(folder_path),
+                '{} does not contain __init__.py'.format(folder_path),
+            )
+
+
+@pytest.mark.nofbcode
+class TestOptPresets(unittest.TestCase):
+    """
+    Ensure all opt presets contain descriptions.
+    """
+
+    def test_opt_preset_docs(self):
+        from parlai.opt_presets.docs import PRESET_DESCRIPTIONS
+
+        folder = os.path.dirname(opt_presets.__file__)
+        has_file = set(x[len(folder) + 1 : -4] for x in glob.glob(f'{folder}/*/*.opt'))
+        has_docs = set(PRESET_DESCRIPTIONS.keys())
+
+        file_no_docs = has_file - has_docs
+        if file_no_docs:
+            raise AssertionError(
+                "The following opt presets have files but no documentation: "
+                f"{', '.join(file_no_docs)}"
+            )
+        docs_no_file = has_docs - has_file
+        if docs_no_file:
+            raise AssertionError(
+                "The following opt presets have documentation but no files: "
+                f"{', '.join(docs_no_file)}"
             )
 
 

@@ -1,0 +1,232 @@
+acts:
+- - context_dataset: wizard_of_wikipedia
+    convai2: i've no idea i am also very shy
+    empathetic_dialogues: Probably because I am insecure.
+    episode_done: false
+    eval_labels:
+    - I think it's because in my head, I think everyone is judging me. I just start
+      to sweat and I get sick in my stomach.
+    free_message: and why is that?
+    guided_chosen_suggestion: wizard_of_wikipedia
+    id: blended_skill_talk:blended_skill_talk
+    label_candidates:
+    - Oh nice! My brother in law is a lawyer and I remember him trying to get certain
+      jobs he wanted and it not being easy sometimes
+    - I'm not from Florida, but I'm here for college. Are you in school?
+    - No, I am always spend time in playing cricket.
+    - I like Green Day, My chemical Romance, Deftones
+    - Yeah that would be devestating.  How long ago did that happen?
+    - Yes, he was.  He was a Polish composer and virtuoso pianist.
+    - My favourite breed is probably Husky because of how big they get, although I'm
+      not a fan of how much fur they shed. What's your favourite breed?
+    - What's going on with your roomates?
+    - That's great! Congratulations!
+    - Not too sure, but I never want to disappoint my family. That's why I'm in college
+      for engineering.
+    - TV is good to fall asleep to, i've wanted to start painting but being a nurse
+      keeps me busy
+    - It's on my bucket list as well. I can't wait to get the chance to go.
+    - How nice! I am on a see food diet :/, but i always text my mom and apparently
+      they're starting a plant based diet
+    - I can understand that! What other genres do you like?
+    - Well, now that all needs to change. Are you hungry in your mouth or stomach?
+      Stay focused on your weight.
+    - That really good. Though I still do make mistakes every now and then. How often
+      do you do crossword puzzles throughout the week?
+    - The university provides me accommodation for a reasonable price. We get discounts
+      for the gym it's still quite expensive. I might take up running instead.
+    - Adopted and raised by my birth father's parents...they're "Mom" and "Dad" to
+      me.
+    - oh ok will try good best
+    - 'He kept on playing dumb and acted as if he had no idea what I was rambling
+      on about. I guess you could neither of us slept well that night. '
+    text: 'your persona: i hate talking to people.
+
+      your persona: i believe dragons are real.
+
+      Social anxiety
+
+      Wow, I am never shy. Do you have anxiety?
+
+      Yes. I end up sweating and blushing and feel like i''m going to throw up.
+
+      and why is that?'
+    wizard_of_wikipedia: I think it's because in my head, I think everyone is judging
+      me. I just start to sweat and I get sick in my stomach.
+- - context_dataset: wizard_of_wikipedia
+    convai2: oh i know . i always feel judged and never know what to do .
+    empathetic_dialogues: Please don't care about those people. Try to be true to
+      yourself. World will recognize you one day.
+    episode_done: false
+    eval_labels:
+    - I don't really have people telling me in my head, more like behind my back
+    free_message: 'interesting but I know how you feel especially the whole people
+      telling that it in your head '
+    guided_chosen_suggestion: ''
+    id: blended_skill_talk:blended_skill_talk
+    label_candidates:
+    - Yes! I internet at a medical device company last year! How many year have you
+      been working as an accountant now?
+    - 'Just come clean I know you did it. It is like a scene from my favorite horror
+      novel. '
+    - 2 years. How is retirement?
+    - Yes, I have that worry too - you can never be sure, can you?
+    - They are friendly and cute!
+    - better get back into the dating game!
+    - I own a ps4 and gaming PC but almost never touch the ps4. Been playing a ton
+      of Modern warfare on pc though.
+    - I've never been that far! I travel for college and I want to be a polygot when
+      I'm older. What was Africa like?
+    - Family is very important to me personally, but I've learned it's important to
+      go your own way. Fleetwood Mac knew it best.
+    - I have been to Six Flags in Gurnee, IL and near St. Louis, MO. However, I much
+      prefer Universal Studios Orlando over both.
+    - Sounds like you have a great brother!
+    - Agreed. So what else do you do for fun?
+    - If you could work one low wage position, what would it be?
+    - I agree. Also very hard on the perfectionist person. Hard for them to accept
+      if they don't make their goals.
+    - i basically a fairly unhealthy eater.  What can I say, I love snacks.
+    - 'I enjoy teaching others, you would be surprised at how much there is to know
+      about nature and the environment. '
+    - I don´t  have any kids yet. But I want to some day. Do you have kids?
+    - Yes, I already found a new place. It's really cool!
+    - I do love to read as well. Do you happen to have a favorite author or book?
+    - 'It''s on my bucket list of things to try. A friend I used to work with had
+      a daughter who owned a horse. '
+    text: 'interesting but I know how you feel especially the whole people telling
+      that it in your head '
+    wizard_of_wikipedia: Right! But the difference with me is I just think about myself
+      and no one else really. People consider it a social and cultural problem.
+- - context_dataset: wizard_of_wikipedia
+    convai2: i try to do stuff like that all time but i can never speak up for myself
+    empathetic_dialogues: I am not sure I believe them most of the time though
+    episode_done: true
+    eval_labels:
+    - Me too! What do you believe in? I believe in dragons... Just finished watching
+      Game of Thrones. Man, those things are dope
+    free_message: 'Dang that''s though. But I also understand that. I have people
+      some who talks behind my back because of certain things that I believe in '
+    guided_chosen_suggestion: ''
+    id: blended_skill_talk:blended_skill_talk
+    label_candidates:
+    - Indeed.
+    - Cool I love the way diffrent rocks can have amzing gem like quality's to them,
+      have You eatten dinner yet going to make pork chops tonight lol
+    - Yes, if a whistleblower tells, the company can get in trouble. They can get
+      big fines for exploitation of workers.
+    - mm very tasty, what brand cheese do you use? i tried Stilton but it wasn't very
+      popular with my 10 adopted children.
+    - Oh yes, that was a great movie. Very funny!
+    - Happy birthday to them, what are their names?
+    - When I have my restaurant, I can hire you :)
+    - 'preferably, Japan and Switzerland. '
+    - Interesting, is it just a normal tomato sauce you cook them in, or is it something
+      else?
+    - wow how does it feel to have a famous gf. you must be really proud
+    - Wooowwww. That's cool. Any plans to get more pets in the future?
+    - look, i you had mom's spaghetti? would you capture it? or just let it slip?
+      (parody of eminem's lose yourself on youtube) haha
+    - What kind of dogs do you have
+    - I am getting ready to go to the gym. I meant to go earlier but I got distracted.
+    - action movies . . it all depended on my mood . you ?
+    - it did . what did you study or do for work ?
+    - I have wanted to visit Germany. However, I also dream of going to Hawaii one
+      day as well. How about you?
+    - That sounds great! I could sure use to burn some fat!
+    - If it is hot where you are you can run in the evenings or early morning.
+    - 'I haven''t been driving for long enough to tell, but I''m sure you''re right.
+      Is your mom hurt though? '
+    text: 'Dang that''s though. But I also understand that. I have people some who
+      talks behind my back because of certain things that I believe in '
+    wizard_of_wikipedia: Shyness is weird too, that awkwardness breeds more shyness
+      I feel and just makes for a positive feedback
+- - context_dataset: empathetic_dialogues
+    convai2: no . i wanted to punch him more than anything . haha !
+    empathetic_dialogues: Oh, cool!  What kind of turtle was it?
+    episode_done: false
+    eval_labels:
+    - What does your turtle eat?  Is it hard to take care of a turtle?
+    free_message: that's funny. No. I let him roam around the house.
+    guided_chosen_suggestion: ''
+    id: blended_skill_talk:blended_skill_talk
+    label_candidates:
+    - I really can't imagine... does she do the early morning shift?
+    - Good, remember to practice it all stages of life
+    - Was he better at teaching or coaching?
+    - oh wow do you like to visit thrift shops ?
+    - Wow! That is wonderful! They will get so much use out of Netflix. The selection
+      for kids is terrific.
+    - Not yet!  Where are you from?
+    - I hear that. I do the same. Do you spend much time on Youtube?
+    - I haven't been to the Bahamas yet.  Will this be your first cruise?
+    - Fired someone with out telling my boss. Two coworkers got in a a fight I perceived
+      opportunity the be the best time to get rid of one.
+    - Mountain biking accident. Couldn't afford to replace my bike afterwards.
+    - That is nice!!! I am usually very punctual. I make it early to every class.
+    - There is a Comics convention next week. Do you want to go? We can grab a meal
+      beforehand. My treat!
+    - Yes. My family moved here when I was 17, but I still have a thick accent as
+      well and that was 6 years ago
+    - Yeah, thanks for the recommendations! Do you plan to take your kid back to daycare
+      anytime soon?
+    - Buying your collection? It would make some interesting and storied decor...
+    - My favorite color is blue
+    - Do you want any in the future?
+    - 'He made the absolute best chicken parmesan! '
+    - Yeah it's like some people unfairly take advantage of another person because
+      of social skills .
+    - 'I love to read books!  '
+    text: 'your persona: i have three daughters.
+
+      your persona: my wife and i like to go scuba diving.
+
+      My turtle ran away from me today.
+
+      Oh my god. Did you guys have a fight?
+
+      that''s funny. No. I let him roam around the house.'
+    wizard_of_wikipedia: What does he eat, is he hard to take care of?
+- - context_dataset: empathetic_dialogues
+    convai2: no , i don't have any pets either .
+    empathetic_dialogues: I do not just a cat
+    episode_done: false
+    eval_labels:
+    - No, not at the moment.  I have 3 girls and they are enough trouble! LOL
+    free_message: He eats insects, leaves and sun flower seeds. It's easy. They don't
+      need walking and cleanup is simple. Do you have any pets?
+    guided_chosen_suggestion: ''
+    id: blended_skill_talk:blended_skill_talk
+    label_candidates:
+    - Wow, engineering, sounds impressive.  I'm sure the income will be awesome.
+    - Do you own lots of things related to The Beatles?
+    - Yeah, you should probably look into that more. She sounds shady.
+    - In the past the umbrella term was billiards
+    - No, not indoors yet. I'll try. I don't know how you can stay so calm? I'm about
+      ready to get in my car and leave.
+    - It's in the works, believe me. This is just my job while I'm in school. I have
+      a semester left! What do you do?
+    - You're welcome.  I wish you the best! what do you do for a living ?
+    - That would have been all bad. Can you imagine explaining that to the grieving
+      family?
+    - 'I''m a junior in college, my 3rd year. I hope to travel for my career as I
+      love the beach and surfing. '
+    - Oh sure, I love dressing up! Did you dress up for Halloween? I was a space alien.
+    - Lol I hear it's better to ask for forgiveness than permission.
+    - I enjoy a lot of great vegetarian recipes. do you have any favorites?
+    - i'm glad . always think positive .
+    - 'What kind of music do you like?i work in a factory so my music is machine niose '
+    - Are you a TB Lightning fan?
+    - He is a very great actor. I also like him in Gangs of New York.
+    - Oh god its a so sad news. how it happended its due to traffic collision.
+    - Yeah, i need a vacation from all my work. I should use the vacation to do some
+      charity...
+    - do you know the song hunting fishing loving every day?
+    - 'but the worst part is you have to clean every day and keep the flat tidy all
+      the time.  '
+    text: He eats insects, leaves and sun flower seeds. It's easy. They don't need
+      walking and cleanup is simple. Do you have any pets?
+    wizard_of_wikipedia: I actually do.  He is ten years old and loves to be outside.  He's
+      fat and furry.
+num_episodes: 980
+num_examples: 5482

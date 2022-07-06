@@ -1,0 +1,406 @@
+acts:
+- - available_knowledge_raw:
+      cast:
+      - Ginnifer Goodwin as Officer Judy Hopps, an optimistic rabbit from Bunnyburrow
+        who is a newly appointed member of the Zootopia Police Department assigned
+        to the 1st Precinct.
+      - Jason Bateman as Nick Wilde, a red fox who is a small-time con artist.
+      - Idris Elba as Chief Bogo, an African buffalo who is the police chief of the
+        Zootopia Police Department's 1st Precinct.
+      - Jenny Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor
+        of Zootopia.
+      critical_response:
+      - The brilliantly well-rounded Zootopia offers a thoughtful, inclusive message
+        that's as rich and timely as its sumptuously state-of-the-art animation   all
+        while remaining fast and funny enough to keep younger viewers entertained.
+      - 'funny, smart, [and] thought-provoking. '
+      - ' ''very funny, and very likable holiday treat.'
+      - '[Zootopia] is constantly asking its characters to look past species stereotypes,
+        and not use species-ist language or repeat hurtful assumptions.... This all
+        seems clever and noble until you realize that all the stereotypes about various
+        animals are to some extent true, in particular the most basic one: carnivores
+        eat herbivores because it''s in their nature.'
+      director: Byron Howard, Rich Moore
+      genre: Comedy, Adventure, Animation
+      introduction: In a world populated by anthropomorphic mammals, Judy Hopps from
+        rural Bunnyburrow fulfills her childhood dream of becoming a police officer
+        in urban Zootopia. Despite being the academy valedictorian, Judy is delegated
+        to parking duty by Chief Bogo, who doubts her potential because she is a rabbit.
+        On her first day, she is hustled by a con artist fox duo, Nick Wilde and Finnick.
+      movieName: Zootopia
+      rating:
+      - 'Rotten Tomatoes: 98% and average: 8/10'
+      - 'IMDB: 8/1'
+      year: '2016'
+    available_knowledge_text: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    checked_sentence: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    episode_done: false
+    id: cmu_dog
+    labels:
+    - So have you seen Zootopia?
+    text: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic rabbit from
+      Bunnyburrow who is a newly appointed member of the Zootopia Police Department
+      assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red fox who is
+      a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo who is
+      the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny Slate
+      as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    title: Zootopia
+- - available_knowledge_raw:
+      cast:
+      - Ginnifer Goodwin as Officer Judy Hopps, an optimistic rabbit from Bunnyburrow
+        who is a newly appointed member of the Zootopia Police Department assigned
+        to the 1st Precinct.
+      - Jason Bateman as Nick Wilde, a red fox who is a small-time con artist.
+      - Idris Elba as Chief Bogo, an African buffalo who is the police chief of the
+        Zootopia Police Department's 1st Precinct.
+      - Jenny Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor
+        of Zootopia.
+      critical_response:
+      - The brilliantly well-rounded Zootopia offers a thoughtful, inclusive message
+        that's as rich and timely as its sumptuously state-of-the-art animation   all
+        while remaining fast and funny enough to keep younger viewers entertained.
+      - 'funny, smart, [and] thought-provoking. '
+      - ' ''very funny, and very likable holiday treat.'
+      - '[Zootopia] is constantly asking its characters to look past species stereotypes,
+        and not use species-ist language or repeat hurtful assumptions.... This all
+        seems clever and noble until you realize that all the stereotypes about various
+        animals are to some extent true, in particular the most basic one: carnivores
+        eat herbivores because it''s in their nature.'
+      director: Byron Howard, Rich Moore
+      genre: Comedy, Adventure, Animation
+      introduction: In a world populated by anthropomorphic mammals, Judy Hopps from
+        rural Bunnyburrow fulfills her childhood dream of becoming a police officer
+        in urban Zootopia. Despite being the academy valedictorian, Judy is delegated
+        to parking duty by Chief Bogo, who doubts her potential because she is a rabbit.
+        On her first day, she is hustled by a con artist fox duo, Nick Wilde and Finnick.
+      movieName: Zootopia
+      rating:
+      - 'Rotten Tomatoes: 98% and average: 8/10'
+      - 'IMDB: 8/1'
+      year: '2016'
+    available_knowledge_text: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    checked_sentence: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    episode_done: false
+    id: cmu_dog
+    labels:
+    - 'I''m not good with character names, but the fox played by jason bateman Nick
+      Wilde
+
+      \ Who was yours?'
+    text: Yes, I have. The movie was hilarious! Who was your favorite character?
+    title: Zootopia
+- - available_knowledge_raw:
+      cast:
+      - Ginnifer Goodwin as Officer Judy Hopps, an optimistic rabbit from Bunnyburrow
+        who is a newly appointed member of the Zootopia Police Department assigned
+        to the 1st Precinct.
+      - Jason Bateman as Nick Wilde, a red fox who is a small-time con artist.
+      - Idris Elba as Chief Bogo, an African buffalo who is the police chief of the
+        Zootopia Police Department's 1st Precinct.
+      - Jenny Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor
+        of Zootopia.
+      critical_response:
+      - The brilliantly well-rounded Zootopia offers a thoughtful, inclusive message
+        that's as rich and timely as its sumptuously state-of-the-art animation   all
+        while remaining fast and funny enough to keep younger viewers entertained.
+      - 'funny, smart, [and] thought-provoking. '
+      - ' ''very funny, and very likable holiday treat.'
+      - '[Zootopia] is constantly asking its characters to look past species stereotypes,
+        and not use species-ist language or repeat hurtful assumptions.... This all
+        seems clever and noble until you realize that all the stereotypes about various
+        animals are to some extent true, in particular the most basic one: carnivores
+        eat herbivores because it''s in their nature.'
+      director: Byron Howard, Rich Moore
+      genre: Comedy, Adventure, Animation
+      introduction: In a world populated by anthropomorphic mammals, Judy Hopps from
+        rural Bunnyburrow fulfills her childhood dream of becoming a police officer
+        in urban Zootopia. Despite being the academy valedictorian, Judy is delegated
+        to parking duty by Chief Bogo, who doubts her potential because she is a rabbit.
+        On her first day, she is hustled by a con artist fox duo, Nick Wilde and Finnick.
+      movieName: Zootopia
+      rating:
+      - 'Rotten Tomatoes: 98% and average: 8/10'
+      - 'IMDB: 8/1'
+      year: '2016'
+    available_knowledge_text: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    checked_sentence: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    episode_done: false
+    id: cmu_dog
+    labels:
+    - I actually watched it at a friends house because her 2 year old had it on repeat
+    text: Oh okay, my favorite character was Judy Hopps. My favorite scene of the
+      movie was when she got initially put as a parking duty cop. I like the movie
+      because it was something that both me and my children enjoyed.
+    title: Zootopia
+- - available_knowledge_raw:
+      cast:
+      - Ginnifer Goodwin as Officer Judy Hopps, an optimistic rabbit from Bunnyburrow
+        who is a newly appointed member of the Zootopia Police Department assigned
+        to the 1st Precinct.
+      - Jason Bateman as Nick Wilde, a red fox who is a small-time con artist.
+      - Idris Elba as Chief Bogo, an African buffalo who is the police chief of the
+        Zootopia Police Department's 1st Precinct.
+      - Jenny Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor
+        of Zootopia.
+      critical_response:
+      - The brilliantly well-rounded Zootopia offers a thoughtful, inclusive message
+        that's as rich and timely as its sumptuously state-of-the-art animation   all
+        while remaining fast and funny enough to keep younger viewers entertained.
+      - 'funny, smart, [and] thought-provoking. '
+      - ' ''very funny, and very likable holiday treat.'
+      - '[Zootopia] is constantly asking its characters to look past species stereotypes,
+        and not use species-ist language or repeat hurtful assumptions.... This all
+        seems clever and noble until you realize that all the stereotypes about various
+        animals are to some extent true, in particular the most basic one: carnivores
+        eat herbivores because it''s in their nature.'
+      director: Byron Howard, Rich Moore
+      genre: Comedy, Adventure, Animation
+      introduction: In a world populated by anthropomorphic mammals, Judy Hopps from
+        rural Bunnyburrow fulfills her childhood dream of becoming a police officer
+        in urban Zootopia. Despite being the academy valedictorian, Judy is delegated
+        to parking duty by Chief Bogo, who doubts her potential because she is a rabbit.
+        On her first day, she is hustled by a con artist fox duo, Nick Wilde and Finnick.
+      movieName: Zootopia
+      rating:
+      - 'Rotten Tomatoes: 98% and average: 8/10'
+      - 'IMDB: 8/1'
+      year: '2016'
+    available_knowledge_text: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    checked_sentence: 'cast:Ginnifer Goodwin as Officer Judy Hopps, an optimistic
+      rabbit from Bunnyburrow who is a newly appointed member of the Zootopia Police
+      Department assigned to the 1st Precinct.,Jason Bateman as Nick Wilde, a red
+      fox who is a small-time con artist.,Idris Elba as Chief Bogo, an African buffalo
+      who is the police chief of the Zootopia Police Department''s 1st Precinct.,Jenny
+      Slate as Dawn Bellwether, a diminutive sheep who is the assistant mayor of Zootopia.;critical_response:The
+      brilliantly well-rounded Zootopia offers a thoughtful, inclusive message that''s
+      as rich and timely as its sumptuously state-of-the-art animation   all while
+      remaining fast and funny enough to keep younger viewers entertained.,funny,
+      smart, [and] thought-provoking. , ''very funny, and very likable holiday treat.,[Zootopia]
+      is constantly asking its characters to look past species stereotypes, and not
+      use species-ist language or repeat hurtful assumptions.... This all seems clever
+      and noble until you realize that all the stereotypes about various animals are
+      to some extent true, in particular the most basic one: carnivores eat herbivores
+      because it''s in their nature.;director:Byron Howard, Rich Moore;genre:Comedy,
+      Adventure, Animation;introduction:In a world populated by anthropomorphic mammals,
+      Judy Hopps from rural Bunnyburrow fulfills her childhood dream of becoming a
+      police officer in urban Zootopia. Despite being the academy valedictorian, Judy
+      is delegated to parking duty by Chief Bogo, who doubts her potential because
+      she is a rabbit. On her first day, she is hustled by a con artist fox duo, Nick
+      Wilde and Finnick.;movieName:Zootopia;rating:Rotten Tomatoes: 98% and average:
+      8/10,IMDB: 8/1;year:2016'
+    episode_done: false
+    id: cmu_dog
+    labels:
+    - I do. 8/10 seems right. The Rotten Tomatoes review seems high, but it's impressive
+    text: Oh, how funny. Do you think that the IMDB rating is appropriate?
+    title: Zootopia
+- - available_knowledge_raw: 'After determining Nick was a suspect seen in Otterton''s
+      last known sighting, Judy blackmails him into assisting her by covertly recording
+      his confession to tax evasion with her carrot pen. They track Otterton to a
+      limousine owned by crime boss Mr. Big, who reveals Otterton went ''savage''   reverted
+      to a feral state   and attacked his chauffeur Manchas. At his home, Manchas
+      mentions Otterton yelled about ''night howlers'' before the attack. Moments
+      later, Manchas himself turns savage and chases the pair. Judy saves Nick by
+      trapping Manchas and calls the ZPD for help, but when they arrive, Manchas has
+      vanished. Bogo demands Judy''s resignation, but Nick reminds Bogo that Judy
+      still has ten hours to solve the case. Judy learns from Nick that he was bullied
+      as a child when he tried to join the Ranger Scouts, who stereotyped him as untrustworthy
+      for being a fox. '
+    available_knowledge_text: 'After determining Nick was a suspect seen in Otterton''s
+      last known sighting, Judy blackmails him into assisting her by covertly recording
+      his confession to tax evasion with her carrot pen. They track Otterton to a
+      limousine owned by crime boss Mr. Big, who reveals Otterton went ''savage''   reverted
+      to a feral state   and attacked his chauffeur Manchas. At his home, Manchas
+      mentions Otterton yelled about ''night howlers'' before the attack. Moments
+      later, Manchas himself turns savage and chases the pair. Judy saves Nick by
+      trapping Manchas and calls the ZPD for help, but when they arrive, Manchas has
+      vanished. Bogo demands Judy''s resignation, but Nick reminds Bogo that Judy
+      still has ten hours to solve the case. Judy learns from Nick that he was bullied
+      as a child when he tried to join the Ranger Scouts, who stereotyped him as untrustworthy
+      for being a fox. '
+    checked_sentence: 'After determining Nick was a suspect seen in Otterton''s last
+      known sighting, Judy blackmails him into assisting her by covertly recording
+      his confession to tax evasion with her carrot pen. They track Otterton to a
+      limousine owned by crime boss Mr. Big, who reveals Otterton went ''savage''   reverted
+      to a feral state   and attacked his chauffeur Manchas. At his home, Manchas
+      mentions Otterton yelled about ''night howlers'' before the attack. Moments
+      later, Manchas himself turns savage and chases the pair. Judy saves Nick by
+      trapping Manchas and calls the ZPD for help, but when they arrive, Manchas has
+      vanished. Bogo demands Judy''s resignation, but Nick reminds Bogo that Judy
+      still has ten hours to solve the case. Judy learns from Nick that he was bullied
+      as a child when he tried to join the Ranger Scouts, who stereotyped him as untrustworthy
+      for being a fox. '
+    episode_done: false
+    id: cmu_dog
+    labels:
+    - What Holiday was this released around? Do you think Judy recording Nick was
+      an ethical decision?
+    text: I agree, Rotten Tomatoes usually has horrible ratings so it is a bit surprising.
+      I like the main theme that people can't be judged based on their color (well
+      in this case species).
+    title: Zootopia
+num_episodes: 4847
+num_examples: 54404

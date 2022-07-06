@@ -1,0 +1,1445 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Sadly no . Medicare does cover a lot of the medical and hospital expenses incurred
+      by a hospital stay . But it does not cover the co-pays required by Medicare
+      . Medicare will cover 80 % leaving the insured to cover the other 20 % along
+      with a payment due as a copayment . These payments must be made by the insured
+      or by an insurance policy .
+    id: insuranceqa:v2
+    label_candidates:
+    - Sadly no . Medicare does cover a lot of the medical and hospital expenses incurred
+      by a hospital stay . But it does not cover the co-pays required by Medicare
+      . Medicare will cover 80 % leaving the insured to cover the other 20 % along
+      with a payment due as a copayment . These payments must be made by the insured
+      or by an insurance policy .
+    - 'Medigap policies serve as a supplement to Original Medicare . Original medicare
+      is an 80/20 plan , where Medicare pays 80 % of the approved charges . The beneficiary
+      is typically responsible for the 20 % co-insurance as well as co-pays and deductibles
+      that come with Medicare Parts A & B . The Medigap policy is designed to pick
+      up the 20 % Medicare does n''t cover in exchange for a monthly premium payable
+      to the carrier selected . The most comprehensive Medigap policy is Plan F ,
+      which covers all of the Part A & B deductible , co-insurance and co-pays , so
+      when the beneficiary goes to receive care their is zero out-of-pocket costs
+      . Some plans may also provide benefits like foreign travel as well as a gym
+      membership as part of your regular plan . Please note : when purchasing a Medigap
+      Policy , you need to add a Stand-Alone Prescription Drug Plan to satisfy your
+      requirement as a Medicare Beneficiary to have Part D - Prescription Drug Coverage
+      met .'
+    - There are 10 standardized Medigap Plans available to Medicare Beneficiaries
+      . They include Plan A , B , C , D , F , G , K , L , M , N with Plan F also offering
+      a high-deductible plan . The most popular standardized Medigap Plans are F ,
+      G , and N. Plan F will cover all your Medicare approved charges . You do not
+      have to pay any co-pays , co-insurance or deductibles for Medicare covered costs
+      . If you choose the high-deductible Plan F , you must pay for Medicare covered
+      costs up to the deductible amount of $ 2,140 -LRB- 2014 -RRB- before your Medigap
+      Plan F will pay anything . Plan G will cover all your Medicare approved charges
+      after you have satisfied the annual Part B deductible of $ 147 -LRB- 2014 -RRB-
+      . Once the small deductible is met , Medigap Plan G acts like Plan F and covers
+      the co-pays , co-insurance and deductibles that Original Medicare does not cover
+      . Plan N covers 100 % of the Part B co-insurance , except for a small co-pay
+      for some office visits -LRB- never more than $ 20 per visit -RRB- and up to
+      a co-pay of $ 50 for emergency room visits -LRB- waived if admitted as an inpatient
+      -RRB- . You are also responsible for satisfying the annual Part B deductible
+      of $ 147 -LRB- 2014 -RRB- and any Medicare Part B Excess Charges . If you have
+      further questions regarding your specific situation , please feel free to contact
+      me .
+    - 'Medigap Plan N is one of the 10 standardized Medicare Supplement plans . Medigap
+      Plan N covers 100 % of the following : Medicare Part A Coinsurance and hospital
+      costs up to an additional 365 days after Medicare benefits are used up . Medicare
+      Part B Coinsurance -LRB- except for a co-pay of up to $ 20 for some office visits
+      and up to $ 50 co-pay for an emergency room visit -- waived if admitted -RRB-
+      . Blood -LRB- first 3 pints -RRB- Part A Hospice Care Coinsurance or Co-pay
+      Skilled Nursing Facility Care Coinsurance Medicare Part A deductible Foreign
+      Travel Emergency -LRB- Up to Plan Limits -RRB- Medigap Plan N DOES NOT cover
+      the following : Medicare Part B deductible -LRB- $ 147 in 2014 -RRB- Medicare
+      Part B Excess Charges -LRB- if the amount a provider is legally permitted to
+      charge is higher than the Medicare approved amount , the difference is the excess
+      charge -RRB- . Medigap Plan N is used by many Medicare Beneficiaries , but it
+      does fall short in not covering Excess Charges . It is important to be aware
+      of how Excess Charges can be charged to you by a provider who does not accept
+      assignment . You may wonder why anyone would bother with Plan N if they have
+      to worry about Excess Charges . The premium for Plan N is often the reason why
+      people choose it .'
+    - Original Medicare Part A & B do not come with Co-Pays . You are , however ,
+      responsible for deductibles and co-insurance . Co-pays are mostly associated
+      with Medicare Advantage Plans and Prescription Drug Plans . The co-pays do have
+      a wide range from one Plan to the next , so it is always a good idea to review
+      the Outline of Coverage for the Plan you have or may be considering . If you
+      have a Medigap Plan -LRB- also known as Medicare Supplement insurance -RRB-
+      , there is one standardized plan that does have co-pays . With Plan N , the
+      customer is responsible for co-pays for doctor visits . The co-pay will not
+      be more than $ 20 for an office visit . Plan N also requires a $ 50 co-pay for
+      an emergency room visit . This co-pay is waived if you are admitted into the
+      hospital .
+    - If you would like to have peace of mind knowing that the remaining 20 % of Medicare
+      approved charges will be covered by insurance -LRB- instead of your bank account
+      -RRB- , then Medigap insurance is absolutely worth it . Medicare Beneficiaries
+      with Original Medicare Part A and Part B leave themselves vulnerable to the
+      ` gaps ' that Medicare does not cover -LRB- co-insurance , co-pays and deductibles
+      -RRB- . This can add up quickly . For example , a $ 5,000 procedure would leave
+      you with a bill for $ 1,000 -LRB- 20 % co-insurance -RRB- . A $ 20,000 procedure
+      would bill you for $ 4,000 -LRB- 20 % co-insurance -RRB- . You see where this
+      is going ... $ 50,000 operation means you 're stuck with a $ 10,000 hospital
+      bill . Not to mention -- if you have a chronic illness , twenty-percent co-insurance
+      can put a huge burden on your budget . I have spoken to Medicare Beneficiaries
+      who are paying the 20 % co-insurance . Some do n't mind because they have n't
+      had any health issues , but others do have health issues and did n't realize
+      they could n't get a Medigap Plan once they were sick . Meaning , you are not
+      always guaranteed a Medigap Plan whenever you want to buy one . If you are not
+      in your initial Open Enrollment Period or another Guaranteed Issue Situation
+      , you 'll have to qualify medically . If I can assist you with your personal
+      situation , please feel free to contact me .
+    - 'What is BEST is so subjective . Office Co-pays , Rx Co-pays , Low Deductible
+      , High Deductible , & more all play into the flexible definition of BEST ...
+      . HOWEVER , I do see a growing trend that can put a more objective -- that is
+      the TYPE of network you buy . PPO / HMO / POS / EPO . Do you know what these
+      acronyms mean ? Do you understand the impact on WHO YOU CAN SEE when you pick
+      a different network . In my area , Nashville TN , the difference in networks
+      is HUGE between carriers . The top carrier has 2002 Family doctors in a 50 mile
+      radius of down town ... the # 2 carrier for 2016 ... . only 270 . 86.5 % LESS
+      doctors to go see . Cardiologists : 201 vs 34 ... 83 % LESS !!! I will stand
+      on the statement , `` There ARE better plans . The better plan gives you greater
+      access to doctors & hospitals in your area & possibly nationally . '''''
+    - Medigap or Medicare Supplement insurance is private health insurance established
+      to help supplement Original Medicare Part A and Part B. Meaning , it will help
+      pay some of the health care costs not covered by Original Medicare -LRB- co-pays
+      , deductibles , co-insurance -RRB- . When you have a Medigap Policy , Medicare
+      will pay it 's share of Medicare approved amounts for your covered health care
+      costs . Then your Medigap -LRB- Medicare Supplement insurance -RRB- pays its
+      share . There are 10 standardized Medigap Plans -LRB- A , B , C , D , F , G
+      , K , L , M , N -RRB- with varying benefits . Plan F is the most popular because
+      it covers all Medicare approved charges and you do not have to pay any co-pays
+      , deductibles or co-insurance . Plan G acts just like Plan F after you 've satisfied
+      the small annual Part B deductible of $ 147 -LRB- 2014 -RRB- . WEBSITELINK Please
+      feel free to contact me regarding your specific situation . In just a matter
+      of minutes , I can provide you with Medigap benefit and quote information to
+      help you make an informed decision .
+    - If you have group coverage you may not need to pick up Medicare part B right
+      away depending on the size of your group . Medicare coordinates with your health
+      insurance . For smaller groups it will be primary , for larger groups it would
+      be secondary . Primary means that Medicare pays first and your health insurance
+      would act like a supplement . Secondary means that your insurance pays first
+      and Medicare would just help pay any deductibles and copay 's . You do not need
+      a Medicare supplement if you have group health insurance in most cases . If
+      you have prescriptions covered at work do not pick up a Medicare Advantage plan
+      or prescription drug plan without discussing it with your HR rep. You could
+      get knocked off your group coverage and not be able to get it back .
+    - In short , Medigap does not cover non-medically necessary procedures -LRB- e.g.
+      cosmetic surgery -RRB- and items such as routine dental work and eye exams .
+      Individual dental insurance plans and vision insurance plans will cover the
+      latter programs - elective cosmetic surgery is generally going to be paid 100
+      % out-of-pocket no matter what . Medigap plans pay benefits when you have a
+      Medicare-approved service claim . Please note , each Medigap plan features different
+      benefits so the question can expand from there as not every Medigap plan covers
+      every available Medigap benefit . For example , plan F covers each Medigap benefit
+      at 100 % from day 1 -LRB- and 80 % for foreign travel emergency care , up to
+      plan lifetime limits of $ 50,000 -RRB- . Plan N covers each Medigap benefit
+      at 100 % from day 1 except for coverage of the Medicare Part B deductible -LRB-
+      $ 147 in 2014 and 2015 -RRB- , Part B excess charges , and you have to pay a
+      co-pay when you go to the doctor -LRB- up to $ 20 co-pay -RRB- or hospital -LRB-
+      up to $ 50 co-pay -RRB- . I hope the information is helpful - please feel free
+      to contact me for further help , including quotes and plan comparisons , and
+      if you have any other questions . Thanks very much .
+    - Unlike Medicare Advantage Plans , Open Enrollment for Medicare Supplements vary
+      by State . Generally most States have a six month Open Enrollment Period after
+      Turning 65 to enroll in a Medicare Supplement on a Guaranteed Issue basis .
+      After your Open Enrollment Period you will be able to change your Medicare Supplement
+      at any time subject to the companies underwriting requirements , meaning you
+      must qualify health wise . Keep in mind you will also need to pick up a Prescription
+      Drug Plan -LRB- Medicare Part D -RRB- . The Initial Election Period for Medicare
+      Part D is three months before , the month of and three months after you turn
+      65 .
+    - Original Medicare Part A & Medicare Part B does not cover co-pays , deductibles
+      or coinsurance . In fact , it covers only about 80 % of your healthcare costs
+      . The remaining 20 % is your responsibility and is limitless unless you have
+      a Medicare Supplement Plan -LRB- Medigap Plan -RRB- . Depending on which Medicare
+      Supplement Plan you have it can pay all or most of those costs . For more information
+      about Medicare or to Compare Medicare Supplement Plans instantly online visit
+      our website at SummitMedigap.com .
+    - Medicare Part B does not cover prescriptions . Medicare Part A & B only covers
+      about up to 80 % of the total costs of healthcare related charges . You can
+      get a Medicare Supplement Plan to cover the co-insurance , deductibles and other
+      expenses that Part A & B does not cover . In addition , you can get a Part D
+      prescription drug plan to cover your prescriptions .
+    - 'Jeff Foxworthy might say , `` You might need a Medicare supplement insurance
+      policy if ... You get shot for looking at another man ''s birddog and you ca
+      n''t afford to go to the hospital . After Medicare pays their portion you offer
+      to settle your bill by arm wrestling in a winner take all match . Medicare only
+      pays 80 % of your hospital bill and the only way you can pay the other 20 %
+      is to sell your pick up truck with the big tires and gun rack in the back window
+      . #GeorgiaMedigapPlanRates #GeorgiaMedicarePlans #GaMedigapQuotes'
+    - Kidney dialysis is a Medicare Part B service . If you have End-Stage Renal Disease
+      -LRB- also known as ESRD -RRB- , Medicare will -LRB- generally -RRB- coverthree
+      dialysis treatments per week . You pay 20 % of the Medicare approved amount
+      , and the Part B deductible applies . This is where your Medigap Plan will help
+      cover some if not all of the remaining costs . Medigap Plan F will pay the remaining
+      20 % of the Medicare approved amount and the applicable Part B deductible .
+      You pay $ 0 . Medigap Plan G will pay the remaining 20 % of the Medicare approved
+      amount after you have paid/met the applicable Part B deductible . You pay ,
+      at most , $ 147 -LRB- Part B deductible in 2014 -RRB- . Medigap Plans A , B
+      , D , M will pay the remaining 20 % of the Medicare approved amount after you
+      have paid/met the applicable Part B deductible . However , you are also responsible
+      for Part B Excess Charges , so you may end up paying more than the Part B deductible
+      -LRB- $ 147 in 2014 -RRB- . Medigap Plan Cwill pay the remaining 20 % of the
+      Medicare approved amount and the applicable Part B deductible ; however , you
+      pay for any Medicare Part B Excess Charges . Medigap Plan Hi-F will pay all
+      Medicare approved amounts after you have met/paid the $ 2,140 deductible -LRB-
+      2014 -RRB- . Medigap Plan Nwill pay the remaining 20 % of the Medicare approved
+      amount after you have paid/met the applicable Part B deductible -- except for
+      a copay of up to $ 20 for some office visits . You are also responsible for
+      paying Medicare Part B Excess Charges . In regards to Excess Charges , this
+      is what you are charged above the Medicare approved amount if the doctor , provider
+      , or supplier does not accept Assignment . If a provider does not accept Assignment
+      , they are telling Medicare that they do not agree to accept the payment amount
+      Medicare approves for the service -- this is how you can get billed for Part
+      B Excess Charges .
+    - Plan F also referred to as the Cadillac plan offers the most complete coverage
+      out of the 10 available Medigap plans . Plan F is the most popular Medicare
+      Supplement because you have no out-of-pocket cost because it covers all the
+      gaps -LRB- deductibles , co-insurance and co-pays -RRB- in your Medicare Part
+      A and Part B coverage . Because it offers the most complete coverage Plan F
+      is the most expensive Medicare Supplement and usually will experience the largest
+      rate increase . Most people on Medicare would be better served by having a Plan
+      G or Plan N .
+    - Medicare supplements , also known as Medigap policies work in addition to your
+      basic Medicare A and B coverage . Anything that is covered by either of those
+      can then be applied to the Medigap plan to pick up some or all of the remaining
+      costs . Inpatient dialysis is a Medicare A procedure . Outpatient or home dialysis
+      options are covered by Part B . This does not include any costs for home health
+      aides , lost wages , housing or blood supplies not included in the doctors visit
+      . Depending on your Medigap policy , some of these may be covered . Your Medigap
+      policy handbook will tell you if your plan covers these additional costs .
+    - Medicare Part B premiums are based on your income . For most people , your Part
+      B premium is $ 104.90 per month for 2013 , but high income earners could pay
+      as much as $ 335.70 per month . If you do n't sign up for Part B when you are
+      eligible , you may have to pay a late enrollment penalty . Your Part B will
+      have a $ 147 annually deductible and a 20 % co-insurance . The important item
+      to remember is that 20 % co-insurance has no limit .
+    - In Florida , the best Medicare Supplement -LRB- Medigap -RRB- Plan will depend
+      on your individual needs . Across the United States , Medigap Plans are standardized
+      -LRB- plans have same benefits regardless of insurance carrier -RRB- . Not only
+      can you use your plan benefits in Florida but anywhere in the U.S. as long as
+      the provider accepts Medicare . Plan F is very popular because it covers all
+      Medicare approved charges . But that does not mean it is the best plan for everyone
+      . Plan F is the most expensive plan and Florida 's rates are among the highest
+      in the country , and even though you can use your Medigap Plan outside of the
+      state , you still have to buy the Plan in Florida if it 's where you reside
+      . There are a couple other popular plans with lower premiums if you do n't mind
+      small co-pays , co-insurance or meeting the Part B deductible . As a licensed
+      independent agent in Florida , I can share with you the Plans that are available
+      in your area . Since Medigap Plans are standardized , once you determine which
+      Medicare Supplement insurance benefits you want then the next step is finding
+      the premium that meets your budget . Thank you for reading my response . Please
+      let me know if I can be of further assistance .
+    - If you have Original Medicare Part A and Part B , you are responsible for twenty
+      percent of your medical costs , the Part A deductible -LRB- $ 1,216 in 2014
+      -RRB- and the Part B deductible -LRB- $ 147 in 2014 -RRB- . A Medigap Plan helps
+      cover the deductibles , co-insurance and co-pays associated with Original Medicare
+      . Often , people will wait until a significant health issue arises and then
+      start looking into Medigap insurance . Unless you are still in your initial
+      enrollment period or another guaranteed issue situation , you will have to pass
+      medical underwriting requirements with the insurance company . The insurance
+      companies are not obligated to sell you a policy because Medicare Supplement
+      insurance does not fall under the Affordable Care Act . An independent agent
+      specializing in Medicare Supplement Specialist can help determine if you can
+      apply for a Medigap Plan based on health conditions . This is just one benefit
+      of working with an independent agent . We are not employees of the insurance
+      companies . We work for you and contract with many insurance companies to help
+      meet the needs of every unique situation . Thank you for reading my reply .
+      Please let me know if I can be of further assistance .
+    reward: 0
+    text: Does Medicare Pick Up Co Pays ?
+- - episode_done: true
+    eval_labels:
+    - You can buy Long Term Care Insurance through brokers or agents who advertise
+      in the Yellow Pages or on the internet . Many Life Insurance agents also sell
+      Long Term Care Insurance because many Life Insurance companies also offer Long
+      Term Care policies . The agent must have special training as required by their
+      state in order to sell Partnership Long Term Care Insurance .
+    id: insuranceqa:v2
+    label_candidates:
+    - You can buy Long Term Care Insurance through brokers or agents who advertise
+      in the Yellow Pages or on the internet . Many Life Insurance agents also sell
+      Long Term Care Insurance because many Life Insurance companies also offer Long
+      Term Care policies . The agent must have special training as required by their
+      state in order to sell Partnership Long Term Care Insurance .
+    - 'Maybe one should not get long-term care insurance . Let ''s start there . If
+      an individual or a family has a sizeable estate that either is liquid or can
+      be liquidated and be made readily available to pay for the cost of long-term
+      care , maybe long-term care is n''t needed . If , on the other extreme , you
+      have a very small estate comprised of no real estate and very little personal
+      property of any worth and will rely almost entirely on Social Security in retirement
+      , you ca n''t afford long-term care premiums , now or in the future . You will
+      have to have a plan , however , in case you do need long-term care . A family
+      discussion around the topic should be scheduled so that those that might become
+      either temporary or permanent caregivers are fully apprised of the responsibilities
+      and sacrifices that may have to be made . Medicaid qualification should be fully
+      investigated and the benefits and limitations understood . People buy long-term
+      care for roughly the same reason they buy life insurance . One buys life insurance
+      because they care about the financial security of those that are left behind
+      . One buys long-term care insurancebecause they care about those that might
+      have to take care of them if they ca n''t take care of themselves . Long-term
+      care costs are not covered by conventional health insurance , Medicare , and
+      most Medicare supplement insurance . They can be very expensive , especially
+      ifthe elderly person lives a long-period of time in a state of incapacity .
+      Caregivers will be spouses and adult children are likely to be caregivers whether
+      one owns long-term care insurance or not . Long-term care insurance is for caregivers
+      . It gives them choices about the quality of care that can be afforded and whether
+      they can be relieved of some of the responsibility for caregiving . Many elderly
+      spouses of those that ca n''t take care of themselves become disabled themselves
+      because of the emotional and psychological energy expended in caregiving . Adult
+      children sometimes get caught in a conflict over eldercare and parenting growing
+      children . Long-term care insurance provides income-tax-free money to hire trained
+      individuals to care for loved ones . Ultimately , it allows the insured to die
+      with dignity and peace . Getting back to the wealthy that do n''t need to buy
+      long-term care insurance , guess what ? Many wealthy couples and individuals
+      do . They understand leverage : paying smaller dollars now for larger dollars
+      later , if needed . They also understand that in many situations , premiums
+      for long-term care may be tax-deductible . What about the middle class ? They
+      would have to design their coverage to help offset the cost of long-term care
+      . No matter how much one spends , no long-term care insurance policy can guarantee
+      to cover all possible long-term care expenses . But , the average claim is about
+      24 - 26 months . Buying a long-term care policy with a pool of money sufficient
+      to cover at least part of those costs would be prudent . Is buying a basic plan
+      for long-term care that would pay only half of one ''s long-term care costs
+      be a bad deal ? I do n''t think anyone that ''s paying $ 400/day for facility
+      care and being reimbursed for $ 200/day would find that of no value .'
+    - 'A better question would be `` Who Should n''t Buy Long-term Care Insurance
+      '''' ? Thats simpler to answer . The following people should NOT buy long term
+      care insurance : 1 . Those that can not afford the premium on even a base policy
+      . 2 . Those that have virtually no assets to pass on to the next generationand
+      will need every available dollar saved for retirement . 3 . Those that will
+      have to work until they die for lack of savings and insufficient Social Security
+      payments or private pension . 4 . Those that can not medically qualify . 5 .
+      Those that are already unable to perform regular daily activities of living
+      without assistance . People in those conditions may qualify for the payment
+      of long-term care through Medicaid -LRB- MediCal in California -RRB- if they
+      come to a point in their life where they need care and ca n''t afford it . If
+      the above conditions describe you in any way , you should be sitting down with
+      your adult children or closest relatives and coming up with a plan of action
+      should you be unable to take care of yourself . Everyone else should consider
+      buying some long-term care insurance through an agent or agency that either
+      specializes or has a specialist that is experienced in handling long-term care
+      insurance casework . Having some amount of insurance is better than having none
+      . When one qualifies to receive payments from the insurance company for long-term
+      care , they are usually near the end of their life . The average long-term care
+      claim is approximately 2 - 2.5 years . For those that need care longer than
+      that , virtually all but the most unusual claims are paid out after 5 years
+      . Families with a history of late-life mental illness -LRB- dementia or Alzheimers
+      -RRB- should consider buying a larger pool of money than others , if they can
+      afford it . It is in the best interest of the adult children to help out with
+      long-term care premium payments if the elderly parents can not afford to pay
+      all of the costs . Long-term care is an emotional , psychological , sociological
+      , and family problem as much as it is financial . For the dignity of those who
+      need care and the people or person most likely to be the caregiver , there needs
+      to be a plan of action determined and long-term care insurance should be a part
+      of that plan if it can be afforded and the person is medically qualified . Long-term
+      care insurance is best purchased when young . Premiums can and will go up during
+      the life of the policy if all the bells and whistles are included in the design
+      of the coverage . But , those increases will seem like pocket-change if one
+      needs long-term care . $ 80,000 per year is not unusual for facility care today
+      . 24/7 home care can exceed $ 20,000 per month ! With family help , home care
+      costs can be kept down . But , if facility care is required , there ''s not
+      much that can be done about avoiding high costs . Long-term care costs vary
+      by place . The left - and right-hand coasts are the most expensive . Relocation
+      may be necessary to get affordable care in a quality facility .'
+    - Roughly sixty percent of Americans will require long term care services sometime
+      during their lifetime . This is not exclusively a problem for the elderly as
+      younger people can require this type of care some times . This level of care
+      includes a range of services including skilled and custodial care that is provided
+      over a long period of time . These requirements come from chronic sickness or
+      injury , cognitive impairment and physical disability . Hospitals provide acute
+      care . Medical care given over a long period of time for chronic conditions
+      is where the need for long term care arises . Sometimes custodial care is required
+      because the patient has lost the ability to do one of the recognized activities
+      of daily living or instrumental activities of daily living . Most of the long
+      term care given in the US is given by family members . However , there are many
+      situations where family members can not provide necessary care . Professional
+      and non-professionals can provide aid and assistance to these people . This
+      long term care can be given in the home of the patient or in a variety of institutional
+      settings . Long term care can be given in day-care facilities , nursing homes
+      , and assisted living facilities . On average men need more than two years of
+      long term care while women need almost four years on average ? The leading causes
+      for patients requiring long term care are dementia , arthritis , cancer , stroke
+      and nervous conditions . Caring for a patient in a home setting can cost up
+      to $ 150,000 per year . The cost for a nursing home bed is about $ 75,000 per
+      year -LRB- this varies by location . -RRB- There are basically four ways to
+      finance long term care . The family can take the expense out of their own pocket
+      , they can look to government programs -LRB- if they qualify , -RRB- they can
+      use long term care insurance or they can rely upon charity . For a variety of
+      reasons long term care insurance has provided a solution for many people . LTC
+      insurance provides predictability for an otherwise unpredictable risk . It has
+      become such popular coverage and policyholders have been so reluctant to drop
+      their coverage that the benefits have started exceeding the premiums . It is
+      quite popular among wealthy policyholders . Many companies that offered coverage
+      have withdrawn and others have been forced to raise their premiums . This adjustment
+      seems to be complete now . There are various forms of LTC coverage . Policies
+      different widely . It is rather difficult to compare but is worth the effort
+      . When deciding on a policy the first thing to establish is the amount of coverage
+      you want and the period of time you want coverage . The second consideration
+      is how soon after the start of long term care will you want the policy to start
+      paying . This waiting period is computed in several ways so care must be exercised
+      to make sure you are making a fair comparison . Not all policies use the same
+      events to trigger benefits so care should be taken in this area as well . This
+      can be a very technical area so compare your situation with the policy requirements
+      . How a policy pays out will vary according to the policy . Some policies provide
+      for reimbursement of expenses , others use an indemnity form which pays up to
+      a specific limit of expenses incurred on each specific day , and some are on
+      a cash model which pays a maximum benefit regardless of the actual cost of the
+      care that is being given . Long term care insurance is a way to protect assets
+      . The alternatives deplete assets with the government programs requiring a person
+      to be in poverty .
+    - 'Short answer : About 8 % Long answer : It ''s hard to say exactly how many
+      people own some type of policy that covers paying the costs of long term care
+      - should one qualify for it - because there are many types of insurance policies
+      that are not just `` stand-alone '''' long-term care policies , but plans of
+      insurance that include being able to use a percentage of other plan benefits
+      for paying long-term care costs :1 . Stand-alone long-term care insurance covers
+      only long-term care costs . It has no cash value . When a policy owner dies
+      , coverage either lapses or stops paying benefits . It is not transferable .
+      It can not be bought or sold on a secondary market . This type of long-term
+      care insurance is sometimes referred to as `` traditional '''' long-term care
+      insurance , as well . It is the type of coverage that is most often associated
+      with the `` percentage of Americans that own their own long-term care insurance
+      '''' .2 . Hybrid long-term care contracts consist of having long-term coverage
+      and a life insurance policy that guarantees to at least return the full premium
+      paid into the policy to the insured ''s designated beneficiary . Usually , these
+      are single-premium contracts , but some have options to also pay over a specified
+      period of time , such as 5 - or 10-years .3 . Linked life + long-term care policies
+      are basically a traditional permanent life insurance contract -LRB- Whole Life
+      or Universal Life , including the Variable or Indexed type -RRB- . If a person
+      qualifies for long-term care and they have the long-term care rider on their
+      life policy , they may apply to the insurance company to advance or accelerate
+      the face value of the policy -LRB- death benefit -RRB- to pay for the costs
+      of care . There are various limitations on how much can be advanced at a time
+      . If the face value of the life contract is completely advanced for long-term
+      care , there is usually a residual death benefit of $ 5,000 - $ 10,000.4 . The
+      latest addition to life insurance product lines are policies offering `` living
+      benefits '''' , one of which is very similar to the linked-life policy . In
+      fact , the only difference is that a medical professional has to state in writing
+      that the insured is not likely to recover from the condition that qualifies
+      for long-term care benefits . -LRB- True long-term care insurance does not require
+      that . -RRB- This type of living benefit is most often referred to as `` chronic
+      care '''' or `` extended care '''' . Annuities may also have special considerations
+      for paying out portions of the account value for long-term care costs.The point
+      is , people who own life insurance or annuity contracts with long-term care
+      accommodations are not typically included in with the 8 % that own traditional
+      long-term care . So , the real percentage of those that have made some type
+      of insurance purchase to offset long-term care costs is greater than 8 % . I
+      doubt , however , that the total percentage of Americans that own any of the
+      above-described types of policies would exceed 20 % at this time .'
+    - Long Term Health Care Insurance is called , simply , Long Term Care Insurance
+      . It covers the cost of living in a nursing home , assisted living home , or
+      receiving other types of services when the insured person is unable to take
+      care of themselves . Among those who should buy Long Term Care Insurance are
+      those who have many assets and feel strongly that they do not want their assets
+      to go toward paying long term care expenses . People who want to have many choices
+      in how and where they are cared for , should they be unable to care for themselves
+      , are also people who would benefit from Long Term Care insurance , if they
+      can afford it . Finally , persons whose families want the security of knowing
+      that their parents will not rely on them for long term care , if needed , are
+      those who should considering buying Long Term Care insurance .
+    - 70 % of people who are 65 years old will need to use some type of long term
+      care in their lifetime . And , as they age the likelihood of needing long term
+      care will increase . The cost for this care is very expensive and it is not
+      covered by conventional health insurance - commercial carriers or Medicare .
+      This is because our health care system is geared to acute care not long term
+      care . According to the 2015 Genworth survey the national average cost for a
+      semi-private room in a nursing home is about $ 80,000 . More , for a private
+      room . Home Health care costs average $ 20/hour . These expense arise when most
+      people are living on a fixed income with little room for added expenses . Especially
+      , unplanned ones . Baby boomers have not been great at planning for retirement
+      . One year of long term care can ruin someone 's retirement plans . This is
+      what happens in many cases ; families deplete their assets and end up qualifying
+      for Medicaid -LRB- aka Welfare -RRB- to pay for long term care expenses . The
+      question people need to ask themselves is when the need for long term care arises
+      , will they have the money to pay for this care ? This is what long term care
+      insurance can do for them . Insurance is the only financial vehicle that promises
+      a specific amount of money at a point in time . There is no other . Even though
+      this can be an expensive premium , depending on the age at which the policy
+      is purchased , compared to the benefits paid , it is worth the outlay for most
+      people . Not only because it will help pay the bills . Long term care insurance
+      policies offer additional benefits that most people are unaware of . Most importantly
+      , all carriers offer optional care management to assist with the difficult decisions
+      about care , choosing facilities and offering discounts on major providers of
+      care . Many times families need someone to discuss options with who is educated
+      about all the options available and is n't emotionally involved with their situation
+      . This is where the care manager can be of tremendous help and the family does
+      not have to go to the expense of hiring a geriatric care manager . The policies
+      will also pay for modifications to be made to the home to keep the person at
+      home rather than moving them to a nursing home .
+    - Is long term insurance a good buy ? Well it all depends on your needs and your
+      assets . The big thing long term care does is provide you a pool of money to
+      help you choose what you want to have happen regarding your care . Without long
+      term care coverage any situation that comes up where you need care , you 'll
+      be faced with where ever will take you and quite possibly a reduction in assets
+      to cover the cost . The idea of long term care being a good buy is strictly
+      in the eye of the beholder . For some it does n't matter and for others it is
+      just a matter of plugging in the right variables to make the plan work best
+      .
+    - Not everyone needs long term care insurance . LTCI is not for persons who are
+      struggling to meet their day to day living expenses , rent an apartment , and
+      have little savings and no investments . If such a person needed to go to a
+      nursing home , Medicaid will almost immediately start picking up their tab and
+      they will be fine . Long term care insurance is for those who have substantial
+      assets or income that they do n't want to `` lose '' by paying high long term
+      care costs . Some people are OK with their savings going to long term care expenses
+      , if needed . They figure that is why they saved . Others feel strongly that
+      they want to pass that wealth to heirs to continue a business , care for a disabled
+      adult child , or help grandchildren go to college , among a myriad of other
+      reasons . It is this latter segment of the population that `` needs '' long
+      term care insurance , especially if they are not so very wealthy that paying
+      nursing home expenses for many years would simply dent their resources , rather
+      than deplete them . If they can afford long term care insurance , but would
+      not be able to to pay for long term care services , people who are adamant about
+      choosing the type of care they receive , or persons who are setting up a plan
+      so that their children do n't have to worry about it , also could use long term
+      care insurance . As long as Medicaid is around , no one absolutely needs long
+      term care insurance . But for all the reasons above , many people would consider
+      it a need if they looked at it realistically .
+    - Is long term care insurance really necessary ? The answer depends on you and
+      what you want to happen to you in a care situation . If you want a say in where
+      you go , how you are treated and what you get to keep asset wise , Long Term
+      Care makes great sense . You can certainly do without it , but understand you
+      give up where you go , how you 're treated and very little if any choice in
+      assets you get to keep . All a long term care policy does is give you control
+      over how you 're treated when you need a care situation . So no , it is not
+      necessary if that does n't matter to you . If it does , then it makes great
+      sense . Long term care is an either you get it or you do n't product . Most
+      purchasers of long term care WANT the product , very few have to be talked into
+      making a purchase . It is one the few products in insurance where you spend
+      a lot of time plugging together options for people as they 've already decided
+      to purchase , so the question becomes what do they want it to do ?
+    - 'Some of the items and services that Medicare does n''t cover include : < a
+      title = '''' Services that include medical and non-medical care provided to
+      people who are unable to perform basic activities of daily living , like dressing
+      or bathing . Long-term supports and services can be provided at home , in the
+      community , in assisted living , or in nursing homes . Individuals may need
+      long-term supports and services at any age . Medicare and most health insurance
+      plans do n''t pay for long-term care . '''' href = '''' WEBSITELINK rel = ``
+      nofollow '''' > Long-term care -LRB- also called < a title = '''' Non-skilled
+      personal care , like help with activities of daily living like bathing , dressing
+      , eating , getting in or out of a bed or chair , moving around , and using the
+      bathroom . It may also include the kind of health-related care that most people
+      do themselves , like using eye drops . In most cases , Medicare does n''t pay
+      for custodial care . '''' href = '''' WEBSITELINK rel = `` nofollow '''' > custodial
+      care -RRB- Most dental care Eye examinations related to prescribing glasses
+      Dentures Cosmetic surgery Acupuncture Hearing aids and exams for fitting them
+      Routine foot care You can go to the medicare.gov website and check on the main
+      page if any test , item or service is covered by Medicare .'
+    - People purchase long term care insurance because they want to protect their
+      assets , and because they want to be involved in the decisions about what long
+      term care they receive . Having a long term care insurance policy can pay the
+      insured person funds that can be used to pay for a home health aid , personal
+      assistant so they can live in an independent living residence , or monthly charge
+      for assisted living or nursing home . While it gives the person freedom to choose
+      the care they are most comfortable with , it also allows them to hold onto their
+      assets that might have to be spent on long term care , without insurance .
+    - I believe you are referring to Long Term Care Insurance . There are a variety
+      of different long term policies from many insurance companies . Most policies
+      sold today are comprehensive and offer a daily benefit that can be used in your
+      home , adult day service centers , hospice care , respite care , assisted living
+      facilities and Alzheimer 's special care facilities and nursing homes . In a
+      home setting , comprehensive polices generally cover skilled nursing care ,
+      occupational , speech , physical and rehabilitation therapy . You can also get
+      help with personal care , such as bathing and dressing . In order to receive
+      long term care expense reimbursement , you need to qualify . Generally , that
+      means the failure of the insured to perform 2 out of 6 of the activities of
+      daily living -LRB- ADLs -RRB- . There is also an `` elimination period '' after
+      which the benefits begin . Policies vary in what they actually cover and there
+      is much you should know about long term care and you need to find a qualified
+      insurance agent near you that can help you understand it .
+    - Stand alone long term care insurance policies can be very expensive and generally
+      are not a fixed premium so may well go up over time . When you purchase long
+      term care as a rider on a whole life policy you will get the lowest premium
+      rate for it that is available . So really then the best time to buy long term
+      insurance is when you 're buying a whole life policy . If you already have a
+      whole life policy without the LTC rider , you could either buy an additional
+      policy or exchange your current policy for a new one and add the LTC rider .
+    - My clients who are over the age of 55 pay between $ 4,000 to $ 7,000 a year
+      . These are clients that have no other assets to exchange for an asset based
+      long term care annuity . My other clients who have large assets will exchange
+      them for a long term care annuity with guaranteed benefits , guaranteed growth
+      on the principle and a guaranteed death benefit . They do not have to use the
+      annuity for a specific long term care need . It is just another to pay for long
+      term care without losing principle . Long term care insurance is a racket .
+      The riders , the definitions and some companies just do n't have a good contract
+      for those who need to pay premiums instead of exchanging assets .
+    - Why ca n't we buy health insurance across state lines ? What difference would
+      it really make ? Insurance pricing , what you pay is based on the cost of care
+      in your zip codes . There is no saving to be had from buying in another state
+      , this is a confused myth created by people who do n't understand health insurance
+      . The cost of your care is priced on where you live , not where someone else
+      lives . Think about it for a second and it will start to make sense . Why would
+      an insurance company underprice the premium in an area where medical claims
+      costs are high ?
+    - 'Long-term care insurance starts becoming more pricey during the mid-fifties
+      . One should seriously consider buying their long-term care insurance before
+      then . However , there are many solutions to the problem of possibly needing
+      to pay for high-cost , end-of-life care . A careful search on the Internet will
+      show a number of ways to accommodate that risk . The National Clearinghouse
+      for Long-term Care is a good place to start : WEBSITELINK'
+    - Long Term Care Insurance exists to pay for the care needed when the insured
+      persons can no longer take care of themselves . To receive a long term care
+      benefit , they must show that they can not do at least two ADL 's -LRB- activities
+      of daily living -RRB- on their own , and it is usually required that the condition
+      is anticipated to last for at least 90 days . It also will pay due to cognitive
+      impairment that interferes with the ability to care for themselves . Disability
+      Insurance does not require that you can not care for yourself in order to start
+      receiving benefits . It just requires that you can not do your job . While Long
+      Term Care benefits are chosen based on the cost of health care in that region
+      , Disability benefits are based on the income brought in by your job .
+    - 'Im going to answer your question this way : Im going to describe for you the
+      kind of person who buys life insurance and is really glad they did . They are
+      happy with the policy they bought ; they are happy with the process they went
+      through to get that policy ; and they are happy to tell all their friends and
+      neighbors about how happy they are with the purchase :-RRB- . These are the
+      qualities of a happy life insurance shopper : Quality number one : the happy
+      life insurance shopper dares to care . Look , life insurance is not for you
+      , right ? Its for your beneficiaries . And frankly , some people could care
+      less about what happens after they die . I mean , to put it bluntly , they are
+      dead , right ? Isnt that what it comes down to ? But for other people , the
+      difference between being alive and being dead is not that great . I mean , you
+      have spent a lifetime building something of value . Your marriage . Your family
+      . Your business . Charitable causes worthy of your support . All these folks
+      have become dependent on you . If you die , they could lose their economic foundation
+      . But if you have insurance on your life , then they dont have to miss a dime
+      . Life can go on in style for your spouse , your children , your business partners
+      , your employees , and all the needy people that are being helped by the charities
+      you support . If you care about these people , then life insurance can make
+      sure life goes on for them , even when your life does not go on for you . Quality
+      number two : the happy life insurance shopper understands that the time to buy
+      is now . Everyone knows we all die sometime . For most of us , though , death
+      is something that happens to someone else - until it strikes home . Maybe someone
+      close to us gets really sick , or we ourselves have a brush with death that
+      wakes us up . But up to that point , we just dont want to think about it . We
+      also convince ourselves that if we stay in shape , eat right , manage our stress
+      , and maintain a good attitude , we can forestall the inevitable . The fact
+      of the matter is that if we really thought about it , there are a whole slew
+      of hazards that are entirely beyond our control . Heres a few that come to mind
+      : Freak household accidents . Violent crime . Natural disasters . Car crashes
+      . Of course we all say that odds are against any of these happening to us .
+      We even say to ourselves that we can afford to wait and buy a policy next year
+      or the year after , so we can qualify for a better rate . But in the meantime
+      , things can happen . And they do . All the time . Unexpectedly . If your time
+      comes before you have a policy in force , then your beneficiaries lose out .
+      You really cant afford to die until that coverage is in place . Quality number
+      three : the happy life insurance shopper wants a guaranteed return on his or
+      her money . OK . Now you know you need to get coverage in force as soon as possible
+      because you never know when your time will come . The next logical question
+      is : for how long do you keep the coverage in force ? Easy answer : for as long
+      as you live . You know at some point you will have your last day on this earth
+      , so that means you know for sure your beneficiary will get their money when
+      your time comes ... ... as long as the policy is still in force . That means
+      you need permanent coverage . The policy should last as long as you do . Doesnt
+      permanent coverage cost more then term coverage ? Yes . Isnt term good for short-term
+      needs ? Yes . Can you buy term and then purchase permanent when you can afford
+      it ? Yes . Does it make sense to buy term now and then convert to a permanent
+      product ? Yes . The thing is , if you dont take a long-term strategy , then
+      you wont be guaranteed a payout . If you do take a long-term strategy , then
+      you will . Guaranteed by a top-flight financial institution . Quality number
+      four : the happy life insurance shopper knows what hes getting into . When you
+      buy a house , do you expect to write a check for the purchase price agreed on
+      ? Of course you do . Same when you buy a business , book a cruise , and buy
+      a pair of shoes . We even demand that a grocery store clerk honors the price
+      on the shelf if an item has been mislabeled . Life insurance should operate
+      the same way . Hard to believe , isnt it ? All too often , a broker will submit
+      an application on the hope and prayer that the applicant will be approved at
+      the rate quoted . We wont know what the price really will be until you are approved
+      . Yes , right , but if you go through full disclosure on a preliminary basis
+      , you can become confident in what that price will be . The broker has to prequalify
+      you and present carriers with thorough and accurate quote information upfront
+      . They can then commit to a price , contingent upon information obtained in
+      underwriting not contradicting the preliminary disclosures . You can then be
+      sure of what you are buying . If you dont get prequalified , then you cant be
+      sure . Simple as that . Quality number five : the happy life insurance shopper
+      wants to be heard . There are a few companies out there who let consumers call
+      them and buy policies . Thats nice for a tiny percentage of the zillions of
+      men and women who need coverage . The rest of us need personalized service and
+      a guide to walk us through the vast marketplace of potential carriers . Only
+      one or two of them will be the best for us , and that broker has to lead the
+      way to their doorstep . But life insurance distribution can be pretty rigid
+      . The broker usually does not have direct access to the carriers . He or she
+      must work through carrier general agencies who act as wholesalers of their products
+      . So there is you , your broker , his or her general agent , and their carrier
+      . I am sure you have played that telephone game where one person in the line
+      passes down a message , and by the time it reaches the end , its completely
+      different . Its the brokers job to make sure all information about you that
+      is passed along the underwriting channels remains consistent and is fairly assessed
+      . He or she is your advocate , and must be prepared to carry your cause over
+      any and all hurdles that pop up in underwriting . And they do pop up . All the
+      time . If you have been properly prequalified for coverage , then the bottom
+      line is this : you should be approved at the rate quoted unless information
+      arises in underwriting that is substantially different from the information
+      that was disclosed on a preliminary basis . Your broker is your advocate to
+      make sure that happens . In my humble opinion , this is how you buy life insurance
+      . If you follow this path , you will be one happy camper :-RRB-'
+    - Under Medicare any type of Home Health Care is limited . They will provide some
+      skilled care on a temporary basis but Medicare generally will not pay for custodial
+      care in any long term care environment . That is why it is important to carry
+      some type of Long Term Care Insurance that will provide Home Health Care . Some
+      policies even pay family members for providing care . A good agent who does
+      long term care planning can help you find a program that will help .
+    reward: 0
+    text: Where Can I Buy Long Term Care Insurance ?
+- - episode_done: true
+    eval_labels:
+    - Call a Local Agent . If you already have Auto Insurance or another line with
+      a company , you will probably get a discount for `` bundling '' your coverages
+      together . Otherwise , there are a few questions to answer about your stuff
+      and the building and you should be able to get covered right away !
+    id: insuranceqa:v2
+    label_candidates:
+    - Call a Local Agent . If you already have Auto Insurance or another line with
+      a company , you will probably get a discount for `` bundling '' your coverages
+      together . Otherwise , there are a few questions to answer about your stuff
+      and the building and you should be able to get covered right away !
+    - 'What ''s the importance of Renters Insurance ? If you ''re renting a house
+      , condo , or an apartment , the last thing you ''re thinking about is renters
+      insurance . Since you do n''t own the building , the landlord is covered , and
+      you do n''t value your personal belongings to really add up , what ''s the point
+      ? What would you do if : The building or home catches fire and all your personal
+      contents are destroyed . Now , all your belongings are gone and you do n''t
+      have a place to sleep . Your home or apartment is burglarized ; you ''ve lost
+      your laptop , mobile phone , entertainment system and flat screen TV . How about
+      your more modern technology items such as a Tablet , iPhone , iPod etc. . .
+      A visitor or service provider trips and falls in your home or apartment and
+      decides to sue you for his injuries . Whether or not it is your fault , a renter
+      must replace his or her personal items . If there is a law suit , the renter
+      will have to seek a defense attorney even if there is clearly no fault . How
+      much would it cost to replace your clothes , laptop , and furniture . Here are
+      some reasons to have renters insurance : BURGLARY . You may think your apartment
+      is `` secure '''' ! Rental units are prime targets for theft and burglars are
+      getting smarter about how to break into apartments and rental homes ; most of
+      them do not have a security system and are not insured . FIRE OR SMOKE DAMAGE
+      . The landlord ''s insurance wo n''t replace your furniture and personal belongings
+      . Renters insurance will cover items damaged by fire , smoke , and other situations
+      . WATER DAMAGE . Renters insurance may cover items caused by water damage .
+      Additional living expenses . If your unit is damaged by water or fire , you
+      ''ll likely need to find another place to live whether short or long term .
+      Most policies include coverage for hotel expenses or assistance to find an alternate
+      rental unit if you ca n''t live in your rental unit . LIABILITY INSURANCE .
+      Renters insurance can cover injury to another person on your property . It can
+      also include medical payments coverage that pays for expenses of guests . Inexpensive
+      . Renters insurance is very inexpensive if not relatively cheap ! Higher deductibles
+      can decrease the cost of insurance . Renters insurance is a must if not required
+      by your landlord and can save you thousands of dollars , all for a lot less
+      than you might think . Get a free quote and get covered today online by visiting
+      WEBSITELINK'
+    - 'How a renters policy is rated is no different than how any other homeowners
+      policy is rented . There are several factors that go into the rating mechanism
+      : Where you live - how far to the nearest fire station and fire hydrant The
+      construction of the building - is it a brick building or a frame building -LRB-
+      which do you think burns easier ? -RRB- Safety features - smoke alarms , deadbolt
+      locks , fire/burglar alarms , sprinklers Your personal Property limit -LRB-
+      your stuff -RRB- - the higher the values , the higher the premium Your personal
+      Liability Limit - again , higher limits , higher premium Personal circumstances
+      - age , credit score , claims history Renters insurance is really just a homeowners
+      policy without building coverage . It ''s coverage for you and your stuff .
+      The cost of renters insurance is usually much lower than a homeowners policy
+      because a lot of the premium is generated by the cost of the building . Some
+      guidelines to get the right renters coverage . Get a good handle on what it
+      would cost to replace your stuff . A good agent can help or you can go to Allstate
+      ''s website and use their tool -LRB- no , I ''m not an Allstate agent , I just
+      like their tool -RRB- . Secondly , choose a higher liability limit . I usually
+      quote at least $ 300,000 but prefer $ 500,000 or more . The cost is very negligible
+      . Be smart , find an agent you can trust and take their advice . If you do have
+      a claim , you ''ll be happy you did .'
+    - Asking the question why should Renters get Renters insurance is the same as
+      asking why should anyone get insurance ? The purpose of insurance is to pool
+      together monies to reduce individual financial risk from unforeseen losses .
+      Other than car insurance and now health insurance you do n't have to purchase
+      insurance but I certainly would n't recommend it . Even if you are a millionaire
+      you still need insurance . The more money you have the more money you can lose
+      and the cost of insurance is minimal compared to the financial risk you face
+      . Renters needs renters insurance to protect their belongings and also to provide
+      liability protection for negligent acts . Renters insurance typically costs
+      between $ 100 - $ 200 per year and for this cost you get coverage up to $ 25,000
+      for personal property and up to $ 300,000 in liability . The real question should
+      be why would n't Renters get Renters insurance .
+    - When you rent your home , it might seem like you dont need insurance . If the
+      building gets damaged in an accident , it will be your landlords problem , not
+      yours . However , just because you are renting your home doesnt mean you dont
+      have anything at stake . There are a few important reasons why you should consider
+      getting renters insurance . The first reason to get renters insurance is to
+      protect your belongings . Your landlords insurance only covers his property
+      . It will cover repairing the building and anything he owns in your home , but
+      wont cover anything you own . If your property is destroyed by a fire or someone
+      breaks in and steals your valuables , youll be on you own to replace everything
+      . This can easily cost you thousands of dollars out of pocket . When you have
+      renters insurance , it will cover these losses . Another reason to buy renters
+      insurance is to protect yourself against lawsuits . If someone has an accident
+      and get badly injured in your home , you as the renter could be liable . Renters
+      insurance protects you against this liability and makes sure you dont lose a
+      fortune in a lawsuit . Lastly , renters insurance is very inexpensive . Many
+      policies cost less than a dollar a day . This means you can get this important
+      protection without having to make a big financial commitment . WEBSITELINK
+    - 'I am going to take a philosophical approach to answering this question . I
+      think it would help you understand the value you are getting for your dollar
+      with this product . Lets suppose that you know with absolute certainty you are
+      going to die next Tuesday . No doubt about it . Was definitely going to happen
+      . Sad to think about , but hey - we are talking about life insurance . Now lets
+      suppose that an insurance company is willing to insure you . -LRB- Yes , I know
+      its crazy , but work with me here . -RRB- And lets suppose they are willing
+      to offer you a $ 1 million policy . Would that be enough ? OK , lets say it
+      would be . How much would you be willing to pay for that $ 1 million of coverage
+      ? You know that the company is going to put out that money . The payout is guaranteed
+      . And you know that the premium is going to be lower than the benefit . Even
+      if you paid $ 900,000 for that $ 1 million dollar policy , you would still get
+      a 10 % return on your money . By any standards , that is a good deal . If you
+      had that money , no doubt you would pay it . And that would be a good deal for
+      three reasons . One : your beneficiary would be getting money that was needed
+      when they lose you . Two : there is an ironclad contractual guarantee from a
+      very strong financial institution to give them that money . Three : the cost
+      would be very reasonable and you would definitely get your dollars worth . All
+      true ? So you would do everything possible to make this deal happen all because
+      you know you are going to die next Tuesday . The only difference between this
+      hypothetical scenario and real life is that you do not know when you are going
+      to die . It could be tomorrow . It could be next Tuesday . I could be in 20
+      years . You just dont know . Otherwise , all factors remain exactly the same
+      : You know you are definitely going to die sometime . You know your beneficiaries
+      will need the money when they lose you . There is an ironclad contractual guarantee
+      from a very strong financial institution to give them that money . The cost
+      would be very reasonable and you would definitely get your dollars worth . The
+      moral of the story is that regardless of the cost , life insurance virtually
+      all the time remains a fantastic deal . You just have to be willing to pay for
+      it . The better question is : what is the value of a good life insurance policy
+      . Want to keep learning ? Read my blog : planrisklive.com'
+    - You will find renters insurance to be very inexpensive . With most companies
+      renter insurance covering approximately $ 5,000 to $ 10,000 in personal contents
+      and $ 300,000 in personal liability to be approximately $ 150 to $ 300 dollars
+      a year which is equivalent to about $ 12.50 to $ 25 dollars a month . Depending
+      on the carrier this could vary . By writing a renters policy not only are you
+      getting coverage for your personal belongings but you are also getting personal
+      liability coverage . Some companies also include additional coverage such as
+      host liquor liability , which you would need to rent halls for events like a
+      wedding or a birthday . You may also be able to schedule things such as your
+      cell phone which may or may not be cheaper then purchasing the coverage from
+      your cell phone carrier . You will find that if you purchase your renters policy
+      through the same carrier as your auto insurance that the discount you receive
+      on your auto insurance will more than pay for your renters policy . Multi-policy
+      discounts with some companies can range from 5 % -20 % or possibly more , which
+      can save you hundreds on your auto insurance . So be sure to talk to your insurance
+      agent about writing a renters policy and what discounts are available .
+    - 'Yes , Yes & Yes !!! Although Renters Insurance is designed to protect the Personal
+      Belongings of the Renter , the policy also includes Personal Liability Coverage
+      . There have been endless numbers of cases in Small Claims Court where there
+      are issues between Landlords and Renters following damage to rental units .
+      With the presence of a Renters Insurance Policy , the insurance company will
+      investigate the claim and find if in fact the renter ''s negligence caused the
+      loss ; if so , the damage repairs will be covered by the tenant ''s personal
+      liability section of the Renters Insurance Policy . In some States , the Renters
+      Insurance Policy is a requirement under the conditions of the standard rental
+      agreement ; however , it is prudent of Landlords to require Renters Insurance
+      . As a rhetorical question : ` Would you wish to rent your property to a tenant
+      not concerned with insuring their own belongings ? '' Renters Insurance is very
+      inexpensive and contrary to common belief , you do n''t have to speak to a salesperson
+      to obtain a quote and buy the insurance . In many States , the minimum coverage
+      is $ 10,000 or $ 15,000 of Personal Property and the policy automatically comes
+      with $ 100,000 of Personal Liability . Depending on your selected deductible
+      , the premium may be as low as $ 100 per year . If you are responsibly cautious
+      only about the liability issue , we would recommend selecting the highest deductible
+      since this will generate the lowest premium ; the deductible does n''t apply
+      to the liability section . For an online free quote and online platform to buy
+      renters insurance online , you may use : WEBSITELINK This link will allow you
+      to get an online quote , select the coverage and deductible you desire and issue
+      the policy online . For further details or to review your present coverage ,
+      you may contact a licensed company representative toll-free at : 877-931-3368
+      .'
+    - I do not see very many disadvantages to renters insurance . Lets look at the
+      coverage renters insurance provides , and then we can talk about what it does
+      not cover . Renters insurance is designed to cover your personal property ,
+      protect you if you are sued , and pay medical bills if someone is injured on
+      your property . Most people get upset when their insurance does not cover something
+      . Sometimes people file claims to pay their landlord for clean up their deposit
+      did not cover -LRB- this is not covered -RRB- . Some agents use renters insurance
+      as an ad on coverage and they choose how much coverage without consulting your
+      need . If you have renters insurance and only have $ 10k of coverage when you
+      needed more you will not be paid more than the $ 10k A common deductible on
+      renters insurance policies is $ 500 , and often smaller theft claims do not
+      exceed the deductible . I see this a lot in personal items stolen out of vehicles
+      . I think the advantages of having renters insurance far out way not having
+      it . People in our society sue for a lot of different things , and protecting
+      your self from being sued for Bodily Injury or Property Damage out side of your
+      Auto is an essential part of creating a sound financial plan . Just make sure
+      you have the proper coverage before you buy .
+    - Renter 's Insurance is not required by state law , but many landlords will require
+      that you carry renter 's insurance as part of your lease agreement . This is
+      because Renter 's Insurance comes with liability insurance protection , so ,
+      in some cases , if you damage the premises , they can collect from your Renter
+      's Insurance policy . That coverage usually applies for accidentally created
+      fires -LRB- for example -RRB- . Fortunately , most people can buy Renter 's
+      insurance for about $ 10 - $ 12 per month -LRB- it might be less and some basic
+      policies only cost about $ 5.00 / month -RRB- . Send me an email and I can get
+      you a rate !
+    - If you can afford a financial loss of your personal items and can easily repurchase
+      what may have been lost due to a potential event such as fire , water , wind
+      , theft and so on as there are many perils that are covered then renters insurance
+      is not necessary . If you can absorb the costs of a potential law suit for bodily
+      injury and/or property damage that can run well into the thousands or hundreds
+      of thousands even if the suit is only alleged then renters insurance is not
+      necessary . If you can pay your loss of use -LRB- substitute housing -RRB- if
+      you are potentially displaced from your home for a loss as mentioned above then
+      renters insurance is not necessary . If you said no to any of these you may
+      wish to consider renters insurance . Renters insurance has to be the most affordable
+      insurance on the market that covers so much for so little .
+    - To the best of my knowledge renters insurance is not required by any state or
+      by the federal government . Whether or not renters insurance is mandatory for
+      a specific premise is solely up to the landlord or property owner . It is ultimately
+      there call as to have renters insurance as a requirement of the rental agreement
+      that you sign . Renters insurance is typically very inexpensive so call a local
+      agent to get pricing and secure coverage .
+    - I could tell you the Christmas story . About how a father or mother bought life
+      insurance to protect their spouse and their children , if there were to be gone
+      from them . About how the life insurance would protect their family from having
+      to find a way to pay the mortgage or having to sell the house and move from
+      the local school , or maybe mom having to get a new job . But the most important
+      part about having life insurance is just knowing that your loved ones are protected
+      should you no longer be with them . Finding the right agent to listen to you
+      and find out what you need , and having the best company , one that pays claims
+      quickly , will give you a sense of relief and satisfaction . That 's what having
+      life insurance is all about . Gary Lane , Registered Representative , New York
+      Life , 949 797 2424 . Thank you .
+    - Almost all auto and homeowners insurance carriers offer renters insurance .
+      If you currently have your auto insurance through a local agent contact them
+      about renters insurance . They will more than likely have a product available
+      . If you combine your renters and auto insurance with the same carrier you will
+      more than likely receive a discount on your premiums .
+    - This is an interesting question . Select ahigh limit of liability . Nothing
+      will ruin your day like a nasty lawsuit . Consider the limits available and
+      take one of the higher amounts . Since most people are thinking about their
+      personal property when they buy a renters policy , remember that at the time
+      of claim , identifying the losses and verifying values is critical , so pictures
+      and scanned receipts can make the entire process as painless as possible . That
+      is how to get the most our of your renters policy .
+    - 'My first bit of advise regarding HOW one should go about buying life insurance
+      is to do a little research . The better informed you are about providers and
+      the types of policies , the better chances are that you ''ll get the best policy
+      for your needs and goals . Of course that will necessitate that you have a good
+      handle on exactly what your needs and goals are ! But there may be some living
+      benefits connected to some policies that you are n''t aware of , such as the
+      cash value and wealth growth potential of Whole Life with a mutual company -
+      not to mention the tax benefits . So you should confer with an experienced Insurance
+      Adviser who will be able to help you determine your needs and goals , answer
+      questions about insurance companies you are considering , and help you to implement
+      the best policy for you . One question you may find important to get the answer
+      to is how the provider you ''re considering handles policy loans . For some
+      enlightening information on that topic please read the article at : WEBSITELINK'
+    - Travelers Insurance Company has an excellent renters insurance policy . The
+      Form HO-4 covers Personal Property and Personal Liability Insurance for the
+      tenant -LRB- insured -RRB- . Renters Insurance is a very valuable coverage because
+      it no only offers protection against damage to your personal property but also
+      protection against negligence and personal liability cases that may be brought
+      against you . One valuable example is if there is fire , smoke or water damage
+      to the rented home or apartment unit , the property owner 's insurance company
+      will most likely attempt to collect damages from the tenant if they can prove
+      negligence . In this case , Renters Insurance will provide the legal representation
+      to handle the situation although the policy limit will apply . If you are not
+      sure and do n't really want to commit to purchase renters insurance but may
+      or may not be required to according to your lease agreement , the best way to
+      generate the lowest annual premium is to select the minimum personal property
+      coverage available , the lowest limit of personal liability and the highest
+      available deductible for the policy . There is a link providing an online format
+      to obtain a quote and buy renters insurance online in multiple States ; may
+      be used by Escrow/Closing Professionals , Mortgage Professionals , Real Estate
+      Agents and directly by Consumers . An exemplary online experience for all !
+      WEBSITELINK
+    - Lets suppose you own a business . Obviously you cant do everything yourself
+      , so you need to hire people with special skills . Collectively you can get
+      to where you want to go . The people with special skills might include a high-ranking
+      executive . Might also include a highly skilled technician . Perhaps a top salesman
+      . All these people play roles that are key to the operation . And you , as the
+      entrepreneur of the enterprise , are very much a key person too . This is not
+      to say that people who are not key do not bring value to the company and are
+      not important . If all the business needed was key people , why would you hire
+      anybody else ? But key people are the ones whose loss would create the biggest
+      problems . Sales could go down . Vendors might not get paid . Clients might
+      get nervous about orders being filled . Banks might think twice about lending
+      money . You need to protect your business against the loss of these people .
+      If any or all of them disappeared tomorrow , you need to be sure that your business
+      can go full speed ahead . Employees , clients , prospects , vendors , lenders
+      , investors , and everyone else related to your business , need to be reassured
+      that business will take place as usual . And that takes money . If you have
+      the exact amount of money you need exactly when you need it , then you could
+      tell people to not worry . Orders will get filled . Bills will get paid . You
+      can take the time needed to find the right replacement . And you dont want to
+      have to set up an investment program to cover these people . Nor do you want
+      to have to borrow the money . You want this coverage to come as cheaply as possible
+      without any hoops to jump through . That is what life insurance does when it
+      is purchased for key person coverage .
+    - For the vast majority of renters , a renters insurance policy is optional .
+      Some landlords will require that the tenant own a renters insurance policy and
+      name them as an additional insured . It is important to note , however , that
+      as a renter you are responsible for injuries and accidents that happen on the
+      rented property . You are also responsible for damage to the unit and if your
+      property is damaged because of a covered peril , your landlord is not responsible
+      to make you whole . Those are things that a renters policy does .
+    - Renters Insurance can be purchased Online ! Renters Insurance is designed to
+      protect tenants from financial loss due to damage or theft of Personal Property
+      and protection from cases of Personal Liability . In order to obtain a quick
+      and free quote for renters insurance , you will need to state the amount of
+      personal property coverage you desire , the personal liability limit and the
+      deductible for the policy . If shopping for the cheapest possible premium ,
+      you should request the minimum amount of personal contents coverage that is
+      acceptable to you , the lowest limit of personal liability -LRB- $ 100,000 -RRB-
+      and the highest available deductible . Once you have the rate quote , you can
+      proceed with the purchase of your renters insurance policy . The link providing
+      an online format to obtain a quote and buy renters insurance online in multiple
+      States may be used directly by Consumers . WEBSITELINK
+    reward: 0
+    text: How To Go About Getting Renters Insurance ?
+- - episode_done: true
+    eval_labels:
+    - The amount of life insurance needed is really only limited by the income and
+      assets being protected , insurability and the capacity to pay premiums . The
+      maximum coverage most insurers will consider for someone under age 45 will be
+      25 times earned income . The earned income multiples grade down as you age .
+      At older ages , net worth plays a bigger role in establishing maximum coverage
+      . As for who would `` need '' the most , consider that ultra high net worth
+      individuals will continue to buy life insurance for estate planning purposes
+      as their wealth grows to deal with estate liquidity issues . At some point ,
+      insurer retention limits and reinsurance capacity limits are reached such that
+      the theoretical limit of US life insurance coverage on an eligible life is about
+      $ 250 million .
+    - Those who need the greatest amount of life insurance are those who would have
+      the greatest losses , numerically speaking , if they passed . Persons with very
+      high incomes would need a very high amount of life insurance to replace their
+      income in the event of their deaths . Owners of a highly valued business could
+      purchase a very large policy to buy out the share of another owner who passes
+      . A son could take out life insurance on his father so that he is able to purchase
+      his father 's ranch when his father passes . Of course , needing a great amount
+      of life insurance does not make the need any more important than for those who
+      need lesser amounts . Sometimes $ 10,000 can mean as much to one beneficiary
+      as $ 1,000,000 can mean to another .
+    - This is a great question . The amount of insurance that a person needs is completely
+      up to them . I have clients that want a low amount of coverage just to assure
+      that they are buried properly and then I have clients that want half a million
+      or more to assure that the house and cars are paid off and that the children
+      are taken care of in the event of their death .
+    id: insuranceqa:v2
+    label_candidates:
+    - The amount of life insurance needed is really only limited by the income and
+      assets being protected , insurability and the capacity to pay premiums . The
+      maximum coverage most insurers will consider for someone under age 45 will be
+      25 times earned income . The earned income multiples grade down as you age .
+      At older ages , net worth plays a bigger role in establishing maximum coverage
+      . As for who would `` need '' the most , consider that ultra high net worth
+      individuals will continue to buy life insurance for estate planning purposes
+      as their wealth grows to deal with estate liquidity issues . At some point ,
+      insurer retention limits and reinsurance capacity limits are reached such that
+      the theoretical limit of US life insurance coverage on an eligible life is about
+      $ 250 million .
+    - Those who need the greatest amount of life insurance are those who would have
+      the greatest losses , numerically speaking , if they passed . Persons with very
+      high incomes would need a very high amount of life insurance to replace their
+      income in the event of their deaths . Owners of a highly valued business could
+      purchase a very large policy to buy out the share of another owner who passes
+      . A son could take out life insurance on his father so that he is able to purchase
+      his father 's ranch when his father passes . Of course , needing a great amount
+      of life insurance does not make the need any more important than for those who
+      need lesser amounts . Sometimes $ 10,000 can mean as much to one beneficiary
+      as $ 1,000,000 can mean to another .
+    - This is a great question . The amount of insurance that a person needs is completely
+      up to them . I have clients that want a low amount of coverage just to assure
+      that they are buried properly and then I have clients that want half a million
+      or more to assure that the house and cars are paid off and that the children
+      are taken care of in the event of their death .
+    - Those who need the greatest amount of life insurance are those who would have
+      the greatest losses , numerically speaking , if they passed . Persons with very
+      high incomes would need a very high amount of life insurance to replace their
+      income in the event of their deaths . Owners of a highly valued business could
+      purchase a very large policy to buy out the share of another owner who passes
+      . A son could take out life insurance on his father so that he is able to purchase
+      his father 's ranch when his father passes . Of course , needing a great amount
+      of life insurance does not make the need any more important than for those who
+      need lesser amounts . Sometimes $ 10,000 can mean as much to one beneficiary
+      as $ 1,000,000 can mean to another .
+    - 'Video Transcript : Who has the greatest need for life insurance ? Everybody
+      that has beneficiaries that they want to indemnify , cover , or protect from
+      their own indebtedness . Maybe you have a mortgage ; maybe you have credit card
+      debt or auto debt . You may have future obligations like college or retirement
+      . Whatever you want to protect , you want to be able to make sure your beneficiaries
+      receive the tax-free benefit of life insurance proceeds to take care of those
+      obligations so that they ''re not saddled and suffer through financial liabilities
+      that you incurred or you created . Remember , just a heads up ; you may even
+      want to create this for charitable intent . Whatever your reasons are , who
+      has the greatest need ? People have the greatest exposure .'
+    - Those who have the greatest need for life insurance are people with few assets
+      , but many financial responsibilities . In other words , if they died , the
+      loss of their income would leave a gaping hole in the financial welfare of those
+      they left behind , because there would be nothing else to replace it . Life
+      insurance is a low cost way of covering that need .
+    - The greatest exposure a renter has is personal injury by someone visiting the
+      unit that you have rented . A lawsuit is a terrible thing and the expense can
+      be devestating . The second greatest loss would be to have your personal property
+      destroyed . The landlord is not responsible for your personal property so if
+      coverage is desired , a renters policy is the way to provide that coverage
+    - Medical care has a price . In the open market it is fixed by consumers who want
+      a service and medical personnel who can deliver the service . The problem occurs
+      when someone needs the treatment but can not or will not pay the price for the
+      service . I say , Will not because every decision about spending is discretionary
+      . Should society as a whole bear the responsibility for the medical care for
+      every resident ? Should the nature of that care be regulated ? Should the source
+      of funding be general ? Those are the most pressing questions when considering
+      a universal health care system . Ultimately in a universal health care system
+      there is a specified list of services and a funding mechanism that is not based
+      upon need for medical services . You may need a procedure that isnt covered
+      in the program . At the same time you might consider another procedure immoral
+      or frivolous . Who is going to decide ? The idea of universal health care sounds
+      very good until you understand that some medical services will probably not
+      be covered . In the USSR dental hygiene consisted of inserting a fluorescent
+      tube into the patients mouth and surgery was routinely conducted in a super-cold
+      environment because anesthesia was not readily available . In that case , most
+      Americans would consider the health care to be inadequate . However , it was
+      available to all and at little or no direct cost to the consumer . Under most
+      regimes universal health care becomes rationed health care . The best example
+      is the army under war time conditions . It is called triage but it means that
+      you treat those with the greatest likelihood of recovery before treating soldiers
+      with graver injuries . While it might be the best utilization of manpower ,
+      the soldier with his leg blown off , might not like the wait and a narcotic
+      shot is not going to make his family happy . The issue of who is going to pay
+      for the universal health care system is the most sensitive . No one wants to
+      see others in need . By the same token no one wants to pay the high bill for
+      medical treatment . If the universal care is funded by general funds from taxes
+      it will always be a political football . If it is paid by premiums paid by individuals
+      there will always be a need to assist those unable to pay the premium . The
+      problem really boils down to our expectations of treatment level , the availability
+      and cost of that treatment and who is going to pay the price . Yes , it sounds
+      like a great idea but it has many difficulties and when it is expected then
+      the society will start to question the need for universal flat screen TVs ,
+      micro-wave ovens and wall-to-wall carpets . There really isnt an end unless
+      you look at the Soviet Union and see how it ended .
+    - 'The typical profile of a life insurance owner is someone who is a family breadwinner
+      and has minimal savings . In other words , has dependents and debt . Term life
+      insurance is by far the most appropriate kind of life insurance for the majority
+      of people . Advantages of term life insurance - Generally lower cost than permanent
+      insurance . - Offers higher coverage at a more affordable price . - Gives you
+      the most coverage for the lowest cost - up to 30 years . - Ideal for younger
+      families when the need for protection is greatest . People choose term life
+      Insurance for covering specific needs that will disappear with time , such as
+      : - Income replacement - Financial security for dependents - Mortgage protection
+      - College funding - Final/burial expenses Use a needs life insurance calculator
+      and get online quotes so that you can compare rates from top rated companies
+      to get the lowest price . Important note : Beware of sites that ask you for
+      your contact information before you can see quotes .'
+    - Universal life insurance is a great option for the client who wants more protection
+      than is offered by term , but does not want to go to the expense of a whole
+      life policy . It gives the client the greatest amount of permanent death benefit
+      for the least amount of cost .
+    - There are several things to consider when purchasing life insurance . The first
+      is insurable interest . Who stands to lose financially if you died today ? A
+      spouse , children , loved one or even business partner ? Who would be left owing
+      your debt or who depends upon your income ? Once you answer this question ,
+      next is how much is needed to satisfy this debt or income replacement ? Now
+      how long would it take to cover this loss ? In other words , how long do you
+      need to repay that debt or how long until your partner or loved one could earn
+      their own income ? Once you have the answers to these questions it will become
+      clear how much life insurance you need and how long do you need to carry it
+      . I recommend using an experienced independent life insurance broker that can
+      shop the market to find you the best coverage at the best price to cover your
+      unique situation .
+    - The amount and type of life insurance you need depends on what you want your
+      life insurance to accomplish . If it is for a temporary need such as getting
+      your kids through college or paying off your house , a Term policy is a reasonably
+      priced way of getting that amount of coverage . If you want to pay for your
+      funeral , a smaller , Whole Life or Guaranteed No Lapse Universal Life policy
+      would be a better choice . You should work with an agent you trust to consider
+      your needs , and who will shop among multiple choices to find your best price
+      for the best policy to suit those needs .
+    - You need disability insurance as `` paycheck protection '' . You should look
+      at your current monthly budget and determine what needs to be covered if you
+      were to lose your paycheck due to an accident or illness . 1 in 4 20 year olds
+      will go on disability before they retire from work . You should look at the
+      your expenses and determine what is the net amount of income that I could get
+      by on . Many people have disability insurance through their employeer . You
+      have to be careful because this policy is usually paid `` pretex '' and is taxed
+      upon your drawing income . You need to check your employeers policy to determine
+      what your benefits are for disability . Business Owners can get a disability
+      policy to pay for their business income . What would happen to your business
+      if you could not do what you do daily to generate income . Would you need to
+      hire somebody ? You can get a policy to cover this . Would your business stop
+      working and revenue dries up ? You may be able to cover this . You need to work
+      with an independent agent to compare the rates and benefits of multiple companies
+      as they treat each situation different . An example would be a Physician who
+      might be offered more income during their disability with a particular company
+      . You would need to check to see if you receive benefits if you can not work
+      your current profession versus working at anything . All paychecks need protection
+      . You should have your evaluated and deceide how you would do if you became
+      disabled .
+    - Which life insurance is better , Term or Whole Life ? It is a debate that has
+      great points on both sides . In reality , most people need more life insurance
+      than they can afford to purchase in Whole Life , but they do n't need that large
+      amount of coverage for a lifetime . Term life is an economical choice for large
+      amounts of coverage for relatively short amounts of time . On the other hand
+      , most people need a small amount of final expense coverage , and this can not
+      be Term insurance or there is a risk of it not being in effect at the time of
+      death . Also , Whole Life can be used for estate planning , business succession
+      , and other permanent needs that justify the higher premium , especially when
+      , as Ted stated , cash value builds up to offset it . There is no one right
+      answer for everyone , but there are many choices . A good agent will guide you
+      to find the best policy or policies for your unique needs , desires , and budget
+      .
+    - The BEST life insurance product is the one that meets your needs . Therefore
+      , you must ask yourself ; What is the goal ??? Term and Permanent insurance
+      are two different products for two completely different needs . Term insurance
+      is a product for just that , a fixed term , with either a level premium for
+      the selected term or an increase annual payment if you were to choose renewable
+      term . Since the contract isfor a fixed period of time , premiums are typically
+      a portion of what the same coverage would be with a Permanent product as there
+      are no cash accumulation or surrender features , making it affordable for those
+      who need it . Regardless , term insurance is great for those with a need for
+      coverage in the event of a loss of life , for a fixed term , i.e. the income
+      or performance of the insured will be relied on by others . Additionally , term
+      insurance is a great way for families with a limited income , to protect and
+      provide for the family and young children in the event of the loss of the family
+      breadwinner or equally important , the caregiver -LRB- many `` breadwinners
+      '' undervalue the benefit provided by the stay-at-home spouse and over look
+      childcare costs ! -RRB- which will help with living and education expenses for
+      the surviving family . In the future , these young families can always re-analyze
+      goals and needs and when their income allows , and convert to a permanent product
+      . Term is also very useful for businesses to protect themselves against the
+      loss of production and revenue in the event of a death of a key employee . This
+      type of insurance planning called Key-man coverage , is cost affordable when
+      using term insurance . Lastly , many of the attractive riders that are issued
+      with permanent life policies can also be issued with term policies . Permanent
+      insurance is a product with virtually infinite uses depending on your needs
+      . Permanent life insurance products are just that , permanent for the life of
+      the insured , so long as the owner has paid a sufficient amount of premium to
+      maintain the coverage . In comparison to term , permanent life insurance is
+      more expensive in order to account for the cost of insurance in later years
+      of the insureds life . However , there are multiple advantages to buying permanent
+      coverage as soon as you can afford it when you are younger . Aside from a lower
+      level premium amount to carry the policy to maturity , more time will allow
+      for a larger accumulation of cash value in the policy . This cash value , accumulating
+      at a tax-deferred rate that beats current treasuries , can also be accessed
+      through policy loans and withdrawals in the event of emergency cash needs ,
+      can be used as collateral for business or personal loans and can also be used
+      to support you during retirement , assuming that the need for coverage has been
+      reduced . There are two main forms of permanent coverage , Whole Life products
+      and Universal Life products , each with their own attractive features including
+      dividends , increasing death benefit , flexible premiums and crediting rates
+      indexed to stock market performances . Before making the decision to purchase
+      either , be sure to sit down for a -LSB- typically free -RSB- consultation with
+      a licensed life insurance agent who will help you identify both your short term
+      and longer term needs and goals . Together , you should be able to put together
+      an effective plan that will blend affordability and proper protection to meet
+      your life insurance needs .
+    - It is really not the person being insured who needs life insurance . Rather
+      , it is those they leave behind . If you have dependents who would suffer financially
+      if you were to pass away , you probably need life insurance . If you owe money
+      that your dependents would have a hard time paying off , you probably need life
+      insurance to pay off that debt or mortgage . Many people feel they have their
+      affairs in order without the need of life insurance . The problem is , disasters
+      or tragedies can chip away at those funds , and what you had hoped to be there
+      , can be depleted before death occurs . That is where having at least some life
+      insurance is necessary for most people .
+    - Who needs permanent life insurance ? People with permanent needs . I.e. needs
+      that will not end after a certain number of years . No one knows for certain
+      when death will occur , so funeral expenses will need to be covered by permanent
+      life insurance if the goal is to pay off the funeral with life insurance . Leaving
+      an inheritance to children or grandchildren will require permanent life insurance
+      . If you have Term insurance , pass away after it expires , and can not qualify
+      for or afford a new policy , the money you planned to leave your family will
+      be gone . Most people do n't need all their life insurance in permanent policies
+      , because some of their life insurance needs will be temporary . But when the
+      need will not go away until death , permanent life insurance is the only sure
+      solution .
+    - 'This is one of the most commonly asked questions about life insurance . I agree
+      with Larry that there is no specific answer . Most studies suggest many have
+      no life insurance at all and of those who do , many are underinsured . We often
+      meet with clients who have less than one times their current annual income .
+      Insurance companies generally approve coverage amounts up to 25X income -LRB-
+      under age 45 -RRB- . There are many calculators online which can help such as
+      this one : WEBSITELINK But there is no substitute for an experienced life insurance
+      professional who can help you plan to have the right amount based on need and
+      budget and can adjust the plan over time to meet changing needs .'
+    - 'This is one of the most commonly asked questions about life insurance . While
+      there is no specific answer , there are methods we can use to determine what
+      ''s right for you and your family . Most studies suggest many have no life insurance
+      at all and of those who do , many are underinsured . We often meet with clients
+      who have coverage of less than one times their current annual income . Insurance
+      companies generally approve coverage amounts up to 25X income -LRB- under age
+      45 -RRB- . There are many calculators online which can help such as this one
+      : WEBSITELINK But there is no substitute for an experienced life insurance professional
+      who can help you plan to have the right amount based on need and budget and
+      can adjust the plan over time to meet changing needs .'
+    - 'How much you need to save for retirement by the time you are 40 depends of
+      course on your desired retirement lifestyle and the amount needed to fund it
+      . Without those details , I unable to offer you an opinion . There are online
+      calculators available of course . However , here is a retirement worksheet to
+      help you understand the process . I have used 6 % for illustration purposes
+      only , it could be higher or lower and is only to give you a point of reference
+      . Age 65 was used as the retirement age -LRB- 25 years in the future -RRB- ,
+      Again . this is for information purposes only . 1 . Annual retirement income
+      which must be provided by savings $ _____ 2 . Amount you must save to generate
+      income $ _____ -LRB- line 1 . X 11.55 -RRB- 3 . Amount you have already saved
+      $ _____ 4 . Amount these savings will have grown $ _____ by the time you retire
+      -LRB- line 3 X 4.2919 -RRB- 5 . Amount of savings still needed $ _____ -LRB-
+      line 4 minus line 2 -RRB- 6 . Amount you need to save each year $ _____ -LRB-
+      line 5 X .01720 -RRB- If you would like to work with a local Retirement Planner
+      , you could start with a Google search . For example , if you search for : retirement
+      planner Halifax or retirement planning Halifax , my name , along with several
+      others , will come up . You can use the same method to find Retirement Planners
+      in your community . If you have further questions , or feel that I could be
+      of assistance , please do not hesitate to contact me .'
+    reward: 0
+    text: Who Would Need The Greatest Amount Of Life Insurance ?
+- - episode_done: true
+    eval_labels:
+    - If you are currently on Tricare you will be required to enroll in Medicare parts
+      A & B when you reach age 65 . In most cases this happens automatically . The
+      part B has a charge . When you have a claim the claim is processed first by
+      Medicare . They pay the benefit on their schedule . The balance of the bill
+      is then sent to Tricare . Tricare then pays what they will pay subject to any
+      applicable deductibles and co-payments . The balance is then due and payable
+      by you . In practice most physicians and hospitals get complete information
+      about how the bill will be handled before they treat you . If you are responsible
+      for any part of the bill , they will demand payment , frequently , before treatment
+      starts .
+    id: insuranceqa:v2
+    label_candidates:
+    - If you are currently on Tricare you will be required to enroll in Medicare parts
+      A & B when you reach age 65 . In most cases this happens automatically . The
+      part B has a charge . When you have a claim the claim is processed first by
+      Medicare . They pay the benefit on their schedule . The balance of the bill
+      is then sent to Tricare . Tricare then pays what they will pay subject to any
+      applicable deductibles and co-payments . The balance is then due and payable
+      by you . In practice most physicians and hospitals get complete information
+      about how the bill will be handled before they treat you . If you are responsible
+      for any part of the bill , they will demand payment , frequently , before treatment
+      starts .
+    - Medicare standard is primary to Tricare in all cases . Medicare Part D , if
+      you elect it is also primary to Tricare . If you have a Medicare Advantage plan
+      , let both Tricare and your MA know about the other , and they will organize
+      the coordination of benefits . One important thing to remember is that , if
+      you have Medicare Part A and Tricare , in most cases you will also have to be
+      enrolled in Medicare Part B to keep the Tricare coverage .
+    - If you are eligible for premium-free Medicare Part A , you must have both Part
+      A and Part B to continue to receive TRICARE . Once you start receiving Part
+      A and B , you start receiving TRICARE benefits under TRICARE for Life -LRB-
+      TFL -RRB- . There is no advantage for most TRICARE recipients to enroll in Medicare
+      Part D because TFL 's drug benefits are so comprehensive .
+    - When you have original Medicare -LRB- Medicare Part A & Part B -RRB- and TRICARE
+      , Medicare is the primary insurance . TRICARE pays second -LRB- the idea being
+      to lower your out of pocket expenses -RRB- . Please note , I believe you have
+      to have both Part A & Part B of Medicare to keep TRICARE benefits when you go
+      on Medicare , but you should double-check with the plan to be 100 % sure . I
+      hope the information is helpful - please feel free to contact me via my profile
+      page with any other questions . Thanks very much .
+    - If you are currently on Tricare you will be required to enroll in Medicare parts
+      A & B when you reach age 65 . In most cases this happens automatically . The
+      part B has a charge . When you have a claim the claim is processed first by
+      Medicare . They pay the benefit on their schedule . The balance of the bill
+      is then sent to Tricare . Tricare then pays what they will pay subject to any
+      applicable deductibles and co-payments . The balance is then due and payable
+      by you . In practice most physicians and hospitals get complete information
+      about how the bill will be handled before they treat you . If you are responsible
+      for any part of the bill , they will demand payment , frequently , before treatment
+      starts .
+    - Tricare is never primary over Medicare . It will only pay after all other insurances
+      have paid . If you have Tricare and are entitled to Part A , you must have Part
+      B to continue the Tricare pharmacy benefits . However you do not have to enroll
+      in a Part D prescription plan . If you do choose to enroll in a Part D plan
+      , Tricare will be secondary to that plan as well .
+    - Tricare , formerly known as CHAMPUS , provides civilian benefits for military
+      personnel , and their dependents . Tricare for Life -LRB- TFL -RRB- was designed
+      to offer secondary coverage to Medicare for all who have Medicare Part A and
+      Part B . There are very few ways one can have Tricare without having Part B
+      . Here is a helpful link to explain TFL and Medicare . WEBSITELINK
+    - Active military and National Guard are covered by TRICARE , a health care program
+      for service members and their families around the world . TRICARE is the major
+      part of the Military Health System , a system that utilizes combined resources
+      of military hospitals and clinics with civilian health care networks , as well
+      as a combination of different coverage options depending on where the person
+      is currently stationed . TRICARE coverage does meet the requirements for having
+      minimum essential benefits as called for under the Affordable Care Act .
+    - Tricare , formerly known as CHAMPUS , is a health care program of the U.S. Dept
+      of Defense Military Health System . TFL , Tricare for Life , offers secondary
+      coverage to Medicare for all beneficiaries who have both Medicare Parts A and
+      B . There are very few incidences where one can get this coverage without having
+      Part B , and those incidences are temporary .
+    - Most branches of the Military on on TriCare and it covers anything medically
+      necessary . Without understanding the specifics being asked here and not having
+      enough room to write everything that 's covered ... this type of group plan
+      will cover any and all medically necessary services that are n't excluded in
+      the policies limitations and exclusions . TriCare is excellent coverage if you
+      have access to it .
+    - Only you can answer that question . Figure your fixed costs after retirement
+      , your plans -LRB- do you plan to travel ? -RRB- , and other individual factors
+      . Also deduct out social security if you want to figure out how much additional
+      savings you need to meet your goal . My opinion is at least 80 % of current
+      income on average but that is not written in stone , every case is different
+      . Sit down with a good agent familiar with retirement planning . He or she can
+      help you put together a good plan for a comfortable retirement .
+    - Yes it is legal , all insurance is regulated by the state insurance commissions
+      , so anything Allstate is doing has been approved by them . First thing you
+      should do now is contact a local independent agent and have them quote you with
+      multiple carriers that can compete for your business . Typically the insurance
+      companies are going to want your home and auto bundled together . This also
+      gives you the most discount opportunities . Every insurance company will work
+      with your mortgage company to get the premium paid .
+    - 'This is a relatively subjective question . There are many companies that sell
+      some form of Critical Illness . A question I would ask if you were working with
+      me is are you looking for a stand-alone policy or a policy that has more value
+      as in attached to your Life Insurance ? I recommend three different companies
+      , Assurity Life , Mutual of Omaha and Transamerica which depending on what you
+      are looking for , which is a bigger question . I would contact an agent or you
+      can reach out to me and I can put together a quote for you . Matt - -LRB-720-RRB-708-5498
+      or email me at : matt@pegasusii.com'
+    - None that I know of will underwrite a mentally impaired person . It goes back
+      to basic contract law and both parties being of sound mind to contract together
+      . In fact when dealing with seniors these days an agent must be sure the senior
+      is of sound mind when doing any financial work . Often , a agent will include
+      family members of the client in the discussion . Dementia is something that
+      can come on quickly and courts have ruled against agents who may have sold products
+      to seniors who not much later on , suffered from dementia .
+    - Great question ! Unfortunately , unless the person to be insured is very young
+      -LRB- think under 16 -RRB- they are going to have to sign the application as
+      the `` insured '' . The laws governing the issuing of insurance were set up
+      especially to prevent person A from taking out a policy on person B without
+      them being aware , to protect person B. I 'd be happy to explain in more detail
+      if you 'd like , just contact me . I 'd suggest the best solution is that you
+      work out whatever issues there are with dad , and proceed together . Thanks
+      for asking !
+    - The cheapest long term care insurance company in Colorado varies according to
+      the person who is applying . Some companies are better at older ages ; some
+      are better for couples . Some are better for -LRB- or are the only ones that
+      will take -RRB- certain health conditions . Some offers certain features at
+      a lower price than others . To find the cheapest long term care insurance for
+      you , contact an agency that sells a variety of long term care companies in
+      Colorado and review your health and all the features offered with a knowledgeable
+      agent . Together , you can work out which has the lowest price for what you
+      qualify for and what you need .
+    - Work with a good independent agent that can show you what the current cost of
+      care is in your area . For example , I would put together figures that would
+      show you what the average cost of home healthcare , assisted living and a nursing
+      home would run . I would then take those numbers into account when preparing
+      a long term care insurance benefits package . Since you will not need the care
+      for several years you need to have a plan that factors in future inflation .
+    - Home fire insurance works on the basis of shared risk . An insurance company
+      brings together people with similar risks so that they can share losses if there
+      are any . Since such a group would have houses of different values , locations
+      , and exposures , the company uses statistics and experience to develop rates
+      that would apportion the risk to the various houses . If in a particular pool
+      the total exposure or risk is $ 1 billion dollars , your portion of the actual
+      risk might be only $ 700 .
+    - To add to both I would suggest by passing the underwriting all together and
+      go for a Group Policy that I offer to individuals through a membership . You
+      must be working 30 hours or more per week , and live in the USA and it is available
+      in all but 4 states . You can have up to $ 100,000 and it is only graded for
+      one year and to give you an idea of the cost for a 49 year old it would be $
+      88.55 per month for $ 100,000 in coverage . Contact me for more information
+      .
+    - Life insurance pricing appears to be wildly different and yet it is working
+      with exactly the same mortality experience and with interest and expenses that
+      are remarkably similar . What you really end up comparing is length of coverage
+      . You can buy a policy that will cover you for 1 year and you can buy one that
+      covers you to death , regardless of when that might occur . An insurance agent
+      is the best source of information about life insurance policies . After listening
+      to you , offering financial advice they should be able to put together exactly
+      the policy that you need at the price you can afford .
+    reward: 0
+    text: How Does Medicare And Tricare Work Together ?
+num_episodes: 2000
+num_examples: 2000

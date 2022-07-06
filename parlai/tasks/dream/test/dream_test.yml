@@ -1,0 +1,121 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - The movie will not be shown.
+    id: dream
+    label_candidates:
+    - They want to buy the tickets for the movie.
+    - The tickets for the movie were sold.
+    - The movie will not be shown.
+    text: 'W: The movie next Tuesday has been cancelled due to lack of interest.
+
+      M: What do you mean?
+
+      W: Well, by last night only a few tickets has been sold.
+
+      What can we conclude about the movie?'
+- - episode_done: false
+    eval_labels:
+    - Fuel refined from oil extracted from underground.
+    id: dream
+    label_candidates:
+    - Coal burnt daily for the comfort of our homes.
+    - Anything that can be used to produce power.
+    - Fuel refined from oil extracted from underground.
+    text: 'W: What does the term "alternative energy source" mean?
+
+      M: When we think of energy or fuel for our homes and cars, we think of petroleum,
+      a fossil fuel processed from oil removed from the ground, of which there is
+      a limited supply. But alternative fuels can be many things. Wind, sun and water
+      can all be used to create fuel.
+
+      W: Is the threat of running out of petroleum real?
+
+      M: It has taken thousands of years to create the natural stores of petroleum
+      we have available at a much faster rate than it is being produced over time.
+      The real controversy surrounding the amount of petroleum we have is how much
+      we need to keep in reserve for future use. Most experts agree that by around
+      2025, the amount of petroleum we use will reach a peak. Then production and
+      availability will begin to seriously decline. This is not to say there will
+      be no petroleum at this point. But it''ll become very difficult and therefore
+      expensive to extract.
+
+      W: Is that the most important reason to develop alternative fuel and energy
+      sources?
+
+      M: There are two very clear reasons to do so. One is that whether we have 60
+      or 600 years of fossil fuels left, we have to find other fuel sources eventually.
+      So the sooner we start, the better off we will be. The other big argument is
+      that when long time, which leads to some long-term negative effects, like global
+      warming and the greenhouse effect.
+
+      What do we usually refer to when we talk about energy according to the man?'
+- - episode_done: false
+    eval_labels:
+    - Oil production will begin to decline worldwide by 2025.
+    id: dream
+    label_candidates:
+    - Oil will soon be replaced by alternative energy sources.
+    - Oil production will begin to decline worldwide by 2025.
+    - Oil consumption has given rise to many global problems.
+    text: What do most experts agree on according to the man?
+- - episode_done: true
+    eval_labels:
+    - Start developing alternative fuels.
+    id: dream
+    label_candidates:
+    - Minimize the use of fossil fuels.
+    - Start developing alternative fuels.
+    - Find the real cause for global warming.
+    text: What does the man think we should do now?
+- - episode_done: false
+    eval_labels:
+    - hiking
+    id: dream
+    label_candidates:
+    - fishing
+    - mountain biking
+    - hiking
+    text: 'Paul: Sara, I''ve been looking forward to our yearly camp out for three
+      weeks. [Me too] It''s going to be a wonderful day for hiking tomorrow. The great
+      outdoors. Camping under the stars. This is the life.
+
+      Sara: Yeah, but Paul, I''m a little bit worried about the weather though. The
+      weatherman said it was going to rain later tonight.
+
+      Paul: Ah, nonsense. Nothing can spoil our adventure. Those weather reports are
+      never right.
+
+      Sara: And it said there was a chance of high winds.
+
+      Paul: Ah. Don''t worry.
+
+      Sara: [thunder] Paul. Paul. Did you remember to bring our raincoats just in
+      case, like I told you? [light rain]
+
+      Paul: Uh ... no. I left them on the front porch. [heavy rain]
+
+      Sara: What are we going to do now?
+
+      Paul: We''ll have to sleep in the car! Hurry get in! [door shut]
+
+      Sara: So, Paul, what are we going to do now?
+
+      Paul: How about playing a card game?
+
+      Sara: Uhh. I left them next to the picnic table. [Hmmm] Hey, you don''t want
+      me to go out in this rain and get them, do you?
+
+      Paul: No. That''s okay. So what now?
+
+      Sara: Well, we could head down the mountain and stay at that hotel we passed
+      on the way up, or go home.
+
+      Paul: Hmm, why don''t we just make the best of it here and hope the weather
+      clears.
+
+      Sara: That''s a good idea.
+
+      What are they planning on doing in the morning?'
+num_episodes: 1287
+num_examples: 2041

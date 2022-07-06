@@ -1,0 +1,132 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - nice thanks! .
+    id: ubuntu
+    label_candidates:
+    - my humble apologies .
+    - '!nomodeset > acer . I''m assuming it is a driver issue. . !pm > acer . i DON''T
+      pm. ;) . OOPS SORRY FOR THE CAPS .'
+    - ok .
+    - '#ubuntu-offtopic .'
+    - thx . unfortunately the program isn't installed from the repositories .
+    - how can I check? By doing a recovery for testing? .
+    - nice thanks! .
+    - http://www.ubuntu.com/project/about-ubuntu/derivatives  (some call them derivatives,
+      others call them flavors, same difference) .
+    - wrong channel for it, but check efnet.org, unofficial page. .
+    - every time the kernel changes, you will lose video . yep .
+    text: "anyone knows why my stock oneiric exports env var 'USERNAME'?  I mean what\
+      \ is that used for?  I know of $USER but not $USERNAME .  My precise install\
+      \ doesn't export USERNAME . \n looks like it used to be exported by lightdm,\
+      \ but the line had the comment \"// FIXME: Is this required?\" so I guess it\
+      \ isn't surprising it is gone . \n thanks!  How the heck did you figure that\
+      \ out? . \n https://bugs.launchpad.net/lightdm/+bug/864109/comments/3 ."
+- - episode_done: true
+    eval_labels:
+    - so you dont know, ok, anyone else? . you are like, yah my mouse doesnt work,
+      reinstall your os lolol what a joke .
+    id: ubuntu
+    label_candidates:
+    - ah yes, i have read return as rerun .
+    - not the case, LTS is every other .04 release. The .04 isn't always more stable
+      . I would reinstall with Precise . you can restore user data and such from backup
+      .
+    - cdrom worked fine on windows. . i dont think it has anything to do with the
+      buring process, cds work fine on my desktop and my other ubuntu lap .
+    - hm? .
+    - ok .
+    - ffmpeg is part of the package , quixotedon , at least I'm quite sure it still
+      is . if not just install ffmpeg .
+    - I used the one I downloaded from AMD .
+    - 'nmap is nice, but it wasn''t what I was looking for.  I finally found it again:
+      mtr (my traceroute) is what I was looking for.  I''ll be keeping nmap handy
+      though. .'
+    - Pretty much .
+    - so you dont know, ok, anyone else? . you are like, yah my mouse doesnt work,
+      reinstall your os lolol what a joke .
+    text: "i set up my hd such that i have to type a passphrase to access it at boot.\
+      \ how can i remove that passwrd, and just boot up normal. i did this at install,\
+      \ it works fine, just tired of having reboots where i need to be at terminal\
+      \ to type passwd in. help? . \n backup your data, and re-install without encryption\
+      \ \"might\" be the easiest method ."
+- - episode_done: true
+    eval_labels:
+    - just wondering how it runs .
+    id: ubuntu
+    label_candidates:
+    - if you're only going to run Ubuntu, just get a normal PC rather than a mac .
+      that said, I'm running it on a macbook, because I got one relatively cheaply
+      .
+    - why do u need analyzer . it is a toy . ok msp301 . but y, i mean it is the same
+      ubunut, only with older programs . ubuntu 804 or 1204 . no i dont use 804 .
+      i am asking hypo qs .
+    - yes, that's what I did, exported it to a "id_dsa" file, then back to Ubuntu
+      copied it into ~/.ssh/ .
+    - that should fix the fonts being too large .
+    - I get to the menu with options such as 'try ubuntu', 'install ubuntu', 'check
+      disc' .
+    - just wondering how it runs .
+    - nothing - i am talking about the question of myhero .
+    - Cntrl-C may stop the command but it doesn't fix my HDD problem. .
+    - okay, so hcitool echos back hci0 <mac address of controller> but the bluetooth
+      devices panel keeps disconnecting and reconnecting the device (or so it seems)
+      any idea why that would be? .
+    - the ones which are not picked up at the moment are on STDERR and not STDOUT
+      and > is only covering STDOUT .
+    text: "im trying to use ubuntu on my macbook pro retina . i read in the forums\
+      \ that ubuntu has a apple version now? . \n  not that ive ever heard of..  normal\
+      \ ubutnu should work on an intel based mac. there is the PPC version also. .\
+      \  you want total control? or what are you wanting exactly? ."
+- - episode_done: true
+    eval_labels:
+    - you cant load anything via usb or cd when luks is running . it wont allow usb
+      boot, i tried with 2 diff usb drives .
+    id: ubuntu
+    label_candidates:
+    - that works just fine, thanks! .
+    - thank you .
+    - rxvt-unicode is one .
+    - '-p  sorry... .  nmap -p22 . It doesn''t say:  22/tcp open  ssh  ? .'
+    - noted .
+    - you cant load anything via usb or cd when luks is running . it wont allow usb
+      boot, i tried with 2 diff usb drives .
+    - i guess so i can't even launch it. .
+    - I tarred all of ~ .
+    - I tarred all of ~ .
+    - I don't really know if I can help, but I was curious. lol . That's cool. I'll
+      look into it. Now, we better stop talking about this since it's offtopic. :P
+      .
+    text: "no suggestions? . links? . how can i remove luks passphrase at boot. i\
+      \ dont want to use feature anymore... . \n you may need to create a new volume\
+      \ . \n that leads me to the next question lol... i dont know how to create new\
+      \ volumes exactly in cmdline, usually i use a gui. im just trying to access\
+      \ this server via usb loaded with next os im going to load, the luks pw is stopping\
+      \ me . \n for something like that I would likely use something like a live gparted\
+      \ disk to avoid the conflict of editing from the disk ."
+- - episode_done: true
+    eval_labels:
+    - i was setting it up under the printer configuration . thanks! .
+    id: ubuntu
+    label_candidates:
+    - i was setting it up under the printer configuration . thanks! .
+    - you should read error messages, it says 'are you root?' .
+    - waiting the college semester to close just to make sure I will not need to reconfigure
+      my environment again .
+    - by the way, the url you posted for davfs is from dapper... that's 5.xx iirc
+      .
+    - i'd say the most commonly venue would be via Launchpad. check out the factoid
+      !bug as well .
+    - i'll give a try .
+    - http://ubuntuforums.org/showthread.php?t=1549847 .
+    - I was calling myself a jerk. All I know is that you downloaded a game successfully.
+      .
+    - So I load up putty gui, then what do I do? .
+    - the old hardy man page, http://manpages.ubuntu.com/manpages/hardy/man1/gcalctool.1.html
+      says "delete" clears the screen, but it doesn't . because LTS are good .
+    text: "I just added a second usb printer but not sure what the uri should read\
+      \ - can anyone help with usb printers? . \n firefox localhost:631 . \n firefox?\
+      \ . \n yes . firefox localhost:631 . firefox http://localhost:631 . cups has\
+      \ a web based interface ."
+num_episodes: 18920
+num_examples: 18920

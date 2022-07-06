@@ -3,6 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from .bert_dictionary import BertDictionaryAgent
 from .bi_encoder_ranker import BiEncoderRankerAgent
 from .cross_encoder_ranker import CrossEncoderRankerAgent
@@ -12,14 +15,18 @@ from parlai.core.torch_agent import TorchAgent, Output, Batch
 
 
 class BothEncoderRankerAgent(TorchAgent):
-    """ A Bi Encoder followed by a Cross Encoder.
-        Although it's trainable by itself, I'd recommend training the crossencoder
-        and the biencoder separately which can be done in parallel or sequentially
-        and thus requiring less memory on the GPU.
+    """
+    A Bi Encoder followed by a Cross Encoder.
+
+    Although it's trainable by itself, I'd recommend training the crossencoder and the
+    biencoder separately which can be done in parallel or sequentially and thus
+    requiring less memory on the GPU.
     """
 
-    @staticmethod
-    def add_cmdline_args(parser):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
         add_common_args(parser)
         parser = parser.add_argument_group('Bert Ranker Arguments')
         parser.add_argument(
@@ -46,7 +53,10 @@ class BothEncoderRankerAgent(TorchAgent):
             default=-1,
             help='crossencoder will be fed those many elements at train or eval time.',
         )
-        parser.set_defaults(encode_candidate_vecs=True)
+        parser.set_defaults(
+            encode_candidate_vecs=True, dict_maxexs=0  # skip building dictionary
+        )
+        return parser
 
     def __init__(self, opt, shared=None):
         opt['lr_scheduler'] = 'none'
@@ -96,7 +106,8 @@ class BothEncoderRankerAgent(TorchAgent):
         return Output(text=[text for out in outc for text in out.text])
 
     def eval_step(self, batch):
-        """ We pass the batch first in the biencoder, then filter with crossencoder
+        """
+        We pass the batch first in the biencoder, then filter with crossencoder.
         """
         output_biencoder = self.biencoder.eval_step(batch)
         if output_biencoder is None:

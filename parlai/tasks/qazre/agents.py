@@ -7,6 +7,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 
@@ -45,7 +46,7 @@ class QAZRETeacher(DialogTeacher):
         # parse and output the episodes
         for fname in os.listdir(input_path):
             if fname.startswith(self.dt):
-                with open(os.path.join(input_path, fname)) as file:
+                with PathManager.open(os.path.join(input_path, fname)) as file:
                     file_data = file.read().split('\n')[:-1]
                 for line in file_data:
                     question, answer = extract_qa(line)

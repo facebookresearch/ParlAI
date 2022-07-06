@@ -1,0 +1,151 @@
+acts:
+- - episode_done: false
+    id: msc:Session1Self
+    label_candidates:
+    - My mom was single with 3 boys, so we never left the projects.
+    - I try to wear all black every day. It makes me feel comfortable.
+    - Well nursing stresses you out so I wish luck with sister
+    - Yeah just want to pick up nba nfl getting old
+    - I really like celine dion. What about you?
+    - No. I live near farms.
+    - I wish I had a daughter, I'm a boy mom. They're beautiful boys though still
+      lucky
+    - Yeah when I get bored I play gone with the wind my favorite movie.
+    - Hi how are you? I'm eating dinner with my hubby and 2 kids.
+    - Were you married to your high school sweetheart? I was.
+    - That is great to hear! Are you a competitive rider?
+    - Hi, I'm doing ok. I'm a banker. How about you?
+    - I'm 5 years old
+    - Hi there. How are you today?
+    - I totally understand how stressful that can be.
+    - Yeah sometimes you do not know what you are actually watching
+    - Mother taught me to cook! We are looking for an exterminator.
+    - I enjoy romantic movie. What is your favorite season? Mine is summer.
+    - Editing photos takes a lot of work.
+    - You must be very fast. Hunting is one of my favorite hobbies.
+    labels:
+    - You must be very fast. Hunting is one of my favorite hobbies.
+    reward: 0
+    text: 'your persona: I like to remodel homes.
+
+      your persona: I like to go hunting.
+
+      your persona: I like to shoot a bow.
+
+      your persona: My favorite holiday is halloween.
+
+      Hi, how are you doing? I''m getting ready to do some cheetah chasing to stay
+      in shape.'
+- - episode_done: false
+    id: msc:Session1Self
+    label_candidates:
+    - Hello I am doing well how are you?
+    - Ll something like that. Do you play games?
+    - Does anything give you relief? I hate taking medicine for mine.
+    - I decorate cakes at a local bakery! And you?
+    - Do you eat lots of meat
+    - I am so weird that I like to collect people and cats
+    - How are your typing skills?
+    - Yeah. I am headed to the gym in a bit to weight lift.
+    - Yeah you have plenty of time
+    - Metal is my favorite, but I can accept that people listen to country. Haha
+    - That's why you desire to be controlled. Let me control you person one.
+    - Two dogs they are the best, how about you?
+    - You do art? What kind of art do you do?
+    - I love watching baseball outdoors on sunny days.
+    - Oh I see. Do you ever think about moving? I do, it is what I want.
+    - Sure. I wish it were winter. The sun really hurts my blue eyes.
+    - Are we pretending to play tennis
+    - I am rich and have all of my dreams fulfilled already
+    - They tire me so, I probably sleep about 10 hrs a day because of them.
+    - I also remodel homes when I am not out bow hunting.
+    labels:
+    - I also remodel homes when I am not out bow hunting.
+    reward: 0
+    text: I am! For my hobby I like to do canning or some whittling.
+- - episode_done: false
+    id: msc:Session1Self
+    label_candidates:
+    - Yes they do but I say no to them lol
+    - I have trouble getting along with family.
+    - I live in texas, what kind of stuff do you do in toronto?
+    - That's so unique! Veganism and line dancing usually don't mix!
+    - No, it isn't that big. Do you travel a lot
+    - That's because they are real ; what do you do for work?
+    - I am lazy all day lol. My mom wants me to get a job and move out
+    - I was born on arbor day, so plant a tree in my name
+    - Okay, I should not tell you, its against the rules but my name is sarah, call
+      me o
+    - Hello how are u tonight
+    - Cool... My parents love country music that's why I hate it
+    - I am an accountant. What do you do?
+    - What do your parents do? My dad is a mechanic.
+    - How are you liking it?
+    - I really am too. Great talking to you too.
+    - Cool. Whats it like working there?
+    - One daughter. She's pre med
+    - No and all men is taller than me why can't I find a man to dance with
+    - I live in utah, and my family live in england, so I understand
+    - That's awesome. Do you have a favorite season or time of year?
+    labels:
+    - That's awesome. Do you have a favorite season or time of year?
+    reward: 0
+    text: That's neat. When I was in high school I placed 6th in 100m dash!
+- - episode_done: false
+    id: msc:Session1Self
+    label_candidates:
+    - Not really, it is just a small local radio station. What about you, what do
+      you do?
+    - Me too! People always say I am so organized
+    - Niagra fall is where our honeymoon will be
+    - Yes! I know how to be by myself. You? I do not need new friends. You?
+    - Ll. My dad is a police officer and they have a sports team too
+    - Oh you should get your license
+    - Okay you have a good day nice talking with you!
+    - I play some ball for a living.
+    - Me too! My asthma is really embarrassing and makes me uncomfortable around others.
+    - Netflix and good food is the best. Maybe lobster, my favorite seafood. Where
+      ya from?
+    - Oh nice. Why is that?
+    - Sounds fun! I helped my wife with health issues, too.
+    - I am a night owl. I think I'll play the piano a little before bed.
+    - Just the real ones, not a big game person
+    - I could be the next mrs. Adam levine. Please, I'll buy you 10 mangoes.
+    - Do you like dogs I've usually to talk
+    - What did she teach? My mom stayed home with my and my 3 older siblings
+    - Neither do I, I am just a photographer, and that is already a ot of energy
+    - No, I say I am average at 5 4. Are you vertically challenged?
+    - What is your favorite meat to eat?
+    labels:
+    - What is your favorite meat to eat?
+    reward: 0
+    text: I do not. But I do have a favorite meat since that is all I eat exclusively.
+- - episode_done: false
+    id: msc:Session1Self
+    label_candidates:
+    - I am listening to system of a down, I wonder if your cat would like them
+    - I absolutely agree, women are just as strong and capable.
+    - In denmark with my grandma. What about you?
+    - I live in backcountry michigan. I encounter many sick, injured wildlife daily!
+    - I am great and you
+    - I am a big foodie, I love to bake. How about you?
+    - Dance!! I win alot of mone and trifies.. What do u do four fun?
+    - Do you do any sports? Swimming helps me keep my energy up.
+    - They are excellent for the environment.
+    - I am going to catch some fish and think this over. Thanks dog!
+    - I am doing well! How about you?
+    - I like old cars better new cars are to expensive
+    - I've met bill once. He seems like a nice guy.
+    - Oh that is amazing. I've been trying to find someone who can help him
+    - I am in my early 30s, what you do for living
+    - So, you are in college? I took foreign language in college.
+    - I just turned 30 the other day
+    - What a coincidence I live up in anchorage
+    - That would be interesting. I am going to be a forensic psychologist.
+    - I like chicken or macaroni and cheese.
+    labels:
+    - I like chicken or macaroni and cheese.
+    reward: 0
+    text: I would have to say its prime rib. Do you have any favorite foods?
+num_episodes: 35880
+num_examples: 236987

@@ -1,0 +1,45 @@
+acts:
+- - agent_id: 0
+    episode_done: false
+    id: decode
+    labels:
+    - none
+    text: I keep hearing noises out my window and I'm home alone. It's very concerning.
+    turn_context: ''
+    turn_id: 0
+- - agent_id: 1
+    episode_done: false
+    id: decode
+    labels:
+    - none
+    text: Should you call the police or something?  I hate being home alone for this
+      exact reason.
+    turn_context: ''
+    turn_id: 1
+- - agent_id: 0
+    episode_done: false
+    id: decode
+    labels:
+    - none
+    text: I believe in the right to bare arms. So I need to go see whats happening.
+    turn_context: ''
+    turn_id: 2
+- - agent_id: 1
+    episode_done: false
+    id: decode
+    labels:
+    - none
+    text: Just be careful and turn lights on so you don't shoot someone you know or
+      an animal.
+    turn_context: ''
+    turn_id: 3
+- - agent_id: 0
+    episode_done: false
+    id: decode
+    labels:
+    - none
+    text: Always. I'd want to more scare an intruder then actually having to use it.
+    turn_context: ''
+    turn_id: 4
+num_episodes: 27184
+num_examples: 228503

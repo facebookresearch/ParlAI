@@ -1,0 +1,57 @@
+acts:
+- - context_dataset: empathetic_dialogues
+    episode_done: false
+    free_turker_message: I like acting, I hope to be an actor, what about you?
+    guided_turker_chosen_suggestion: ' '
+    id: style_gen:labeled_blended_skill_talk
+    labels:
+    - that is ok.  have any kids?
+    personality: Maternal (Mother-like)
+    text: 'your persona: i''ve 2 kids.
+
+      your persona: i love flowers.
+
+      I love live music, that''s why I try to go to concerts
+
+      I do too. Wat do you like?
+
+      I like acting, I hope to be an actor, what about you?'
+- - context_dataset: empathetic_dialogues
+    episode_done: false
+    free_turker_message: No, but someday.
+    guided_turker_chosen_suggestion: ' '
+    id: style_gen:labeled_blended_skill_talk
+    labels:
+    - that is good. I have 2
+    personality: Humble
+    text: No, but someday.
+- - context_dataset: empathetic_dialogues
+    episode_done: false
+    free_turker_message: After I am done with school I plan to have a family.
+    guided_turker_chosen_suggestion: ' '
+    id: style_gen:labeled_blended_skill_talk
+    labels:
+    - that is great! you will be ready
+    personality: Happy
+    text: After I am done with school I plan to have a family.
+- - context_dataset: empathetic_dialogues
+    episode_done: false
+    free_turker_message: I hope so, how old are your kids?
+    guided_turker_chosen_suggestion: ' '
+    id: style_gen:labeled_blended_skill_talk
+    labels:
+    - 5 & 7.  they take up a lot of my time
+    personality: Lazy
+    text: I hope so, how old are your kids?
+- - context_dataset: empathetic_dialogues
+    episode_done: false
+    free_turker_message: I would imagine. I am sure they a great kids.
+    guided_turker_chosen_suggestion: ' '
+    id: style_gen:labeled_blended_skill_talk
+    labels:
+    - luckily, they love flowers just as much as I do.  we spend a lot of time in
+      the garden
+    personality: Humble
+    text: I would imagine. I am sure they a great kids.
+num_episodes: 4819
+num_examples: 27018

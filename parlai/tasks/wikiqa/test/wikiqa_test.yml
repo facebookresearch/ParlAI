@@ -1,0 +1,153 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - As such, African immigrants are to be distinguished from African American people,
+      the latter of whom are descendants of mostly West and Central Africans who were
+      involuntarily brought to the United States by means of the historic Atlantic
+      slave trade .
+    id: wikiqa
+    label_candidates:
+    - The term African in the scope of this article refers to geographical or national
+      origins rather than racial affiliation.
+    - From the Immigration and Nationality Act of 1965 to 2007, an estimated total
+      of 0.8 to 0.9 million Africans immigrated to the United States, accounting for
+      roughly 3.3% of total immigration to the United States during this period.
+    - African immigrants in the United States come from almost all regions in Africa
+      and do not constitute a homogeneous group.
+    - They include people from different national, linguistic, ethnic, racial, cultural
+      and social backgrounds.
+    - As such, African immigrants are to be distinguished from African American people,
+      the latter of whom are descendants of mostly West and Central Africans who were
+      involuntarily brought to the United States by means of the historic Atlantic
+      slave trade .
+    reward: 0
+    text: HOW AFRICAN AMERICANS WERE IMMIGRATED TO THE US
+- - episode_done: true
+    eval_labels:
+    - Pumps operate by some mechanism (typically reciprocating or rotary ), and consume
+      energy to perform mechanical work by moving the fluid.
+    id: wikiqa
+    label_candidates:
+    - A small, electrically powered pump
+    - A large, electrically driven pump (electropump) for waterworks near the Hengsteysee
+      , Germany .
+    - A pump is a device that moves fluids ( liquids or gases ), or sometimes slurries
+      , by mechanical action.
+    - 'Pumps can be classified into three major groups according to the method they
+      use to move the fluid: direct lift, displacement, and gravity pumps.'
+    - Pumps operate by some mechanism (typically reciprocating or rotary ), and consume
+      energy to perform mechanical work by moving the fluid.
+    - Pumps operate via many energy sources, including manual operation, electricity,
+      engines , or wind power .
+    reward: 0
+    text: how a water pump works
+- - episode_done: true
+    eval_labels:
+    - The actress who played Lolita, Sue Lyon , was fourteen at the time of filming.
+    id: wikiqa
+    label_candidates:
+    - Lolita is a 1962 comedy-drama film by Stanley Kubrick based on the classic novel
+      of the same title by Vladimir Nabokov , centres around a middle-aged man who
+      becomes obsessed with a teenage girl.
+    - The film stars James Mason as Humbert Humbert, Sue Lyon as Dolores Haze (Lolita)
+      and Shelley Winters as Charlotte Haze with Peter Sellers as Clare Quilty.
+    - Due to the MPAA 's restrictions at the time , the film toned down the more provocative
+      aspects of the novel, sometimes leaving much to the audience's imagination.
+    - The actress who played Lolita, Sue Lyon , was fourteen at the time of filming.
+    - Kubrick later commented that, had he realized how severe the censorship limitations
+      were going to be, he probably never would have made the film.
+    reward: 0
+    text: how old was sue lyon when she made lolita
+- - episode_done: true
+    eval_labels:
+    - An antibody (Ab), also known as an immunoglobulin (Ig), is a large Y-shaped
+      protein produced by B-cells that is used by the immune system to identify and
+      neutralize foreign objects such as bacteria and viruses .
+    - The antibody recognizes a unique part of the foreign target, called an antigen
+      .
+    - Each tip of the "Y" of an antibody contains a paratope (a structure analogous
+      to a lock) that is specific for one particular epitope (similarly analogous
+      to a key) on an antigen, allowing these two structures to bind together with
+      precision.
+    - Using this binding mechanism, an antibody can tag a microbe or an infected cell
+      for attack by other parts of the immune system, or can neutralize its target
+      directly (for example, by blocking a part of a microbe that is essential for
+      its invasion and survival).
+    id: wikiqa
+    label_candidates:
+    - Each antibody binds to a specific antigen ; an interaction similar to a lock
+      and key.
+    - An antibody (Ab), also known as an immunoglobulin (Ig), is a large Y-shaped
+      protein produced by B-cells that is used by the immune system to identify and
+      neutralize foreign objects such as bacteria and viruses .
+    - The antibody recognizes a unique part of the foreign target, called an antigen
+      .
+    - Each tip of the "Y" of an antibody contains a paratope (a structure analogous
+      to a lock) that is specific for one particular epitope (similarly analogous
+      to a key) on an antigen, allowing these two structures to bind together with
+      precision.
+    - Using this binding mechanism, an antibody can tag a microbe or an infected cell
+      for attack by other parts of the immune system, or can neutralize its target
+      directly (for example, by blocking a part of a microbe that is essential for
+      its invasion and survival).
+    - The production of antibodies is the main function of the humoral immune system
+      .
+    - Antibodies are secreted by a type of white blood cell called a plasma cell .
+    - Antibodies can occur in two physical forms, a soluble form that is secreted
+      from the cell, and a membrane -bound form that is attached to the surface of
+      a B cell and is referred to as the B cell receptor (BCR).
+    - The BCR is only found on the surface of B cells and facilitates the activation
+      of these cells and their subsequent differentiation into either antibody factories
+      called plasma cells , or memory B cells that will survive in the body and remember
+      that same antigen so the B cells can respond faster upon future exposure.
+    - In most cases, interaction of the B cell with a T helper cell is necessary to
+      produce full activation of the B cell and, therefore, antibody generation following
+      antigen binding.
+    - Antibodies are typically made of basic structural units—each with two large
+      heavy chains and two small light chains .
+    - There are several different types of antibody heavy chains, and several different
+      kinds of antibodies, which are grouped into different isotypes based on which
+      heavy chain they possess.
+    - Five different antibody isotypes are known in mammals, which perform different
+      roles, and help direct the appropriate immune response for each different type
+      of foreign object they encounter.
+    - Though the general structure of all antibodies is very similar, a small region
+      at the tip of the protein is extremely variable, allowing millions of antibodies
+      with slightly different tip structures, or antigen binding sites, to exist.
+    - This region is known as the hypervariable region.
+    - Each of these variants can bind to a different antigen.
+    - This enormous diversity of antibodies allows the immune system to recognize
+      an equally wide variety of antigens.
+    - The large and diverse population of antibodies is generated by random combinations
+      of a set of gene segments that encode different antigen binding sites (or paratopes),
+      followed by random mutations in this area of the antibody gene, which create
+      further diversity.
+    - Antibody genes also re-organize in a process called class switching that changes
+      the base of the heavy chain to another, creating a different isotype of the
+      antibody that retains the antigen specific variable region.
+    - This allows a single antibody to be used by several different parts of the immune
+      system.
+    reward: 0
+    text: how are antibodies used in
+- - episode_done: true
+    eval_labels:
+    - The peso is subdivided into 100 centavos, represented by " ¢ ".
+    id: wikiqa
+    label_candidates:
+    - 'The peso ( sign : $; code : MXN) is the currency of Mexico .'
+    - Modern peso and dollar currencies have a common origin in the 15th–19th century
+      Spanish dollar , most continuing to use its sign, "$" .
+    - The Mexican peso is the 13th most traded currency in the world, the third most
+      traded in the Americas , and the most traded currency in Latin America .
+    - The current ISO 4217 code for the peso is MXN; prior to the 1993 revaluation
+      (see below), the code MXP was used.
+    - The peso is subdivided into 100 centavos, represented by " ¢ ".
+    - The name was originally used in reference to pesos oro (gold weights) or pesos
+      plata (silver weights).
+    - The literal English translation of the Spanish word peso is weight.
+    - As of January 4, 2013, the peso's exchange rate was $16.5914 per euro and $12.7597
+      per U.S. dollar URL_http
+    reward: 0
+    text: HOW MUCH IS CENTAVOS IN MEXICO
+num_episodes: 243
+num_examples: 243

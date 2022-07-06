@@ -6,7 +6,7 @@
 
 import os
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher
 from parlai.tasks.dialog_babi_plus.build import build
 
 tasks = {}
@@ -36,7 +36,7 @@ def _path(task, opt):
 
 
 # The knowledge base of facts that can be used to answer questions.
-class KBTeacher(FbDialogTeacher):
+class KBTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         build(opt)
         opt['datafile'] = os.path.join(
@@ -49,7 +49,7 @@ class KBTeacher(FbDialogTeacher):
 
 
 # Single task.
-class DefaultTeacher(FbDialogTeacher):
+class DefaultTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         default_task_id = 1
         paths = _path(default_task_id, opt)

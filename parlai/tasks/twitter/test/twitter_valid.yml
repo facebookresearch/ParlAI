@@ -1,0 +1,32 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - white ford boys @face_with_steam_from_nose@ @face_with_steam_from_nose@ @face_with_tears_of_joy@
+    id: twitter
+    text: if you see any clowns tn lmk . me and the boys cleaning the streets @face_with_steam_from_nose@
+      @face_with_steam_from_nose@
+- - episode_done: true
+    eval_labels:
+    - really ? i heard he was done . that was early report though .
+    id: twitter
+    text: i heard he could play this week
+- - episode_done: true
+    eval_labels:
+    - yes . i'll be a reference for you . @camera@ @magnifying_glass_tilted_right@
+    id: twitter
+    text: logged onto linkedin &amp ; found this in my inbox . should i apply ? photographer
+      @ federal bureau of investigation ( fbi )
+- - episode_done: true
+    eval_labels:
+    - you're shocked to discover people in the same family get into the same kind
+      of work ?
+    id: twitter
+    text: his wife scotta callister runs the blue mountain eagle or whatever it is
+      . kid works for another paper . idsayso
+- - episode_done: true
+    eval_labels:
+    - thanks lenny @smiling_face@
+    id: twitter
+    text: car show ? awesome ! have a great day !
+num_episodes: 10405
+num_examples: 10405

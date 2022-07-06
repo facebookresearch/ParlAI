@@ -1,0 +1,45 @@
+acts:
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - There is one . 5 blocks away from here ?
+    id: dailydialog:no_start
+    text: Good morning , sir . Is there a bank near here ?
+    topic: tourism
+- - act_type: directive
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - Surely , of course . What kind of currency have you got ?
+    id: dailydialog:no_start
+    text: Well , that's too far . Can you change some money for me ?
+    topic: tourism
+- - act_type: inform
+    emotion: no_emotion
+    episode_done: true
+    eval_labels:
+    - How much would you like to change ?
+    id: dailydialog:no_start
+    text: RIB .
+    topic: tourism
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - This is Mr Meng speaking , Michelle .
+    id: dailydialog:no_start
+    text: Good afternoon . This is Michelle Li speaking , calling on behalf of IBA
+      . Is Mr Meng available at all ?
+    topic: finance
+- - act_type: inform
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - That was quick ! I wasn't expecting it until later this week .
+    id: dailydialog:no_start
+    text: Oh , hello ! Sorry about that . I'm just calling to say that we've received
+      your new Corporate Credit Card from HQ .
+    topic: finance
+num_episodes: 1960
+num_examples: 7069

@@ -7,7 +7,6 @@ This directory contains a variety of different agents which use ParlAI's interfa
 - **local_human**: receives human input from the terminal. used for interactive mode, e.g. `parlai/scripts/interactive.py`.
 - **legacy_agents**: contains deprecated agent code for posterity
 - **random_candidate**: returns a random candidate, if candidates are available. simple baseline agent.
-- **remote_agent**: uses ZMQ to communicate with a different process, either on the local machine or on a remote host.
 - **repeat_label**: sends back the label if available. good for sanity checks such as checking statistics of the base dataset.
 - **repeat_query**: repeats whatever is said to it. simple baseline agent.
 
@@ -22,7 +21,6 @@ This directory contains a variety of different agents which use ParlAI's interfa
 
 - **bert_ranker**: BERT-based bi-ranker and cross-ranker retrieval models
 - **drqa**: context-based question answering system
-- **fairseq**: provides access to models from FAIR's FairSeq library (github.com/facebookresearch/fairseq)
 - **language_model**: simple RNN-based language model
 - **memnn**: memory network
 - **ibm_seq2seq**: IBM's RNN-based sequence to sequence model

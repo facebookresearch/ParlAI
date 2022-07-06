@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
@@ -7,13 +7,17 @@
 """
 Agents for handling the generation aspects of Wizard.
 """
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from itertools import chain
 from functools import lru_cache
 
 import torch as th
 import numpy as np
 
-from parlai.utils.misc import padded_tensor, round_sigfigs
+from parlai.utils.torch import padded_tensor
+from parlai.utils.misc import round_sigfigs
 
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 
@@ -36,15 +40,19 @@ DEFAULT_OPTS = {
     "n_layers": 5,
     "betas": "0.9,0.98",
     "truncate": 128,
+    "add_token_knowledge": True,
     "dict_textfields": "text,labels,chosen_topic,checked_sentence,knowledge,title",
 }
 
 
 class _GenericWizardAgent(TransformerGeneratorAgent):
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        argparser.set_defaults(**DEFAULT_OPTS)
-        super(_GenericWizardAgent, cls).add_cmdline_args(argparser)
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser.set_defaults(**DEFAULT_OPTS)
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
 
     def batchify(self, obs_batch):
         batch = super().batchify(obs_batch)
@@ -97,7 +105,7 @@ class TwoStageAgent(_GenericWizardAgent):
 class EndToEndAgent(_GenericWizardAgent):
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
-        self._vectorize_text = lru_cache(int(2 ** 20))(self._vectorize_text)
+        self._vectorize_text = lru_cache(int(2**20))(self._vectorize_text)
 
         # knowledge truncate defaults to the same as --truncate
         self.knowledge_truncate = opt.get('knowledge_truncate')
@@ -105,16 +113,6 @@ class EndToEndAgent(_GenericWizardAgent):
             self.knowledge_truncate = opt['truncate']
         self.max_knowledge = opt.get('max_knowledge')
         self.knowledge_alpha = opt['knowledge_alpha']
-
-    def _dummy_batch(self, bsz, maxlen):
-        batch = super()._dummy_batch(bsz, maxlen)
-        batch['know_vec'] = th.zeros(bsz, 2, 2).long().cuda()
-        # bool/uint8 backwards for pytorch 1.0/1.2 compatibility
-        ck_mask = (th.ones(bsz, 2, dtype=th.uint8) != 0).cuda()
-        batch['ck_mask'] = ck_mask
-        batch['cs_ids'] = th.zeros(bsz).long().cuda()
-        batch['use_cs_ids'] = True
-        return batch
 
     def compute_loss(self, batch, return_output=False):
         # first compute our regular forced decoding loss
@@ -172,7 +170,9 @@ class EndToEndAgent(_GenericWizardAgent):
 
         if 'checked_sentence' not in obs:
             # interactive time. we're totally on our own
-            obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+            obs_know = [
+                k.strip() for k in obs.get('knowledge', 'no_passages_used').split('\n')
+            ]
             obs_know = [k for k in obs_know if k]
             obs['knowledge_parsed'] = obs_know
             return obs['knowledge_parsed']
@@ -181,7 +181,9 @@ class EndToEndAgent(_GenericWizardAgent):
             obs['title'], TOKEN_KNOWLEDGE, obs['checked_sentence']
         )
         # grab all the nonempty knowledge
-        obs_know = [k.strip() for k in obs.get('knowledge', '').split('\n')]
+        obs_know = [
+            k.strip() for k in obs.get('knowledge', 'no_passages_used').split('\n')
+        ]
         obs_know = [k for k in obs_know if k]
 
         # we want the correct knowledge to always be in index 0
@@ -253,7 +255,7 @@ class EndToEndAgent(_GenericWizardAgent):
             for k in flattened_knowledge
         ]
         knowledge_vec, _ = padded_tensor(
-            knowledge_vec, self.NULL_IDX, self.use_cuda, left_padded=True
+            knowledge_vec, pad_idx=self.NULL_IDX, left_padded=True
         )
         knowledge_vec[:, -1] = self.END_IDX
         T = knowledge_vec.size(-1)
@@ -282,9 +284,11 @@ class EndToEndAgent(_GenericWizardAgent):
         return batch
 
     @classmethod
-    def add_cmdline_args(cls, argparser):
-        super(EndToEndAgent, cls).add_cmdline_args(argparser)
-        group = argparser.add_argument_group("EndToEnd Agent")
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        group = parser.add_argument_group("EndToEnd Agent")
         group.add_argument(
             '--knowledge-alpha',
             type=float,
@@ -302,12 +306,13 @@ class EndToEndAgent(_GenericWizardAgent):
             type=int,
             help='Reduce the amount of negative knowledge at train time.',
         )
-        argparser.add_argument(
+        parser.add_argument(
             '--knowledge-alpha',
             type=float,
             default=0.95,
             help='Weight on the knowledge-attn loss',
         )
+        return parser
 
     def _model_input(self, batch):
         return (

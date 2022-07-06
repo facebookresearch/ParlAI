@@ -1,0 +1,80 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - contradiction
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Linguistics is the scientific study of language, and involves
+      an analysis of language form, language meaning, and language in context. The
+      earliest activities in the documentation and description of language have been
+      attributed to the 4th century BCE Indian grammarian Pāṇini, who wrote a formal
+      description of the Sanskrit language in his "Aṣṭādhyāyī ".
+
+      Hypothesis: Form and meaning are the only aspects of language linguistics is
+      concerned with.'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Clear Hearts Grey Flowers is the second full-length and final
+      album by Jack Off Jill. Produced by Chris Vrenna of Nine Inch Nails/Tweaker,
+      it was released in July 2000 on the now-defunct label Risk Records. After "Clear
+      Hearts, Grey Flowers" the band formally split up and moved on to establish other
+      projects.
+
+      Hypothesis: Risk Records released Jack Off Jill''s initial album.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: ANLI:R3
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: one of the orders issued by Ochola in April Login to license this
+      image from 1$. In short At Kira Road police station, the photocopier business
+      has moved behind the station, far away from the prying eyes of those passing
+      on the road to Bukoto while at Old Kampala Police station, clients are now buying
+      the forms across the road.
+
+      Hypothesis: The decision to move the photocopier business was done for privacy
+      reasons.'
+- - episode_done: true
+    eval_labels:
+    - entailment
+    id: ANLI:R1
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Franco Zeffirelli, KBE Grande Ufficiale OMRI (] ; born 12 February
+      1923) is an Italian director and producer of operas, films and television. He
+      is also a former senator (1994–2001) for the Italian centre-right "Forza Italia"
+      party. Recently, Italian researchers have found that he is one of the few distant
+      relatives of Leonardo da Vinci.
+
+      Hypothesis: Franco Zeffirelli had a political career'
+- - episode_done: true
+    eval_labels:
+    - neutral
+    id: ANLI:R2
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    text: 'Premise: Joseph Byron Stannard (February 6, 1872 – February 22, 1952) was
+      an American football coach. He served as the seventh head football coach for
+      the Colgate University and he held that position for the 1899 season. His record
+      at Colgate was 4–5. Before coaching, Stannard played football first at Colgate
+      under Spencer Ford and then at Pennsylvania under George Washington Woodruff.
+
+      Hypothesis: Joseph Byron Stannard was soldier in World War I. '
+num_episodes: 3200
+num_examples: 3200

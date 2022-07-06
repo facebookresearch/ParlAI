@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
@@ -12,7 +13,9 @@ import os
 
 
 class DefaultTeacher(DialogTeacher):
-    """MutualFriends dataset."""
+    """
+    MutualFriends dataset.
+    """
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
@@ -25,16 +28,20 @@ class DefaultTeacher(DialogTeacher):
         super().__init__(opt, shared)
 
     def act(self):
-        """Use DialogTeacher act but set id to "Teacher" for intro message."""
+        """
+        Use DialogTeacher act but set id to "Teacher" for intro message.
+        """
         reply = super().act()
         if reply.get('text', '').startswith('You have the following friends'):
             reply['id'] = 'Teacher'
         return reply
 
     def setup_data(self, path):
-        """Load json data of conversations."""
+        """
+        Load json data of conversations.
+        """
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.loaded_data = json.load(data_file)
         for ex in self.loaded_data:
             if len(ex['events']) > 0:

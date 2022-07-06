@@ -1,0 +1,14 @@
+tasks:
+  default:
+    onboard_world: QADataCollectionOnboardWorld
+    task_world: QADataCollectionTaskWorld
+    timeout: 300
+    agents_required: 1
+task_name: qa_data_collection
+world_module: parlai.chat_service.tasks.qa_data_collection.worlds
+overworld: QADataCollectionOverWorld
+max_workers: 30
+opt:
+  debug: True
+additional_args:
+  page_id: 1 # Configure Your Own Page

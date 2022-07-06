@@ -1,0 +1,33 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - classic rock
+    id: simplequestions
+    reward: 0
+    text: Which genre of album is harder.....faster?
+- - episode_done: true
+    eval_labels:
+    - album
+    id: simplequestions
+    reward: 0
+    text: what format is fearless
+- - episode_done: true
+    eval_labels:
+    - athens
+    id: simplequestions
+    reward: 0
+    text: what city was alex golfis born in
+- - episode_done: true
+    eval_labels:
+    - clash of the titans (2010 film)
+    id: simplequestions
+    reward: 0
+    text: what film is by the writer phil hay?
+- - episode_done: true
+    eval_labels:
+    - holyoke, massachusetts
+    id: simplequestions
+    reward: 0
+    text: Where did roger marquis die
+num_episodes: 21687
+num_examples: 21687

@@ -1,0 +1,92 @@
+acts:
+- - episode_done: false
+    id: AQuA
+    label_candidates:
+    - A ) 21
+    - B ) 21.5
+    - C ) 22
+    - D ) 22.5
+    - E ) 23
+    labels:
+    - E ) 23
+    text: Two friends plan to walk along a 43 - km trail , starting at opposite ends
+      of the trail at the same time . If Friend P ' s rate is 15 % faster than Friend
+      Q ' s , how many kilometers will Friend P have walked when they pass each other
+      ?
+- - episode_done: true
+    id: AQuA
+    label_candidates:
+    - 'If Q complete x kilometers , then P completes 1.15 x kilometers .
+
+      x + 1.15 x = 43
+
+      2.15 x = 43
+
+      x = 43 / 2.15 = 20
+
+      Then P will have have walked 1.15 * 20 = 23 km .
+
+      The answer is E .'
+    labels:
+    - 'If Q complete x kilometers , then P completes 1.15 x kilometers .
+
+      x + 1.15 x = 43
+
+      2.15 x = 43
+
+      x = 43 / 2.15 = 20
+
+      Then P will have have walked 1.15 * 20 = 23 km .
+
+      The answer is E .'
+    text: Can you provide a rationale for your answer?
+- - episode_done: false
+    id: AQuA
+    label_candidates:
+    - A ) 4 and 1
+    - B ) 1 and 5
+    - C ) 5 and 1
+    - D ) 3 and 5
+    - E ) 5 and 3
+    labels:
+    - C ) 5 and 1
+    text: In the coordinate plane , points ( x , 1 ) and ( 5 , y ) are on line k .
+      If line k passes through the origin and has slope 1 / 5 , then what are the
+      values of x and y respectively ?
+- - episode_done: true
+    id: AQuA
+    label_candidates:
+    - 'Line k passes through the origin and has slope 1 / 5 means that its equation
+      is y = 1 / 5 * x .
+
+      Thus : ( x , 1 ) = ( 5 , 1 ) and ( 5 , y ) = ( 5,1 ) - - > x = 5 and y = 1
+
+      Answer : C'
+    labels:
+    - 'Line k passes through the origin and has slope 1 / 5 means that its equation
+      is y = 1 / 5 * x .
+
+      Thus : ( x , 1 ) = ( 5 , 1 ) and ( 5 , y ) = ( 5,1 ) - - > x = 5 and y = 1
+
+      Answer : C'
+    text: Can you provide a rationale for your answer?
+- - episode_done: false
+    id: AQuA
+    label_candidates:
+    - A ) II
+    - B ) I and II
+    - C ) I and III
+    - D ) II and III
+    - E ) All of the above
+    labels:
+    - B ) I and II
+    text: 'For all numbers p and q , the operation @ is defined by p @ q = p ^ 2 -
+      pq . If xy ≠ 0 , then which of the following can be equal to zero ?
+
+      I . x @ y
+
+      II . ( xy ) @ y
+
+      III . x @ ( x + y )'
+num_episodes: 97467
+num_examples: 194934

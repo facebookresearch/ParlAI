@@ -1,5 +1,12 @@
 # Mastering the Dungeon
 
+This project was archived on 2020-08-01. The code had not been tested in a long time.
+If you wish to view the old code, you may rewind to the
+[`mastering_the_dungeon`](https://github.com/facebookresearch/ParlAI/tree/mastering_the_dungeon/projects/mastering_the_dungeon)
+tag.
+
+# Old README
+
 This project contains the code we used in our paper:
 
 [Mastering the Dungeon: Grounded Language Learning by Mechanical Turker Descent](https://arxiv.org/abs/1711.07950)

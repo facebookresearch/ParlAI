@@ -1,0 +1,30 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - it &apos;s that pyrami@@ d .
+    id: iwslt14
+    text: es ist diese pyrami@@ de .
+- - episode_done: true
+    eval_labels:
+    - in mother &apos;s milk .
+    id: iwslt14
+    text: durch die mutter@@ mil@@ ch .
+- - episode_done: true
+    eval_labels:
+    - it had two-@@ to-@@ three-@@ to-@@ 400 times the tox@@ ic lo@@ ads ever allowed
+      by the ep@@ a .
+    id: iwslt14
+    text: es enth@@ i@@ elt das zwei@@ - , drei@@ - , bis 40@@ 0-@@ fa@@ che des gren@@
+      z@@ wer@@ ts an sch@@ ad@@ stoffen der laut ep@@ a erlaubt war .
+- - episode_done: true
+    eval_labels:
+    - often what j@@ ams us up is se@@ wa@@ ge .
+    id: iwslt14
+    text: oft ist es ab@@ wasser , was uns ver@@ stop@@ ft .
+- - episode_done: true
+    eval_labels:
+    - what do you do when you have this sort of dis@@ rup@@ ted flow ?
+    id: iwslt14
+    text: was macht man , wenn man solch eine unter@@ bre@@ chung im fluss hat ?
+num_episodes: 7282
+num_examples: 7282

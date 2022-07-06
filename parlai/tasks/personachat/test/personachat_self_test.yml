@@ -1,0 +1,155 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - i am well an loving this interaction how are you ?
+    id: personachat:self
+    label_candidates:
+    - god help you and make you rich one day .
+    - it is okay . nothing special !
+    - do you live in a large or small city ? i am in large
+    - i like blue hair . is it dark blue or light blue ?
+    - hey ! coach johnny here ! how are you
+    - great ! i do work on my fathers hobby farm in my spare time
+    - yes ! one photo is going in an ad at my agency too
+    - i try to go to the gym every once in a while
+    - that is so nice ! i wanted girls but have two boys . would not trade them ,
+      though !
+    - no , i like to watch tv shows . the office is my favorite
+    - you re awesome i hope i can do that
+    - wish i could . i keep a large garden as well .
+    - the office i think if ok ; i am not sure about the latter .
+    - i love the gym , i go daily .
+    - have two cats . do you travel a lot ?
+    - i knit baby hats for local hospitals !
+    - yeah swimming is really fun , works everything out
+    - about 70 , 000 but the more you make the more you spend i need to cut back
+    - hi , how are you doing ?
+    - i am well an loving this interaction how are you ?
+    reward: 0
+    text: 'your persona: i love to meet new people.
+
+      your persona: i have a turtle named timothy.
+
+      your persona: my favorite sport is ultimate frisbee.
+
+      your persona: my parents are living in bora bora.
+
+      your persona: autumn is my favorite season.
+
+      hello , how are you doing tonight ?'
+- - episode_done: false
+    eval_labels:
+    - this is my favorite time of the year season wise
+    id: personachat:self
+    label_candidates:
+    - neat i follow the stock market carefully since becoming a stock broker
+    - have a cat . i wanted a dog but i am allergic .
+    - oh nice ! i live in new york but i do not drive , though .
+    - cannot blame you there . i know the feeling every time i take a camping trip
+    - i still have roommates here in seattle
+    - i am from california . where are you from ?
+    - i am not really into sports . i like robots though !
+    - i do not blame you . i work as a registered nurse .
+    - no i do not . i like theatre though
+    - i love babies too ! right now i have 2 dogs . no cats . i hate them .
+    - yes , i am a native american from the tribe called iroquois
+    - yes , last year . thinking of starting college
+    - i enjoy reading books about running . how about you ?
+    - no , i am not . i have a tail for feet and long hair .
+    - yeah , my three sisters stayed home with my mom , but i was always hitched to
+      the semi .
+    - i hope we both get to do that someday
+    - oh okay . my has his own car store . you have any friends ?
+    - doing well . i live in ohio and my job is in a factory . you ?
+    - that is not good . do you like to read ? i read whenever possible .
+    - this is my favorite time of the year season wise
+    reward: 0
+    text: i am great . i just got back from the club .
+- - episode_done: false
+    eval_labels:
+    - what club did you go to ? me an timothy watched tv
+    id: personachat:self
+    label_candidates:
+    - fine how are you on this cold day ?
+    - what do you paint ? and it is not the same .
+    - the only language i speak is english
+    - i like some romance shows . they have to be realistic though .
+    - i do how tall are you ?
+    - business administration . is it hard to work as consulting manager
+    - hi there ! how you doing today ? i just got home from school .
+    - i use to have anxiety but then i took tae kwan do . i am a champ at it
+    - i only have a turtle .
+    - oh so you get to see all those annoying animals
+    - yes , i am ! i spend most of my day studying .
+    - here in ohio , i take the kids hiking on the weekends .
+    - baby , i am from houston , texas . but i am in chicago right now
+    - great ! hello , i cook but i am not a chef . you have pets ?
+    - two pit bulls , i am not allowed at the shelter anymore cause i adopt every
+      time
+    - we could hike and eat candy and brownies .
+    - no , especially if your a girl
+    - oh i am so sorry people need prayer
+    - sometimes , i do , too , but the boys are enough like animals sometimes .
+    - what club did you go to ? me an timothy watched tv
+    reward: 0
+    text: i would rather eat chocolate cake during this season .
+- - episode_done: false
+    eval_labels:
+    - lol oh okay kind of random
+    id: personachat:self
+    label_candidates:
+    - when i move to nyc , i hope to hear some jazz on the streets .
+    - it is very pretty ! do you like asia ?
+    - like water or oceans ? i am terrified .
+    - layla is at great cat name . i am huge and tall
+    - in screenplays i like reading horror . love to see difference versus movie
+    - since when am i a dog ? that is quite rude !
+    - no i am just on my lunch break
+    - hello , how are you today ?
+    - her name is ellenor rose . we alos have a 4th family member whose a dog names
+      milly
+    - i like the band radiohead a lot , green is my favorite color
+    - hello there . where are you from ?
+    - i like salads as well .
+    - i met alot of shy people when i studied abroad it is ok
+    - i am not comfortable in the mountains .
+    - i do not like bugs either but bacon is good .
+    - i love dogs . but sadly i am allergic to them and cats
+    - same here . only english . my sister speaks russian .
+    - they are , i will use my garden as a teaching environment too
+    - sure , my name is dan and i just had my first child .
+    - lol oh okay kind of random
+    reward: 0
+    text: i went to club chino . what show are you watching ?
+- - episode_done: false
+    eval_labels:
+    - we watched a show about animals like him
+    id: personachat:self
+    label_candidates:
+    - i like to read in my free time . and cook !
+    - yes i like going bike riding near the mountains .
+    - no not the kid ! i am scared of heights . cats are my friends though .
+    - i see . yes , i do not like watching sports on tv much . rather be in the action
+      .
+    - it really is ! it was nice to have met you jane !
+    - i see . you are a writer , then ?
+    - how old are your girls ?
+    - i use to work at the local carnival , i can understand a tight budget
+    - yes ! i rap on the weekends myself too . my friends like country , boo .
+    - either or . i have young kids , i am used to running sentences together , lol
+    - i love prince . especially purple rain . i love prince and purple so it works
+      out
+    - hi , i am 69 , veteran with one leg who travels by wheelchair . you ?
+    - hello , how are you ? do you play poke ?
+    - i am thinking about doing the walking dead what do you think
+    - that sounds like fun . i would like to take my wife and kids to europe .
+    - i used to play poker every night in new york !
+    - i also play the guitar . i sing as well
+    - i am good , thanks ! and you ?
+    - fun ! we must live in totally different climates . i have been out fishing all
+      day .
+    - we watched a show about animals like him
+    reward: 0
+    text: do you live in a house or apartment ?
+num_episodes: 968
+num_examples: 7512

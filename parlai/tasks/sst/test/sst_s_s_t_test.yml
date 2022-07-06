@@ -1,0 +1,56 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"No movement, no yuks, not much of anything."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"A gob of drivel so sickly sweet, even the eager consumers of Moore''s
+      pasteurized ditties will retch it up like rancid crème brûlée."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"Gangs of New York is an unapologetic mess, whose only saving grace is
+      that it ends by blowing just about everything up."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - negative
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: '"We never really feel involved with the story, as all of its ideas remain
+      just that: abstract ideas."
+
+      Is this sentence positive or negative?'
+- - episode_done: true
+    eval_labels:
+    - positive
+    id: sst
+    label_candidates:
+    - negative
+    - positive
+    text: 'This is one of Polanski''s best films.
+
+      Is this sentence positive or negative?'
+num_episodes: 1821
+num_examples: 1821

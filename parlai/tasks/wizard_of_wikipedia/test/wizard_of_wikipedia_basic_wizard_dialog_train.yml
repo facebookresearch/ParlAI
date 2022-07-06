@@ -1,0 +1,41 @@
+acts:
+- - chosen_topic: Science fiction
+    episode_done: false
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    labels:
+    - Awesome! I really love how sci-fi storytellers focus on political/social/philosophical
+      issues that would still be around even in the future. Makes them relatable.
+    text: 'I''m a huge fan of science fiction myself! '
+- - chosen_topic: Science fiction
+    episode_done: false
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    labels:
+    - It's not quite sci-fi, but my favorite version of time travel is in Harry Potter
+      and the Prisoner of Azkaban. Breaks zero logical rules.
+    text: I agree. One of my favorite forms of science fiction is anything related
+      to time travel! I find it fascinating.
+- - chosen_topic: Science fiction
+    episode_done: false
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    labels:
+    - If you really want a look at the potential negative consequences of scientific
+      innovation, what you should check out is the TV show Fringe. Incredibly well
+      written.
+    text: And that's difficult to do when dealing with time travel. I actually haven't
+      seen the latest Harry Potter movies. Guess it's time to check them out!
+- - chosen_topic: Science fiction
+    episode_done: true
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    labels:
+    - It blends science fiction and paranormal/psychological/MK Ultra type stuff together,
+      but it's science fiction at its core.
+    text: Thank you for the suggestion, I will definitely check it out!
+- - chosen_topic: Internet access
+    episode_done: false
+    id: wizard_of_wikipedia:basic_wizard_dialog
+    labels:
+    - No I could not! I couldn't imagine living when internet access was rare and
+      very few people had it!
+    text: 'Can you imagine the world without internet access? '
+num_episodes: 18430
+num_examples: 74092

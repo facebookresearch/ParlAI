@@ -1,0 +1,247 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Good Evening. You must be the painter of this room.
+    id: light_dialog
+    label_candidates:
+    - Good Evening. You must be the painter of this room.
+    - Is someone here?
+    - Is that an apple tree she's pointing at? Oh I can't believe it! This is like
+      the best day ever!! OK LET'S RIDE HOLD ON LADY!! GIVE ME THAT BASKET I'M HOLDING
+      ON TO IT!
+    - I am sorry we do not have that here. You see I do not even have a wife yet....
+      I have been searching...
+    - Oh, have you seen my chambermaid.
+    - Evil lurking? In such a tranquil lake house? Sure you're pulling my leg.
+    - So what is it you are doing here in these dense forests. I came to collect grapes
+      and berries for the sacrament and to meditate and save souls.
+    - Oh, come on. I'm not that bad. I've got layers.
+    - 'I just wanted some food. Everything looks great and this little rat is hungry '
+    - Such a gentleman. Maybe I'll bring some of the other little ones next time.
+    - Aye, you look experienced, but a man such as yerself shouldn't have to lower
+      yourself as to watch yer back for such vile things. Tell you what, squire, me
+      and my men can watch out for yer ship while ye tour the docks... fer a price!
+    - Doesn't all this fish smell amazing?!
+    - You really should stick to counting coppers because you are no detective. I
+      know what you've been doing, and I know where the money is going. I'm here to
+      end it. Right after I throw up ...
+    - Remember what we fight for.
+    - Are you sure that this is not the trick up your sleeve that you used to gain
+      an unfair edge?
+    - I can't give you a job, I'm just a kid. My mom gave me a pence to buy lunch.
+      You and I can share.
+    - I'm here cleaning up whatever I can of this mess. How about you?
+    - Sounds good to me, dragon.
+    - 'Ahhhh... I have one here for just such a cause. You must drink it at the stroke
+      of midnight under a full moon. '
+    - staring contest, go...
+    text: '_task_speech
+
+      _setting_name Castle Maids'' Room, Inside Castle
+
+      _setting_desc Inside the maids room is dark and grey.  It is much different
+      from the rest of the Castle which has grand walls and floors and paintings from
+      famous painters around the wall.  The maid holds many secrets in this room.  One
+      which is a secret door that holds paintings she should not have.
+
+      _partner_name painter
+
+      _self_name worker
+
+      _self_persona I am a worker from a village up the river. I tie the logs our
+      woodsmen fell into rafts, and steer them down to the next town for milling.
+      I am hardworking and patient. I enjoy fishing off of the edge of the raft during
+      quiet times on the raft.
+
+      _object_desc a floor : THe floor is dusty and broken in several places. You
+      don''t quite trust it will hold your full weight.
+
+      _object_desc a brush : Upon close inspection, the brush is dainty and carved
+      with roses.
+
+      _object_desc a tape : The tape is rudimentary but does the job well of holding
+      the bandage in place. You can see a sticky resin on one side of the material.
+
+      _object_desc a paint brushes : The paint brush has a long handle and dry black
+      bristles.
+
+      _object_desc a fresh red paint : The paint is a bright red color and easy to
+      apply on a surface.
+
+      _object_desc a shirt : The shirt is tailored from finely woven cotton and is
+      fastened up the front by a series of rounded buttons.
+
+      _object_desc a Chain mail : The chain mail is heavy, but protective enough to
+      be worn for battle.
+
+      _object_desc a A quiver : The quiver contains a mess of arrows, its leather
+      frame stretched from years of use.
+
+      _partner_say hello'
+- - episode_done: false
+    eval_labels:
+    - I am just a lowly worker. I think the red paint looks good. I can assist you
+      with painting.
+    id: light_dialog
+    label_candidates:
+    - Must be nice to have a steady income off of being here, I would come here everyday
+      if I could afford to.
+    - There are other ways of freeing me that are much easier and near foolproof.
+    - Nurse! Have you seen my chambermaid?
+    - Do you two know each other?
+    - No! You are a frog! I can not marry a frog!
+    - 'I have been invited to grand banquets here as I hold a powerful position in
+      society. I have not seen the owners here in quite some time. '
+    - Thank you for this good gift, priest. I'll love to keep it around for a bit.
+    - I...used to be an Oarsman on one of the King's finest ships... We were attacked
+      on both sides...I can still hear...no...
+    - I hope that the king is paying you well this is some really fine work.  Don't
+      overwork yourself now.
+    - You could consider working it off, perhaps counting your steps for exercise
+      purposes. Otherwise the armor would hardly fit.
+    - I brought my pick and shovel with me, mind if I poke around as well?
+    - Yes. 5 more days to the full moon.
+    - Ha. Do you think I got to this rank by my own lucky stars? Besides, I have a
+      prisoner in my tent. let me get him.
+    - I should eat the nut before I go, just so the bird doesn't think I was declining
+      its gift.
+    - 'That was a very big mistake, foolish one '
+    - Best wishes on the sea... steer your ship out to the point. I hear the fish
+      are biting there.
+    - From where did you get coal in a place like this, thief?
+    - I am just a lowly worker. I think the red paint looks good. I can assist you
+      with painting.
+    - I don't suppose you know of a doctor that has dealt with magical sicknesses?
+      She seems to have eaten a dark mushroom.
+    - Again with the demands. My stew is the finest and I will not be rushed. If all
+      you desire is a quick meal, perhaps you should seek elsewhere. If you would
+      like the best, then I suggest you sit and offer some manners and patience.
+    text: '_self_say Good Evening. You must be the painter of this room.
+
+      _partner_say Yes sir! do you have a preferred color?
+
+      _self_act get brush'
+- - episode_done: false
+    eval_labels:
+    - Not too long. The paintings in this Castle are magnificent.
+    id: light_dialog
+    label_candidates:
+    - Purrrrrrr!
+    - HA! Forgive, have you forgot the crime it is that you have commited?
+    - How is a snake talking to me?
+    - Any chance you'd want to go over and ask 'em?
+    - 'Oh my you are very generous my King, I shall bring back the pack of wolves
+      for you. '
+    - I will look forward to spending time with you tomorrow! Will you bring more
+      food tomorrow?
+    - Yeahhhh. You are probably right.  Let's lock it.  Maybe nail it shut, just to
+      be sure.
+    - No...life's too short for that.  Well...maybe one...that I haven't caught more
+      of your fish.
+    - The statistics do jump off the page, I must admit. Maybe I have be wrong about
+      you people.
+    - We will get you some new clothes
+    - hey now
+    - Could you send a note to my lovely wife and 6 children? They must be worried
+      sick! I have not seen or spoken to them since I was thrown in here!
+    - Sorry, I would if I had any money but I do not.
+    - Well it seems that we should bring both women to court on that day. I will get
+      to the bottom of it at that time
+    - Not too long. The paintings in this Castle are magnificent.
+    - 'Much obliged, I supposed I won''t scurry on your meal tonight before you ingest
+      it as a token of my appreciation. I shall stick to the dog''s meal instead! '
+    - You command me mortal?
+    - It is better if I leave this here.
+    - Before I paint, if I may ask, are you a part of the choir?
+    - 'become a knight here '
+    text: '_self_say I am just a lowly worker. I think the red paint looks good. I
+      can assist you with painting.
+
+      _partner_say I will love that. Tell me, how long have you been here?
+
+      _partner_act give brush to worker
+
+      _self_act drop paint brushes'
+- - episode_done: false
+    eval_labels:
+    - Yes, In  the village where I work, the other workers speak of some of the hidden
+      secrets of this castle.
+    id: light_dialog
+    label_candidates:
+    - My bonnet can't compare to this
+    - You have done enough for today. I need to head to the dungeon and get some answers.
+    - Very good, very good.  Allow us to celebrate in her honor with lots of wine!
+    - Yes please, by all means!  The harmony does work best with pipal accompaniment!
+    - maybe
+    - I don't think so! My loyal knight will see to it you are punished for your insolence!
+    - Yes, In  the village where I work, the other workers speak of some of the hidden
+      secrets of this castle.
+    - wh-what no of course not
+    - Sometimes I have my doubts about you but then you make me realise why you're
+      so great!
+    - Thanks for the vote of confidence.I will try my best
+    - What? I said hello! Well, I'm glad to see you are still the diplomat
+    - Squeak..... Sugar, you have sugar.
+    - 'Yes I need a greenhouse erected. Let me ask my wife how large the building
+      will be. '
+    - Do not expect much.It is an small town in a rural area
+    - 'Maybe you have not been listening to the conversation as well as you should
+      be. My cousin is one of the best negotiators I know. As stated before, I will
+      talk until it is time for action. If you do not like my plan, than tell me so,
+      but do not start talking about a murder to me!! '
+    - 'Let us head to to booth then, my child. '
+    - To be a slave to a master that loves you more than all others is a blessing.
+    - Yes, I hope to one day be a brave knight and protect your Kingdom. Look at what
+      that strange lady over there gave me. She said it would bring me gook luck!
+    - No, I am ready to die with my place in the afterlife secure.  I am here for
+      intercession for my children.
+    - Well, if you're still willing to take me as a travel companion, I would be happy
+      to join you in your travels. I have not had much fortune remaining here.
+    text: '_self_say Not too long. The paintings in this Castle are magnificent.
+
+      _partner_say Nice, there are a lot of secret about the castle. Take this maid''s
+      room for instance, heard there are so many secrets about it'
+- - episode_done: false
+    eval_labels:
+    - Yes, we must get started but while we paint, it would not do any harm to keep
+      an eye out for passages and secrets.
+    id: light_dialog
+    label_candidates:
+    - What is this doom and gloom? Do you really think the world is going to end?
+    - 'Yes solider, death! And can you think of a reason why you should be spared
+      this penalty? '
+    - 'She wants to adorn this hall with another dozen crystal chandeliers! I feel
+      that is a bit much, myself. '
+    - I like gaja fruit the best but we have beet juice most often.
+    - 'Well I see this bell tower is in poor shape, could we come to some sort of
+      agreement? '
+    - Get away from  me!
+    - I am here to relax
+    - No. I am just a snob by nature.I don't bother with those things
+    - Wait I need to make some changes!
+    - ig for me
+    - 'She would be devastated but she is not the only thing I need in life right
+      now. I know she will always be there  '
+    - Yes, we must get started but while we paint, it would not do any harm to keep
+      an eye out for passages and secrets.
+    - 'I am a wanderer without a home. '
+    - You do so much for me friend.
+    - Too small to bother, seen anything larger?
+    - 'Your insubordination knows no bounds! I shall report this to head servant.
+      You''ll be lucky to avoid the dungeons. '
+    - You know your ecosystem well my friend. Many birds are attracted by a blossoming
+      jasmine!
+    - I will hold you while in the tub, unless you want to swim
+    - This juicy rack of lamb, tender pheasant cake and a fragrant peach ice cream.
+    - You started it!
+    text: '_self_say Yes, In  the village where I work, the other workers speak of
+      some of the hidden secrets of this castle.
+
+      _partner_say ok...i hope to get some truths however. We should get working,
+      the night is upon us
+
+      _partner_act get brush
+
+      _self_emote smile'
+num_episodes: 2000
+num_examples: 13272

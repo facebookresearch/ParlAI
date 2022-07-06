@@ -1,0 +1,53 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - you know , one of the inten@@ se pleas@@ ures of travel and one of the deli@@
+      ghts of eth@@ no@@ graphic research is the opportunity to live am@@ on@@ gst
+      those who have not for@@ gotten the old ways , who still feel their past in
+      the wind , touch it in st@@ ones poli@@ shed by rain , taste it in the bit@@
+      ter leaves of plants .
+    id: iwslt14
+    text: wissen sie , eines der großen vern@@ ü@@ gen beim reisen und eine der freu@@
+      den bei der eth@@ no@@ graph@@ ischen forschung ist , gemeinsam mit den menschen
+      zu leben , die sich noch an die alten tage erinnern können . die ihre vergangenheit
+      noch immer im wind spüren , sie auf vom regen ge@@ gl@@ ä@@ t@@ teten st@@ einen
+      berü@@ hren , sie in den bit@@ teren blä@@ ttern der pflanzen schme@@ cken .
+- - episode_done: true
+    eval_labels:
+    - just to know that ja@@ gu@@ ar sh@@ am@@ ans still journey beyond the mil@@
+      ky way , or the my@@ ths of the in@@ u@@ it el@@ ders still reson@@ ate with
+      meaning , or that in the hi@@ mal@@ a@@ ya , the budd@@ hi@@ sts still pur@@
+      sue the breath of the d@@ har@@ ma , is to really remember the central re@@
+      vel@@ ation of anthropo@@ log@@ y , and that is the idea that the world in which
+      we live does not exist in some absolute sense , but is just one model of reality
+      , the consequ@@ ence of one particular set of adap@@ tive choices that our lin@@
+      e@@ age made , al@@ b@@ eit success@@ fully , many generations ago .
+    id: iwslt14
+    text: einfach das wissen , dass ja@@ gu@@ ar-@@ sch@@ am@@ an@@ en noch immer
+      jen@@ seits der mil@@ ch@@ straße reisen oder die bedeutung der my@@ then der
+      äl@@ testen der in@@ u@@ it noch voller bedeutung sind , oder dass im hi@@ mal@@
+      a@@ ya die budd@@ hi@@ sten noch immer den at@@ em des d@@ har@@ ma verfolgen
+      , bedeutet , sich die zentr@@ ale offen@@ bar@@ ung der anthropo@@ log@@ ie
+      ins ge@@ däch@@ tnis zu rufen , das ist der gedanke , dass die welt , in der
+      wir leben , nicht in einem absol@@ uten sinn existiert , sondern nur als ein
+      modell der realität , als eine folge einer gruppe von bestimmten möglichkeiten
+      der anpas@@ sung die unsere a@@ hnen , wen@@ n@@ gleich erfolgreich , vor vielen
+      generationen wähl@@ ten .
+- - episode_done: true
+    eval_labels:
+    - and of course , we all share the same adap@@ tive im@@ per@@ a@@ tives .
+    id: iwslt14
+    text: und natürlich teilen wir alle diesel@@ ben anpas@@ s@@ ungs@@ notwen@@ dig@@
+      keiten .
+- - episode_done: true
+    eval_labels:
+    - we &apos;re all born . we all bring our children into the world .
+    id: iwslt14
+    text: wir werden alle geboren . wir bringen kinder zur welt .
+- - episode_done: true
+    eval_labels:
+    - we go through initi@@ ation ri@@ tes .
+    id: iwslt14
+    text: wir durch@@ laufen initi@@ a@@ tions@@ ritu@@ ale .
+num_episodes: 6750
+num_examples: 6750

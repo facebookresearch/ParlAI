@@ -1,0 +1,93 @@
+acts:
+- - answer_starts:
+    - 269
+    episode_done: true
+    id: squad2
+    labels:
+    - in the late 1990s
+    plausible_answers: []
+    text: 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September
+      4, 1981) is an American singer, songwriter, record producer and actress. Born
+      and raised in Houston, Texas, she performed in various singing and dancing competitions
+      as a child, and rose to fame in the late 1990s as lead singer of R&B girl-group
+      Destiny''s Child. Managed by her father, Mathew Knowles, the group became one
+      of the world''s best-selling girl groups of all time. Their hiatus saw the release
+      of Beyoncé''s debut album, Dangerously in Love (2003), which established her
+      as a solo artist worldwide, earned five Grammy Awards and featured the Billboard
+      Hot 100 number-one singles "Crazy in Love" and "Baby Boy".
+
+      When did Beyonce start becoming popular?'
+- - answer_starts:
+    - 207
+    episode_done: true
+    id: squad2
+    labels:
+    - singing and dancing
+    plausible_answers: []
+    text: 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September
+      4, 1981) is an American singer, songwriter, record producer and actress. Born
+      and raised in Houston, Texas, she performed in various singing and dancing competitions
+      as a child, and rose to fame in the late 1990s as lead singer of R&B girl-group
+      Destiny''s Child. Managed by her father, Mathew Knowles, the group became one
+      of the world''s best-selling girl groups of all time. Their hiatus saw the release
+      of Beyoncé''s debut album, Dangerously in Love (2003), which established her
+      as a solo artist worldwide, earned five Grammy Awards and featured the Billboard
+      Hot 100 number-one singles "Crazy in Love" and "Baby Boy".
+
+      What areas did Beyonce compete in when she was growing up?'
+- - answer_starts:
+    - 526
+    episode_done: true
+    id: squad2
+    labels:
+    - '2003'
+    plausible_answers: []
+    text: 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September
+      4, 1981) is an American singer, songwriter, record producer and actress. Born
+      and raised in Houston, Texas, she performed in various singing and dancing competitions
+      as a child, and rose to fame in the late 1990s as lead singer of R&B girl-group
+      Destiny''s Child. Managed by her father, Mathew Knowles, the group became one
+      of the world''s best-selling girl groups of all time. Their hiatus saw the release
+      of Beyoncé''s debut album, Dangerously in Love (2003), which established her
+      as a solo artist worldwide, earned five Grammy Awards and featured the Billboard
+      Hot 100 number-one singles "Crazy in Love" and "Baby Boy".
+
+      When did Beyonce leave Destiny''s Child and become a solo singer?'
+- - answer_starts:
+    - 166
+    episode_done: true
+    id: squad2
+    labels:
+    - Houston, Texas
+    plausible_answers: []
+    text: 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September
+      4, 1981) is an American singer, songwriter, record producer and actress. Born
+      and raised in Houston, Texas, she performed in various singing and dancing competitions
+      as a child, and rose to fame in the late 1990s as lead singer of R&B girl-group
+      Destiny''s Child. Managed by her father, Mathew Knowles, the group became one
+      of the world''s best-selling girl groups of all time. Their hiatus saw the release
+      of Beyoncé''s debut album, Dangerously in Love (2003), which established her
+      as a solo artist worldwide, earned five Grammy Awards and featured the Billboard
+      Hot 100 number-one singles "Crazy in Love" and "Baby Boy".
+
+      In what city and state did Beyonce  grow up? '
+- - answer_starts:
+    - 276
+    episode_done: true
+    id: squad2
+    labels:
+    - late 1990s
+    plausible_answers: []
+    text: 'Beyoncé Giselle Knowles-Carter (/biːˈjɒnseɪ/ bee-YON-say) (born September
+      4, 1981) is an American singer, songwriter, record producer and actress. Born
+      and raised in Houston, Texas, she performed in various singing and dancing competitions
+      as a child, and rose to fame in the late 1990s as lead singer of R&B girl-group
+      Destiny''s Child. Managed by her father, Mathew Knowles, the group became one
+      of the world''s best-selling girl groups of all time. Their hiatus saw the release
+      of Beyoncé''s debut album, Dangerously in Love (2003), which established her
+      as a solo artist worldwide, earned five Grammy Awards and featured the Billboard
+      Hot 100 number-one singles "Crazy in Love" and "Baby Boy".
+
+      In which decade did Beyonce become famous?'
+num_episodes: 130319
+num_examples: 130319

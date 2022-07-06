@@ -3,31 +3,37 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Basic script which allows local human keyboard input to talk to a trained model.
+"""
+Basic script which allows local human keyboard input to talk to a trained model.
 
-Examples
---------
+## Examples
 
-.. code-block:: shell
+```shell
+parlai interactive --model-file "zoo:tutorial_transformer_generator/model"
+```
 
-  python examples/interactive.py -m drqa -mf "models:drqa/squad/model"
+When prompted, enter something like: `Bob is Blue.\\nWhat is Bob?`
 
-When prompted, enter something like: ``Bob is Blue.\\nWhat is Bob?``
-
-Input is often model or task specific, but in drqa, it is always
-``context '\\n' question``.
+Input is often model or task specific. Some tasks will automatically format
+The input with context for the task, e.g. `-t convai2` will automatically add
+personas.
 """
 from parlai.core.params import ParlaiParser
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from parlai.core.script import ParlaiScript, register_script
+from parlai.utils.world_logging import WorldLogger
 from parlai.agents.local_human.local_human import LocalHumanAgent
+import parlai.utils.logging as logging
 
 import random
 
 
 def setup_args(parser=None):
     if parser is None:
-        parser = ParlaiParser(True, True, 'Interactive chat with a model')
+        parser = ParlaiParser(
+            True, True, 'Interactive chat with a model on the command line'
+        )
     parser.add_argument('-d', '--display-examples', type='bool', default=False)
     parser.add_argument(
         '--display-prettify',
@@ -37,10 +43,10 @@ def setup_args(parser=None):
         'examples with text candidates',
     )
     parser.add_argument(
-        '--display-ignore-fields',
+        '--display-add-fields',
         type=str,
-        default='label_candidates,text_candidates',
-        help='Do not display these fields',
+        default='',
+        help='Display these fields when verbose is off (e.g., "--display-add-fields label_candidates,beam_texts")',
     )
     parser.add_argument(
         '-it',
@@ -49,43 +55,69 @@ def setup_args(parser=None):
         default=True,
         help='Create interactive version of task',
     )
+    parser.add_argument(
+        '--outfile',
+        type=str,
+        default='',
+        help='Saves a jsonl file containing all of the task examples and '
+        'model replies. Set to the empty string to not save at all',
+    )
+    parser.add_argument(
+        '--save-format',
+        type=str,
+        default='conversations',
+        choices=['conversations', 'parlai'],
+        help='Format to save logs in. conversations is a jsonl format, parlai is a text format.',
+    )
     parser.set_defaults(interactive_mode=True, task='interactive')
-    LocalHumanAgent.add_cmdline_args(parser)
+    LocalHumanAgent.add_cmdline_args(parser, partial_opt=None)
+    WorldLogger.add_cmdline_args(parser, partial_opt=None)
     return parser
 
 
-def interactive(opt, print_parser=None):
-    if print_parser is not None:
-        if print_parser is True and isinstance(opt, ParlaiParser):
-            print_parser = opt
-        elif print_parser is False:
-            print_parser = None
+def interactive(opt):
     if isinstance(opt, ParlaiParser):
-        print('[ Deprecated Warning: interactive should be passed opt not Parser ]')
+        logging.error('interactive should be passed opt not Parser')
         opt = opt.parse_args()
 
     # Create model and assign it to the specified task
     agent = create_agent(opt, requireModelExists=True)
+    agent.opt.log()
     human_agent = LocalHumanAgent(opt)
+    # set up world logger
+    world_logger = WorldLogger(opt) if opt.get('outfile') else None
     world = create_task(opt, [human_agent, agent])
 
-    if print_parser:
-        # Show arguments after loading model
-        print_parser.opt = agent.opt
-        print_parser.print_args()
-
     # Show some example dialogs:
-    while True:
+    while not world.epoch_done():
         world.parley()
+        if world.epoch_done() or world.get_total_parleys() <= 0:
+            # chat was reset with [DONE], [EXIT] or EOF
+            if world_logger is not None:
+                world_logger.reset()
+            continue
+
+        if world_logger is not None:
+            world_logger.log(world)
         if opt.get('display_examples'):
             print("---")
             print(world.display())
-        if world.epoch_done():
-            print("EPOCH DONE")
-            break
+
+    if world_logger is not None:
+        # dump world acts to file
+        world_logger.write(opt['outfile'], world, file_format=opt['save_format'])
+
+
+@register_script('interactive', aliases=['i'])
+class Interactive(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_args()
+
+    def run(self):
+        return interactive(self.opt)
 
 
 if __name__ == '__main__':
     random.seed(42)
-    parser = setup_args()
-    interactive(parser.parse_args(print_args=False), print_parser=parser)
+    Interactive.main()

@@ -1,0 +1,85 @@
+acts:
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    sentence1: No Weapons of Mass Destruction Found in Iraq Yet.
+    sentence2: Weapons of Mass Destruction Found in Iraq.
+    text: 'No Weapons of Mass Destruction Found in Iraq Yet.
+
+      Weapons of Mass Destruction Found in Iraq.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - entailment
+    sentence1: A place of sorrow, after Pope John Paul II died, became a place of
+      celebration, as Roman Catholic faithful gathered in downtown Chicago to mark
+      the installation of new Pope Benedict XVI.
+    sentence2: Pope Benedict XVI is the new leader of the Roman Catholic Church.
+    text: 'A place of sorrow, after Pope John Paul II died, became a place of celebration,
+      as Roman Catholic faithful gathered in downtown Chicago to mark the installation
+      of new Pope Benedict XVI.
+
+      Pope Benedict XVI is the new leader of the Roman Catholic Church.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - entailment
+    sentence1: Herceptin was already approved to treat the sickest breast cancer patients,
+      and the company said, Monday, it will discuss with federal regulators the possibility
+      of prescribing the drug for more breast cancer patients.
+    sentence2: Herceptin can be used to treat breast cancer.
+    text: 'Herceptin was already approved to treat the sickest breast cancer patients,
+      and the company said, Monday, it will discuss with federal regulators the possibility
+      of prescribing the drug for more breast cancer patients.
+
+      Herceptin can be used to treat breast cancer.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - entailment
+    sentence1: Judie Vivian, chief executive at ProMedica, a medical service company
+      that helps sustain the 2-year-old Vietnam Heart Institute in Ho Chi Minh City
+      (formerly Saigon), said that so far about 1,500 children have received treatment.
+    sentence2: The previous name of Ho Chi Minh City was Saigon.
+    text: 'Judie Vivian, chief executive at ProMedica, a medical service company that
+      helps sustain the 2-year-old Vietnam Heart Institute in Ho Chi Minh City (formerly
+      Saigon), said that so far about 1,500 children have received treatment.
+
+      The previous name of Ho Chi Minh City was Saigon.'
+- - episode_done: true
+    id: huggingface
+    label_candidates:
+    - entailment
+    - not_entailment
+    labels:
+    - not_entailment
+    sentence1: A man is due in court later charged with the murder 26 years ago of
+      a teenager whose case was the first to be featured on BBC One's Crimewatch.
+      Colette Aram, 16, was walking to her boyfriend's house in Keyworth, Nottinghamshire,
+      on 30 October 1983 when she disappeared. Her body was later found in a field
+      close to her home. Paul Stewart Hutchinson, 50, has been charged with murder
+      and is due before Nottingham magistrates later.
+    sentence2: Paul Stewart Hutchinson is accused of having stabbed a girl.
+    text: 'A man is due in court later charged with the murder 26 years ago of a teenager
+      whose case was the first to be featured on BBC One''s Crimewatch. Colette Aram,
+      16, was walking to her boyfriend''s house in Keyworth, Nottinghamshire, on 30
+      October 1983 when she disappeared. Her body was later found in a field close
+      to her home. Paul Stewart Hutchinson, 50, has been charged with murder and is
+      due before Nottingham magistrates later.
+
+      Paul Stewart Hutchinson is accused of having stabbed a girl.'
+num_episodes: 2490
+num_examples: 2490

@@ -1,0 +1,2 @@
+,question,matchup,model1,numwins1,winrate1,model2,numwins2,winrate2,numratings,sigf,stars,p,agree
+0,Who would you prefer to talk to for a long conversation?,model1__vs__model2,model1,2,0.5,model2,2,0.5,4,p>.05,,1,

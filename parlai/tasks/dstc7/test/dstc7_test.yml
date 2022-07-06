@@ -1,0 +1,283 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - well we don't know 'cause of your PPAs! :D
+    id: dstc7
+    label_candidates:
+    - should be there by default, in Hoary right?
+    - That's the beauty.  We don't have viruses! :).  Okay, we've had two in 15 years..  Still
+      worried? :P
+    - well we don't know 'cause of your PPAs! :D
+    - why do you want to write it to the terminal?.  it will write to stdout, but
+      it is refusing to write to the console
+    - one sec i am looking it up
+    - You mean it just dissapears?
+    - you can install it but it may have newer deps and then they mayneed newer deps
+      and you'll have some weird frankenstien install
+    - im pretty sure i had to do that once. cause apt was complaining about duplicate
+      sources. doesnt hurt nothin, just makes first apt-get take longer
+    - yeah some of the compiz goodies were nice to play with. but only for show and
+      tell. I too didnt use them much. admin_masu3710 just ask. dont ask to ask
+    - \040
+    - using an usb hub?
+    - I don't think there is a setting for that
+    - cd /etc/X11/xorg.conf ; sudo cp <backup> xorg.conf
+    - so you are using which x driver? nv? nouveau? nvidia?
+    - will be 10 secs
+    - no more beep! :D
+    - wouldn't it be easier just to open your image viewer set to the secret folder
+      on another desktop?. virtual desktop, that is
+    - fsck
+    - it's just a submenu in networkmanager
+    - No, but you can specify it with apt-get (see the man page, the second paragraph
+      for 'install')
+    text: 'participant 1: Hi, upgraded from 12.04 to 14.04 on my thinkpad x220. Have
+      a couple of issues related to video and im not sure if it relates to having
+      x-swat ppa on my previous install. basically when I hot undock my laptop from
+      my docking station the graphics glitch out and everything but the mouse cursor
+      flickers. only way to resolve is switch to a vterm and kill Xorg.. was wondering
+      what troubleshooting steps I can take before I restore my 12.04 system image.
+
+      participant 2: common upgrade practice is to remove all custom PPAs *beforehand*
+      so that could be a good start
+
+      participant 1: I had forgotten id enabled it :( since everything worked so well.
+      I tried the x-swat repo in trusty but theres no updated packages. I tried the
+      xorg-edgers ppa and these drivers have the same issues
+
+      participant 2: my point was to run built-in, not look for yet more PPAs to break
+      and confuse things :)
+
+      participant 1: presumably after the update I had built in? that was acting broken
+
+      '
+- - episode_done: true
+    eval_labels:
+    - I always thought opera had some kind of built-in flash support... can't you
+      install flash manually? at least until they fix it?
+    id: dstc7
+    label_candidates:
+    - 'you need to boot into a recovery shell and add your hostname to /etc/hosts
+      to map to a localhost ip address (eg: 127.0.0.2)'
+    - 'not at all.  i''d first try google: ''ubuntu wine-doors "typeError: can''t
+      concatenate"'' and see if someone else stumbled into this'
+    - yea, same here.  - nvidia graphics card?
+    - usually /var/lib/samba. passdb.tdb
+    - i'm stuck on a 33.6 connection; i feel your pain
+    - I don't know what can be causing this, from what I know this is an issue with
+      the video card
+    - you're trying to mount a nonexistant volume.  try sda1
+    - Try using synaptic:)
+    - how about sun-java6-jdk or openjdk-6-jdk
+    - 5stack now?
+    - have been running it since hardy was released, and no big problems so far
+    - did you see anything in /var/log/messages?
+    - humm, how new is the router in question (and the laptop for that matter)
+    - precisely what chipset is it?
+    - find a SVG version, or PNG one with alpha.
+    - sorry, this is my first day with ubuntu, I don't know :)
+    - I found a great app to fix that, let me see if I can find it
+    - pmount currently doesn't support mounting NFS shares
+    - you're welcome, next step would be using sar for detailled logs of your system
+      it is in sysutils package (I think)
+    - hmm?
+    text: 'participant 1: Hey. Does anyone know if flashplugin-nonfree will be updated
+      soon to fix compatibility with Opera?
+
+      participant 2: I hope they don''t mess with it more.. it''s finally working
+      again on firefox
+
+      participant 1: Yeah, I''m happy that at least ff works. But Opera''s been broken
+      ever since the breakage began. :(
+
+      participant 2: it uses the same plugin?
+
+      participant 1: Yes.
+
+      '
+- - episode_done: true
+    eval_labels:
+    - ok. i know what your problem is, something has stuffed up your driver installation.
+      not sure how to fix that though. err. :|. thats confused me more
+    id: dstc7
+    label_candidates:
+    - np. you would need xserver-xorg and a bunch of others to start x
+    - 'sure, join #snappy'
+    - pastebinit /var/log/syslog.  give urls from terminal here (pasties)
+    - do you have two directories in /usr/lib/jvm/java-1.5.0-sun/jre/plugin/i386 ?
+    - breezy?
+    - do this for me, type 'users' in the console
+    - try `man dpkg` or `dpkg --force-help [package name]`.  when reading through
+      the man file, it looks like you can force different things. Its a matter of
+      finding the right --force (--force-install maybe)
+    - no idea, have you googled it?
+    - i don't see the point in it (especially when you can use a vm)
+    - and completely out of the box.  ebuyer.co.uk had them going cheap...I was pleasantly
+      surprised
+    - Those aren't forks, they're just ubuntu with different default desktops.
+    - :)
+    - which part of linux?
+    - 'McQue: You tried to use ndisswrapper. Try to use the Ubuntu Driver'
+    - yes.  no you don't need to login.  use keepvid.com
+    - 5:24am
+    - well i have no idea really :)
+    - I don't support windows in any format
+    - . the error you get is it from wine or from msiexec?
+    - your question is how to edit a wmv file then. i'm not sure if there is any software
+      that can work directly with such files, i avoid them.
+    text: 'participant 1: guys, i need some serious help. I screwed up my Xserver.
+      when I boot my computer, it won''t load X, so it goes to a unix shell, or whatever
+      you call that. I was installing some packages to get a game to work. some Gl
+      and mesa svga and shit
+
+      participant 2: you need to look at /var/logs/X11/XFree86.something.log
+
+      participant 1: basically, i was being careless.  what do I find in there? I
+      looked but wasn''t sure what to look for
+
+      participant 2: sorry. /var/log/XFree86.something.log. you want to look for some
+      kind of Error. Fatal''s are good ;)
+
+      participant 1: okay. on the startup, i found an error. i think it was saying
+      it failed to load hw_random. something like that
+
+      participant 2: paste in #flood
+
+      participant 1: called it Fatal
+
+      participant 2: nice.
+
+      participant 1: , let me get that.  i''m sending it in #flood.  did you see what
+      i posted?
+
+      participant 2: yep. looking at it
+
+      participant 1: k
+
+      participant 2: hrm im not sure how to help you with that one.
+
+      participant 1: that all?.  check out this, maybe this is helpful
+
+      '
+- - episode_done: true
+    eval_labels:
+    - show the exact lines. use pastebin. show the exact errors if any. use pastebin.
+    id: dstc7
+    label_candidates:
+    - i would try graveman for that
+    - please don't discuss that
+    - chown -R  /whatnot
+    - It's only for i386, is one machine PPC/AMD64?
+    - if anywhere https://shipit.ubuntu.com/
+    - i would think english is easier than spanish. less conjugations and grammatical
+      gender :p
+    - yes, this is correct. Caused by them both using the old style sound drier (which
+      exclusively locks the sound device).  The fix is to not use both at the same
+      time.
+    - nooo! I'm reading that thread now! =o)
+    - someone else will have to tell you that>.<
+    - didja put the password in the fstab
+    - exactly.
+    - using kubuntu? when?
+    - I think timidity can play them also (if you just want a simple player)
+    - Sounds like compiz is crashing, possibly because of a driver bug. Try to get
+      a detailed crash report by installing compiz-dbg and enabling Crash Handler
+      plugin in ccsm then look in /tmp for a crash log if it happens again
+    - Besides that, 10.10 was able to use FAT32 usb drives.
+    - what do you mean nothing changes?
+    - yeah, you need to escape the space, with a \. or you can use quotes, like cd
+      Documentos/"ficheiros pdf"
+    - sounds like you've lost your WM, something like 'metacity --replace' in a terminal
+      might work
+    - i think 'x-terminal-emulator' is a capability, not a package.  e.g., the 'gnome-terminal'
+      package provides 'x-terminal-emulator'
+    - u welcome :)
+    text: 'participant 1: Please is there someone who can help me out with multi disk
+      preseed?. Or point me in the right direction...
+
+      participant 2: yes. whats the issue?
+
+      participant 1: I got single disk to work but I have multiple disks
+
+      participant 2: ??
+
+      participant 1: partman doesn''t seem to support multiple disks
+
+      '
+- - episode_done: true
+    eval_labels:
+    - when are you going to do it?
+    id: dstc7
+    label_candidates:
+    - Alternatively, cat > index.php
+    - it's not in the development repo - so I do'nt expect anything soon
+    - something in smb.conf? writeable=yes, perhaps?
+    - Pulling that 6gig out will most likely increase your overall performance
+    - and that's the problem... there's a million files that need their ownership
+      changed to various things, and some of them will also need chmoded too
+    - when are you going to do it?
+    - Photoshop I think so... what's CS?
+    - fyi, photorec is file recovery part of testdisk (which does partition recovery)
+    - ok do you have the ralink modules loaded (should work pretty much out of box
+      with most generic kernels)
+    - in /etc/apt/sources.list
+    - yea, it is nice
+    - Okay, bug filed. Thanks for your help
+    - yeesss, what is it?
+    - CC? next tuesday - ie, not tomorrow
+    - that is what is meant to happen, an upgrade to the latest distribution updates
+      packages and installs new ones.
+    - 'you too: with tasksel.  you''re not the first to ask'
+    - If a msdos which is what has been used until W8 came out, the sdX would be where
+      grub went X is the HD letter, no partitions.  grub the linux bootloader is that.
+    - and what is autolog_path set to?
+    - it's like rolling the dice. wait, update or dist-upgrade?
+    - hi
+    text: 'participant 1: first my BIOS flash went bad, then I had to get another
+      mobo, because the flash i have is soldered onboard.... now Ubuntu doesn''t want
+      to install correctly with SLI... now what to do?
+
+      participant 2: what mobo are you using btw?
+
+      participant 1: does anyone else here run nvidia SLI on their machines?
+
+      participant 2: ok, ignore me. and yes, i do.
+
+      participant 1: I am running an Asus M2N-SLI deluxe edition with dual nvidia
+      8600GT (256MG DDR3)
+
+      participant 2: oh, sorry.
+
+      participant 1: I wasn''t ignoring you, lol, I was just typing.. and I''m kinda
+      slow at it lol
+
+      participant 2: i know my bad, i apologise. errr... iirc the M2N range had a
+      few problems with the bios mem?
+
+      participant 1: I have 4GB of DDR2 RAM also.. with the AMD 6400+ proc @ 3.2GHz...
+      I am trying to figure out why SLI won''t work and why my dual 500GB hadd''s
+      keep giving me errors on bootup.  if that''s the case, should I try a bios update
+      then?
+
+      participant 2: please do
+
+      participant 1: I am now kinda gunshy at it since I fried my Gigabyte mobo by
+      trying to flash it lol
+
+      participant 2: hang in here for a sec..  back ;)
+
+      participant 1: I know that the Asus has an EZ Flash 2 flash setup, but still,
+      I am REALLY kinda scared, heh...
+
+      participant 2: pftt.  just go for it imo
+
+      participant 1: I probly will be, as soon as I can get it installed and grab
+      what I need first. I think it''s installing ok this time... I hope......
+
+      participant 2: my VPN from home to work is playing up. bear with me.
+
+      participant 1: no problem
+
+      '
+num_episodes: 1000
+num_examples: 1000

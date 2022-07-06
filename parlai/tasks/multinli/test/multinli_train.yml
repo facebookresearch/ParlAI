@@ -1,0 +1,63 @@
+acts:
+- - episode_done: true
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: Conceptually cream skimming has two basic dimensions - product
+      and geography.
+
+      Hypothesis: Product and geography are what make cream skimming work. '
+- - episode_done: true
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: you know during the season and i guess at at your level uh you
+      lose them to the next level if if they decide to recall the the parent team
+      the Braves decide to call to recall a guy from triple A then a double A guy
+      goes up to replace him and a single A guy goes up to replace him
+
+      Hypothesis: You lose the things to the following level if the people recall.'
+- - episode_done: true
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: One of our number will carry out your instructions minutely.
+
+      Hypothesis: A member of my team will execute your orders with immense precision.'
+- - episode_done: true
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - entailment
+    text: 'Premise: How do you know? All this is their information again.
+
+      Hypothesis: This information belongs to them.'
+- - episode_done: true
+    id: MultiNLI
+    label_candidates:
+    - contradiction
+    - entailment
+    - neutral
+    labels:
+    - neutral
+    text: 'Premise: yeah i tell you what though if you go price some of those tennis
+      shoes i can see why now you know they''re getting up in the hundred dollar range
+
+      Hypothesis: The tennis shoes have a range of prices.'
+num_episodes: 392702
+num_examples: 392702

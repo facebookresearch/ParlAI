@@ -8,5 +8,5 @@ Read more about Memory Networks [here](https://arxiv.org/abs/1410.3916).
 
 Train a memory network on the bAbi task.
 ```bash
-python examples/train_model.py -m memnn -t babi:task10k:1 -mf /tmp/memnn_babi.mdl
+parlai train_model -m memnn -t babi:task10k:1 -mf /tmp/memnn_babi.mdl
 ```

@@ -8,6 +8,16 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+
+RESOURCES = [
+    DownloadableFile(
+        '1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA',
+        'qangaroo.zip',
+        '2f512869760cdad76a022a1465f025b486ae79dc5b8f0bf3ad901a4caf2d3050',
+        from_google=True,
+    )
+]
 
 
 def build(opt):
@@ -22,12 +32,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'qangaroo.zip'
-        g_ID = "1ytVZ4AhubFDOEL7o7XrIRIyhU8g9wvKA"
-
-        print("downloading ...")
-        build_data.download_from_google_drive(g_ID, os.path.join(dpath, fname))
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         # Mark the data as built.
         build_data.mark_done(dpath, version_string=version)

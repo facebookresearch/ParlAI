@@ -1,0 +1,39 @@
+acts:
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - and it can be a very complicated thing , what human health is .
+    text: und was menschliche gesundheit ist , kann auch ziemlich kompliziert sein
+      .
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - and bringing those two together might seem a very da@@ un@@ ting task , but
+      what i &apos;m going to try to say is that even in that complexity , there &apos;s
+      some simple the@@ mes that i think , if we understand , we can really move forward
+      .
+    text: und diese zwei zusammen zu bringen , erscheint vielleicht wie eine gewal@@
+      tige aufgabe . aber was ich ihnen zu sagen versuche ist , dass es trotz dieser
+      komplexität einige einfache themen gibt , von denen ich denke , wenn wir diese
+      verstehen , können wir uns wirklich weiter entwickeln .
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - and those simple the@@ mes aren &apos;t really the@@ mes about the complex science
+      of what &apos;s going on , but things that we all pretty well know .
+    text: und diese einfachen themen sind eigentlich keine komplex@@ en wissenschaftlichen
+      zusammen@@ hän@@ ge , sondern tat@@ sachen , die wir alle gut kennen .
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - 'and i &apos;m going to start with this one : if mom@@ ma ain &apos;t happy
+      , ain &apos;t nobody happy .'
+    text: 'und ich werde mit dieser hier anfangen : wenn die mama nicht glücklich
+      ist , ist keiner glücklich .'
+- - episode_done: true
+    id: iwslt14
+    labels:
+    - we know that , right ? we &apos;ve experienced that .
+    text: kennen wir das nicht alle ? das haben wir alle schon erlebt .
+num_episodes: 160215
+num_examples: 160215

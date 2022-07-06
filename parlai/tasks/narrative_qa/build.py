@@ -11,9 +11,16 @@ import subprocess
 import shutil
 import csv
 import time
+from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
 
-
-NARRATIVE_QA_DOWNLOAD_URL = 'https://github.com/deepmind/narrativeqa/archive/master.zip'
+RESOURCES = [
+    DownloadableFile(
+        'https://github.com/deepmind/narrativeqa/archive/master.zip',
+        'narrative_qa.zip',
+        'd9fc92d5f53409f845ba44780e6689676d879c739589861b4805064513d1476b',
+    )
+]
 
 
 def get_rows_for_set(reader, req_set):
@@ -29,7 +36,7 @@ def read_csv_to_dict_list(filepath):
 def write_dict_list_to_csv(dict_list, filepath):
     keys = list(dict_list[0].keys())
 
-    with open(filepath, 'w') as f:
+    with PathManager.open(filepath, 'w') as f:
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
 
@@ -78,7 +85,7 @@ def try_downloading(directory, row):
 
     actual_story_size = 0
     if os.path.exists(story_path):
-        with open(story_path, 'rb') as f:
+        with PathManager.open(story_path, 'rb') as f:
             actual_story_size = len(f.read())
 
     if actual_story_size <= 19000:
@@ -105,7 +112,7 @@ def download_stories(path):
     tmp_dir = os.path.join(path, 'tmp')
     build_data.make_dir(tmp_dir)
 
-    with open(documents_csv, 'r') as f:
+    with PathManager.open(documents_csv, 'r') as f:
         reader = csv.DictReader(f, delimiter=',')
         for row in reader:
             print("Downloading %s (%s)" % (row['wiki_title'], row['document_id']))
@@ -130,14 +137,9 @@ def build(opt):
             build_data.remove_dir(dpath)
         build_data.make_dir(dpath)
 
-        # download the data.
-        fname = 'narrative_qa.zip'
-        # dataset URL
-        url = NARRATIVE_QA_DOWNLOAD_URL
-        build_data.download(url, dpath, fname)
-
-        # uncompress it
-        build_data.untar(dpath, fname)
+        # Download the data.
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         print('downloading stories now')
         base_path = os.path.join(dpath, 'narrativeqa-master')

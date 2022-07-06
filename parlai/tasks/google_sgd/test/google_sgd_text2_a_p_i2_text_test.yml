@@ -1,0 +1,77 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Any preference on the restaurant, location and time?
+    id: google_sgd:text2_a_p_i2_text
+    slots:
+      location: []
+      restaurant_name: []
+      time: []
+    text: 'Hi, could you get me a restaurant booking on the 8th please? api_resp:
+      time = [] ; restaurant_name = [] ; location = []'
+    type: apiresp
+- - episode_done: false
+    eval_labels:
+    - Please confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for
+      2 on March 8th.
+    id: google_sgd:text2_a_p_i2_text
+    slots:
+      date:
+      - '2019-03-08'
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - P.f. Chang's
+      time:
+      - '12:00'
+    text: 'Could you get me a reservation at P.f. Chang''s in Corte Madera at afternoon
+      12? api_resp: restaurant_name = ["P.f. Chang''s"] ; location = [''Corte Madera'']
+      ; time = [''12:00''] ; date = [''2019-03-08''] ; number_of_seats = [''2'']'
+    type: apiresp
+- - episode_done: false
+    eval_labels:
+    - 'apicall: ReserveRestaurant.date = 2019-03-08 ; ReserveRestaurant.location =
+      Corte Madera ; ReserveRestaurant.number_of_seats = 2 ; ReserveRestaurant.restaurant_name
+      = P.f. Chang''s ; ReserveRestaurant.time = 12:00'
+    id: google_sgd:text2_a_p_i2_text
+    slots:
+      ReserveRestaurant.date: '2019-03-08'
+      ReserveRestaurant.location: Corte Madera
+      ReserveRestaurant.number_of_seats: '2'
+      ReserveRestaurant.restaurant_name: P.f. Chang's
+      ReserveRestaurant.time: '12:00'
+    text: Sure, that is great.
+    type: apicall
+- - episode_done: false
+    eval_labels:
+    - Sorry, your reservation could not be made. Could I help you with something else?
+    id: google_sgd:text2_a_p_i2_text
+    slots:
+      ? ''
+      : []
+    text: 'api_resp:  = []'
+    type: apiresp
+- - episode_done: false
+    eval_labels:
+    - Sure, please confirm your reservation at Benissimo Restaurant & Bar in Corte
+      Madera at 12 pm for 2 on March 8th.
+    id: google_sgd:text2_a_p_i2_text
+    slots:
+      date:
+      - '2019-03-08'
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Benissimo Restaurant & Bar
+      time:
+      - '12:00'
+    text: 'Could you try booking a table at Benissimo instead? api_resp: restaurant_name
+      = [''Benissimo Restaurant & Bar''] ; location = [''Corte Madera''] ; time =
+      [''12:00''] ; date = [''2019-03-08''] ; number_of_seats = [''2'']'
+    type: apiresp
+num_episodes: 4201
+num_examples: 54970

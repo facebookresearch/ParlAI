@@ -3,19 +3,34 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Talk with a model using a web UI."""
+"""
+Talk with a model using a web UI.
+
+## Examples
+
+```shell
+parlai interactive_web --model-file "zoo:tutorial_transformer_generator/model"
+```
+"""
 
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from parlai.scripts.interactive import setup_args
 from parlai.core.agents import create_agent
 from parlai.core.worlds import create_task
+from typing import Dict, Any
+from parlai.core.script import ParlaiScript, register_script
+import parlai.utils.logging as logging
 
 import json
+import time
+
+from parlai.agents.local_human.local_human import LocalHumanAgent
 
 HOST_NAME = 'localhost'
 PORT = 8080
-SHARED = {}
+
+SHARED: Dict[Any, Any] = {}
 STYLE_SHEET = "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.css"
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.3.1/js/all.js"
 WEB_HTML = """
@@ -24,20 +39,15 @@ WEB_HTML = """
     <script defer src={}></script>
     <head><title> Interactive Run </title></head>
     <body>
-        <div class="columns">
+        <div class="columns" style="height: 100%">
             <div class="column is-three-fifths is-offset-one-fifth">
-              <section class="hero is-info is-large has-background-light has-text-grey-dark">
-                <div id="parent" class="hero-body">
+              <section class="hero is-info is-large has-background-light has-text-grey-dark" style="height: 100%">
+                <div id="parent" class="hero-body" style="overflow: auto; height: calc(100% - 76px); padding-top: 1em; padding-bottom: 0;">
                     <article class="media">
-                      <figure class="media-left">
-                        <span class="icon is-large">
-                          <i class="fas fa-robot fas fa-2x"></i>
-                        </span>
-                      </figure>
                       <div class="media-content">
                         <div class="content">
                           <p>
-                            <strong>Model</strong>
+                            <strong>Instructions</strong>
                             <br>
                             Enter a message, and the model will respond interactively.
                           </p>
@@ -45,7 +55,7 @@ WEB_HTML = """
                       </div>
                     </article>
                 </div>
-                <div class="hero-foot column is-three-fifths is-offset-one-fifth">
+                <div class="hero-foot column is-three-fifths is-offset-one-fifth" style="height: 76px">
                   <form id = "interact">
                       <div class="field is-grouped">
                         <p class="control is-expanded">
@@ -104,7 +114,10 @@ WEB_HTML = """
                 span.appendChild(icon);
                 figure.appendChild(span);
 
-                article.appendChild(figure);
+                if (agent !== "Instructions") {{
+                    article.appendChild(figure);
+                }};
+
                 article.appendChild(media);
 
                 return article;
@@ -127,7 +140,7 @@ WEB_HTML = """
 
                     // Change info for Model response
                     parDiv.append(createChatRow("Model", data.text));
-                    window.scrollTo(0,document.body.scrollHeight);
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
             document.getElementById("interact").addEventListener("reset", function(event){{
@@ -144,8 +157,8 @@ WEB_HTML = """
                     var parDiv = document.getElementById("parent");
 
                     parDiv.innerHTML = '';
-                    parDiv.append(createChatRow("Model", "Enter a message, and the model will respond interactively."));
-                    window.scrollTo(0,document.body.scrollHeight);
+                    parDiv.append(createChatRow("Instructions", "Enter a message, and the model will respond interactively."));
+                    parDiv.scrollTo(0, parDiv.scrollHeight);
                 }})
             }});
         </script>
@@ -156,7 +169,9 @@ WEB_HTML = """
 
 
 class MyHandler(BaseHTTPRequestHandler):
-    """Handle HTTP requests."""
+    """
+    Handle HTTP requests.
+    """
 
     def _interactive_running(self, opt, reply_text):
         reply = {'episode_done': False, 'text': reply_text}
@@ -165,24 +180,27 @@ class MyHandler(BaseHTTPRequestHandler):
         return model_res
 
     def do_HEAD(self):
-        """Handle HEAD requests."""
+        """
+        Handle HEAD requests.
+        """
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
 
     def do_POST(self):
-        """Handle POST request, especially replying to a chat message."""
+        """
+        Handle POST request, especially replying to a chat message.
+        """
         if self.path == '/interact':
             content_length = int(self.headers['Content-Length'])
             body = self.rfile.read(content_length)
             model_response = self._interactive_running(
                 SHARED.get('opt'), body.decode('utf-8')
             )
-
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            json_str = json.dumps(model_response)
+            json_str = json.dumps(model_response.json_safe_payload())
             self.wfile.write(bytes(json_str, 'utf-8'))
         elif self.path == '/reset':
             self.send_response(200)
@@ -194,7 +212,9 @@ class MyHandler(BaseHTTPRequestHandler):
             return self._respond({'status': 500})
 
     def do_GET(self):
-        """Respond to GET request, especially the initial load."""
+        """
+        Respond to GET request, especially the initial load.
+        """
         paths = {
             '/': {'status': 200},
             '/favicon.ico': {'status': 202},  # Need for chrome
@@ -216,33 +236,69 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(response)
 
 
-def setup_interactive(shared):
-    """Build and parse CLI opts."""
+def setup_interweb_args(shared):
+    """
+    Build and parse CLI opts.
+    """
     parser = setup_args()
+    parser.description = 'Interactive chat with a model in a web browser'
     parser.add_argument('--port', type=int, default=PORT, help='Port to listen on.')
-    SHARED['opt'] = parser.parse_args(print_args=False)
+    parser.add_argument(
+        '--host',
+        default=HOST_NAME,
+        type=str,
+        help='Host from which allow requests, use 0.0.0.0 to allow all IPs',
+    )
+    return parser
 
-    SHARED['opt']['task'] = 'parlai.agents.local_human.local_human:LocalHumanAgent'
+
+def shutdown():
+    global SHARED
+    if 'server' in SHARED:
+        SHARED['server'].shutdown()
+    SHARED.clear()
+
+
+def wait():
+    global SHARED
+    while not SHARED.get('ready'):
+        time.sleep(0.01)
+
+
+def interactive_web(opt):
+    global SHARED
+
+    human_agent = LocalHumanAgent(opt)
 
     # Create model and assign it to the specified task
-    agent = create_agent(SHARED.get('opt'), requireModelExists=True)
+    agent = create_agent(opt, requireModelExists=True)
+    agent.opt.log()
+    SHARED['opt'] = agent.opt
     SHARED['agent'] = agent
-    SHARED['world'] = create_task(SHARED.get('opt'), SHARED['agent'])
+    SHARED['world'] = create_task(opt, [human_agent, SHARED['agent']])
 
-    # show args after loading model
-    parser.opt = agent.opt
-    parser.print_args()
-    return agent.opt
-
-
-if __name__ == '__main__':
-    opt = setup_interactive(SHARED)
     MyHandler.protocol_version = 'HTTP/1.0'
-    httpd = HTTPServer((HOST_NAME, opt['port']), MyHandler)
-    print('http://{}:{}/'.format(HOST_NAME, opt['port']))
+    httpd = HTTPServer((opt['host'], opt['port']), MyHandler)
+    SHARED['server'] = httpd
+    logging.info('http://{}:{}/'.format(opt['host'], opt['port']))
 
     try:
+        SHARED['ready'] = True
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
+
+
+@register_script('interactive_web', aliases=['iweb'], hidden=True)
+class InteractiveWeb(ParlaiScript):
+    @classmethod
+    def setup_args(cls):
+        return setup_interweb_args(SHARED)
+
+    def run(self):
+        return interactive_web(self.opt)
+
+
+if __name__ == '__main__':
+    InteractiveWeb.main()

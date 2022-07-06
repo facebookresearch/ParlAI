@@ -4,22 +4,45 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 from parlai.core.teachers import FixedDialogTeacher, DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 import json
 import os
 
 
-class IndexTeacher(FixedDialogTeacher):
-    """Hand-written SQuAD teacher, which loads the json squad data and
-    implements its own `act()` method for interacting with student agent,
-    rather than inheriting from the core Dialog Teacher. This code is here as
-    an example of rolling your own without inheritance.
+def add_common_cmdline_args(parser):
+    agent = parser.add_argument_group('Squad2 teacher arguments')
+    agent.add_argument(
+        '--impossible-answer-string',
+        type=str,
+        default='',
+        help='Set the label for impossible answers; defaults to an empty string, but one might try something like "I do not know"',
+    )
 
-    This teacher also provides access to the "answer_start" indices that
-    specify the location of the answer in the context.
+
+class IndexTeacher(FixedDialogTeacher):
     """
+    Hand-written SQuAD teacher, which loads the json squad data and implements its own
+    `act()` method for interacting with student agent, rather than inheriting from the
+    core Dialog Teacher. This code is here as an example of rolling your own without
+    inheritance.
+
+    This teacher also provides access to the "answer_start" indices that specify the
+    location of the answer in the context.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        add_common_cmdline_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         build(opt)
@@ -53,6 +76,8 @@ class IndexTeacher(FixedDialogTeacher):
             for a in qa['answers']:
                 answers.append(a['text'])
                 answer_starts.append(a['answer_start'])
+        else:
+            answers = [self.opt['impossible_answer_string']]
         context = paragraph['context']
         plausible = qa.get("plausible_answers", [])
 
@@ -67,7 +92,7 @@ class IndexTeacher(FixedDialogTeacher):
         return action
 
     def _setup_data(self, path):
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         self.examples = []
 
@@ -81,11 +106,21 @@ class IndexTeacher(FixedDialogTeacher):
 
 
 class DefaultTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     For SQuAD, this does not efficiently store the paragraphs in memory.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        add_common_cmdline_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
@@ -100,7 +135,7 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             # each paragraph is a context for the attached questions
@@ -108,20 +143,30 @@ class DefaultTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_list = [{"text": ""}]
+                    ans_list = [{"text": self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_list = qa['answers']
-                    answers = (a['text'] for a in ans_list)
+                    answers = tuple(a['text'] for a in ans_list)
                     context = paragraph['context']
                     yield (context + '\n' + question, answers), True
 
 
 class OpenSquadTeacher(DialogTeacher):
-    """This version of SQuAD inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a default `act` function.
+    """
+    This version of SQuAD inherits from the core Dialog Teacher, which just requires it
+    to define an iterator over its data `setup_data` in order to inherit basic metrics,
+    a default `act` function.
+
     Note: This teacher omits the context paragraph
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        add_common_cmdline_args(parser)
+        return parser
 
     def __init__(self, opt, shared=None):
         self.datatype = opt['datatype']
@@ -136,7 +181,7 @@ class OpenSquadTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             # each paragraph is a context for the attached questions
@@ -144,15 +189,18 @@ class OpenSquadTeacher(DialogTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_iter = [{"text": ''}]
+                    ans_iter = [{"text": self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_iter = qa['answers']
-                    answers = (a['text'] for a in ans_iter)
+                    answers = [a['text'] for a in ans_iter]
                     yield (question, answers), True
 
 
 class TitleTeacher(DefaultTeacher):
-    """This version of SquAD inherits from the Default Teacher. The only
+    """
+    This version of SquAD inherits from the Default Teacher.
+
+    The only
     difference is that the 'text' field of an observation will contain
     the title of the article separated by a newline from the paragraph and the
     query.
@@ -169,7 +217,7 @@ class TitleTeacher(DefaultTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.squad = json.load(data_file)['data']
         for article in self.squad:
             title = article['title']
@@ -178,17 +226,17 @@ class TitleTeacher(DefaultTeacher):
                 # each question is an example
                 for qa in paragraph['qas']:
                     question = qa['question']
-                    ans_iter = [{"text": ""}]
+                    ans_iter = [{'text': self.opt['impossible_answer_string']}]
                     if not qa['is_impossible']:
                         ans_iter = qa['answers']
-                    answers = (a['text'] for a in ans_iter)
+                    answers = [a['text'] for a in ans_iter]
                     context = paragraph['context']
                     yield ('\n'.join([title, context, question]), answers), True
 
 
 class SentenceIndexTeacher(IndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
-    answer.
+    """
+    Index teacher where the labels are the sentences the contain the true answer.
     """
 
     def __init__(self, opt, shared=None):
@@ -251,6 +299,8 @@ class SentenceIndexTeacher(IndexTeacher):
         plausible = []
         if qa['is_impossible']:
             plausible = qa['plausible_answers']
+            labels = [self.opt['impossible_answer_string']]
+
         action = {
             'id': 'squad',
             'text': context + '\n' + question,
@@ -263,11 +313,11 @@ class SentenceIndexTeacher(IndexTeacher):
 
 
 class SentenceIndexEditTeacher(SentenceIndexTeacher):
-    """Index teacher where the labels are the sentences the contain the true
-    answer.
+    """
+    Index teacher where the labels are the sentences the contain the true answer.
 
-    Some punctuation may be removed from the context and the answer for
-    tokenization purposes.
+    Some punctuation may be removed from the context and the answer for tokenization
+    purposes.
     """
 
     def __init__(self, opt, shared=None):
@@ -307,6 +357,8 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
         plausible = []
         if qa['is_impossible']:
             plausible = qa['plausible_answers']
+            labels = [self.opt['impossible_answer_string']]
+
         action = {
             'id': 'squad',
             'text': context + '\n' + question,
@@ -319,8 +371,9 @@ class SentenceIndexEditTeacher(SentenceIndexTeacher):
 
 
 class SentenceLabelsTeacher(IndexTeacher):
-    """Teacher which contains the question as the text, the sentences as the
-    label candidates, and the label as the sentence containing the answer.
+    """
+    Teacher which contains the question as the text, the sentences as the label
+    candidates, and the label as the sentence containing the answer.
 
     Some punctuation may be removed for tokenization purposes.
     """
@@ -372,6 +425,7 @@ class SentenceLabelsTeacher(IndexTeacher):
         plausible = []
         if qa['is_impossible']:
             plausible = qa['plausible_answers']
+            labels = [self.opt['impossible_answer_string']]
         action = {
             'id': 'SquadSentenceLabels',
             'text': question,

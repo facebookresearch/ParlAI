@@ -1,0 +1,86 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - new movies in new york
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: false
+    text: 'I live in New York, New York.
+
+      I like going to the moives.
+
+      I love to get the overpriced snacks.'
+- - episode_done: true
+    eval_labels:
+    - upcomming movies
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: 'I live in New York, New York.
+
+      I like going to the moives.
+
+      I love to get the overpriced snacks.'
+- - episode_done: true
+    eval_labels:
+    - movie toy story
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: 'I live in New York, New York.
+
+      I like going to the moives.
+
+      I love to get the overpriced snacks.
+
+      Have you seen any good movies lately?
+
+      I have. I liked Toy Story. There was a marathon.'
+- - episode_done: true
+    eval_labels:
+    - pixar animation studios technology
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: 'I live in New York, New York.
+
+      I like going to the moives.
+
+      I love to get the overpriced snacks.
+
+      Have you seen any good movies lately?
+
+      I have. I liked Toy Story. There was a marathon.
+
+      All four movies in the Toy Story series are great. Tom Hanks, Tim Allen, and
+      Don Rickles are all truly great actors and the creativity of the Pixar Animation
+      Studios team is really top notch.
+
+      It is neat to see how they progressed in the series with the quality.'
+- - episode_done: true
+    eval_labels:
+    - laptop lost files pixar
+    id: SearchQueryGenerationTeacher
+    is_last_search_query: true
+    text: 'I live in New York, New York.
+
+      I like going to the moives.
+
+      I love to get the overpriced snacks.
+
+      Have you seen any good movies lately?
+
+      I have. I liked Toy Story. There was a marathon.
+
+      All four movies in the Toy Story series are great. Tom Hanks, Tim Allen, and
+      Don Rickles are all truly great actors and the creativity of the Pixar Animation
+      Studios team is really top notch.
+
+      It is neat to see how they progressed in the series with the quality.
+
+      You''re right. The quality of all of Pixar''s movies have increased over the
+      years. This is due, in no small part, to the fact that they have long term teams
+      that work together on multiple projects. Further, Pixar, as a company, cares
+      more about creating high quality movies than they do making the most money possible.
+      This is their company''s culture and the reason for their continuing success.
+
+      I once heard someone erased progress on it like a saved file but someone had
+      it on their laptop or something.'
+num_episodes: 503
+num_examples: 2466

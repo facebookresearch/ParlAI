@@ -6,7 +6,7 @@
 #
 # Download and build the data if it does not exist.
 
-from parlai.core.agents import MultiTaskTeacher
+from parlai.core.teachers import MultiTaskTeacher
 import parlai.tasks.squad.agents as squad
 import parlai.tasks.iwslt14.agents as iwslt14
 import parlai.tasks.cnn_dm.agents as cnn_dm

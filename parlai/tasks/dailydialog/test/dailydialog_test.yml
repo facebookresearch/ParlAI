@@ -1,0 +1,44 @@
+acts:
+- - act_type: no_act
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - Hey man , you wanna buy some weed ?
+    id: dailydialog
+    text: __SILENCE__
+    topic: politics
+- - act_type: question
+    emotion: surprise
+    episode_done: false
+    eval_labels:
+    - Weed ! You know ? Pot , Ganja , Mary Jane some chronic !
+    id: dailydialog
+    text: Some what ?
+    topic: politics
+- - act_type: commissive
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - I also have blow if you prefer to do a few lines .
+    id: dailydialog
+    text: Oh , umm , no thanks .
+    topic: politics
+- - act_type: commissive
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - Come on man ! I even got dope and acid ! Try some !
+    id: dailydialog
+    text: No , I am ok , really .
+    topic: politics
+- - act_type: question
+    emotion: no_emotion
+    episode_done: false
+    eval_labels:
+    - I got my connections ! Just tell me what you want and I ' ll even give you one
+      ounce for free .
+    id: dailydialog
+    text: Do you really have all of these drugs ? Where do you get them from ?
+    topic: politics
+num_episodes: 2000
+num_examples: 7740

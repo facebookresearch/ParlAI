@@ -3,23 +3,35 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Model Code."""
+"""
+Model Code.
+"""
 
+from typing import Optional
+from parlai.core.params import ParlaiParser
+from parlai.core.opt import Opt
 import torch
 from torch import nn
 from torch import optim
 from parlai.agents.transformer.modules import TransformerEncoder
 from parlai.agents.transformer import transformer as Transformer
+from parlai.utils.io import PathManager
 
 
 class TransresnetModel(nn.Module):
-    """Actual model code for the Transresnet Agent."""
+    """
+    Actual model code for the Transresnet Agent.
+    """
 
-    @staticmethod
-    def add_cmdline_args(argparser):
-        """Add command line arguments."""
-        Transformer.add_common_cmdline_args(argparser)
-        agent = argparser.add_argument_group('TransresnetModel arguments')
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command line arguments.
+        """
+        Transformer.add_common_cmdline_args(parser)
+        agent = parser.add_argument_group('TransresnetModel arguments')
         agent.add_argument(
             '--truncate',
             type=int,
@@ -87,9 +99,10 @@ class TransresnetModel(nn.Module):
             default=0.2,
             help='dropout for additional linear layer',
         )
-        argparser.set_params(
+        parser.set_params(
             ffn_size=1200, attention_dropout=0.2, relu_dropout=0.2, n_positions=1000
         )
+        return parser
 
     def __init__(self, opt, personalities_list, dictionary):
         super().__init__()
@@ -150,22 +163,12 @@ class TransresnetModel(nn.Module):
             )
 
         self.text_encoder = TransformerEncoder(
-            n_heads=self.opt['n_heads'],
-            n_layers=self.opt['n_layers'],
-            embedding_size=self.opt['embedding_size'],
-            ffn_size=self.opt['ffn_size'],
-            vocabulary_size=len(self.dictionary),
+            opt=self.opt,
             embedding=self.embeddings,
-            dropout=self.opt['dropout'],
-            attention_dropout=self.opt['attention_dropout'],
-            relu_dropout=self.opt['relu_dropout'],
+            vocabulary_size=len(self.dictionary),
             padding_idx=self.dictionary.tok2ind[self.dictionary.null_token],
-            learn_positional_embeddings=self.opt['learn_positional_embeddings'],
             embeddings_scale=False,
-            n_positions=self.opt['n_positions'],
-            activation=self.opt['activation'],
-            variant=self.opt['variant'],
-            n_segments=self.opt['n_segments'],
+            output_scaling=1.0,
         )
         if self.opt.get('load_encoder_from') is not None:
             self._load_text_encoder_state()
@@ -393,9 +396,9 @@ class TransresnetModel(nn.Module):
         for img_index in range(len(context_encoded)):
             context_encoding = context_encoded[img_index : img_index + 1, :]
             scores = torch.mm(
-                candidates_encoded[img_index]
+                candidates_encoded[img_index].to(context_encoding)
                 if not one_cand_set
-                else candidates_encoded,
+                else candidates_encoded.to(context_encoding),
                 context_encoding.transpose(0, 1),
             )
             if k >= 1:
@@ -467,11 +470,15 @@ class TransresnetModel(nn.Module):
         return loss, num_correct
 
     def freeze_text_encoder(self):
-        """Freeze the text (candidate) encoder."""
+        """
+        Freeze the text (candidate) encoder.
+        """
         self.text_encoder_frozen = True
 
     def unfreeze_text_encoder(self):
-        """Unfreeze the text (candidate) encoder."""
+        """
+        Unfreeze the text (candidate) encoder.
+        """
         self.text_encoder_frozen = False
 
     def sum_encodings(self, addends):
@@ -539,7 +546,8 @@ class TransresnetModel(nn.Module):
     def _load_text_encoder_state(self):
         try:
             state_file = self.opt.get('load_encoder_from')
-            model = torch.load(state_file)
+            with PathManager.open(state_file, 'b') as f:
+                model = torch.load(f)
             states = model['model']
             self.text_encoder.load_state_dict(states)
         except Exception as e:
@@ -552,7 +560,9 @@ class TransresnetModel(nn.Module):
 
 
 def load_fasttext_embeddings(dic, embedding_dim, datapath):
-    """Load weights from fasttext_cc and put them in embeddings.weights."""
+    """
+    Load weights from fasttext_cc and put them in embeddings.weights.
+    """
     print('Initializing embeddings from fasttext_cc')
     from parlai.zoo.fasttext_cc_vectors.build import download
 
@@ -574,7 +584,9 @@ def load_fasttext_embeddings(dic, embedding_dim, datapath):
 
 
 class LinearWrapper(nn.Module):
-    """Linear layer with dropout."""
+    """
+    Linear layer with dropout.
+    """
 
     def __init__(self, in_dim, out_dim, dropout):
         super(LinearWrapper, self).__init__()
@@ -582,5 +594,7 @@ class LinearWrapper(nn.Module):
         self.dp = nn.Dropout(dropout)
 
     def forward(self, input):
-        """Forward pass."""
+        """
+        Forward pass.
+        """
         return self.lin(self.dp(input))

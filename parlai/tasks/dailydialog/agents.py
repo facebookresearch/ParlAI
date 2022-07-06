@@ -5,8 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Daily Dialog
-https://arxiv.org/abs/1710.03957
+Daily Dialog https://arxiv.org/abs/1710.03957.
 
 Original data is copyright by the owners of the paper, and free for use in research.
 
@@ -22,7 +21,9 @@ once acting as Speaker 2.
 
 import os
 import json
+from parlai.core.message import Message
 from parlai.core.teachers import FixedDialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 
 
@@ -55,7 +56,7 @@ class Convai2Teacher(FixedDialogTeacher):
     def _setup_data(self, fold):
         self.data = []
         fpath = os.path.join(self.opt['datapath'], 'dailydialog', fold + '.json')
-        with open(fpath) as f:
+        with PathManager.open(fpath) as f:
             for line in f:
                 self.data.append(json.loads(line))
 
@@ -70,14 +71,16 @@ class Convai2Teacher(FixedDialogTeacher):
 
         episode_done = 2 * entry_idx + speaker_id + 1 >= len(full_eps['dialogue']) - 1
 
-        action = {
-            'topic': full_eps['topic'],
-            'text': their_turn['text'],
-            'emotion': their_turn['emotion'],
-            'act_type': their_turn['act'],
-            'labels': [my_turn['text']],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'topic': full_eps['topic'],
+                'text': their_turn['text'],
+                'emotion': their_turn['emotion'],
+                'act_type': their_turn['act'],
+                'labels': [my_turn['text']],
+                'episode_done': episode_done,
+            }
+        )
         return action
 
     def share(self):
@@ -89,6 +92,7 @@ class Convai2Teacher(FixedDialogTeacher):
 class NoStartTeacher(Convai2Teacher):
     """
     Same as default teacher, but it doesn't contain __SILENCE__ entries.
+
     If we are the first speaker, then the first utterance is skipped.
     """
 
@@ -114,14 +118,16 @@ class NoStartTeacher(Convai2Teacher):
         my_turn = entries[1 + speaker_id + 2 * entry_idx]
         episode_done = 2 * entry_idx + speaker_id + 1 >= len(entries) - 2
 
-        action = {
-            'topic': full_eps['topic'],
-            'text': their_turn['text'],
-            'emotion': their_turn['emotion'],
-            'act_type': their_turn['act'],
-            'labels': [my_turn['text']],
-            'episode_done': episode_done,
-        }
+        action = Message(
+            {
+                'topic': full_eps['topic'],
+                'text': their_turn['text'],
+                'emotion': their_turn['emotion'],
+                'act_type': their_turn['act'],
+                'labels': [my_turn['text']],
+                'episode_done': episode_done,
+            }
+        )
         return action
 
 

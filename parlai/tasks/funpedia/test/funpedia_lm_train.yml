@@ -1,0 +1,34 @@
+acts:
+- - episode_done: true
+    id: funpedia:lm
+    labels:
+    - Well, I bet you didn't know about danio's two pairs of long barbels
+    reward: 0
+    text: ''
+- - episode_done: true
+    id: funpedia:lm
+    labels:
+    - I wonder what the people in Livingston feel about their county, Sumter.
+    reward: 0
+    text: ''
+- - episode_done: true
+    id: funpedia:lm
+    labels:
+    - What a nice place to go above sea level, Soldier Mountain is
+    reward: 0
+    text: ''
+- - episode_done: true
+    id: funpedia:lm
+    labels:
+    - Incredible, the island Tyssoy is all away towards the north in the country
+    reward: 0
+    text: ''
+- - episode_done: true
+    id: funpedia:lm
+    labels:
+    - Old Trick New Dog has lovely new songs but I am thankful for the Partridge Family
+      remake songs.
+    reward: 0
+    text: ''
+num_episodes: 81467
+num_examples: 81467

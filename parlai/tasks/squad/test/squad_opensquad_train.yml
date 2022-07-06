@@ -1,0 +1,28 @@
+acts:
+- - episode_done: true
+    id: squad
+    labels:
+    - Saint Bernadette Soubirous
+    text: To whom did the Virgin Mary allegedly appear in 1858 in Lourdes France?
+- - episode_done: true
+    id: squad
+    labels:
+    - a copper statue of Christ
+    text: What is in front of the Notre Dame Main Building?
+- - episode_done: true
+    id: squad
+    labels:
+    - the Main Building
+    text: The Basilica of the Sacred heart at Notre Dame is beside to which structure?
+- - episode_done: true
+    id: squad
+    labels:
+    - a Marian place of prayer and reflection
+    text: What is the Grotto at Notre Dame?
+- - episode_done: true
+    id: squad
+    labels:
+    - a golden statue of the Virgin Mary
+    text: What sits on top of the Main Building at Notre Dame?
+num_episodes: 87599
+num_examples: 87599

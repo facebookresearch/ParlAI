@@ -1,0 +1,31 @@
+acts:
+- - episode_done: false
+    eval_labels:
+    - Blue is always nice. I like royal blue.
+    id: wizard_of_wikipedia:basic_apprentice_dialog
+    text: Blue is my favorite primary color.
+- - episode_done: false
+    eval_labels:
+    - Oh that sounds really nice. I bet there was a lot of scenery and blue skies.
+    id: wizard_of_wikipedia:basic_apprentice_dialog
+    text: I once road on The Royal Blue train from New York to D.C
+- - episode_done: false
+    eval_labels:
+    - No I haven't, but I always like the way he danced.
+    id: wizard_of_wikipedia:basic_apprentice_dialog
+    text: Yes, speaking of Blue Skies, have you seen the 1946 movie staring Bing Crosby?
+- - episode_done: true
+    eval_labels:
+    - He was definitely a legend. I think he was a good singer too.
+    id: wizard_of_wikipedia:basic_apprentice_dialog
+    text: Yes. I was sad when he died in 1977. He was my favorite actor.
+- - episode_done: false
+    eval_labels:
+    - Yes buddy,  Images captured with an electronic image-sensor, produces an electrical
+      charge.The word "cinematography" is based on the Greek words  meaning movement,
+      motion.
+    id: wizard_of_wikipedia:basic_apprentice_dialog
+    text: 'Cinematography,is a type of motion picture , captured electronically by
+      means of an image '
+num_episodes: 965
+num_examples: 3885

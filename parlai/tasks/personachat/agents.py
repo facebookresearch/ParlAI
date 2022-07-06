@@ -3,7 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""PersonaChat task agents.
+"""
+PersonaChat task agents.
 
 Persona can be 'none', 'self', 'other', or 'both'.
 Format of persona can be 'original' or 'revised'.
@@ -21,7 +22,7 @@ This is specified in the following way:
 """
 
 
-from parlai.core.teachers import FbDialogTeacher
+from parlai.core.teachers import FbDeprecatedDialogTeacher
 from .build import build
 
 import copy
@@ -35,14 +36,14 @@ def _path(opt, persona):
     return os.path.join(opt['datapath'], 'Persona-Chat', 'personachat', dt + '.txt')
 
 
-class NoneTeacher(FbDialogTeacher):
+class NoneTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'none_original')
         super().__init__(opt, shared)
 
 
-class SelfOriginalTeacher(FbDialogTeacher):
+class SelfOriginalTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'self_original')
@@ -53,14 +54,14 @@ class SelfTeacher(SelfOriginalTeacher):
     pass
 
 
-class SelfRevisedTeacher(FbDialogTeacher):
+class SelfRevisedTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'self_revised')
         super().__init__(opt, shared)
 
 
-class OtherOriginalTeacher(FbDialogTeacher):
+class OtherOriginalTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'other_original')
@@ -71,14 +72,14 @@ class OtherTeacher(OtherOriginalTeacher):
     pass
 
 
-class OtherRevisedTeacher(FbDialogTeacher):
+class OtherRevisedTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'other_revised')
         super().__init__(opt, shared)
 
 
-class BothOriginalTeacher(FbDialogTeacher):
+class BothOriginalTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'both_original')
@@ -89,7 +90,7 @@ class BothTeacher(BothOriginalTeacher):
     pass
 
 
-class BothRevisedTeacher(FbDialogTeacher):
+class BothRevisedTeacher(FbDeprecatedDialogTeacher):
     def __init__(self, opt, shared=None):
         opt = copy.deepcopy(opt)
         opt['datafile'] = _path(opt, 'both_revised')

@@ -1,0 +1,43 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - SELECT  Nationality FROM table WHERE Player = Terrence Ross
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      What is terrence ross'' nationality'
+- - episode_done: true
+    eval_labels:
+    - SELECT  School/Club Team FROM table WHERE Years in Toronto = 1995-96
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      What clu was in toronto 1995-96'
+- - episode_done: true
+    eval_labels:
+    - SELECT  School/Club Team FROM table WHERE Years in Toronto = 2003-06
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      which club was in toronto 2003-06'
+- - episode_done: true
+    eval_labels:
+    - SELECT COUNT School/Club Team FROM table WHERE Player = Jalen Rose
+    id: wikisql
+    text: 'The table has column names Player, No., Nationality, Position, Years in
+      Toronto and School/Club Team.
+
+      how many schools or teams had jalen rose'
+- - episode_done: true
+    eval_labels:
+    - SELECT  Round FROM table WHERE Circuit = Assen
+    id: wikisql
+    text: 'The table has column names No, Date, Round, Circuit, Pole Position, Fastest
+      Lap, Race winner and Report.
+
+      Where was Assen held?'
+num_episodes: 56355
+num_examples: 56355

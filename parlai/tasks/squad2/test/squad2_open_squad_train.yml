@@ -1,0 +1,28 @@
+acts:
+- - episode_done: true
+    id: squad2
+    labels:
+    - in the late 1990s
+    text: When did Beyonce start becoming popular?
+- - episode_done: true
+    id: squad2
+    labels:
+    - singing and dancing
+    text: What areas did Beyonce compete in when she was growing up?
+- - episode_done: true
+    id: squad2
+    labels:
+    - '2003'
+    text: When did Beyonce leave Destiny's Child and become a solo singer?
+- - episode_done: true
+    id: squad2
+    labels:
+    - Houston, Texas
+    text: 'In what city and state did Beyonce  grow up? '
+- - episode_done: true
+    id: squad2
+    labels:
+    - late 1990s
+    text: In which decade did Beyonce become famous?
+num_episodes: 130319
+num_examples: 130319

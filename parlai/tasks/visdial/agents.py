@@ -5,7 +5,9 @@
 # LICENSE file in the root directory of this source tree.
 
 from parlai.core.teachers import DialogTeacher
-from .build import build, buildImage
+from .build import build
+from parlai.utils.io import PathManager
+from parlai.tasks.coco_caption.build_2014 import buildImage
 
 from PIL import Image
 import json
@@ -33,7 +35,7 @@ def _path(opt):
         opt['datapath'], 'VisDial-v0.9', 'visdial_0.9_' + suffix + '.json'
     )
 
-    image_path = os.path.join(opt['datapath'], 'COCO-IMG', img_suffix)
+    image_path = os.path.join(opt['datapath'], 'COCO-IMG-2014', img_suffix)
 
     return data_path, image_path
 
@@ -47,10 +49,10 @@ def _image_loader(path):
 
 class DefaultTeacher(DialogTeacher):
     """
-    This version of VisDial inherits from the core Dialog Teacher, which just
-    requires it to define an iterator over its data `setup_data` in order to
-    inherit basic metrics, a `act` function, and enables
-    Hogwild training with shared memory with no extra work.
+    This version of VisDial inherits from the core Dialog Teacher, which just requires
+    it to define an iterator over its data `setup_data` in order to inherit basic
+    metrics, a `act` function, and enables Hogwild training with shared memory with no
+    extra work.
     """
 
     def __init__(self, opt, shared=None):
@@ -64,7 +66,7 @@ class DefaultTeacher(DialogTeacher):
 
     def setup_data(self, path):
         print('loading: ' + path)
-        with open(path) as data_file:
+        with PathManager.open(path) as data_file:
             self.visdial = json.load(data_file)
 
         self.questions = self.visdial['data']['questions']

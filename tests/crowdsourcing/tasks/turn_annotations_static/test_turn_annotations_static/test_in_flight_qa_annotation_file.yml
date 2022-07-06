@@ -1,0 +1,381 @@
+inputs:
+- - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Hi!
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+- - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Hi!
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: I haven't done anything wrong, we barely just met.
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: I don't know why you're being downvoted, but I'm upvoting you anyway.
+- - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Hi!
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: 'Upvotes are good - please go ahead if you like. '
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: Upvoted. Appreciated if you upvote me as well. Thank you very much.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: 'OK, I will. What else would you like to talk about? '
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: I don't know what else to say, but I will upvote your comment. Thank you.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: 'You''re welcome, and thanks. What do you do for a living? '
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: I'm a software engineer, but I have a lot of free time in my free time.
+      I work in it.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: That sounds like you have a recursion problem with your free time!
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: It's not recursion, it's recursion. Recursion is a type of recursion!
+- - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Hi!
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: I haven't done anything wrong, we barely just met.
+  - agent_idx: 1
+    do_annotate: false
+    other_metadata: null
+    text: I don't know why you're being downvoted, but I'm upvoting you anyway.
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: It must be because I'm so controversial. Thanks for the upvote. I would
+      upvote you too.
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: I upvoted you as well. Thank you for your upvote. Have a nice day.
+- - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+  - agent_idx: 0
+    do_annotate: false
+    other_metadata: null
+    text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+  - agent_idx: 1
+    do_annotate: true
+    other_metadata: null
+    text: Last utterance where user should select bucket_1 and bucket_3
+outputs:
+  final_data:
+  - data:
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Hi!
+      turn_idx: 0
+    - agent_idx: 1
+      bucket_0: true
+      bucket_1: false
+      bucket_2: false
+      bucket_3: false
+      bucket_4: false
+      other_metadata: null
+      text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+      turn_idx: 1
+    subtask_index: 0
+  - data:
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Hi!
+      turn_idx: 0
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+      turn_idx: 1
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I haven't done anything wrong, we barely just met.
+      turn_idx: 2
+    - agent_idx: 1
+      bucket_0: false
+      bucket_1: true
+      bucket_2: false
+      bucket_3: false
+      bucket_4: false
+      other_metadata: null
+      text: I don't know why you're being downvoted, but I'm upvoting you anyway.
+      turn_idx: 3
+    subtask_index: 1
+  - data:
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Hi!
+      turn_idx: 0
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+      turn_idx: 1
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: 'Upvotes are good - please go ahead if you like. '
+      turn_idx: 2
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Upvoted. Appreciated if you upvote me as well. Thank you very much.
+      turn_idx: 3
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: 'OK, I will. What else would you like to talk about? '
+      turn_idx: 4
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I don't know what else to say, but I will upvote your comment. Thank you.
+      turn_idx: 5
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: 'You''re welcome, and thanks. What do you do for a living? '
+      turn_idx: 6
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I'm a software engineer, but I have a lot of free time in my free time.
+        I work in it.
+      turn_idx: 7
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: That sounds like you have a recursion problem with your free time!
+      turn_idx: 8
+    - agent_idx: 1
+      bucket_0: true
+      bucket_1: false
+      bucket_2: false
+      bucket_3: false
+      bucket_4: false
+      other_metadata: null
+      text: It's not recursion, it's recursion. Recursion is a type of recursion!
+      turn_idx: 9
+    subtask_index: 2
+  - data:
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Hi!
+      turn_idx: 0
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I'm not sure if I should upvote you or downvote you. I'll go with upvote.
+      turn_idx: 1
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I haven't done anything wrong, we barely just met.
+      turn_idx: 2
+    - agent_idx: 1
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: I don't know why you're being downvoted, but I'm upvoting you anyway.
+      turn_idx: 3
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: It must be because I'm so controversial. Thanks for the upvote. I would
+        upvote you too.
+      turn_idx: 4
+    - agent_idx: 1
+      bucket_0: false
+      bucket_1: true
+      bucket_2: false
+      bucket_3: false
+      bucket_4: false
+      other_metadata: null
+      text: I upvoted you as well. Thank you for your upvote. Have a nice day.
+      turn_idx: 5
+    subtask_index: 3
+  - data:
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+      turn_idx: 0
+    - agent_idx: 1
+      bucket_0: true
+      bucket_1: false
+      bucket_2: false
+      bucket_3: false
+      bucket_4: false
+      other_metadata: null
+      text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+      turn_idx: 1
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+      turn_idx: 2
+    - agent_idx: 1
+      bucket_0: false
+      bucket_1: true
+      bucket_2: false
+      bucket_3: false
+      bucket_4: false
+      other_metadata: null
+      text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+      turn_idx: 3
+    - agent_idx: 0
+      bucket_0: null
+      bucket_1: null
+      bucket_2: null
+      bucket_3: null
+      bucket_4: null
+      other_metadata: null
+      text: Lorem ipsum dolor sit amet, unum dolor lobortis ad pro
+      turn_idx: 4
+    - agent_idx: 1
+      bucket_0: false
+      bucket_1: true
+      bucket_2: false
+      bucket_3: true
+      bucket_4: false
+      other_metadata: null
+      text: Last utterance where user should select bucket_1 and bucket_3
+      turn_idx: 5
+    subtask_index: 4

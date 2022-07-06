@@ -1,0 +1,45 @@
+acts:
+- - agent_id: 0
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: i've been to new york city once crazy place that city .
+    turn_context: ''
+    turn_id: 0
+- - agent_id: 1
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: i wish i could go there . i'm sure they have a place with great meatloaf
+      !
+    turn_context: ''
+    turn_id: 1
+- - agent_id: 0
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: They probably do, somewhere! You can find nearly any cuisine there you want.
+    turn_context: ''
+    turn_id: 2
+- - agent_id: 1
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: I wonder if they have anything different, I wonder if anyone has tried to
+      make meatloaf with tofu instead.
+    turn_context: ''
+    turn_id: 3
+- - agent_id: 0
+    episode_done: false
+    eval_labels:
+    - none
+    id: decode
+    text: I'm sure somebody has, though I am not sure how it would taste.
+    turn_context: ''
+    turn_id: 4
+num_episodes: 4216
+num_examples: 34838

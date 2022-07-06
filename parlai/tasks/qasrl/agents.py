@@ -7,6 +7,7 @@
 # Download and build the data if it does not exist.
 
 from parlai.core.teachers import DialogTeacher
+from parlai.utils.io import PathManager
 from .build import build
 import os
 import copy
@@ -82,7 +83,7 @@ class QASRLTeacher(DialogTeacher):
                     counter += 1
             return qa_pairs
 
-        with open(file_path) as file:
+        with PathManager.open(file_path) as file:
             # split the data by sentences
             file_data = file.read().split('\n\n')[:-1]
         for data in file_data:

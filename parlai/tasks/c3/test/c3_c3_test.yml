@@ -1,0 +1,73 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - 丈夫
+    id: c3
+    label_candidates:
+    - 老师
+    - 学生
+    - 丈夫
+    - 孩子
+    text: '男：你这么生气，是不是跟你的那位先生吵架了?
+
+      女：要不是他，我会这么生气吗?
+
+      女的到底生谁的气?'
+- - episode_done: true
+    eval_labels:
+    - 留在学校看书
+    id: c3
+    label_candidates:
+    - 要回家
+    - 要去旅游
+    - 留在学校看书
+    - 不想考研究生
+    text: '男：就要放暑假了，你是回家还是出去旅游？
+
+      女：我很想旅游，但是妈妈打电话来说要我在学校看书，准备考研究生，所以哪儿都不去了。
+
+      女的意思是什么？'
+- - episode_done: true
+    eval_labels:
+    - 古典音乐
+    id: c3
+    label_candidates:
+    - 古典音乐
+    - 摇滚音乐
+    - 流行音乐
+    - 乡村音乐
+    text: '男：还是古典音乐好听，我就受不了摇滚乐，实在太吵了。
+
+      女：那是因为你没听过现场，流行乐和摇滚乐才有感觉呢。
+
+      男的喜欢什么样的音乐?'
+- - episode_done: true
+    eval_labels:
+    - 注意身体
+    id: c3
+    label_candidates:
+    - 注意身体
+    - 注意营养
+    - 注意锻炼
+    - 注意病情
+    text: '男：最近怎么腰酸背痛的?
+
+      女：你当你年轻呢，悠着点儿吧，别玩命干了。
+
+      女的是提醒男的什么?'
+- - episode_done: true
+    eval_labels:
+    - 袋子太重
+    id: c3
+    label_candidates:
+    - 袋子太重
+    - 看不见路
+    - 不认识路
+    - 女的不见了
+    text: '女：一回头发现你不见了，怎么突然停下来了?
+
+      男：没办法，手上拿的袋子实在太重了。
+
+      男的为什么停下来?'
+num_episodes: 1627
+num_examples: 1890

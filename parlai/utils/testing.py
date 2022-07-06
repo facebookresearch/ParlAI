@@ -1,19 +1,25 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-"""General utilities for helping writing ParlAI unit and integration tests."""
+"""
+General utilities for helping writing ParlAI unit and integration tests.
+"""
 
-import sys
 import os
 import unittest
 import contextlib
 import tempfile
 import shutil
 import io
-from typing import Tuple
+import signal
+from typing import Tuple, Dict, Any
+from parlai.core.opt import Opt
+import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
+from pytest_regressions.data_regression import DataRegressionFixture
 
 
 try:
@@ -26,6 +32,13 @@ except ImportError:
     GPU_AVAILABLE = False
 
 try:
+    import torchvision  # noqa: F401
+
+    VISION_AVAILABLE = True
+except ImportError:
+    VISION_AVAILABLE = False
+
+try:
     import git
 
     git_ = git.Git()
@@ -34,18 +47,43 @@ except ImportError:
     git_ = None
     GIT_AVAILABLE = False
 
+try:
+    import subword_nmt  # noqa: F401
 
-DEBUG = False  # change this to true to print to stdout anyway
+    BPE_INSTALLED = True
+except ImportError:
+    BPE_INSTALLED = False
+
+try:
+    import fairseq  # noqa: F401
+
+    FAIRSEQ_AVAILABLE = True
+except ImportError:
+    FAIRSEQ_AVAILABLE = False
 
 
 def is_this_circleci():
-    """Return if we are currently running in CircleCI."""
+    """
+    Return if we are currently running in CircleCI.
+    """
     return bool(os.environ.get('CIRCLECI'))
 
 
 def skipUnlessTorch(testfn, reason='pytorch is not installed'):
-    """Decorate a test to skip if torch is not installed."""
+    """
+    Decorate a test to skip if torch is not installed.
+    """
     return unittest.skipUnless(TORCH_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessTorch17(testfn, reason='Test requires pytorch 1.7+'):
+    if not TORCH_AVAILABLE:
+        skip = True
+    else:
+        from packaging import version
+
+        skip = version.parse(torch.__version__) < version.parse('1.7.0')
+    return unittest.skipIf(skip, reason)(testfn)
 
 
 def skipIfGPU(testfn, reason='Test is CPU-only'):
@@ -58,18 +96,48 @@ def skipIfGPU(testfn, reason='Test is CPU-only'):
 
 
 def skipUnlessGPU(testfn, reason='Test requires a GPU'):
-    """Decorate a test to skip if no GPU is available."""
+    """
+    Decorate a test to skip if no GPU is available.
+    """
     return unittest.skipUnless(GPU_AVAILABLE, reason)(testfn)
 
 
+def skipUnlessBPE(testfn, reason='Test requires subword NMT'):
+    """
+    Decorate a test to skip if BPE is not installed.
+    """
+    return unittest.skipUnless(BPE_INSTALLED, reason)(testfn)
+
+
 def skipIfCircleCI(testfn, reason='Test disabled in CircleCI'):
-    """Decorate a test to skip if running on CircleCI."""
+    """
+    Decorate a test to skip if running on CircleCI.
+    """
     return unittest.skipIf(is_this_circleci(), reason)(testfn)
+
+
+def skipUnlessVision(testfn, reason='torchvision not installed'):
+    """
+    Decorate a test to skip unless torchvision is installed.
+    """
+    return unittest.skipUnless(VISION_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessFairseq(testfn, reason='fairseq not installed'):
+    """
+    Decorate a test to skip unless fairseq is installed.
+    """
+    return unittest.skipUnless(FAIRSEQ_AVAILABLE, reason)(testfn)
 
 
 class retry(object):
     """
     Decorator for flaky tests. Test is run up to ntries times, retrying on failure.
+
+    :param ntries:
+        the number of tries to attempt
+    :param log_retry:
+        if True, prints to stdout on retry to avoid being seen as "hanging"
 
     On the last time, the test will simply fail.
 
@@ -79,11 +147,14 @@ class retry(object):
     ...     self.assertLess(0.5, random.random())
     """
 
-    def __init__(self, ntries=3):
+    def __init__(self, ntries=3, log_retry=False):
         self.ntries = ntries
+        self.log_retry = log_retry
 
     def __call__(self, testfn):
-        """Call testfn(), possibly multiple times on failureException."""
+        """
+        Call testfn(), possibly multiple times on failureException.
+        """
         from functools import wraps
 
         @wraps(testfn)
@@ -92,7 +163,8 @@ class retry(object):
                 try:
                     return testfn(testself, *args, **kwargs)
                 except testself.failureException:
-                    pass
+                    if self.log_retry:
+                        logging.debug("Retrying {}".format(testfn))
             # last time, actually throw any errors there may be
             return testfn(testself, *args, **kwargs)
 
@@ -100,15 +172,19 @@ class retry(object):
 
 
 def git_ls_files(root=None, skip_nonexisting=True):
-    """List all files tracked by git."""
+    """
+    List all files tracked by git.
+    """
     filenames = git_.ls_files(root).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 
 def git_ls_dirs(root=None):
-    """List all folders tracked by git."""
+    """
+    List all folders tracked by git.
+    """
     dirs = set()
     for fn in git_ls_files(root):
         dirs.add(os.path.dirname(fn))
@@ -121,18 +197,20 @@ def git_changed_files(skip_nonexisting=True):
 
     :param bool skip_nonexisting:
         If true, ignore files that don't exist on disk. This is useful for
-        disregarding files created in master, but don't exist in HEAD.
+        disregarding files created in main, but don't exist in HEAD.
     """
-    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
+    fork_point = git_.merge_base('origin/main', 'HEAD').strip()
     filenames = git_.diff('--name-only', fork_point).split('\n')
     if skip_nonexisting:
-        filenames = [fn for fn in filenames if os.path.exists(fn)]
+        filenames = [fn for fn in filenames if PathManager.exists(fn)]
     return filenames
 
 
 def git_commit_messages():
-    """Output each commit message between here and master."""
-    fork_point = git_.merge_base('origin/master', 'HEAD').strip()
+    """
+    Output each commit message between here and main.
+    """
+    fork_point = git_.merge_base('origin/main', 'HEAD').strip()
     messages = git_.log(fork_point + '..HEAD')
     return messages
 
@@ -150,27 +228,6 @@ def is_new_task_filename(filename):
     )
 
 
-class TeeStringIO(io.StringIO):
-    """
-    StringIO which also prints to stdout.
-
-    Used in case of DEBUG=False to make sure we get verbose output.
-    """
-
-    def __init__(self, *args):
-        self.stream = sys.stdout
-        super().__init__(*args)
-
-    def write(self, data):
-        """Write data to stdout and the buffer."""
-        if DEBUG and self.stream:
-            self.stream.write(data)
-        super().write(data)
-
-    def __str__(self):
-        return self.getvalue()
-
-
 @contextlib.contextmanager
 def capture_output():
     """
@@ -183,7 +240,7 @@ def capture_output():
     >>> output.getvalue()
     'hello'
     """
-    sio = TeeStringIO()
+    sio = io.StringIO()
     with contextlib.redirect_stdout(sio), contextlib.redirect_stderr(sio):
         yield sio
 
@@ -203,7 +260,34 @@ def tempdir():
     shutil.rmtree(d)
 
 
-def train_model(opt):
+@contextlib.contextmanager
+def timeout(time: int = 30):
+    """
+    Raise a timeout if a function does not return in time `time`.
+
+    Use as a context manager, so that the signal class can reset it's alarm for
+    `SIGALARM`
+
+    :param int time:
+        Time in seconds to wait for timeout. Default is 30 seconds.
+    """
+    assert time >= 0, 'Time specified in timeout must be nonnegative.'
+
+    def _handler(signum, frame):
+        raise TimeoutError
+
+    signal.signal(signal.SIGALRM, _handler)
+    signal.alarm(time)
+
+    try:
+        yield
+    except TimeoutError as e:
+        raise e
+    finally:
+        signal.signal(signal.SIGALRM, signal.SIG_IGN)
+
+
+def train_model(opt: Opt) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """
     Run through a TrainLoop.
 
@@ -215,41 +299,34 @@ def train_model(opt):
     """
     import parlai.scripts.train_model as tms
 
-    with capture_output() as output:
-        with tempdir() as tmpdir:
-            if 'model_file' not in opt:
-                opt['model_file'] = os.path.join(tmpdir, 'model')
-            if 'dict_file' not in opt:
-                opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
-            parser = tms.setup_args()
-            # needed at the very least to set the overrides.
-            parser.set_params(**opt)
-            parser.set_params(log_every_n_secs=10)
-            popt = parser.parse_args(print_args=False)
-            # in some rare cases, like for instance if the model class also
-            # overrides its default params, the params override will not
-            # be taken into account.
-            for k, v in opt.items():
-                popt[k] = v
-            tl = tms.TrainLoop(popt)
-            valid, test = tl.train()
+    with tempdir() as tmpdir:
+        if 'model_file' not in opt:
+            opt['model_file'] = os.path.join(tmpdir, 'model')
+        if 'dict_file' not in opt:
+            opt['dict_file'] = os.path.join(tmpdir, 'model.dict')
+        # Parse verification
+        valid, test = tms.TrainModel.main(**opt)
 
-    return (output.getvalue(), valid, test)
+    return valid, test
 
 
-def eval_model(opt, skip_valid=False, skip_test=False):
+def eval_model(
+    opt, skip_valid=False, skip_test=False, valid_datatype='valid', test_datatype='test'
+):
     """
     Run through an evaluation loop.
 
     :param opt:
         Any non-default options you wish to set.
     :param bool skip_valid:
-        If true skips the valid evaluation, and the second return value will be None.
+        If true skips the valid evaluation, and the first return value will be None.
     :param bool skip_test:
-        If true skips the test evaluation, and the third return value will be None.
+        If true skips the test evaluation, and the second return value will be None.
+    :param str valid_datatype:
+        If custom datatype required for valid, e.g. train:evalmode, specify here
 
-    :return: (stdout, valid_results, test_results)
-    :rtype: (str, dict, dict)
+    :return: (valid_results, test_results)
+    :rtype: (dict, dict)
 
     If model_file is not in opt, then this helper will create a temporary directory
     to store the model files, and clean up afterwards. You can keep the directory
@@ -257,21 +334,15 @@ def eval_model(opt, skip_valid=False, skip_test=False):
     """
     import parlai.scripts.eval_model as ems
 
-    parser = ems.setup_args()
-    parser.set_params(**opt)
-    parser.set_params(log_every_n_secs=10)
-    popt = parser.parse_args(print_args=False)
+    if opt.get('model_file') and not opt.get('dict_file'):
+        opt['dict_file'] = opt['model_file'] + '.dict'
 
-    if popt.get('model_file') and not popt.get('dict_file'):
-        popt['dict_file'] = popt['model_file'] + '.dict'
+    opt['datatype'] = 'valid' if valid_datatype is None else valid_datatype
+    valid = None if skip_valid else ems.EvalModel.main(**opt)
+    opt['datatype'] = 'test' if test_datatype is None else test_datatype
+    test = None if skip_test else ems.EvalModel.main(**opt)
 
-    with capture_output() as output:
-        popt['datatype'] = 'valid'
-        valid = None if skip_valid else ems.eval_model(popt)
-        popt['datatype'] = 'test'
-        test = None if skip_test else ems.eval_model(popt)
-
-    return (output.getvalue(), valid, test)
+    return valid, test
 
 
 def display_data(opt):
@@ -285,7 +356,7 @@ def display_data(opt):
 
     parser = dd.setup_args()
     parser.set_params(**opt)
-    popt = parser.parse_args(print_args=False)
+    popt = parser.parse_args([])
 
     with capture_output() as train_output:
         popt['datatype'] = 'train:stream'
@@ -300,17 +371,17 @@ def display_data(opt):
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
-def display_model(opt) -> Tuple[str, str]:
+def display_model(opt) -> Tuple[str, str, str]:
     """
     Run display_model.py.
 
-    :return: (stdout_valid, stdout_test)
+    :return: (stdout_train, stdout_valid, stdout_test)
     """
     import parlai.scripts.display_model as dm
 
     parser = dm.setup_args()
     parser.set_params(**opt)
-    popt = parser.parse_args(print_args=False)
+    popt = parser.parse_args([])
     with capture_output() as train_output:
         # evalmode so that we don't hit train_step
         popt['datatype'] = 'train:evalmode:stream'
@@ -324,17 +395,88 @@ def display_model(opt) -> Tuple[str, str]:
     return (train_output.getvalue(), valid_output.getvalue(), test_output.getvalue())
 
 
-def download_unittest_models():
-    """Download the unittest pretrained models."""
-    from parlai.core.params import ParlaiParser
-    from parlai.core.build_data import download_models
+class AutoTeacherTest:
+    stream = True
 
-    opt = ParlaiParser().parse_args(print_args=False)
-    model_filenames = [
-        'seq2seq.tar.gz',
-        'transformer_ranker.tar.gz',
-        'transformer_generator2.tar.gz',
-        'memnn.tar.gz',
-    ]
-    with capture_output():
-        download_models(opt, model_filenames, 'unittest', version='v3.0')
+    def _safe(self, obj):
+        from parlai.core.message import Message
+
+        if isinstance(obj, list):
+            return [self._safe(o) for o in obj]
+        elif isinstance(obj, Message):
+            obj = dict(obj)
+            for key in ['label_candidates', 'eval_label_candidates']:
+                if key not in obj:
+                    continue
+                if isinstance(obj[key], set):
+                    obj[key] = sorted(list(obj[key]))
+                if len(obj[key]) > 20:
+                    obj[key] = list(obj[key][:10]) + list(obj[key][-10:])
+            if 'image' in obj:
+                # convert the image to base64 encoding so we can store it as a string
+                import base64
+                import PIL
+
+                assert isinstance(obj['image'], PIL.Image.Image)
+                resized = obj['image'].resize((16, 16), PIL.Image.NEAREST)
+                gray = resized.convert('LA')
+                obj['image_hex'] = base64.b64encode(gray.tobytes()).decode('ascii')
+                del obj['image']
+            return obj
+        else:
+            return obj
+
+    def _regression(self, data_regression: DataRegressionFixture, datatype: str):
+        import random
+        from parlai.core.worlds import create_task
+        from parlai.core.params import ParlaiParser
+
+        basename = f"{self.task}_{datatype}".replace(":", "_")
+
+        if self.stream:
+            datatype = datatype + ':stream'
+        if datatype == 'train:stream':
+            datatype = datatype + ':ordered'
+
+        random.seed(42)
+
+        opt = ParlaiParser(True, True).parse_kwargs(
+            model='fixed_response',
+            fixed_response='none',
+            task=self.task,
+            datatype=datatype,
+            batchsize=1,
+        )
+
+        world = create_task(opt, [])
+        acts = []
+        for _ in range(5):
+            world.parley()
+            act = self._safe(world.get_acts())
+            acts.append(act)
+
+        teacher = world.get_task_agent()
+        output = {
+            'acts': acts,
+            'num_episodes': teacher.num_episodes(),
+            'num_examples': teacher.num_examples(),
+        }
+        data_regression.check(output, basename=basename)
+
+    def test_train_stream_ordered(self, data_regression):
+        """
+        Test --datatype train:stream:ordered.
+        """
+        return self._regression(data_regression, 'train')
+
+    def test_valid_stream(self, data_regression):
+        """
+        Test --datatype valid:stream.
+        """
+        return self._regression(data_regression, 'valid')
+
+    def test_test_stream(self, data_regression):
+        """
+        Test --datatype test:stream.
+        """
+        return self._regression(data_regression, 'test')

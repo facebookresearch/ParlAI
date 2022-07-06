@@ -1,0 +1,370 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Keddah
+    id: cbt:NE
+    label_candidates:
+    - Assamese
+    - Hai
+    - Keddah
+    - Nag
+    - Pudmini
+    - Sahib
+    - Toomai
+    - days
+    - mahout
+    - right
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      But , son , I am angry that thou shouldst meddle in the business that belongs
+      to these dirty Assamese jungle folk .
+
+      Kala Nag will obey none but me , so I must go with him into the Keddah , but
+      he is only a fighting elephant , and he does not help to rope them .
+
+      So I sit at my ease , as befits a mahout , -- not a mere hunter , -- a mahout
+      , I say , and a man who gets a pension at the end of his service .
+
+      Is the family of Toomai of the Elephants to be trodden underfoot in the dirt
+      of a Keddah ?
+
+      Bad one !
+
+      Wicked one !
+
+      Worthless son !
+
+      Go and wash Kala Nag and attend to his ears , and see that there are no thorns
+      in his feet .
+
+      Or else Petersen Sahib will surely catch thee and make thee a wild hunter --
+      a follower of elephant ''s foot tracks , a jungle bear .
+
+      Bah !
+
+      Shame !
+
+      Go ! ''''
+
+      Little Toomai went off without saying a word , but he told Kala Nag all his
+      grievances while he was examining his feet .
+
+      `` No matter , '''' said Little Toomai , turning up the fringe of Kala Nag ''s
+      huge right ear .
+
+      `` They have said my name to Petersen Sahib , and perhaps -- and perhaps --
+      and perhaps -- who knows ?
+
+      Hai !
+
+      That is a big thorn that I have pulled out ! ''''
+
+      The next few days were spent in getting the elephants together , in walking
+      the newly caught wild elephants up and down between a couple of tame ones to
+      prevent them giving too much trouble on the downward march to the plains , and
+      in taking stock of the blankets and ropes and things that had been worn out
+      or lost in the forest .
+
+      Petersen Sahib came in on his clever she-elephant Pudmini ; he had been paying
+      off other camps among the hills , for the season was coming to an end , and
+      there was a native clerk sitting at a table under a tree , to pay the drivers
+      their wages .
+
+      As each man was paid he went back to his elephant , and joined the line that
+      stood ready to start .
+
+      The catchers , and hunters , and beaters , the men of the regular XXXXX , who
+      stayed in the jungle year in and year out , sat on the backs of the elephants
+      that belonged to Petersen Sahib ''s permanent force , or leaned against the
+      trees with their guns across their arms , and made fun of the drivers who were
+      going away , and laughed when the newly caught elephants broke the line and
+      ran about .'
+- - episode_done: true
+    eval_labels:
+    - man
+    id: cbt:CN
+    label_candidates:
+    - birds
+    - food
+    - maiden
+    - man
+    - middle
+    - place
+    - sight
+    - south
+    - wash
+    - wings
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      -LRB- 3 -RRB- Hollenmadchen .
+
+      ` But where is he to find the Witch-maiden ? ''
+
+      said the first bird .
+
+      ` She has no settled dwelling , but is here to-day and gone to-morrow .
+
+      He might as well try to catch the wind . ''
+
+      The other replied , '' I do not know , certainly , where she is at present ,
+      but in three nights from now she will come to the spring to wash her face ,
+      as she does every month when the moon is full , in order that she may never
+      grow old nor wrinkled , but may always keep the bloom of youth . ''
+
+      ` Well , '' said the first bird , ` the spring is not far from here .
+
+      Shall we go and see how it is she does it ? ''
+
+      ` Willingly , if you like , '' said the other .
+
+      The youth immediately resolved to follow the birds to the spring , only two
+      things made him uneasy : first , lest he might be asleep when the birds went
+      , and secondly , lest he might lose sight of them , since he had not wings to
+      carry him along so swiftly .
+
+      He was too tired to keep awake all night , yet his anxiety prevented him from
+      sleeping soundly , and when with the earliest dawn he looked up to the tree-top
+      , he was glad to see his feathered companions still asleep with their heads
+      under their wings .
+
+      He ate his breakfast , and waited until the birds should start , but they did
+      not leave the place all day .
+
+      They hopped about from one tree to another looking for food , all day long until
+      the evening , when they went back to their old perch to sleep .
+
+      The next day the same thing happened , but on the third morning one bird said
+      to the other , ` To-day we must go to the spring to see the Witch-maiden wash
+      her face . ''
+
+      They remained on the tree till noon ; then they flew away and went towards the
+      south .
+
+      The young man ''s heart beat with anxiety lest he should lose sight of his guides
+      , but he managed to keep the birds in view until they again perched upon a tree
+      .
+
+      The young man ran after them until he was quite exhausted and out of breath
+      , and after three short rests the birds at length reached a small open space
+      in the forest , on the edge of which they placed themselves on the top of a
+      high tree .
+
+      When the youth had overtaken them , he saw that there was a clear spring in
+      the middle of the space .
+
+      He sat down at the foot of the tree upon which the birds were perched , and
+      listened attentively to what they were saying to each other .
+
+      ` The sun is not down yet , '' said the first bird ; ` we must wait yet awhile
+      till the moon rises and the maiden comes to the spring .
+
+      Do you think she will see that young XXXXX sitting under the tree ? '''
+- - episode_done: true
+    eval_labels:
+    - am
+    id: cbt:V
+    label_candidates:
+    - am
+    - born
+    - find
+    - picking
+    - pricked
+    - said
+    - sat
+    - seems
+    - streamed
+    - thinking
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      Longman , the third , looked at the others over his shoulder .
+
+      Goldband , the fourth , had a gold sash round his waist ; and little Playman
+      did nothing at all , and was the more proud .
+
+      There was too much ostentation , and so I came away . ''
+
+      ` And now we are sitting and shining here ! ''
+
+      said the bit of bottle-glass .
+
+      At that moment more water came into the gutter ; it streamed over the edges
+      and washed the bit of bottle-glass away .
+
+      ` Ah !
+
+      now he has been promoted ! ''
+
+      said the Darning-needle . ''
+
+      I remain here ; I am too fine .
+
+      But that is my pride , which is a sign of respectability ! ''
+
+      And she sat there very proudly , thinking lofty thoughts . ''
+
+      I really believe I must have been born a sunbeam , I am so fine !
+
+      It seems to me as if the sunbeams were always looking under the water for me
+      .
+
+      Ah , I am so fine that my own mother can not find me !
+
+      If I had my old eye which broke off , I believe I could weep ; but I ca n''t
+      -- it is not fine to weep ! ''
+
+      One day two street-urchins were playing and wading in the gutter , picking up
+      old nails , pennies , and such things .
+
+      It was rather dirty work , but it was a great delight to them .
+
+      ` Oh , oh ! ''
+
+      cried out one , as he pricked himself with the Darning-needle ; ` he is a fine
+      fellow though ! '' ''
+
+      I XXXXX not a fellow ; I am a young lady ! '''
+- - episode_done: true
+    eval_labels:
+    - as
+    id: cbt:P
+    label_candidates:
+    - across
+    - after
+    - among
+    - as
+    - by
+    - from
+    - in
+    - that
+    - though
+    - while
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      They had not known the precise day of her coming and were not aware of the Camerons
+      '' arrival at Dalveigh .
+
+      `` It ''s the girl herself .
+
+      It ''s Nora , '''' said old Nathan , rising from his bench .
+
+      `` Mother ! ''''
+
+      cried Nora .
+
+      She ran across the room and buried her face in her mother ''s breast , sobbing
+      .
+
+      When the news spread , the Racicot people crowded in to see Nora until the house
+      was full .
+
+      They spent a noisy , merry , whole-hearted evening of the old sort .
+
+      The men smoked and most of the women knitted while they talked .
+
+      They were pleased to find that Nora did not put on any airs .
+
+      Old Jonas Myers bluntly told her that he did n''t see as her year among rich
+      folks had done her much good , after all .
+
+      `` You ''re just the same as when you went away , '''' he said .
+
+      `` They have n''t made a fine lady of you .
+
+      Folks here thought you ''d be something wonderful . ''''
+
+      Nora laughed .
+
+      She was glad that they did not find her changed .
+
+      Old Nathan chuckled in his dry way .
+
+      There was a difference in the girl , and he saw it , though the neighbours did
+      not , but it was not the difference he had feared .
+
+      His daughter was not utterly taken from him yet .
+
+      Nora sat by her mother and was happy .
+
+      But XXXXX the evening wore away she grew very quiet , and watched the door with
+      something piteous in her eyes .'
+- - episode_done: true
+    eval_labels:
+    - King
+    id: cbt:NE
+    label_candidates:
+    - Court
+    - Hallo
+    - King
+    - Princess
+    - Simpleton
+    - command
+    - courtier
+    - peasants
+    - people
+    - village
+    reward: 0
+    text: 'Fill in the blank in the last sentence.
+
+      ` This is not common wood , '' answered the other .
+
+      ` What sort of wood is it , then ? ''
+
+      said the Simpleton .
+
+      ` If you throw it upon the ground , '' said the man , ` it will be changed into
+      an army of soldiers . ''
+
+      ` Come into the ship with us , then . ''
+
+      And so he too joined them ; and away the ship flew on , and on , and on , and
+      once more the Simpleton looked out , and this time he saw a man carrying straw
+      upon his back .
+
+      ` Hallo !
+
+      Where are you carrying that straw to ? ''
+
+      ` To the village , '' said the man .
+
+      ` Do you mean to say there is no straw in the village ? ''
+
+      ` Ah !
+
+      but this is quite a peculiar straw .
+
+      If you strew it about even in the hottest summer the air at once becomes cold
+      , and snow falls , and the people freeze . ''
+
+      Then the Simpleton asked him also to join them .
+
+      At last the ship , with its strange crew , arrived at the King ''s Court .
+
+      The King was having his dinner , but he at once despatched one of his courtiers
+      to find out what the huge , strange new bird could be that had come flying through
+      the air .
+
+      The courtier peeped into the ship , and , seeing what it was , instantly went
+      back to the King and told him that it was a flying ship , and that it was manned
+      by a few peasants .
+
+      Then the King remembered his royal oath ; but he made up his mind that he would
+      never consent to let the Princess marry a poor peasant .
+
+      So he thought and thought , and then said to himself : '' I will give him some
+      impossible tasks to perform ; that will be the best way of getting rid of him
+      . ''
+
+      And he there and then decided to despatch one of his courtiers to the Simpleton
+      , with the command that he was to fetch the King the healing water from the
+      world ''s end before he had finished his dinner .
+
+      But while the XXXXX was still instructing the courtier exactly what he was to
+      say , the first man of the ship ''s company , the one with the miraculous power
+      of hearing , had overheard the King ''s words , and hastily reported them to
+      the poor Simpleton .'
+num_episodes: 10000
+num_examples: 10000

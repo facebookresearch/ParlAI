@@ -1,0 +1,45 @@
+acts:
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'APIS: '
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'USER: I want to make a restaurant reservation for 2 people at half past
+      11 in the morning.'
+    type: 'APICALL: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: What city do you want to dine in? Do you have a preferred restaurant?'
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'APICALL: '
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'USER: Please find restaurants in San Jose. Can you try Sino?'
+    type: 'APICALL: '
+- - domain: Restaurants
+    episode_done: false
+    eval_labels:
+    - 'SYSTEM: Confirming: I will reserve a table for 2 people at Sino in San Jose.
+      The reservation time is 11:30 am today.'
+    id: GoogleSgdInDomain_SystemTeacher
+    slots: {}
+    text: 'APIRESP: '
+    type: 'SYSTEM: '
+num_episodes: 1966
+num_examples: 42808

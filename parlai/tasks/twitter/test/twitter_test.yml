@@ -1,0 +1,31 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - too bad you don't actually go to my school you liar @face_with_tears_of_joy@
+    id: twitter
+    text: when you find so you decide to stay in her class @face_with_tears_of_joy@
+      @winking_face@
+- - episode_done: true
+    eval_labels:
+    - and she had her blue , double vision glasses on !
+    id: twitter
+    text: not a single reporter noticed that hillary's entire staff was on death's
+      door and a doctor was following her around ?
+- - episode_done: true
+    eval_labels:
+    - well not really . jay cutler just quit on his team
+    id: twitter
+    text: jim schwartz has faced 2 teams as defensive coordinator . both starting
+      qb's have left the game injured .
+- - episode_done: true
+    eval_labels:
+    - yeah jared , get them with your cool hat .
+    id: twitter
+    text: go gettum jared !
+- - episode_done: true
+    eval_labels:
+    - us and 1 point gained for tottenham thats what it came down too .
+    id: twitter
+    text: arsenal didn't deserve to win either so ?
+num_episodes: 10405
+num_examples: 10405

@@ -1,0 +1,33 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - donald trump
+    id: simplequestions
+    reward: 0
+    text: Who was the trump ocean club international hotel and tower named after
+- - episode_done: true
+    eval_labels:
+    - maribor
+    id: simplequestions
+    reward: 0
+    text: where was sasha vujačić born
+- - episode_done: true
+    eval_labels:
+    - united kingdom
+    id: simplequestions
+    reward: 0
+    text: What is a region that dead combo was released in
+- - episode_done: true
+    eval_labels:
+    - stay
+    id: simplequestions
+    reward: 0
+    text: What is a film directed by wiebke von carolsfeld?
+- - episode_done: true
+    eval_labels:
+    - germany
+    id: simplequestions
+    reward: 0
+    text: what country was music for stock exchange  released in
+num_episodes: 10845
+num_examples: 10845

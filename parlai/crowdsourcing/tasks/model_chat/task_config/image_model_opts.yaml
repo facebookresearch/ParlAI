@@ -1,0 +1,3 @@
+transresnet_multimodal: >
+    --model-file models:image_chat/transresnet_multimodal/model
+    --image-mode resnet152

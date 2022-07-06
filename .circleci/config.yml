@@ -1,314 +1,399 @@
-version: 2
+version: 2.1
 
 # -------------------------------------------------------------------------------------
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
-standard_cpu37: &standard_cpu37
-  docker:
-    - image: circleci/python:3.7.1
+executors:
+  standard_cpu38:
+    docker:
+      - image: circleci/python:3.8.0-buster-node
+    environment:
+      PYTHONUNBUFFERED: 1
+    resource_class: xlarge
 
-standard_cpu36: &standard_cpu36
-  docker:
-    - image: circleci/python:3.6.5-node
+  small_cpu38:
+    docker:
+      - image: circleci/python:3.8.0-buster-node
+    environment:
+      PYTHONUNBUFFERED: 1
+    resource_class: medium
 
-osx_cpu37: &osx_cpu37
-  macos:
-    xcode: "10.1.0"
-  environment:
-    PYTHON: 3.7.1
-    HOMEBREW_NO_AUTO_UPDATE: 1
+  osx_cpu38:
+    macos:
+      # https://circleci.com/docs/2.0/testing-ios/
+      xcode: "12.5.1"
+    environment:
+      PYTHON: 3.8.0
+      PYTHONUNBUFFERED: 1
+      HOMEBREW_NO_AUTO_UPDATE: 1
+    resource_class: macos.x86.medium.gen2
 
-gpu: &gpu
-  environment:
-    CUDA_VERSION: "10.0"
-  machine:
-    image: default
-  resource_class: gpu.medium # tesla m60
-# -------------------------------------------------------------------------------------
+  gpu_small:
+    environment:
+      CUDA_VERSION: "11.2"
+      PYTHONUNBUFFERED: 1
+      CUDA_HOME: /usr/local/cuda-11.2
+    machine:
+       image: ubuntu-2004-cuda-11.2:202103-01
+    resource_class: gpu.nvidia.small.multi
+
+  gpu_medium:
+    environment:
+      CUDA_VERSION: "11.2"
+      PYTHONUNBUFFERED: 1
+      CUDA_HOME: /usr/local/cuda-11.2
+    machine:
+       image: ubuntu-2004-cuda-11.2:202103-01
+    resource_class: gpu.nvidia.medium.multi
+
+
+
 
 # -------------------------------------------------------------------------------------
 # reusable commands
 # -------------------------------------------------------------------------------------
-fixgit: &fixgit
-  # circleci sets master to the tip of the branch, which isn't super useful for us.
-  # better if master looks like it would on our local machines
-  run:
-    name: Fixes git
-    command: |
-      ( [[ "$CIRCLE_BRANCH" != "master" ]] && git branch -f master origin/master ) || true
+commands:
+  fixgit:
+    # circleci sets main to the tip of the branch, which isn't super useful for us.
+    # better if main looks like it would on our local machines
+    description: Fixes git
+    steps:
+      - run:
+          name: Fixes git
+          command: |
+            ( [[ "$CIRCLE_BRANCH" != "main" ]] && git branch -f main origin/main ) || true
 
-setup: &setup
-  run:
-    name: Sets up the virtual environment
-    command: |
-      mkdir -p ~/venv
-      virtualenv --python=python3 ~/venv
-      echo ". ~/venv/bin/activate" >> $BASH_ENV
-      . ~/venv/bin/activate
-      python --version
-      pip3 install --upgrade --progress-bar off pip
+  setup:
+    description: Sets up the virtual environment
+    steps:
+      - run:
+          name: Sets up the virtual environment
+          command: |
+            mkdir -p ~/venv
+            virtualenv --python=python3 ~/venv
+            echo ". ~/venv/bin/activate" >> $BASH_ENV
+            . ~/venv/bin/activate
+            python --version
 
-installdeps: &installdeps
-  run:
-    name: Installs basic dependencies
-    command: |
-      python setup.py develop
-      python -c "import nltk; nltk.download('punkt')"
+  codecov:
+    description: Coverage report
+    steps:
+      - run:
+          name: Coverage report
+          when: always
+          command: |
+            python -m codecov --flags $CIRCLE_JOB
+            mkdir -p ~/ParlAI/data
 
-installtorchgpu11: &installtorchgpu11
-  run:
-    name: Install torch GPU and dependencies
-    command: |
-      pip3 install --progress-bar off 'torch<1.2.0'
-      pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
-      pip3 install --progress-bar off pytorch-pretrained-bert
-      pip3 install --progress-bar off torchtext
+  installdeps:
+    description: Install basic dependencies
+    steps:
+      - run:
+          name: Installs basic dependencies
+          command: |
+            python -m pip install --progress-bar off pip setuptools==62.3.4
+            python -m pip install --progress-bar off coverage
+            python -m pip install --progress-bar off codecov
+            mkdir -p ~/ParlAI/test-results
+            pip install -v -r requirements.txt
+            python setup.py develop
+            python -c "import nltk; nltk.download('punkt')"
 
+  installtorchgpu:
+    description: Install torch GPU and dependencies
+    steps:
+      - run:
+          name: Install torch GPU and dependencies
+          command: |
+            python -m pip install --progress-bar off torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+            python -m pip install --progress-bar off 'fairscale~=0.4.0'
+            python -m pip install --progress-bar off pytorch-pretrained-bert
+            python -m pip install --progress-bar off 'transformers==4.3.3'
+            python -m pip install --progress-bar off 'fairseq==0.10.0'
+            python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
+            python -m pip uninstall dataclasses -y
+            python -c 'import torch; print("Torch version:", torch.__version__)'
+            python -m torch.utils.collect_env
+            python -c 'import torch; print("Torch version:", torch.__version__)'
+            python -m torch.utils.collect_env
 
-installtorchgpu12: &installtorchgpu12
-  run:
-    name: Install torch GPU and dependencies
-    command: |
-      pip3 install --progress-bar off 'torch>=1.2.0'
-      pip3 install --progress-bar off 'git+https://github.com/rsennrich/subword-nmt.git#egg=subword-nmt' # bpe support
-      pip3 install --progress-bar off pytorch-pretrained-bert
-      pip3 install --progress-bar off torchtext
+  installtorchcpuosx:
+    description: Install torch CPU and dependencies
+    steps:
+      - run:
+          name: Install torch CPU and dependencies
+          command: |
+            python -m pip install --progress-bar off 'transformers==4.3.3'
+            python -m pip install --progress-bar off 'torch==1.11.0'
+            python -c 'import torch; print("Torch version:", torch.__version__)'
+            python -m torch.utils.collect_env
 
+  installtorchcpu:
+    description: Install torch CPU and dependencies
+    steps:
+      - run:
+          name: Install torch CPU and dependencies
+          command: |
+            python -m pip install --progress-bar off 'torch==1.11.0+cpu' 'torchvision==0.12.0+cpu' 'torchaudio==0.11.0+cpu' -f https://download.pytorch.org/whl/torch_stable.html
+            python -m pip install --progress-bar off 'transformers==4.3.3'
+            python -c 'import torch; print("Torch version:", torch.__version__)'
+            python -m torch.utils.collect_env
 
-installtorchcpuosx: &installtorchcpuosx
-  run:
-    name: Install torch CPU and dependencies
-    command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.0-cp37-none-macosx_10_7_x86_64.whl
+  installcrowdsourcingdeps:
+    description: Install Mephisto
+    steps:
+      - run:
+            name: Install Mephisto
+            command: |
+              cd ..
+              git clone git@github.com:facebookresearch/Mephisto.git Mephisto
+              cd Mephisto; git checkout v1.0.1 -b stable
+              pip install -r requirements.txt
+              python setup.py develop
+              # `echo` so that ENTER will be pressed at the prompt
+              echo | mephisto check
 
-installtorchcpu36: &installtorchcpu36
-  run:
-    name: Install torch CPU and dependencies
-    command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp36-cp36m-linux_x86_64.whl
+  setupcuda:
+    description: Setup CUDA
+    steps:
+      - run:
+          name: Setup CUDA
+          working_directory: ~/
+          command: |
+            pyenv versions
+            nvidia-smi
+            pyenv global 3.9.2
 
-installtorchcpu37: &installtorchcpu37
-  run:
-    name: Install torch CPU and dependencies
-    command: |
-      pip3 install --progress-bar off https://download.pytorch.org/whl/cpu/torch-1.0.1.post2-cp37-cp37m-linux_x86_64.whl
+  findtests:
+    description: Find tests to run
+    parameters:
+      marker:
+        type: string
+    steps:
+      - run:
+          working_directory: ~/ParlAI
+          name: Find tests to run
+          command: |
+            set +o pipefail
+            mkdir -p ~/ParlAI/data/models
+            python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" | grep -v ':'> teststorun.txt
+            cat teststorun.txt
 
-setupcuda: &setupcuda
-  run:
-    name: Setup CUDA
-    working_directory: ~/
-    command: |
-      # download and install nvidia drivers, cuda, etc
-      wget -q 'https://s3.amazonaws.com/ossci-linux/nvidia_driver/NVIDIA-Linux-x86_64-410.79.run'
-      sudo /bin/bash ./NVIDIA-Linux-x86_64-410.79.run -s --no-drm
-      wget -q https://developer.nvidia.com/compute/cuda/10.1/Prod/local_installers/cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-      sudo dpkg -i cuda-repo-ubuntu1404-10-1-local-10.1.105-418.39_1.0-1_amd64.deb
-      sudo apt-key add /var/cuda-repo-10-1-local-10.1.105-418.39/7fa2af80.pub
-      nvidia-smi
-      pyenv global 3.6.5
+  runtests:
+    description: Run a full suite of unit tests
+    parameters:
+      cachename:
+        description: the key for our caches. date and checksum will be added
+        type: string
+      marker:
+        description: the pytest marker to filter on
+        type: string
+      more_installs:
+        description: Any extra installation commands to run
+        type: steps
+        default: []
+      install_cuda:
+        description: Should we install cuda?
+        type: boolean
+        default: false
+      pytest_flags:
+        description: extra flags to pass to pytest
+        type: string
+        default: "-v"
+    steps:
+      - checkout
+      - when:
+          condition: << parameters.install_cuda >>
+          steps:
+            - setupcuda
+      - fixgit
+      - restore_cache:
+          key: deps-20220615-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+      - setup
+      - installdeps
+      - << parameters.more_installs >>
+      - save_cache:
+          key: deps-20220615-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - findtests:
+          marker: << parameters.marker >>
+      - restore_cache:
+          key: data-20220615-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+      - run:
+          name: Run tests
+          no_output_timeout: 60m
+          command: |
+            coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
+      - save_cache:
+          key: data-20220615-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          paths:
+            - "~/ParlAI/data"
+      - codecov
+      - store_test_results:
+          path: test-results
 
-buildwebsite: &buildwebsite
-  run:
-    working_directory: ~/ParlAI/website
-    name: Build the website
-    command: make
+  website:
+    description: Build (and possibly deploy) the website
+    parameters:
+      deploy:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - fixgit
+      - restore_cache:
+          key: deps-20220615-bw-{{ checksum "requirements.txt" }}
+      - setup
+      - installdeps
+      - installtorchgpu
+      - save_cache:
+          key: deps-20220615-bw-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
+      - run:
+          working_directory: ~/ParlAI/website
+          name: build the website
+          command: make
+      - run:
+          name: zip up the website
+          working_directory: ~/ParlAI/website/build/
+          command: |
+            zip -r ~/ParlAI/website.zip *
+      - store_artifacts:
+          path: website.zip
+      - run:
+          name: check for bad links
+          working_directory: ~/ParlAI/
+          command: |
+            pip install linkchecker
+            python -m http.server --directory website/build >/dev/null &
+            linkchecker http://localhost:8000/
+            kill %1
+      - when:
+         condition: << parameters.deploy >>
+         steps:
+         - run:
+             working_directory: ~/ParlAI/
+             name: Upload the website
+             command: |
+               pip install s3cmd
+               s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
+               s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
+               s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
+
 
 # -------------------------------------------------------------------------------------
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  datatests:
-    <<: *standard_cpu36
+  cleaninstall_38:
+    executor: standard_cpu38
     working_directory: ~/ParlAI
+    parallelism: 1
     steps:
       - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu36
+      - fixgit
+      - setup
       - run:
-          name: Data tests
-          command: python setup.py test -s tests.suites.datatests -v
+          name: Test installation instructions
+          no_output_timeout: 60m
+          command: |
+            python -m pip install --progress-bar off pip setuptools==62.3.4
+            python setup.py develop
+            parlai display_data -t integration_tests
 
   unittests_osx:
-    <<: *osx_cpu37
+    executor: osx_cpu38
     working_directory: ~/ParlAI
+    parallelism: 2
     steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpuosx
-      - run:
-          name: Unit tests (OSX)
-          command: python setup.py test -s tests.suites.unittests -v
+      - runtests:
+          cachename: osx
+          marker: unit
 
-  unittests_36:
-    <<: *standard_cpu36
+  unittests_38:
+    executor: standard_cpu38
     working_directory: ~/ParlAI
+    parallelism: 2
     steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu36
-      - run:
-          name: Unit tests (py36)
-          command: python setup.py test -s tests.suites.unittests -v
+      - runtests:
+          more_installs:
+            - installtorchcpu
+          cachename: ut38
+          marker: unit
 
-  unittests_37:
-    <<: *standard_cpu37
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu37
-      - run:
-          name: Unit tests (py37)
-          command: python setup.py test -s tests.suites.unittests -v
-
-  unittests_gpu11:
-    <<: *gpu
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setupcuda
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchgpu11
-      - run:
-          name: Unit tests (GPU; pytorch 1.1)
-          command: python setup.py test -s tests.suites.unittests -v
-      - run:
-          name: Quickstart unit tests (GPU; pytorch 1.1)
-          command: sh tests/test_quickstart.sh
-
-  unittests_gpu12:
-    <<: *gpu
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setupcuda
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchgpu12
-      - run:
-          name: Unit tests (GPU; pytorch 1.2)
-          command: python setup.py test -s tests.suites.unittests -v
-      - run:
-          name: Quickstart unit tests (GPU; pytorch 1.1)
-          command: sh tests/test_quickstart.sh
-
-  black:
-    <<: *standard_cpu36
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - run:
-          name: minimum black dependencies
-          working_directory: ~/ParlAI
-          command: |
-            pip install -q gitpython black  # only what's needd to lint
-      - run:
-          name: black
-          working_directory: ~/ParlAI
-          command: |
-            bash ./tests/lint_changed.sh -b
-
-  lint:
-    <<: *standard_cpu36
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - run:
-          name: JS Lint
-          working_directory: ~/ParlAI/parlai/mturk
-          command: |
-            npm install
-            npm run lint
-      - run:
-          name: minimum lint dependencies
-          working_directory: ~/ParlAI
-          command: |
-            pip install -q flake8 gitpython flake8-bugbear  # only what's needd to lint
-      - run:
-          name: Lint
-          working_directory: ~/ParlAI
-          command: |
-            bash ./tests/lint_changed.sh
-
-  nightly_gpu_tests:
-    <<: *gpu
+  unittests_gpu18:
+    executor: gpu_small
     working_directory: ~/ParlAI
     parallelism: 8
     steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setupcuda
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchgpu12
-      - run:
-          name: Nightly GPU tests
-          no_output_timeout: 60m
-          command: python setup.py test -s tests.suites.nightly_gpu -v
+      - runtests:
+          more_installs:
+            - installtorchgpu
+          install_cuda: true
+          cachename: gpu18
+          marker: unit
 
-  mturk_tests:
-    <<: *standard_cpu36
+  long_gpu_tests:
+    executor: gpu_medium
     working_directory: ~/ParlAI
+    parallelism: 8
     steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - run:
-          name: All mturk tests
-          command: python setup.py test -s tests.suites.mturk -v
+      - runtests:
+          more_installs:
+            - installtorchgpu
+          install_cuda: true
+          cachename: nightly
+          marker: nightly_gpu
+          pytest_flags: -v -s
+
+  crowdsourcing_tests:
+    executor: small_cpu38
+    working_directory: ~/ParlAI
+    parallelism: 1
+    steps:
+      - runtests:
+          cachename: crowdsourcing
+          marker: crowdsourcing
+          more_installs:
+            - installtorchgpu
+            - installcrowdsourcingdeps
+
+  teacher_tests:
+    executor: standard_cpu38
+    working_directory: ~/ParlAI
+    parallelism: 16
+    steps:
+      - runtests:
+          more_installs:
+            - installtorchcpu
+          cachename: teacher
+          marker: teacher
+          pytest_flags: -v -s
 
   build_website:
-    <<: *standard_cpu36
+    executor: small_cpu38
     working_directory: ~/ParlAI
+    parallelism: 1
     steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu36
-      - <<: *buildwebsite
+      - website:
+          deploy: false
 
   deploy_website:
-    <<: *standard_cpu36
+    executor: small_cpu38
     working_directory: ~/ParlAI
     steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - <<: *installdeps
-      - <<: *installtorchcpu36
-      - <<: *buildwebsite
-      - run:
-          working_directory: ~/ParlAI/
-          name: Upload the website
-          command: |
-            sudo apt-get install s3cmd
-            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
-            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
-            s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
+      - website:
+          deploy: true
 
   test_website:
-    <<: *standard_cpu36
-    working_directory: ~/
+    executor: small_cpu38
+    working_directory: ~/ParlAI
     steps:
       - run:
-          working_directory: ~/ParlAI/
           name: Test the website
           command: |
             echo 'Testing root page:'
@@ -323,78 +408,36 @@ jobs:
             echo 'Testing docs css'
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
 
-  check_extra_tests:
-    <<: *standard_cpu36
-    working_directory: ~/ParlAI
-    steps:
-      - checkout
-      - <<: *fixgit
-      - <<: *setup
-      - run:
-          name: "Conditionally launching long tests..."
-          working_directory: ~/ParlAI/
-          command: |
-            pip install gitpython
-            python setup.py develop --no-deps
-            python .circleci/triggers.py | while read job; do
-              curl -s \
-                --data "build_parameters[CIRCLE_JOB]=${job}" \
-                --data "build_parameters[CIRCLE_WORKFLOW_ID]=${CIRCLE_WORKFLOW_ID}" \
-                --data "build_parameters[CIRCLE_WORKFLOW_WORKSPACE_ID]=${CIRCLE_WORKFLOW_WORKSPACE_ID}" \
-                --data "build_parameters[CIRCLE_WORKFLOW_UPSTREAM_JOB_IDS]=${CIRCLE_WORKFLOW_JOB_ID}" \
-                --data "revision=$CIRCLE_SHA1" \
-                https://circleci.com/api/v1.1/project/github/$CIRCLE_PROJECT_USERNAME/$CIRCLE_PROJECT_REPONAME/tree/$CIRCLE_BRANCH?circle-token=$CIRCLE_API_USER_TOKEN >/dev/null
-                echo "Launching ${job}..."
-            done
 
-
-# -------------------------------------------------------------------------------------
-# Workflows
-# -------------------------------------------------------------------------------------
 workflows:
   version: 2
   commit:
     jobs:
-      - black
-      - lint
-      - unittests_gpu11
-      - unittests_gpu12
-      - unittests_37
-      - unittests_36
-      - unittests_osx
-      - mturk_tests:
-          filters:
-            branches:
-              only: master
-      - check_extra_tests:
-          filters:
-            branches:
-              ignore: master
+      - cleaninstall_38
+      - unittests_gpu18:
+          requires:
+            - unittests_38
+      - unittests_osx:
+          requires:
+            - unittests_38
+      - unittests_38
+      - long_gpu_tests:
+          requires:
+            - unittests_38
+      - crowdsourcing_tests:
+          requires:
+            - unittests_38
+      - teacher_tests:
+          requires:
+            - unittests_38
       - build_website:
           filters:
             branches:
-              ignore: master
+              ignore: main
       - deploy_website:
           filters:
             branches:
-              only: master
+              only: main
       - test_website:
           requires:
             - deploy_website
-  nightly:
-    triggers:
-      - schedule:
-          cron: "0 10 * * *" # 10am UTC is 5am NYC
-          filters:
-            branches:
-              only:
-                - master
-    jobs:
-      - unittests_36
-      - unittests_37
-      - unittests_gpu11
-      - unittests_gpu12
-      - unittests_osx
-      - mturk_tests
-      - nightly_gpu_tests
-      - test_website

@@ -7,10 +7,21 @@
 
 import parlai.core.build_data as build_data
 import os
+from parlai.core.build_data import DownloadableFile
+from parlai.utils.io import PathManager
+
+RESOURCES = [
+    DownloadableFile(
+        '0BwmD_VLjROrfTTljRDVZMFJnVWM',
+        'cnn.tgz',
+        '9405beb90c9267e7769c86fa42720b7e479bcf38c64217c0d3f456ce8cd122ce',
+        from_google=True,
+    )
+]
 
 
 def _process(fname, fout):
-    with open(fname) as f:
+    with PathManager.open(fname) as f:
         lines = [line.strip('\n') for line in f]
     # main article
     s = '1 ' + lines[2]
@@ -27,7 +38,7 @@ def _process(fname, fout):
 
 def create_fb_format(outpath, dtype, inpath):
     print('building fbformat:' + dtype)
-    with open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
+    with PathManager.open(os.path.join(outpath, dtype + '.txt'), 'w') as fout:
         for f in os.listdir(inpath):
             if f.endswith('.question'):
                 fname = os.path.join(inpath, f)
@@ -46,10 +57,8 @@ def build(opt):
         build_data.make_dir(dpath)
 
         # Download the data.
-        fname = 'cnn.tgz'
-        gd_id = '0BwmD_VLjROrfTTljRDVZMFJnVWM'
-        build_data.download_from_google_drive(gd_id, os.path.join(dpath, fname))
-        build_data.untar(dpath, fname)
+        for downloadable_file in RESOURCES:
+            downloadable_file.download_file(dpath)
 
         create_fb_format(
             dpath, 'train', os.path.join(dpath, 'cnn', 'questions', 'training')

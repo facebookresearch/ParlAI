@@ -1,9 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Test for Transresnet Multimodal Pretrained Model."""
+"""
+Test for Transresnet Multimodal Pretrained Model.
+"""
 
 import unittest
 import parlai.scripts.display_data as display_data
@@ -20,65 +22,40 @@ MODEL_OPTIONS = {
 
 @testing_utils.skipUnlessGPU
 class TestTransresnet(unittest.TestCase):
-    """Checks that pre-trained Transresnet Multimodal model gives the correct results."""
+    """
+    Checks that pre-trained Transresnet Multimodal model gives the correct results.
+    """
 
     @classmethod
     def setUpClass(cls):
-        """Set up the test by downloading the model/data."""
-        with testing_utils.capture_output():
-            parser = display_data.setup_args()
-            parser.set_defaults(**MODEL_OPTIONS)
-            opt = parser.parse_args(print_args=False)
-            opt['num_examples'] = 1
-            display_data.display_data(opt)
+        """
+        Set up the test by downloading the model/data.
+        """
+        parser = display_data.setup_args()
+        parser.set_defaults(**MODEL_OPTIONS)
+        opt = parser.parse_args([])
+        opt['num_examples'] = 1
+        display_data.display_data(opt)
 
     def test_transresnet(self):
-        """Test pretrained model."""
-        stdout, _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
+        """
+        Test pretrained model.
+        """
+        _, test = testing_utils.eval_model(MODEL_OPTIONS, skip_valid=True)
 
         # Overall
-        self.assertEqual(
-            test['accuracy'],
-            0.3667,
-            'test accuracy = {}\nLOG:\n{}'.format(test['accuracy'], stdout),
-        )
-        self.assertEqual(
-            test['hits@5'],
-            0.633,
-            'test hits@5 = {}\nLOG:\n{}'.format(test['hits@5'], stdout),
-        )
-        self.assertEqual(
-            test['hits@10'],
-            0.767,
-            'test hits@10 = {}\nLOG:\n{}'.format(test['hits@10'], stdout),
-        )
+        self.assertAlmostEqual(test['accuracy'], 0.3667, places=4)
+        self.assertAlmostEqual(test['hits@5'], 0.6333, places=4)
+        self.assertAlmostEqual(test['hits@10'], 0.7667, places=4)
 
         # First round
-        self.assertEqual(
-            test['first_round']['hits@1/100'],
-            0.2,
-            'test first round hits@1/100 = {}\nLOG:\n{}'.format(
-                test['first_round']['hits@1/100'], stdout
-            ),
-        )
+        self.assertAlmostEqual(test['first_round/hits@1/100'], 0.2, places=4)
 
         # Second round
-        self.assertEqual(
-            test['second_round']['hits@1/100'],
-            0.5,
-            'test second round hits@1/100 = {}\nLOG:\n{}'.format(
-                test['second_round']['hits@1/100'], stdout
-            ),
-        )
+        self.assertAlmostEqual(test['second_round/hits@1/100'], 0.5, places=4)
 
         # Third round
-        self.assertEqual(
-            test['third_round+']['hits@1/100'],
-            0.4,
-            'test third round hits@1/100 = {}\nLOG:\n{}'.format(
-                test['third_round+']['hits@1/100'], stdout
-            ),
-        )
+        self.assertAlmostEqual(test['third_round+/hits@1/100'], 0.4, places=4)
 
 
 if __name__ == '__main__':

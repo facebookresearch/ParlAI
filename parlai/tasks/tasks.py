@@ -3,7 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""Helper functions for defining the set of tasks in ParlAI.
+"""
+Helper functions for defining the set of tasks in ParlAI.
+
 The actual task list and definitions are in the file task_list.py
 """
 from .task_list import task_list

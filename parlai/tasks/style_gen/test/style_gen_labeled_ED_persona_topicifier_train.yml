@@ -1,0 +1,90 @@
+acts:
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sentimental
+    episode_done: false
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - Was this a friend you were in love with, or just a best friend?
+    personality: Questioning
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: 'your persona: people hate that i obsess about the poor.
+
+      your persona: i like to make cellphone apps that would help heal our world.
+
+      your persona: i like to watch people pray together.
+
+      your persona: people don t like me too much but i like them anyways.
+
+      Android (operating system)#Applications
+
+      I remember going to see the fireworks with my best friend. It was the first
+      time we ever spent time alone together. Although there was a lot of people,
+      we felt like the only people in the world.'
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sentimental
+    episode_done: false
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - Where has she gone?
+    personality: Bewildered (Astonished, Confused)
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: This was a best friend. I miss her.
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sentimental
+    episode_done: true
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - Oh was this something that happened because of an argument?
+    personality: Absentminded
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: We no longer talk.
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sentimental
+    episode_done: false
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - This was a best friend. I miss her.
+    personality: Sentimental
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: 'your persona: i drive a honda civic.
+
+      your persona: i am named after my grandmother.
+
+      your persona: my best friend lives down the street.
+
+      your persona: i enjoy taking walks.
+
+      Honda Civic
+
+      Was this a friend you were in love with, or just a best friend?'
+- - deepmoji_cand: None
+    deepmoji_ctx: None
+    emotion: sentimental
+    episode_done: true
+    id: style_gen:labeled_ED_persona_topicifier
+    labels:
+    - We no longer talk.
+    personality: Rigid
+    prepend_cand: None
+    prepend_ctx: None
+    situation: I remember going to the fireworks with my best friend. There was a
+      lot of people, but it only felt like us in the world.
+    text: Where has she gone?
+num_episodes: 39057
+num_examples: 64636

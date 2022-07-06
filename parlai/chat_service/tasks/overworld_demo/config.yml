@@ -1,0 +1,25 @@
+tasks:
+  echo:
+    onboard_world: MessengerEchoOnboardWorld
+    task_world: MessengerEchoTaskWorld
+    timeout: 180
+    agents_required: 1
+  onboard data: # must be the name returned by the overworld
+    onboard_world: MessengerOnboardDataOnboardWorld
+    task_world: MessengerOnboardDataTaskWorld
+    timeout: 180
+    agents_required: 1
+  chat: # must be the name returned by the overworld
+    onboard_world: MessengerChatOnboardWorld
+    task_world: MessengerChatTaskWorld
+    timeout: 180
+    agents_required: 2
+task_name: overworld_demo
+world_module: parlai.chat_service.tasks.overworld_demo.worlds
+overworld: MessengerOverworld
+max_workers: 30
+opt:
+  debug: True
+  password: ParlAI
+additional_args:
+  page_id: 1 # Configure Your Own Page
