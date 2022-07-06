@@ -772,7 +772,7 @@ class TorchAgent(ABC, Agent):
         opt = self.opt
 
         # Safety checkers to ensure TorchAgent assumptions aren't being violated.
-        self.allow_multiple_observe = opt['allow_multiple_observe']
+        self.allow_multiple_observe = opt.get('allow_multiple_observe', False)
         self.__expecting_clear_history = False
         self.__expecting_to_reply = False
 
