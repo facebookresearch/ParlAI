@@ -5,24 +5,16 @@
 # LICENSE file in the root directory of this source tree.
 """
 Worlds are the basic environments which define how agents interact with one another.
-
     ``World(object)`` provides a generic parent class, including ``__enter__``
     and ``__exit__`` statements which allow you to guarantee that the shutdown
     method is called.
-
     ``DialogPartnerWorld(World)`` provides a two-agent turn-based dialog setting.
-
     ``MultiAgentDialogWorld(World)`` provides a multi-agent setting.
-
     ``MultiWorld(World)`` creates a set of environments (worlds) for the same agent
     to multitask over, a different environment will be chosen per episode.
-
     ``BatchWorld(World)`` is a container for doing minibatch training over a world by
     collecting batches of N copies of the environment (each with different state).
-
-
 All worlds are initialized with the following parameters:
-
     ``opt`` -- contains any options needed to set up the agent. This generally contains
         all command-line arguments recognized from core.params, as well as other
         options that might be set through the framework to enable certain modes.
@@ -71,7 +63,6 @@ def validate(observation):
 class World(object):
     """
     Empty parent providing null definitions of API functions for Worlds.
-
     All children can override these to provide more detailed functionality.
     """
 
@@ -93,7 +84,6 @@ class World(object):
     def parley(self):
         """
         Perform one step of actions for the agents in the world.
-
         This is empty in the base class.
         """
         # TODO: mark as abstract?
@@ -108,7 +98,6 @@ class World(object):
     def display(self):
         """
         Return a string describing the current state of the world.
-
         Useful for monitoring and debugging. By default, display the messages between
         the agents.
         """
@@ -132,7 +121,6 @@ class World(object):
     def epoch_done(self):
         """
         Whether the epoch is done or not.
-
         Not all worlds have the notion of an epoch, but this is useful for fixed
         training, validation or test sets.
         """
@@ -157,7 +145,6 @@ class World(object):
     def _share_agents(self):
         """
         Create shared data for agents.
-
         Allows other classes to create the same agents without duplicating the data
         (i.e. sharing parameters).
         """
@@ -217,11 +204,8 @@ class World(object):
     def __enter__(self):
         """
         Empty enter provided for use with ``with`` statement.
-
         e.g:
-
         .. code-block:: python
-
             with World() as world:
                 for n in range(10):
                     n.parley()
@@ -238,7 +222,6 @@ class World(object):
     def num_examples(self):
         """
         Return the number of examples.
-
         Always 0 in the abstract world.
         """
         # TODO: mark as abstract?
@@ -247,7 +230,6 @@ class World(object):
     def num_episodes(self):
         """
         Return the number of episodes.
-
         Always 0 in the abstract world.
         """
         # TODO: mark as abstract?
@@ -312,7 +294,6 @@ class World(object):
 class DialogPartnerWorld(World):
     """
     Simple world for two agents communicating synchronously.
-
     This basic world switches back and forth between two agents, giving each agent one
     chance to speak per turn and passing that back to the other one.
     """
@@ -323,7 +304,6 @@ class DialogPartnerWorld(World):
     ) -> ParlaiParser:
         """
         Return the parser as-is.
-
         Self-chat-specific world flags can be added here.
         """
         return parser
@@ -360,7 +340,6 @@ class DialogPartnerWorld(World):
     def parley(self):
         """
         Agent 0 goes first.
-
         Alternate between the two agents.
         """
         acts = self.acts
@@ -443,9 +422,32 @@ class DialogPartnerWorld(World):
 class MultiAgentDialogWorld(World):
     """
     Basic world where each agent gets a turn in a round-robin fashion.
-
     Each agent receives as input the actions of all other agents since its last `act()`.
     """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add an option for parley mode (round-robin v.s.
+        async). Defaults to round-robin for backward-compatability.
+        """
+        world = parser.add_argument_group('MultiAgentDialogWorld Arguments')
+        world.add_argument(
+            '-pm',
+            '--parley-mode',
+            default='round-robin',
+            choices=[
+                'round-robin',
+                'async',
+            ],
+            help='Choose between different strategies for performing '
+            'one round of parley. Default is round-robin (each agent '
+            'acts in turn), but can also be async (each agent acts '
+            'simultaneously).',
+        )
+        return parser
 
     def __init__(self, opt: Opt, agents, shared=None):
         super().__init__(opt)
@@ -456,11 +458,22 @@ class MultiAgentDialogWorld(World):
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
+        self.parley_mode = opt['parley_mode']
 
     def parley(self):
         """
         Perform a turn for every agent.
+        Agents act either in a round-robin fashion (default) or asynchronously,
+        depending on the command line argument `parley-mode`.
+        """
+        if self.parley_mode == 'round-robin':
+            self._parley_round_robin()
+        else:
+            self._parley_async()
 
+    def _parley_round_robin(self):
+        """
+        Perform a turn for every agent.
         For each agent, get an observation of the last action each of the other agents
         took. Then take an action yourself.
         """
@@ -470,6 +483,30 @@ class MultiAgentDialogWorld(World):
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
+        self.update_counters()
+
+    def _parley_async(self):
+        """
+        Perform a turn for every agent (each turn is one clock tick).
+        For each agent, take an action for this turn simultaneously.
+        Since they all speak at the same time,
+        they must first act before getting to observe others --
+        utterances spoken this round should not influence their decisions this round..
+        Once every agent has taken an action, make each agent
+        observe the actions taken by all the other agents this turn.
+        This information can then can used in their decision next round.
+        """
+        acts = self.acts
+        for index, agent in enumerate(self.agents):
+            acts[index] = agent.act()
+
+        # Since all agents speak at the exact same time, we break ties randomly
+        # Shuffle the speaking order this turn to randomly decide speaking order
+        shuffled_indices = random.sample([_ for _ in range(len(acts))], len(acts))
+        for index in shuffled_indices:
+            for agent_index, agent in enumerate(self.agents):
+                if index != agent_index:
+                    agent.observe(validate(acts[index]))
         self.update_counters()
 
     def get_task_agent(self):
@@ -532,7 +569,6 @@ class MultiAgentDialogWorld(World):
 class MultiWorld(World):
     """
     Container for multiple worlds.
-
     Container for a set of worlds where each world gets a turn in a round-robin fashion.
     The same user_agents are placed in each, though each world may contain additional
     agents according to the task that world represents.
@@ -668,7 +704,6 @@ class MultiWorld(World):
     def parley_init(self):
         """
         Update the current subworld.
-
         If we are in the middle of an episode, keep the same world and finish this
         episode. If we have finished this episode, pick a new world (either in a random
         or round-robin fashion).
@@ -749,7 +784,6 @@ class MultiWorld(World):
 def _override_opts_in_shared(table, overrides):
     """
     Override all shared dicts.
-
     Looks recursively for ``opt`` dictionaries within shared dict and overrides any key-
     value pairs with pairs from the overrides dict.
     """
@@ -775,10 +809,8 @@ def _override_opts_in_shared(table, overrides):
 class BatchWorld(World):
     """
     BatchWorld contains many copies of the same world.
-
     Create a separate world for each item in the batch, sharing
     the parameters for each.
-
     The underlying world(s) it is batching can be either
     ``DialogPartnerWorld``, ``MultiAgentWorld``, or ``MultiWorld``.
     """
@@ -863,7 +895,6 @@ class BatchWorld(World):
     def parley(self):
         """
         Parley in all subworlds.
-
         Usually with ref:`batch_act` and ref:`batch_observe`.
         """
         # Collect batch together for each agent, and do update.
@@ -946,7 +977,6 @@ class BatchWorld(World):
     def episode_done(self):
         """
         Return whether the episode is done.
-
         A batch world is never finished, so this always returns `False`.
         """
         return False
@@ -1093,11 +1123,9 @@ class DynamicBatchWorld(World):
     def _ceil(self, n):
         """
         Round to the nearest multiple of 8.
-
         TensorCores only work when a tensor is a multiple of 8 in almost all
         dimensions. This means all examples cost is related to their nearest
         multiple of 8.
-
         See https://devblogs.nvidia.com/programming-tensor-cores-cuda-9/ for
         more information.
         """
@@ -1381,7 +1409,6 @@ class BackgroundWorkerDynamicBatchWorld(DynamicBatchWorld):
 def _create_task_agents(opt: Opt):
     """
     Create task agent(s) for the given task name.
-
     It does this by calling the create_agent function in agents.py of the given task. If
     create_agents function does not exist, it just looks for the teacher (agent) class
     defined by the task name directly.  (This saves the task creator bothering to define
@@ -1406,7 +1433,6 @@ def _create_task_agents(opt: Opt):
 def create_task_world(opt: Opt, user_agents, default_world=None):
     """
     Instantiate a world with the supplied options and user agents.
-
     (A world factory.)
     """
     task_agents = _create_task_agents(opt)
@@ -1424,7 +1450,6 @@ def create_task_world(opt: Opt, user_agents, default_world=None):
 def create_task(opt: Opt, user_agents, default_world=None):
     """
     Create a world + task_agents (aka a task).
-
     Assuming ``opt['task']="task_dir:teacher_class:options"`` e.g. ``"babi:Task1k:1"``
     or ``"#babi-1k"`` or ``"#QA"``, see ``parlai/tasks/tasks.py`` and see
     ``parlai/tasks/task_list.py`` for list of tasks.
