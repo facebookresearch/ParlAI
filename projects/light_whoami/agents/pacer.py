@@ -197,7 +197,10 @@ class PacerTreeSearchMixin(TreeSearch):
         return extract_characters(self.context_str)['_self_name']
 
     def set_batch_context(
-        self: TSType, batch_context_list: List[List[int]], batch_idx: int
+        self: TSType,
+        batch_context_list: List[List[int]],
+        batch_idx: int,
+        gpu_beam_blocking: bool,
     ) -> TSType:
         """
         Override to save de-tokenized version of context.
@@ -264,7 +267,8 @@ class PacerTreeSearchMixin(TreeSearch):
             h
             for i in range(len(self.partial_hyps))
             for h in [
-                self.agent._v2t(self.partial_hyps[i][1:] + [ind]) for ind in inds[i]
+                self.agent._v2t(self.partial_hyps[i][1:].tolist() + [ind])
+                for ind in inds[i]
             ]
         ]
         # Classify all beam outputs
