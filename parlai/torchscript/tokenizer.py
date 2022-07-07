@@ -384,7 +384,7 @@ class ScriptableGpt2BpeHelper(object):
 @torch.jit.script
 class ScriptableSubwordBpeHelper(object):
     """
-    Version of parlai.utils.bpe.ScriptableSubwordBpeHelper that can be TorchScripted.
+    Version of parlai.utils.bpe.SubwordBPEHelper that can be TorchScripted.
     """
 
     @classmethod
