@@ -881,8 +881,8 @@ class BatchWorld(World):
             self.acts[agent_idx] = batch_act
             # We possibly execute this action in the world.
             if hasattr(self.world, 'execute'):
-                for w in self.worlds:
-                    w.execute(w.agents[agent_idx], batch_act[agent_idx])
+                for i, w in enumerate(self.worlds):
+                    w.execute(w.agents[agent_idx], batch_act[i])
             # All agents (might) observe the results.
             for other_index in range(num_agents):
                 obs = self.batch_observe(other_index, batch_act, agent_idx)
