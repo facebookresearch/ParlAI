@@ -24,7 +24,6 @@ from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
 
@@ -559,7 +558,6 @@ class MultiWOZv22DSTTeacher(tod_agents.TodUserSimulatorTeacher):
     def setup_data(self, fold):
         dialogs = self._load_data(fold)
         examples = []
-        #  mapping_dict = {"restaurant": "hotel", "hotel": "restaurant", "taxi": "train", "train": "taxi"}
         for dialog in dialogs:
             context = []
             for turn in dialog["turns"]:
