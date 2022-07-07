@@ -814,7 +814,7 @@ class BatchWorld(World):
             observation = None
             if batch_actions[i] is None:
                 # shouldn't send None, should send empty observations
-                batch_actions[i] = [{}] * len(self.worlds)
+                batch_actions[i] = {}
 
             if hasattr(w, 'observe'):
                 # The world has its own observe function, which the action
