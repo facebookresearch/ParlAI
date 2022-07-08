@@ -1,6 +1,7 @@
 # comment just to bump caches
 boto3==1.17.95
 botocore==1.20.95
+checklist==0.0.11
 coloredlogs==14.0
 datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
@@ -37,6 +38,7 @@ requests<3,>=2.21.0
 scikit-learn==0.23.1
 scipy==1.8.0
 sh==1.12.14
+spacy==3.3.1
 sphinx_rtd_theme==0.4.3
 sphinx-autodoc-typehints~=1.10.3
 Sphinx~=2.2.0
@@ -56,5 +58,3 @@ jsonlines==1.2.0
 numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
 markdown<=3.3.2 # Pin to something that works so tests are happy
 jinja2==3.0.3
-ninja
-protobuf~=3.20
