@@ -21,6 +21,8 @@ __global__ void banRepeatedTokens(long *__restrict__ hypothesis_ptr,
                                   long *__restrict__ context_ptr,
                                   float *__restrict__ lprobs,
                                   int current_seq_length,
+                                  int context_length,
+                                  int beam_size,
                                   int vocab_size,
                                   int no_repeat_ngram_size,
                                   bool if_context_blocking)
@@ -35,7 +37,8 @@ __global__ void banRepeatedTokens(long *__restrict__ hypothesis_ptr,
 
   if (if_context_blocking)
   {
-    previous_ngram_ptr = &context_ptr[col];
+    previous_ngram_ptr = &context_ptr[row / beam_size * context_length + col];
+    // previous_ngram_ptr = &context_ptr[col];
   }
   else
   {
@@ -92,7 +95,7 @@ torch::Tensor ngram_repeat_block_cuda_forward(const torch::Tensor hypothesis,
   int context_length;
   if (if_context_blocking)
   {
-    context_length = context.size(0);
+    context_length = context.size(-1);
   }
   else
   {
@@ -119,6 +122,8 @@ torch::Tensor ngram_repeat_block_cuda_forward(const torch::Tensor hypothesis,
       context_ptr,
       lprob_ptr,
       current_seq_length,
+      context_length,
+      beam_size,
       vocab_size,
       no_repeat_ngram_size,
       if_context_blocking);

@@ -928,6 +928,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if beam_preds_scores is not None
             else None
         )
+        # with open("batch.txt",'a') as file:
+        #     for i in text:
+        #         file.writelines(i)
+        #         file.write('\n')
 
         if self.show_token_details and beam_preds_scores is not None:
             text_token_info = []
@@ -1152,12 +1156,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         bsz = batch.batchsize
         if batch.text_vec is not None:
-            batchsize = batch.batchsize
             batch_context_list = self._get_batch_context(batch)
-
-            # beams_batch = self._treesearch_factory(dev, verbose=self.show_token_details).set_block_list(self.beam_block_list)
-            # self.context = batch_context_list
-
             beams = [
                 self._treesearch_factory(dev, verbose=self.show_token_details)
                 .set_batch_context(
@@ -1166,8 +1165,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     self.opt.get('gpu_beam_blocking', False),
                 )
                 .set_block_list(self.beam_block_list)
-                for batch_idx in range(batchsize)
+                for batch_idx in range(bsz)
             ]
+            self.batch_context = batch_context_list
         else:
             beams = [
                 self._treesearch_factory(dev, verbose=self.show_token_details)
@@ -1205,9 +1205,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     :, :, prefix_toks
                 ] = False  # everything except prefix toks should be neginf
                 score[prefix_mask] = neginf(score.dtype)
-            for i, b in enumerate(beams):
-                if not b.is_done():
-                    b.advance(score[i], _ts)
+            # for i, b in enumerate(beams):
+            #     if not b.is_done():
+            #         b.advance(score[i], _ts)
+            self.batch_advance(beams, score, _ts, bsz)
             incr_state_inds = torch.cat(
                 [
                     beam_size * i + b.get_backtrack_from_current_step()
@@ -1236,6 +1237,147 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
 
         return beam_preds_scores, beams
+
+    def batch_advance(self, beams, logprobs, step, bsz):
+        """
+        :param logprobs:
+           shape: (bsz, beam_size, vocab_size)
+        """
+
+        # TODO: check to make sure all batch element's current length is the same
+        logprobs = logprobs.view(bsz * self.beam_size, -1)
+
+        current_length = step
+        if current_length < self.beam_min_length:
+            logprobs[:, self.END_IDX] = neginf(logprobs.dtype)
+
+        # initialize scores at first step
+        if step == 0:
+            for b in beams:
+                b.scores = torch.zeros(1).type_as(logprobs).to(logprobs.device)
+
+        batch_partial_hyps = []
+        for b in beams:
+            for hyp_id, token in enumerate(b.outputs[-1]):
+                if token == self.END_IDX:
+                    b.scores[hyp_id] = neginf(b.scores.dtype)
+            # concat partial hyps
+            batch_partial_hyps.append(b.partial_hyps)
+
+        self.batch_partial_hyps = (
+            torch.stack(batch_partial_hyps)
+            .view(bsz * self.beam_size, -1)
+            .to(logprobs.device)
+        )
+
+        if self.beam_block_ngram > 0:
+            logprobs = self._batch_block_ngrams(
+                ngram_size=self.beam_block_ngram,
+                logprobs=logprobs,
+                bsz=bsz,
+                step=step,
+                if_context_blocking=False,
+            )
+
+        if self.beam_context_block_ngram > 0:
+            if self.batch_context is None:
+                raise ValueError(
+                    "Must use TreeSearch.set_context to use context blocking."
+                )
+            logprobs = self._batch_block_ngrams(
+                ngram_size=self.beam_context_block_ngram,
+                logprobs=logprobs,
+                bsz=bsz,
+                step=step,
+                if_context_blocking=True,
+            )
+
+        logprobs = logprobs.view(bsz, self.beam_size, -1)
+
+        for i, b in enumerate(beams):
+            logprobs[i] = b._block_block_list(logprobs[i])
+            path_selection = b.select_paths(logprobs[i], b.scores, current_length)
+            b.scores = path_selection.scores
+            b.all_scores.append(b.scores.clone())
+            b.outputs.append(path_selection.token_ids)
+            b.bookkeep.append(path_selection.hypothesis_ids)
+            if b.partial_hyps.get_device() == -1:
+                hyp_device = 'cpu'
+            else:
+                hyp_device = b.partial_hyps.get_device()
+            b.partial_hyps = torch.cat(
+                (
+                    b.partial_hyps[path_selection.hypothesis_ids.long()],
+                    path_selection.token_ids.view(
+                        path_selection.token_ids.shape[0], -1
+                    ).to(hyp_device),
+                ),
+                1,
+            )
+
+            if b.verbose:
+                assert path_selection.token_details
+                assert b.token_details
+                for j in range(self.beam_size):
+                    b.token_details[j].append(path_selection.token_details[j])
+
+            for hypid in range(self.beam_size):
+                if b.outputs[-1][hypid] == b.eos:
+                    if b.scores[hypid] <= neginf(b.scores.dtype):
+                        continue
+                    #  this is finished hypo, adding to finished
+
+                    eostail = _HypothesisTail(
+                        timestep=len(b.outputs) - 1,
+                        hypid=hypid,
+                        score=b.all_scores[-1][hypid],
+                        tokenid=b.eos,
+                        token_details=b.token_details[hypid][-1]
+                        if b.token_details is not None
+                        else None,
+                    )
+                    b.finished.append(eostail)
+                    b.n_best_counter += 1
+
+            if b.outputs[-1][0] == b.eos:
+                b.eos_top = True
+                if b.eos_top_ts is None:
+                    b.eos_top_ts = len(b.outputs) - 1
+
+    def _batch_block_ngrams(
+        self,
+        ngram_size: int,
+        logprobs: torch.Tensor,
+        bsz: int,
+        step: int = 0,
+        if_context_blocking=False,
+    ):
+        """
+        Hard block ngrams from the logprobs.
+
+        :param ngram_size:
+            The length of ngrams to block. Must be > 0.
+        :param logprobs:
+            Float or HalfTensor, representing the log-probabilities. This is
+            modified in place.
+        :param step:
+            current step on generating utterances
+        :param if_context_blocking:
+            whether we are doing context blocking
+        """
+        context = self.batch_context if if_context_blocking else None
+        op = NGramRepeatBlock()
+        logprobs = op(
+            hypothesis=self.batch_partial_hyps,
+            context=context,
+            lprobs=logprobs,
+            bsz=bsz,
+            step=step,
+            beam_size=self.beam_size,
+            no_repeat_ngram_size=ngram_size,
+            if_context_blocking=if_context_blocking,
+        )
+        return logprobs
 
     def _load_beam_block_list(self) -> SearchBlocklist:
         """
@@ -1526,8 +1668,14 @@ class TreeSearch(object):
         """
         Advance the beam one step.
 
-        :param logprobs:
-            shape: (bsz, beam_size, vocab_size)
+        Notes:
+        - self.all_scores:
+            list of score per step, each element has length beam_size
+            starts with [[0] * beam_size]
+        - self.outputs:
+            output tokens at each time step
+            starts with [[bos] * beam_size]
+
         """
         current_length = len(self.all_scores) - 1
         if current_length < self.min_length:
@@ -1620,7 +1768,6 @@ class TreeSearch(object):
                 self.n_best_counter += 1
 
         if self.outputs[-1][0] == self.eos:
-            breakpoint()
             self.eos_top = True
             if self.eos_top_ts is None:
                 self.eos_top_ts = len(self.outputs) - 1

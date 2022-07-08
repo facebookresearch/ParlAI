@@ -51,9 +51,9 @@ class NGramRepeatBlock(nn.Module):
     ):
         """
         Args:
-        hypothesis(Tensor): (beam*bsz, current_sequence_length)
-        context(Tensor): context for context-blocking
-        lprobs(Tensor): likelihood probability(beam, vocab_size)
+        hypothesis(Tensor): (beam*bsz, hyp_length)
+        context(Tensor): (bsz, context_length), context for context-blocking
+        lprobs(Tensor): (beam*bsz, vocab_size), likelihood probability
         bsz(int): batch size
         step(int): current step
         beam_size(int): beam size
