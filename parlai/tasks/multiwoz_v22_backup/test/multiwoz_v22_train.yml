@@ -1,0 +1,95 @@
+acts:
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_SystemTeacher
+    labels:
+    - 'APIS: '
+    slots: {}
+    text: 'APIS: '
+    type: 'APIS: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_SystemTeacher
+    labels:
+    - 'APICALL: api_name = find_hotel'
+    slots:
+      api_name: find_hotel
+    text: 'USER: i need a place to dine in the center thats expensive'
+    type: 'APICALL: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_SystemTeacher
+    labels:
+    - 'SYSTEM: I have several options for you; do you prefer African, Asian, or British
+      food?'
+    slots:
+      COUNT: 33
+      address: 124 tenison road
+      area: east
+      id: '0'
+      internet: 'yes'
+      location:
+      - 52.1963733
+      - 0.1987426
+      n: .nan
+      name: a and b guest house
+      parking: 'no'
+      phone: '01223315702'
+      postcode: cb12dp
+      price:
+        double: '70'
+        family: '90'
+        single: '50'
+      pricerange: moderate
+      stars: '4'
+      takesbookings: 'yes'
+      type: guesthouse
+    text: 'APIRESP: COUNT = 33 ; address = 124 tenison road ; area = east ; id = 0
+      ; internet = yes ; location = 0.1987426, 52.1963733 ; n = nan ; name = a and
+      b guest house ; parking = no ; phone = 01223315702 ; postcode = cb12dp ; price
+      = {''double'': ''70'', ''family'': ''90'', ''single'': ''50''} ; pricerange
+      = moderate ; stars = 4 ; takesbookings = yes ; type = guesthouse'
+    type: 'SYSTEM: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_SystemTeacher
+    labels:
+    - 'APICALL: api_name = find_restaurant ; area = centre ; pricerange = expensive'
+    slots:
+      api_name: find_restaurant
+      area: centre
+      pricerange: expensive
+    text: 'USER: Any sort of food would be fine, as long as it is a bit expensive.
+      Could I get the phone number for your recommendation?'
+    type: 'APICALL: '
+- - domain: hotel, restaurant
+    episode_done: false
+    id: MultiwozV22_SystemTeacher
+    labels:
+    - 'SYSTEM: There is an Afrian place named Bedouin in the centre. How does that
+      sound?'
+    slots:
+      COUNT: 33
+      address: 106 Regent Street City Centre
+      area: centre
+      food: indian
+      id: '19214'
+      introduction: curry garden serves traditional indian and bangladeshi cuisine
+        cooked with fresh produce delivered every day
+      location:
+      - 52.200187
+      - 0.126407
+      name: curry garden
+      phone: '01223302330'
+      postcode: cb21dp
+      pricerange: expensive
+      signature: .nan
+      type: restaurant
+    text: 'APIRESP: COUNT = 33 ; address = 106 Regent Street City Centre ; area =
+      centre ; food = indian ; id = 19214 ; introduction = curry garden serves traditional
+      indian and bangladeshi cuisine cooked with fresh produce delivered every day
+      ; location = 0.126407, 52.200187 ; name = curry garden ; phone = 01223302330
+      ; postcode = cb21dp ; pricerange = expensive ; signature = nan ; type = restaurant'
+    type: 'SYSTEM: '
+num_episodes: 7913
+num_examples: 133963
