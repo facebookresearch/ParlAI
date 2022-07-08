@@ -40,7 +40,9 @@ WELL_FORMATTED_DOMAINS = ["attraction", "bus", "hotel", "restaurant", "train", "
 class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
     """
     Abstract data loader for Multiwoz V2.2 into TOD structured data format.
+
     Multiwoz 2.2 has 'find' and 'book' as the only intents.
+
     For API calls, we look for turns that are not 'NONE' `active_intents` in the USER's turn state. We then filter these for whether or not the SYSTSEM has actually made an api call by looking in the dialogue act of the SYSTEM turn.
     * For 'find' intents, we make an API call if it does an "Inform" or gives a "NoOffer". We look in the corresponding `.db` file to return the relevant information.
     * For 'book' intents, we make an API call if the SYSTEM's dialogue act includes  booking and then offer the slots/values of that key as the API response.
@@ -220,6 +222,7 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
     def _get_round(self, dialogue_id, raw_episode, turn_id):
         """
         Parse to TodStructuredRound.
+
         Assume User turn first.
         """
         user_turn = raw_episode[turn_id]
