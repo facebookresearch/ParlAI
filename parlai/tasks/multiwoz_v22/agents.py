@@ -380,6 +380,12 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
 
 
 class MultiWOZv22DSTTeacher(tod_agents.TodUserSimulatorTeacher):
+    """
+    This Teacher is responsible for performing the task of Dialogue State Tracking.
+    It can be used to evaluate LM on JGA (Joint Goal Accuracy) metric (as shown in
+    [SimpleTOD](https://arxiv.org/abs/2005.00796) and [Soloist](https://arxiv.org/abs/2005.05298)).
+    """
+
     BELIEF_STATE_DELIM = " ; "
 
     domains = [
