@@ -15,7 +15,6 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-from parlai_fb.tasks.multiwoz_v22.build import build_dataset, fold_size
 
 import parlai.core.tod.tod_agents as tod_agents
 import parlai.core.tod.tod_core as tod
@@ -40,8 +39,13 @@ DOMAINS = [
 
 WELL_FORMATTED_DOMAINS = ["attraction", "bus", "hotel", "restaurant", "train", "taxi"]
 
+DATA_LEN = {"train": 17, "dev": 2, "test": 2}
+
 SEED = 42
 
+
+def fold_size(fold):
+    return DATA_LEN[fold]
 
 class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
     """
@@ -420,7 +424,7 @@ class MultiWOZv22DSTTeacher(tod_agents.TodUserSimulatorTeacher):
         self.id = "multiwoz_v22"
 
         if shared is None:
-            build_dataset(opt)
+            build_.build(opt)
         super().__init__(opt, shared)
 
     def _load_data(self, fold):
