@@ -47,6 +47,7 @@ SEED = 42
 def fold_size(fold):
     return DATA_LEN[fold]
 
+
 class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
     """
     Abstract data loader for Multiwoz V2.2 into TOD structured data format.
