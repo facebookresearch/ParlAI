@@ -447,31 +447,6 @@ class MultiAgentDialogWorld(World):
     Each agent receives as input the actions of all other agents since its last `act()`.
     """
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        """
-        Add an option for parley mode (round-robin v.s.
-
-        async). Defaults to round-robin for backward-compatability.
-        """
-        world = parser.add_argument_group('MultiAgentDialogWorld Arguments')
-        world.add_argument(
-            '-pm',
-            '--parley-mode',
-            default='round-robin',
-            choices=[
-                'round-robin',
-                'async',
-            ],
-            help='Choose between different strategies for performing '
-            'one round of parley. Default is round-robin (each agent '
-            'acts in turn), but can also be async (each agent acts '
-            'simultaneously).',
-        )
-        return parser
-
     def __init__(self, opt: Opt, agents, shared=None):
         super().__init__(opt)
         if shared:
@@ -481,21 +456,8 @@ class MultiAgentDialogWorld(World):
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
-        self.parley_mode = opt.get('parley_mode', 'round-robin')
 
     def parley(self):
-        """
-        Perform a turn for every agent.
-
-        Agents act either in a round-robin fashion (default) or asynchronously,
-        depending on the command line argument `parley-mode`.
-        """
-        if self.parley_mode == 'round-robin':
-            self._parley_round_robin()
-        else:
-            self._parley_async()
-
-    def _parley_round_robin(self):
         """
         Perform a turn for every agent.
 
@@ -508,32 +470,6 @@ class MultiAgentDialogWorld(World):
             for other_agent in self.agents:
                 if other_agent != agent:
                     other_agent.observe(validate(acts[index]))
-        self.update_counters()
-
-    def _parley_async(self):
-        """
-        Perform a turn for every agent (each turn is one clock tick).
-
-        For each agent, take an action for this turn simultaneously.
-        Since they all speak at the same time,
-        they must first act before getting to observe others --
-        utterances spoken this round should not influence their decisions this round..
-
-        Once every agent has taken an action, make each agent
-        observe the actions taken by all the other agents this turn.
-        This information can then can used in their decision next round.
-        """
-        acts = self.acts
-        for index, agent in enumerate(self.agents):
-            acts[index] = agent.act()
-
-        # Since all agents speak at the exact same time, we break ties randomly
-        # Shuffle the speaking order this turn to randomly decide speaking order
-        shuffled_indices = random.sample([_ for _ in range(len(acts))], len(acts))
-        for index in shuffled_indices:
-            for agent_index, agent in enumerate(self.agents):
-                if index != agent_index:
-                    agent.observe(validate(acts[index]))
         self.update_counters()
 
     def get_task_agent(self):
