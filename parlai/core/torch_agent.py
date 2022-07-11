@@ -108,6 +108,7 @@ class Batch(AttrDict):
     batchsize: int
     is_training: bool
     text_vec: Optional[torch.LongTensor]
+    timestep_vec: Optional[torch.LongTensor]
     label_vec: Optional[torch.LongTensor]
     labels: Optional[List[str]]
     valid_indices: Optional[torch.LongTensor]
@@ -125,6 +126,8 @@ class Batch(AttrDict):
         self,
         text_vec=None,
         text_lengths=None,
+        timestep_vec=None,
+        timestep_lengths=None,
         label_vec=None,
         label_lengths=None,
         labels=None,
@@ -145,6 +148,8 @@ class Batch(AttrDict):
         super().__init__(
             text_vec=text_vec,
             text_lengths=text_lengths,
+            timestep_vec=timestep_vec,
+            timestep_lengths=timestep_lengths,
             label_vec=label_vec,
             label_lengths=label_lengths,
             labels=labels,
@@ -277,7 +282,10 @@ class History(object):
         self.history_strings = []
         self.history_raw_strings = []
         self.history_vecs = []
+        self.history_timesteps = []
+        self.history_timestep_vecs = []
         self.temp_history = None
+        self.temp_timestep = None
 
         # person token args
         self.add_person_tokens = opt.get('person_tokens', False)
@@ -285,6 +293,7 @@ class History(object):
         self.p1_token = p1_token
         self.p2_token = p2_token
         self.speaker_field = opt.get('speaker_field', None)
+        self.timestep_field = opt.get('timestep_field', None)
         self.speakers = set([p1_token, p2_token])
 
     def parse(self, text):
@@ -293,6 +302,14 @@ class History(object):
         """
         return self.dict.txt2vec(text)
 
+    def parse_timestep(self, timestep):
+        """
+        Tokenize timestep with the given dictionary.
+
+        Can override for custom timestep parsing.
+        """
+        return self.dict.txt2vec(timestep)
+
     def reset(self):
         """
         Clear the history.
@@ -300,6 +317,10 @@ class History(object):
         self.history_raw_strings = []
         self.history_strings = []
         self.history_vecs = []
+        self.history_timesteps = []
+        self.history_timestep_vecs = []
+        self.temp_history = None
+        self.temp_timestep = None
 
     def _update_strings(self, text):
         if self.size > 0:
@@ -319,7 +340,19 @@ class History(object):
                 self.history_vecs.pop(0)
         self.history_vecs.append(self.parse(text))
 
-    def add_reply(self, text):
+    def _update_timesteps(self, timestep):
+        if self.size > 0:
+            while len(self.history_timesteps) >= self.size:
+                self.history_timesteps.pop(0)
+        self.history_timesteps.append(timestep)
+
+    def _update_timestep_vecs(self, timestep):
+        if self.size > 0:
+            while len(self.history_timestep_vecs) >= self.size:
+                self.history_timestep_vecs.pop(0)
+        self.history_timestep_vecs.append(self.parse_timestep(timestep))
+
+    def add_reply(self, text, timestep=None):
         """
         Add your own response to the history.
         """
@@ -330,6 +363,10 @@ class History(object):
         self._update_strings(text)
         # update history vecs
         self._update_vecs(text)
+        # update history timesteps
+        self._update_timesteps(timestep)
+        # update history timestep vecs
+        self._update_timestep_vecs(timestep)
 
     def update_history(self, obs: Message, temp_history: Optional[str] = None):
         """
@@ -348,6 +385,9 @@ class History(object):
                 next_texts = obs[self.field].split('\n')
             else:
                 next_texts = [obs[self.field]]
+            timestep = None
+            if self.timestep_field in obs and obs[self.timestep_field] is not None:
+                timestep = obs[self.timestep_field]
             for text in next_texts:
                 self._update_raw_strings(text)
                 if self.add_person_tokens:
@@ -367,8 +407,17 @@ class History(object):
                 self._update_strings(text)
                 # update history vecs
                 self._update_vecs(text)
+                # update history timesteps
+                self._update_timesteps(timestep)
+                # update history timestep vects
+                self._update_timestep_vecs(timestep)
 
         self.temp_history = temp_history
+
+        temp_timestep = None
+        if self.timestep_field in obs and obs[self.timestep_field] is not None:
+            temp_timestep = obs[self.timestep_field]
+        self.temp_timestep = temp_timestep
 
     def get_history_str(self) -> Optional[str]:
         """
@@ -376,7 +425,6 @@ class History(object):
         """
         if len(self.history_strings) > 0:
             history = self.history_strings[:]
-            history = self.delimiter.join(history)
             if self.temp_history is not None:
                 history += self.temp_history
             return history
@@ -412,6 +460,49 @@ class History(object):
         Return a list of history vecs.
         """
         return self.history_vecs
+
+    def get_history_str_with_timesteps(self) -> Optional[str]:
+        """
+        Return the string version of the history, including timesteps.
+        """
+        if len(self.history_strings) > 0:
+            history = self.history_strings[:]
+            timesteps = self.history_timesteps[:]
+            history = self.delimiter.join(
+                [f"{h}{self.delimiter}{t}" for h, t in zip(history, timesteps)]
+            )
+            if self.temp_history is not None:
+                history += self.temp_history
+            return history
+
+        return None
+
+    def get_history_timestep_vec(self):
+        if len(self.history_timestep_vecs) == 0:
+            return None
+
+        # vec type is a list
+        timesteps = []
+        for vec in self.history_timestep_vecs[:-1]:
+            timesteps += [vec]
+            timesteps += [self.delimiter_tok]
+        timesteps += [self.history_timestep_vecs[-1]]
+        if self.temp_timestep is not None:
+            timesteps.extend([self.parse_timestep(self.temp_timestep)])
+        if self._global_end_token is not None:
+            timesteps += [[self._global_end_token]]
+
+        timesteps = sum(timesteps, [])
+        if self.reversed:
+            timesteps = list(reversed(timesteps))
+
+        return timesteps
+
+    def get_history_timestep_list(self):
+        """
+        Return a list of history timesteps.
+        """
+        return self.history_timesteps
 
     def _add_person_tokens(self, text, token, add_after_newln=False):
         if add_after_newln:
@@ -511,6 +602,12 @@ class TorchAgent(ABC, Agent):
             ' set to off.'
             ' Typically, scripts can set their preferred default behavior at the start,'
             ' e.g. eval scripts.',
+        )
+        agent.add_argument(
+            '--record-silence',
+            type='bool',
+            default=True,
+            helper='Whether to record silence token in the agent history when the agent self-observes. Defaults to True for backward-compatability.',
         )
         # pretrained embedding arguments
         agent.add_argument(
@@ -691,6 +788,15 @@ class TorchAgent(ABC, Agent):
             "overrides `__p1__` in `--person-tokens` if field is not None and is present in the observation.",
         )
         agent.add_argument(
+            '-tstep',
+            '--timestep-field',
+            type='nonestr',
+            default=None,
+            help="field in the observation to track indicating the timestep of the message "
+            "over the course of the episode (defaults to None). If set, `obs[timestep]` will get "
+            "saved in the `self.history_timesteps` field of history memory.",
+        )
+        agent.add_argument(
             '--split-lines',
             type='bool',
             default=False,
@@ -825,6 +931,7 @@ class TorchAgent(ABC, Agent):
 
         # now set up any fields that all instances may need
         self.EMPTY = torch.zeros(0, dtype=torch.long)
+        self.SILENCE_IDX = self.dict[self.dict.silence_token]
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
@@ -846,6 +953,8 @@ class TorchAgent(ABC, Agent):
         # stores up to hist_utt past observations within current dialog
         self.history = self.build_history()
         self.history_reversed = opt.get('history_reversed', False)
+        # whether to record silence token in the agent history when the agent self-observes
+        self.record_silence = opt.get('record_silence', True)
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
@@ -898,6 +1007,13 @@ class TorchAgent(ABC, Agent):
         else:
             speaker = self.P1_TOKEN
         return speaker
+
+    def _get_timestep_from_observation(self, observation: Message):
+        timestep_field = self.opt.get('timestep_field', None)
+        timestep = None
+        if timestep_field:
+            timestep = observation.get(timestep_field, None)
+        return timestep
 
     def _resize_token_embeddings(self, state_dict, msg=None):
         """
@@ -1514,6 +1630,16 @@ class TorchAgent(ABC, Agent):
 
         return obs
 
+    def _set_timestep_vec(self, obs, history):
+        """
+        Sets the 'timestep_vec' field in the observation.
+
+        Useful to override to change vectorization behavior
+        """
+        if 'timestep_vec' not in obs:
+            obs['timestep_vec'] = history.get_history_timestep_vec()
+        return obs
+
     def _set_label_vec(self, obs, add_start, add_end, truncate):
         """
         Set the 'labels_vec' field in the observation.
@@ -1636,6 +1762,7 @@ class TorchAgent(ABC, Agent):
         self._set_text_vec(obs, history, text_truncate)
         self._set_label_vec(obs, add_start, add_end, label_truncate)
         self._set_label_cands_vec(obs, add_start, add_end, label_truncate)
+        self._set_timestep_vec(obs, history)
         return obs
 
     def _pad_tensor(
@@ -1744,6 +1871,17 @@ class TorchAgent(ABC, Agent):
                     x_lens, xs, x_lens, valid_inds, exs, descending=True
                 )
 
+        # TIME_STEPS
+        ts = t_lens = None
+        if any(ex.get('timestep_vec') is not None for ex in exs):
+            _ts = [ex.get('timestep_vec', self.EMPTY) for ex in exs]
+            ts, t_lens = self._pad_tensor(_ts)
+            if sort:
+                sort = False  # now we won't sort on labels
+                ts, t_lens, valid_inds, exs = argsort(
+                    t_lens, ts, t_lens, valid_inds, exs, descending=True
+                )
+
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
         some_labels_avail = labels_avail or any('eval_labels_vec' in ex for ex in exs)
@@ -1800,6 +1938,7 @@ class TorchAgent(ABC, Agent):
             batchsize=len(valid_inds),
             is_training=is_training,
             text_vec=xs,
+            timestep_vec=ts,
             label_vec=ys,
             labels=labels,
             valid_indices=valid_inds,
@@ -1974,8 +2113,11 @@ class TorchAgent(ABC, Agent):
             )
             if label_key is not None:
                 lbls = self.observation[label_key]
+                timestep = self._get_timestep_from_observation(self.observation)
                 last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
-                self.history.add_reply(last_reply)
+                # Disregard any silence output in history, if not recording silence
+                if self.record_silence or last_reply != self.dict.silence_token:
+                    self.history.add_reply(last_reply, timestep)
                 return
             # you might expect a hard failure here, but in interactive mode we'll
             # never get a label
@@ -1983,7 +2125,10 @@ class TorchAgent(ABC, Agent):
         # otherwise, we use the last output the model generated
         if self_message is not None:
             last_reply = self_message['text']
-            self.history.add_reply(last_reply)
+            last_timestep = self._get_timestep_from_observation(self_message)
+            # Disregard any silence output in history, if not recording silence
+            if self.record_silence or last_reply != self.dict.silence_token:
+                self.history.add_reply(last_reply, last_timestep)
             return
 
         raise RuntimeError("Unexpected case in self_observe.")
