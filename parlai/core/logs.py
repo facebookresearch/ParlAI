@@ -26,7 +26,6 @@ from parlai.core.opt import Opt
 from parlai.core.metrics import Metric, dict_report, get_metric_display_data
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-import pandas as pd
 
 
 _TB_SUMMARY_INVALID_TAG_CHARACTERS = re.compile(r'[^-/\w\.]')
@@ -301,7 +300,7 @@ class ClearMLLogger(object):
         task_name = opt.get('clearml_task_name')
 
         # Instantiate CleaML Task
-        self.clearml_Task = Task.init(
+        self.clearml_task = Task.init(
             project_name=project_name,
             task_name=task_name,
             auto_connect_arg_parser=False,
@@ -309,17 +308,17 @@ class ClearMLLogger(object):
         )
 
         # Report Hyperparameter Configurations
-        self.clearml_Task.connect(opt)
+        self.clearml_task.connect(opt)
 
         # Initialize ClearML Logger
-        self.clearml_Logger = Logger.current_logger()
+        self.clearml_logger = Logger.current_logger()
 
     def log_metrics(self, setting, step, report):
         """
-        Log all metrics to ClearML WebUI.
+        Log all metrics (iteratively during training) to ClearML WebUI.
 
         :param setting:
-            One of train/valid/test. Will be used as the title for the graph/table/chart.
+            One of train/valid/test. Here, it will be "train". Will be used as the title for the graph/table/chart.
         :param step:
             Number of parleys
         :param report:
@@ -333,7 +332,7 @@ class ClearMLLogger(object):
             display = get_metric_display_data(metric=k)
 
             try:
-                self.clearml_Logger.report_scalar(
+                self.clearml_logger.report_scalar(
                     title=f"{display.title} ({k})",
                     series=f'{setting}',
                     value=v,
@@ -345,27 +344,19 @@ class ClearMLLogger(object):
 
     def log_final(self, setting, report):
         """
-        Log final metrics to ClearML WebUI.
+        Log final single value metrics to ClearML WebUI.
 
         :param setting:
-            One of train/valid/test. Will be used as the title for the graph/table/chart.
+            One of train/valid/test. Here, it will be either "valid" or "test". Will be used as the title for the graph/table/chart.
         :param report:
             The report to log
         """
         report = dict_report(report)
-        report = {
-            f'{get_metric_display_data(metric=k).title}': v
-            for k, v in report.items()
-            if isinstance(v, numbers.Number)
-        }
-
-        # ClearML Final Reporting
-        self.clearml_Task.get_logger().report_table(
-            f'{setting}',
-            f'{setting}',
-            iteration=0,
-            table_plot=pd.DataFrame(report, index=[0]).T,
-        )
+        for k, v in report.items():
+            if isinstance(v, numbers.Number):
+                self.clearml_logger.report_single_value(
+                    f'{get_metric_display_data(metric=k).title} - {setting}', v
+                )
 
     def log_debug_samples(self, series, debug_samples, index=0, title="dialogues"):
         """
@@ -382,7 +373,7 @@ class ClearMLLogger(object):
         """
 
         # Report Test/Validation Samples as debug samples
-        self.clearml_Logger.report_media(
+        self.clearml_logger.report_media(
             title=title,
             series=series,
             iteration=index,
@@ -400,16 +391,16 @@ class ClearMLLogger(object):
             The disk location of the artifact for uploading.
         """
 
-        self.clearml_Task.upload_artifact(artifact_name, artifact_path)
+        self.clearml_task.upload_artifact(artifact_name, artifact_path)
 
     def flush(self):
         """
         Flush logger manually.
         """
-        self.clearml_Logger.flush()
+        self.clearml_logger.flush()
 
     def close(self):
         """
         Close current ClearML Task after completing the experiment.
         """
-        self.clearml_Task.close()
+        self.clearml_task.close()

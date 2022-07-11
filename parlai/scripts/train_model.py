@@ -527,21 +527,6 @@ class TrainLoop:
                 indent=4,
             )
 
-        # # ClearML-Report Validation and Test Report
-        # self.clearml_task.get_logger().report_table(
-        #     "Validation Report",
-        #     "Validation Report",
-        #     iteration=0,
-        #     table_plot=pd.DataFrame(dict_report(self.final_valid_report), index=[0]).T,
-        # )
-
-        # self.clearml_task.get_logger().report_table(
-        #     "Test Report",
-        #     "Test Report",
-        #     iteration=0,
-        #     table_plot=pd.DataFrame(dict_report(self.final_test_report), index=[0]).T,
-        # )
-
     def validate(self):
         """
         Perform a validation run, checking whether we should stop training.
@@ -673,7 +658,7 @@ class TrainLoop:
 
                 if opt['clearml_log'] and is_primary_worker():
                     self.clearml_logger.log_debug_samples(
-                        datatype, valid_world.display(), index
+                        datatype, valid_world.display()
                     )
 
                 print(valid_world.report())
