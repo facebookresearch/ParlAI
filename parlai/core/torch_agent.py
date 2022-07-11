@@ -512,13 +512,6 @@ class TorchAgent(ABC, Agent):
             ' Typically, scripts can set their preferred default behavior at the start,'
             ' e.g. eval scripts.',
         )
-        agent.add_argument(
-            '--allow-multiple-observe',
-            type='bool',
-            default=False,
-            help='Allow multiple rounds of observations before the agent takes an action itself.'
-            ' (defaults to False)',
-        )
         # pretrained embedding arguments
         agent.add_argument(
             '-emb',
@@ -774,7 +767,6 @@ class TorchAgent(ABC, Agent):
         opt = self.opt
 
         # Safety checkers to ensure TorchAgent assumptions aren't being violated.
-        self.allow_multiple_observe = opt.get('allow_multiple_observe', False)
         self.__expecting_clear_history = False
         self.__expecting_to_reply = False
 
@@ -1890,7 +1882,7 @@ class TorchAgent(ABC, Agent):
         observation = Message(observation)
 
         # Sanity check everything is in order
-        self._validate_observe_invariants(observation)
+        self._validate_observe_invariants()
 
         if observation.get('episode_done'):
             self.__expecting_clear_history = True
@@ -1996,11 +1988,11 @@ class TorchAgent(ABC, Agent):
 
         raise RuntimeError("Unexpected case in self_observe.")
 
-    def _validate_observe_invariants(self, observation: Message = None):
+    def _validate_observe_invariants(self):
         """
         Check that we properly called self_observe after the last batch_act.
         """
-        if not self.allow_multiple_observe and self.__expecting_to_reply:
+        if self.__expecting_to_reply:
             raise RuntimeError(
                 "Last observe() had a label, but no call to self_observe ever "
                 "happened. You are likely making multiple observe() calls without "
@@ -2008,11 +2000,7 @@ class TorchAgent(ABC, Agent):
                 "issue if you require assistance."
             )
 
-        if (not self.allow_multiple_observe and self.__expecting_clear_history) or (
-            self.__expecting_clear_history
-            and observation is not None
-            and not observation.get('episode_done')
-        ):
+        if self.__expecting_clear_history:
             raise RuntimeError(
                 "Last observe() was episode_done, but we never saw a corresponding "
                 "self_observe to clear the history, probably because you missed an "
