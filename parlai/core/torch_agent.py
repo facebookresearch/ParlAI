@@ -428,6 +428,7 @@ class History(object):
         """
         if len(self.history_strings) > 0:
             history = self.history_strings[:]
+            history = self.delimiter.join(history)
             if self.temp_history is not None:
                 history += self.temp_history
             return history
