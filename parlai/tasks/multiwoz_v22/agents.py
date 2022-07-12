@@ -618,5 +618,5 @@ class SingleApiSchemaAgent(MultiwozV22Parser, tod_agents.TodSingleApiSchemaAgent
     pass
 
 
-class DefaultTeacher(MultiWOZv22DSTTeacher):
+class DefaultTeacher(SystemTeacher):
     pass
