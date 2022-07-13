@@ -13,6 +13,7 @@ import unittest
 from parlai.core.agents import create_agent_from_shared
 from parlai.utils.testing import tempdir
 from parlai.utils.misc import Message
+from parlai.utils.torch import FP16_PAD_SIZE
 
 SKIP_TESTS = False
 try:
@@ -60,6 +61,21 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent()
         shared = agent.share()
         self.assertTrue('dict' in shared)
+
+    def test__pad_dictionary_fp16(self):
+        """
+        Make sure dictionary gets padded correctly for fp16 as new speakers get added to
+        the dictionary.
+        """
+        agent = get_agent(fp16=True, speaker_field="speaker")
+        assert len(agent.dict) % FP16_PAD_SIZE == 0
+
+        obs = Message({'text': 'I am Groot.', 'speaker': 'Groot'})
+        obs2 = Message({'text': 'Groot!', 'speaker': 'Star-Lord'})
+        agent.observe(obs)
+        assert len(agent.dict) % FP16_PAD_SIZE == 0
+        agent.observe(obs2)
+        assert len(agent.dict) % FP16_PAD_SIZE == 0
 
     def test__vectorize_text(self):
         """
@@ -263,7 +279,8 @@ class TestTorchAgent(unittest.TestCase):
         """
         Test the vectorization of timesteps in observations.
 
-        Make sure timesteps are properly vectorized and included in the vectorized output
+        Make sure timesteps are properly vectorized and included in the vectorized
+        output
         """
         pass
 
@@ -810,7 +827,7 @@ class TestTorchAgent(unittest.TestCase):
 
     def test_history_timestep(self):
         """
-        Test that history handles timestep properly
+        Test that history handles timestep properly.
         """
         # try with unlimited history
         agent = get_agent(history_size=-1, timestep_field='timestep')
@@ -915,11 +932,15 @@ class TestTorchAgent(unittest.TestCase):
             speaker_field='speaker',
             timestep_field='timestep',
         )
+        self.assertEqual(agent.history.speakers, set())
+
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, '{} I am Groot.'.format(obs['speaker']))
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, '{} I am Groot.\n00:00:00'.format(obs['speaker']))
+        self.assertEqual(agent.history.speakers, set([obs['speaker']]))
+        assert obs['speaker'] in agent.dict
         # second exchange, history should still contain the tokens
         agent.history.add_reply('I am Groot?', '00:00:10')
         agent.history.update_history(obs3)
@@ -937,6 +958,9 @@ class TestTorchAgent(unittest.TestCase):
                 obs['speaker'], agent.P2_TOKEN, obs3['speaker']
             ),
         )
+        self.assertEqual(agent.history.speakers, set([obs['speaker'], obs3['speaker']]))
+        assert obs['speaker'] in agent.dict
+        assert obs3['speaker'] in agent.dict
 
         # now add add_p1_after_newln
         agent = get_agent(
@@ -1085,9 +1109,72 @@ class TestTorchAgent(unittest.TestCase):
 
     def test_observe_timestep(self):
         """
-        Make sure agent stores and returns observation when timestep is present.
+        Make sure agent stores and returns observation.
         """
-        pass
+        agent = get_agent(timestep_field='timestep')
+        # text and timestep could be none
+        obs = {'text': None, 'timestep': None, 'episode_done': True}
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
+        # make sure we throw an exception for having an episode done without a reset
+        obs = {
+            'text': "I'll be back.",
+            'timestep': '00:00:00',
+            'labels': ["I'm back."],
+            'episode_done': True,
+        }
+        with self.assertRaises(RuntimeError):
+            agent.observe(obs.copy())
+        # okay, let's do it properly now
+        agent.reset()
+        obs = {
+            'text': "I'll be back.",
+            'timestep': '00:00:00',
+            'labels': ["I'm back."],
+            'episode_done': True,
+        }
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
+        self.assertIsNotNone(agent.observation)
+        self.assertEqual(out['text'], "I'll be back.")
+        self.assertEqual(out['timestep'], "00:00:00")
+        # now try with episode not done
+        agent = get_agent()
+        obs['episode_done'] = False
+        out = agent.observe(obs.copy())
+        self.assertIsNotNone(out)
+        self.assertIsNotNone(agent.observation)
+        self.assertEqual(out['text'], "I'll be back.")
+        self.assertEqual(out['timestep'], "00:00:00")
+
+    def test_record_silence(self):
+        """
+        Make sure silence token doesn't get added to the history during self_observe if
+        the --record-silence cli flag is False.
+        """
+        obs = Message({'text': 'I am Groot.', 'episode_done': False})
+        self_message = Message({'text': '__SILENCE__'})
+
+        # First test default behavior (record silence token)
+        agent = get_agent(silence_token='__SILENCE__')
+        agent.observe(obs)
+        agent.self_observe(self_message)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.\n__SILENCE__')
+
+        # Make sure behavior is fine without specifying silence token
+        agent = get_agent()
+        agent.observe(obs)
+        agent.self_observe(self_message)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.\n__SILENCE__')
+
+        # Test behavior for not recording silence token
+        agent = get_agent(silence_token='__SILENCE__', record_silence=False)
+        agent.observe(obs)
+        agent.self_observe(self_message)
+        text = agent.history.get_history_str()
+        self.assertEqual(text, 'I am Groot.')
 
     def test_batch_act(self):
         """
@@ -1159,6 +1246,12 @@ class TestTorchAgent(unittest.TestCase):
         for i in range(len(obs_elabs_vecs)):
             self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
 
+    def test_batch_act_timestep(self):
+        """
+        Make sure batch act calls the right step.
+        """
+        pass
+
     def test_respond(self):
         """
         Tests respond() in the base Agent class, where the agent provides a string
@@ -1183,6 +1276,9 @@ class TestTorchAgent(unittest.TestCase):
         )
         response = agent.respond(message)
         self.assertIn('Evaluating 0', response)
+
+    def test_respond_timestep(self):
+        pass
 
     def test_batch_respond(self):
         """
@@ -1245,6 +1341,9 @@ class TestTorchAgent(unittest.TestCase):
         for i, resp in enumerate(response):
             self.assertIn('Evaluating {}'.format(i), resp)
 
+    def test_batch_respond_timestep(self):
+        pass
+
     def test_interactive_mode(self):
         """
         Test if conversation history is destroyed in MTurk mode.
@@ -1305,6 +1404,9 @@ class TestTorchAgent(unittest.TestCase):
             'Evaluating 0', response['text'], 'Incorrect output in single act()'
         )
 
+    def test_interactive_mode_timestep(self):
+        pass
+
     def test_use_reply(self):
         """
         Check that self-observe is correctly acting on labels.
@@ -1339,13 +1441,8 @@ class TestTorchAgent(unittest.TestCase):
         agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call')
 
-    # test timestep_vec in Batch
-    # test history_timesteps, history_timestep_vecs, temp_timestep
-    # test self.speaker_field
-    # test self.timestep_field
-    # test self.speakers
-    # test add_reply
-    # test update_history
+    def test_use_reply_timestep(self):
+        pass
 
     def test_mturk_racehistory(self):
         """
@@ -1372,6 +1469,9 @@ class TestTorchAgent(unittest.TestCase):
         self.assertNotIn('thread2-msg1', share1.history.get_history_str())
         self.assertNotIn('thread1-msg2', share2.history.get_history_str())
         self.assertNotIn('thread2-msg2', share1.history.get_history_str())
+
+    def test_mturk_racehistory_timestep(self):
+        pass
 
     def test_resume_checkpoint(self):
         """

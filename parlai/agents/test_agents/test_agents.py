@@ -24,8 +24,6 @@ class MockDict(Agent):
 
     null_token = '__null__'
     NULL_IDX = 0
-    silence_token = '__silence__'
-    SILENCE_IDX = 1000
     start_token = '__start__'
     BEG_IDX = 1001
     end_token = '__end__'

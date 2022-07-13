@@ -615,6 +615,12 @@ class TorchAgent(ABC, Agent):
             default=True,
             help='Whether to record silence token in the agent history when the agent self-observes. Defaults to True for backward-compatability.',
         )
+        agent.add_argument(
+            '--silence-token',
+            type='nonestr',
+            default=None,
+            help='The token to indicate inaction by agent. Defaults to None.',
+        )
         # pretrained embedding arguments
         agent.add_argument(
             '-emb',
@@ -937,7 +943,6 @@ class TorchAgent(ABC, Agent):
 
         # now set up any fields that all instances may need
         self.EMPTY = torch.zeros(0, dtype=torch.long)
-        self.SILENCE_IDX = self.dict[self.dict.silence_token]
         self.NULL_IDX = self.dict[self.dict.null_token]
         self.START_IDX = self.dict[self.dict.start_token]
         self.END_IDX = self.dict[self.dict.end_token]
@@ -961,6 +966,7 @@ class TorchAgent(ABC, Agent):
         self.history_reversed = opt.get('history_reversed', False)
         # whether to record silence token in the agent history when the agent self-observes
         self.record_silence = opt.get('record_silence', True)
+        self.silence_token = opt.get('silence_token', None)
 
         self.is_training = False  # track whether model is training
         self.rank_candidates = opt['rank_candidates']
@@ -2122,7 +2128,7 @@ class TorchAgent(ABC, Agent):
                 timestep = self._get_timestep_from_observation(self.observation)
                 last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 # Disregard any silence output in history, if not recording silence
-                if self.record_silence or last_reply != self.dict.silence_token:
+                if self.record_silence or last_reply != self.silence_token:
                     self.history.add_reply(last_reply, timestep)
                 return
             # you might expect a hard failure here, but in interactive mode we'll
@@ -2133,7 +2139,7 @@ class TorchAgent(ABC, Agent):
             last_reply = self_message['text']
             last_timestep = self._get_timestep_from_observation(self_message)
             # Disregard any silence output in history, if not recording silence
-            if self.record_silence or last_reply != self.dict.silence_token:
+            if self.record_silence or last_reply != self.silence_token:
                 self.history.add_reply(last_reply, last_timestep)
             return
 

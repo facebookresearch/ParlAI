@@ -112,7 +112,6 @@ class DictionaryAgent(Agent):
     default_maxngram = -1
     default_minfreq = 0
     default_maxtokens = -1
-    default_silence = '__silence__'
     default_null = '__null__'
     default_start = '__start__'
     default_end = '__end__'
@@ -171,12 +170,6 @@ class DictionaryAgent(Agent):
             type=int,
             help='max number of tokens to include in dictionary or bpe codecs',
             hidden=True,
-        )
-        dictionary.add_argument(
-            '--dict-silencetoken',
-            default=DictionaryAgent.default_silence,
-            hidden=True,
-            help='silence token, used to indicate inaction by agent',
         )
         dictionary.add_argument(
             '--dict-nulltoken',
@@ -241,9 +234,6 @@ class DictionaryAgent(Agent):
         """
         self.opt = copy.deepcopy(opt)
         self.minfreq = opt.get('dict_minfreq', DictionaryAgent.default_minfreq)
-        self.silence_token = opt.get(
-            'dict_silencetoken', DictionaryAgent.default_silence
-        )
         self.null_token = opt.get('dict_nulltoken', DictionaryAgent.default_null)
         self.end_token = opt.get('dict_endtoken', DictionaryAgent.default_end)
         self.unk_token = opt.get('dict_unktoken', DictionaryAgent.default_unk)
@@ -277,9 +267,6 @@ class DictionaryAgent(Agent):
             self.freq = defaultdict(int)
             self.tok2ind = {}
             self.ind2tok = {}
-
-            if self.silence_token:
-                self.add_token(self.silence_token)
 
             if self.null_token:
                 self.add_token(self.null_token)
@@ -336,10 +323,6 @@ class DictionaryAgent(Agent):
             self.bpe.sync_with_dict(self)
 
         if not shared:
-            if self.silence_token:
-                # fix count for silence token to one billion and four
-                self.freq[self.silence_token] = 1000000004
-
             if self.null_token:
                 # fix count for null token to one billion and three
                 self.freq[self.null_token] = 1000000003
@@ -642,7 +625,7 @@ class DictionaryAgent(Agent):
         logging.info(f'loading dictionary from {filename}')
 
         lower_special = self.null_token == self.null_token.lower()
-        SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__', '__SILENCE__'}
+        SPECIAL_TOKENS = {'__UNK__', '__NULL__', '__END__', '__START__'}
         with PathManager.open(filename, 'r', encoding='utf-8', errors='ignore') as read:
             for line in read:
                 split = line.rstrip("\n\r").split('\t')
