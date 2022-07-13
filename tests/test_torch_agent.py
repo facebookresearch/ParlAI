@@ -68,14 +68,14 @@ class TestTorchAgent(unittest.TestCase):
         the dictionary.
         """
         agent = get_agent(fp16=True, speaker_field="speaker")
-        assert len(agent.dict) % FP16_PAD_SIZE == 0
+        self.assertEqual(len(agent.dict) % FP16_PAD_SIZE, 0)
 
         obs = Message({'text': 'I am Groot.', 'speaker': 'Groot'})
         obs2 = Message({'text': 'Groot!', 'speaker': 'Star-Lord'})
         agent.observe(obs)
-        assert len(agent.dict) % FP16_PAD_SIZE == 0
+        self.assertEqual(len(agent.dict) % FP16_PAD_SIZE, 0)
         agent.observe(obs2)
-        assert len(agent.dict) % FP16_PAD_SIZE == 0
+        self.assertEqual(len(agent.dict) % FP16_PAD_SIZE, 0)
 
     def test__vectorize_text(self):
         """
@@ -940,7 +940,7 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, '{} I am Groot.\n00:00:00'.format(obs['speaker']))
         self.assertEqual(agent.history.speakers, set([obs['speaker']]))
-        assert obs['speaker'] in agent.dict
+        self.assertIn(obs['speaker'], agent.dict)
         # second exchange, history should still contain the tokens
         agent.history.add_reply('I am Groot?', '00:00:10')
         agent.history.update_history(obs3)
@@ -959,8 +959,8 @@ class TestTorchAgent(unittest.TestCase):
             ),
         )
         self.assertEqual(agent.history.speakers, set([obs['speaker'], obs3['speaker']]))
-        assert obs['speaker'] in agent.dict
-        assert obs3['speaker'] in agent.dict
+        self.assertIn(obs['speaker'], agent.dict)
+        self.assertIn(obs3['speaker'], agent.dict)
 
         # now add add_p1_after_newln
         agent = get_agent(
