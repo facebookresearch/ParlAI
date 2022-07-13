@@ -369,7 +369,12 @@ class History(object):
             # update history timestep vecs
             self._update_timestep_vecs(timestep)
 
-    def update_history(self, obs: Message, temp_history: Optional[str] = None):
+    def update_history(
+        self,
+        obs: Message,
+        temp_history: Optional[str] = None,
+        temp_timestep: Optional[str] = None,
+    ):
         """
         Update the history with the given observation.
 
@@ -415,12 +420,7 @@ class History(object):
                     self._update_timestep_vecs(timestep)
 
         self.temp_history = temp_history
-
-        if self.timestep_field is not None:
-            temp_timestep = None
-            if self.timestep_field in obs and obs[self.timestep_field] is not None:
-                temp_timestep = obs[self.timestep_field]
-            self.temp_timestep = temp_timestep
+        self.temp_timestep = temp_timestep
 
     def get_history_str(self) -> Optional[str]:
         """
@@ -477,6 +477,8 @@ class History(object):
             )
             if self.temp_history is not None:
                 history += self.temp_history
+            if self.temp_timestep is not None:
+                history += self.temp_timestep
             return history
 
         return None
