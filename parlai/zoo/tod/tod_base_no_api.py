@@ -15,10 +15,10 @@ import os.path
 def download(datapath):
     ddir = os.path.join(get_model_dir(datapath), 'tod_base_no_api')
     model_type = 'tod_base_no_api'
-    version = 'v1.0'
+    version = 'v2.0'
     if not built(os.path.join(ddir, model_type), version):
         opt = {'datapath': datapath, 'model_type': model_type}
-        fnames = ['model.tar.gz']
+        fnames = ['model_v2.tar.gz']
         download_models(
             opt, fnames, 'tod', version=version, path='aws', use_model_type=True
         )
