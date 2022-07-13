@@ -25,6 +25,8 @@ crowdsourcing tasks with this script.
 _ = STATIC_BLUEPRINT_TYPE
 
 TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
+WORKING_DIRECTORY = os.getcwd()
+
 
 defaults = ["_self_", {"conf": 'example'}]
 
@@ -33,6 +35,7 @@ defaults = ["_self_", {"conf": 'example'}]
 class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
     task_dir: str = TASK_DIRECTORY
+    working_dir: str = WORKING_DIRECTORY
     monitoring_log_rate: int = field(
         default=30,
         metadata={
