@@ -1004,14 +1004,6 @@ class TorchAgent(ABC, Agent):
             d[self.P2_TOKEN] = 999_999_998
         return d
 
-    def _add_speaker_to_dictionary(self, speaker: str):
-        d = self.dict
-        if speaker not in d:
-            d[speaker] = 999_999_999 - len(self.history.speakers)
-            # Re-pad dictionary if necessary
-            if self.opt.get('fp16') or self.opt.get('force_fp16_tokens'):
-                self._pad_dictionary_fp16()
-
     def _get_speaker_from_observation(self, observation: Message):
         speaker_field = self.opt.get("speaker_field", None)
         if speaker_field:
@@ -1806,13 +1798,6 @@ class TorchAgent(ABC, Agent):
         """
         from parlai.utils.torch import FP16_PAD_SIZE
 
-        # First get rid of all the paddings
-        for i in range(FP16_PAD_SIZE):
-            key = f'__FP16_PAD_{i}__'
-            if key in self.dict:
-                del self.dict[key]
-
-        # Re-pad the dictionary
         if len(self.dict) % FP16_PAD_SIZE != 0:
             for i in range(FP16_PAD_SIZE - len(self.dict) % FP16_PAD_SIZE):
                 self.dict['__FP16_PAD_{}__'.format(i)] = 1
@@ -2052,13 +2037,6 @@ class TorchAgent(ABC, Agent):
                 self.dict.set_tokenization_mode(TokenizationMode.TRAIN_TIME_TEXT)
             else:
                 self.dict.set_tokenization_mode(TokenizationMode.TEST_TIME_TEXT)
-
-        # If we are tracking speaker id and a new speaker appears, update dictionary
-        # Since self.history is sharing the same dictionary, it will be aware of the update too,
-        # and
-        if self.add_person_tokens:
-            speaker = self._get_speaker_from_observation(observation)
-            self._add_speaker_to_dictionary(speaker)
 
         # Update the history using the observation.
         # We may also consider adding a temporary string to the history
