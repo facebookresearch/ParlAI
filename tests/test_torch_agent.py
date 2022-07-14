@@ -259,25 +259,17 @@ class TestTorchAgent(unittest.TestCase):
         vecs = agent.history.get_history_vec_list()
         self.assertEqual(vecs, [[1], [1, 2, 3, 4, 5], [1, 2, 3, 4], [1, 2, 3]])
 
-    def test_vectorize_timestep(self):
-        """
-        Test the vectorization of timesteps in observations.
-
-        Make sure timesteps are properly vectorized and included in the vectorized
-        output
-        """
-        pass
-
     def test_batchify(self):
         """
         Make sure the batchify function sets up the right fields.
         """
-        agent = get_agent(rank_candidates=True)
+        agent = get_agent(rank_candidates=True, timestep_field='timestep')
         obs_labs = [
             Message(
                 {
                     'text': 'It\'s only a flesh wound.',
                     'labels': ['Yield!'],
+                    'timestep': '00:00:00',
                     'episode_done': True,
                 }
             ),
@@ -285,6 +277,7 @@ class TestTorchAgent(unittest.TestCase):
                 {
                     'text': 'The needs of the many outweigh...',
                     'labels': ['The needs of the few.'],
+                    'timestep': '00:00:01',
                     'episode_done': True,
                 }
             ),
@@ -292,6 +285,7 @@ class TestTorchAgent(unittest.TestCase):
                 {
                     'text': 'Hello there.',
                     'labels': ['General Kenobi.'],
+                    'timestep': '00:00:02',
                     'episode_done': True,
                 }
             ),
@@ -301,6 +295,7 @@ class TestTorchAgent(unittest.TestCase):
                 {
                     'text': 'It\'s only a flesh wound.',
                     'eval_labels': ['Yield!'],
+                    'timestep': '00:00:00',
                     'episode_done': True,
                 }
             ),
@@ -308,6 +303,7 @@ class TestTorchAgent(unittest.TestCase):
                 {
                     'text': 'The needs of the many outweigh...',
                     'eval_labels': ['The needs of the few.'],
+                    'timestep': '00:00:01',
                     'episode_done': True,
                 }
             ),
@@ -315,6 +311,7 @@ class TestTorchAgent(unittest.TestCase):
                 {
                     'text': 'Hello there.',
                     'eval_labels': ['General Kenobi.'],
+                    'timestep': '00:00:02',
                     'episode_done': True,
                 }
             ),
@@ -330,6 +327,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
+            self.assertIsNone(batch.timestep_vec)
 
             obs_vecs = []
             for o in obs_batch:
@@ -352,6 +350,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
+            self.assertIsNone(batch.timestep_vec)
 
             # is_valid should check for text_vec
             def is_valid(obs):
@@ -364,6 +363,7 @@ class TestTorchAgent(unittest.TestCase):
             self.assertIsNotNone(batch.text_vec)
             self.assertIsNotNone(batch.label_vec)
             self.assertIsNotNone(batch.labels)
+            self.assertIsNotNone(batch.timestep_vec)
             self.assertIsNone(batch.candidates)
             self.assertIsNone(batch.candidate_vecs)
             self.assertIsNone(batch.image)
@@ -376,6 +376,10 @@ class TestTorchAgent(unittest.TestCase):
             self.assertEqual(
                 batch.label_vec.tolist(),
                 [[1, 0, 0, 0, 0], [1, 2, 3, 4, 5], [1, 2, 0, 0, 0]],
+            )
+            self.assertEqual(
+                batch.timestep_vec.tolist(),
+                [[1], [1], [1]],
             )
             self.assertEqual(batch.labels, [o[lab_key][0] for o in obs_batch])
             self.assertEqual(list(batch.valid_indices), [0, 1, 2])
@@ -399,6 +403,7 @@ class TestTorchAgent(unittest.TestCase):
             for vec in new_vecs:
                 vec.pop('text')
                 vec.pop('text_vec')
+                vec.pop('timestep_vec')
 
             def is_valid(obs):
                 return 'labels_vec' in obs or 'eval_labels_vec' in obs
@@ -407,6 +412,7 @@ class TestTorchAgent(unittest.TestCase):
 
             batch = agent.batchify(new_vecs, sort=True)
             self.assertIsNone(batch.text_vec)
+            self.assertIsNone(batch.timestep_vec)
             self.assertIsNotNone(batch.label_vec)
             self.assertEqual(
                 batch.label_vec.tolist(),
@@ -431,17 +437,32 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.reset()
         obs_cands = [
             agent.vectorize(
-                Message({'label_candidates': ['A', 'B', 'C']}), agent.history
-            ),
-            agent.vectorize(
-                Message({'label_candidates': ['1', '2', '5', '3', 'Sir']}),
+                Message({'label_candidates': ['A', 'B', 'C'], 'timestep': '00:00:00'}),
                 agent.history,
             ),
             agent.vectorize(
-                Message({'label_candidates': ['Do', 'Re', 'Mi']}), agent.history
+                Message(
+                    {
+                        'label_candidates': ['1', '2', '5', '3', 'Sir'],
+                        'timestep': '00:00:01',
+                    }
+                ),
+                agent.history,
             ),
             agent.vectorize(
-                Message({'label_candidates': ['Fa', 'So', 'La', 'Ti']}), agent.history
+                Message(
+                    {'label_candidates': ['Do', 'Re', 'Mi'], 'timestep': '00:00:02'}
+                ),
+                agent.history,
+            ),
+            agent.vectorize(
+                Message(
+                    {
+                        'label_candidates': ['Fa', 'So', 'La', 'Ti'],
+                        'timestep': '00:00:03',
+                    }
+                ),
+                agent.history,
             ),
         ]
 
@@ -456,6 +477,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertIsNone(batch.text_vec)
         self.assertIsNone(batch.label_vec)
         self.assertIsNone(batch.labels)
+        self.assertIsNone(batch.timestep_vec)
         self.assertIsNotNone(batch.valid_indices)
         self.assertIsNotNone(batch.candidates)
         self.assertIsNotNone(batch.candidate_vecs)
@@ -464,12 +486,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(len(batch.candidate_vecs), len(obs_cands))
         for i, cs in enumerate(batch.candidate_vecs):
             self.assertEqual(len(cs), len(obs_cands[i]['label_candidates']))
-
-    def test_batichify_timestep(self):
-        """
-        Make sure the batchify function sets up the right fields related to timesteps.
-        """
-        pass
 
     def test_match_batch(self):
         """
@@ -1236,12 +1252,6 @@ class TestTorchAgent(unittest.TestCase):
         for i in range(len(obs_elabs_vecs)):
             self.assertIn('Evaluating {}'.format(i), reply[i]['text'])
 
-    def test_batch_act_timestep(self):
-        """
-        Make sure batch act calls the right step.
-        """
-        pass
-
     def test_respond(self):
         """
         Tests respond() in the base Agent class, where the agent provides a string
@@ -1266,9 +1276,6 @@ class TestTorchAgent(unittest.TestCase):
         )
         response = agent.respond(message)
         self.assertIn('Evaluating 0', response)
-
-    def test_respond_timestep(self):
-        pass
 
     def test_batch_respond(self):
         """
@@ -1331,9 +1338,6 @@ class TestTorchAgent(unittest.TestCase):
         for i, resp in enumerate(response):
             self.assertIn('Evaluating {}'.format(i), resp)
 
-    def test_batch_respond_timestep(self):
-        pass
-
     def test_interactive_mode(self):
         """
         Test if conversation history is destroyed in MTurk mode.
@@ -1393,9 +1397,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertIn(
             'Evaluating 0', response['text'], 'Incorrect output in single act()'
         )
-
-    def test_interactive_mode_timestep(self):
-        pass
 
     def test_use_reply(self):
         """
