@@ -943,7 +943,6 @@ class TestTorchAgent(unittest.TestCase):
             agent.history.speakers,
             set([obs['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
         )
-        self.assertIn(obs['speaker'], agent.dict)
         # second exchange, history should still contain the tokens
         agent.history.add_reply('I am Groot?', '00:00:10')
         agent.history.update_history(obs3)
@@ -965,8 +964,6 @@ class TestTorchAgent(unittest.TestCase):
             agent.history.speakers,
             set([obs['speaker'], obs3['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
         )
-        self.assertIn(obs['speaker'], agent.dict)
-        self.assertIn(obs3['speaker'], agent.dict)
 
         # now add add_p1_after_newln
         agent = get_agent(
