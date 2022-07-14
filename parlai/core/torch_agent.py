@@ -2137,7 +2137,10 @@ class TorchAgent(ABC, Agent):
         # otherwise, we use the last output the model generated
         if self_message is not None:
             last_reply = self_message['text']
+            # If model does not output a timestep, use the last observation by default
             last_timestep = self._get_timestep_from_observation(self_message)
+            if last_timestep is None:
+                last_timestep = self._get_timestep_from_observation(self.observation)
             # Disregard any silence output in history, if not recording silence
             if self.record_silence or last_reply != self.silence_token:
                 self.history.add_reply(last_reply, last_timestep)

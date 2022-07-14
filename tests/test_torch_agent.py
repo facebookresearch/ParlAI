@@ -13,7 +13,6 @@ import unittest
 from parlai.core.agents import create_agent_from_shared
 from parlai.utils.testing import tempdir
 from parlai.utils.misc import Message
-from parlai.utils.torch import FP16_PAD_SIZE
 
 SKIP_TESTS = False
 try:
@@ -61,21 +60,6 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent()
         shared = agent.share()
         self.assertTrue('dict' in shared)
-
-    def test__pad_dictionary_fp16(self):
-        """
-        Make sure dictionary gets padded correctly for fp16 as new speakers get added to
-        the dictionary.
-        """
-        agent = get_agent(fp16=True, speaker_field="speaker")
-        self.assertEqual(len(agent.dict) % FP16_PAD_SIZE, 0)
-
-        obs = Message({'text': 'I am Groot.', 'speaker': 'Groot'})
-        obs2 = Message({'text': 'Groot!', 'speaker': 'Star-Lord'})
-        agent.observe(obs)
-        self.assertEqual(len(agent.dict) % FP16_PAD_SIZE, 0)
-        agent.observe(obs2)
-        self.assertEqual(len(agent.dict) % FP16_PAD_SIZE, 0)
 
     def test__vectorize_text(self):
         """
@@ -932,14 +916,17 @@ class TestTorchAgent(unittest.TestCase):
             speaker_field='speaker',
             timestep_field='timestep',
         )
-        self.assertEqual(agent.history.speakers, set())
+        self.assertEqual(agent.history.speakers, set([agent.P1_TOKEN, agent.P2_TOKEN]))
 
         agent.history.update_history(obs)
         text = agent.history.get_history_str()
         self.assertEqual(text, '{} I am Groot.'.format(obs['speaker']))
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, '{} I am Groot.\n00:00:00'.format(obs['speaker']))
-        self.assertEqual(agent.history.speakers, set([obs['speaker']]))
+        self.assertEqual(
+            agent.history.speakers,
+            set([obs['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
+        )
         self.assertIn(obs['speaker'], agent.dict)
         # second exchange, history should still contain the tokens
         agent.history.add_reply('I am Groot?', '00:00:10')
@@ -958,7 +945,10 @@ class TestTorchAgent(unittest.TestCase):
                 obs['speaker'], agent.P2_TOKEN, obs3['speaker']
             ),
         )
-        self.assertEqual(agent.history.speakers, set([obs['speaker'], obs3['speaker']]))
+        self.assertEqual(
+            agent.history.speakers,
+            set([obs['speaker'], obs3['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
+        )
         self.assertIn(obs['speaker'], agent.dict)
         self.assertIn(obs3['speaker'], agent.dict)
 
@@ -1442,7 +1432,71 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent.history.get_history_str(), 'Call')
 
     def test_use_reply_timestep(self):
-        pass
+        # default is hybrid label-model, which uses the label if it's available, and
+        # otherwise the label
+        # first check if there is a label available
+        agent = get_agent(timestep_field='timestep')
+        obs = Message(
+            {
+                'text': 'Call',
+                'timestep': '00:00:00',
+                'labels': ['Response'],
+                'episode_done': False,
+            }
+        )
+        agent.observe(obs)
+        _ = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call\nResponse')
+        self.assertEqual(
+            agent.history.get_history_str_with_timesteps(),
+            'Call\n00:00:00\nResponse\n00:00:00',
+        )
+        # check if there is no label
+        agent.reset()
+        obs = Message({'text': 'Call', 'timestep': '00:00:00', 'episode_done': False})
+        agent.observe(obs)
+        _ = agent.act()
+        self.assertEqual(
+            agent.history.get_history_str(), 'Call\nEvaluating 0 (responding to [[1]])!'
+        )
+        self.assertEqual(
+            agent.history.get_history_str_with_timesteps(),
+            'Call\n00:00:00\nEvaluating 0 (responding to [[1]])!\n00:00:00',
+        )
+        # now some of the other possible values of --use-reply
+        # --use-reply model. even if there is a label, we should see the model's out
+        agent = get_agent(use_reply='model', timestep_field='timestep')
+        obs = Message(
+            {
+                'text': 'Call',
+                'timestep': '00:00:00',
+                'labels': ['Response'],
+                'episode_done': False,
+            }
+        )
+        agent.observe(obs)
+        _ = agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
+        self.assertEqual(
+            agent.history.get_history_str_with_timesteps(),
+            'Call\n00:00:00\nTraining 0!\n00:00:00',
+        )
+        # --use-reply none doesn't hear itself
+        agent = get_agent(use_reply='none', timestep_field='timestep')
+        obs = Message(
+            {
+                'text': 'Call',
+                'timestep': '00:00:00',
+                'labels': ['Response'],
+                'episode_done': False,
+            }
+        )
+        agent.observe(obs)
+        agent.act()
+        self.assertEqual(agent.history.get_history_str(), 'Call')
+        self.assertEqual(
+            agent.history.get_history_str_with_timesteps(), 'Call\n00:00:00'
+        )
 
     def test_mturk_racehistory(self):
         """
@@ -1469,9 +1523,6 @@ class TestTorchAgent(unittest.TestCase):
         self.assertNotIn('thread2-msg1', share1.history.get_history_str())
         self.assertNotIn('thread1-msg2', share2.history.get_history_str())
         self.assertNotIn('thread2-msg2', share1.history.get_history_str())
-
-    def test_mturk_racehistory_timestep(self):
-        pass
 
     def test_resume_checkpoint(self):
         """
