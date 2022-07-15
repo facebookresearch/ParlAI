@@ -48,6 +48,7 @@ tqdm~=4.62.1
 typing-extensions==3.7.4.3
 Unidecode==1.1.1
 urllib3>=1.26.5
+websocket-client==0.56.0
 jsonlines==1.2.0
 numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
 markdown<=3.3.2 # Pin to something that works so tests are happy
