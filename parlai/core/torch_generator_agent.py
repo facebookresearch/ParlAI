@@ -994,8 +994,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 verbose=verbose,
                 gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
-        elif method == 'nucleusbeam':
-            return NucleusBeamSearch(
+        elif method == 'delayednucleusbeam':
+            return DelayedNucleusBeamSearch(
                 self.opt['topp'],
                 self.opt['beam_delay'],
                 beam_size,
@@ -1878,7 +1878,7 @@ class DelayedBeamSearch(TreeSearch):
             return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
 
 
-class NucleusBeamSearch(TreeSearch):
+class DelayedNucleusBeamSearch(TreeSearch):
     def __init__(self, p, delay, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.p = p
