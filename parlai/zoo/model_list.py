@@ -1418,26 +1418,21 @@ model_list = [
        .9973  .01745 38.08 604.1 15.86 5651 .9973    .1622 2.129 5e-10 5.633 89.36 43.71 693.4""",
     },
     {
-        "title": "Faster-R-CNN Detectron Features",
-        "id": "detectron",
-        "path": "zoo:detectron/detectron_model.pth",
-        "agent": "n/a",
-        "task": "n/a",
-        "project": 'https://github.com/facebookresearch/vilbert-multi-task',
-        "description": "Detectron Model for extracting 100x2048d object detection features. Model is from linked project website",
-        "example": "parlai display_data -t flickr30k --image-mode faster_r_cnn_152_32x8d -n 1 -v",
+        "title": "Style-controlled generation: current-utterance-only classifier",
+        "id": "style_gen",
+        "path": "zoo:style_gen/curr_only_classifier/model",
+        "agent": "projects.style_gen.classifier:ClassifierAgent",
+        "task": "style_gen:LabeledBlendedSkillTalk",
+        "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
+        "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance as the sole context.",
+        "example": "parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk --model-file zoo:style_gen/curr_only_classifier/model --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file",
         "result": """
-        [id]: flickr30k
-        [image_id]: 1000092795
-        [ image ]: tensor([[ 0.0000,  7.1329,  0.0000,  ...,  0.0000,  0.0000,  5.3357],
-                [ 0.0000,  0.0000,  0.0000,  ...,  0.0000,  0.0000,  0.0000],
-                [ 0.0000,  0.0000,  0.4687,  ...,  0.0000,  0.0000,  0.0000],
-                ...,
-                [ 0.0000,  3.0936,  3.4888,  ...,  0.0000,  0.0000,  0.0000],
-                [ 3.8596,  0.0000,  0.0000,  ...,  0.0000,  4.3454,  0.0000],
-                [ 0.0000,  7.9822,  1.0979,  ...,  3.5514,  0.0000, 15.3559]])
-        [labels]: Two young guys with shaggy hair look at their hands while hanging out in the yard.|Two young, White males are outside near many bushes.|Two men in green shirts are standing in a yard.|A man in a blue shirt standing in a garden.|Two friends enjoy time spent together.
-        """,
+16:46:41 | Finished evaluating tasks ['style_gen:CurrUttOnlyStyle'] using datatype valid
+    accuracy  bleu-4  <PER_CLASS_METRICS_SNIPPED>  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   tpb   tps  \
+       .4311 .004642                              19.18 19.18 425.9       0          0  22.2 5651 .4363    .1586 5.633 2.658 5e-10 5.633 125.1       0          0 24.82 550.9
+    weighted_f1
+          .4319
+""",  # The accuracy is low here because the task was labeled using a different classifier, zoo:style_gen/prev_curr_classifier/model
     },
     {
         "title": "Multi-Modal BlenderBot (MMB DegenPos)",
@@ -2164,6 +2159,138 @@ Which level are you at?
      model: I am a journeyman electrician. I work in the construction industry. How about you?""",
     },
     {
+        "title": "Task-Oriented Dialog (TOD) pretrained model, Schema-Aware",
+        "id": "tod",
+        "path": "zoo:tod/tod_base_yes_api/model",
+        "agent": "bart",
+        "task": "8 different task-oriented dataset (see project page)",
+        "project": "https://parl.ai/projects/tod_simulator/",
+        "description": (
+            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pretraining in these cases done with *non-empty* API Schema prompting turns."
+        ),
+        "example": (
+            "parlai display_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_yes_api/model  --skip-generation false --api-schemas true"
+        ),
+        "result": (
+            """...
+- - - NEW EPISODE: GoogleSgdOutDomain_SystemTeacher- - -
+APIS: api_name = FindHomeByArea ; optArg = has_garage, in_unit_laundry ; reqArg = area, intent, number_of_baths, number_of_beds | api_name = ScheduleVisit ; reqArg = property_name, visit_date | api_name = GetRide ; reqArg = destination, number_of_seats, ride_type | api_name = ShareLocation ; reqArg = contact_name, location
+    labels: APIS:
+     model: APIS:
+USER: i'm looking to move house so i'm after some options
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: Are you looking to rent or buy? How many room will you need?
+     model: SYSTEM: where are you looking to move?
+USER: Umm three bedrooms would be good and i want to buy
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: What are are you interested in?
+     model: SYSTEM: What area are you looking to stay in?
+USER: can you look for me in sunnyvale
+    labels: APICALL:
+     model: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; number_of_beds = 3
+APIRESP:
+    labels: SYSTEM: How many bathrooms do you need
+     model: SYSTEM: what is your location?
+USER: can you find places with two bathrooms
+    labels: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3
+     model: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; number_of_baths = 2 ; number_of_beds = 3
+APIRESP: address = 400 East Remington Drive ; area = Sunnyvale ; has_garage = False ; in_unit_laundry = True ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3 ; phone_number = 408-738-4862 ; price = 3650000 ; property_name = Apricot Pit Apartments
+    labels: SYSTEM: I have 10 properties that might suit, including Apricot pit apartments 400 east remington drive. The listing price is $3,650,000
+     model: SYSTEM: i found 10 options for you. How about apricot pit apartments? it's located in sunnyvale
+USER: Does this place have a garage?
+    labels: APICALL:
+     model: APICALL:
+"""
+        ),
+        "example2": (
+            "parlai eval_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_yes_api/model  --skip-generation false --api-schemas true --api-jga-record false -ne 100"
+        ),
+        "result2": (
+            """ ...
+ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'] using datatype valid
+                      accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem   jga  jga+nlg  \
+   OutDomainOnlyApis                                                                                  .7500
+   all                   .5200   .1430 631.5 438.3  1142   .6600      193.9 2.605  100 .7517   .05251 .9167    .5057
+                      jga_empty  jga_noempty  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  nlg_bleu  nlg_f1   ppl  \
+   OutDomainOnlyApis
+   all                    .9459        .8182 14.52 .7146 1e-08 14.52 37.82       0          0     .0948   .5373 2.043
+                      slot_f1  slot_p  slot_r  token_acc  token_em   tpb  tps
+   OutDomainOnlyApis
+   all                  .8602   .8696   .8511      .8278     .5100 452.8 1179
+"""
+        ),
+    },
+    {
+        "title": "Task-Oriented Dialog (TOD) pretrained model, Schema-Agnostic",
+        "id": "tod",
+        "path": "zoo:tod/tod_base_no_api/model",
+        "agent": "bart",
+        "task": "8 different task-oriented dataset (see project page)",
+        "project": "https://parl.ai/projects/tod_simulator/",
+        "description": (
+            "BART-large model multitasked on 8 different task-oriented datasets, parsed to the converesation structure specified in the simulator paper when possible. Pre-training in these cases done with *empty* API grounding turns."
+        ),
+        "example": (
+            "parlai display_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_no_api/model  --skip-generation false --api-schemas false"
+        ),
+        "result": (
+            """
+- - - NEW EPISODE: GoogleSgdOutDomain_SystemTeacher- - -
+APIS:
+    labels: APIS:
+     model: APIS:
+USER: i'm looking to move house so i'm after some options
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: Are you looking to rent or buy? How many room will you need?
+     model: SYSTEM: where are you looking to move to?
+USER: Umm three bedrooms would be good and i want to buy
+    labels: APICALL:
+     model: APICALL:
+APIRESP:
+    labels: SYSTEM: What are are you interested in?
+     model: SYSTEM: What city are you looking to stay in?
+USER: can you look for me in sunnyvale
+    labels: APICALL:
+     model: APICALL: api_name = SearchHouse ; where_to = Sunnyvale ; number_of_adults = 3 ; where_to = Sunnyvale
+APIRESP:
+    labels: SYSTEM: How many bathrooms do you need
+     model: SYSTEM: When are you planning to move?
+USER: can you find places with two bathrooms
+    labels: APICALL: api_name = FindHomeByArea ; area = Sunnyvale ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3
+     model: APICALL: api_name = SearchHouse ; has_birch = True ; number_of_adults = 2 ; where_to = Sunnyvale
+APIRESP: address = 400 East Remington Drive ; area = Sunnyvale ; has_garage = False ; in_unit_laundry = True ; intent = buy ; number_of_baths = 2 ; number_of_beds = 3 ; phone_number = 408-738-4862 ; price = 3650000 ; property_name = Apricot Pit Apartments
+    labels: SYSTEM: I have 10 properties that might suit, including Apricot pit apartments 400 east remington drive. The listing price is $3,650,000
+     model: SYSTEM: i found 10 houses for you. There is a nice place at apricot pit apartments located at 400 east remington drive
+USER: Does this place have a garage?
+    labels: APICALL:
+     model: APICALL:
+"""
+        ),
+        "example2": (
+            "parlai eval_model -t google_sgd_simulation_splits:OutDomainSystemTeacher -mf zoo:tod/tod_base_no_api/model  --skip-generation false --api-schemas false --api-jga-record false -ne 100"
+        ),
+        "result2": (
+            """ ...
+Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'] using datatype valid
+                      accuracy  bleu-4  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem   jga  jga+nlg  \
+   OutDomainOnlyApis                                                                                      0
+   all                   .4700  .08715 426.8   335 951.2   .3700      93.03 2.839  100 .7132   .05245 .7708    .4348
+                      jga_empty  jga_noempty  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  nlg_bleu  nlg_f1   ppl  \
+   OutDomainOnlyApis
+   all                    .9459        .1818 14.52 1.046 1e-08 14.52 41.22       0          0    .09885   .5216 2.845
+                      slot_f1  slot_p  slot_r  token_acc  token_em   tpb   tps
+   OutDomainOnlyApis
+   all                  .2500   .2449   .2553      .7865     .4600 349.6 992.4
+"""
+        ),
+    },
+    {
         "title": "SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures",
         "id": "saferdialogues",
         "path": "zoo:saferdialogues/model",
@@ -2582,5 +2709,205 @@ Which level are you at?
                         0          0 10.45      .5078         0 280.1 25.01
             """
         ),
+    },
+    {
+        "title": "R2C2 Base 400M",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_base_400M/model",
+        "agent": "bart",
+        "task": "pushshift.io,roberta,cc100en",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "400M parameter generative model pretrained on Reddit, RoBERTa, and CC100en tasks, but not finetuned."
+        ),
+        "example": (
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 4 --model bart r2c2_base_400M/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_400m"
+        ),
+        "result": "Results vary.",
+    },
+    {
+        "title": "R2C2 Base 2.7B",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_base_3B/model",
+        "agent": "bart",
+        "task": "pushshift.io,roberta,cc100en",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "2.7B parameter generative model pretrained on Reddit, RoBERTa, and CC100en tasks, but not finetuned."
+        ),
+        "example": (
+            "parlai train_model -t blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues --multitask-weights 1,3,3,3 -vstep 200 -lstep 50 -bs 1 --model bart r2c2_base_3B/init_opt.opt --text-truncate 1000 --label-truncate 1000 --fp16 true -lr 1e-6 --lr-scheduler reduceonplateau --optimizer adamw --warmup-updates 100 --gradient-clip 1.0 --skip-generation true --dropout 0.1 --attention-dropout 0.0 -vp 5 -vmt ppl -vmm min -dynb full --model-file /tmp/test_train_r2c2_3B"
+        ),
+        "result": "Results vary.",
+    },
+    {
+        "title": "R2C2 BlenderBot 400M",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_blenderbot_400M/model",
+        "agent": "bart",
+        "task": "blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues",
+        "project": "https://parl.ai/projects/seeker",
+        "description": ("400M parameter generative model fine-tuned on the BST tasks"),
+        "example": (
+            "parlai i -mf zoo:seeker/r2c2_blenderbot_400M/model -t blended_skill_talk"
+        ),
+        "result": """
+            Enter Your Message: Hi, what do you do for a living?\n
+            [Bart]: I'm a stay at home mom. What about you? What do you like to do for fun?
+        """,
+    },
+    {
+        "title": "R2C2 BlenderBot 3BM",
+        "id": "seeker",
+        "path": "zoo:seeker/r2c2_blenderbot_3B/model",
+        "agent": "bart",
+        "task": "blended_skill_talk,wizard_of_wikipedia,convai2:normalized,empathetic_dialogues",
+        "project": "https://parl.ai/projects/seeker",
+        "description": ("3B parameter generative model fine-tuned on the BST tasks"),
+        "example": (
+            "parlai i -mf zoo:seeker/r2c2_blenderbot_3B/model -t blended_skill_talk"
+        ),
+        "result": """
+            Enter Your Message: Hi, what do you do for a living?\n
+            [Bart]: I am a lawyer at a large firm.  What about you?  Do you have kids?
+        """,
+    },
+    {
+        "title": "SeeKeR Dialogue 400M",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_dialogue_400M/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "projects.seeker.tasks.knowledge:KnowledgeTeacher,projects.seeker.tasks.knowledge:DialogueTeacher,projects.seeker.tasks.knowledge:SearchQueryTeacher,projects.seeker.tasks.knowledge:SearchDecisionTeacher",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR Dialogue model; trained to search the internet, synthesize knowledge, "
+            "and produce a dialogue response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_dialogue_400M/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            13:05:40 | Search Queries: ['AI research']
+            13:05:40 | sending search request to <SERVER>
+            13:05:40 | Generated knowledge: ['Non-delusional Q-learning and value-iteration']
+            [ComboFidSearchQuery]: Ai research is the study of non delusional q-learning. It is a form of machine learning.
+        """,
+    },
+    {
+        "title": "SeeKeR Dialogue 3B",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_dialogue_3B/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "projects.seeker.tasks.knowledge:KnowledgeTeacher,projects.seeker.tasks.knowledge:DialogueTeacher,projects.seeker.tasks.knowledge:SearchQueryTeacher,projects.seeker.tasks.knowledge:SearchDecisionTeacher",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR Dialogue model; trained to search the internet, synthesize knowledge, "
+            "and produce a dialogue response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_dialogue_3B/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            12:28:46 | Search Queries: ['ai research']
+            12:28:46 | sending search request to <SERVER>
+            12:28:50 | Generated knowledge: ['Computer science defines AI research as the study of  intelligent agents : any device that perceives its environment']
+            [ComboFidSearchQuery]: The study of intelligent agents and how they perceive their environment is called AI research. What do you want to know about it?
+        """,
+    },
+    {
+        "title": "SeeKeR LM + Dialogue 3B",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_dialogue_3B/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "projects.seeker.tasks.knowledge:KnowledgeTeacher,projects.seeker.tasks.knowledge:DialogueTeacher,projects.seeker.tasks.knowledge:SearchQueryTeacher,projects.seeker.tasks.knowledge:SearchDecisionTeacher",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM and Dialogue model; trained to search the internet, synthesize knowledge, "
+            "and produce a dialogue response. Additionally trained on language modeling data."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_dialogue_3B/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            [ComboFidSearchQuery]: The study of intelligent agents and how they perceive their environment is called AI research. It is very interesting.
+        """,
+        "example2": (
+            "parlai i -mf zoo:seeker/seeker_lm_dialogue_3B/model -o gen/seeker_dialogue --search-server <search_server>"
+        ),
+        "result2": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:35:35 | Search Queries: ['parlAI']
+            13:35:35 | sending search request to <SERVER>
+            13:35:39 | Generated knowledge: ['ParlAI (pronounced “par-lay”) is a one-stop shop for dialog research, where researchers can submit new tasks and training algorithms to a single, shared repository.']
+            [ComboFidSearchQuery]: ParlAI is a dialog research platform that allows researchers to share tasks, training algorithms, and more.
+        """,
+    },
+    {
+        "title": "SeeKeR LM Medium",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_med/model",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
+        "task": "cc",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM Medium model - a GPT2-Medium model trained to search the internet, synthesize knowledge, "
+            "and produce a response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_med/model -o gen/seeker_lm --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:29:24 | Search Queries: ['ParlAI Software Updates']
+            13:29:24 | sending search request to <SERVER>
+            [GPT2ComboSearchQuery]: ParlAI: A Dialog Research Software Platform by Miller, A. H. (2017).
+        """,
+    },
+    {
+        "title": "SeeKeR LM Large",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_large/model",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
+        "task": "cc",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM Large model - a GPT2-Large model trained to search the internet, synthesize knowledge, "
+            "and produce a response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_large/model -o gen/seeker_lm --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:32:59 | Search Queries: ['ParlAI: A New Software for Machine Learning']
+            13:32:59 | sending search request to <SERVER>
+            13:33:02 | Generated knowledge: ['... Finally, teachers are a type of agent that talk to the learner, for example, one that implements a task listed previously.... That’s why ParlAI supports integration with Mechanical Turk for data collection, training, and evaluation.']
+            [GPT2ComboSearchQuery]: ParlAI is a type of agent that talk to the learner, for example, one that implements a task listed previously. That's why it supports integration with Mechanical Turk for data collection, training, and evaluation.
+        """,
+    },
+    {
+        "title": "SeeKeR LM XL",
+        "id": "seeker",
+        "path": "zoo:seeker/seeker_lm_xl/model",
+        "agent": "projects.seeker.agents.gpt2_seeker:GPT2SeekerAgent",
+        "task": "cc",
+        "project": "https://parl.ai/projects/seeker",
+        "description": (
+            "SeeKeR LM XL model - a GPT2-XL model trained to search the internet, synthesize knowledge, "
+            "and produce a response."
+        ),
+        "example": (
+            "parlai i -mf zoo:seeker/seeker_lm_xl/model -o gen/seeker_lm --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: In recent developments, we have learned the following about ParlAI's new software.
+            13:36:25 | Search Queries: ['ParlAI: New software to help AI researchers']
+            13:36:25 | sending search request to <SERVER>
+            13:36:29 | Generated knowledge: ['ParlAI: A new software platform for dialog research_0 / POSTED ON MAY 15, 2017 TO AI Research, ML Applications...']
+            [GPT2ComboSearchQuery]: ParlAI: A new software platform for dialog research. Image credit: AI Research, ML Applications
+        """,
     },
 ]

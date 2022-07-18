@@ -404,7 +404,7 @@ class PolyEncoderModule(torch.nn.Module):
         embeddings = torch.nn.Embedding(
             len(dict_), embedding_size, padding_idx=null_idx
         )
-        torch.nn.init.normal_(embeddings.weight, 0, embedding_size ** -0.5)
+        torch.nn.init.normal_(embeddings.weight, 0, embedding_size**-0.5)
         return embeddings
 
     def attend(self, attention_layer, queries, keys, values, mask):

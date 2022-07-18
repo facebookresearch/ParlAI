@@ -1,0 +1,26 @@
+#@package _global_
+defaults:
+  - /mephisto/blueprint: dialcrowd_static_blueprint
+  - /mephisto/architect: local
+  - /mephisto/provider: mock
+mephisto:
+  blueprint:
+    data_jsonl: ${task_dir}/data.jsonl
+    extra_source_dir: ${task_dir}/webapp/src/static
+    subtasks_per_unit: 4
+    task_source: ${task_dir}/webapp/build/bundle.js
+    units_per_assignment: 5
+  task:
+    allowed_concurrent: 1
+    assignment_duration_in_seconds: 450
+    max_num_concurrent_units: 0
+    maximum_units_per_worker: 1
+    task_description: Our goal is to build an AI chat bot that can help people complete
+      certain tasks. To achieve this goal and train the bot, we need some sentences
+      labeled by human annotators. Please help us classify the sentences below.
+    task_name: turn_annotations_static
+    task_reward: 0.65
+    task_tags: chat,conversation,dialog,partner
+    task_title: Annotate Sentences For Intent
+mturk:
+  worker_blocklist_paths: null

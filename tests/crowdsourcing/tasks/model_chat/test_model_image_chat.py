@@ -59,6 +59,8 @@ try:
 
         def setUp(self) -> None:
             self._setup()
+            self.message_sleep_time = 20
+            # Wait for the message with the encoded image to arrive
 
         def tearDown(self) -> None:
             self._teardown()
@@ -134,7 +136,7 @@ try:
                 self._set_up_server(shared_state=shared_state)
 
                 # Check that the agent states are as they should be
-                self._get_channel_info().job.task_runner.task_run.get_blueprint().use_onboarding = (
+                self._get_live_run().task_runner.task_run.get_blueprint().use_onboarding = (
                     False
                 )
                 # Don't require onboarding for this test agent
@@ -160,7 +162,6 @@ try:
                 self._check_final_chat_data(
                     actual_value=actual_chat_data, expected_value=expected_chat_data
                 )
-
 
 except ImportError:
     pass

@@ -279,7 +279,7 @@ class AcuteAnalyzer(object):
             ~df["worker"].isin(workers_failing_onboarding) & ~df["is_onboarding"]
         ]
         print(
-            f'{self.dataframe.size:d} dataframe entries remaining after removing users who failed onboarding.'
+            f'{self.dataframe.index.size:d} dataframe entries remaining after removing users who failed onboarding.'
         )
 
     def _load_pairing_files(self):

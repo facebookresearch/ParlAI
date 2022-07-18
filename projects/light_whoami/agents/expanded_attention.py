@@ -5,7 +5,8 @@
 """
 Expanded Attention Transformer Model.
 
-Specifically, the decoder uses an additional attention mechanism over a (possibly separate) context.
+Specifically, the decoder uses an additional attention mechanism over a (possibly
+separate) context.
 """
 import os
 import torch
@@ -20,6 +21,7 @@ from parlai.agents.transformer.modules import (
     TransformerGeneratorModel,
     LAYER_NORM_EPS,
 )
+from parlai.agents.transformer.modules.decoder import DecoderIncrState
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.agents import create_agent_from_model_file
 from parlai.core.build_data import modelzoo_path
@@ -56,7 +58,7 @@ ExtraOutput = Union[EncoderOutput, Tuple[Encoding, MaskOut, AttnWeights, AttnWei
 
 
 def get_classifier_model_and_dict(
-    opt: Opt
+    opt: Opt,
 ) -> Tuple[Optional[TorchAgent], Optional[DictionaryAgent]]:
     """
     Build classifier model and dictionary.
@@ -287,8 +289,8 @@ class ExpandedDecoderAttentionAgent(TransformerGeneratorAgent):
 
     def expanded_observe(self, observation: Message) -> Message:
         """
-        Add the relevant expanded input vectors; essentially extrapolates observe, for potential
-        subclasses.
+        Add the relevant expanded input vectors; essentially extrapolates observe, for
+        potential subclasses.
         """
         if 'text_vec' not in observation:
             return observation
@@ -502,7 +504,8 @@ class TransformerExpandedDecoderModel(TransformerGeneratorModel):
 
 class TransformerDoubleEncoder(TransformerEncoder):
     """
-    The Double Encoder encodes both the context and additional expanded attn input information.
+    The Double Encoder encodes both the context and additional expanded attn input
+    information.
     """
 
     def __init__(self, opt: Opt, *args, **kwargs):
@@ -643,9 +646,9 @@ class TransformerExpandedDecoder(TransformerDecoder):
         self,
         input: torch.Tensor,
         encoder_state,
-        incr_state: Optional[Dict[str, torch.Tensor]] = None,
+        incr_state: Optional[DecoderIncrState] = None,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Override TD.Forward to include extra encoder outputs.
         """
@@ -665,9 +668,9 @@ class TransformerExpandedDecoder(TransformerDecoder):
         tensor: torch.Tensor,
         encoder_output: torch.Tensor,
         encoder_mask: torch.Tensor,
-        incr_state: Dict[int, Dict[str, Dict[str, torch.Tensor]]],
+        incr_state: DecoderIncrState,
         **kwargs,
-    ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor]]:
+    ) -> Tuple[torch.Tensor, DecoderIncrState]:
         """
         Override to pass more options to model parallel (which is unfortunately not
         handled in super class.)
@@ -679,7 +682,7 @@ class TransformerExpandedDecoder(TransformerDecoder):
             )
         else:
             tensor, new_incr_state = super().forward_layers(
-                tensor, encoder_output, encoder_mask, incr_state, **kwargs
+                tensor, encoder_output, encoder_mask, incr_state=incr_state, **kwargs
             )
 
         return tensor, new_incr_state
@@ -705,9 +708,14 @@ class TransformerExpandedDecoder(TransformerDecoder):
         new_incr_state = {i: [] for i, _ in enumerate(self.layers)}
 
         for chunk_idx, layer_nos, next_device in work_items:
-            s_tensor, s_enc_out, s_enc_mask, s_incr_state, s_extra_out, s_extra_mask = chunks[
-                chunk_idx
-            ]
+            (
+                s_tensor,
+                s_enc_out,
+                s_enc_mask,
+                s_incr_state,
+                s_extra_out,
+                s_extra_mask,
+            ) = chunks[chunk_idx]
             for layer_no in layer_nos:
                 s_tensor, nis = self.layers[layer_no](
                     x=s_tensor,
@@ -719,7 +727,13 @@ class TransformerExpandedDecoder(TransformerDecoder):
                 )
                 new_incr_state[layer_no].append(nis)
             # don't move incr state, it's always on the correct device
-            s_tensor, s_enc_out, s_enc_mask, s_extra_out, s_extra_mask = PipelineHelper.chunk_to(
+            (
+                s_tensor,
+                s_enc_out,
+                s_enc_mask,
+                s_extra_out,
+                s_extra_mask,
+            ) = PipelineHelper.chunk_to(
                 (s_tensor, s_enc_out, s_enc_mask, s_extra_out, s_extra_mask),
                 next_device,
             )
@@ -766,7 +780,7 @@ class ExpandedAttentionTransformerDecoderLayer(TransformerDecoderLayer):
         )
         self.opt = opt
         if not opt['expanded_attention_share_weights']:
-            self.extra_input_attention = self.swappables.encoder_attention(
+            self.extra_input_attention = self.swappables.encoder_attention(  # type: ignore
                 opt=self.opt,
                 n_heads=opt['n_heads'],
                 dim=opt['embedding_size'],

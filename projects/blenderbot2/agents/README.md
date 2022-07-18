@@ -4,7 +4,7 @@ Below, we have compiled a list of FAQs regarding the usage of BlenderBot2. Pleas
 
 ### `ModuleNotFoundError: No module named 'transformers'`
 
-Please run `pip install transformer==4.3.3`.
+Please run `pip install transformers==4.3.3`.
 
 ### `ModuleNotFoundError: No module named 'parlai.zoo.bart.bart_large`
 Please make sure you have [installed fairseq](https://github.com/pytorch/fairseq#requirements-and-installation)

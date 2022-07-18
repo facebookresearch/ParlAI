@@ -211,7 +211,7 @@ class DenseHNSWFlatIndexer(BaseIndexer):
                 'HNSW index needs to index all data at once, results will be unpredictable otherwise.'
             )
         phi = 0
-        norms = (data ** 2).sum(dim=1)
+        norms = (data**2).sum(dim=1)
         max_norms = norms.max().item()
         phi = max(phi, max_norms)
         logging.info(f'HNSWF DotProduct -> L2 space phi={phi}')

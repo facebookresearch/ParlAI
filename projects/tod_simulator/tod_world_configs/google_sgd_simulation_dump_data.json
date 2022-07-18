@@ -1,0 +1,12 @@
+{
+"api_schema_grounding_model": "parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiSchemaAgent",
+"goal_grounding_model": "parlai.tasks.google_sgd_simulation_splits.agents:OutDomainGoalAgent",
+"user_model": "parlai.tasks.google_sgd_simulation_splits.agents:OutDomainUserUttAgent",
+"user_model_file": "",
+"system_model":"parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiCallAndSysUttAgent",
+"system_model_file": "", 
+"api_resp_model": "parlai.tasks.google_sgd_simulation_splits.agents:OutDomainApiResponseAgent", 
+"display_examples": "True",
+"datatype": "valid",
+"num_episodes": -1
+}

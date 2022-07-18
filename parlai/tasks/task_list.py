@@ -289,6 +289,17 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1706.05125"},
     },
     {
+        "id": "Friends",
+        "display_name": "Friends",
+        "task": "friends",
+        "tags": ["MultiPartyConvo"],
+        "description": (
+            "Multi-party conversation dataset modified from the 10 seasons "
+            "of the popular American sitcom that ran in the 90s, Friends."
+        ),
+        "links": {"website": "https://convokit.cornell.edu/documentation/friends.html"},
+    },
+    {
         "id": "Glue",
         "display_name": "Glue",
         "task": "glue",
@@ -1535,5 +1546,40 @@ task_list = [
             "Dataset has been released under the CC BY-NC license."
         ),
         "links": {"arXiv": "https://arxiv.org/abs/2110.07518"},
+    },
+    {
+        "id": "XPersona",
+        "display_name": "XPersona",
+        "task": "xpersona",
+        "tags": ["ChitChat"],
+        "description": (
+            "XPersona is an extension of ConvAI2 with six more languages: Chinese, French, Indonesian, Italian, Korean, and Japanese."
+        ),
+        "links": {
+            "arXiv": "https://arxiv.org/pdf/2003.07568.pdf",
+            "website": "https://github.com/HLTCHKUST/Xpersona",
+        },
+    },
+    {
+        "id": "LCCC",
+        "display_name": "LCCC",
+        "task": "lccc",
+        "tags": ["ChitChat"],
+        "description": ("Large-scale cleaned Chinese conversation dataset."),
+        "links": {
+            "arXiv": "https://arxiv.org/pdf/2008.03946",
+            "website": "https://github.com/thu-coai/CDial-GPT",
+        },
+    },
+    {
+        "id": "SPOLIN",
+        "display_name": "SPOLIN",
+        "task": "spolin",
+        "tags": ["all", "engaging", "improv", "open-ended", "common ground"],
+        "description": "Conversation pairs from the SPOLIN dataset. The pairs abide by the Yes-and principle of improvisational theatre (improv).",
+        "links": {
+            "arXiv": "https://arxiv.org/abs/2004.09544",
+            "website": "https://justin-cho.com/spolin",
+        },
     },
 ]

@@ -26,12 +26,17 @@ acts:
     id: MultiwozV22_SystemTeacher
     slots:
       COUNT: 133
-      OPTIONS: '[{"arriveby": "06:35", "day": "monday", "departure": "norwich", "destination":
-        "cambridge", "duration": "79 minutes", "leaveat": "05:16", "price": "17.60
-        pounds", "trainid": "TR9020"}]'
-    text: 'APIRESP: COUNT = 133 ; OPTIONS = [{"arriveby": "06:35", "day": "monday",
-      "departure": "norwich", "destination": "cambridge", "duration": "79 minutes",
-      "leaveat": "05:16", "price": "17.60 pounds", "trainid": "TR9020"}]'
+      arriveby: 06:35
+      day: monday
+      departure: norwich
+      destination: cambridge
+      duration: 79 minutes
+      leaveat: 05:16
+      price: 17.60 pounds
+      trainid: TR9020
+    text: 'APIRESP: COUNT = 133 ; arriveby = 06:35 ; day = monday ; departure = norwich
+      ; destination = cambridge ; duration = 79 minutes ; leaveat = 05:16 ; price
+      = 17.60 pounds ; trainid = TR9020'
     type: 'SYSTEM: '
 - - domain: attraction, train
     episode_done: false
@@ -55,12 +60,17 @@ acts:
     id: MultiwozV22_SystemTeacher
     slots:
       COUNT: 12
-      OPTIONS: '[{"arriveby": "06:35", "day": "monday", "departure": "norwich", "destination":
-        "cambridge", "duration": "79 minutes", "leaveat": "05:16", "price": "17.60
-        pounds", "trainid": "TR9020"}]'
-    text: 'APIRESP: COUNT = 12 ; OPTIONS = [{"arriveby": "06:35", "day": "monday",
-      "departure": "norwich", "destination": "cambridge", "duration": "79 minutes",
-      "leaveat": "05:16", "price": "17.60 pounds", "trainid": "TR9020"}]'
+      arriveby: 06:35
+      day: monday
+      departure: norwich
+      destination: cambridge
+      duration: 79 minutes
+      leaveat: 05:16
+      price: 17.60 pounds
+      trainid: TR9020
+    text: 'APIRESP: COUNT = 12 ; arriveby = 06:35 ; day = monday ; departure = norwich
+      ; destination = cambridge ; duration = 79 minutes ; leaveat = 05:16 ; price
+      = 17.60 pounds ; trainid = TR9020'
     type: 'SYSTEM: '
 num_episodes: 1000
 num_examples: 17744

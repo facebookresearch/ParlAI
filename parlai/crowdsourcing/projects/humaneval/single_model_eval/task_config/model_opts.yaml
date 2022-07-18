@@ -1,0 +1,35 @@
+blender_90M: >
+    --model-file zoo:blender/blender_90M/model
+    --beam-block-full-context False
+    --beam-block-ngram 3
+    --beam-context-block-ngram 3
+    --beam-min-length 20
+    --beam-size 10
+    --inference beam
+
+blender_3B: >
+    --model-file zoo:blender/blender_3B/model
+    --beam-block-full-context False
+    --beam-block-ngram 3
+    --beam-context-block-ngram 3
+    --beam-min-length 20
+    --beam-size 10
+    --inference beam
+
+blender_3B_beam_min_length_0: >
+    --model-file zoo:blender/blender_3B/model
+    --beam-block-full-context False
+    --beam-block-ngram 3
+    --beam-context-block-ngram 3
+    --beam-min-length 0
+    --beam-size 10
+    --inference beam
+
+reddit_3B: >
+    --model-file zoo:blender/reddit_3B/model
+    --beam-block-full-context False
+    --beam-block-ngram 3
+    --beam-context-block-ngram 3
+    --beam-min-length 20
+    --beam-size 10
+    --inference beam

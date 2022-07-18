@@ -1,0 +1,76 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Hi!",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text_response_1": "Hi, how is your? I'm like cooking and baking pies!",
+                "text_response_2": "Hello, how's your day going? I just came back from a workout session and am feeling pretty tired.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "response_2"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I just had a really bad day at work, messed up a very important order and my boss got really angry at me.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text_response_1": "That sounds awful! What happened? Were you not paying attention enough? What kind of order was it?",
+                "text_response_2": "Oh no I am sorry! I am sorry! What happened to you? Did you not pay attention? What happened to you?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "response_1"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "I thought an order was supposed to be delivered by next month when in reality it's supposed to be in two weeks.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text_response_1": "Ouch! Well I guess bad days do happen to the best of us. Do you think you can get it done in time?",
+                "text_response_2": "I don't know how to respond to that. What do you think about tacos?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "response_1"
+                ]
+            }
+        ],
+        [
+            {
+                "text": "Hopefully. Two weeks is not a lot of time but if I hurry I may still be able to get most it done.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text_response_1": "I think all is good and that you are good. I do hope that you are having a pleasant day!",
+                "text_response_2": "That sounds good, hopefully you get that sorted out. Better late than never, I suppose.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": [
+                    "response_2"
+                ]
+            }
+        ]
+    ]
+}

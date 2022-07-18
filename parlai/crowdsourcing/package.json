@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.14.1",
+    "eslint": "^8.11.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-ignore-generated-and-nolint": "^1.0.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",

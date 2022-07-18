@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 """
-Define PATHS to pre-trained models
+Define PATHS to pre-trained models.
 """
 
 RPA_RERANKER = 'zoo:light_whoami/rpa_reranker/model'

@@ -348,7 +348,13 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
                 'GoldDocRetrieverFiDAgent only works with `rag_retriever_query` being `"full_history"`. '
                 f'Changing opt value for `rag_retriever_query`: `"{prev_sel}"` -> `"full_history"`'
             )
-
+        if not (
+            opt['dynamic_batching'] in [None, 'off']
+            and opt.get('eval_dynamic_batching') in [None, 'off']
+        ):
+            raise RuntimeError(
+                "For now dynamic batching doesn't work with ObservationEchoRetriever as it cleans up _saved_docs mapping after each batch act."
+            )
         super().__init__(opt, shared=shared)
 
     @abstractmethod
@@ -375,6 +381,15 @@ class GoldDocRetrieverFiDAgent(SearchQueryFiDAgent):
     def _set_query_vec(self, observation: Message) -> Message:
         self.show_observation_to_echo_retriever(observation)
         super()._set_query_vec(observation)
+
+    def batch_act(self, observations):
+        """
+        Clear the _saved_docs and _query_ids mappings in ObservationEchoRetriever.
+        """
+        batch_reply = super().batch_act(observations)
+        if hasattr(self.model_api.retriever, 'clear_mapping'):
+            self.model_api.retriever.clear_mapping()
+        return batch_reply
 
 
 class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
@@ -409,7 +424,7 @@ class WizIntGoldDocRetrieverFiDAgent(GoldDocRetrieverFiDAgent):
         for doc_idx in range(n_docs_in_message):
             doc_content = message[consts.RETRIEVED_DOCS][doc_idx]
             for sel_sentc in selected_sentences:
-                if sel_sentc in doc_content:
+                if sel_sentc in doc_content and doc_idx not in already_added_doc_idx:
                     retrieved_docs.append(
                         self._extract_doc_from_message(message, doc_idx)
                     )
@@ -447,6 +462,7 @@ def concat_enc_outs(
     mask: torch.BoolTensor,
     embedding_size: int,
     padding_idx: int,
+    right_padded: bool = True,
 ) -> Tuple[torch.Tensor, torch.BoolTensor]:
     """
     Concatenate Encoder Outputs.
@@ -464,6 +480,8 @@ def concat_enc_outs(
         emb/hidden size of the enc representations
     :param padding_idx:
         pad token index; used for mask purposes.
+    :param right_padded:
+        whether the input is right padded (true) or left padded (false)
 
     :return (new_out, new_mask):
         return the encoder output and encoder mask, appropriately concatenated.
@@ -486,7 +504,11 @@ def concat_enc_outs(
     new_mask.fill_(False)
 
     for i, (out_i, length_i) in enumerate(zip(concat_outs, concat_lengths)):
-        new_out[i, :length_i] = out_i
-        new_mask[i, :length_i] = True
+        if right_padded:
+            new_out[i, :length_i] = out_i
+            new_mask[i, :length_i] = True
+        else:
+            new_out[i, new_out.size(1) - length_i :] = out_i
+            new_mask[i, new_out.size(1) - length_i :] = True
 
     return new_out, new_mask

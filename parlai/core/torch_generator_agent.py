@@ -17,6 +17,7 @@ Contains the following utilities:
 * Beam class which provides some generic beam functionality for classes to use
 """
 
+from typing_extensions import TypedDict
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
@@ -42,6 +43,9 @@ from parlai.utils.torch import (
     trainable_parameters,
     PipelineHelper,
 )
+
+if torch.cuda.is_available():
+    from parlai.ops.ngram_repeat_block import NGramRepeatBlock
 
 
 class SearchBlocklist(object):
@@ -458,6 +462,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             default=False,
             help='if true, compute tokenized bleu scores',
         )
+        parser.add_argument(
+            '--gpu-beam-blocking',
+            type='bool',
+            help='Set to use CUDA kernel for beam search ngram blocking',
+            default=False,
+        )
 
         super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
@@ -474,7 +484,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
         self.temperature = opt.get('temperature', 1.0)
         assert self.temperature > 0, '--temperature must be greater than 0'
-        self.output_token_losses = opt.get(
+        self.show_token_details = opt.get(
             'verbose', False
         ) or 'token_losses' in opt.get('display_add_fields', '')
         self.compute_tokenized_bleu = opt.get('compute_tokenized_bleu', False)
@@ -786,11 +796,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     def _construct_generated_token_details(self, tokens, tokens_metadata):
         tokens_as_txt = [self.dict[int(token)] for token in tokens]
-
-        details_lists = [tokens_as_txt, tokens_metadata["logprobs"].tolist()]
-        if "ranks" in tokens_metadata:
-            details_lists.append(tokens_metadata["ranks"].tolist())
-        return list(zip(*details_lists))
+        return list(zip(tokens_as_txt, tokens_metadata))
 
     def _compute_fairseq_bleu(self, batch: Batch, preds):
         """
@@ -827,7 +833,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         self.record_local_metric(
             'gen_n_toks',
-            AverageMetric.many([p.size(0) for p in preds], [1] * batch.batchsize),
+            AverageMetric.many([p.size(0) for p in preds], [1] * len(preds)),
         )
 
     def rank_eval_label_candidates(self, batch, batchsize):
@@ -845,7 +851,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         for i in range(batchsize):
             num_cands = len(batch.candidate_vecs[i])
             enc = self.model.reorder_encoder_states(encoder_states, [i] * num_cands)
-            cands, _ = self._pad_tensor(batch.candidate_vecs[i])
+            cands, _ = self._pad_tensor(batch.candidate_vecs[i], is_label=True)
             cands = cands.to(batch.text_vec.device)
             scores, _ = self.model.decode_forced(enc, cands)
             score_view = scores.reshape(num_cands * cands.size(1), -1)
@@ -880,7 +886,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if batch.label_vec is not None:
             # calculate loss on targets with teacher forcing
             loss, model_output = self.compute_loss(batch, return_output=True)
-            if self.output_token_losses:
+            if self.show_token_details:
                 token_losses = self._construct_label_token_losses(
                     batch.label_vec, model_output
                 )
@@ -902,12 +908,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             beam_texts_token_info: List[List[List[Tuple]]] = []
             for beam in beams:
                 beam_texts.append([])
-                if self.output_token_losses:
+                if self.show_token_details:
                     beam_texts_token_info.append([])
 
                 for tokens, score, token_metadata in beam.get_rescored_finished():
                     try:
-                        if self.output_token_losses:
+                        if self.show_token_details:
                             beam_texts_token_info[-1].append(
                                 self._construct_generated_token_details(
                                     tokens, token_metadata
@@ -928,7 +934,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             else None
         )
 
-        if self.output_token_losses and beam_preds_scores is not None:
+        if self.show_token_details and beam_preds_scores is not None:
             text_token_info = []
             for beam_text_token_info in beam_texts_token_info:
                 text_token_info.append(beam_text_token_info[0])
@@ -962,6 +968,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'beam':
             return BeamSearch(
@@ -975,6 +982,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'delayedbeam':
             return DelayedBeamSearch(
@@ -990,6 +998,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'topk':
             return TopKSampling(
@@ -1004,6 +1013,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         elif method == 'nucleus':
             return NucleusSampling(
@@ -1018,6 +1028,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
         else:
             raise ValueError(f"Can't use inference method {method}")
@@ -1178,16 +1189,20 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         bsz = batch.batchsize
         if batch.text_vec is not None:
             batchsize = batch.batchsize
-            batch_context_list = self._get_batch_context(batch).tolist()
+            batch_context_list = self._get_batch_context(batch)
             beams = [
-                self._treesearch_factory(dev, verbose=self.output_token_losses)
-                .set_batch_context(batch_context_list, batch_idx)
+                self._treesearch_factory(dev, verbose=self.show_token_details)
+                .set_batch_context(
+                    batch_context_list,
+                    batch_idx,
+                    self.opt.get('gpu_beam_blocking', False),
+                )
                 .set_block_list(self.beam_block_list)
                 for batch_idx in range(batchsize)
             ]
         else:
             beams = [
-                self._treesearch_factory(dev, verbose=self.output_token_losses)
+                self._treesearch_factory(dev, verbose=self.show_token_details)
                 for _ in range(bsz)
             ]
 
@@ -1224,7 +1239,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 score[prefix_mask] = neginf(score.dtype)
             for i, b in enumerate(beams):
                 if not b.is_done():
-                    b.advance(score[i])
+                    b.advance(score[i], _ts)
             incr_state_inds = torch.cat(
                 [
                     beam_size * i + b.get_backtrack_from_current_step()
@@ -1282,15 +1297,19 @@ class _HypothesisTail(object):
     """
 
     # use slots because we don't want dynamic attributes here
-    __slots__ = ['timestep', 'hypid', 'score', 'tokenid', 'token_score', 'token_rank']
+    __slots__ = ['timestep', 'hypid', 'score', 'tokenid', 'token_details']
 
-    def __init__(self, timestep, hypid, score, tokenid, token_score, token_rank):
+    def __init__(self, timestep, hypid, score, tokenid, token_details):
         self.timestep = timestep
         self.hypid = hypid
         self.score = score
         self.tokenid = tokenid
-        self.token_score = token_score
-        self.token_rank = token_rank
+        self.token_details = token_details
+
+
+class _PathSelectionTokenDetails(TypedDict, total=False):
+    token_logprob: float  # conditional log-probability of token (normalized)
+    token_rank: int  # rank of token in conditional distribution
 
 
 class _PathSelection(object):
@@ -1300,14 +1319,19 @@ class _PathSelection(object):
     Represents output of path selection process.
     """
 
-    __slots__ = ['hypothesis_ids', 'token_ids', 'scores', 'token_scores', 'token_ranks']
+    __slots__ = ['hypothesis_ids', 'token_ids', 'scores', 'token_details']
 
-    def __init__(self, hypothesis_ids, token_ids, scores, token_scores, token_ranks):
+    def __init__(
+        self,
+        hypothesis_ids,
+        token_ids,
+        scores,
+        token_details: Optional[List[_PathSelectionTokenDetails]] = None,
+    ):
         self.hypothesis_ids = hypothesis_ids
         self.token_ids = token_ids
         self.scores = scores
-        self.token_scores = token_scores
-        self.token_ranks = token_ranks
+        self.token_details = token_details  # length equal to beam size
 
 
 class TreeSearch(object):
@@ -1331,6 +1355,7 @@ class TreeSearch(object):
         device='cpu',
         length_penalty=0.65,
         verbose=False,
+        gpu_beam_blocking=False,
     ):
         """
         Instantiate Beam object.
@@ -1376,22 +1401,24 @@ class TreeSearch(object):
         ]
 
         self.verbose = verbose
-        self.token_scores, self.token_ranks = None, None
+        # (beam size, sample length) list of lists containing token-level data for each token in each hypo in the beam
+        self.token_details: Optional[List[List[_PathSelectionTokenDetails]]] = None
         if self.verbose:
-            # beam token scores
-            self.token_scores = torch.zeros(
-                (self.beam_size, 1), device=self.device
-            )  # log prob of bos token is 0
-            # beam token ranks
-            self.token_ranks = torch.ones(
-                (self.beam_size, 1), device=self.device
-            )  # bos token is prob 1 and so rank 1
+            self.token_details = []
+            for _ in range(self.beam_size):
+                self.token_details.append([{"token_logprob": 0.0, "token_rank": 0}])
+
         # keeps tuples (score, time_step, hyp_id)
         self.finished = []
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
-        self.partial_hyps = [[self.bos] for i in range(beam_size)]
+        self.gpu_beam_blocking = gpu_beam_blocking
+        self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
+        if self.gpu_beam_blocking:
+            self.partial_hyps = self.partial_hyps.cuda()
+        if torch.cuda.is_available():
+            self.no_repeat_ngram_op = NGramRepeatBlock()
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
         """
@@ -1405,7 +1432,10 @@ class TreeSearch(object):
         return self
 
     def set_batch_context(
-        self: TSType, batch_context_list: List[List[int]], batch_idx: int
+        self: TSType,
+        batch_context_list: torch.LongTensor,
+        batch_idx: int,
+        gpu_beam_blocking: bool,
     ) -> TSType:
         """
         Version of .set_context() that operates on a single element of a batch.
@@ -1416,8 +1446,12 @@ class TreeSearch(object):
             a list of lists, each one containing the context for one member of the batch
         :param batch_idx:
             index of the batch
+        :param gpu_beam_blocking:
+            whether we are using gpu kernel for beam blocking, if so return a tensor,
+            else return a list.
         """
-        self.context = batch_context_list[batch_idx]
+        context = batch_context_list[batch_idx]
+        self.context = context if gpu_beam_blocking else context.tolist()
         return self
 
     def set_block_list(self: TSType, block_list: Optional[SearchBlocklist]) -> TSType:
@@ -1450,7 +1484,7 @@ class TreeSearch(object):
         :param current_length:
             the current length in tokens
         :return:
-            a {hypothesis_ids, token_ids, scores, token_scores, token_ranks} , where:
+            a {hypothesis_ids, token_ids, scores, token_details} , where:
 
             - hypothesis_ids is a LongTensor of hypotheses we're extending. May have
               repeats, but should always be (beamsize) long.
@@ -1458,36 +1492,54 @@ class TreeSearch(object):
               each of the hypotheses.
             - scores is a (beamsize) Tensor with the updated cumulative log-probs
               of each beam.
-            - token_scores is a (beamsize) Tensor with the log-probs of the next-token choices for
-              each of the hypotheses.
-            - token_ranks is a (beamsize) Tensor with the ranks of the next-token choices for
-              each of the hypotheses.
+            - token_details is a (beamsize) list of objects with with metadata about each generated token.
         """
         pass
 
     def _block_ngrams(
-        self, ngram_size: int, logprobs: torch.Tensor, source: torch.LongTensor = None
+        self,
+        ngram_size: int,
+        logprobs: torch.Tensor,
+        step: int = 0,
+        if_context_blocking=False,
     ):
         """
-        Hard block ngrams from the logprobs, based on the source.
+        Hard block ngrams from the logprobs.
 
         :param ngram_size:
             The length of ngrams to block. Must be > 0.
         :param logprobs:
             Float or HalfTensor, representing the log-probabilities. This is
             modified in place.
-        :param source:
-            Source text to grab ngrams from. If None, it uses the current
-            hypothesis (i.e. self-blocking).
+        :param step:
+            current step on generating utterances
+        :param if_context_blocking:
+            whether we are doing context blocking
         """
-        for beam_id, hyp in enumerate(self.partial_hyps):
+        # gpu beam blocking
+        if self.gpu_beam_blocking:
+            context = self.context if if_context_blocking else None
+            logprobs = self.no_repeat_ngram_op(
+                hypothesis=self.partial_hyps,
+                context=context,
+                lprobs=logprobs,
+                bsz=1,
+                step=step,
+                beam_size=self.beam_size,
+                no_repeat_ngram_size=ngram_size,
+                if_context_blocking=if_context_blocking,
+            )
+            return logprobs
+
+        # cpu beam blocking
+        for beam_id, hyp in enumerate(self.partial_hyps.tolist()):
             if len(hyp) < ngram_size - 1:
                 continue
-            source_ = hyp if source is None else source
-            ngrams = self._find_ngrams(source_, ngram_size)
+            source = hyp if if_context_blocking is False else self.context
             prefix = hyp[-(ngram_size - 1) :]
-            for ngram in ngrams:
-                if ngram_size == 1 or prefix == list(ngram[:-1]):
+            for i in range(len(source) - ngram_size + 1):
+                ngram = source[i : i + ngram_size]
+                if ngram_size == 1 or prefix == ngram[:-1]:
                     logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
@@ -1495,15 +1547,15 @@ class TreeSearch(object):
         if self.block_list is None:
             return logprobs
 
-        for beam_id, hyp in enumerate(self.partial_hyps):
+        for beam_id, hyp in enumerate(self.partial_hyps.tolist()):
             for ngram_size, bad_ngrams in self.block_list.items():
                 prefix = hyp[-(ngram_size - 1) :]
                 for ngram in bad_ngrams:
-                    if (ngram_size == 1) or prefix == list(ngram[:-1]):
+                    if (ngram_size == 1) or prefix == ngram[:-1]:
                         logprobs[beam_id][ngram[-1]] = neginf(logprobs.dtype)
         return logprobs
 
-    def advance(self, logprobs):
+    def advance(self, logprobs, step):
         """
         Advance the beam one step.
         """
@@ -1525,7 +1577,13 @@ class TreeSearch(object):
 
         # beam blocking
         if self.block_ngram > 0:
-            logprobs = self._block_ngrams(self.block_ngram, logprobs, None)
+            # self blocking
+            logprobs = self._block_ngrams(
+                ngram_size=self.block_ngram,
+                logprobs=logprobs,
+                step=step,
+                if_context_blocking=False,
+            )
 
         logprobs = self._block_block_list(logprobs)
 
@@ -1534,8 +1592,12 @@ class TreeSearch(object):
                 raise ValueError(
                     "Must use TreeSearch.set_context to use context blocking."
                 )
+            # context blocking
             logprobs = self._block_ngrams(
-                self.context_block_ngram, logprobs, self.context
+                ngram_size=self.context_block_ngram,
+                logprobs=logprobs,
+                step=step,
+                if_context_blocking=True,
             )
 
         path_selection = self.select_paths(logprobs, self.scores, current_length)
@@ -1546,19 +1608,28 @@ class TreeSearch(object):
 
         self.outputs.append(path_selection.token_ids)
         self.bookkeep.append(path_selection.hypothesis_ids)
-        tok_id_list = path_selection.token_ids.tolist()
-        self.partial_hyps = [
-            self.partial_hyps[path_selection.hypothesis_ids[i]] + [tok_id_list[i]]
-            for i in range(self.beam_size)
-        ]
+
+        # this checking for device seems suboptimal
+        # might need to change later
+        if self.partial_hyps.get_device() == -1:
+            hyp_device = 'cpu'
+        else:
+            hyp_device = self.partial_hyps.get_device()
+        self.partial_hyps = torch.cat(
+            (
+                self.partial_hyps[path_selection.hypothesis_ids.long()],
+                path_selection.token_ids.view(path_selection.token_ids.shape[0], -1).to(
+                    hyp_device
+                ),
+            ),
+            1,
+        )
 
         if self.verbose:
-            self.token_scores = torch.cat(
-                (self.token_scores, path_selection.token_scores.unsqueeze(1)), dim=1
-            )
-            self.token_ranks = torch.cat(
-                (self.token_ranks, path_selection.token_ranks.unsqueeze(1)), dim=1
-            )
+            assert path_selection.token_details
+            assert self.token_details
+            for i in range(self.beam_size):
+                self.token_details[i].append(path_selection.token_details[i])
 
         #  check new hypos for eos label, if we have some, add to finished
         for hypid in range(self.beam_size):
@@ -1566,16 +1637,14 @@ class TreeSearch(object):
                 if self.scores[hypid] <= neginf(self.scores.dtype):
                     continue
                 #  this is finished hypo, adding to finished
+
                 eostail = _HypothesisTail(
                     timestep=len(self.outputs) - 1,
                     hypid=hypid,
                     score=self.all_scores[-1][hypid],
                     tokenid=self.eos,
-                    token_score=self.token_scores[hypid, -1]
-                    if self.token_scores is not None
-                    else None,
-                    token_rank=self.token_ranks[hypid, -1]
-                    if self.token_ranks is not None
+                    token_details=self.token_details[hypid][-1]
+                    if self.token_details is not None
                     else None,
                 )
                 self.finished.append(eostail)
@@ -1621,11 +1690,8 @@ class TreeSearch(object):
                     hypid=endback,
                     score=self.all_scores[i][endback],
                     tokenid=self.outputs[i][endback],
-                    token_score=self.token_scores[endback, i]
-                    if self.token_scores is not None
-                    else None,
-                    token_rank=self.token_ranks[endback, i]
-                    if self.token_ranks is not None
+                    token_details=self.token_details[endback][i]
+                    if self.token_details is not None
                     else None,
                 )
             )
@@ -1638,18 +1704,6 @@ class TreeSearch(object):
         Return hypothesis as a tensor of token ids.
         """
         return torch.stack([ht.tokenid for ht in reversed(list_of_hypotails)])
-
-    def _get_pretty_token_metadata(self, list_of_hypotails):
-        """
-        Return token probabilities and ranks as two tensors.
-        """
-
-        return {
-            "logprobs": torch.stack(
-                [ht.token_score for ht in reversed(list_of_hypotails)]
-            ),
-            "ranks": torch.stack([ht.token_rank for ht in reversed(list_of_hypotails)]),
-        }
 
     def get_rescored_finished(self, n_best=None):
         """
@@ -1678,11 +1732,8 @@ class TreeSearch(object):
                     hypid=0,
                     score=self.all_scores[-1][0],
                     tokenid=self.outputs[-1][0],
-                    token_score=self.token_scores[0, -1]
-                    if self.token_scores is not None
-                    else None,
-                    token_rank=self.token_ranks[0, -1]
-                    if self.token_ranks is not None
+                    token_details=self.token_details[0][-1]
+                    if self.token_details is not None
                     else None,
                 )
             )
@@ -1698,8 +1749,7 @@ class TreeSearch(object):
                     hypid=finished_item.hypid,
                     score=finished_item.score / length_penalty,
                     tokenid=finished_item.tokenid,
-                    token_score=finished_item.token_score,
-                    token_rank=finished_item.token_rank,
+                    token_details=finished_item.token_details,
                 )
             )
 
@@ -1714,7 +1764,9 @@ class TreeSearch(object):
             hyp_data = self._get_hyp_from_finished(hyp)
             token_ids = self._get_pretty_hypothesis(hyp_data)
             token_metadata = (
-                self._get_pretty_token_metadata(hyp_data) if self.verbose else None
+                [tok.token_details for tok in reversed(hyp_data)]
+                if self.verbose
+                else None
             )
             n_best_list.append((token_ids, hyp.score, token_metadata))
 
@@ -1750,17 +1802,17 @@ class GreedySearch(TreeSearch):
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0), device=logprobs.device)
 
-        tok_ranks = None
+        token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_scores = tok_scores.view(-1)
-            tok_ranks = torch.tensor([0], device=logprobs.device, dtype=torch.long)
+            tok_logprob = torch.softmax(logprobs.view(-1), dim=-1)[tok_ids].log().item()
+            tok_rank = 0
+            token_details = [{"token_logprob": tok_logprob, "token_rank": tok_rank}]
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
             token_ids=tok_ids,
             scores=best_scores,
-            token_scores=tok_scores,
-            token_ranks=tok_ranks,
+            token_details=token_details,
         )
 
 
@@ -1784,31 +1836,42 @@ class BeamSearch(TreeSearch):
         voc_size = logprobs.size(-1)
 
         # get the backtracking hypothesis id as a multiple of full voc_sizes
-        hyp_ids = best_idxs // voc_size
+        hyp_ids = torch.div(best_idxs, voc_size, rounding_mode='trunc')
         # get the actual word id from residual of the same division
         tok_ids = best_idxs % voc_size
 
-        tok_scores, tok_ranks = None, None
+        token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_scores = (
-                torch.index_select(logprobs, 0, hyp_ids)
+            probs = torch.softmax(logprobs, dim=-1)
+            tok_probs = (
+                torch.index_select(probs, 0, hyp_ids)
                 .gather(1, tok_ids.unsqueeze(1))
                 .view(-1)
             )
-
             tok_ranks = (
-                logprobs.argsort(1, descending=True)
+                probs.argsort(1, descending=True)
                 .argsort(1)
                 .view(-1)
                 .gather(0, best_idxs)
             )
 
+            token_details = []
+
+            for tok_logprob, tok_rank in zip(
+                tok_probs.log().cpu().numpy(), tok_ranks.cpu().numpy()
+            ):
+                token_details.append(
+                    {
+                        "token_logprob": tok_logprob.item(),
+                        "token_rank": int(tok_rank.item()),
+                    }
+                )
+
         return _PathSelection(
             hypothesis_ids=hyp_ids,
             token_ids=tok_ids,
             scores=best_scores,
-            token_scores=tok_scores,
-            token_ranks=tok_ranks,
+            token_details=token_details,
         )
 
 
@@ -1862,17 +1925,22 @@ class TopKSampling(TreeSearch):
         scores = values[hyp_ids, choices]
         best_scores = prior_scores.expand_as(scores) + scores
 
-        tok_scores, tok_ranks = None, None
+        token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_scores = scores.view(-1)
-            tok_ranks = choices.view(-1)
+            tok_logprobs = probs[hyp_ids, choices].log().view(-1).cpu().numpy()
+            tok_ranks = choices.view(-1).cpu().numpy()
+            token_details = []
+
+            for tok_logprob, tok_rank in zip(tok_logprobs, tok_ranks):
+                token_details.append(
+                    {"token_logprob": tok_logprob, "token_rank": int(tok_rank)}
+                )
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
             token_ids=tok_ids,
             scores=best_scores,
-            token_scores=tok_scores,
-            token_ranks=tok_ranks,
+            token_details=token_details,
         )
 
 
@@ -1900,24 +1968,30 @@ class NucleusSampling(TreeSearch):
         # The subtraction here is to get the exclusive prefix sum,
         # to guarantee the first element is not masked
         mask = (sprobs.cumsum(dim=-1) - sprobs) >= self.p
-        sprobs[mask] = 0
-        sprobs.div_(sprobs.sum(dim=-1).unsqueeze(1))
-        choices = torch.multinomial(sprobs, 1)[:, 0]
+        trunc_sprobs = sprobs.detach().clone()
+        trunc_sprobs[mask] = 0
+        trunc_sprobs.div_(trunc_sprobs.sum(dim=-1).unsqueeze(1))
+        choices = torch.multinomial(trunc_sprobs, 1)[:, 0]
         hyp_ids = torch.arange(logprobs.size(0)).to(logprobs.device)
         tok_ids = sinds[hyp_ids, choices]
         # Convert back to logspace.
-        scores = sprobs[hyp_ids, choices].log()
+        scores = trunc_sprobs[hyp_ids, choices].log()
         best_scores = prior_scores.expand_as(scores) + scores
 
-        tok_scores, tok_ranks = None, None
+        token_details: Optional[List[_PathSelectionTokenDetails]] = None
         if self.verbose:
-            tok_scores = scores.view(-1)
-            tok_ranks = choices.view(-1)
+            tok_logprobs = sprobs[hyp_ids, choices].log().view(-1).cpu().numpy()
+            tok_ranks = choices.view(-1).cpu().numpy()
+            token_details = []
+
+            for tok_logprob, tok_rank in zip(tok_logprobs, tok_ranks):
+                token_details.append(
+                    {"token_logprob": tok_logprob, "token_rank": int(tok_rank)}
+                )
 
         return _PathSelection(
             hypothesis_ids=hyp_ids,
             token_ids=tok_ids,
             scores=best_scores,
-            token_scores=tok_scores,
-            token_ranks=tok_ranks,
+            token_details=token_details,
         )

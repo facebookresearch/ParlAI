@@ -12,10 +12,7 @@ module.exports = {
   output: {
     path: __dirname,
     filename: "build/bundle.js",
-  },
-  node: {
-    net: "empty",
-    dns: "empty",
+    hashFunction: "sha256",
   },
   resolve: {
     alias: {
@@ -32,11 +29,12 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader",
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(svg|png|jpe?g|ttf)$/,
-        loader: "url-loader?limit=100000",
+        loader: "url-loader",
+        options: { limit: 100000 },
       },
       {
         test: /\.jpg$/,

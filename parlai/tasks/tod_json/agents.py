@@ -75,6 +75,12 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
         agent.add_argument(
             "--split-folds-seed", type=int, default=42, help="Seed for the fold split"
         )
+        agent.add_argument(
+            "--fail-hard",
+            type=bool,
+            default=False,
+            help="Raise errors if formatting not correct",
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -97,7 +103,10 @@ class JsonTodParser(tod_agents.TodStructuredDataParser):
         for raw_round in blob["dialog"][1:]:
             if "prefix_stripped_text" not in raw_round[0]:
                 for i in range(len(raw_round)):
-                    if PREFIXES[i] not in raw_round[i]['text']:
+                    if (
+                        PREFIXES[i] not in raw_round[i]['text']
+                        and self.opt["fail_hard"]
+                    ):
                         raise RuntimeError(
                             f"Missing prefix `{PREFIXES[i]}` before turn of text: `{raw_round[i]}`"
                         )

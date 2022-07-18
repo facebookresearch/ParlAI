@@ -3,7 +3,10 @@
 We offer wrappers for generative transformers from [Hugging Face's transformers repository](https://github.com/huggingface/transformers) for fine-tuning and evaluating in ParlAI.
 
 ## GPT2
-To use GPT2, run your command with the flag: `-m hugging_face/gpt2`.
+To use GPT2, run your command with the flag: `-m hugging_face/gpt2`. And suppose you want to use another model other 
+than the default English GPT2 (small, medium, large and xl version), in that case, you can use `-m hugging_face/gpt2 --model_name <gpt2 model name>`,
+where `<gpt2 model name>` can be any GPT2 model hosted in Huggingface such as **anonymous-german-nlp/german-gpt2**
+or **indonesian-nlp/gpt2**
 
 ### Examples
 **Talk to GPT2 large in interactive mode, with beam size 10, 3-gram beam blocking, and minimum beam length 25:**

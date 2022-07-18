@@ -1,0 +1,28 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - 那个饭凉了吧唧的怎么吃啊摔
+    id: lccc
+    text: 啊我好爱虾仁蛋黄酱金枪鱼蛋黄酱
+- - episode_done: true
+    eval_labels:
+    - 看了下全文，那女的考试当天就表明身体不舒服了，考试不是她预约是教练自己安排的，教练还让她考试不就是教练的错吗？而且她住院花了31万，赔30万不过分吧
+    id: lccc
+    text: 考试撞墙关驾校屁事？你怎么不顺便把考场施工单位也告了？
+- - episode_done: true
+    eval_labels:
+    - 好好好，偶遇我大闺蜜
+    id: lccc
+    text: 我先去穿衣服，准备走了
+- - episode_done: true
+    eval_labels:
+    - 保存一下
+    id: lccc
+    text: 期待小猎豹的表现
+- - episode_done: true
+    eval_labels:
+    - 给你一个么么哒
+    id: lccc
+    text: 为了你们新年有惊喜，我也是用心良苦了
+num_episodes: 20000
+num_examples: 25558

@@ -74,9 +74,10 @@ class RagModel(TorchGeneratorModel):
             opt['text_truncate'] or opt['truncate'], get_n_positions_from_options(opt)
         )
         if self.n_extra_positions > 0:
-            self.expanded_input_truncate = max(
-                self.expanded_input_truncate, self.n_extra_positions
-            )
+            # This attribute is overloaded.
+            # when n_extra_positions == 0, it is the truncation of the full expanded input
+            # when >0, it is the maximum length of the knowledge tokens.
+            self.expanded_input_truncate = self.n_extra_positions
         self.min_doc_token_length = opt['min_doc_token_length']
 
         # modules
@@ -88,7 +89,10 @@ class RagModel(TorchGeneratorModel):
             padding_idx=self.pad_idx,
         )
         self.seq2seq_decoder = self.build_decoder(
-            opt, embedding=self.embeddings, padding_idx=self.pad_idx
+            opt,
+            embedding=self.embeddings,
+            dictionary=dictionary,
+            padding_idx=self.pad_idx,
         )
 
     @classmethod
@@ -120,7 +124,9 @@ class RagModel(TorchGeneratorModel):
         **kwargs,
     ):
         if decoder_class is None:
-            return RagDecoder(opt=opt, embedding=embedding, n_positions=n_positions)
+            return RagDecoder(
+                opt=opt, embedding=embedding, n_positions=n_positions, **kwargs
+            )
         else:
             return decoder_class(opt, *args, **kwargs)
 
@@ -329,6 +335,7 @@ class RagModel(TorchGeneratorModel):
         input_lengths: torch.LongTensor,
         top_docs: List[List[Document]],
         max_num_docs: int,
+        right_padded: bool = True,
     ) -> torch.LongTensor:
         """
         Add document tokens to input tokens.
@@ -341,6 +348,8 @@ class RagModel(TorchGeneratorModel):
             list of n_docs top documents for each input sequence
         :param max_num_docs:
             maximum number of docs out of all examples
+        :param right_padded:
+            whether the input is right padded.
 
         :return (tokens, lengths):
             return expanded token vectors & corresponding lengths
@@ -368,7 +377,11 @@ class RagModel(TorchGeneratorModel):
                         self.expanded_input_truncate - self.min_doc_token_length,
                         input_i_len,
                     )
-                    input_i = input_i[input_i_len - new_input_length : input_i_len]
+                    if right_padded:
+                        input_i = input_i[input_i_len - new_input_length : input_i_len]
+                    else:
+                        input_i = input_i[input_i.size(0) - new_input_length :]
+
                     doc_max_len = max(max_len - len(input_i), 0)
                     sample_doc_tokens = sample_doc_tokens[:doc_max_len]
                     expanded_input.append(
@@ -380,7 +393,7 @@ class RagModel(TorchGeneratorModel):
                     input_i_new = input_i.new(
                         self.n_positions - self.n_extra_positions
                     ).fill_(self.pad_idx)
-                    input_i_new[: input_i.size(0)] = input_i
+                    input_i_new[input_i_new.size(0) - input_i.size(0) :] = input_i
                     expanded_input.append(torch.cat([input_i_new, sample_doc_tokens]))
             # append extra null inputs if there are diff # of docs per input
             expanded_input += [
@@ -388,9 +401,10 @@ class RagModel(TorchGeneratorModel):
             ] * (max_num_docs - len(docs))
         expanded_input, _ = padded_tensor(
             expanded_input,
-            fp16friendly=self.fp16,
+            fp16friendly=self.fp16 and right_padded,
             max_len=max_len if self.n_extra_positions <= 0 else None,
             pad_idx=self.pad_idx,
+            left_padded=not right_padded,
         )
         expanded_input = expanded_input.to(input.device)
         return expanded_input  # type: ignore
@@ -526,6 +540,7 @@ class T5RagModel(RagModel):
         super().__init__(opt, dictionary, retriever_shared)
         self.embedding_size = opt['t5'].model_dim
         self.t5 = opt.pop('t5', None)
+        self.paralleled = not opt['t5_model_parallel']
 
     @classmethod
     def build_encoder(
@@ -568,6 +583,6 @@ class T5RagModel(RagModel):
 
     @set_device
     def decoder_output(self, latent: torch.Tensor):
-        tensor = latent * (self.t5.model_dim ** -0.5)
+        tensor = latent * (self.t5.model_dim**-0.5)
         logits = self.t5.lm_head(tensor)
         return logits

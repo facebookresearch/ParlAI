@@ -50,9 +50,11 @@ def get_utterance_text(utterance):
 
 class CasinoTeacher(Teacher):
     """
-    A negotiation teacher that loads the CaSiNo data from https://github.com/kushalchawla/CaSiNo.
+    A negotiation teacher that loads the CaSiNo data from
+    https://github.com/kushalchawla/CaSiNo.
 
-    Each dialogue is converted into two datapoints, one from the perspective of each participant.
+    Each dialogue is converted into two datapoints, one from the perspective of each
+    participant.
     """
 
     def __init__(self, opt, shared=None):
@@ -93,17 +95,13 @@ class CasinoTeacher(Teacher):
             episode = copy.deepcopy(dialogue)
             episode[
                 'perspective'
-            ] = (
-                'mturk_agent_1'
-            )  # id of the agent whose perspective will be used in this dialog
+            ] = 'mturk_agent_1'  # id of the agent whose perspective will be used in this dialog
             episodes.append(episode)
 
             episode = copy.deepcopy(dialogue)
             episode[
                 'perspective'
-            ] = (
-                'mturk_agent_2'
-            )  # id of the agent whose perspective will be used in this dialog
+            ] = 'mturk_agent_2'  # id of the agent whose perspective will be used in this dialog
             episodes.append(episode)
 
         self.episodes = episodes
@@ -152,8 +150,11 @@ class CasinoTeacher(Teacher):
 
     def num_examples(self):
         """
-        Lets return the the number of responses that an agent would generate in one epoch + 1 count for every output. This will include special utterances for submit-deal, accept-deal, and reject-deal.
- 
+        Lets return the the number of responses that an agent would generate in one
+        epoch + 1 count for every output.
+
+        This will include special utterances for submit-deal, accept-deal, and reject-
+        deal.
         """
         num_exs = 0
 
@@ -204,9 +205,11 @@ class CasinoTeacher(Teacher):
 
     def _start_dialogue(self):
         """
-        Starting a dialogue should be the same as continuing a dialogue but with just one difference: it will attach the welcome note to the teacher's utterance.
+        Starting a dialogue should be the same as continuing a dialogue but with just
+        one difference: it will attach the welcome note to the teacher's utterance.
 
-        Each dialogue has two agents possible: mturk_agent_1 or mturk_agent_2. One of them will act as the perspective for this episode.
+        Each dialogue has two agents possible: mturk_agent_1 or mturk_agent_2. One of
+        them will act as the perspective for this episode.
         """
 
         episode = self.episodes[self.episode_idx]
@@ -255,9 +258,11 @@ class CasinoTeacher(Teacher):
 
     def _continue_dialogue(self):
         """
-        Return an action object
+        Return an action object.
 
-        From the perspective of a specific agent's id, all utterances authored by the other agent are coming from the teacher as the text of the action object, and all utterances authored by this agent appear as the labels.
+        From the perspective of a specific agent's id, all utterances authored by the
+        other agent are coming from the teacher as the text of the action object, and
+        all utterances authored by this agent appear as the labels.
         """
         action = {}
         # Fill in teacher's message (THEM)

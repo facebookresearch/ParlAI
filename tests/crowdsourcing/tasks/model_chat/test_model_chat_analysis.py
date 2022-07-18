@@ -8,7 +8,10 @@ Test the analysis code for the model chat task.
 """
 
 import glob
+import json
 import os
+import re
+from typing import Any, Dict, List
 
 import pytest
 from pytest_regressions.file_regression import FileRegressionFixture
@@ -22,6 +25,38 @@ try:
         ModelChatResultsCompiler,
     )
     from parlai.crowdsourcing.utils.tests import check_stdout
+
+    class TestModelChatResultsCompiler(ModelChatResultsCompiler):
+        def get_task_data(self) -> List[Dict[str, Any]]:
+            fake_jsons = []
+            # Load paths
+            date_strings = sorted(
+                [
+                    obj
+                    for obj in os.listdir(self.results_folder)
+                    if os.path.isdir(os.path.join(self.results_folder, obj))
+                    and re.fullmatch(r'\d\d\d\d_\d\d_\d\d', obj)
+                ]
+            )
+            folders = [os.path.join(self.results_folder, str_) for str_ in date_strings]
+
+            for folder in folders:
+                for file_name in sorted(os.listdir(folder)):
+                    # Read in file
+                    with open(os.path.join(folder, file_name), 'rb') as f:
+                        data = json.load(f)
+                        worker_id = data['workers'][0]
+                        assignment_id = data['assignment_ids'][0]
+                        fake_jsons.append(
+                            {
+                                'data': {'save_data': {'custom_data': data}},
+                                'worker_id': worker_id,
+                                'assignment_id': assignment_id,
+                                'status': 'completed',
+                            }
+                        )
+
+            return fake_jsons
 
     class TestCompileResults:
         """
@@ -62,14 +97,12 @@ try:
 
                     # Run analysis
                     with testing_utils.capture_output() as output:
-                        arg_string = f"""\
---results-folders {analysis_samples_folder}
---output-folder {tmpdir} \
-{flag_string}
-"""
-                        parser_ = ModelChatResultsCompiler.setup_args()
+                        arg_string = f"""--output-folder {tmpdir} {flag_string}"""
+                        parser_ = TestModelChatResultsCompiler.setup_args()
                         args_ = parser_.parse_args(arg_string.split())
-                        ModelChatResultsCompiler(vars(args_)).compile_and_save_results()
+                        compiler = TestModelChatResultsCompiler(vars(args_))
+                        compiler.results_folder = analysis_samples_folder
+                        compiler.compile_and_save_results()
                         stdout = output.getvalue()
 
                     # Define output structure
@@ -131,7 +164,6 @@ try:
                 prefix = f'{case}__worker_results'
                 outputs = setup_teardown
                 file_regression.check(outputs[prefix], basename=prefix)
-
 
 except ImportError:
     pass

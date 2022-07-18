@@ -41,12 +41,40 @@ class TestBertModel(unittest.TestCase):
                 batchsize=2,
                 learningrate=1e-3,
                 gradient_clip=1.0,
-                type_optimization="all_encoder_layers",
                 text_truncate=8,
                 label_truncate=8,
             )
         )
         self.assertGreaterEqual(test['accuracy'], 0.8)
+
+    def test_bertclassifier(self):
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:classifier',
+                model='bert_classifier/bert_classifier',
+                num_epochs=2,
+                batchsize=2,
+                learningrate=1e-2,
+                gradient_clip=1.0,
+                classes=["zero", "one"],
+            )
+        )
+        self.assertGreaterEqual(test['accuracy'], 0.9)
+
+    def test_bertclassifier_with_relu(self):
+        valid, test = testing_utils.train_model(
+            dict(
+                task='integration_tests:classifier',
+                model='bert_classifier/bert_classifier',
+                num_epochs=2,
+                batchsize=2,
+                learningrate=1e-2,
+                gradient_clip=1.0,
+                classes=["zero", "one"],
+                classifier_layers=["linear,64", "linear,2", "relu"],
+            )
+        )
+        self.assertGreaterEqual(test['accuracy'], 0.9)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,12 @@
+[
+    {
+        "value": "response_1",
+        "name": "Response 1",
+        "description": "Represents the user choosing response 1"
+    },
+    {
+        "value": "response_2",
+        "name": "Response 2",
+        "description": "Represents the user choosing response 2"
+    }
+]

@@ -37,6 +37,9 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
+            '--results-folders', type=str, help='Comma-separated list of result folders'
+        )
+        parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
             help='Path to JSONL file containing onboarding in-flight conversations',
@@ -51,6 +54,12 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
+
+        if 'results_folders' in opt:
+            self.results_folders = opt['results_folders'].split(',')
+        else:
+            self.results_folders = None
+
         # Validate problem buckets
         if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
             # The code relies on a catchall "none" category if the user selects no other
@@ -513,10 +522,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 except Exception:
                     n_ij = 0.0
                 p_j[j] += n_ij
-                P_bar_sum_term += n_ij ** 2
+                P_bar_sum_term += n_ij**2
 
         p_j = [tmp / (N * number_of_raters) for tmp in p_j]
-        P_e_bar = sum([tmp ** 2 for tmp in p_j])
+        P_e_bar = sum([tmp**2 for tmp in p_j])
 
         P_bar = (P_bar_sum_term - N * number_of_raters) / (
             N * number_of_raters * (number_of_raters - 1)

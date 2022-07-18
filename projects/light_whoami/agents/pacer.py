@@ -11,6 +11,7 @@ import random
 import torch
 import torch.nn.functional as F
 from typing import Optional, Any, Dict, List
+from parlai.agents.rag.retrievers import clean_vec
 
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
 from parlai.core.opt import Opt
@@ -34,6 +35,8 @@ from projects.light_whoami.agents.rpa_rerank import (
 from projects.light_whoami.task.utils import extract_characters
 from projects.msc.agents.long_tga import TransformerVariantAgent
 
+from parlai.agents.reranker.reranker import AbstractReranker
+
 
 class PacerAgentMixin:
     """
@@ -41,10 +44,18 @@ class PacerAgentMixin:
     """
 
     @classmethod
+    def get_partial_only_reranker_class(cls) -> AbstractReranker:
+        """
+        Return class to instantiate classifier.
+        """
+        return RPAReranker
+
+    @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        RPAReranker.add_cmdline_args(parser, partial_opt=partial_opt)
+        reranker_class = cls.get_partial_only_reranker_class() or AbstractReranker
+        reranker_class.add_cmdline_args(parser, partial_opt=partial_opt)
         group = parser.add_argument_group('PACER Group')
         group.add_argument(
             '--pacer-n-tokens',
@@ -62,8 +73,9 @@ class PacerAgentMixin:
 
     def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
-        if not shared:
-            self.classifier = RPAReranker(opt)
+        reranker_class = self.get_partial_only_reranker_class()
+        if not (shared and 'classifier' in shared):
+            self.classifier = reranker_class(opt)
         else:
             self.classifier = shared['classifier']
         assert opt[
@@ -181,15 +193,25 @@ class PacerTreeSearchMixin(TreeSearch):
         self.frequency = kwargs.pop('pacer_frequency_ratio')
         super().__init__(*args, **kwargs)
 
+    def get_target_character(self):
+        return extract_characters(self.context_str)['_self_name']
+
     def set_batch_context(
-        self: TSType, batch_context_list: List[List[int]], batch_idx: int
+        self: TSType,
+        batch_context_list: List[List[int]],
+        batch_idx: int,
+        gpu_beam_blocking: bool,
     ) -> TSType:
         """
         Override to save de-tokenized version of context.
         """
+        # remove pad_idx from the batch vec
         self.context = batch_context_list[batch_idx]
-        self.context_str = self.agent._v2t(self.context)
-        self.character = extract_characters(self.context_str)['_self_name']
+        clean_context = clean_vec(
+            batch_context_list[batch_idx], self.agent.END_IDX, [self.agent.NULL_IDX]
+        )
+        self.context_str = self.agent._v2t(clean_context)
+        self.character = self.get_target_character()
         return self
 
     def select_paths(
@@ -245,7 +267,8 @@ class PacerTreeSearchMixin(TreeSearch):
             h
             for i in range(len(self.partial_hyps))
             for h in [
-                self.agent._v2t(self.partial_hyps[i][1:] + [ind]) for ind in inds[i]
+                self.agent._v2t(self.partial_hyps[i][1:].tolist() + [ind])
+                for ind in inds[i]
             ]
         ]
         # Classify all beam outputs
@@ -257,7 +280,7 @@ class PacerTreeSearchMixin(TreeSearch):
             torch.stack(
                 [
                     F.log_softmax(pred['sorted_scores'].float(), dim=0)[
-                        int(pred['text'] == self.character) - 1
+                        pred['text_candidates'].index(self.character)
                     ]
                     for pred in predictor_outputs
                 ]

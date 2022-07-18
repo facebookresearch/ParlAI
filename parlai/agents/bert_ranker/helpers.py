@@ -20,7 +20,6 @@ except ImportError:
         'installed. Install with:\n `pip install transformers`.'
     )
 
-
 import torch
 
 
@@ -64,20 +63,6 @@ def add_common_args(parser):
         ' with distributed training',
     )
     parser.add_argument(
-        '--type-optimization',
-        type=str,
-        default='all_encoder_layers',
-        choices=[
-            'additional_layers',
-            'top_layer',
-            'top4_layers',
-            'all_encoder_layers',
-            'all',
-        ],
-        help='Which part of the encoders do we optimize. '
-        '(Default: all_encoder_layers.)',
-    )
-    parser.add_argument(
         '--bert-aggregation',
         type=str,
         default='first',
@@ -96,16 +81,27 @@ def add_common_args(parser):
 
 class BertWrapper(torch.nn.Module):
     """
-    Adds a optional transformer layer and a linear layer on top of BERT.
+    Adds a optional transformer layer and classification layers on top of BERT.
+    Args:
+        bert_model: pretrained BERT model
+        output_dim: dimension of the output layer for defult 1 linear layer classifier. Either output_dim or classifier_layer must be specified
+        add_transformer_layer: if additional transformer layer should be added on top of the pretrained model
+        layer_pulled: which layer should be pulled from pretrained model
+        aggregation: embeddings aggregation (pooling) strategy. Available options are:
+            (default)"first" - [CLS] representation,
+            "mean" - average of all embeddings except CLS,
+            "max" - max of all embeddings except CLS
+        classifier_layer: classification layers, can be a signle layer, or list of layers (for ex, torch.nn.Sequential)
     """
 
     def __init__(
         self,
-        bert_model,
-        output_dim,
-        add_transformer_layer=False,
-        layer_pulled=-1,
-        aggregation="first",
+        bert_model: BertModel,
+        output_dim: int = -1,
+        add_transformer_layer: bool = False,
+        layer_pulled: int = -1,
+        aggregation: str = "first",
+        classifier_layer: torch.nn.Module = None,
     ):
         super(BertWrapper, self).__init__()
         self.layer_pulled = layer_pulled
@@ -123,7 +119,18 @@ class BertWrapper(torch.nn.Module):
                 hidden_act='gelu',
             )
             self.additional_transformer_layer = BertLayer(config_for_one_layer)
-        self.additional_linear_layer = torch.nn.Linear(bert_output_dim, output_dim)
+        if classifier_layer is None and output_dim == -1:
+            raise Exception(
+                "Either output dimention or classifier layers must be specified"
+            )
+        elif classifier_layer is None:
+            self.additional_linear_layer = torch.nn.Linear(bert_output_dim, output_dim)
+        else:
+            self.additional_linear_layer = classifier_layer
+            if output_dim != -1:
+                print(
+                    "Both classifier layer and output dimension are specified. Output dimension parameter is ignored."
+                )
         self.bert_model = bert_model
 
     def forward(self, token_ids, segment_ids, attention_mask):
@@ -171,7 +178,7 @@ class BertWrapper(torch.nn.Module):
         # Sort of hack to make it work with distributed: this way the pooler layer
         # is used for grad computation, even though it does not change anything...
         # in practice, it just adds a very (768*768) x (768*batchsize) matmul
-        result += 0 * torch.sum(output_pooler)
+        result = result + 0 * torch.sum(output_pooler)
         return result
 
 

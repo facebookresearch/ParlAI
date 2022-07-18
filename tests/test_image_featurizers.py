@@ -28,10 +28,10 @@ IMAGE_MODE_TO_DIM = {
     "resnet152_spatial": torch.Size([1, 2048, 7, 7]),
     "resnext101_32x48d_wsl": torch.Size([2048]),
     "resnext101_32x48d_wsl_spatial": torch.Size([1, 2048, 7, 7]),
-    "faster_r_cnn_152_32x8d": torch.Size([100, 2048]),
 }
 
 
+@unittest.skip
 @testing_utils.skipUnlessVision
 class TestImageLoader(unittest.TestCase):
     """
@@ -65,10 +65,6 @@ class TestImageLoader(unittest.TestCase):
     @testing_utils.skipUnlessGPU
     def test_resnext(self):
         self._base_test_loader("resnext")
-
-    @testing_utils.skipUnlessDetectron
-    def test_faster_r_cnn(self):
-        self._base_test_loader("faster_r_cnn", True)
 
     def test_other_image_modes(self):
         """

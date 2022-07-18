@@ -238,10 +238,17 @@ class BaseModelChatWorld(CrowdTaskWorld, ABC):
                 )
                 self.final_chat_data = self.get_final_chat_data()
                 self.agent.mephisto_agent.state.messages.append(
-                    {'final_chat_data': self.final_chat_data}
+                    {
+                        'final_chat_data': self.final_chat_data,
+                        'data': {},
+                        'packet_type': None,
+                        'timestamp': None,
+                    }
                 )
                 # Append the chat data directly to the agent state's message list in
-                # order to prevent the worker from seeing a new text response in the UI
+                # order to prevent the worker from seeing a new text response in the UI.
+                # Add some dummy keys for compatibility with all agent state messages
+                # TODO: remove this when no longer saving data to disk manually
                 with open(chat_data_path, 'w+') as f_json:
                     data_str = json.dumps(self.final_chat_data)
                     f_json.write(data_str)
@@ -610,10 +617,7 @@ def validate_onboarding(data):
     status_message = messages[-2]
     if status_message is None:
         return False
-    submitted_data = status_message.get('data')
-    if submitted_data is None:
-        return False
-    final_status = submitted_data.get('final_status')
+    final_status = status_message.get('final_status')
     return final_status == ONBOARD_SUCCESS
 
 

@@ -144,6 +144,34 @@ def get_task_world_logs(task, world_logs, is_multitask=False):
         return f'{base_outfile}_{task}{extension}'
 
 
+def prepare_tb_logger(opt):
+    if opt['tensorboard_log'] and is_primary_worker():
+        tb_logger = TensorboardLogger(opt)
+    else:
+        tb_logger = None
+
+    if 'train' in opt['datatype']:
+        setting = 'train'
+    elif 'valid' in opt['datatype']:
+        setting = 'valid'
+    else:
+        setting = 'test'
+    return tb_logger, setting
+
+
+def get_n_parleys(opt):
+    trainstats_suffix = '.trainstats'
+    if opt.get('model_file') and PathManager.exists(
+        opt['model_file'] + trainstats_suffix
+    ):
+        with PathManager.open(opt['model_file'] + trainstats_suffix) as ts:
+            obj = json.load(ts)
+            parleys = obj.get('parleys', 0)
+    else:
+        parleys = 0
+    return parleys
+
+
 def _eval_single_world(opt, agent, task):
     logging.info(f'Evaluating task {task} using datatype {opt.get("datatype")}.')
     # set up world logger
@@ -233,11 +261,17 @@ def eval_model(opt):
     agent = create_agent(opt, requireModelExists=True)
     agent.opt.log()
 
+    tb_logger, setting = prepare_tb_logger(opt)
+
+    if tb_logger:
+        n_parleys = get_n_parleys(opt)
+
     tasks = opt['task'].split(',')
     reports = []
     for task in tasks:
         task_report = _eval_single_world(opt, agent, task)
         reports.append(task_report)
+        logging.report(f"Report for {task}:\n{nice_report(task_report)}")
 
     report = aggregate_named_reports(
         dict(zip(tasks, reports)), micro_average=opt.get('aggregate_micro', False)
@@ -251,6 +285,9 @@ def eval_model(opt):
 
     print(nice_report(report))
     _save_eval_stats(opt, report)
+    if tb_logger:
+        tb_logger.log_metrics(setting, n_parleys, report)
+        tb_logger.flush()
     return report
 
 

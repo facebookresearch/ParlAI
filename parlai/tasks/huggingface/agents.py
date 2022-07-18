@@ -15,12 +15,6 @@ import os
 import datasets
 
 
-class SplitsMappingDict(TypedDict):
-    train: str
-    valid: str
-    test: str
-
-
 class AbstractHuggingFaceTeacher(DialogTeacher):
     """
     Abstract parent class for HuggingFace teachers. Extend this class and specify the
@@ -29,6 +23,7 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
     hf_path = path parameter passed into hugging face load_dataset function
     hf_name = name parameter passed into hugging face load_dataset function
     hf_text_fields = list of names of the data fields from the dataset to be included in the text/query
+    hf_message_fields = [optional] list of names of the data fields from the dataset to be included in the message object but *not* text
     hf_label_field = name of the data field from the hf dataset that specifies the label of the episode
     hf_splits_mapping = dictionary mapping with the keys 'train', 'valid', and 'test', that map to the
     names of the splits of the hf dataset.
@@ -52,26 +47,6 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
             )
         return os.path.join(opt['datapath'], 'huggingface', self.hf_path, self.fold)
 
-    @property
-    def hf_path(self) -> str:
-        raise NotImplementedError
-
-    @property
-    def hf_name(self) -> Optional[str]:
-        return None
-
-    @property
-    def hf_text_fields(self) -> List[str]:
-        raise NotImplementedError
-
-    @property
-    def hf_label_field(self) -> str:
-        raise NotImplementedError
-
-    @property
-    def hf_splits_mapping(self) -> SplitsMappingDict:
-        raise NotImplementedError
-
     def _get_text_value(self, row) -> Tuple[str, Dict[str, str]]:
         """
         return the constructed text query and dict mapping text field names to values.
@@ -83,7 +58,14 @@ class AbstractHuggingFaceTeacher(DialogTeacher):
             if text_part is None:
                 raise KeyError(f'Feature "{col}" not found in data.')
             text_dict[col] = text_part
-        return '\n'.join(text_dict.values()), text_dict
+        query = '\n'.join(text_dict.values())
+        if hasattr(self, "hf_message_fields"):
+            for col in self.hf_message_fields:
+                text_part = row.get(col)
+                if text_part is None:
+                    raise KeyError(f'Feature "{col}" not found in data.')
+                text_dict[col] = text_part
+        return query, text_dict
 
     def _get_label_value(self, row):
         """

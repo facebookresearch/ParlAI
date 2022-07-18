@@ -225,8 +225,10 @@ class WoiDropoutRetrievedDocs(MessageMutator):
         docs = message.get(CONST.RETRIEVED_DOCS)
         new_docs = []
         max_chunks = self.opt.get('woi_doc_max_chunks', 100)
-
-        keep = torch.randperm(len(docs))[0:max_chunks]
+        if max_chunks > 0:
+            keep = torch.randperm(len(docs))[0:max_chunks]
+        else:
+            keep = torch.randperm(len(docs))
         remove = torch.ones(len(docs))
         remove[keep] = 0
 

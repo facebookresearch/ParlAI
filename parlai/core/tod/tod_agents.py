@@ -40,7 +40,7 @@ class TodStructuredDataParser(Agent):
 
     Inherit from this class and implement `setup_episodes()` to implement the intermediate representation for a specific dataset. Use multiple inheritence with classes that implement an `act()` below to use.
 
-    For example, if we have a `MyDataset_DataParser(TodStructuredDataParser)` and wanted to make a teacher to train a model togenerate User Utterances based on a goal prompt, we would do so by defining `class MyDatasetUserSimulatorTeacher(MyDataset_DataParser, TodUserSimulatorTeacher)`.
+    For example, if we have a `MyDataset_DataParser(TodStructuredDataParser)` and wanted to make a teacher to train a model to generate User Utterances based on a goal prompt, we would do so by defining `class MyDatasetUserSimulatorTeacher(MyDataset_DataParser, TodUserSimulatorTeacher)`.
     """
 
     @classmethod
@@ -735,6 +735,19 @@ class TodUserSimulatorTeacher(TodStructuredDataParser, DialogTeacher):
         # Manually set number of examples + number of episodes
         self._num_examples_cache = sum([len(x.rounds) for x in self.episodes])
         self._num_episodes_cache = len(self.episodes)
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        parser = super().add_cmdline_args(parser, partial_opt)
+        parser.add_argument(
+            "--api-schemas",
+            type="bool",
+            default=False,
+            help="Preempt first turn with intents + required/optional parameters as key/value for given domain. NOOP for this teacher, but including to make sweeps easier",
+        )
+        return parser
 
     def setup_data(self, fold):
         for episode in self.generate_episodes():

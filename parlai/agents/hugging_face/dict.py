@@ -58,6 +58,14 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
             self.opt.get('text_truncate') or self.hf_tokenizer.model_max_length
         )
 
+    def is_prebuilt(self):
+        """
+        Indicates whether the dictionary is fixed, and does not require building.
+
+        Overrides DictionaryAgent.is_prebuilt
+        """
+        return True
+
     @abstractmethod
     def get_tokenizer(self, opt):
         """
@@ -116,12 +124,6 @@ class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
 
 
 class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
-    def is_prebuilt(self):
-        """
-        Indicates whether the dictionary is fixed, and does not require building.
-        """
-        return True
-
     @property
     def add_special_tokens(self) -> bool:
         """
@@ -140,23 +142,26 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         """
         Instantiate tokenizer.
         """
-        model_sz = opt["gpt2_size"]
-        if model_sz == "small":
-            model_key = "gpt2"
-        elif model_sz == "distilgpt2":
-            model_key = "distilgpt2"
+        if opt.get("model_name"):
+            fle_key = opt["model_name"]
         else:
-            model_key = f"gpt2-{model_sz}"
-        # check if datapath has the files that hugging face code looks for
-        hf_dir = os.path.join(opt["datapath"], "hf", model_key)
-        if all(
-            PathManager.exists(os.path.join(hf_dir, file_name))
-            for file_name in ["merges.txt", "vocab.json"]
-        ):
-            fle_key = PathManager.get_local_path(hf_dir, recursive=True)
+            model_sz = opt["gpt2_size"]
+            if model_sz == "small":
+                model_key = "gpt2"
+            elif model_sz == "distilgpt2":
+                model_key = "distilgpt2"
+            else:
+                model_key = f"gpt2-{model_sz}"
+            # check if datapath has the files that hugging face code looks for
+            hf_dir = os.path.join(opt["datapath"], "hf", model_key)
+            if all(
+                PathManager.exists(os.path.join(hf_dir, file_name))
+                for file_name in ["merges.txt", "vocab.json"]
+            ):
+                fle_key = PathManager.get_local_path(hf_dir, recursive=True)
 
-        else:
-            fle_key = model_key
+            else:
+                fle_key = model_key
         return GPT2Tokenizer.from_pretrained(fle_key)
 
     def add_additional_special_tokens(self, additional_special_tokens: List[str]):

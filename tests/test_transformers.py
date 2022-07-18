@@ -286,7 +286,7 @@ class TestTransformerGenerator(TestTransformerBase):
 
     def test_checkpoint(self):
         """
-        Checks --checkpoint-activations true
+        Checks --checkpoint-activations true.
         """
         valid, test = testing_utils.train_model(
             dict(
@@ -379,7 +379,7 @@ class TestTransformerGenerator(TestTransformerBase):
         self.assertEqual(len(response["beam_texts"]), size)
 
     @pytest.mark.nofbcode
-    def test_beamsearch_blocking(self):
+    def test_beamsearch_blocking_cpu(self):
         """
         Test beamsearch blocking.
         """
@@ -422,7 +422,59 @@ class TestTransformerGenerator(TestTransformerBase):
             assert '34 34' not in text
 
     @pytest.mark.nofbcode
-    def test_beamsearch_contextblocking(self):
+    @testing_utils.skipUnlessGPU
+    def test_beamsearch_blocking_gpu(self):
+        """
+        Test beamsearch blocking.
+        """
+        with testing_utils.tempdir() as tmpdir:
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(gpu_beam_blocking=True),
+            )
+            agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+            assert agent.act()['text'] == '5 5 5 5 5 5 5'
+
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(beam_block_ngram=1, gpu_beam_blocking=True),
+            )
+            agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+            assert '5 5' not in agent.act()['text']
+
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(beam_block_ngram=2, gpu_beam_blocking=True),
+            )
+            agent.observe({'text': '5 5 5 5 5 5 5', 'episode_done': True})
+            assert '5 5 5' not in agent.act()['text']
+
+            with open(os.path.join(tmpdir, 'blocklist.txt'), 'w') as f:
+                f.write("38\n62\n34 34\n")
+
+            agent = create_agent_from_model_file(
+                'zoo:unittest/beam_blocking/model',
+                Opt(
+                    beam_block_list_filename=os.path.join(tmpdir, 'blocklist.txt'),
+                    gpu_beam_blocking=True,
+                ),
+            )
+            agent.observe({'text': '4 4 4', 'episode_done': True})
+            assert agent.act()['text'] == '4 4 4'
+
+            agent.observe({'text': '38 38 38', 'episode_done': True})
+            assert '38' not in agent.act()['text']
+
+            agent.observe({'text': '62 62 62', 'episode_done': True})
+            assert '62' not in agent.act()['text']
+
+            agent.observe({'text': '34 34 34', 'episode_done': True})
+            text = agent.act()['text']
+            assert '34' in text
+            assert '34 34' not in text
+
+    @pytest.mark.nofbcode
+    def test_beamsearch_contextblocking_cpu(self):
         """
         Test beamsearch context blocking.
         """
@@ -443,6 +495,42 @@ class TestTransformerGenerator(TestTransformerBase):
 
         agent = create_agent_from_model_file(
             'zoo:unittest/context_blocking/model', Opt(beam_context_block_ngram=2)
+        )
+        agent.observe({'text': '5 4 3 2', 'episode_done': True})
+        text = agent.act()['text']
+        assert '5' in text
+        assert '5 4' not in text
+        assert '4 3' not in text
+        assert '3 2' not in text
+
+    @pytest.mark.nofbcode
+    @testing_utils.skipUnlessGPU
+    def test_beamsearch_contextblocking_gpu(self):
+        """
+        Test beamsearch context blocking.
+        """
+
+        agent = create_agent_from_model_file(
+            'zoo:unittest/context_blocking/model',
+            Opt(gpu_beam_blocking=True),
+        )
+        agent.observe({'text': '5 4 3 2', 'episode_done': True})
+        assert agent.act()['text'] == '5 4 3 2'
+
+        agent = create_agent_from_model_file(
+            'zoo:unittest/context_blocking/model',
+            Opt(beam_context_block_ngram=1, gpu_beam_blocking=True),
+        )
+        agent.observe({'text': '5 4 3 2', 'episode_done': True})
+        text = agent.act()['text']
+        assert '5' not in text
+        assert '4' not in text
+        assert '3' not in text
+        assert '2' not in text
+
+        agent = create_agent_from_model_file(
+            'zoo:unittest/context_blocking/model',
+            Opt(beam_context_block_ngram=2, gpu_beam_blocking=True),
         )
         agent.observe({'text': '5 4 3 2', 'episode_done': True})
         text = agent.act()['text']
@@ -1013,6 +1101,85 @@ class TestSwappableComponents(unittest.TestCase):
             {'text': '1 2 3 4', 'eval_labels': ['1 2 3 4'], 'episode_done': True}
         )
         model.act()
+
+
+class TestDecoderOnly(unittest.TestCase):
+    """
+    Unit tests for DecoderOnlyAgent.
+    """
+
+    @pytest.mark.nofbcode
+    def test_resize_embeddings(self):
+        model = 'transformer/decoder'
+        with testing_utils.tempdir() as tmpdir:
+            model_file = os.path.join(tmpdir, 'model_file')
+            _, _ = testing_utils.train_model(
+                dict(
+                    model=model,
+                    task='integration_tests:short_fixed',
+                    n_layers=2,
+                    num_epochs=1,
+                    dict_tokenizer='bytelevelbpe',
+                    bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                    bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                    bpe_add_prefix_space=False,
+                    model_file=model_file,
+                    save_after_valid=True,
+                )
+            )
+
+            # now create agent with special tokens
+            parser = ParlaiParser()
+            parser.set_params(
+                model=model,
+                task='integration_tests:short_fixed',
+                n_layers=2,
+                dict_tokenizer='bytelevelbpe',
+                bpe_vocab=DEFAULT_BYTELEVEL_BPE_VOCAB,
+                bpe_merge=DEFAULT_BYTELEVEL_BPE_MERGE,
+                bpe_add_prefix_space=False,
+                model_file=model_file,
+                save_after_valid=True,
+                special_tok_lst='PARTY,PARROT',
+            )
+            opt = parser.parse_args([])
+            agent = create_agent(opt)
+            # assert that the embeddings were resized
+            assert agent.resized_embeddings
+            # assert model has special tokens
+            self.assertEqual(agent.special_toks, ['PARTY', 'PARROT'])
+
+    def _overfit_train(self, **args):
+        args = dict(
+            task='integration_tests:overfit',
+            model='transformer/decoder',
+            optimizer='sgd',
+            learningrate=1,
+            momentum=0.9,
+            batchsize=4,
+            n_layers=2,
+            n_heads=1,
+            ffn_size=32,
+            embedding_size=16,
+            inference='greedy',
+            beam_size=1,
+            skip_generation=True,
+            validation_metric='ppl',
+            validation_every_n_epochs=10,
+            num_epochs=100,
+        )
+        args.update(args)
+        return testing_utils.train_model(args)
+
+    @testing_utils.retry(ntries=3)
+    def test_train(self):
+        """
+        Test basic training.
+        """
+        valid, test = self._overfit_train(variant='prelayernorm', activation='gelu')
+
+        self.assertLessEqual(valid['ppl'], 1.30)
+        self.assertLessEqual(test['ppl'], 1.30)
 
 
 if __name__ == '__main__':

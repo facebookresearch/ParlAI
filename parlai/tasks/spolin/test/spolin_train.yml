@@ -1,0 +1,29 @@
+acts:
+- - episode_done: true
+    id: SPOLIN
+    labels:
+    - Yes, but only on the reservation.
+    text: We keep our rifles for hunting.
+- - episode_done: true
+    id: SPOLIN
+    labels:
+    - Some guy in a blue Toyota pickup ran me over.
+    text: All I want to know is what happened to you.
+- - episode_done: true
+    id: SPOLIN
+    labels:
+    - Actually, I'm fine. I don't mind his staring eyes.
+    text: I suppose you're making Larissa feel uncomfortable by staring at her.
+- - episode_done: true
+    id: SPOLIN
+    labels:
+    - Then why not just fuckin' say better than expected? Everybody knows what better
+      than expected means.
+    text: Supernumerary. It means better than expected.
+- - episode_done: true
+    id: SPOLIN
+    labels:
+    - And you tried to run me over with your little car.
+    text: You tried to drown me.
+num_episodes: 67188
+num_examples: 67188
