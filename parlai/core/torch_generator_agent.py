@@ -425,7 +425,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
+            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam', 'delayednucleusbeam'},
             default='greedy',
             help='Generation algorithm',
         )
