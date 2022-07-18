@@ -10,7 +10,9 @@ from pyexpat import model
 import re
 from datetime import datetime
 from typing import Any, Dict
+import warnings
 
+warnings.simplefilter(action='ignore', category=FutureWarning)
 import numpy as np
 import pandas as pd
 

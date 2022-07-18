@@ -10,7 +10,7 @@ import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
 const DEFAULT_MIN_CORRECT = 4;
-const DEFAULT_MAX_INCORRECT = 0;
+const DEFAULT_MAX_INCORRECT = 2;
 const DEFAULT_MAX_FAILURES_ALLOWED = 1;
 var onboardingFailuresCount = 0;
 

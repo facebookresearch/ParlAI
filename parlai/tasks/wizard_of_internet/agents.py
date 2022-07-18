@@ -654,6 +654,8 @@ class ContextGenerator:
         with open(opt['persona_path']) as f:
             self.personas = json.load(f)
 
+        self.opt_agent = opt.get('opt_agent')
+
     def get_context(self) -> dict:
         """
         Get context information to be shown at the beginning of one conversation. Values
@@ -667,6 +669,11 @@ class ContextGenerator:
 
         bot_persona_msg = persona
         human_persona = persona.replace('\n', ' ')
+        if self.opt_agent:
+            if '.\n' in bot_persona_msg:
+                bot_persona_msg = persona.replace('\n', ' ')
+            else:
+                bot_persona_msg = persona.replace('\n', '. ')
 
         human_persona_msg = f'You have the following persona: {human_persona}'
 
