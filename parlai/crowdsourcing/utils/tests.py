@@ -432,8 +432,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
 def collapse_whitespace(in_string: str):
     """
-    Helper function to remove extra whitespace that may make table outputs
-    direct checks fail
+    Helper function to remove extra whitespace that may make table outputs direct checks
+    fail.
     """
     while "  " in in_string:
         in_string = in_string.replace("  ", " ")
