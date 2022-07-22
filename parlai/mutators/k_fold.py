@@ -7,7 +7,7 @@
 from typing import List, Optional
 
 from parlai.core.message import Message
-from parlai.core.mutators import ManyEpisodeMutator, Mutator, register_mutator
+from parlai.core.mutators import ManyEpisodeMutator, register_mutator
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
@@ -23,7 +23,7 @@ This introduces a k-fold cross validation mutator, that withholds one fold from 
 @register_mutator("k_fold_withhold_on_train")
 class KFoldWithholdOnTrainMutator(ManyEpisodeMutator):
     """
-    Cross validation mutator, withhold a fold
+    Cross validation mutator, withhold a fold.
     """
 
     @classmethod
@@ -57,6 +57,9 @@ class KFoldWithholdOnTrainMutator(ManyEpisodeMutator):
 
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
         # assuming single message episode
+        assert (
+            len(episode) == 1
+        ), 'k_fold mutator only works with single message episode.'
         if not self.is_training:
             return [episode]
         message = episode[0]
@@ -76,6 +79,9 @@ class KFoldReleaseOnValidMutator(KFoldWithholdOnTrainMutator):
     # only use fold k for validation
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
         # assuming single message episode
+        assert (
+            len(episode) == 1
+        ), 'k_fold mutator only works with single message episode.'
         if self.is_training:
             return [episode]
         message = episode[0]

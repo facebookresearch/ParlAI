@@ -11,7 +11,6 @@ from parlai.core.mutators import MessageMutator, register_mutator
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
-from parlai.utils.misc import warn_once
 import hashlib
 import parlai.utils.logging as logging
 
@@ -24,8 +23,8 @@ work with binary classification only.
 """
 
 
-@register_mutator("flip_label")
-class FlipLabelMutator(MessageMutator):
+@register_mutator("flip_classification_label")
+class FlipClassificationLabelMutator(MessageMutator):
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -73,9 +72,7 @@ class FlipLabelMutator(MessageMutator):
                     elif labels[0] == '__notok__':
                         new_labels = ['__ok__']
                     else:
-                        raise ValueError(
-                            f'{type(self).__name__} labels are not in the right format!'
-                        )
+                        raise ValueError("labels must be '__ok__' and '__notok__'")
                     assert len(new_labels) == 1
             if flip:
                 message.force_set('labels', new_labels)
@@ -85,8 +82,8 @@ class FlipLabelMutator(MessageMutator):
         logging.info(f'Flipped {self.flip_cnt}')
 
 
-@register_mutator("flip_label_train_only")
-class FlipLabelTrainOnlyMutator(FlipLabelMutator):
+@register_mutator("flip_classification_label_train_only")
+class FlipClassificationLabelTrainOnlyMutator(FlipClassificationLabelMutator):
     def __init__(self, opt: Opt):
         super().__init__(opt)
         if not self.is_training:
@@ -101,10 +98,10 @@ class FlipLabelTrainOnlyMutator(FlipLabelMutator):
 
 
 @register_mutator("flip_label_valid_only")
-class FlipLabelValidOnlyMutator(FlipLabelMutator):
+class FlipClassificationLabelValidOnlyMutator(FlipClassificationLabelMutator):
     def __init__(self, opt: Opt):
         super().__init__(opt)
-        if not self.is_training:
+        if self.is_training:
             logging.info('No flipping in train mode.')
         return
 
@@ -115,8 +112,8 @@ class FlipLabelValidOnlyMutator(FlipLabelMutator):
             return super().message_mutation(message)
 
 
-@register_mutator("random_label")
-class RandomLabelMutator(FlipLabelMutator):
+@register_mutator("random_classification_label")
+class RandomClassificationLabelMutator(FlipClassificationLabelMutator):
     def message_mutation(self, message: Message) -> Message:
         message = copy.deepcopy(message)
         if 'labels' in message:
