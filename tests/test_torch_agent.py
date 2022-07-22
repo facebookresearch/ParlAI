@@ -829,8 +829,6 @@ class TestTorchAgent(unittest.TestCase):
         """
         Test that history handles timestep properly.
         """
-        # try with unlimited history
-        agent = get_agent(history_size=-1, timestep_field='timestep')
         obs = {
             'speaker': 'Groot',
             'text': 'I am Groot.',
@@ -852,6 +850,9 @@ class TestTorchAgent(unittest.TestCase):
             'timestep': '00:00:30',
             'episode_done': False,
         }
+
+        # try with unlimited history
+        agent = get_agent(history_size=-1, timestep_field='timestep')
 
         # first exchange
         agent.history.update_history(obs)
@@ -927,6 +928,39 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text, 'I am Groot.\t00:00:00\nI am Groot?\t00:00:10\nI am Groot!\t00:00:20'
+        )
+
+        # alternate between messages with and without timestep
+        _obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
+        _obs2 = {
+            'speaker': 'Groot',
+            'text': 'I am Groot!',
+            'labels': ['I am Groot!?'],
+            'episode_done': False,
+        }
+        agent = get_agent(history_size=-1, timestep_field='timestep')
+
+        # first exchange, with timestep
+        agent.history.update_history(_obs)
+        text = agent.history.get_history_str_with_timesteps()
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
+
+        # second exchange, no timestep
+        agent.history.update_history(_obs2)
+        text = agent.history.get_history_str_with_timesteps()
+        self.assertEqual(text, 'I am Groot.\t00:00:00\nI am Groot!\t')
+
+        # third exchange, with timestep
+        agent.history.update_history(_obs)
+        text = agent.history.get_history_str_with_timesteps()
+        self.assertEqual(
+            text, 'I am Groot.\t00:00:00\nI am Groot!\t\nI am Groot.\t00:00:00'
         )
 
         # now test add_person_tokens
