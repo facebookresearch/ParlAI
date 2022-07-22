@@ -856,46 +856,48 @@ class TestTorchAgent(unittest.TestCase):
         # first exchange
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
 
         # second exchange, no reply
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00\nI am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00\nI am Groot.\t00:00:00')
 
         # include reply
-        agent.history.add_reply('I am Groot?', '00:00:10')
+        agent.history.add_timestep('00:00:10')
+        agent.history.add_reply('I am Groot?')
         agent.history.update_history(obs2)
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text,
-            'I am Groot.\n00:00:00\nI am Groot.\n00:00:00\nI am Groot?\n00:00:10\nI am Groot!\n00:00:20',
+            'I am Groot.\t00:00:00\nI am Groot.\t00:00:00\nI am Groot?\t00:00:10\nI am Groot!\t00:00:20',
         )
 
         # on reset should be same as first exchange
         agent.history.reset()
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
 
         # now try with history size = 1
         agent = get_agent(history_size=1, timestep_field='timestep')
         # first exchange
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
         # second exchange should change nothing
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
         # third exchange with reply should change nothing
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
         # now if we add the reply, we should only have the reply left
-        agent.history.add_reply(obs['labels'][0], '00:00:10')
+        agent.history.add_timestep('00:00:10')
+        agent.history.add_reply(obs['labels'][0])
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot?\n00:00:10')
+        self.assertEqual(text, 'I am Groot?\t00:00:10')
 
         # now try with history size = 2
         agent = get_agent(history_size=2, timestep_field='timestep')
@@ -903,26 +905,28 @@ class TestTorchAgent(unittest.TestCase):
         # first exchange
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
 
         # second exchange with reply should contain reply
-        agent.history.add_reply('I am Groot?', '00:00:10')
+        agent.history.add_timestep('00:00:10')
+        agent.history.add_reply('I am Groot?')
         agent.history.update_history(obs2)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot?\n00:00:10\nI am Groot!\n00:00:20')
+        self.assertEqual(text, 'I am Groot?\t00:00:10\nI am Groot!\t00:00:20')
 
         # now try with history size = 3
         agent = get_agent(history_size=3, timestep_field='timestep')
         # first exchange
         agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.\n00:00:00')
+        self.assertEqual(text, 'I am Groot.\t00:00:00')
         # second exchange with reply should contain reply and input
-        agent.history.add_reply('I am Groot?', '00:00:10')
+        agent.history.add_timestep('00:00:10')
+        agent.history.add_reply('I am Groot?')
         agent.history.update_history(obs2)
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
-            text, 'I am Groot.\n00:00:00\nI am Groot?\n00:00:10\nI am Groot!\n00:00:20'
+            text, 'I am Groot.\t00:00:00\nI am Groot?\t00:00:10\nI am Groot!\t00:00:20'
         )
 
         # now test add_person_tokens
@@ -938,13 +942,14 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, '{} I am Groot.'.format(obs['speaker']))
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, '{} I am Groot.\n00:00:00'.format(obs['speaker']))
+        self.assertEqual(text, '{} I am Groot.\t00:00:00'.format(obs['speaker']))
         self.assertEqual(
             agent.history.speakers,
             set([obs['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
         )
         # second exchange, history should still contain the tokens
-        agent.history.add_reply('I am Groot?', '00:00:10')
+        agent.history.add_timestep('00:00:10')
+        agent.history.add_reply('I am Groot?')
         agent.history.update_history(obs3)
         text = agent.history.get_history_str()
         self.assertEqual(
@@ -956,7 +961,7 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text,
-            "{} I am Groot.\n00:00:00\n{} I am Groot?\n00:00:10\n{} I'm pretty sure the answer is 'I am Groot.'\n00:00:30".format(
+            "{} I am Groot.\t00:00:00\n{} I am Groot?\t00:00:10\n{} I'm pretty sure the answer is 'I am Groot.'\t00:00:30".format(
                 obs['speaker'], agent.P2_TOKEN, obs3['speaker']
             ),
         )
@@ -982,10 +987,11 @@ class TestTorchAgent(unittest.TestCase):
         )
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
-            text, 'Groot is Groot.\n{} I am Groot.\n00:00:00'.format(ctx_obs['speaker'])
+            text, 'Groot is Groot.\n{} I am Groot.\t00:00:00'.format(ctx_obs['speaker'])
         )
         # second exchange, history should still contain context text
-        agent.history.add_reply('I am Groot?', '00:00:10')
+        agent.history.add_timestep('00:00:10')
+        agent.history.add_reply('I am Groot?')
         agent.history.update_history(obs2)
         text = agent.history.get_history_str()
         self.assertEqual(
@@ -997,7 +1003,7 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text,
-            'Groot is Groot.\n{} I am Groot.\n00:00:00\n{} I am Groot?\n00:00:10\n{} I am Groot!\n00:00:20'.format(
+            'Groot is Groot.\n{} I am Groot.\t00:00:00\n{} I am Groot?\t00:00:10\n{} I am Groot!\t00:00:20'.format(
                 ctx_obs['speaker'], agent.P2_TOKEN, obs2['speaker']
             ),
         )
@@ -1040,17 +1046,17 @@ class TestTorchAgent(unittest.TestCase):
             timestep_field='timestep',
         )
         agent.history.reset()
-        agent.history.update_history(obs, temp_timestep=' 00:00:40')
+        agent.history.update_history(obs, temp_timestep='__delim__00:00:40')
         text = agent.history.get_history_str_with_timesteps()
-        self.assertEqual(text, 'I am Groot.__delim__00:00:00 00:00:40')
+        self.assertEqual(text, 'I am Groot.\t00:00:00__delim__00:00:40')
         vec = agent.history.get_history_timestep_vec()
         self.assertEqual(vec, [1, 1])
 
-        agent.history.update_history(obs, temp_timestep=' 00:00:40')
+        agent.history.update_history(obs, temp_timestep='__delim__00:00:40')
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text,
-            'I am Groot.__delim__00:00:00__delim__I am Groot.__delim__00:00:00 00:00:40',
+            'I am Groot.\t00:00:00__delim__I am Groot.\t00:00:00__delim__00:00:40',
         )
         vecs = agent.history.get_history_timestep_list()
         self.assertEqual(vecs, ['00:00:00', '00:00:00'])
@@ -1066,7 +1072,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.update_history({'text': 'i am bob', 'timestep': '00:00:10'})
         assert (
             agent.history.get_history_str_with_timesteps()
-            == 'hello i am jimmy\n00:00:00\ni am bob\n00:00:10'
+            == 'hello i am jimmy\t00:00:00\ni am bob\t00:00:10'
         )
         agent.history.reset()
         agent.history.update_history(
@@ -1075,7 +1081,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.history.update_history({'text': 'i am bob', 'timestep': '00:00:10'})
         assert (
             agent.history.get_history_str_with_timesteps()
-            == 'your persona: filler\nhello i am jimmy\n00:00:00\ni am bob\n00:00:10'
+            == 'your persona: filler\nhello i am jimmy\t00:00:00\ni am bob\t00:00:10'
         )
 
     def test_observe(self):
@@ -1447,7 +1453,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent.history.get_history_str(), 'Call\nResponse')
         self.assertEqual(
             agent.history.get_history_str_with_timesteps(),
-            'Call\n00:00:00\nResponse\n00:00:00',
+            'Call\t00:00:00\nResponse\t00:00:00',
         )
         # check if there is no label
         agent.reset()
@@ -1459,7 +1465,7 @@ class TestTorchAgent(unittest.TestCase):
         )
         self.assertEqual(
             agent.history.get_history_str_with_timesteps(),
-            'Call\n00:00:00\nEvaluating 0 (responding to [[1]])!\n00:00:00',
+            'Call\t00:00:00\nEvaluating 0 (responding to [[1]])!\t00:00:00',
         )
         # now some of the other possible values of --use-reply
         # --use-reply model. even if there is a label, we should see the model's out
@@ -1477,7 +1483,7 @@ class TestTorchAgent(unittest.TestCase):
         self.assertEqual(agent.history.get_history_str(), 'Call\nTraining 0!')
         self.assertEqual(
             agent.history.get_history_str_with_timesteps(),
-            'Call\n00:00:00\nTraining 0!\n00:00:00',
+            'Call\t00:00:00\nTraining 0!\t00:00:00',
         )
         # --use-reply none doesn't hear itself
         agent = get_agent(use_reply='none', timestep_field='timestep')
@@ -1493,7 +1499,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call')
         self.assertEqual(
-            agent.history.get_history_str_with_timesteps(), 'Call\n00:00:00'
+            agent.history.get_history_str_with_timesteps(), 'Call\t00:00:00'
         )
 
     def test_mturk_racehistory(self):

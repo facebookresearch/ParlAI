@@ -268,6 +268,7 @@ class History(object):
         self.field = field
         self.dict = dict_agent
         self.delimiter = opt.get('delimiter', '\n')
+        self.timestep_delimiter = opt.get('timestep-delimiter', '\t')
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
@@ -352,7 +353,7 @@ class History(object):
                 self.history_timestep_vecs.pop(0)
         self.history_timestep_vecs.append(self.parse_timestep(timestep))
 
-    def add_reply(self, text, timestep=None):
+    def add_reply(self, text):
         """
         Add your own response to the history.
         """
@@ -363,11 +364,12 @@ class History(object):
         self._update_strings(text)
         # update history vecs
         self._update_vecs(text)
-        if self.timestep_field is not None:
-            # update history timesteps
-            self._update_timesteps(timestep)
-            # update history timestep vecs
-            self._update_timestep_vecs(timestep)
+
+    def add_timestep(self, timestep):
+        # update history timesteps
+        self._update_timesteps(timestep)
+        # update history timestep vecs
+        self._update_timestep_vecs(timestep)
 
     def update_history(
         self,
@@ -391,8 +393,8 @@ class History(object):
                 next_texts = obs[self.field].split('\n')
             else:
                 next_texts = [obs[self.field]]
-            timestep = None
-            if self.timestep_field in obs and obs[self.timestep_field] is not None:
+            timestep = ''
+            if self.timestep_field in obs and obs[self.timestep_field]:
                 timestep = obs[self.timestep_field]
             for text in next_texts:
                 self._update_raw_strings(text)
@@ -413,11 +415,7 @@ class History(object):
                 self._update_strings(text)
                 # update history vecs
                 self._update_vecs(text)
-                if self.timestep_field is not None:
-                    # update history timesteps
-                    self._update_timesteps(timestep)
-                    # update history timestep vects
-                    self._update_timestep_vecs(timestep)
+                self.add_timestep(timestep)
 
         self.temp_history = temp_history
         self.temp_timestep = temp_timestep
@@ -473,7 +471,7 @@ class History(object):
             history = self.history_strings[:]
             timesteps = self.history_timesteps[:]
             history = self.delimiter.join(
-                [f"{h}{self.delimiter}{t}" for h, t in zip(history, timesteps)]
+                [f"{h}{self.timestep_delimiter}{t}" for h, t in zip(history, timesteps)]
             )
             if self.temp_history is not None:
                 history += self.temp_history
@@ -617,9 +615,9 @@ class TorchAgent(ABC, Agent):
         )
         agent.add_argument(
             '--silence-token',
-            type='nonestr',
-            default=None,
-            help='The token to indicate inaction by agent. Defaults to None.',
+            type=str,
+            default='__SILENCE__',
+            help="The token (a string) to indicate inaction by agent. Defaults to '__SILENCE__.'",
         )
         # pretrained embedding arguments
         agent.add_argument(
@@ -793,19 +791,18 @@ class TorchAgent(ABC, Agent):
         agent.add_argument(
             '-spkr',
             '--speaker-field',
-            type='nonestr',
-            default=None,
+            type=str,
+            default='id',
             help="field in the observation to track indicating the id of the speaker "
-            "over the course of the episode (defaults to None); `observation['speaker_field']` "
-            "overrides `__p1__` in `--person-tokens` if field is not None and is present in the observation.",
+            "over the course of the episode (defaults to 'id'); `observation['speaker_field']` "
+            "overrides `__p1__` in `--person-tokens` if field is present in the observation.",
         )
         agent.add_argument(
-            '-tstep',
             '--timestep-field',
-            type='nonestr',
-            default=None,
+            type=str,
+            default='timestep',
             help="field in the observation to track indicating the timestep of the message "
-            "over the course of the episode (defaults to None). If set, `obs[timestep]` will get "
+            "over the course of the episode (defaults to 'timestep'). If set, `obs[timestep]` will get "
             "saved in the `self.history_timesteps` field of history memory.",
         )
         agent.add_argument(
@@ -839,6 +836,12 @@ class TorchAgent(ABC, Agent):
             type=str,
             default='\n',
             help='Join history lines with this token, defaults to newline',
+        )
+        agent.add_argument(
+            '--timestep-delimiter',
+            type=str,
+            default='\t',
+            help='Join text and timestep with this token, defaults to tab',
         )
         agent.add_argument(
             '--history-add-global-end-token',
@@ -1013,10 +1016,10 @@ class TorchAgent(ABC, Agent):
         return speaker
 
     def _get_timestep_from_observation(self, observation: Message):
-        timestep_field = self.opt.get('timestep_field', None)
-        timestep = None
+        timestep_field = self.opt.get('timestep_field', 'timestep')
+        timestep = ''
         if timestep_field:
-            timestep = observation.get(timestep_field, None)
+            timestep = observation.get(timestep_field, '')
         return timestep
 
     def _resize_token_embeddings(self, state_dict, msg=None):
@@ -2107,7 +2110,8 @@ class TorchAgent(ABC, Agent):
                 last_reply = lbls[0] if len(lbls) == 1 else self.random.choice(lbls)
                 # Disregard any silence output in history, if not recording silence
                 if self.record_silence or last_reply != self.silence_token:
-                    self.history.add_reply(last_reply, timestep)
+                    self.history.add_timestep(timestep)
+                    self.history.add_reply(last_reply)
                 return
             # you might expect a hard failure here, but in interactive mode we'll
             # never get a label
@@ -2117,11 +2121,12 @@ class TorchAgent(ABC, Agent):
             last_reply = self_message['text']
             # If model does not output a timestep, use the last observation by default
             last_timestep = self._get_timestep_from_observation(self_message)
-            if last_timestep is None:
+            if not last_timestep:
                 last_timestep = self._get_timestep_from_observation(self.observation)
             # Disregard any silence output in history, if not recording silence
             if self.record_silence or last_reply != self.silence_token:
-                self.history.add_reply(last_reply, last_timestep)
+                self.history.add_timestep(last_timestep)
+                self.history.add_reply(last_reply)
             return
 
         raise RuntimeError("Unexpected case in self_observe.")
