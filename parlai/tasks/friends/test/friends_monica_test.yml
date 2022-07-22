@@ -1,59 +1,103 @@
 acts:
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay
     episode_done: false
     eval_labels:
-    - 'Monica Geller: __SILENCE__'
+    - Joey, you're this guy's teacher. I mean how could you do this?
     id: friends:monica
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    text: 'Chandler Bing: You told him to play the boxer gay!!
+
+      Joey Tribbiani: Well, I-I might''ve said supergay.
+
+      Chandler Bing: You totally screwed him over.
+
+      Monica Geller:'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
     episode_done: false
     eval_labels:
-    - 'Monica Geller: __SILENCE__'
+    - I know it's last minute, but we decided to have a Halloween party.
     id: friends:monica
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Monica Geller: Hey you guys?
 
-      Rachel Green: Ooy.'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+      Ross Geller: What?
+
+      Monica Geller:'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
     episode_done: false
     eval_labels:
-    - 'Monica Geller: __SILENCE__'
+    - And everybody has to wear costumes. Come on! It'll be fun!
     id: friends:monica
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Monica Geller: Hey you guys?
 
-      Rachel Green: Ooy.
+      Ross Geller: What?
 
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+      Monica Geller: I know it''s last minute, but we decided to have a Halloween
+      party.
+
+      Phoebe Buffay: Oh good!
+
+      Monica Geller:'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
     episode_done: false
     eval_labels:
-    - 'Monica Geller: __SILENCE__'
+    - You have to!
     id: friends:monica
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Monica Geller: Hey you guys?
 
-      Rachel Green: Ooy.
+      Ross Geller: What?
 
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?
+      Monica Geller: I know it''s last minute, but we decided to have a Halloween
+      party.
 
-      Rachel Green: Oh my god, are we supposed to answer?'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+      Phoebe Buffay: Oh good!
+
+      Monica Geller: And everybody has to wear costumes. Come on! It''ll be fun!
+
+      Ross Geller: Well, I''ll-I''ll be there. I mean I have to wear a costume to
+      all my classes that day anyway so...
+
+      Rachel Green: Please tell me you''re not gonna dress up like a dinosaur.
+
+      Ross Geller: Not two years in a row.
+
+      Joey Tribbiani: Look, I''ll come to the party but I''m not dressing up.
+
+      Monica Geller:'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
     episode_done: false
     eval_labels:
-    - 'Monica Geller: __SILENCE__'
+    - So Ross, are you gonna bring Mona?
     id: friends:monica
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Monica Geller: Hey you guys?
 
-      Rachel Green: Ooy.
+      Ross Geller: What?
 
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?
+      Monica Geller: I know it''s last minute, but we decided to have a Halloween
+      party.
 
-      Rachel Green: Oh my god, are we supposed to answer?
+      Phoebe Buffay: Oh good!
 
-      Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
-      which I''m still fine with by the way. E is for how extremely normal I find
-      it. That you two are together. And now one day you might get married and have
-      children of your own.'
+      Monica Geller: And everybody has to wear costumes. Come on! It''ll be fun!
+
+      Ross Geller: Well, I''ll-I''ll be there. I mean I have to wear a costume to
+      all my classes that day anyway so...
+
+      Rachel Green: Please tell me you''re not gonna dress up like a dinosaur.
+
+      Ross Geller: Not two years in a row.
+
+      Joey Tribbiani: Look, I''ll come to the party but I''m not dressing up.
+
+      Monica Geller: You have to!
+
+      Joey Tribbiani: No way! Look, Halloween is so stupid! Dressing up, pretending
+      to be someone you''re not...
+
+      Chandler Bing: You''re an actor!
+
+      Monica Geller:'
 num_episodes: 302
 num_examples: 5774
