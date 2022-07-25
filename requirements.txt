@@ -1,6 +1,4 @@
 # comment just to bump caches
-boto3==1.17.95
-botocore==1.20.95
 coloredlogs==14.0
 datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
@@ -14,12 +12,12 @@ importlib-metadata<4.3
 iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
-hydra-core~=1.1.0
+hydra-core>=1.1.0
 ipython==7.31.1
 torch>=1.4.0
 joblib==0.14.1
 nltk==3.6.6
-omegaconf~=2.1.1
+omegaconf>=2.1.1
 pandas==1.4.0
 pytest_regressions==2.1.1
 pytest==5.3.2
@@ -51,7 +49,6 @@ typing-extensions==3.7.4.3
 Unidecode==1.1.1
 urllib3>=1.26.5
 websocket-client==0.56.0
-websocket-server==0.4
 jsonlines==1.2.0
 numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
 markdown<=3.3.2 # Pin to something that works so tests are happy

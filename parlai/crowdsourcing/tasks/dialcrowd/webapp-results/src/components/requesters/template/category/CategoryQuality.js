@@ -66,9 +66,18 @@ function getWorkerQuality(t) {
         var userdata = {}
         var userid = user['userId']
 
-        timings.push((user['mephisto_data']['times']['task_end'] - user['mephisto_data']['times']['task_start']).toFixed(2))
+        var has_times_dict = user['mephisto_data']['times'] !== undefined;
+        var run_time = -1;
+        if (has_times_dict) {
+          run_time = user['mephisto_data']['times']['task_end'] - user['mephisto_data']['times']['task_start']
+        } else {
+          console.log("Run time could not be computed, as it must be pulled from metadata.")
+          console.log("Please update the server if you want this functionality.")
+        }
 
-        userdata['time'] = (user['mephisto_data']['times']['task_end'] - user['mephisto_data']['times']['task_start']).toFixed(2)
+        timings.push((run_time).toFixed(2))
+
+        userdata['time'] = (run_time).toFixed(2)
 
         user['mephisto_data']['inputs'].forEach((data, j) => {
           input_sentences[data['id']] = data['sentences'][0]
