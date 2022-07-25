@@ -40,7 +40,7 @@ class KFoldWithholdOnTrainMutator(ManyEpisodeMutator):
         agent.add_argument(
             '--held-fold',
             type=int,
-            help='the curent fold reserved from training',
+            help='the current fold reserved from training',
         )
         return parser
 
@@ -48,6 +48,10 @@ class KFoldWithholdOnTrainMutator(ManyEpisodeMutator):
         super().__init__(opt)
         self.k_fold = opt['k_fold']
         self.held_fold = opt['held_fold']
+        assert self.held_fold >= 0, f'held_fold should be greater than 0.'
+        assert (
+            self.held_fold < self.k_fold
+        ), f'held_fold should be smaller than {self.k_fold}.'
         logging.info(
             f'We are doing {self.k_fold}-fold with {self.held_fold} held from training.'
         )

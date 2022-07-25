@@ -36,6 +36,12 @@ class FlipClassificationLabelMutator(MessageMutator):
             type=float,
             help='The probability of label flipping',
         )
+        agent.add_argument(
+            '--classification-label-to-mutate',
+            default='__ok__,__notok__',
+            type=str,
+            help='The binary labels in the data for flipping / random assignment. seprated by ,',
+        )
         return parser
 
     def __init__(self, opt: Opt):
@@ -46,6 +52,7 @@ class FlipClassificationLabelMutator(MessageMutator):
             logging.info('No noise, teacher should be the same as before.')
         if opt['noise_level'] == 1:
             logging.info('Labels are exact the opposite.')
+        self.labels = opt['classification_label_to_flip'].split(',')
         self.noise_level = opt['noise_level']
         logging.info(f'Flipping with noise level {self.noise_level}')
         self.is_training = DatatypeHelper.is_training(opt['datatype'])
@@ -67,12 +74,14 @@ class FlipClassificationLabelMutator(MessageMutator):
                 # deterministic flipping for each example
                 if flip:
                     self.flip_cnt += 1
-                    if labels[0] == '__ok__':
-                        new_labels = ['__notok__']
-                    elif labels[0] == '__notok__':
-                        new_labels = ['__ok__']
+                    if labels[0] == self.labels[0]:
+                        new_labels = [self.labels[1]]
+                    elif labels[0] == self.labels[1]:
+                        new_labels = [self.labels[0]]
                     else:
-                        raise ValueError("labels must be '__ok__' and '__notok__'")
+                        raise ValueError(
+                            f'labels must be binary and the same as in {self.labels}'
+                        )
                     assert len(new_labels) == 1
             if flip:
                 message.force_set('labels', new_labels)
@@ -97,7 +106,7 @@ class FlipClassificationLabelTrainOnlyMutator(FlipClassificationLabelMutator):
             return super().message_mutation(message)
 
 
-@register_mutator("flip_label_valid_only")
+@register_mutator("flip_classification_label_valid_only")
 class FlipClassificationLabelValidOnlyMutator(FlipClassificationLabelMutator):
     def __init__(self, opt: Opt):
         super().__init__(opt)
@@ -130,9 +139,9 @@ class RandomClassificationLabelMutator(FlipClassificationLabelMutator):
                 if flip:
                     self.flip_cnt += 1
                     if hashlib.md5(text.encode('utf8')).digest()[1] / 256 > 0.5:
-                        new_labels = ['__notok__']
+                        new_labels = [self.labels[0]]
                     else:
-                        new_labels = ['__ok__']
+                        new_labels = [self.labels[1]]
 
                     assert len(new_labels) == 1
             if flip:
