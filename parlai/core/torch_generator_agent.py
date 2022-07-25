@@ -425,7 +425,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam', 'delayednucleusbeam'},
+            choices={
+                'beam',
+                'greedy',
+                'topk',
+                'nucleus',
+                'delayedbeam',
+                'delayednucleusbeam',
+            },
             default='greedy',
             help='Generation algorithm',
         )
@@ -1886,7 +1893,9 @@ class DelayedNucleusBeamSearch(TreeSearch):
 
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         if current_length < self.delay:
-            return NucleusSampling.select_paths(self, logprobs, prior_scores, current_length)
+            return NucleusSampling.select_paths(
+                self, logprobs, prior_scores, current_length
+            )
         else:
             return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
 
