@@ -36,11 +36,13 @@ class KFoldWithholdOnTrainMutator(ManyEpisodeMutator):
             '--k-fold',
             type=int,
             help='the number of k-fold',
+            default=3,
         )
         agent.add_argument(
             '--held-fold',
             type=int,
             help='the current fold reserved from training',
+            default=0,
         )
         return parser
 
