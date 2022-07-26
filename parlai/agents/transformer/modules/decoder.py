@@ -21,6 +21,7 @@ from parlai.agents.transformer.modules import (
     LAYER_NORM_EPS,
     MultiHeadAttention,
     TransformerFFN,
+    Triton_MHA,
 )
 from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
@@ -427,7 +428,7 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
 
 @swappable(
     self_attention=MultiHeadAttention,
-    encoder_attention=MultiHeadAttention,
+    encoder_attention=Triton_MHA,
     feedforward=TransformerFFN,
 )
 class TransformerDecoderLayer(BaseTransformerDecoderLayer):
