@@ -283,7 +283,9 @@ class History(object):
         self.history_strings = []
         self.history_raw_strings = []
         self.history_vecs = []
+        # history_timesteps stores timesteps in its raw form (e.g. ['00:00:00', '00:03:10'])
         self.history_timesteps = []
+        # history_timestep_vecs is the vectorized version of history_timesteps (e.g. [[0, 0, 0], [0, 3, 10]])
         self.history_timestep_vecs = []
         self.temp_history = None
         self.temp_timestep = None
@@ -345,12 +347,9 @@ class History(object):
         if self.size > 0:
             while len(self.history_timesteps) >= self.size:
                 self.history_timesteps.pop(0)
-        self.history_timesteps.append(timestep)
-
-    def _update_timestep_vecs(self, timestep):
-        if self.size > 0:
             while len(self.history_timestep_vecs) >= self.size:
                 self.history_timestep_vecs.pop(0)
+        self.history_timesteps.append(timestep)
         self.history_timestep_vecs.append(self.parse_timestep(timestep))
 
     def add_reply(self, text):
@@ -368,8 +367,6 @@ class History(object):
     def add_timestep(self, timestep):
         # update history timesteps
         self._update_timesteps(timestep)
-        # update history timestep vecs
-        self._update_timestep_vecs(timestep)
 
     def update_history(
         self,
@@ -1872,15 +1869,10 @@ class TorchAgent(ABC, Agent):
                 )
 
         # TIME_STEPS
-        ts = t_lens = None
-        if any(ex.get('timestep_vec') is not None for ex in exs):
+        ts = None
+        if any(ex.get('timestep_vec') for ex in exs):
             _ts = [ex.get('timestep_vec', self.EMPTY) for ex in exs]
-            ts, t_lens = self._pad_tensor(_ts)
-            if sort:
-                sort = False  # now we won't sort on labels
-                ts, t_lens, valid_inds, exs = argsort(
-                    t_lens, ts, t_lens, valid_inds, exs, descending=True
-                )
+            ts, _ = self._pad_tensor(_ts)
 
         # LABELS
         labels_avail = any('labels_vec' in ex for ex in exs)
