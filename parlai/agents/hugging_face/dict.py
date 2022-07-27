@@ -16,7 +16,7 @@ from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer, T5TokenizerFast
+    from transformers import GPT2Tokenizer, T5TokenizerFast, AutoTokenizer
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
@@ -245,3 +245,65 @@ class T5DictionaryAgent(HuggingFaceDictionaryAgent):
         self.start_idx = self[self.start_token]
         self.end_idx = self[self.end_token]
         self.null_idx = self[self.null_token]
+
+
+class OPTDictionaryAgent(HuggingFaceDictionaryAgent):
+    @property
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+        """
+        return True
+
+    @property
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to skip special tokens when converting tokens to text.
+        """
+        return False
+
+    def get_tokenizer(self, opt):
+        """
+        Instantiate tokenizer.
+        """
+        return AutoTokenizer.from_pretrained("facebook/opt-350m")
+
+    def add_additional_special_tokens(self, additional_special_tokens: List[str]):
+        """
+        Add additional special tokens to the dictionary.
+        """
+        self.additional_special_tokens = additional_special_tokens
+        self.hf_tokenizer.add_special_tokens(
+            {'additional_special_tokens': additional_special_tokens}
+        )
+        for tok in self.additional_special_tokens:
+            self.add_token(tok)
+
+    def _define_special_tokens(self, opt):
+        if opt["add_special_tokens"]:
+            # Add additional start/end/pad tokens
+            self.hf_tokenizer.add_special_tokens(SPECIAL_TOKENS)
+            self.start_token = SPECIAL_TOKENS["bos_token"]
+            self.end_token = SPECIAL_TOKENS["eos_token"]
+            self.null_token = SPECIAL_TOKENS["pad_token"]
+        else:
+            # Only special token is end of text
+            self.start_token = NO_OP  # hack, we cut off the start token
+            self.end_token = "<|endoftext|>"
+            self.null_token = "<|endoftext|>"
+
+    def override_special_tokens(self, opt):
+        # define special tokens
+        self._define_special_tokens(opt)
+        # now override
+        self.start_idx = self.hf_tokenizer.convert_tokens_to_ids([self.start_token])[0]
+        self.end_idx = self.hf_tokenizer.convert_tokens_to_ids([self.end_token])[0]
+        self.null_idx = self.hf_tokenizer.convert_tokens_to_ids([self.null_token])[0]
+        # set tok2ind for special tokens
+        self.tok2ind[self.end_token] = self.end_idx
+        self.tok2ind[self.start_token] = self.start_idx
+        self.tok2ind[self.null_token] = self.null_idx
+        # set ind2tok for special tokens
+        self.ind2tok[self.end_idx] = self.end_token
+        self.ind2tok[self.start_idx] = self.start_token
+        self.ind2tok[self.null_idx] = self.null_token
