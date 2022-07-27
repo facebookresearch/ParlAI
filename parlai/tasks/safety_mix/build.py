@@ -11,6 +11,7 @@ import hashlib
 import random
 import copy
 import numpy as np
+import json
 
 RESOURCES = [
     DownloadableFile(
@@ -20,8 +21,23 @@ RESOURCES = [
         zipped=False,
     ),
 ]
-
+# The size of safety mix
 DATA_SIZE = {'train': 200, 'valid': 24, 'test': 24}
+
+TROLL_TYPES = [
+    'troll',
+    'master_troll',
+    'lazy_troll',
+    'safe_troll',
+    'unsafe_troll',
+    'gaslight_troll',
+]
+
+FILE_TYPE_EXTENSIONS = {
+    'train': '_train.jsonl',
+    'valid': '_valid.jsonl',
+    'test': '_test.jsonl',
+}
 
 
 def flip_labels(samples, N):
@@ -138,7 +154,9 @@ def set_random_labels(samples, N):
     return samples
 
 
-def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios):
+def generate_user_based_dataset(
+    N, generation_fold, safety_dataset, user_ratios, random_int_for_sample
+):
     total_number_of_samples = DATA_SIZE[generation_fold]
     # Take the first 800 samples from safety set to make it balanced between good and bad.
     standard_safe = safety_dataset['standard'][generation_fold]['1']['good'][:800]
@@ -154,15 +172,16 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         adversarial_safe + adversarial_unsafe,
         len(adversarial_safe + adversarial_unsafe),
     )
-    # for each type of trolls:
-    # helper:
-    # sample utterance number
     user_id = 0
 
     # for helpers
     helper_utterance_num = int(total_number_of_samples * user_ratios['helper'])
     helper_samples, user_id = sample_from_single_dataset(
-        standard_dataset_for_sample, 'standard', helper_utterance_num, user_id
+        standard_dataset_for_sample,
+        'standard',
+        helper_utterance_num,
+        user_id,
+        random_int_for_sample,
     )
     helper_samples = set_user_type(helper_samples, 'helper')
 
@@ -175,13 +194,18 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         'adversarial',
         master_helper_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     master_helper_samples = set_user_type(master_helper_samples, 'master_helper')
 
     # for trolls
     troll_utterance_num = int(total_number_of_samples * user_ratios['troll'])
     troll_samples, user_id = sample_from_single_dataset(
-        standard_dataset_for_sample, 'standard', troll_utterance_num, user_id
+        standard_dataset_for_sample,
+        'standard',
+        troll_utterance_num,
+        user_id,
+        random_int_for_sample,
     )
     # flip samples for trolls
     troll_samples = flip_labels(troll_samples, N)
@@ -196,6 +220,7 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         'adversarial',
         master_troll_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     # flip samples for master trolls
     master_troll_samples = flip_labels(master_troll_samples, N)
@@ -208,6 +233,7 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         adversarial_dataset_for_sample,
         safe_troll_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     safe_troll_samples = set_labels(safe_troll_samples, '__ok__')
     safe_troll_samples = set_user_type(safe_troll_samples, 'safe_troll')
@@ -221,6 +247,7 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         adversarial_dataset_for_sample,
         unsafe_troll_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     unsafe_troll_samples = set_labels(unsafe_troll_samples, '__notok__')
     unsafe_troll_samples = set_user_type(unsafe_troll_samples, 'unsafe_troll')
@@ -234,6 +261,7 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         'standard',
         happy_helper_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     happy_helper_samples = set_user_type(happy_helper_samples, 'happy_helper')
 
@@ -246,6 +274,7 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         'adversarial',
         gaslight_troll_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     gaslight_troll_samples = set_labels(gaslight_troll_samples, '__ok__')
     gaslight_troll_samples = set_user_type(gaslight_troll_samples, 'gaslight_troll')
@@ -257,6 +286,7 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
         adversarial_dataset_for_sample,
         lazy_troll_utterance_num,
         user_id,
+        random_int_for_sample,
     )
     lazy_troll_samples = set_random_labels(lazy_troll_samples, N)
     lazy_troll_samples = set_user_type(lazy_troll_samples, 'lazy_troll')
@@ -275,6 +305,31 @@ def generate_user_based_dataset(N, generation_fold, safety_dataset, user_ratios)
     return dataset
 
 
+def save_dataset_for_two_class(dataset, troll_type, output_data_path, generate_fold):
+    # split dataset into postive and negative for balanced training
+    dataset_pos = []
+    dataset_neg = []
+    for each_sample in dataset:
+        if each_sample['labels'][0] == '__ok__':
+            dataset_pos.append(each_sample)
+        else:
+            dataset_neg.append(each_sample)
+    output_file_name = os.path.join(
+        output_data_path, 'pos_' + troll_type + FILE_TYPE_EXTENSIONS[generate_fold]
+    )
+    with open(output_file_name, 'w') as outfile:
+        for json_blob in dataset_pos:
+            outfile.write(json.dumps(json_blob))
+            outfile.write("\n")
+    output_file_name = os.path.join(
+        output_data_path, 'neg_' + troll_type + FILE_TYPE_EXTENSIONS[generate_fold]
+    )
+    with open(output_file_name, 'w') as outfile:
+        for json_blob in dataset_neg:
+            outfile.write(json.dumps(json_blob))
+            outfile.write("\n")
+
+
 def build(datapath):
     version = 'v1.0'
     dpath = os.path.join(datapath, 'safety_mix')
@@ -291,6 +346,37 @@ def build(datapath):
             downloadable_file.download_file(dpath)
         random.seed(42)
         np.random.seed(42)
-
-        # Mark the data as built.
-        build_data.mark_done(dpath, version)
+        # The number of user utterances for sampling
+        random_nums = np.random.normal(loc=10, scale=2, size=100000)
+        random_int_for_sample = np.round(random_nums)
+        # load safety dataset
+        with open(os.path.join(dpath, 'single_turn_safety.json')) as safety_file:
+            safety_data = json.load(safety_file)
+        for troll_type in TROLL_TYPES:
+            # by default we do a 50% 50% mix with helpers and trolls
+            ratios = {
+                'helper': 0.5,
+                'troll': 0.0,
+                'master_helper': 0.0,
+                'master_troll': 0.0,
+                'lazy_troll': 0.0,
+                'safe_troll': 0.0,
+                'unsafe_troll': 0.0,
+                'gaslight_troll': 0.0,
+                'happy_helper': 0.0,
+            }
+            # Set the troll type 50% accordingly
+            ratios[troll_type] = 0.5
+            # Set the noise ratio N for some type of trolls
+            N = 0.8
+            for generation_fold in ['train', 'valid', 'test']:
+                # for deterministic data generation
+                random.seed(42)
+                np.random.seed(42)
+                dataset = generate_user_based_dataset(
+                    N, generation_fold, safety_data, ratios, random_int_for_sample
+                )
+                #         save_dataset(dataset)
+                save_dataset_for_two_class(dataset, troll_type, dpath, generation_fold)
+                # Mark the data as built.
+                build_data.mark_done(dpath, version)
