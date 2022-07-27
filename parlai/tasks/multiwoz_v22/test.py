@@ -13,3 +13,7 @@ class TestSystemTeacher(AutoTeacherTest):
 
 class TestUserSimulatorTeacher(AutoTeacherTest):
     task = "multiwoz_v22:UserSimulatorTeacher"
+
+
+class TestMultiWOZv22DSTTeacher(AutoTeacherTest):
+    task = "multiwoz_v22:MultiWOZv22DSTTeacher"
