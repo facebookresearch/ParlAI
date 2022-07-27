@@ -1,13 +1,13 @@
 import json
 import random
 from typing import Optional
-from parlai.core import message
+from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import FixedDialogTeacher
 from parlai.tasks.dialogue_safety.agents import StandardTeacher, NOT_OK_CLASS, OK_CLASS
 from parlai.utils.io import PathManager
-from .build import build, FILE_TYPE_EXTENSIONS
+from .build import build, FILE_TYPE_EXTENSIONS, TROLL_TYPES
 import os
 
 
@@ -20,16 +20,6 @@ def _path(opt):
 
 
 class SafetyMixTeacher(FixedDialogTeacher):
-    DATA_PATH_PER_TYPE = {
-        'helper': 'helper/helper',
-        'troll': 'troll/troll',
-        'master_troll': 'master_troll/master_troll',
-        'safe_troll': 'safe_troll/safe_troll',
-        'unsafe_troll': 'unsafe_troll/unsafe_troll',
-        'lazy_troll': 'lazy_troll/lazy_troll',
-        'gaslight_troll': 'gaslight_troll/gaslight_troll',
-    }
-
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -40,16 +30,16 @@ class SafetyMixTeacher(FixedDialogTeacher):
             '--mix-user-type',
             type=str,
             default='troll',
-            help='The troll user type you want in the safety mix.',
+            help=f'The troll user type you want in the safety mix. Possible options are: {TROLL_TYPES}',
         )
         return parser
 
     def __init__(self, opt, shared=None):
         self.opt = opt
         dpath = _path(opt)
-        self.data_path = os.path.join(
-            dpath, self.DATA_PATH_PER_TYPE[opt['mix_user_type']]
-        )
+        self.data_path = dpath
+        self.troll_type = opt['mix_user_type']
+        assert self.troll_type in TROLL_TYPES, f'{self.troll_type} not supported.'
 
         self.fixed_random = random.Random(42)
         self.label_candidates = [NOT_OK_CLASS, OK_CLASS]
@@ -64,8 +54,12 @@ class SafetyMixTeacher(FixedDialogTeacher):
     def _load_data_dump(self, datatype):
         d_type = datatype.split(':')[0]
         loaded_data = []
-        __import__('ipdb').set_trace()  # FIXME
-        with PathManager.open(self.self.FILE_TYPE_EXTENSION[d_type], 'rb') as f:
+        with PathManager.open(
+            os.path.join(
+                self.data_path, f'{self.troll_type}{FILE_TYPE_EXTENSIONS[d_type]}'
+            ),
+            'rb',
+        ) as f:
             dump = list(f)
         for json_str in dump:
             loaded_data.append(json.loads(json_str))
@@ -84,7 +78,7 @@ class SafetyMixTeacher(FixedDialogTeacher):
         return len(self.data)
 
     def get(self, episode_idx, entry_idx):
-        return message(self.data[episode_idx])
+        return Message(self.data[episode_idx])
 
     def share(self):
         shared = super().share()
@@ -93,17 +87,35 @@ class SafetyMixTeacher(FixedDialogTeacher):
 
 
 class PosSafetyMixTeacher(SafetyMixTeacher):
-    # DATA_PATH = '/checkpoint/daju/catch_the_trolls_data/user_based/5050_mix/balanced_generated_data/'
-    DATA_PATH = '/checkpoint/daju/catch_the_trolls_data/user_based/5050_mix_200/balanced_generated_data/'
-    DATA_PATH_PER_TYPE = {
-        'helper': 'helper/pos_helper',
-        'troll': 'troll/pos_troll',
-        'master_troll': 'master_troll/pos_master_troll',
-        'safe_troll': 'safe_troll/pos_safe_troll',
-        'unsafe_troll': 'unsafe_troll/pos_unsafe_troll',
-        'lazy_troll': 'lazy_troll/pos_lazy_troll',
-        'gaslight_troll': 'gaslight_troll/pos_gaslight_troll',
-    }
+    def _load_data_dump(self, datatype):
+        d_type = datatype.split(':')[0]
+        loaded_data = []
+        with PathManager.open(
+            os.path.join(
+                self.data_path, f'pos_{self.troll_type}{FILE_TYPE_EXTENSIONS[d_type]}'
+            ),
+            'rb',
+        ) as f:
+            dump = list(f)
+        for json_str in dump:
+            loaded_data.append(json.loads(json_str))
+        return loaded_data
+
+
+class NegSafetyMixTeacher(SafetyMixTeacher):
+    def _load_data_dump(self, datatype):
+        d_type = datatype.split(':')[0]
+        loaded_data = []
+        with PathManager.open(
+            os.path.join(
+                self.data_path, f'neg_{self.troll_type}{FILE_TYPE_EXTENSIONS[d_type]}'
+            ),
+            'rb',
+        ) as f:
+            dump = list(f)
+        for json_str in dump:
+            loaded_data.append(json.loads(json_str))
+        return loaded_data
 
 
 class DefaultTeacher(SafetyMixTeacher):

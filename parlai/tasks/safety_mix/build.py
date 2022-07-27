@@ -24,20 +24,56 @@ RESOURCES = [
 # The size of safety mix
 DATA_SIZE = {'train': 200, 'valid': 24, 'test': 24}
 
-TROLL_TYPES = [
+TROLL_TYPES = {
     'troll',
     'master_troll',
     'lazy_troll',
     'safe_troll',
     'unsafe_troll',
     'gaslight_troll',
-]
+}
 
 FILE_TYPE_EXTENSIONS = {
     'train': '_train.jsonl',
     'valid': '_valid.jsonl',
     'test': '_test.jsonl',
 }
+
+# Dataset analysis
+# check how many samples from standard vs adversarial
+def analysis_dataset(dataset):
+    standard_sample_cnt = 0
+    adversarial_sample_cnt = 0
+    flipped_label_cnt = 0
+    dupilicated_samples = {}
+    for each_sample in dataset:
+        if each_sample['source'] == 'standard':
+            standard_sample_cnt += 1
+        else:
+            adversarial_sample_cnt += 1
+        if each_sample['gold_labels'][0] != each_sample['labels'][0]:
+            flipped_label_cnt += 1
+        if each_sample['text'] in dupilicated_samples:
+            dupilicated_samples[each_sample['text']] += 1
+        else:
+            dupilicated_samples[each_sample['text']] = 1
+    dupilicated_samples = {
+        k: v for k, v in sorted(dupilicated_samples.items(), key=lambda item: item[1])
+    }
+    dupilicated_samples = {k: v for k, v in dupilicated_samples.items() if int(v) >= 2}
+
+    all_values = list(dupilicated_samples.values())
+    max_value = 0 if len(all_values) == 0 else max(all_values)
+    mean_value = 0 if len(all_values) == 0 else np.mean(all_values)
+    print(
+        f'real noise level {flipped_label_cnt / (standard_sample_cnt + adversarial_sample_cnt)}'
+    )
+    print(
+        f'standard samples: {standard_sample_cnt} adversarial samples: {adversarial_sample_cnt}'
+    )
+    print(
+        f'it has {len(dupilicated_samples)} duplicated samples, the the maxium apperance {max_value} in average {mean_value}'
+    )
 
 
 def flip_labels(samples, N):
@@ -305,8 +341,16 @@ def generate_user_based_dataset(
     return dataset
 
 
-def save_dataset_for_two_class(dataset, troll_type, output_data_path, generate_fold):
+def save_dataset_for_two_class(dataset, troll_type, output_data_path, generation_fold):
     # split dataset into postive and negative for balanced training
+    output_file_name = os.path.join(
+        output_data_path, troll_type + FILE_TYPE_EXTENSIONS[generation_fold]
+    )
+    with open(output_file_name, 'w') as outfile:
+        for json_blob in dataset:
+            outfile.write(json.dumps(json_blob))
+            outfile.write("\n")
+
     dataset_pos = []
     dataset_neg = []
     for each_sample in dataset:
@@ -315,14 +359,14 @@ def save_dataset_for_two_class(dataset, troll_type, output_data_path, generate_f
         else:
             dataset_neg.append(each_sample)
     output_file_name = os.path.join(
-        output_data_path, 'pos_' + troll_type + FILE_TYPE_EXTENSIONS[generate_fold]
+        output_data_path, 'pos_' + troll_type + FILE_TYPE_EXTENSIONS[generation_fold]
     )
     with open(output_file_name, 'w') as outfile:
         for json_blob in dataset_pos:
             outfile.write(json.dumps(json_blob))
             outfile.write("\n")
     output_file_name = os.path.join(
-        output_data_path, 'neg_' + troll_type + FILE_TYPE_EXTENSIONS[generate_fold]
+        output_data_path, 'neg_' + troll_type + FILE_TYPE_EXTENSIONS[generation_fold]
     )
     with open(output_file_name, 'w') as outfile:
         for json_blob in dataset_neg:
@@ -376,6 +420,9 @@ def build(datapath):
                 dataset = generate_user_based_dataset(
                     N, generation_fold, safety_data, ratios, random_int_for_sample
                 )
+                if generation_fold == 'train':
+                    print(f'Stats for troll type {troll_type}')
+                    analysis_dataset(dataset)
                 #         save_dataset(dataset)
                 save_dataset_for_two_class(dataset, troll_type, dpath, generation_fold)
                 # Mark the data as built.
