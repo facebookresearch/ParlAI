@@ -276,7 +276,7 @@ def setup_args(parser=None) -> ParlaiParser:
         default='conversations',
         choices=['conversations', 'parlai'],
     )
-    train.add_argument('--seed', type=int, default=42)
+    train.add_argument('--seed', type=int, default=None)
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
@@ -1052,7 +1052,8 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
-        set_seed(self.opt['seed'])
+        if self.opt['seed'] is not None:
+            set_seed(self.opt['seed'])
         return self.train_loop.train()
 
 
