@@ -328,8 +328,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     TorchGeneratorAgent aims to handle much of the bookkeeping and infrastructure work
     for any generative models, like seq2seq or transformer. It implements the train_step
-    and eval_step. The only requirement is that your model *must* implemented the
-    interface TorchGeneratorModel interface.
+    and eval_step. The only requirement is that your model *must* be implemented with
+    the TorchGeneratorModel interface.
     """
 
     @classmethod
