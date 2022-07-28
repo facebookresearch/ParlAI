@@ -72,7 +72,7 @@ _Competition on dialogue chitchat based on the PersonaChat task._
 _Task & models for chitchat with a given persona._
 
 
-## [Well-Behaved](#well-behaved)
+## <a id="well-behaved">Well-Behaved</a>
 
 - **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
   _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
