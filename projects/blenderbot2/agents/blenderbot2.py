@@ -247,6 +247,15 @@ class BlenderBot2RagAgent(RagAgent):
             'none => do not access any knowledge.\n',
         )
         bb2_group.add_argument(
+            '--use-multiparty',
+            type=bool,
+            default=False,
+            help='Whether to enable multiparty mode by disabling calls to _remove_person_tokens and '
+            "disabling adding prefixes ('your persona: ', 'partner's persona: ') to text. "
+            'Assumes the speaker label is already in the text. '
+            'Defaults to False.',
+        )
+        bb2_group.add_argument(
             '--memory-key',
             type=str,
             default='full_text',
@@ -290,7 +299,7 @@ class BlenderBot2RagAgent(RagAgent):
         )
         bb2_group.add_argument(
             '--memory-extractor-phrase',
-            type=str,
+            type='nonestr',
             default='persona:',
             help="phrase used to extract memories from `--memory-key` in the observation. "
             "For example, set to 'your persona:' to limit memories to only lines that "
@@ -576,7 +585,7 @@ class BlenderBot2RagAgent(RagAgent):
                 self.opt['retriever_ignore_phrase'],
                 delimiter=self.opt['retriever_delimiter'],
             )
-        if self.add_person_tokens:
+        if self.add_person_tokens and not self.opt['use_multiparty']:
             query_str = self._remove_person_tokens(query_str)
         observation['query_vec'] = self.model_api.tokenize_query(query_str)
         return observation
@@ -645,7 +654,7 @@ class BlenderBot2RagAgent(RagAgent):
                     self.opt['query_generator_ignore_phrase'],
                     self.opt['query_generator_delimiter'],
                 )
-            if self.add_person_tokens:
+            if self.add_person_tokens and not self.opt['use_multiparty']:
                 query_generator_input = self._remove_person_tokens(
                     query_generator_input
                 )
@@ -742,7 +751,7 @@ class BlenderBot2RagAgent(RagAgent):
                     self.opt['memory_decoder_ignore_phrase'],
                     self.opt['memory_decoder_delimiter'],
                 )
-            if self.add_person_tokens:
+            if self.add_person_tokens and not self.opt['use_multiparty']:
                 memory_decoder_input = self._remove_person_tokens(memory_decoder_input)
             conv_lines = [
                 t

@@ -14,6 +14,7 @@ import time
 import torch
 import torch.nn
 from typing import List, Tuple, Dict, Optional, Any
+from collections import defaultdict
 
 from parlai.agents.rag.retrievers import clean_vec
 from parlai.core.agents import create_agent_from_model_file, create_agent_from_shared
@@ -344,6 +345,56 @@ class MemoryDecoder(BB2SubmoduleMixin):
         return memories
 
     def _extract_from_raw_memories(self, raw_memories: List[str]) -> List[str]:
+        """
+        Extract memory lines from batch generated memories.
+
+        :param raw_memories:
+            raw memory generations. sometimes we need skip the memories because
+            nothing was generated
+
+        :return memories:
+            return filtered memories
+        """
+        if self.opt['use_multiparty']:
+            return self._extract_from_raw_memories_multi_speaker(raw_memories)
+        return self._extract_from_raw_memories_two_speaker(raw_memories)
+
+    def _extract_from_raw_memories_multi_speaker(
+        self, raw_memories: List[str]
+    ) -> List[str]:
+        """
+        Extract memory lines from batch generated memories.
+
+        Skip prefix-ing, and combines on one line if necessary.
+
+        :param raw_memories:
+            raw memory generations. sometimes we need skip the memories because
+            nothing was generated
+
+        :return memories:
+            return filtered memories
+        """
+        speaker_memories = defaultdict(list)
+        num_ctxt = len(raw_memories)
+        memories = []
+        for idx in range(num_ctxt):
+            if raw_memories[idx] == NOPERSONA:
+                continue
+            if self.one_line_memories:
+                speaker = raw_memories[idx].split(':')[0]
+                utterance = ':'.join(raw_memories[idx].split(':')[1:])
+                speaker_memories[speaker].append(utterance)
+            else:
+                memories.append(raw_memories[idx])
+        if self.one_line_memories:
+            for speaker, utterances in speaker_memories.items():
+                memories.append(f"{speaker}: {' '.join(utterances)}")
+
+        return memories
+
+    def _extract_from_raw_memories_two_speaker(
+        self, raw_memories: List[str]
+    ) -> List[str]:
         """
         Extract memory lines from batch generated memories.
 
