@@ -72,11 +72,13 @@ _Competition on dialogue chitchat based on the PersonaChat task._
 _Task & models for chitchat with a given persona._
 
 
-## <a id="well-behaved">Well-Behaved</a>
+## <a id="well-behaved">Well-Behaved</a> / Safety
 
 - **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
   _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
 
+- **Safety for E2E Conversational AI workshops** _We have helped organize workshops in [2020](https://emdinan1.medium.com/a-recap-of-the-first-workshop-on-safety-for-conversational-ai-98201d257530) and [2021](https://sites.google.com/view/safety4convai/home) on Safety in Conversational AI._
+  
 - **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
   _Benchmarks for evaluating the safety of English-language dialogue models_
 
