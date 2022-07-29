@@ -91,7 +91,7 @@ commands:
       - run:
           name: Installs basic dependencies
           command: |
-            python -m pip install --progress-bar off --upgrade pip setuptools
+            python -m pip install --progress-bar off pip setuptools==62.3.4
             python -m pip install --progress-bar off coverage
             python -m pip install --progress-bar off codecov
             mkdir -p ~/ParlAI/test-results
@@ -147,9 +147,8 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v1.0.1 -b stable
-              pip install -r requirements.txt
-              python setup.py develop
+              cd Mephisto; git checkout v1.0.3 -b stable
+              pip install -e .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
 
@@ -208,26 +207,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220519-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220625-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220519-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220625-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220519-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220625-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220519-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220625-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -244,12 +243,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220519-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220625-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220519-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220625-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -301,7 +300,7 @@ jobs:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
-            python -m pip install --progress-bar off --upgrade pip setuptools
+            python -m pip install --progress-bar off pip setuptools==62.3.4
             python setup.py develop
             parlai display_data -t integration_tests
 

@@ -12,9 +12,12 @@ from .build import build
 from collections import defaultdict
 import jsonlines
 from parlai.utils.data import DatatypeHelper
-
+import random
 import copy
 import os
+
+RANDOM_SEED = 123
+random.seed(RANDOM_SEED)
 
 START_TOKEN = '__START__'
 SILENCE_TOKEN = '__SILENCE__'
@@ -32,7 +35,8 @@ class DefaultTeacher(DialogTeacher):
         opt['datafile'] = _path(opt, self.fold + '.jsonl')
         self.characters = opt['characters'].split(',')
         self.character = opt['character']
-        self.use_silence_token = opt['use_silence_token']
+        self.include_speaker_in_context = opt['include_speaker_in_context']
+        self.silence_token_dropout = opt['silence_token_dropout']
         self.silence_token = opt['silence_token']
         self.use_start_token = opt['use_start_token']
         self.start_token = opt['start_token']
@@ -86,14 +90,20 @@ class DefaultTeacher(DialogTeacher):
                     self.character == 'All' and speaker in self.characters
                 ) or speaker == self.character:
                     yield {
-                        "text": prev_context,
-                        "label": f'{speaker}: {text}',
+                        "text": prev_context + f'\n{speaker}:'
+                        if self.include_speaker_in_context
+                        else prev_context,
+                        "label": text
+                        if self.include_speaker_in_context
+                        else f'{speaker}: {text}',
                         "characters": characters_string,
                     }, isConversationDone
-                elif self.use_silence_token:
+                elif random.random() > self.silence_token_dropout:
                     yield {
                         "text": prev_context,
-                        "label": f'{self.character}: {self.silence_token}',
+                        "label": self.silence_token
+                        if self.include_speaker_in_context
+                        else f'{self.character}: {self.silence_token}',
                         "characters": characters_string,
                     }, isConversationDone
 
@@ -125,10 +135,16 @@ class DefaultTeacher(DialogTeacher):
             help='A comma-separated list of characters to train on when `--character` == `All`',
         )
         agent.add_argument(
-            '--use-silence-token',
+            '--include-speaker-in-context',
             type='bool',
             default=True,
-            help='Use silence token to generate training example for sentences where the chosen speaker is not speaking. Defaults to True.',
+            help='Append speaker to the end of each context. Defaults to True.',
+        )
+        agent.add_argument(
+            '--silence-token-dropout',
+            type=float,
+            default=1,
+            help='Dropout probability for using silence token to generate training example for sentences where the chosen speaker is not speaking. When set to 0, all silence tokens will generate training examples. When set to 1, no silence tokens will generate training examples. Defaults to 1.',
         )
         agent.add_argument(
             '--silence-token',

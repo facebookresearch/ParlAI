@@ -1,58 +1,82 @@
 acts:
-- - characters: Phoebe Buffay,Ross Geller
+- - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
-    - 'Chandler Bing: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!'
-- - characters: Phoebe Buffay,Ross Geller
+    - Oh, no, no, I'm an intern, just like you guys... except for the tie, the briefcase...
+      and the fact that I can rent a car.
+    text: 'Chandler Bing: Good morning, everybody.
+
+      Intern: Can I get you a cup of coffee, Sir?
+
+      Chandler Bing:'
+- - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
-    - 'Chandler Bing: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Yeah, well, I'm kinda heading into a new career direction and, you know, you
+      gotta start at the bottom.
+    text: 'Chandler Bing: Good morning, everybody.
 
-      Ross Geller: Hi!'
-- - characters: Phoebe Buffay,Ross Geller
+      Intern: Can I get you a cup of coffee, Sir?
+
+      Chandler Bing: Oh, no, no, I''m an intern, just like you guys... except for
+      the tie, the briefcase... and the fact that I can rent a car.
+
+      Intern: Seriously, you''re an intern?
+
+      Chandler Bing:'
+- - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
-    - 'Chandler Bing: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Right. Look, I know I'm a little bit older than you guys, but it's not like
+      I'm Bob Hope.
+    text: 'Chandler Bing: Good morning, everybody.
 
-      Ross Geller: Hi!
+      Intern: Can I get you a cup of coffee, Sir?
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.'
-- - characters: Phoebe Buffay,Ross Geller
+      Chandler Bing: Oh, no, no, I''m an intern, just like you guys... except for
+      the tie, the briefcase... and the fact that I can rent a car.
+
+      Intern: Seriously, you''re an intern?
+
+      Chandler Bing: Yeah, well, I''m kinda heading into a new career direction and,
+      you know, you gotta start at the bottom.
+
+      Intern: Dude!
+
+      Chandler Bing:'
+- - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
-    - 'Chandler Bing: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - The comedian? USO?!
+    text: 'Chandler Bing: Good morning, everybody.
 
-      Ross Geller: Hi!
+      Intern: Can I get you a cup of coffee, Sir?
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
+      Chandler Bing: Oh, no, no, I''m an intern, just like you guys... except for
+      the tie, the briefcase... and the fact that I can rent a car.
 
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.'
-- - characters: Phoebe Buffay,Ross Geller
+      Intern: Seriously, you''re an intern?
+
+      Chandler Bing: Yeah, well, I''m kinda heading into a new career direction and,
+      you know, you gotta start at the bottom.
+
+      Intern: Dude!
+
+      Chandler Bing: Right. Look, I know I''m a little bit older than you guys, but
+      it''s not like I''m Bob Hope.
+
+      Chandler Bing:'
+- - characters: Chandler Bing,Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:chandler
     labels:
-    - 'Chandler Bing: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Oh, hey.
+    text: 'Phoebe Buffay: Um, Chandler, Ross, this is Robert.
 
-      Ross Geller: Hi!
-
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
-
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.
-
-      Phoebe Buffay: No! No, that you and Rachel are engaged!'
+      Chandler Bing:'
 num_episodes: 2427
 num_examples: 46610
