@@ -89,7 +89,7 @@ def _fwd_kernel(
         qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
         qk = tl.dot(q, k, trans_b=True)
         qk *= sm_scale
-        qk += tl.where(mask, 0, float("-inf"))
+        # qk += tl.where(mask, float("-inf"), 0)
         # -- compute m_ij, p, l_ij
         m_ij = tl.max(qk, 1)
         p = tl.exp(qk - m_ij[:, None])
@@ -99,7 +99,7 @@ def _fwd_kernel(
         alpha = tl.exp(m_i - m_i_new)
         beta = tl.exp(m_ij - m_i_new)
         l_i_new = alpha * l_i + beta * l_ij
-        p *= tl.where(drop, drop / (1 - drop_p), 0.0)
+        # p *= tl.where(drop, drop / (1 - drop_p), 0.0)
         # -- update output accumulator --
         # scale p
         p_scale = beta / l_i_new

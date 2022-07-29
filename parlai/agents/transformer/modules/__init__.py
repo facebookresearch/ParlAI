@@ -25,3 +25,4 @@ from .decoder import (  # noqa: F401
 from .generator import TransformerGeneratorModel  # noqa: F401
 from .wrappers import TransformerLinearWrapper, TransformerResponseWrapper  # noqa: F401
 from .mem_net import TransformerMemNetModel  # noqa: F401
+from .triton_att import _attention
