@@ -4,7 +4,9 @@ Here we list projects undertaken in the ParlAI framework that are shared publicl
 
 This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents), [tasks](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/main/parlai/zoo) for what else is in ParlAI.
 
-## Generative Models
+## Generative Models & Architectures 
+
+- **Director** [[project]](https://parl.ai/projects/director/) _New architecture/method for training language models with positive and negative examples._
 
 - **Maintaining Identity** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/light_whoami/) _State-of-the-art dialogue models cannot maintain identity -- we study measurements & methods for this open problem._
 
@@ -21,15 +23,12 @@ This directory also contains subfolders for some of the projects which are house
 - **Retrieve and Refine** [[paper]](https://arxiv.org/abs/1808.04776).
   _Models for improved chitchat ability by combining retrieval with generative refinement._
 
-- **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
-  _Analysis of the performance of search in generative models for chitchat tasks._
-
-
-## Retrieval Models
 - **Poly-Encoders** [[project]](https://parl.ai/projects/polyencoder/) [[paper]](https://arxiv.org/abs/1905.01969).
   _State-of-the-art Transformer architectures + pretraining for dialogue retrieval._
 
-
+- **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
+  _Analysis of the performance of search in generative models for chitchat tasks._
+  
 ## Interactive Learning
 
 - **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
@@ -148,8 +147,9 @@ _QA model for answering questions by retrieving and reading knowledge._
 
 ## Evaluation
 
-- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
-_ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
-
-- **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
+- **Human Evaluation Methods Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
 _Compares how well different human crowdworker evaluation techniques can detect relative performance differences among dialogue models._
+
+- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
+_ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method in many cases._
+
