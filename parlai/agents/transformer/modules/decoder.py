@@ -428,7 +428,7 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
 
 @swappable(
     self_attention=MultiHeadAttention,
-    encoder_attention=Triton_MHA,
+    encoder_attention=MultiHeadAttention,
     feedforward=TransformerFFN,
 )
 class TransformerDecoderLayer(BaseTransformerDecoderLayer):
