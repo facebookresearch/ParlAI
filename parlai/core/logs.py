@@ -14,18 +14,18 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
+import datetime
+import json
+import numbers
 import os
 import re
 from typing import Optional
-from parlai.core.params import ParlaiParser
-import json
-import numbers
-import datetime
-from parlai.core.opt import Opt
-from parlai.core.metrics import Metric, dict_report, get_metric_display_data
-from parlai.utils.io import PathManager
-import parlai.utils.logging as logging
 
+import parlai.utils.logging as logging
+from parlai.core.metrics import Metric, dict_report, get_metric_display_data
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
+from parlai.utils.io import PathManager
 
 _TB_SUMMARY_INVALID_TAG_CHARACTERS = re.compile(r'[^-/\w\.]')
 
@@ -157,6 +157,13 @@ class WandbLogger(object):
             help='W&B entity name.',
             hidden=False,
         )
+        logger.add_argument(
+            '-wbmodel',
+            '--wandb-model',
+            type=bool,
+            default=False,
+            help="Enable W&B logging of model artifacts",
+        )
         return logger
 
     def __init__(self, opt: Opt, model=None):
@@ -165,6 +172,7 @@ class WandbLogger(object):
             # last second to import it.
             import wandb
 
+            self._wandb = wandb
         except ImportError:
             raise ImportError('Please run `pip install wandb`.')
 
@@ -201,7 +209,11 @@ class WandbLogger(object):
                 if key not in self.run.config:  # set by task logic
                     if value is None or isinstance(value, (str, numbers.Number, tuple)):
                         setattr(self.run.config, key, value)
-
+        self.log_model = opt.get('wandb_model', False)
+        if self.log_model:
+            self.model_file = opt.get('model_file', None)
+        else:
+            self.model_file = None
         if model is not None:
             self.run.watch(model)
 
@@ -234,6 +246,17 @@ class WandbLogger(object):
         }
         for key, value in report.items():
             self.run.summary[key] = value
+        if self.model_file is not None and self.log_model:
+            artifact = self._wandb.Artifact('model', type='model')
+            artifact.add_file(
+                self.model_file,
+                f'{self.run.name}_model',
+            )
+            artifact.add_file(
+                self.model_file + ".dict",
+                f'{self.run.name}_dictionary',
+            )
+            self.run.log_artifact(artifact)
 
     def finish(self):
         self.run.finish()
