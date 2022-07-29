@@ -183,7 +183,7 @@ You can also specify running Fast ACUTEs between only specific model pairs, with
 
 If you are running self-chat, you can optionally specify a seed task to use for self-chat with `mephisto.blueprint.task=${SELF_CHAT_TASK}`.
 
-When you are ready to run a **live** ACUTE-Eval, add `mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=heroku` to this command, where `${REQUESTER_NAME}` is the MTurk requester name that you specified when setting up Mephisto.
+When you are ready to run a **live** ACUTE-Eval, add `mephisto.provider.requester_name=${REQUESTER_NAME} mephisto/architect=ec2 mephisto.architect.profile_name=mephisto-router-iam` to this command, where `${REQUESTER_NAME}` is the MTurk requester name that you specified when setting up Mephisto.
 
 #### Onboarding
 
