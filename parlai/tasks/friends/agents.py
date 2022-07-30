@@ -77,14 +77,7 @@ class DefaultTeacher(DialogTeacher):
                         speaker = utterance['speaker']
                         speakers.append(speaker)
 
-                        # Replace newline character by whitespace so that the data
-                        # format plays nicely with BB2, which splits each utterance
-                        # by newline and expects a corresponding speaker label
-                        # (if we don't replace the newline character here, we have
-                        # to later match each speaker label back to variable number of
-                        # sentences, which overly complicates things)
-                        # c.f. line 606 of projects/blenerbot2/agents/blenderbot2.py
-                        text = utterance['text'].replace('\n', ' ')
+                        text = self._get_text(utterance)
                         if self.include_speaker_in_context:
                             context = f'{speaker}: {text}'
                         else:
@@ -93,14 +86,7 @@ class DefaultTeacher(DialogTeacher):
 
                 speaker = utterance['speaker']
 
-                # Replace newline character by whitespace so that the data
-                # format plays nicely with BB2, which splits each utterance
-                # by newline and expects a corresponding speaker label
-                # (if we don't replace the newline character here, we have
-                # to later match each speaker label back to variable number of
-                # sentences, which overly complicates things)
-                # c.f. line 606 of projects/blenerbot2/agents/blenderbot2.py
-                text = utterance['text'].replace('\n', ' ')
+                text = self._get_text(utterance)
                 prev_context = context
                 if self.include_speaker_in_context:
                     context += self.utterance_delimiter + f'{speaker}: {text}'
@@ -141,6 +127,18 @@ class DefaultTeacher(DialogTeacher):
                     }, isConversationDone
                 else:
                     speakers.append(speaker)
+
+    def _get_text(self, utterance):
+        """
+        Replace newline character by whitespace so that the data format plays nicely
+        with BB2, which splits each utterance by newline and expects a corresponding
+        speaker label (if we don't replace the newline character here, we have to later
+        match each speaker label back to variable number of sentences, which overly
+        complicates things) c.f.
+
+        line 606 of projects/blenerbot2/agents/blenderbot2.py
+        """
+        return utterance['text'].replace('\n', ' ')
 
     def _get_message_fields(self, text, speaker, speakers, prev_context):
         """
