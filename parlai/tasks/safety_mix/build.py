@@ -4,14 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
-from parlai.core.build_data import DownloadableFile
-import parlai.core.build_data as build_data
-import hashlib
-import random
 import copy
-import numpy as np
+import hashlib
 import json
+import os
+import random
+
+import numpy as np
+import parlai.core.build_data as build_data
+import parlai.utils.logging as logging
+from parlai.core.build_data import DownloadableFile
 
 RESOURCES = [
     DownloadableFile(
@@ -45,7 +47,7 @@ def analysis_dataset(dataset):
     standard_sample_cnt = 0
     adversarial_sample_cnt = 0
     flipped_label_cnt = 0
-    dupilicated_samples = {}
+    duplicated_samples = {}
     for each_sample in dataset:
         if each_sample['source'] == 'standard':
             standard_sample_cnt += 1
@@ -53,26 +55,26 @@ def analysis_dataset(dataset):
             adversarial_sample_cnt += 1
         if each_sample['gold_labels'][0] != each_sample['labels'][0]:
             flipped_label_cnt += 1
-        if each_sample['text'] in dupilicated_samples:
-            dupilicated_samples[each_sample['text']] += 1
+        if each_sample['text'] in duplicated_samples:
+            duplicated_samples[each_sample['text']] += 1
         else:
-            dupilicated_samples[each_sample['text']] = 1
-    dupilicated_samples = {
-        k: v for k, v in sorted(dupilicated_samples.items(), key=lambda item: item[1])
+            duplicated_samples[each_sample['text']] = 1
+    duplicated_samples = {
+        k: v for k, v in sorted(duplicated_samples.items(), key=lambda item: item[1])
     }
-    dupilicated_samples = {k: v for k, v in dupilicated_samples.items() if int(v) >= 2}
+    duplicated_samples = {k: v for k, v in duplicated_samples.items() if int(v) >= 2}
 
-    all_values = list(dupilicated_samples.values())
+    all_values = list(duplicated_samples.values())
     max_value = 0 if len(all_values) == 0 else max(all_values)
     mean_value = 0 if len(all_values) == 0 else np.mean(all_values)
-    print(
-        f'real noise level {flipped_label_cnt / (standard_sample_cnt + adversarial_sample_cnt)}'
+    logging.info(
+        f'Real noise level {flipped_label_cnt / (standard_sample_cnt + adversarial_sample_cnt)}'
     )
-    print(
-        f'standard samples: {standard_sample_cnt} adversarial samples: {adversarial_sample_cnt}'
+    logging.info(
+        f'Standard samples: {standard_sample_cnt} adversarial samples: {adversarial_sample_cnt}'
     )
-    print(
-        f'it has {len(dupilicated_samples)} duplicated samples, the the maxium apperance {max_value} in average {mean_value}'
+    logging.info(
+        f'It has {len(duplicated_samples)} duplicated samples, the the maximum appearance {max_value}, in average {mean_value}'
     )
 
 
@@ -93,7 +95,7 @@ def flip_labels(samples, N):
                 raise ValueError('labels are not in the right format.')
         if flip:
             sample['labels'] = new_labels
-    print(f'{flip_cnt} labels flipped.')
+    logging.debug(f'{flip_cnt} labels flipped.')
     return samples
 
 
@@ -186,7 +188,7 @@ def set_random_labels(samples, N):
             sample['labels'] = ['__ok__']
         else:
             sample['labels'] = ['__notok__']
-    print(f'{random_cnt} labels randomized.')
+    logging.debug(f'{random_cnt} labels randomized.')
     return samples
 
 
@@ -379,7 +381,7 @@ def build(datapath):
     dpath = os.path.join(datapath, 'safety_mix')
 
     if not build_data.built(dpath, version):
-        print('[building data: ' + dpath + ']')
+        logging.info('[building data: ' + dpath + ']')
         if build_data.built(dpath):
             # An older version exists, so remove these outdated files.
             build_data.remove_dir(dpath)
@@ -421,7 +423,7 @@ def build(datapath):
                     N, generation_fold, safety_data, ratios, random_int_for_sample
                 )
                 if generation_fold == 'train':
-                    print(f'Stats for troll type {troll_type}')
+                    logging.info(f'Stats for troll type {troll_type}')
                     analysis_dataset(dataset)
                 #         save_dataset(dataset)
                 save_dataset_for_two_class(dataset, troll_type, dpath, generation_fold)
