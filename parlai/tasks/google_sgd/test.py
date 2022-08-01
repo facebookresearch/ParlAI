@@ -16,3 +16,4 @@ class TestUserSimulatorTeacher(AutoTeacherTest):
 
 class TestUserSimulatorTeacher(AutoTeacherTest):
     task = "google_sgd:GoogleSGDDSTTeacher"
+    
