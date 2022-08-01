@@ -1071,11 +1071,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         :return initial_input:
             initial input for the decoder
         """
-        return (
-            torch.LongTensor([self.START_IDX])  # type: ignore
-            .expand(bsz * beam_size, 1)
-            .to(dev)
-        )
+        return torch.LongTensor([self.START_IDX]).expand(bsz * beam_size, 1).to(dev)  # type: ignore
 
     def _get_next_decoder_input(
         self,
@@ -1224,9 +1220,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         n_best_beam_preds_scores = [b.get_rescored_finished() for b in beams]
 
         if hasattr(self, '_rerank_beams'):
-            n_best_beam_preds_scores = self._rerank_beams(  # type: ignore
-                batch, n_best_beam_preds_scores
-            )
+            n_best_beam_preds_scores = self._rerank_beams(batch, n_best_beam_preds_scores)  # type: ignore
 
         # get the top prediction for each beam (i.e. minibatch sample)
         beam_preds_scores = [n_best_list[0] for n_best_list in n_best_beam_preds_scores]
