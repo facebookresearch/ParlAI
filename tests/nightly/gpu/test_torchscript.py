@@ -23,16 +23,16 @@ from parlai.core.worlds import create_task
 from parlai.utils.bpe import Gpt2BpeHelper
 
 
-@testing_utils.skipUnlessFairseq
+# @testing_utils.skipUnlessFairseq
 @testing_utils.skipUnlessTorch17
 class TestTorchScript(unittest.TestCase):
-    def test_token_splitter(self):
+    def test_gpt2_token_splitter(self):
         """
         Test TorchScriptable code for splitting tokens against reference GPT-2 version.
         """
 
         from parlai.scripts.torchscript import TorchScript
-        from parlai.torchscript.modules import ScriptableGpt2BpeHelper
+        from parlai.torchscript.tokenizer import ScriptableGpt2BpeHelper
 
         # Params
         tasks = ['taskmaster2', 'convai2']
@@ -60,10 +60,44 @@ class TestTorchScript(unittest.TestCase):
                 if idx + 1 == num_examples:
                     break
 
+    def test_subword_bpe_token_splitter(self):
+        """
+        Test TorchScriptable code for splitting tokens against reference subword BPE
+        version.
+        """
+
+        from parlai.scripts.torchscript import TorchScript
+        from parlai.torchscript.tokenizer import ScriptableSubwordBpeHelper
+
+        # Params
+        tasks = ['dialogue_safety:standard']
+        splitter = regex.compile(r'\w+|[^\w\s]', regex.UNICODE)
+
+        for task in tasks:
+            opt = TorchScript.setup_args().parse_kwargs(
+                task=task, datatype='train:ordered'
+            )
+            agent = RepeatLabelAgent(opt)
+            teacher = create_task(opt, agent).get_task_agent()
+            num_examples = teacher.num_examples()
+
+            print(
+                f'\nStarting to test {num_examples:d} examples for the ' f'{task} task.'
+            )
+            for idx, message in enumerate(teacher):
+                if idx % 10000 == 0:
+                    print(f'Testing example #{idx:d}.')
+                text = message['text']
+                canonical_tokens = splitter.findall(text)
+                scriptable_tokens = ScriptableSubwordBpeHelper.findall(text)
+                self.assertEqual(canonical_tokens, scriptable_tokens)
+                if idx + 1 == num_examples:
+                    break
+
     def test_special_tokenization(self):
         from parlai.core.dict import DictionaryAgent
         from parlai.core.params import ParlaiParser
-        from parlai.torchscript.modules import ScriptableDictionaryAgent
+        from parlai.torchscript.tokenizer import ScriptableDictionaryAgent
 
         SPECIAL = ['Q00', 'Q01']
         text = "Don't have a Q00, man! Have a Q01 instead."
@@ -95,11 +129,14 @@ class TestTorchScript(unittest.TestCase):
                 bpe_byte_encoder=orig_bpe.byte_encoder,
                 fused_key_bpe_ranks=fused_key_bpe_ranks,
                 special_tokens=[],
+                subword_bpe_version=(0, 0),
+                fused_bpe_codes={},
+                subword_bpe_separator='',
             )
 
-            tokenized = sda.txt2vec(text)
+            tokenized = sda.txt2vec(text, dict_tokenizer='gpt2')
             assert len(tokenized) == 15
-            assert sda.vec2txt(tokenized) == text
+            assert sda.vec2txt(tokenized, dict_tokenizer='gpt2') == text
 
             orig_dict = DictionaryAgent(opt)
             orig_dict.add_additional_special_tokens(SPECIAL)
@@ -117,16 +154,19 @@ class TestTorchScript(unittest.TestCase):
                 bpe_byte_encoder=orig_bpe.byte_encoder,
                 fused_key_bpe_ranks=fused_key_bpe_ranks,
                 special_tokens=SPECIAL,
+                subword_bpe_version=(0, 0),
+                fused_bpe_codes={},
+                subword_bpe_separator='',
             )
 
-            special_tokenized = sda.txt2vec(text)
+            special_tokenized = sda.txt2vec(text, dict_tokenizer='gpt2')
             assert len(special_tokenized) == 15
-            assert sda.vec2txt(special_tokenized) == text
+            assert sda.vec2txt(special_tokenized, dict_tokenizer='gpt2') == text
             assert special_tokenized != tokenized
 
-    def test_torchscript_agent(self):
+    def test_torchscript_bart_agent(self):
         """
-        Test exporting a model to TorchScript and then testing it on sample data.
+        Test exporting a BART model to TorchScript and then testing it on sample data.
         """
 
         from parlai.scripts.torchscript import TorchScript
@@ -153,9 +193,43 @@ class TestTorchScript(unittest.TestCase):
             act = bart.act()
             self.assertEqual(act['text'], test_phrase)
 
-    def test_gpu_torchscript_agent(self):
+    def test_torchscript_transformer_classifier_agent(self):
         """
-        Test exporting a model to TorchScript for GPU and then testing it on sample
+        Test exporting a Transformer classifier model to TorchScript and then testing it
+        on sample data.
+        """
+
+        from parlai.scripts.torchscript import TorchScript
+
+        test_phrase = "Don't have a cow, man!"
+
+        with testing_utils.tempdir() as tmpdir:
+
+            scripted_model_file = os.path.join(tmpdir, 'scripted_model.pt')
+
+            # Export transformer classifier model for safety task
+            export_opt = TorchScript.setup_args().parse_kwargs(
+                model='transformer/classifier',
+                model_file='zoo:dialogue_safety/single_turn/model',
+                script_module='parlai.torchscript.modules:TorchScriptTransformerClassifier',
+                scripted_model_file=scripted_model_file,
+                no_cuda=True,
+            )
+            TorchScript(export_opt).run()
+
+            # Test the scripted transformer classifier model
+            scripted_opt = ParlaiParser(True, True).parse_kwargs(
+                model='parlai.torchscript.agents:TorchScriptAgent',
+                model_file=scripted_model_file,
+            )
+            bart = create_agent(scripted_opt)
+            bart.observe({'text': test_phrase, 'episode_done': True})
+            act = bart.act()
+            self.assertEqual(act['text'], '__ok__')
+
+    def test_gpu_torchscript_bart_agent(self):
+        """
+        Test exporting a BART model to TorchScript for GPU and then testing it on sample
         data.
         """
 

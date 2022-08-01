@@ -328,8 +328,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     TorchGeneratorAgent aims to handle much of the bookkeeping and infrastructure work
     for any generative models, like seq2seq or transformer. It implements the train_step
-    and eval_step. The only requirement is that your model *must* implemented the
-    interface TorchGeneratorModel interface.
+    and eval_step. The only requirement is that your model *must* be implemented with
+    the TorchGeneratorModel interface.
     """
 
     @classmethod
@@ -425,7 +425,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
+            choices={
+                'beam',
+                'greedy',
+                'topk',
+                'nucleus',
+                'delayedbeam',
+                'delayednucleusbeam',
+            },
             default='greedy',
             help='Generation algorithm',
         )
@@ -981,6 +988,22 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         elif method == 'delayedbeam':
             return DelayedBeamSearch(
                 self.opt['topk'],
+                self.opt['beam_delay'],
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+                verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
+            )
+        elif method == 'delayednucleusbeam':
+            return DelayedNucleusBeamSearch(
+                self.opt['topp'],
                 self.opt['beam_delay'],
                 beam_size,
                 min_length=self.beam_min_length,
@@ -1850,6 +1873,21 @@ class DelayedBeamSearch(TreeSearch):
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         if current_length < self.delay:
             return TopKSampling.select_paths(
+                self, logprobs, prior_scores, current_length
+            )
+        else:
+            return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
+
+
+class DelayedNucleusBeamSearch(TreeSearch):
+    def __init__(self, p, delay, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.p = p
+        self.delay = delay
+
+    def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
+        if current_length < self.delay:
+            return NucleusSampling.select_paths(
                 self, logprobs, prior_scores, current_length
             )
         else:

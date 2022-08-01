@@ -1,59 +1,85 @@
 acts:
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+- - characters: Chandler Bing,Joey Tribbiani
+    episode_done: true
+    eval_labels:
+    - I'm gonna hold him a different way. Look I don't understand, if you hated it
+      so much, why did you buy it in the first place?
+    id: friends:chandler
+    text: 'Chandler Bing: Hey look, are we gonna have to bring this out every time
+      Ross comes over?
+
+      Joey Tribbiani: He paid a lot of money for it.
+
+      Chandler Bing:'
+- - characters: Chandler Bing,Joey Tribbiani
     episode_done: false
     eval_labels:
-    - 'Chandler Bing: __SILENCE__'
+    - So is he housetrained or is he gonna leave little bathroom tiles all over the
+      place? Stay. Good, STAY! Good fake dog.
     id: friends:chandler
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    text: 'Chandler Bing: Hey look, are we gonna have to bring this out every time
+      Ross comes over?
+
+      Joey Tribbiani: He paid a lot of money for it.
+
+      Chandler Bing: I''m gonna hold him a different way. Look I don''t understand,
+      if you hated it so much, why did you buy it in the first place?
+
+      Joey Tribbiani: Well, I had a whole ceramic zoo thing goin'' over there but
+      now, without the other ones, it just looks tacky.
+
+      Chandler Bing:'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay
     episode_done: false
     eval_labels:
-    - 'Chandler Bing: __SILENCE__'
+    - You totally screwed him over.
     id: friends:chandler
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Chandler Bing: You told him to play the boxer gay!!
 
-      Rachel Green: Ooy.'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+      Joey Tribbiani: Well, I-I might''ve said supergay.
+
+      Chandler Bing:'
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
     episode_done: false
     eval_labels:
-    - 'Chandler Bing: __SILENCE__'
+    - You're an actor!
     id: friends:chandler
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Monica Geller: Hey you guys?
 
-      Rachel Green: Ooy.
+      Ross Geller: What?
 
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+      Monica Geller: I know it''s last minute, but we decided to have a Halloween
+      party.
+
+      Phoebe Buffay: Oh good!
+
+      Monica Geller: And everybody has to wear costumes. Come on! It''ll be fun!
+
+      Ross Geller: Well, I''ll-I''ll be there. I mean I have to wear a costume to
+      all my classes that day anyway so...
+
+      Rachel Green: Please tell me you''re not gonna dress up like a dinosaur.
+
+      Ross Geller: Not two years in a row.
+
+      Joey Tribbiani: Look, I''ll come to the party but I''m not dressing up.
+
+      Monica Geller: You have to!
+
+      Joey Tribbiani: No way! Look, Halloween is so stupid! Dressing up, pretending
+      to be someone you''re not...
+
+      Chandler Bing:'
+- - characters: Chandler Bing,Joey Tribbiani
     episode_done: false
     eval_labels:
-    - 'Chandler Bing: __SILENCE__'
+    - Hey-hey-hey. So what happened? A forest tick you off?
     id: friends:chandler
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+    text: 'Chandler Bing: Hey!
 
-      Rachel Green: Ooy.
+      Joey Tribbiani: Hey!
 
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?
-
-      Rachel Green: Oh my god, are we supposed to answer?'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
-    episode_done: false
-    eval_labels:
-    - 'Chandler Bing: __SILENCE__'
-    id: friends:chandler
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
-
-      Rachel Green: Ooy.
-
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?
-
-      Rachel Green: Oh my god, are we supposed to answer?
-
-      Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
-      which I''m still fine with by the way. E is for how extremely normal I find
-      it. That you two are together. And now one day you might get married and have
-      children of your own.'
+      Chandler Bing:'
 num_episodes: 302
 num_examples: 5774

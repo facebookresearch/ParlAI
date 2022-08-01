@@ -3,47 +3,18 @@ acts:
     episode_done: false
     id: friends:phoebe
     labels:
-    - 'Phoebe Buffay: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!'
-- - characters: Phoebe Buffay,Ross Geller
-    episode_done: false
-    id: friends:phoebe
-    labels:
-    - 'Phoebe Buffay: Congratulations! I didn''t want to say anything in front of
-      Joey ''cause I didn''t know if he knew yet.'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
-
-      Ross Geller: Hi!'
-- - characters: Phoebe Buffay,Ross Geller
-    episode_done: false
-    id: friends:phoebe
-    labels:
-    - 'Phoebe Buffay: __SILENCE__'
+    - Congratulations! I didn't want to say anything in front of Joey 'cause I didn't
+      know if he knew yet.
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.'
+      Phoebe Buffay:'
 - - characters: Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:phoebe
     labels:
-    - 'Phoebe Buffay: No! No, that you and Rachel are engaged!'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
-
-      Ross Geller: Hi!
-
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
-
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.'
-- - characters: Phoebe Buffay,Ross Geller
-    episode_done: false
-    id: friends:phoebe
-    labels:
-    - 'Phoebe Buffay: __SILENCE__'
+    - No! No, that you and Rachel are engaged!
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!
@@ -54,6 +25,84 @@ acts:
       Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
       although, he did eat a piece of plastic fruit earlier.
 
-      Phoebe Buffay: No! No, that you and Rachel are engaged!'
+      Phoebe Buffay:'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:phoebe
+    labels:
+    - Oh, it's a secret. Oh goodie! Yes! We haven't done the secret thing in a long
+      time.
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.
+
+      Phoebe Buffay: No! No, that you and Rachel are engaged!
+
+      Ross Geller: What?
+
+      Phoebe Buffay:'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:phoebe
+    labels:
+    - Are you lying? Is this like that time you tried to convince us that you were
+      a doctor?
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.
+
+      Phoebe Buffay: No! No, that you and Rachel are engaged!
+
+      Ross Geller: What?
+
+      Phoebe Buffay: Oh, it''s a secret. Oh goodie! Yes! We haven''t done the secret
+      thing in a long time.
+
+      Ross Geller: Phoebe, there is no secret. Okay? I didn''t propose.
+
+      Phoebe Buffay:'
+- - characters: Phoebe Buffay,Ross Geller
+    episode_done: false
+    id: friends:phoebe
+    labels:
+    - All right, me too. Should we wake her up?
+    text: 'Phoebe Buffay: Oh hey! Wait up!
+
+      Ross Geller: Hi!
+
+      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
+      ''cause I didn''t know if he knew yet.
+
+      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
+      although, he did eat a piece of plastic fruit earlier.
+
+      Phoebe Buffay: No! No, that you and Rachel are engaged!
+
+      Ross Geller: What?
+
+      Phoebe Buffay: Oh, it''s a secret. Oh goodie! Yes! We haven''t done the secret
+      thing in a long time.
+
+      Ross Geller: Phoebe, there is no secret. Okay? I didn''t propose.
+
+      Phoebe Buffay: Are you lying? Is this like that time you tried to convince us
+      that you were a doctor?
+
+      Ross Geller: I am a doctor! Y''know what? I''m just gonna go and talk to Rachel
+      myself.
+
+      Phoebe Buffay:'
 num_episodes: 2427
 num_examples: 46610

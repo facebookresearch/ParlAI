@@ -703,7 +703,7 @@ class TorchClassifierAgent(TorchAgent):
             self._update_confusion_matrix(batch, preds)
 
         if self.opt.get('print_scores', False):
-            return Output(preds, class_list=[self.class_list], probs=probs.cpu())
+            return Output(preds, class_list=[self.class_list], probs=probs.tolist())
         if self.opt.get('return_cand_scores', False):
             sorted_scores, ranks = probs.sort(1, descending=True)
             sorted_scores = sorted_scores.cpu()
