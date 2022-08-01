@@ -41,6 +41,7 @@ FILE_TYPE_EXTENSIONS = {
     'test': '_test.jsonl',
 }
 
+
 # Dataset analysis
 # check how many samples from standard vs adversarial
 def analysis_dataset(dataset):
@@ -145,7 +146,7 @@ def sample_from_both_datasets(
         #     sample with replacement
         #     flip a coin
         samples = []
-        for i in range(current_user_utterance_num):
+        for _ in range(current_user_utterance_num):
             if random.random() > 0.5:
                 sample = copy.deepcopy(random.choice(standard_dataset_for_sample))
                 sample['source'] = 'standard'
@@ -180,7 +181,6 @@ def set_random_labels(samples, N):
     for sample in samples:
         text = sample['text']
         change_label = hashlib.md5(text.encode('utf8')).digest()[0] < N * 256
-        labels = sample['labels']
         # deterministic flipping for each example
         if change_label:
             random_cnt += 1
