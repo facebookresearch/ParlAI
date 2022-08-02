@@ -80,7 +80,7 @@ class EDCLeftToRightMutator(ManyEpisodeMutator):
 
 
 @register_mutator('DIRECTOR_LTR_COPY')
-class EDCLeftToRightMutator(ManyEpisodeMutator):
+class EDCLeftToRightMutatorCopy(ManyEpisodeMutator):
     """
     EDCLeftToRightMutator prepares data for training left to right (LTR) classifier for
     Encoder-Decoder Classifier (EDC) model.
@@ -112,7 +112,7 @@ class EDCLeftToRightMutator(ManyEpisodeMutator):
 
 
 @register_mutator('DIRECTOR_LTR_EMPTY')
-class EDCLeftToRightMutator(ManyEpisodeMutator):
+class EDCLeftToRightMutatorEmpty(ManyEpisodeMutator):
     """
     EDCLeftToRightMutator prepares data for training left to right (LTR) classifier for
     Encoder-Decoder Classifier (EDC) model.
