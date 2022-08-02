@@ -379,7 +379,9 @@ class APIUtils:
         It checks this based on the existences of the failure reasons as they get
         accumulated in `_make_request` functionn calls.
         """
-        return len(resp.get('failures', [])) > 0
+        return len(
+            resp.get('failures', [])
+        ) > 0 or APIUtils.METASEQ_FAIL_MESSAGE_TEXT in resp.get('text', '')
 
     @staticmethod
     async def make_request(

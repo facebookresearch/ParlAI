@@ -111,6 +111,12 @@ class BlenderBot3Agent(R2C2Agent):
             default=None,
         )
         group.add_argument(
+            '--raw-search-server',
+            type=str,
+            help='specify a search server address.',
+            default=None,
+        )
+        group.add_argument(
             '--num-shots',
             type=int,
             default=None,
@@ -171,6 +177,7 @@ class BlenderBot3Agent(R2C2Agent):
         self.search_agent = SearchAgent(
             {
                 'server': self.opt.get('search_server', 'default'),
+                'raw_server': self.opt.get('raw_search_server', None),
                 'intra_doc_delimiter': ' ',
                 'n_docs': 5,
                 'search_server_timeout': opt.get('search_server_timeout', 0),
@@ -531,7 +538,11 @@ class BlenderBot3Agent(R2C2Agent):
         dialogue_obs, dialogue_replies = [], []
         for i, reply in enumerate(batch_reply_knowledge):
             for k_module in Module.knowledge_modules():
-                if not reply.get(k_module.message_name()):
+                if not reply.get(
+                    k_module.message_name()
+                ) or APIUtils.METASEQ_FAIL_MESSAGE_TEXT in reply.get(
+                    k_module.message_name(), ''
+                ):
                     continue
                 logging.debug(
                     f'{k_module.message_name()}: {reply[k_module.message_name()]}'
