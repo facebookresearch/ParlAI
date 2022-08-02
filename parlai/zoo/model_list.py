@@ -3014,4 +3014,50 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             "[TransformerClassifier]: __ok__"
         """,
     },
+    {
+        "title": "BlenderBot 3 3B",
+        "id": "bb3",
+        "path": "zoo:bb3/bb3_3B/model",
+        "agent": "projects.bb3.agents.r2c2_bb3_agent:BlenderBot3Agent",
+        "task": "projects.bb3.tasks.module_level_tasks:AlwaysSearchTeacher,projects.bb3.tasks.module_level_tasks:MaybeSearchTeacher,projects.bb3.tasks.module_level_tasks:MemoryDecisionTeacher,projects.bb3.tasks.module_level_tasks:SearchQueryGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:SearchKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:EntityKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:SearchDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:EntityDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:VanillaDialogueGenerationTeacher",
+        "project": "https://parl.ai/projects/bb3",
+        "description": (
+            "BB3 3B Model. Trained to perform an assortment of dialogue-related tasks."
+        ),
+        "example": (
+            "parlai i -mf zoo:bb3/bb3_3B/model -o gen/r2c2_bb3 --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            21:37:52 | Example 0, search_decision_agent: __do-search__
+            21:37:52 | Example 0, memory_decision_agent: __do-not-access-memory__
+            21:37:52 | Search Queries: ['AI research']
+            21:37:53 | Partner Memories: ['__NO__PERSONA__BEAM__MIN__LEN__20__']
+            21:37:53 | sending search request to SEARCH_SERVER
+            21:37:54 | URLS: [URLS]
+            21:37:57 | Search KNOWLEDGE for example 0: Computer science defines AI research as the study of intelligent agents
+            21:37:58 | Combined DIALOGUE response for example 0: Artificial intelligence (AI) is a field of computer science that studies intelligent agents, such as robots.; score: -7.90
+            21:38:00 | Self Memories: ['__NO__PERSONA__BEAM__MIN__LEN__20__']
+            [BlenderBot3]: Artificial intelligence (AI) is a field of computer science that studies intelligent agents, such as robots.
+        """,
+    },
+    {
+        "title": "Persona Summarizer",
+        "id": "bb3",
+        "path": "zoo:bb3/persona_summarizer/model",
+        "agent": "transformer/generator",
+        "task": "msc:PersonaSummary",
+        "project": "https://parl.ai/projects/bb3",
+        "description": (
+            "Persona Summarization Model. Generates summaries of memories based on prior context turns. "
+            "Used to build BB3 memory dialogue and memory knowledge tasks."
+        ),
+        "example": (
+            "parlai i -mf zoo:bb3/persona_summarizer/model --skip-generation false --inference beam --beam-size 3 --beam-block-ngram 3 --beam-min-length 10"
+        ),
+        "result": """
+            Enter Your Message: I love my job as an AI researcher - I get to work on so many cool problems!
+            [Bart]: I am an AI researcher. I love my job.
+        """,
+    },
 ]
