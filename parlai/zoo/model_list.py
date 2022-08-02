@@ -2910,4 +2910,108 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             [GPT2ComboSearchQuery]: ParlAI: A new software platform for dialog research. Image credit: AI Research, ML Applications
         """,
     },
+    {
+        "title": "Search Query Generator trained on FITS",
+        "id": "fits",
+        "path": "zoo:fits/bart_sq_gen/model",
+        "agent": "bart",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "BART-Large 400m model for generating search queries (finetuned on FITS dataset)"
+        ),
+        "example": ("parlai i -mf zoo:fits/bart_sq_gen/model"),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[Bart]: dining options in New York City"
+        """,
+    },
+    {
+        "title": "BlenderBot2 + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/bb2_module_supervision/model",
+        "agent": "projects.blenderbot2.agents.blenderbot2:BlenderBot2FidAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "BlenderBot 2 finetuned with module supervision on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/bb2_module_supervision/model --query-generator-model-file zoo:fits/bart_sq_gen/model --search-server <YOUR_SEARCH_SERVER>"
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[BlenderBot2Fid]: Eliza dumais and peranakan mixed herb rice with dried shrimp, from kopitiam."
+        """,
+    },
+    {
+        "title": "BlenderBot2 + Director + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/director_bb2_module/model",
+        "agent": "projects.fits.agents.director_bb2:DirectorBlenderBot2FidAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "BlenderBot 2 + Director finetuned with module supervision on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/director_bb2_module/model --knowledge-access-method search_only --query-generator-model-file zoo:fits/bart_sq_gen/model --model projects.fits.agents.director_bb2:DirectorBlenderBot2FidAgent --rag-retriever-type search_engine --search-server <SEARCH_SERVER> --beam_block_full_context True --infer-mixing-weights 0.35 "
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[BlenderBot2Fid]: Eliza dumais and peranakan mixed herb rice with dried shrimp, from kopitiam."
+        """,
+    },
+    {
+        "title": "SeeKeR + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/seeker_module_supervision/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": ("SeeKeR finetuned with module supervision on the FITS task"),
+        "example": (
+            "parlai i -mf zoo:fits/seeker_module_supervision/model --init-opt parlai/zoo/fits/seeker_opts_search_always.opt --search-decision always --search-server <SEARCH_SERVER>"
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[DirectorComboFidSearchQuery]: Chinatown is a great place to eat. You can get a full meal for under $10."
+        """,
+    },
+    {
+        "title": "SeeKeR + Director + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/director_seeker_module/model",
+        "agent": "projects.fits.agents.director_bb2:DirectorSeekerAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "SeeKeR + Director finetuned with module supervision on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/director_seeker_module/model --init-opt parlai/zoo/fits/seeker_opts_search_always.opt --model projects.fits.agents.director_seeker:DirectorSeekerAgent --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10 "
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[DirectorComboFidSearchQuery]: One of the best places to get sushi in new york city is maki sushi. They have the best sushi in the city."
+        """,
+    },
+    {
+        "title": "Dialogue Response Satisfaction Classifier",
+        "id": "fits",
+        "path": "zoo:fits/response_satisfaction/model",
+        "agent": "transformer/classifier",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "Dialogue Response Satisfaction Classifier finetuned on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/response_satisfaction/model --model transformer/classifier --skip-generation False "
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\nOne of the best places to get sushi in new york city is maki sushi. They have the best sushi in the city.\n"
+            "[TransformerClassifier]: __ok__"
+        """,
+    },
 ]

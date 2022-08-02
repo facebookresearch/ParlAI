@@ -1582,4 +1582,11 @@ task_list = [
             "website": "https://justin-cho.com/spolin",
         },
     },
+    {
+        "id": "Feedback for Interactive Talk & Search",
+        "display_name": "FITS",
+        "task": "fits",
+        "tags": ["all", "engaging", "improve", "open-ended"],
+        "description": "A human-model dialogue dataset consist of 14k dialogues where human speakers give feedbacks on bot responses. ",
+    },
 ]
