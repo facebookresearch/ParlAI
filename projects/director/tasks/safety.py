@@ -57,7 +57,8 @@ class EDCLeftToRightMutator(ManyEpisodeMutator):
     The final utterance is considered as a label for the decoder and the attribute/classifier
     labels are stored seperately marking the final utterance pos. or neg.
 
-    This mutator also adds a is_ltr flag to differentiate classifier exs from the generator exs which are used to finetune the generator model.
+    This mutator also adds a is_ltr flag to differentiate classifier exs from the generator
+    exs which are used to finetune the generator model.
     """
 
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
@@ -89,7 +90,8 @@ class EDCLeftToRightMutatorCopy(ManyEpisodeMutator):
     The final utterance is considered as a label for the decoder and the attribute/classifier
     labels are stored seperately marking the final utterance pos. or neg.
 
-    This mutator also adds a is_ltr flag to differentiate classifier exs from the generator exs which are used to finetune the generator model.
+    This mutator also adds a is_ltr flag to differentiate classifier exs from the generator
+    exs which are used to finetune the generator model.
     """
 
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
@@ -121,7 +123,8 @@ class EDCLeftToRightMutatorEmpty(ManyEpisodeMutator):
     The final utterance is considered as a label for the decoder and the attribute/classifier
     labels are stored seperately marking the final utterance pos. or neg.
 
-    This mutator also adds a is_ltr flag to differentiate classifier exs from the generator exs which are used to finetune the generator model.
+    This mutator also adds a is_ltr flag to differentiate classifier exs from the generator
+    exs which are used to finetune the generator model.
     """
 
     def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
