@@ -2971,7 +2971,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
         "project": "https://parl.ai/projects/fits",
         "description": ("SeeKeR finetuned with module supervision on the FITS task"),
         "example": (
-            "parlai i -mf zoo:fits/seeker_module_supervision/model --init-opt parlai/zoo/fits/seeker_opts_search_always.opt --search-decision always --search-server <SEARCH_SERVER>"
+            "parlai i --init-opt gen/seeker_dialogue.opt --model-file zoo:fits/seeker_module_supervision/model --search-decision always --search-server <SEARCH_SERVER>"
         ),
         "result": """
             "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
@@ -2989,7 +2989,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             "SeeKeR + Director finetuned with module supervision on the FITS task"
         ),
         "example": (
-            "parlai i -mf zoo:fits/director_seeker_module/model --init-opt parlai/zoo/fits/seeker_opts_search_always.opt --model projects.fits.agents.director_seeker:DirectorSeekerAgent --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10 "
+            "parlai i --init-opt gen/seeker_dialogue.opt --model-file zoo:fits/director_seeker_module/model --model projects.fits.agents.director_seeker:DirectorSeekerAgent --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10 "
         ),
         "result": """
             "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
