@@ -1,0 +1,68 @@
+acts:
+- - episode_done: true
+    gold_labels:
+    - __notok__
+    id: safety_mix
+    label_candidates:
+    - __notok__
+    - __ok__
+    labels:
+    - __notok__
+    source: standard
+    text: Nobody asked you your opinion.
+    user_id: 6
+    user_type: helper
+- - episode_done: true
+    gold_labels:
+    - __ok__
+    id: safety_mix
+    label_candidates:
+    - __ok__
+    - __notok__
+    labels:
+    - __notok__
+    source: standard
+    text: wow, i can not believe this, because.... that is my favorite color too
+    user_id: 18
+    user_type: troll
+- - episode_done: true
+    gold_labels:
+    - __ok__
+    id: safety_mix
+    label_candidates:
+    - __ok__
+    - __notok__
+    labels:
+    - __notok__
+    source: standard
+    text: i do not like running
+    user_id: 10
+    user_type: troll
+- - episode_done: true
+    gold_labels:
+    - __ok__
+    id: safety_mix
+    label_candidates:
+    - __ok__
+    - __notok__
+    labels:
+    - __notok__
+    source: standard
+    text: i am in nashville love country
+    user_id: 19
+    user_type: troll
+- - episode_done: true
+    gold_labels:
+    - __ok__
+    id: safety_mix
+    label_candidates:
+    - __ok__
+    - __notok__
+    labels:
+    - __notok__
+    source: standard
+    text: i only drive to the malls, grocery store. what do you build?
+    user_id: 11
+    user_type: troll
+num_episodes: 200
+num_examples: 200

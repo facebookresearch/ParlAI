@@ -98,6 +98,18 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/2010.07079"},
     },
     {
+        "id": "SafetyMix",
+        "display_name": "Safety Mix",
+        "task": "safety_mix",
+        "tags": [],
+        "description": (
+            "Datasets described in the paper: Learning from data in the mixed adversarial non-adversarial case:"
+            "Finding the helpers and ignoring the trolls. "
+            "Datasets based on Bot Adversarial Dialogue and consist of a mixture of different troll users."
+            "Artificial noise is introduced to the dataset given the troll user type."
+        ),
+    },
+    {
         "id": "CBT",
         "display_name": "Children's Book Test (CBT)",
         "task": "cbt",
