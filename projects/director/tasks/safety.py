@@ -7,7 +7,11 @@
 
 from typing import List, Tuple
 from typing import Optional
-from parlai.core.agents import Agent, create_agent_from_model_file
+from parlai.core.agents import (
+    Agent,
+    create_agent_from_model_file,
+    create_agent_from_shared,
+)
 from parlai.core.params import ParlaiParser
 from parlai.core.message import Message
 from parlai.core.opt import Opt
@@ -146,9 +150,13 @@ class NegOnlyMutator(ManyEpisodeMutator):
     """
 
     def many_episode_mutation(self, episode: List[Message]) -> List[Message]:
+        neg_kwords = ['neg', '__notok__']
         new_episodes = []
         for message in episode:
-            if message['labels'][0] == 'neg' or message['labels'][0] == '__notok__':
+            if message['labels'][0] in neg_kwords or (
+                'classifier_label' in message
+                and message['classifier_label'] in neg_kwords
+            ):
                 new_episodes.append([message])
         return new_episodes
 
@@ -160,14 +168,18 @@ class PosOnlyMutator(ManyEpisodeMutator):
     """
 
     def many_episode_mutation(self, episode: List[Message]) -> List[Message]:
+        pos_kwords = ['pos', '__ok__']
         new_episodes = []
         for message in episode:
-            if message['labels'][0] == 'pos':
+            if message['labels'][0] in pos_kwords or (
+                'classifier_label' in message
+                and message['classifier_label'] in pos_kwords
+            ):
                 new_episodes.append([message])
         return new_episodes
 
 
-class ClassifierMetricTeacher:
+class ClassifierMetricTeacher(bibifi.DefaultTeacher):
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -182,32 +194,59 @@ class ClassifierMetricTeacher:
         parser.add_argument(
             '--include-label-cand-only',
             type='bool',
-            default=False,
+            default=True,
             help='When passing inputs to the classifier, use only the label targets if set to True.',
+        )
+        parser.add_argument(
+            '--truncate-prediction-at',
+            type=int,
+            default=-1,
+            help='Truncate the prediction of the model after n words before feeding it to the classifier.',
+        )
+        parser.add_argument(
+            '--limit-classifier-examples-at',
+            type=int,
+            default=-1,
+            help='Limit the amount of classifier examples (used during training).',
+        )
+        parser.add_argument(
+            '--eval-classifier-use-cuda',
+            type=bool,
+            default=False,
+            help='Use the gpu for the eval classifier. This does not work during distributed training.',
         )
         return parser
 
     def __init__(self, opt, shared=None):
+        super().__init__(opt, shared)
+        if opt['limit_classifier_examples_at'] > 0:
+            self.data = self.data[: opt['limit_classifier_examples_at']]
         self.include_label_cand_only = opt['include_label_cand_only']
+        self.truncate_prediction_at = opt['truncate_prediction_at']
         if opt.get('eval_classifier_model_file'):
-            from parlai.agents.reranker.classifier_reranker import ClassifierReranker
 
             if not shared:
                 self.classifier = create_agent_from_model_file(
-                    opt['eval_classifier_model_file']
+                    opt['eval_classifier_model_file'],
+                    opt_overrides={
+                        'datatype': 'valid',
+                        'no_cuda': not opt['eval_classifier_use_cuda'],
+                    },
                 )
+                self.classifier.opt.log()
             else:
-                self.classifier = shared['classifier']
+                print('Load the classifier from shared')
+                self.classifier = create_agent_from_shared(shared['classifier'])
             self.context = []
             DEFAULT_DELIM = '\n'
             self.delimiter = opt.get('delimiter', DEFAULT_DELIM)
         else:
             self.classifier = None
-        super().__init__(opt, shared)
 
     def share(self):
         shared = super().share()
-        shared['classifier'] = self.classifier
+        if self.classifier:
+            shared['classifier'] = self.classifier.share()
         return shared
 
     def predict(self, context: str) -> Message:
@@ -250,16 +289,20 @@ class ClassifierMetricTeacher:
         self.context.append(teacher_action['text'])
         correct_class = self.classifier.ref_class
         model_text = model_response['text']
+        if self.truncate_prediction_at > 0:
+            model_text = ' '.join(model_text.split()[: self.truncate_prediction_at])
+
         if self.include_label_cand_only:
             classifier_act = self.predict(model_text)
         else:
             context = self.delimiter.join(self.context)
             classifier_act = self.predict(context + self.delimiter + model_text)
 
-        predicted_class = classifier_act['text']
-        correct_prediction = int(predicted_class == correct_class)
+        if 'text' in classifier_act:
+            predicted_class = classifier_act['text']
+            correct_prediction = int(predicted_class == correct_class)
 
-        self.metrics.add('classifier_accuracy', AverageMetric(correct_prediction))
+            self.metrics.add('classifier_accuracy', AverageMetric(correct_prediction))
 
         if teacher_action['episode_done']:
             self.context = []
@@ -268,7 +311,7 @@ class ClassifierMetricTeacher:
             self.context.append(labels[0])
 
 
-class SafeWikiToxicEvalTeacher(ClassifierMetricTeacher, bibifi.DefaultTeacher):
+class SafeWikiToxicEvalTeacher(ClassifierMetricTeacher):
     pass
 
 
