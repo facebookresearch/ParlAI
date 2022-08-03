@@ -19,11 +19,11 @@ Frozen models trained to mimic static datasets can never improve their performan
 
 ## Data
 
-We release the Feedback for Interactive Talk & Search (FITS) task at `parlai/tasks/fits`. 
+We release the Feedback for Interactive Talk & Search (FITS) task at `parlai/tasks/fits`.
 
 To view the dialogue data, run:
 ```
-parlai display_data -t fits 
+parlai display_data -t fits
 ```
 
 See the [ParlAI quickstart for help](http://www.parl.ai/docs/tutorial_quick.html).
@@ -43,12 +43,12 @@ parlai eval_model -mf zoo:fits/director_bb2_module/model --knowledge-access-meth
 
 - The model **SeeKeR 3B + module supervision** can be downloaded and evaluated with the following command:
 ```
-parlai eval_model --init-opt gen/seeker_dialogue.opt -mf zoo:fits/seeker_module_supervision/model -t fits -dt valid --search-decision always  --search-server <SEARCH_SERVER>
+parlai eval_model --init-opt gen/seeker_dialogue -mf zoo:fits/seeker_module_supervision/model -t fits -dt valid --search-decision always  --search-server <SEARCH_SERVER>
 ```
 
 - The model **SeeKeR 3B + DIRECTOR module+binary feedback** can be downloaded and evaluated with the following command:
 ```
-parlai eval_model --init-opt gen/seeker_dialogue.opt -mf zoo:fits/director_seeker_module/model  --model projects.fits.agents.director_seeker:DirectorSeekerAgent  -t fits --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10
+parlai eval_model --init-opt gen/seeker_dialogue -mf zoo:fits/director_seeker_module/model  --model projects.fits.agents.director_seeker:DirectorSeekerAgent  -t fits --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10
 ```
 
 

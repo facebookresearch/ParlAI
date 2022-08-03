@@ -2971,7 +2971,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
         "project": "https://parl.ai/projects/fits",
         "description": ("SeeKeR finetuned with module supervision on the FITS task"),
         "example": (
-            "parlai i --init-opt gen/seeker_dialogue.opt --model-file zoo:fits/seeker_module_supervision/model --search-decision always --search-server <SEARCH_SERVER>"
+            "parlai i --init-opt gen/seeker_dialogue --model-file zoo:fits/seeker_module_supervision/model --search-decision always --search-server <SEARCH_SERVER>"
         ),
         "result": """
             "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
@@ -2989,7 +2989,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             "SeeKeR + Director finetuned with module supervision on the FITS task"
         ),
         "example": (
-            "parlai i --init-opt gen/seeker_dialogue.opt --model-file zoo:fits/director_seeker_module/model --model projects.fits.agents.director_seeker:DirectorSeekerAgent --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10 "
+            "parlai i --init-opt gen/seeker_dialogue --model-file zoo:fits/director_seeker_module/model --model projects.fits.agents.director_seeker:DirectorSeekerAgent --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10 "
         ),
         "result": """
             "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
@@ -3007,7 +3007,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             "Dialogue Response Satisfaction Classifier finetuned on the FITS task"
         ),
         "example": (
-            "parlai i -mf zoo:fits/response_satisfaction/model --model transformer/classifier --skip-generation False "
+            "parlai i -mf zoo:fits/response_satisfaction/model --model transformer/classifier "
         ),
         "result": """
             "Enter Your Message: I am looking for a good and affordable dining place in New York City.\nOne of the best places to get sushi in new york city is maki sushi. They have the best sushi in the city.\n"
