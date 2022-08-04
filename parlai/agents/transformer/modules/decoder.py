@@ -21,7 +21,6 @@ from parlai.agents.transformer.modules import (
     LAYER_NORM_EPS,
     MultiHeadAttention,
     TransformerFFN,
-    Triton_MHA,
 )
 from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
