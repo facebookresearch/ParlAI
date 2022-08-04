@@ -469,6 +469,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             help='Set to use CUDA kernel for beam search ngram blocking',
             default=False,
         )
+        parser.add_argument(
+            '--flash-attention',
+            type='bool',
+            help='Set to use flash attention',
+            default=False,
+        )
 
         super().add_cmdline_args(parser, partial_opt=partial_opt)
         return agent
