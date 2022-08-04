@@ -7,6 +7,7 @@
 Implementations of attention.
 """
 
+from cmath import nan
 import math
 from typing import Dict, Tuple, Optional, Union
 
@@ -17,6 +18,7 @@ import torch.nn.functional as F
 from parlai.core.opt import Opt
 from parlai.core.params import default
 from parlai.utils.torch import neginf
+from .triton_att import _attention
 
 
 class BasicAttention(nn.Module):
@@ -128,6 +130,7 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
+        pad: bool = False,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
@@ -151,6 +154,22 @@ class MultiHeadAttention(nn.Module):
           key/value-multiplied tensor before softmax,
         )
         """
+
+        def if_enc_self_att():
+            return len(mask.shape) == 2 and not value and not key
+
+        if if_enc_self_att and pad:
+            _, old_query_len, _ = query.size()
+            next_seq_len = 128 * math.ceil(old_query_len / 128)
+            query = F.pad(
+                query,
+                pad=(0, 0, 0, next_seq_len - old_query_len),
+                mode='constant',
+                value=0,
+            )
+            mask = F.pad(
+                mask, pad=(0, next_seq_len - old_query_len), mode='constant', value=0
+            )
 
         batch_size, query_len, dim = query.size()
         assert (
@@ -254,7 +273,7 @@ class MultiHeadAttention(nn.Module):
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
-        attentioned = (
+        out = (
             attentioned.type_as(query)
             .view(batch_size, n_heads, query_len, dim_per_head)
             .transpose(1, 2)
@@ -262,7 +281,10 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size, query_len, dim)
         )
 
-        out = self.out_lin(attentioned)
+        if if_enc_self_att and pad:
+            out = out[:, :old_query_len, :]
+
+        out = self.out_lin(out)
 
         return out, new_incr_state, dot_prod
 
@@ -319,6 +341,7 @@ class Triton_MHA(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
+        pad: bool = False,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
@@ -343,7 +366,11 @@ class Triton_MHA(nn.Module):
         )
         """
 
-        print(mask.shape)
+        if pad:
+            _, old_query_len, _ = query.size()
+            next_seq_len = 128 * math.ceil(old_query_len / 128)
+            query = F.pad(query, pad=(0, 0, 0, next_seq_len - old_query_len), value=0)
+            mask = F.pad(mask, pad=(0, next_seq_len - old_query_len), value=False)
 
         batch_size, query_len, dim = query.size()
         assert (
@@ -352,21 +379,8 @@ class Triton_MHA(nn.Module):
         assert mask is not None, 'Mask is None, please specify a mask'
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
-        scale = math.sqrt(dim_per_head)
+        scale = 1.0 / math.sqrt(dim_per_head)
 
-        def prepare_head(tensor):
-            # input is [batch_size, seq_len, n_heads * dim_per_head]
-            # output is [batch_size * n_heads, seq_len, dim_per_head]
-            bsz, seq_len, _ = tensor.size()
-            tensor = tensor.view(batch_size, tensor.size(1), n_heads, dim_per_head)
-            tensor = (
-                tensor.transpose(1, 2)
-                .contiguous()
-                .view(batch_size * n_heads, seq_len, dim_per_head)
-            )
-            return tensor
-
-        # q, k, v are the transformed values
         if key is None and value is None:
             # self attention
             key = value = query
@@ -376,96 +390,44 @@ class Triton_MHA(nn.Module):
             # self attention
             value = key
 
-        assert key is not None  # let mypy know we sorted this
-        _, _key_len, dim = key.size()
+        def prepare_head(tensor):
+            # input is [batch_size, seq_len, n_heads * dim_per_head]
+            # output is [batch_size, n_heads, seq_len, dim_per_head]
+            bsz, seq_len, _ = tensor.size()
+            tensor = tensor.view(bsz, seq_len, n_heads, dim_per_head)
+            tensor = tensor.transpose(1, 2).contiguous()
+            return tensor
 
         q = prepare_head(self.q_lin(query))
+        k = prepare_head(self.k_lin(key))
+        v = prepare_head(self.v_lin(value))
 
-        # Prepend incremental states. For each of the key, value, and mask, see if
-        # a previous incremental state exists, and if so, reshape it to match the shape
-        # of the new state. Concatenate the previous and new states to match what the
-        # full state would have been if we had not cached. (If we are using static_kv,
-        # these three states are unchanging, so just re-use the cached states.)
-        if incr_state is None:
-            incr_state = {}
-        if 'prev_key' in incr_state:
-            prev_key = incr_state['prev_key'].view(
-                batch_size * n_heads, -1, dim_per_head
-            )
-            if static_kv:
-                k = prev_key
-            else:
-                k = torch.cat([prev_key, prepare_head(self.k_lin(key))], dim=1)
-        else:
-            k = prepare_head(self.k_lin(key))
-        if 'prev_value' in incr_state:
-            prev_value = incr_state['prev_value'].view(
-                batch_size * n_heads, -1, dim_per_head
-            )
-            if static_kv:
-                v = prev_value
-            else:
-                v = torch.cat([prev_value, prepare_head(self.v_lin(value))], dim=1)
-        else:
-            v = prepare_head(self.v_lin(value))
-        if 'prev_mask' in incr_state:
-            if static_kv:
-                mask = incr_state['prev_mask']
-            else:
-                # Mask will be of size (B x query_len x key_len)
-                # During incremental decoding the query will only represent the next token,
-                # whereas the key/value will represent the entire sequence thus far.
-                # In such a case, we only want to look at the last element of the mask in the query dimension.
-                prev_mask = incr_state['prev_mask'][:, -query_len:, :]
-                mask = torch.cat([prev_mask, mask], dim=2)
-                # Prepend along the key_len dimension (analogous to incr_state['prev_key'])
+        full_key_len = k.size(2)
 
-        # Save new incremental states. We reshape to allow for reordering along batch
-        # dimension.
-        new_incr_state = {
-            'prev_key': k.view(batch_size, n_heads, -1, dim_per_head),
-            'prev_value': v.view(batch_size, n_heads, -1, dim_per_head),
-            'prev_mask': mask,
-        }
-
-        full_key_len = k.size(1)
-        dot_prod = q.div_(scale).bmm(k.transpose(1, 2))
-        # [B * n_heads, query_len, key_len]
-        attn_mask = (
+        mask = (
             (mask == 0)
             .view(batch_size, 1, -1, full_key_len)
             .repeat(1, n_heads, 1, 1)
             .expand(batch_size, n_heads, query_len, full_key_len)
-            .view(batch_size * n_heads, query_len, full_key_len)
+            .contiguous()
+            .clone()
         )
-        assert attn_mask.shape == dot_prod.shape
-        dot_prod.masked_fill_(attn_mask, neginf(dot_prod.dtype))
 
-        attn_weights = F.softmax(
-            dot_prod, dim=-1, dtype=torch.float  # type: ignore
-        ).type_as(query)
-        attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
+        attention = _attention.apply
+        out = attention(q, k, v, mask, scale)
+        # if out.isnan().any():
+        #     breakpoint()
 
-        attentioned = attn_weights.bmm(v)
-        attentioned = (
-            attentioned.type_as(query)
-            .view(batch_size, n_heads, query_len, dim_per_head)
+        out = (
+            out.type_as(query)
             .transpose(1, 2)
             .contiguous()
             .view(batch_size, query_len, dim)
         )
 
-        out = self.out_lin(attentioned)
+        if pad:
+            out = out[:, :old_query_len, :]
 
-        return out, new_incr_state, dot_prod
+        out = self.out_lin(out)
 
-    def reorder_incremental_state(
-        self, incremental_state: Dict[str, torch.Tensor], inds: torch.Tensor
-    ) -> Dict[str, torch.Tensor]:
-        """
-        Reorder the input incremental-state tensors.
-        """
-        return {
-            key: torch.index_select(val, 0, inds.to(val.device)).contiguous()
-            for key, val in incremental_state.items()
-        }
+        return out, {}
