@@ -20,6 +20,7 @@ from parlai.agents.transformer.modules import (
     LAYER_NORM_EPS,
     MultiHeadAttention,
     TransformerFFN,
+    Triton_MHA,
 )
 from parlai.agents.transformer.modules.modular import swappable
 from parlai.core.opt import Opt
@@ -60,12 +61,20 @@ class TransformerEncoderLayer(nn.Module):
         self.ffn_dim = ffn_size
         self.activation = activation
         self.variant = variant
-        self.attention = self.swappables.self_attention(  # type: ignore
-            opt=self.opt,
-            n_heads=n_heads,
-            dim=embedding_size,
-            dropout=attention_dropout,  # --attention-dropout
-        )
+        if not self.opt.get("flash_attention", False):
+            self.attention = self.swappables.self_attention(  # type: ignore
+                opt=self.opt,
+                n_heads=n_heads,
+                dim=embedding_size,
+                dropout=attention_dropout,  # --attention-dropout
+            )
+        else:
+            self.attention = Triton_MHA(  # type: ignore
+                opt=self.opt,
+                n_heads=n_heads,
+                dim=embedding_size,
+                dropout=attention_dropout,  # --attention-dropout
+            )
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = self.swappables.feedforward(  # type: ignore
             opt=self.opt,
