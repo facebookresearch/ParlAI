@@ -121,6 +121,14 @@ METRICS_DISPLAY_DATA = {
     "ltrunclen": MetricDisplayData(
         "Label Truncation Length", "Average length of label tokens truncated"
     ),
+    "precision": MetricDisplayData(
+        "Precision",
+        "Precision computed based on unigram, under a standardized (model-independent) tokenizer",
+    ),
+    "recall": MetricDisplayData(
+        "Recall",
+        "Recall computed based on unigram, under a standardized (model-independent) tokenizer",
+    ),
     "rouge-1": MetricDisplayData("ROUGE-1", "ROUGE metrics"),
     "rouge-2": MetricDisplayData("ROUGE-2", "ROUGE metrics"),
     "rouge-L": MetricDisplayData("ROUGE-L", "ROUGE metrics"),
