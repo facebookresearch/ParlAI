@@ -341,7 +341,7 @@ class Triton_MHA(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
-        pad: bool = False,
+        pad: bool = True,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
@@ -415,8 +415,9 @@ class Triton_MHA(nn.Module):
 
         attention = _attention.apply
         out = attention(q, k, v, mask, scale)
-        # if out.isnan().any():
-        #     breakpoint()
+        if out.isnan().any():
+            print("IMPORTANT: found nan in output, program halted")
+            breakpoint()
 
         out = (
             out.type_as(query)
