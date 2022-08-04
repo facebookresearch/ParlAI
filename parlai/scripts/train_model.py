@@ -26,14 +26,16 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 import copy
 import json
 import os
-import numpy as np
 import signal
 from typing import Tuple
 
-from parlai.core.metrics import Metric
+import numpy as np
+
+import parlai.utils.logging as logging
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger, WandbLogger
+from parlai.core.metrics import Metric
 from parlai.core.metrics import (
     aggregate_named_reports,
     aggregate_unnamed_reports,
@@ -41,6 +43,7 @@ from parlai.core.metrics import (
 )
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, print_announcements
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.worlds import create_task, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.scripts.eval_model import get_task_world_logs
@@ -52,11 +55,9 @@ from parlai.utils.distributed import (
     get_rank,
     num_workers,
 )
+from parlai.utils.io import PathManager
 from parlai.utils.misc import Timer, nice_report
 from parlai.utils.world_logging import WorldLogger
-from parlai.core.script import ParlaiScript, register_script
-import parlai.utils.logging as logging
-from parlai.utils.io import PathManager
 
 
 def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
@@ -488,6 +489,8 @@ class TrainLoop:
             try:
                 self.agent.save(fn)
                 self._save_train_stats(suffix)
+                if self.opt['wandb_log']:
+                    self.wb_logger.log_model(fn)
                 break
             except KeyboardInterrupt:
                 pass

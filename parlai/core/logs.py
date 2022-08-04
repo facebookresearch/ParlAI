@@ -18,6 +18,7 @@ import datetime
 import json
 import numbers
 import os
+import pathlib
 import re
 from typing import Optional
 
@@ -157,13 +158,6 @@ class WandbLogger(object):
             help='W&B entity name.',
             hidden=False,
         )
-        logger.add_argument(
-            '-wbmodel',
-            '--wandb-model',
-            type=bool,
-            default=False,
-            help="Enable W&B logging of model artifacts",
-        )
         return logger
 
     def __init__(self, opt: Opt, model=None):
@@ -209,11 +203,8 @@ class WandbLogger(object):
                 if key not in self.run.config:  # set by task logic
                     if value is None or isinstance(value, (str, numbers.Number, tuple)):
                         setattr(self.run.config, key, value)
-        self.log_model = opt.get('wandb_model', False)
-        if self.log_model:
-            self.model_file = opt.get('model_file', None)
-        else:
-            self.model_file = None
+
+        self.model_file = opt.get('model_file', None)
         if model is not None:
             self.run.watch(model)
 
@@ -246,17 +237,32 @@ class WandbLogger(object):
         }
         for key, value in report.items():
             self.run.summary[key] = value
-        if self.model_file is not None and self.log_model:
-            artifact = self._wandb.Artifact('model', type='model')
-            artifact.add_file(
-                self.model_file,
-                f'{self.run.name}_model',
-            )
-            artifact.add_file(
-                self.model_file + ".dict",
-                f'{self.run.name}_dictionary',
-            )
-            self.run.log_artifact(artifact)
+
+    def log_model(self, model_file=None):
+        if self.model_file is not None:
+            if not model_file:
+                model_file = self.model_file
+            model_file = pathlib.Path(model_file)
+            if model_file.exists():
+                self.run.log_artifact(
+                    str(model_file),
+                    name=f"{self.run.name}-{model_file.name}",
+                    type="model",
+                )
+            vocab_file = model_file.with_suffix('.dict')
+            if vocab_file.exists():
+                self.run.log_artifact(
+                    str(vocab_file),
+                    name=f"{self.run.name}-{vocab_file.name}",
+                    type="vocab",
+                )
+            stats_file = model_file.with_suffix('.trainstats')
+            if stats_file.exists():
+                self.run.log_artifact(
+                    str(stats_file),
+                    name=f"{self.run.name}-{stats_file.name}",
+                    type="stats",
+                )
 
     def finish(self):
         self.run.finish()
