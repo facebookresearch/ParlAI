@@ -35,7 +35,7 @@ BB3 also builds on all our previous work, including [BB1](https://parl.ai/projec
 
 ## Logbook
 
-We are also releasing a BB3 Logbook documenting the development of our system, available [here](bb3_logbook.pdf).
+We are also releasing a BB3 Logbook documenting the development of our system, available [here](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3/bb3_logbook.pdf).
 
 ## <a id="models">Models</a>
 
