@@ -131,6 +131,7 @@ class SearchQueryClassificationMixin(MessageMutator):
             message.force_set('text', f"{last_context} {self.PROMPT}")
         if message['labels'] != [self.get_label(message)]:
             message.force_set('labels', [self.get_label(message)])
+        message.pop('knowledge', None)
         return message
 
     @abstractmethod
@@ -425,6 +426,9 @@ class ExtractEntityResponse(ManyEpisodeMutator):
     Picks an entity in the context and uses it as the intended target.
     """
 
+    BEGIN_KNOWLEDGE: str = CONST.KNOWLEDGE_TOKEN
+    END_KNOWLEDGE: str = CONST.END_KNOWLEDGE_TOKEN
+
     def many_episode_mutation(self, episode):
         out_episodes = []
         for message in episode:
@@ -437,9 +441,7 @@ class ExtractEntityResponse(ManyEpisodeMutator):
                 longest_ent = max(ents, key=len)
             else:
                 continue
-            knol_text = (
-                f'{CONST.KNOWLEDGE_TOKEN} {longest_ent} {CONST.END_KNOWLEDGE_TOKEN}'
-            )
+            knol_text = f'{self.BEGIN_KNOWLEDGE} {longest_ent} {self.END_KNOWLEDGE}'
             new_text = message['text'] + '\n' + knol_text
             new_message.force_set('text', new_text)
             out_episodes.append([new_message])
@@ -459,7 +461,11 @@ class MscFindSelectedSentenceKnowledge(ManyEpisodeMutator):
         for m in episode:
             new_m = m.copy()
             gold_label = m.get('labels', [''])[0]
-            gold_label_parts = nltk.word_tokenize(gold_label)
+            try:
+                gold_label_parts = nltk.word_tokenize(gold_label)
+            except IndexError:
+                # malformed label
+                gold_label_parts = []
             best_f1 = 0
             best_sentence = ''
             context_except_last_line = '\n'.join(m['text'].split('\n')[:-1])
@@ -494,6 +500,7 @@ class MscFindSelectedSentenceKnowledge(ManyEpisodeMutator):
                     + best_sentence
                     + ' __endknowledge__',
                 )
+            new_m.force_set('old_target', gold_label)
 
             if best_f1 > msc_f1_threshold:
                 out_episodes.append([new_m])

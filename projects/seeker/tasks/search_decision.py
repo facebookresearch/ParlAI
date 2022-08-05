@@ -32,6 +32,7 @@ class WoiSearchDecisionTeacher(woi.DefaultTeacher):
                 'flatten',
                 'woi_dropout_retrieved_docs',
                 'woi_maybe_generate_search_query_mutator',
+                'woi_pop_documents_mutator',
                 'skip_retrieval_mutator',
             ]
         )

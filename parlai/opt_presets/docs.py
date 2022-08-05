@@ -45,4 +45,14 @@ PRESET_DESCRIPTIONS = {
         "Architecture parameters for R2C2 Base 3B model. See"
         "[Shuster et al. (2022)](https://arxiv.org/abs/2203.13224)"
     ),
+    "gen/r2c2_bb3": (
+        "Generation parameters for BB3-3B. See " "https://parl.ai/projects/bb3"
+    ),
+    "gen/opt_bb3": (
+        "Generation parameters for BB3-175B. See " "https://parl.ai/projects/bb3"
+    ),
+    "gen/opt_pt": (
+        "Generation parameters for OPT-175B in BB3 setup. See "
+        "https://parl.ai/projects/bb3"
+    ),
 }
