@@ -60,7 +60,7 @@ See [here](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/bb3/d
 We are releasing the new [FITS](https://parl.ai/projects/fits) dataset of Feedback on Internet Talk & Search used to train BB3.
 
 Training is also multi-tasked with all the existing datasets from BB1 and BB2, e.g. the existing [BST tasks](https://parl.ai/projects/bst) from [BlenderBot 1](https://parl.ai/projects/recipes), and [Multi-Session Chat](https://parl.ai/projects/msc) and [Wizard of the Internet](https://parl.ai/projects/sea) from BB2. To train for safety we use the [SaFeRDialogues](https://parl.ai/projects/saferdialogues/) and [BAD dataset](https://parl.ai/projects/safety_recipes). In addition, we use a number of QA tasks and task-oriented dialogue datasets that are all available in [ParlAI](https://parl.ai/docs/tasks.html). See
-the [tech report](BB3_main_tech_report.pdf) for the full list.
+the [tech report](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3/BB3_main_tech_report.pdf) for the full list.
 
 See the [ParlAI quickstart](http://www.parl.ai/docs/tutorial_quick.html) for help.
 
@@ -151,7 +151,7 @@ Commands for evaluating the BB3 models on the [HolisticBias](https://github.com/
 ## <a id="interaction-data">Live deployment / demo</a>
 
 The live demo is available [here](https://blenderbot.ai/). We have been placing ads&mdash;and conducting user studies&mdash;to allow members of the public to participate in using the system, and to optionally record interaction and feedback data for use by the research community.
-See the [tech report](BB3_main_tech_report.pdf) for full details and evaluation metrics thus far.
+See the [tech report](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3/BB3_main_tech_report.pdf) for full details and evaluation metrics thus far.
 
 
 ## <a id="interaction-data">Sharing interaction data & model improvements: _coming next!_</a>
