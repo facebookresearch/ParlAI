@@ -11,7 +11,6 @@ import parlai.tasks.blended_skill_talk.agents as bst
 import parlai.tasks.empathetic_dialogues.agents as ed
 import parlai.tasks.msc.agents as msc
 import parlai.tasks.wizard_of_wikipedia.agents as wow
-from parlai.utils.data import DatatypeHelper
 import parlai.utils.logging as logging
 
 import projects.bb3.constants as BB3_CONST
@@ -19,7 +18,6 @@ from projects.bb3.tasks.module_level_tasks import BB3TeacherMixin
 
 from projects.seeker.tasks.search_decision import (
     WoiSearchDecisionTeacher as woi_sdm,
-    WowSearchDecisionTeacher as wow_sdm,
     SquadSearchDecisionTeacher as squad_sdm,
     TriviaQASearchDecisionTeacher as triviaqa_sdm,
     NQSearchDecisionTeacher as nq_sdm,

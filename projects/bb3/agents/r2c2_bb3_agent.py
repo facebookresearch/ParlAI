@@ -31,7 +31,6 @@ from parlai.agents.rag.retrievers import (
 )
 from parlai.core.agents import Agent, create_agent, create_agent_from_shared
 from parlai.core.dict import DictionaryAgent
-from parlai.core.loader import load_agent_module
 from parlai.core.message import Message
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
@@ -611,7 +610,7 @@ class BlenderBot3Agent(ModularAgentMixin):
 
     def get_mdm_observation(self, ag_obs: Message) -> Message:
         """
-        Add memories to the memory decision observation
+        Add memories to the memory decision observation.
 
         :param ag_obs:
             incoming mdm observation

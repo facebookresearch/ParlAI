@@ -28,7 +28,7 @@ from projects.seeker.tasks.dialogue import (
 )
 
 from parlai.tasks.fits.agents import FitsBaseTeacher as FitsDialogueTeacher
-import parlai.tasks.fits.mutators
+import parlai.tasks.fits.mutators  # type: ignore
 
 from projects.bb3.tasks.module_level_tasks import BB3TeacherMixin
 from projects.bb3.tasks.r2c2_knowledge_tasks import (

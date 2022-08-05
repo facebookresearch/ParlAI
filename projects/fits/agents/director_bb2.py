@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from typing import Optional, Any, Dict, Tuple, Union, List
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from parlai.agents.transformer.modules import (
     TransformerDecoderLayer,
 )
@@ -168,8 +168,9 @@ class DirectorFidModelMixin:
         self, latent: torch.Tensor, encoder_states: Optional[Tuple[Any, ...]] = None
     ):
         """
-        Overriding decoder_output method to use classifier heads to modify the generator logprobs.
-        This modification allows model to incorporate attribute information  from classifier while selecting the next tokens.
+        Overriding decoder_output method to use classifier heads to modify the generator
+        logprobs. This modification allows model to incorporate attribute information
+        from classifier while selecting the next tokens.
 
         Notice that the output method of a RagModel is an identity mapping. One need to override the RagModel.decoder_output instead
 
@@ -293,7 +294,8 @@ class DirectorFidModelMixin:
         incr_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[torch.Tensor, Optional[Dict[str, Any]]]:
         """
-        Refactored Decode, RAG-Style to split the FID.decoder into decoder_output_before_final_projection + decoder_output
+        Refactored Decode, RAG-Style to split the FID.decoder into
+        decoder_output_before_final_projection + decoder_output.
 
         :param input:
             input for the decoder
@@ -557,8 +559,9 @@ class DirectorFidAgent(FidAgent):
         self, batch, losses, metric_loss, metric_correct, metric_target_tokens, indices
     ):
         """
-        This method reshapes the loss-related vectors back to the batch size.
-        This is needed to record local metrics as the metrics need to be of batch size for generator model.
+        This method reshapes the loss-related vectors back to the batch size. This is
+        needed to record local metrics as the metrics need to be of batch size for
+        generator model.
 
         Args:
             batch: batch being processed in this iteration.

@@ -5,10 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 
 import itertools
-import os
-import time
 import torch
-from typing import Optional, List, Dict, Any, Tuple
+from typing import Optional, List, Dict, Any
 
 from parlai.core.agents import Agent, create_agent
 from parlai.core.dict import DictionaryAgent

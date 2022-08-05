@@ -117,8 +117,9 @@ class DirectorComboFidModel(DirectorFidModelMixin, ComboFidModel):
         incr_state: Optional[Dict[str, Any]] = None,
     ) -> Tuple[torch.Tensor, Optional[Dict[str, Any]]]:
         """
-        Refactored Decode, RAG-Style to split the FID.decoder into decoder_output_before_final_projection + decoder_output
-        only for generation purpose Decode, RAG-Style.
+        Refactored Decode, RAG-Style to split the FID.decoder into
+        decoder_output_before_final_projection + decoder_output only for generation
+        purpose Decode, RAG-Style.
 
         :param input:
             input for the decoder
@@ -146,8 +147,9 @@ class DirectorComboFidModel(DirectorFidModelMixin, ComboFidModel):
         encoder_states: Optional[Tuple[Any, ...]] = None,
     ):
         """
-        Overriding decoder_output method to use classifier heads to modify the generator logprobs.
-        This modification allows model to incorporate attribute information  from classifier while selecting the next tokens.
+        Overriding decoder_output method to use classifier heads to modify the generator
+        logprobs. This modification allows model to incorporate attribute information
+        from classifier while selecting the next tokens.
 
         Notice that the skip_director_reranking_for_all_generations is moved to Agent config as all subagents share the same model, including model weights and model configs
         Args:
@@ -220,7 +222,8 @@ class DirectorComboFidAgent(DirectorFidAgent, ComboFidAgent):
         Union[torch.BoolTensor, None],
     ]:
         """
-        Override ComboFidAgent._encoder_input to pass through skip_director_reranking_vec.
+        Override ComboFidAgent._encoder_input to pass through
+        skip_director_reranking_vec.
         """
         return (
             batch.text_vec,

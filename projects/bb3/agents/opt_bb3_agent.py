@@ -19,7 +19,6 @@ SRM: Search Dialogue Response Model
 """
 import copy
 import random
-import torch
 from typing import List, Optional, Dict, Any, Union, Tuple
 from parlai.agents.rag.retrievers import Document
 
@@ -78,7 +77,7 @@ BB3_OPT_GEN_KEYS = [
 
 class BlenderBot3Agent(R2C2Agent):
     """
-    OPT BB3 Agent
+    OPT BB3 Agent.
     """
 
     MODEL_TYPE: str = 'OPT'
@@ -229,7 +228,7 @@ class BlenderBot3Agent(R2C2Agent):
 
     def get_mdm_observation(self, ag_obs: Message) -> Message:
         """
-        Add memories to the memory decision observation
+        Add memories to the memory decision observation.
 
         :param ag_obs:
             incoming mdm observation

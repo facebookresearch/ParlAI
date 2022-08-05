@@ -5,7 +5,6 @@
 from abc import ABC, abstractmethod
 import copy
 from typing import List, Optional, Union
-from types import MethodType
 
 from parlai.core.agents import Agent
 from parlai.core.message import Message
@@ -79,7 +78,7 @@ class BB3MultitaskTeacher(MultiTaskTeacher, ABC):
     @abstractmethod
     def get_task_type(self) -> str:
         """
-        Return the task type
+        Return the task type.
         """
 
     @abstractmethod

@@ -20,8 +20,6 @@ import parlai.core.tod.tod_core as tod
 from parlai.tasks.blended_skill_talk.build import build as build_bst
 import parlai.tasks.wizard_of_internet.constants as CONST
 
-from parlai.utils.data import DatatypeHelper
-import parlai.utils.logging as logging
 from parlai.utils.strings import normalize_reply
 
 from projects.seeker.utils import calc_f1_msc, IS_SEARCH_REQUIRED
@@ -113,7 +111,7 @@ def build_summarizer(opt: Opt) -> Agent:
 
 def build_all_personas(opt: Opt) -> List[str]:
     """
-    Build the personas list from which we sample memories for MDM
+    Build the personas list from which we sample memories for MDM.
     """
     personas_path = os.path.join(
         opt['datapath'], 'blended_skill_talk', 'persona_list.txt'

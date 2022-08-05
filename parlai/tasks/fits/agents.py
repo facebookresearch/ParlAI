@@ -63,7 +63,7 @@ def dedup_list(arr):
 
 class FitsBaseTeacher(DialogTeacher):
     """
-    Base Teacher that extract metadata for dialogues
+    Base Teacher that extract metadata for dialogues.
     """
 
     @classmethod
@@ -425,7 +425,7 @@ class FitsBaseTeacher(DialogTeacher):
 
 class FitsFeedbackTeacher(FitsBaseTeacher):
     """
-    Teacher that display free-form text feedbacks
+    Teacher that display free-form text feedbacks.
     """
 
     def __init__(self, opt, shared=None):
@@ -449,7 +449,7 @@ class FitsFeedbackTeacher(FitsBaseTeacher):
 
 class FitsSatisfactionTeacher(FitsBaseTeacher):
     """
-    Teacher that display binary classes __ok__, __notok__ on bot response
+    Teacher that display binary classes __ok__, __notok__ on bot response.
     """
 
     @classmethod

@@ -164,9 +164,8 @@ class GoldKnowledgeNoSpecialToken(FlattenMutator):
 @register_mutator("knowledge_appended_mutator")
 class ContLnKnowledgeAppendedDialogueResponseTeacher(ManyEpisodeMutator):
     """
-    parlai dd -t
-    fits:mutators=flatten+knowledge_appended_mutator_internal appended
-    gold knowleddge to response.
+    parlai dd -t fits:mutators=flatten+knowledge_appended_mutator_internal appended gold
+    knowleddge to response.
     """
 
     def many_episode_mutation(self, episode):
@@ -315,8 +314,8 @@ class PosNegLabelConvertor(MessageMutator):
 @register_mutator('fits_director_LTR_mutator')
 class DirectorLeftToRightMutator(ManyEpisodeMutator):
     """
-    DirectorLeftToRightMutator prepares data for training left to right (LTR) classifier for
-    Director model.
+    DirectorLeftToRightMutator prepares data for training left to right (LTR) classifier
+    for Director model.
 
     This limits to context to all but last utterance that is fed to the encoder.
     The final utterance is considered as a label for the decoder and the attribute/classifier
