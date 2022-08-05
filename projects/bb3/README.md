@@ -18,7 +18,7 @@
 
 **BB3 main technical report**:
 
-* [BlenderBot 3: a deployed conversational agent that continually learns to responsibly engage](BB3_main_tech_report.pdf).
+* [BlenderBot 3: a deployed conversational agent that continually learns to responsibly engage](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3/BB3_main_tech_report.pdf).
 Kurt Shuster†, Jing Xu†, Mojtaba Komeili†, Da Ju†, Eric Michael Smith, Stephen Roller, Megan Ung, Moya Chen, Kushal Arora+, Joshua Lane, Morteza Behrooz, William Ngan, Spencer Poff, Naman Goyal, Arthur Szlam, Y-Lan Boureau, Melanie Kambadur, Jason Weston.
 
 We are also concurrently releasing **two companion papers** describing key innovations:
