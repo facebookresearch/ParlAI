@@ -24,6 +24,8 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 import copy
+import random
+import torch
 import json
 import os
 import signal
@@ -275,12 +277,17 @@ def setup_args(parser=None) -> ParlaiParser:
         default='conversations',
         choices=['conversations', 'parlai'],
     )
+    train.add_argument('--seed', type=int, default=None)
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
-
     parser = setup_dict_args(parser)
     return parser
+
+
+def set_seed(seed):
+    random.seed(seed)
+    torch.manual_seed(seed)
 
 
 def load_eval_worlds(agent, opt, datatype):
@@ -1048,6 +1055,8 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
+        if self.opt['seed'] is not None:
+            set_seed(self.opt['seed'])
         return self.train_loop.train()
 
 
