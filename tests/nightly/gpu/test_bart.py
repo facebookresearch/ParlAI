@@ -43,7 +43,7 @@ class TestBartModel(unittest.TestCase):
 
     def test_bart_cache_text_vec(self):
         """
-        Test BART text vec caching
+        Test BART text vec caching.
         """
         opt = ParlaiParser(True, True).parse_args(['--model', 'bart'])
         bart = create_agent(opt)

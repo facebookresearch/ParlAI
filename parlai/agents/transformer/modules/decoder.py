@@ -432,7 +432,8 @@ class BaseTransformerDecoderLayer(nn.Module, ABC):
 )
 class TransformerDecoderLayer(BaseTransformerDecoderLayer):
     """
-    Implements a single Transformer decoder layer with cross (encoder) attention as in
+    Implements a single Transformer decoder layer with cross (encoder) attention as in.
+
     [Vaswani, 2017](https://arxiv.org/abs/1706.03762).
 
     Decoder layers are similar to encoder layers but:
