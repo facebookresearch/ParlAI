@@ -496,7 +496,7 @@ class TrainLoop:
             try:
                 self.agent.save(fn)
                 self._save_train_stats(suffix)
-                if self.opt['wandb_log']:
+                if self.opt['wandb_log'] and self.opt["wandb_log_model"]:
                     self.wb_logger.log_model(fn)
                 break
             except KeyboardInterrupt:

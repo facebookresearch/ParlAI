@@ -158,6 +158,14 @@ class WandbLogger(object):
             help='W&B entity name.',
             hidden=False,
         )
+
+        logger.add_argument(
+            '--wandb-log-model',
+            type=bool,
+            default=False,
+            help='Enable logging of model artifacts to weight and biases',
+            hidden=False,
+        )
         return logger
 
     def __init__(self, opt: Opt, model=None):
@@ -166,7 +174,6 @@ class WandbLogger(object):
             # last second to import it.
             import wandb
 
-            self._wandb = wandb
         except ImportError:
             raise ImportError('Please run `pip install wandb`.')
 
