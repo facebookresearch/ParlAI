@@ -14,7 +14,7 @@ Frozen models trained to mimic static datasets can never improve their performan
 
 ## Paper
 
-[Link](fits_paper.pdf)
+[Link](https://github.com/facebookresearch/ParlAI/blob/main/projects/fits/fits_paper.pdf)
 
 
 ## Data
