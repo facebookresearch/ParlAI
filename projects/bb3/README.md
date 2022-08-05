@@ -106,7 +106,7 @@ You will receive instructions for downloading the 175B model if approved.
 
 ### BB3 30B/175B: Interact
 
-(Docs adapated from [OPT docs](https://github.com/facebookresearch/metaseq/blob/main/projects/OPT/download_opt175b.md#run-the-api))
+(Docs adapted from [OPT docs](https://github.com/facebookresearch/metaseq/blob/main/projects/OPT/download_opt175b.md#run-the-api))
 
 After downloading the consolidated BB3 30B or 175B checkpoints, you will need to reshard according to your GPU resources. The 30B model checkpoint requires 56gb of GPU memory, while the 175B checkpoint requires 384GB of GPU memory.
 
@@ -128,7 +128,7 @@ MP=16
 python -m metaseq.scripts.reshard_model_parallel $CONSOLIDATED/consolidated $MP --save-prefix $RESHARD/reshard
 ```
 
-Then, you can follow the instructions for [running an API in `metaseq`](https://github.com/facebookresearch/metaseq/blob/main/docs/api.md) to spin up the API. You will need to update the constants in `metaseq/service/constants.py` to point to right directories -- specifically, set the [`CHECKPOINT_FOLDER`](https://github.com/facebookresearch/metaseq/blob/c9c817d2a230519c2865264bafdf45931afa02e6/metaseq/service/constants.py#L32) to where you have downloaded the models.
+Then, you can follow the instructions for [running an API in `metaseq`](https://github.com/facebookresearch/metaseq/blob/main/docs/api.md) to spin up the API. You will need to update the constants in `metaseq/service/constants.py` to point to the right directories -- specifically, set the [`CHECKPOINT_FOLDER`](https://github.com/facebookresearch/metaseq/blob/c9c817d2a230519c2865264bafdf45931afa02e6/metaseq/service/constants.py#L32) to where you have downloaded the models.
 
 Note that the gpt2-merges.txt and gpt2-vocab.json files in projects/OPT/assets/ will need to be moved to the corresponding directories defined in the constants.py file. You can directly download them with:
 
