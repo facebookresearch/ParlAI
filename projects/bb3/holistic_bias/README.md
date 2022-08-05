@@ -16,7 +16,7 @@ python setup.py develop
 # (Tested with 8 32-GB GPUs)
 CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 \
 python projects/bb3/holistic_bias/scripts/eval_3b_model.py \
--mf ${MODEL_PATH} \
+-mf zoo:bb3/bb3_3B/model \
 --mutators skip_retrieval_mutator \
 --task holistic_bias \
 --world-logs ${LOG_JSONL_PATH} \
