@@ -16,7 +16,7 @@ The promise of interaction between intelligent conversational agents and humans 
 
 ## Paper
 
-[Link](finding_the_helpers.pdf) 
+[Link](https://github.com/facebookresearch/ParlAI/blob/main/projects/trollhunting/finding_the_helpers.pdf) 
 
 ## SafetyMix Benchmark
 
