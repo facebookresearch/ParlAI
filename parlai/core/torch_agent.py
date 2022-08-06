@@ -44,7 +44,6 @@ from parlai.utils.fp16 import (
     Adafactor,
 )
 from parlai.core.metrics import (
-    AverageMetric,
     Metrics,
     Metric,
     GlobalAverageMetric,
@@ -2181,28 +2180,28 @@ class TorchAgent(ABC, Agent):
         self.is_training = batch.is_training
 
         # truncation statistics
-#          if batch._context_original_length is not None:
-            #  self.record_local_metric(
-                #  'clen', AverageMetric.many(batch._context_original_length)
-            #  )
-            #  self.record_local_metric(
-                #  'ctrunc', AverageMetric.many(batch._context_truncate_rate)
-            #  )
+        #          if batch._context_original_length is not None:
+        #  self.record_local_metric(
+        #  'clen', AverageMetric.many(batch._context_original_length)
+        #  )
+        #  self.record_local_metric(
+        #  'ctrunc', AverageMetric.many(batch._context_truncate_rate)
+        #  )
         #  if batch._context_truncated_length is not None:
-            #  self.record_local_metric(
-                #  'ctrunclen', AverageMetric.many(batch._context_truncated_length)
-            #  )
+        #  self.record_local_metric(
+        #  'ctrunclen', AverageMetric.many(batch._context_truncated_length)
+        #  )
         #  if batch._label_original_length is not None:
-            #  self.record_local_metric(
-                #  'llen', AverageMetric.many(batch._label_original_length)
-            #  )
-            #  self.record_local_metric(
-                #  'ltrunc', AverageMetric.many(batch._label_truncate_rate)
-            #  )
+        #  self.record_local_metric(
+        #  'llen', AverageMetric.many(batch._label_original_length)
+        #  )
+        #  self.record_local_metric(
+        #  'ltrunc', AverageMetric.many(batch._label_truncate_rate)
+        #  )
         #  if batch._label_truncated_length is not None:
-            #  self.record_local_metric(
-                #  'ltrunclen', AverageMetric.many(batch._label_truncated_length)
-            #  )
+        #  self.record_local_metric(
+        #  'ltrunclen', AverageMetric.many(batch._label_truncated_length)
+        #  )
 
         self.global_metrics.add('exps', GlobalTimerMetric(batch.batchsize))
 
