@@ -89,7 +89,7 @@ def _fwd_kernel(
         qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
         qk = tl.dot(q, k, trans_b=True)
         qk *= sm_scale
-        qk += tl.where(mask, float("-inf"), 0)
+        qk += tl.where(mask == 1, -1e20, 0)
         # -- compute m_ij, p, l_ij
         m_ij = tl.max(qk, 1)
         p = tl.exp(qk - m_ij[:, None])
