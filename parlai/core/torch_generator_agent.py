@@ -1057,7 +1057,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         if hasattr(self, '_get_context'):
             # Warn users that have subclassed with '_get_gontext
             warn_once(
-                "WARNING: TGA._get_context() is deprecated, use TGA.get_batch_context() instead"
+                "WARNING: TGA._get_context() has been removed, use TGA.get_batch_context() instead"
             )
 
         if self.beam_context_block_ngram <= 0:
