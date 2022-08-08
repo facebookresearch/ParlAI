@@ -16,7 +16,7 @@ The promise of interaction between intelligent conversational agents and humans 
 
 ## Paper
 
-[Link](https://github.com/facebookresearch/ParlAI/blob/main/projects/trollhunting/finding_the_helpers.pdf) 
+[Link](https://arxiv.org/abs/2208.03295)
 
 ## SafetyMix Benchmark
 
@@ -43,7 +43,7 @@ parlai display_data -t safety_mix --mix-user-type troll
 To see all the available troll types use:
 
 ```bash
-parlai display_data -t safety_mix --help 
+parlai display_data -t safety_mix --help
 ```
 
 You can change the noise level N and other parameters in ParlAI/tasks/safety_mix/build.py
