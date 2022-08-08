@@ -1,9 +1,10 @@
-"""
-Fused Attention
-===============
-This is a Triton implementation of the Flash Attention algorithm
-(see: Dao et al., https://arxiv.org/pdf/2205.14135v2.pdf; Rabe and Staats https://arxiv.org/pdf/2112.05682v2.pdf)
-"""
+#!/usr/bin/env python3
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+# Triton fused attention code adapted from:
+# https://github.com/openai/triton/blob/master/python/tutorials/06-fused-attention.py
+
 
 import pytest
 import torch
@@ -18,6 +19,7 @@ def _fwd_kernel(
     K,
     V,
     sm_scale,
+    MASK,
     TMP,
     L,
     M,  # NOTE: TMP is a scratchpad buffer to workaround a compiler bug
@@ -38,6 +40,9 @@ def _fwd_kernel(
     stride_oh,
     stride_om,
     stride_on,
+    stride_dh,
+    stride_d3,
+    stride_d4,
     Z,
     H,
     N_CTX,
@@ -60,10 +65,14 @@ def _fwd_kernel(
     off_v = (
         off_hz * stride_qh + offs_n[:, None] * stride_qm + offs_d[None, :] * stride_qk
     )
+    off_mask = (
+        off_hz * stride_dh + offs_m[:, None] * stride_d3 + offs_n[None, :] * stride_d4
+    )
     # Initialize pointers to Q, K, V
     q_ptrs = Q + off_q
     k_ptrs = K + off_k
     v_ptrs = V + off_v
+    mask_ptrs = MASK + off_mask
     # initialize pointer to m and l
     t_ptrs = TMP + off_hz * N_CTX + offs_m
     m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
@@ -72,14 +81,15 @@ def _fwd_kernel(
     # load q: it will stay in SRAM throughout
     q = tl.load(q_ptrs)
     # loop over k, v and update accumulator
-    for start_n in range(0, (start_m + 1) * BLOCK_M, BLOCK_N):
+    for start_n in range(0, N_CTX, BLOCK_N):
         start_n = tl.multiple_of(start_n, BLOCK_N)
         # -- compute qk ----
         k = tl.load(k_ptrs + start_n * stride_kn)
+        mask = tl.load(mask_ptrs + start_n)
         qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
         qk += tl.dot(q, k, trans_b=True)
         qk *= sm_scale
-        qk += tl.where(offs_m[:, None] >= (start_n + offs_n[None, :]), 0, float("-inf"))
+        qk += tl.where(mask == 0, 0, float("-inf"))
         # -- compute m_ij, p, l_ij
         m_ij = tl.max(qk, 1)
         p = tl.exp(qk - m_ij[:, None])
@@ -252,7 +262,7 @@ def _bwd_kernel(
 
 class _attention(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, q, k, v, sm_scale):
+    def forward(ctx, q, k, v, mask, sm_scale):
         BLOCK = 128
         # shape constraints
         Lq, Lk = q.shape[-1], k.shape[-1]
@@ -273,6 +283,7 @@ class _attention(torch.autograd.Function):
             k,
             v,
             sm_scale,
+            mask,
             tmp,
             L,
             m,
@@ -293,12 +304,16 @@ class _attention(torch.autograd.Function):
             o.stride(1),
             o.stride(2),
             o.stride(3),
+            mask.stride(0),
+            mask.stride(1),
+            mask.stride(2),
+            mask.stride(3),
             q.shape[0],
             q.shape[1],
             q.shape[2],
             BLOCK_M=BLOCK,
             BLOCK_N=BLOCK,
-            BLOCK_DMODEL=64,
+            BLOCK_DMODEL=32,
             num_warps=4,
             num_stages=1,
         )
@@ -306,7 +321,7 @@ class _attention(torch.autograd.Function):
         ctx.BLOCK = BLOCK
         ctx.grid = grid
         ctx.sm_scale = sm_scale
-        ctx.BLOCK_DMODEL = 64
+        ctx.BLOCK_DMODEL = 32
         return o
 
     @staticmethod
