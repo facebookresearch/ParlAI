@@ -82,6 +82,13 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
             default=False,
             help="Whether to include bot persona or not in the message",
         )
+        agent.add_argument(
+            '--filter-want-to-talk-about-labels',
+            type=bool,
+            default=False,
+            help="Filter out episodes that end in an utterance asking 'want to talk about something else'."
+            " This accounts for roughly 7k episodes.",
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -161,6 +168,16 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
                 f'is intentional, you may ignore this, but you MAY have a bug in '
                 f'your data.'
             )
+
+        # Filter out "do you want to talk about something else"
+        if self.opt['filter_want_to_talk_about_labels']:
+
+            def filter_fn(episode):
+                utterances = episode[0]['text'].split('\n')
+                return 'do you want to talk about' not in utterances[-1].lower()
+
+            filtered_episodes = list(filter(filter_fn, self.episodes))
+            self.episodes = filtered_episodes
 
 
 def _human_safety_eval_datapath(opt: Opt) -> str:
