@@ -1,0 +1,60 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Nba season start nba.com
+    id: fits_query_None
+    text: 'When does the nba season begin?
+
+      I''m not sure, but I''m pretty sure it starts next week.
+
+      What does it say on the nba website?'
+- - episode_done: true
+    eval_labels:
+    - 50th anniversary wedding gifts
+    id: fits_query_None
+    text: 'I am looking for gifts to give my spouse for our 50th wedding anniversary.
+      Help me find suggestions.
+
+      That''s a great question. I''m sure there are a lot of great ideas out there.
+      What are you looking for?
+
+      I''m looking for something for my spouse. Something personal and memorable for
+      our 50th anniversary.
+
+      Traditionally, gold was given for 50th anniversary. Would gold jewelry be something
+      your spouse would like?
+
+      I think that would be a great idea. Getting them a gold necklace or ring would
+      be a great idea.'
+- - episode_done: true
+    eval_labels:
+    - How to install hulu on samsung smart tv
+    id: fits_query_None
+    text: 'How do I install hulu on a samsung smart tv?
+
+      You have to download the app from the samsung website and then install it on
+      your samsung smart tv.
+
+      Can you give me a step-by-step guide?
+
+      You just have to go to the website and download the hulu app. It''s pretty easy
+      to do.
+
+      Can you give me a detailed explanation?'
+- - episode_done: true
+    eval_labels:
+    - Types of fish that eat fish flakes
+    id: fits_query_None
+    text: What fish eat fish flakes?
+- - episode_done: true
+    eval_labels:
+    - Best garden fertilizer
+    id: fits_query_None
+    text: 'What is the best garden fertilizer?
+
+      It depends on the type of soil you have. If you have a well-drained soil, you
+      don''t need fertilizer.
+
+      Do you have any recommendations for soil that is not well draining?'
+num_episodes: 5592
+num_examples: 19868

@@ -1,0 +1,2946 @@
+acts:
+- - __retrieved-docs-titles__:
+    - Hyperloop How Elon Musk s Tube Travel Concept Works_0
+    - Elon Musk s hyperloop dream may come true and soon_0
+    - What is Hyperloop The 700mph subsonic train explained_0
+    - Hyperloop at USC_0
+    - HyperLoopDesign for open source development of Hyperloop_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+      by the promised higher speeds of Musk s system. But the idea itself is obviously
+      adapted from available technologies and older concepts including the  vactrain  concept
+      from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+      Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+      waves, and out-competing air travel are similar.
+    - 'Elon Musk s hyperloop dream may come true -- and soon
+
+      It''s happening far faster than I would have ever expected, and it''s happening
+      all over the world.
+
+      Hyperloop Transportation Technologies capsule.Hyperloop Transportation Technologies
+
+      Elon Musk first described his idea for a futuristic transportation system that
+      would send passenger pods through tubes at speeds of hundreds of miles an hour
+      back in 2013. At the time, the idea of actually building and operating a so-called
+      "hyperloop" seemed far-fetched, to say the least.
+
+      But hyperloops are no longer quite so hypothetical. A handful of firms are now
+      competing to develop the necessary technology. And in addition to designing
+      the magnetically levitated pods and testing them on small-scale tracks, the
+      firms are taking preliminary steps to set up hyperloop routes in the U.S. and
+      abroad.
+
+      "It''s happening far faster than I would have ever expected, and it''s happening
+      all over the world," said Dr. David Goldsmith, a transportation researcher at
+      Virginia Tech.
+
+      One of the biggest players is Musk himself. His whimsically named Boring Company
+      is planning to dig a hyperloop tunnel that would make it possible to travel
+      from Washington, D.C. to New York City in half an hour (the fastest Amtrak trains
+      make the trip in just under three hours). Meanwhile, a pair of California-based
+      startups, Virgin Hyperloop One and Hyperloop Transportation Technologies, are
+      developing routes in North America, Asia, and Europe.
+
+      An electric skate will carry between 8 and 16 passengers.Boring Company
+
+      Many engineering and regulatory hurdles must be crossed before the first paying
+      customer boards a hyperloop pod and zooms off down'
+    - 'What is Hyperloop? The 700mph subsonic train explained
+
+      Max Langridge and Elyse Betters | 13 October 2017
+
+      - Hyperloop is a high-speed train system
+
+      - Musk is planning two Hyperloop routes so far
+
+      - Meanwhile Virgin Hyperloop One has built a test track
+
+      Elon Musk has started the building revolution for a new train system.
+
+      Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA to
+      San Francisco in under 30 minutes. But what is it and how does it work? Good
+      questions. Musk has likened it to a vacuum tube system in a building used to
+      move documents from place to place. Confused? No worries. Here s everything
+      you need to know about the futuristic train coming from the founder of Tesla
+      and SpaceX.
+
+      We also delve into competitor systems, like Virgin Hyperloop One.
+
+      What is X.COM? Elon Musk s new website and project teased
+
+      What is SolarCity and why is Tesla buying it?
+
+      Tesla: Everything you need to know about its cars and more
+
+      Hyperloop is essentially a train system that Musk calls  a cross between a Concorde,
+      a railgun, and an air hockey table . It s based on the very high-speed transit
+      (VHST) system proposed in 1972, which combines a magnetic levitation train and
+      a low pressure transit tube. It evolves some of the original ideas of VHST,
+      but it still uses tunnels and pods or capsules to move from place to place.
+
+      Musk has likened it to a vacuum tube system in a building used to move documents
+      from place to place.
+
+      What speeds have been proposed?
+
+      Hyperloop is being'
+    - 'Economical, Sustainable, and Insanely Fast
+
+      Hyperloop Outperforms All Other Modes of Transport.
+
+      Linear induction motors, axial compressors, and air bearings enable full-scale
+      Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+      tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+      and automobiles. The result is a mass transportation system with faster travel
+      times, greater energy efficiency, and lower costs than any previous mode of
+      transportation.
+
+      Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first introduction
+      to the Hyperloop concept and an effort to inspire a transportation revolution.
+      Connecting Los Angeles and San Francisco at speeds up to 760 mph with total
+      construction and operation costs orders of magnitude lower than the California
+      High Speed Rail, Hyperloop Alpha readily exceeds traditional transportation
+      solutions in both performance and value.
+
+      Five minute station times, top speeds of 760 mph, isolated internal tube environments,
+      and a capacity of 840 passengers per hour make the Hyperloop the fastest, safest,
+      and most efficient mass transportation system ever proposed.
+
+      With approximately 594 acres of solar cell coverage on top of the tubes, the
+      all-electric Hyperloop is completely self powering during peak solar activity,
+      ensuring a responsible and reliable transportation solution for the future.
+
+      The LA-SF Hyperloop offers the fastest ground transportation ever proposed at
+      a total cost of just $6 billion, where as the California High Speed Rail project
+      costs an estimated $68 billion and has a maximum speed of only 220 mph.
+
+      Hyperloop Alpha White Paper
+
+      With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop'
+    - 'HyperLoopDesign is a resource for Hyperloop engineers, looking at the design
+      challenges and solutions for final designs or sub-systems.
+
+      Hyperloop Alpha, August 2013.
+
+      Elon Musk s original proposed Hyperloop Alpha, which runs in a 2.23m (7ft4 )
+      diameter tube, at an absolute pressure of 100 Pa ( 1/1000 atmosphere). It used
+      air bearing skis, with an air compressor to provide air. Acceleration thrust
+      is from linear motors on limited sections of the track.
+
+      Cheetah is a design variation released by Richard Macfarlane in January 2014,
+      with a number of changes to simplify and solve problems.
+
+      Wheels are used which provide traction. Steam from the cooling system is ejected
+      into the tube, increasing the speed of sound, and reducing aerodynamic drag.
+
+      The pod is 3 seats wide, and the tube is now 2.6 - 2.8m diameter. The seats
+      are in 3 seating modules which roll out at the station.
+
+      Maglev and air bearing skis
+
+      Hyperloop Alpha originally proposed air ski bearings for levitation. But there
+      may be insufficient airflow in the near-vacuum. See air skis here.
+
+      The tube in the 2016 Pod Competition has an aluminium plate for maglev, but
+      any plate maglev will suffer high drag. See passive maglev plate here. See Arx
+      Pax here.
+
+      Maglev using copper coils along the whole route would be the ideal levitation
+      system, except for the extreme expense. See maglev coils here.
+
+      Cheetah links :-
+
+      Competition Pod - for the 2016 Pod Competition.
+
+      Wheels - the simpler and more achieveable option.
+
+      Elon Musk spoke at the 2016 Pod Competition, and recommended wheels.
+
+      Wheels have been proved at higher speeds than any other levitation
+
+      Pneumatic tires'
+    __selected-sentences__: []
+    better_response: It's a train that goes from one place to another in a tube. The
+      current plans call for one hyperloop in Stockdale California.
+    bot_acts:
+    - display_top_docs:
+      - original_doc_str: Hyperloop How Elon Musk s Tube Travel Concept Works_0 |
+          Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        sentences:
+        - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        title: Hyperloop How Elon Musk s Tube Travel Concept Works_0
+      - original_doc_str: 'Elon Musk s hyperloop dream may come true and soon_0 |
+          Elon Musk s hyperloop dream may come true -- and soon
+
+          It''s happening far faster than I would have ever expected, and it''s happening
+          all over the world.
+
+          Hyperloop Transportation Technologies capsule.Hyperloop Transportation Technologies
+
+          Elon Musk first described his idea for a futuristic transportation system
+          that would send passenger pods through tubes at speeds of hundreds of miles
+          an hour back in 2013. At the time, the idea of actually building and operating
+          a so-called "hyperloop" seemed far-fetched, to say the least.
+
+          But hyperloops are no longer quite so hypothetical. A handful of firms are
+          now competing to develop the necessary technology. And in addition to designing
+          the magnetically levitated pods and testing them on small-scale tracks,
+          the firms are taking preliminary steps to set up hyperloop routes in the
+          U.S. and abroad.
+
+          "It''s happening far faster than I would have ever expected, and it''s happening
+          all over the world," said Dr. David Goldsmith, a transportation researcher
+          at Virginia Tech.
+
+          One of the biggest players is Musk himself. His whimsically named Boring
+          Company is planning to dig a hyperloop tunnel that would make it possible
+          to travel from Washington, D.C. to New York City in half an hour (the fastest
+          Amtrak trains make the trip in just under three hours). Meanwhile, a pair
+          of California-based startups, Virgin Hyperloop One and Hyperloop Transportation
+          Technologies, are developing routes in North America, Asia, and Europe.
+
+          An electric skate will carry between 8 and 16 passengers.Boring Company
+
+          Many engineering and regulatory hurdles must be crossed before the first
+          paying customer boards a hyperloop pod and zooms off down'
+        sentences:
+        - Elon Musk s hyperloop dream may come true -- and soon
+        - It's happening far faster than I would have ever expected, and it's happening
+          all over the world.
+        - Hyperloop Transportation Technologies capsule.Hyperloop Transportation Technologies
+        - Elon Musk first described his idea for a futuristic transportation system
+          that would send passenger pods through tubes at speeds of hundreds of miles
+          an hour back in 2013. At the time, the idea of actually building and operating
+          a so-called "hyperloop" seemed far-fetched, to say the least.
+        - But hyperloops are no longer quite so hypothetical. A handful of firms are
+          now competing to develop the necessary technology. And in addition to designing
+          the magnetically levitated pods and testing them on small-scale tracks,
+          the firms are taking preliminary steps to set up hyperloop routes in the
+          U.S. and abroad.
+        - '"It''s happening far faster than I would have ever expected, and it''s
+          happening all over the world," said Dr. David Goldsmith, a transportation
+          researcher at Virginia Tech.'
+        - One of the biggest players is Musk himself. His whimsically named Boring
+          Company is planning to dig a hyperloop tunnel that would make it possible
+          to travel from Washington, D.C. to New York City in half an hour (the fastest
+          Amtrak trains make the trip in just under three hours). Meanwhile, a pair
+          of California-based startups, Virgin Hyperloop One and Hyperloop Transportation
+          Technologies, are developing routes in North America, Asia, and Europe.
+        - An electric skate will carry between 8 and 16 passengers.Boring Company
+        - Many engineering and regulatory hurdles must be crossed before the first
+          paying customer boards a hyperloop pod and zooms off down
+        title: Elon Musk s hyperloop dream may come true and soon_0
+      - original_doc_str: 'What is Hyperloop The 700mph subsonic train explained_0
+          | What is Hyperloop? The 700mph subsonic train explained
+
+          Max Langridge and Elyse Betters | 13 October 2017
+
+          - Hyperloop is a high-speed train system
+
+          - Musk is planning two Hyperloop routes so far
+
+          - Meanwhile Virgin Hyperloop One has built a test track
+
+          Elon Musk has started the building revolution for a new train system.
+
+          Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+          to San Francisco in under 30 minutes. But what is it and how does it work?
+          Good questions. Musk has likened it to a vacuum tube system in a building
+          used to move documents from place to place. Confused? No worries. Here s
+          everything you need to know about the futuristic train coming from the founder
+          of Tesla and SpaceX.
+
+          We also delve into competitor systems, like Virgin Hyperloop One.
+
+          What is X.COM? Elon Musk s new website and project teased
+
+          What is SolarCity and why is Tesla buying it?
+
+          Tesla: Everything you need to know about its cars and more
+
+          Hyperloop is essentially a train system that Musk calls  a cross between
+          a Concorde, a railgun, and an air hockey table . It s based on the very
+          high-speed transit (VHST) system proposed in 1972, which combines a magnetic
+          levitation train and a low pressure transit tube. It evolves some of the
+          original ideas of VHST, but it still uses tunnels and pods or capsules to
+          move from place to place.
+
+          Musk has likened it to a vacuum tube system in a building used to move documents
+          from place to place.
+
+          What speeds have been proposed?
+
+          Hyperloop is being'
+        sentences:
+        - What is Hyperloop? The 700mph subsonic train explained
+        - Max Langridge and Elyse Betters | 13 October 2017
+        - '- Hyperloop is a high-speed train system'
+        - '- Musk is planning two Hyperloop routes so far'
+        - '- Meanwhile Virgin Hyperloop One has built a test track'
+        - Elon Musk has started the building revolution for a new train system.
+        - Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+          to San Francisco in under 30 minutes. But what is it and how does it work?
+          Good questions. Musk has likened it to a vacuum tube system in a building
+          used to move documents from place to place. Confused? No worries. Here s
+          everything you need to know about the futuristic train coming from the founder
+          of Tesla and SpaceX.
+        - We also delve into competitor systems, like Virgin Hyperloop One.
+        - What is X.COM? Elon Musk s new website and project teased
+        - What is SolarCity and why is Tesla buying it?
+        - 'Tesla: Everything you need to know about its cars and more'
+        - Hyperloop is essentially a train system that Musk calls  a cross between
+          a Concorde, a railgun, and an air hockey table . It s based on the very
+          high-speed transit (VHST) system proposed in 1972, which combines a magnetic
+          levitation train and a low pressure transit tube. It evolves some of the
+          original ideas of VHST, but it still uses tunnels and pods or capsules to
+          move from place to place.
+        - Musk has likened it to a vacuum tube system in a building used to move documents
+          from place to place.
+        - What speeds have been proposed?
+        - Hyperloop is being
+        title: What is Hyperloop The 700mph subsonic train explained_0
+      id: BOT
+      improve_bucket: better_others
+      memories: []
+      search_queries: hyper loop
+      text: It's a train that goes from one place to another in a tube. _potentially_unsafe__
+      top_docs:
+      - Hyperloop How Elon Musk s Tube Travel Concept Works_0 | Similarities between
+        the propulsion of maglev trains and Hyperloop are trumped by the promised
+        higher speeds of Musk s system. But the idea itself is obviously adapted from
+        available technologies and older concepts including the  vactrain  concept
+        from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+        Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+        waves, and out-competing air travel are similar.
+      - 'Elon Musk s hyperloop dream may come true and soon_0 | Elon Musk s hyperloop
+        dream may come true -- and soon
+
+        It''s happening far faster than I would have ever expected, and it''s happening
+        all over the world.
+
+        Hyperloop Transportation Technologies capsule.Hyperloop Transportation Technologies
+
+        Elon Musk first described his idea for a futuristic transportation system
+        that would send passenger pods through tubes at speeds of hundreds of miles
+        an hour back in 2013. At the time, the idea of actually building and operating
+        a so-called "hyperloop" seemed far-fetched, to say the least.
+
+        But hyperloops are no longer quite so hypothetical. A handful of firms are
+        now competing to develop the necessary technology. And in addition to designing
+        the magnetically levitated pods and testing them on small-scale tracks, the
+        firms are taking preliminary steps to set up hyperloop routes in the U.S.
+        and abroad.
+
+        "It''s happening far faster than I would have ever expected, and it''s happening
+        all over the world," said Dr. David Goldsmith, a transportation researcher
+        at Virginia Tech.
+
+        One of the biggest players is Musk himself. His whimsically named Boring Company
+        is planning to dig a hyperloop tunnel that would make it possible to travel
+        from Washington, D.C. to New York City in half an hour (the fastest Amtrak
+        trains make the trip in just under three hours). Meanwhile, a pair of California-based
+        startups, Virgin Hyperloop One and Hyperloop Transportation Technologies,
+        are developing routes in North America, Asia, and Europe.
+
+        An electric skate will carry between 8 and 16 passengers.Boring Company
+
+        Many engineering and regulatory hurdles must be crossed before the first paying
+        customer boards a hyperloop pod and zooms off down'
+      - 'What is Hyperloop The 700mph subsonic train explained_0 | What is Hyperloop?
+        The 700mph subsonic train explained
+
+        Max Langridge and Elyse Betters | 13 October 2017
+
+        - Hyperloop is a high-speed train system
+
+        - Musk is planning two Hyperloop routes so far
+
+        - Meanwhile Virgin Hyperloop One has built a test track
+
+        Elon Musk has started the building revolution for a new train system.
+
+        Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+        to San Francisco in under 30 minutes. But what is it and how does it work?
+        Good questions. Musk has likened it to a vacuum tube system in a building
+        used to move documents from place to place. Confused? No worries. Here s everything
+        you need to know about the futuristic train coming from the founder of Tesla
+        and SpaceX.
+
+        We also delve into competitor systems, like Virgin Hyperloop One.
+
+        What is X.COM? Elon Musk s new website and project teased
+
+        What is SolarCity and why is Tesla buying it?
+
+        Tesla: Everything you need to know about its cars and more
+
+        Hyperloop is essentially a train system that Musk calls  a cross between a
+        Concorde, a railgun, and an air hockey table . It s based on the very high-speed
+        transit (VHST) system proposed in 1972, which combines a magnetic levitation
+        train and a low pressure transit tube. It evolves some of the original ideas
+        of VHST, but it still uses tunnels and pods or capsules to move from place
+        to place.
+
+        Musk has likened it to a vacuum tube system in a building used to move documents
+        from place to place.
+
+        What speeds have been proposed?
+
+        Hyperloop is being'
+      - 'Hyperloop at USC_0 | Economical, Sustainable, and Insanely Fast
+
+        Hyperloop Outperforms All Other Modes of Transport.
+
+        Linear induction motors, axial compressors, and air bearings enable full-scale
+        Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+        tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+        and automobiles. The result is a mass transportation system with faster travel
+        times, greater energy efficiency, and lower costs than any previous mode of
+        transportation.
+
+        Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first
+        introduction to the Hyperloop concept and an effort to inspire a transportation
+        revolution. Connecting Los Angeles and San Francisco at speeds up to 760 mph
+        with total construction and operation costs orders of magnitude lower than
+        the California High Speed Rail, Hyperloop Alpha readily exceeds traditional
+        transportation solutions in both performance and value.
+
+        Five minute station times, top speeds of 760 mph, isolated internal tube environments,
+        and a capacity of 840 passengers per hour make the Hyperloop the fastest,
+        safest, and most efficient mass transportation system ever proposed.
+
+        With approximately 594 acres of solar cell coverage on top of the tubes, the
+        all-electric Hyperloop is completely self powering during peak solar activity,
+        ensuring a responsible and reliable transportation solution for the future.
+
+        The LA-SF Hyperloop offers the fastest ground transportation ever proposed
+        at a total cost of just $6 billion, where as the California High Speed Rail
+        project costs an estimated $68 billion and has a maximum speed of only 220
+        mph.
+
+        Hyperloop Alpha White Paper
+
+        With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop'
+      - 'HyperLoopDesign for open source development of Hyperloop_0 | HyperLoopDesign
+        is a resource for Hyperloop engineers, looking at the design challenges and
+        solutions for final designs or sub-systems.
+
+        Hyperloop Alpha, August 2013.
+
+        Elon Musk s original proposed Hyperloop Alpha, which runs in a 2.23m (7ft4
+        ) diameter tube, at an absolute pressure of 100 Pa ( 1/1000 atmosphere). It
+        used air bearing skis, with an air compressor to provide air. Acceleration
+        thrust is from linear motors on limited sections of the track.
+
+        Cheetah is a design variation released by Richard Macfarlane in January 2014,
+        with a number of changes to simplify and solve problems.
+
+        Wheels are used which provide traction. Steam from the cooling system is ejected
+        into the tube, increasing the speed of sound, and reducing aerodynamic drag.
+
+        The pod is 3 seats wide, and the tube is now 2.6 - 2.8m diameter. The seats
+        are in 3 seating modules which roll out at the station.
+
+        Maglev and air bearing skis
+
+        Hyperloop Alpha originally proposed air ski bearings for levitation. But there
+        may be insufficient airflow in the near-vacuum. See air skis here.
+
+        The tube in the 2016 Pod Competition has an aluminium plate for maglev, but
+        any plate maglev will suffer high drag. See passive maglev plate here. See
+        Arx Pax here.
+
+        Maglev using copper coils along the whole route would be the ideal levitation
+        system, except for the extreme expense. See maglev coils here.
+
+        Cheetah links :-
+
+        Competition Pod - for the 2016 Pod Competition.
+
+        Wheels - the simpler and more achieveable option.
+
+        Elon Musk spoke at the 2016 Pod Competition, and recommended wheels.
+
+        Wheels have been proved at higher speeds than any other levitation
+
+        Pneumatic tires'
+    - display_top_docs: []
+      id: BOT
+      improve_bucket: perfect
+      memories: []
+      search_queries: hyper loop
+      text: It's a train that goes from one place to another in a tube. The current
+        plans call for one hyperloop in stockdale california.
+      top_docs: It's a train that goes from one place to another in a tube. The current
+        plans call for one hyperloop in Stockdale California.
+    bot_gold:
+      search_query: []
+    bot_modular_failure:
+      search_query: []
+    bot_no_feedback:
+      search_query: []
+    domain: Business
+    episode_done: false
+    eval_labels:
+    - It's a train that goes from one place to another in a tube. The current plans
+      call for one hyperloop in stockdale california.
+    feedback_chain:
+    - better_others
+    - perfect
+    generic_topic: hyper loop
+    human_acts:
+    - id: YOU
+      text: What is a hyper loop, can you tell me who will ride them?  Where will
+        the hyper loops go to and come from?
+    - feedback_text: It's a train that goes from one place to another in a tube. The
+        current plans call for one hyperloop in Stockdale California.
+      feedback_type: better_others
+      id: YOU
+      text: Where are the hyper loops at, locations.
+    human_revision:
+      search_query: []
+      selected_sentences: []
+    id: fits_None_v1_seenFalse
+    last_nonperfect_feedback: better_others
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: What is a hyper loop, can you tell me who will ride them? Where will the
+      hyper loops go to and come from?
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - Musk s Hyperloop math doesn t add up Greater_0
+    - Hyperloop at USC_0
+    - Hyperloop How Elon Musk s Tube Travel Concept Works_0
+    - Hyperloop Wikipedia_0
+    - Hyperloop A SWOT analysis of the most popular new age_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - 'Musk''s Hyperloop math doesn''t add up
+
+      TransitBy Matt Johnson (Editorial Board Alum) August 14, 2013194
+
+      On Monday, entrepreneur Elon Musk announced plans to build
+
+      a design for a super-fast tube train connecting Los Angeles and San Francisco.
+      He believes his plan will obviate the need for the California High-Speed Rail.
+      Unfortunately, his math doesn''t add up.
+
+      The "Hyperloop" would be a pair of tubes stretching from Los Angeles to the
+      Bay Area. Pods within these tubes would travel at up to 760 mph, making the
+      trip between California''s largest metro areas in 35 minutes. Musk says he became
+      motivated to invent this technology because he grew disenchanted with the California
+      High-Speed Rail project''s expense ($53 billion in 2013 dollars) and sloth (it
+      will travel at an average of 168 mph).
+
+      Musk claims the Hyperloop system could be built for just $6 billion, 10% of
+      the cost of HSR. Some are wondering if this is a serious proposal or a ploy
+      intended to derail the California High-Speed Rail project. Evidence seems to
+      point to the latter. After all, the guy proposing this revolution in transit
+      owns a car company.
+
+      The Hyperloop concept has gotten a lot of press over the past few days. It seems
+      to have inspired the masses like an idea out of Popular Mechanics. And it may
+      very well be possible to build a system much like this one. Perhaps one day
+      in my lifetime, people will be taking Hyperloops all over the nation.
+
+      Hyperloop concept drawings. All images from Musk''s proposal.
+
+      Let''s set aside for the moment any discussion of the'
+    - 'Economical, Sustainable, and Insanely Fast
+
+      Hyperloop Outperforms All Other Modes of Transport.
+
+      Linear induction motors, axial compressors, and air bearings enable full-scale
+      Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+      tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+      and automobiles. The result is a mass transportation system with faster travel
+      times, greater energy efficiency, and lower costs than any previous mode of
+      transportation.
+
+      Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first introduction
+      to the Hyperloop concept and an effort to inspire a transportation revolution.
+      Connecting Los Angeles and San Francisco at speeds up to 760 mph with total
+      construction and operation costs orders of magnitude lower than the California
+      High Speed Rail, Hyperloop Alpha readily exceeds traditional transportation
+      solutions in both performance and value.
+
+      Five minute station times, top speeds of 760 mph, isolated internal tube environments,
+      and a capacity of 840 passengers per hour make the Hyperloop the fastest, safest,
+      and most efficient mass transportation system ever proposed.
+
+      With approximately 594 acres of solar cell coverage on top of the tubes, the
+      all-electric Hyperloop is completely self powering during peak solar activity,
+      ensuring a responsible and reliable transportation solution for the future.
+
+      The LA-SF Hyperloop offers the fastest ground transportation ever proposed at
+      a total cost of just $6 billion, where as the California High Speed Rail project
+      costs an estimated $68 billion and has a maximum speed of only 220 mph.
+
+      Hyperloop Alpha White Paper
+
+      With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop'
+    - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+      by the promised higher speeds of Musk s system. But the idea itself is obviously
+      adapted from available technologies and older concepts including the  vactrain  concept
+      from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+      Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+      waves, and out-competing air travel are similar.
+    - 'Hyperloop
+
+      A Hyperloop is a proposed mode of passenger and/or freight transportation, first
+      used to describe an open-source vactrain design released by a joint team from
+      Tesla and SpaceX. Drawing heavily from Robert Goddard''s vactrain, a hyperloop
+      comprises a sealed tube or system of tubes through which a pod may travel free
+      of air resistance or friction conveying people or objects at high speed while
+      being very efficient.
+
+      Elon Musk''s version of the concept, first publicly mentioned in 2012, incorporates
+      reduced-pressure tubes in which pressurized capsules ride on air bearings driven
+      by linear induction motors and air compressors.
+
+      The Hyperloop Alpha concept was first published in August 2013, proposing and
+      examining a route running from the Los Angeles region to the San Francisco Bay
+      Area roughly following the Interstate 5 corridor. The paper conceived of a hyperloop
+      system that would propel passengers along the route at an average speed of around
+      , with a top speed of , allowing for a travel time of 35 minutes, which is considerably
+      faster than current rail or air travel times. Preliminary cost estimates for
+      this LA-SF suggested route were included in the white paper-- for a passenger-only
+      version, and for a somewhat larger-diameter version transporting passengers
+      and vehicles--although transportation analysts had doubts that the system could
+      be constructed on that budget; some analysts claimed that the Hyperloop would
+      be several billion dollars overbudget, taking into consideration construction,
+      development and operation costs.
+
+      The Hyperloop concept has been explicitly "open-sourced" by Musk and SpaceX,
+      and others have been encouraged to take the ideas and further'
+    - 'Hyperloop: A SWOT analysis of the most popular new age transportation technology
+
+      While commercial deployment of the loop network across India is still in the
+      pipe dream stage (no pun intended), we decided to do a SWOT analysis of the
+      project.
+
+      Nimish Sawant Feb 19, 2018 10:53:03 IST
+
+      Editor s Note: This article was originally published on 27 Jan 2017 and is being
+      republished keeping in mind the announcement of Virgin Hyperloop One announcement
+      to begin an operational hyperloop route between Mumbai and Pune, at the ongoing
+      Magnetic Maharashtra Summit.
+
+      Elon Musk s Hyperloop transit system idea was announced in 2012 promising a
+      pneumatic tube transportation system. The average speed that these Hyperloop
+      pods are expected to achieve is 970 kmph with a top speed of 1200 kmph. This
+      brings with it the promise of covering long distances in a matter of minutes.
+
+      Since 2012, the Hyperloop concept has been taken forward by companies such as
+      Hyperloop Transportation Technologies (HTT) and Hyperloop One. Apart from these
+      there are many independent entities working on the different aspects of this
+      transportation systems such as the pods, the tubes and so on.
+
+      The Hyperloop One XP-1. Image: Virgin Hyperloop One
+
+      Both HTT and Hyperloop One have expressed interest in getting the Hyperloop
+      project to India. HTT chairman Bibop Gabriele Gresta has proposed a loop between
+      Mumbai and Pune in a meeting with transport minister Nitin Gadkari. Hyperloop
+      One, on the other hand, has proposed a country-wide network which connects all
+      the major cities in India.
+
+      One 18 February, Hyperloop One signed a memorandum of understanding with the'
+    __selected-sentences__: []
+    bot_acts:
+    - display_top_docs:
+      - original_doc_str: 'Musk s Hyperloop math doesn t add up Greater_0 | Musk''s
+          Hyperloop math doesn''t add up
+
+          TransitBy Matt Johnson (Editorial Board Alum) August 14, 2013194
+
+          On Monday, entrepreneur Elon Musk announced plans to build
+
+          a design for a super-fast tube train connecting Los Angeles and San Francisco.
+          He believes his plan will obviate the need for the California High-Speed
+          Rail. Unfortunately, his math doesn''t add up.
+
+          The "Hyperloop" would be a pair of tubes stretching from Los Angeles to
+          the Bay Area. Pods within these tubes would travel at up to 760 mph, making
+          the trip between California''s largest metro areas in 35 minutes. Musk says
+          he became motivated to invent this technology because he grew disenchanted
+          with the California High-Speed Rail project''s expense ($53 billion in 2013
+          dollars) and sloth (it will travel at an average of 168 mph).
+
+          Musk claims the Hyperloop system could be built for just $6 billion, 10%
+          of the cost of HSR. Some are wondering if this is a serious proposal or
+          a ploy intended to derail the California High-Speed Rail project. Evidence
+          seems to point to the latter. After all, the guy proposing this revolution
+          in transit owns a car company.
+
+          The Hyperloop concept has gotten a lot of press over the past few days.
+          It seems to have inspired the masses like an idea out of Popular Mechanics.
+          And it may very well be possible to build a system much like this one. Perhaps
+          one day in my lifetime, people will be taking Hyperloops all over the nation.
+
+          Hyperloop concept drawings. All images from Musk''s proposal.
+
+          Let''s set aside for the moment any discussion of the'
+        sentences:
+        - Musk's Hyperloop math doesn't add up
+        - TransitBy Matt Johnson (Editorial Board Alum) August 14, 2013194
+        - On Monday, entrepreneur Elon Musk announced plans to build
+        - a design for a super-fast tube train connecting Los Angeles and San Francisco.
+          He believes his plan will obviate the need for the California High-Speed
+          Rail. Unfortunately, his math doesn't add up.
+        - The "Hyperloop" would be a pair of tubes stretching from Los Angeles to
+          the Bay Area. Pods within these tubes would travel at up to 760 mph, making
+          the trip between California's largest metro areas in 35 minutes. Musk says
+          he became motivated to invent this technology because he grew disenchanted
+          with the California High-Speed Rail project's expense ($53 billion in 2013
+          dollars) and sloth (it will travel at an average of 168 mph).
+        - Musk claims the Hyperloop system could be built for just $6 billion, 10%
+          of the cost of HSR. Some are wondering if this is a serious proposal or
+          a ploy intended to derail the California High-Speed Rail project. Evidence
+          seems to point to the latter. After all, the guy proposing this revolution
+          in transit owns a car company.
+        - The Hyperloop concept has gotten a lot of press over the past few days.
+          It seems to have inspired the masses like an idea out of Popular Mechanics.
+          And it may very well be possible to build a system much like this one. Perhaps
+          one day in my lifetime, people will be taking Hyperloops all over the nation.
+        - Hyperloop concept drawings. All images from Musk's proposal.
+        - Let's set aside for the moment any discussion of the
+        title: Musk s Hyperloop math doesn t add up Greater_0
+      - original_doc_str: 'Hyperloop at USC_0 | Economical, Sustainable, and Insanely
+          Fast
+
+          Hyperloop Outperforms All Other Modes of Transport.
+
+          Linear induction motors, axial compressors, and air bearings enable full-scale
+          Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+          tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+          and automobiles. The result is a mass transportation system with faster
+          travel times, greater energy efficiency, and lower costs than any previous
+          mode of transportation.
+
+          Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first
+          introduction to the Hyperloop concept and an effort to inspire a transportation
+          revolution. Connecting Los Angeles and San Francisco at speeds up to 760
+          mph with total construction and operation costs orders of magnitude lower
+          than the California High Speed Rail, Hyperloop Alpha readily exceeds traditional
+          transportation solutions in both performance and value.
+
+          Five minute station times, top speeds of 760 mph, isolated internal tube
+          environments, and a capacity of 840 passengers per hour make the Hyperloop
+          the fastest, safest, and most efficient mass transportation system ever
+          proposed.
+
+          With approximately 594 acres of solar cell coverage on top of the tubes,
+          the all-electric Hyperloop is completely self powering during peak solar
+          activity, ensuring a responsible and reliable transportation solution for
+          the future.
+
+          The LA-SF Hyperloop offers the fastest ground transportation ever proposed
+          at a total cost of just $6 billion, where as the California High Speed Rail
+          project costs an estimated $68 billion and has a maximum speed of only 220
+          mph.
+
+          Hyperloop Alpha White Paper
+
+          With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop'
+        sentences:
+        - Economical, Sustainable, and Insanely Fast
+        - Hyperloop Outperforms All Other Modes of Transport.
+        - Linear induction motors, axial compressors, and air bearings enable full-scale
+          Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+          tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+          and automobiles. The result is a mass transportation system with faster
+          travel times, greater energy efficiency, and lower costs than any previous
+          mode of transportation.
+        - Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first
+          introduction to the Hyperloop concept and an effort to inspire a transportation
+          revolution. Connecting Los Angeles and San Francisco at speeds up to 760
+          mph with total construction and operation costs orders of magnitude lower
+          than the California High Speed Rail, Hyperloop Alpha readily exceeds traditional
+          transportation solutions in both performance and value.
+        - Five minute station times, top speeds of 760 mph, isolated internal tube
+          environments, and a capacity of 840 passengers per hour make the Hyperloop
+          the fastest, safest, and most efficient mass transportation system ever
+          proposed.
+        - With approximately 594 acres of solar cell coverage on top of the tubes,
+          the all-electric Hyperloop is completely self powering during peak solar
+          activity, ensuring a responsible and reliable transportation solution for
+          the future.
+        - The LA-SF Hyperloop offers the fastest ground transportation ever proposed
+          at a total cost of just $6 billion, where as the California High Speed Rail
+          project costs an estimated $68 billion and has a maximum speed of only 220
+          mph.
+        - Hyperloop Alpha White Paper
+        - With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop
+        title: Hyperloop at USC_0
+      - original_doc_str: Hyperloop How Elon Musk s Tube Travel Concept Works_0 |
+          Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        sentences:
+        - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        title: Hyperloop How Elon Musk s Tube Travel Concept Works_0
+      id: BOT
+      improve_bucket: perfect
+      memories: []
+      search_queries: Hyperloop train capacity
+      text: I'm not sure, but I'm sure it's a lot of fun. _potentially_unsafe__
+      top_docs:
+      - 'Musk s Hyperloop math doesn t add up Greater_0 | Musk''s Hyperloop math doesn''t
+        add up
+
+        TransitBy Matt Johnson (Editorial Board Alum) August 14, 2013194
+
+        On Monday, entrepreneur Elon Musk announced plans to build
+
+        a design for a super-fast tube train connecting Los Angeles and San Francisco.
+        He believes his plan will obviate the need for the California High-Speed Rail.
+        Unfortunately, his math doesn''t add up.
+
+        The "Hyperloop" would be a pair of tubes stretching from Los Angeles to the
+        Bay Area. Pods within these tubes would travel at up to 760 mph, making the
+        trip between California''s largest metro areas in 35 minutes. Musk says he
+        became motivated to invent this technology because he grew disenchanted with
+        the California High-Speed Rail project''s expense ($53 billion in 2013 dollars)
+        and sloth (it will travel at an average of 168 mph).
+
+        Musk claims the Hyperloop system could be built for just $6 billion, 10% of
+        the cost of HSR. Some are wondering if this is a serious proposal or a ploy
+        intended to derail the California High-Speed Rail project. Evidence seems
+        to point to the latter. After all, the guy proposing this revolution in transit
+        owns a car company.
+
+        The Hyperloop concept has gotten a lot of press over the past few days. It
+        seems to have inspired the masses like an idea out of Popular Mechanics. And
+        it may very well be possible to build a system much like this one. Perhaps
+        one day in my lifetime, people will be taking Hyperloops all over the nation.
+
+        Hyperloop concept drawings. All images from Musk''s proposal.
+
+        Let''s set aside for the moment any discussion of the'
+      - 'Hyperloop at USC_0 | Economical, Sustainable, and Insanely Fast
+
+        Hyperloop Outperforms All Other Modes of Transport.
+
+        Linear induction motors, axial compressors, and air bearings enable full-scale
+        Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+        tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+        and automobiles. The result is a mass transportation system with faster travel
+        times, greater energy efficiency, and lower costs than any previous mode of
+        transportation.
+
+        Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first
+        introduction to the Hyperloop concept and an effort to inspire a transportation
+        revolution. Connecting Los Angeles and San Francisco at speeds up to 760 mph
+        with total construction and operation costs orders of magnitude lower than
+        the California High Speed Rail, Hyperloop Alpha readily exceeds traditional
+        transportation solutions in both performance and value.
+
+        Five minute station times, top speeds of 760 mph, isolated internal tube environments,
+        and a capacity of 840 passengers per hour make the Hyperloop the fastest,
+        safest, and most efficient mass transportation system ever proposed.
+
+        With approximately 594 acres of solar cell coverage on top of the tubes, the
+        all-electric Hyperloop is completely self powering during peak solar activity,
+        ensuring a responsible and reliable transportation solution for the future.
+
+        The LA-SF Hyperloop offers the fastest ground transportation ever proposed
+        at a total cost of just $6 billion, where as the California High Speed Rail
+        project costs an estimated $68 billion and has a maximum speed of only 220
+        mph.
+
+        Hyperloop Alpha White Paper
+
+        With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop'
+      - Hyperloop How Elon Musk s Tube Travel Concept Works_0 | Similarities between
+        the propulsion of maglev trains and Hyperloop are trumped by the promised
+        higher speeds of Musk s system. But the idea itself is obviously adapted from
+        available technologies and older concepts including the  vactrain  concept
+        from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+        Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+        waves, and out-competing air travel are similar.
+      - 'Hyperloop Wikipedia_0 | Hyperloop
+
+        A Hyperloop is a proposed mode of passenger and/or freight transportation,
+        first used to describe an open-source vactrain design released by a joint
+        team from Tesla and SpaceX. Drawing heavily from Robert Goddard''s vactrain,
+        a hyperloop comprises a sealed tube or system of tubes through which a pod
+        may travel free of air resistance or friction conveying people or objects
+        at high speed while being very efficient.
+
+        Elon Musk''s version of the concept, first publicly mentioned in 2012, incorporates
+        reduced-pressure tubes in which pressurized capsules ride on air bearings
+        driven by linear induction motors and air compressors.
+
+        The Hyperloop Alpha concept was first published in August 2013, proposing
+        and examining a route running from the Los Angeles region to the San Francisco
+        Bay Area roughly following the Interstate 5 corridor. The paper conceived
+        of a hyperloop system that would propel passengers along the route at an average
+        speed of around , with a top speed of , allowing for a travel time of 35 minutes,
+        which is considerably faster than current rail or air travel times. Preliminary
+        cost estimates for this LA-SF suggested route were included in the white paper--
+        for a passenger-only version, and for a somewhat larger-diameter version transporting
+        passengers and vehicles--although transportation analysts had doubts that
+        the system could be constructed on that budget; some analysts claimed that
+        the Hyperloop would be several billion dollars overbudget, taking into consideration
+        construction, development and operation costs.
+
+        The Hyperloop concept has been explicitly "open-sourced" by Musk and SpaceX,
+        and others have been encouraged to take the ideas and further'
+      - 'Hyperloop A SWOT analysis of the most popular new age_0 | Hyperloop: A SWOT
+        analysis of the most popular new age transportation technology
+
+        While commercial deployment of the loop network across India is still in the
+        pipe dream stage (no pun intended), we decided to do a SWOT analysis of the
+        project.
+
+        Nimish Sawant Feb 19, 2018 10:53:03 IST
+
+        Editor s Note: This article was originally published on 27 Jan 2017 and is
+        being republished keeping in mind the announcement of Virgin Hyperloop One
+        announcement to begin an operational hyperloop route between Mumbai and Pune,
+        at the ongoing Magnetic Maharashtra Summit.
+
+        Elon Musk s Hyperloop transit system idea was announced in 2012 promising
+        a pneumatic tube transportation system. The average speed that these Hyperloop
+        pods are expected to achieve is 970 kmph with a top speed of 1200 kmph. This
+        brings with it the promise of covering long distances in a matter of minutes.
+
+        Since 2012, the Hyperloop concept has been taken forward by companies such
+        as Hyperloop Transportation Technologies (HTT) and Hyperloop One. Apart from
+        these there are many independent entities working on the different aspects
+        of this transportation systems such as the pods, the tubes and so on.
+
+        The Hyperloop One XP-1. Image: Virgin Hyperloop One
+
+        Both HTT and Hyperloop One have expressed interest in getting the Hyperloop
+        project to India. HTT chairman Bibop Gabriele Gresta has proposed a loop between
+        Mumbai and Pune in a meeting with transport minister Nitin Gadkari. Hyperloop
+        One, on the other hand, has proposed a country-wide network which connects
+        all the major cities in India.
+
+        One 18 February, Hyperloop One signed a memorandum of understanding with the'
+    bot_gold:
+      search_query: []
+    bot_modular_failure:
+      search_query: []
+    bot_no_feedback:
+      search_query:
+      - Hyperloop train capacity
+    domain: Business
+    episode_done: false
+    eval_labels:
+    - I'm not sure, but I'm sure it's a lot of fun.
+    feedback_chain:
+    - perfect
+    generic_topic: hyper loop
+    human_acts:
+    - feedback_text: ''
+      feedback_type: perfect
+      id: YOU
+      text: How many people can ride on a hyper loop train?
+    human_revision:
+      search_query: []
+      selected_sentences: []
+    id: fits_None_v1_seenFalse
+    last_nonperfect_feedback: none
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: How many people can ride on a hyper loop train?
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - Hyperloop How Elon Musk s Tube Travel Concept Works_0
+    - Elon Musk Is Building a Hyperloop and It s Great News for_0
+    - What is Hyperloop The 700mph subsonic train explained_0
+    - Richard Branson Wants To Build A High Speed Hyperloop In_0
+    - Hyperloop Wikipedia_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+      by the promised higher speeds of Musk s system. But the idea itself is obviously
+      adapted from available technologies and older concepts including the  vactrain  concept
+      from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+      Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+      waves, and out-competing air travel are similar.
+    - 'Great News for Everyone! Elon Musk Is Building a Hyperloop
+
+      Elon Musk is back in the loop.
+
+      Four years after encouraging anyone and everyone to try making his crazy hyperloop
+      idea work, the Silicon Valley titan has decided he s not too busy to do it himself
+      after all. You could see this coming last month, of course. That s when Musk
+      announced his tunneling outfit, the Boring Company, received  verbal government
+      approval  to dig a hyperloop tunnel between New York and Washington, DC. When
+      WIRED asked Musk via Twitter who might build the hyperloop that would fill that
+      tunnel, he replied,  the Boring Company.
+
+      Speculation ramped up last week when Bloomberg, citing  sources close to Musk,  reported
+      on his plans. On Monday, a spokesperson for the Boring Company confirmed it
+      to WIRED.
+
+      At the Boring Company, we plan to build low-cost, fast-to-dig tunnels that will
+      house new high-speed transportation systems,  the spokesperson wrote in a statement.  Most
+      will be standard pressurized tunnels with electric skates going 125+ mph. For
+      long-distance routes in straight lines, such as NY to DC, it will make sense
+      to use pressurized pods in a depressurized tunnel to allow speeds up to approximately
+      600+ mph (aka Hyperloop).
+
+      Hyperhype
+
+      Slovakia s Hyperloop Moves a Step Closer to Not Being a Joke
+
+      A Pod Races Through the Hyperloop for the First Time Ever
+
+      Oh, Elon. Building Infrastructure for the Hyperloop Doesn t Work Like That
+
+      Now, this may annoy some of the people who heeded Musk s call to figure out
+      the best way to'
+    - 'What is Hyperloop? The 700mph subsonic train explained
+
+      Max Langridge and Elyse Betters | 13 October 2017
+
+      - Hyperloop is a high-speed train system
+
+      - Musk is planning two Hyperloop routes so far
+
+      - Meanwhile Virgin Hyperloop One has built a test track
+
+      Elon Musk has started the building revolution for a new train system.
+
+      Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA to
+      San Francisco in under 30 minutes. But what is it and how does it work? Good
+      questions. Musk has likened it to a vacuum tube system in a building used to
+      move documents from place to place. Confused? No worries. Here s everything
+      you need to know about the futuristic train coming from the founder of Tesla
+      and SpaceX.
+
+      We also delve into competitor systems, like Virgin Hyperloop One.
+
+      What is X.COM? Elon Musk s new website and project teased
+
+      What is SolarCity and why is Tesla buying it?
+
+      Tesla: Everything you need to know about its cars and more
+
+      Hyperloop is essentially a train system that Musk calls  a cross between a Concorde,
+      a railgun, and an air hockey table . It s based on the very high-speed transit
+      (VHST) system proposed in 1972, which combines a magnetic levitation train and
+      a low pressure transit tube. It evolves some of the original ideas of VHST,
+      but it still uses tunnels and pods or capsules to move from place to place.
+
+      Musk has likened it to a vacuum tube system in a building used to move documents
+      from place to place.
+
+      What speeds have been proposed?
+
+      Hyperloop is being'
+    - 'Richard Branson Wants To Build A High-Speed Hyperloop In India
+
+      The proposed route between Mumbai and Pune could cut travel time from over three
+      hours to 25 minutes.
+
+      Richard Branson s project, Virgin Hyperloop One, seeks to decrease travel time
+      using vacuum-based underground tunnels.
+
+      British billionaire Richard Branson has announced plans to build a high-speed
+      shuttle in India that could potentially revolutionize travel in the country.
+
+      The proposed hyperloop route between Mumbai and Pune, two major cities in the
+      western state of Maharashtra, would reduce travel time from over three hours
+      by train to just 25 minutes, according to a Virgin press release.
+
+      Branson, co-founder of the British multinational conglomerate, signed a preliminary
+      agreement with Maharashtra''s government on Sunday, the Press Trust of India
+      reports. The project will now undergo an extensive feasibility study.
+
+      "I believe Virgin Hyperloop One could have the same impact upon India in the
+      21st century as trains did in the 20th century," Branson said in the press release.
+      "The Pune-Mumbai route is an ideal first corridor as part of a national hyperloop
+      network that will dramatically reduce travel times between most of India''s
+      major cities to under two hours."
+
+      A post shared by HyperloopOne (@hyperloopone) on Feb 17, 2018 at 9:26am PST
+
+      The hyperloop will also connect passengers to the proposed Navi Mumbai International
+      Airport, which is being built near Mumbai. Branson estimated that the shuttle
+      would support 150 million passenger trips per year and "create a thriving, competitive
+      megaregion."
+
+      Entrepreneur Elon Musk first published a white paper outlining his vision for
+      a vacuum-based, high-speed, underground shuttle system, or hyperloop,'
+    - 'Hyperloop
+
+      A Hyperloop is a proposed mode of passenger and/or freight transportation, first
+      used to describe an open-source vactrain design released by a joint team from
+      Tesla and SpaceX. Drawing heavily from Robert Goddard''s vactrain, a hyperloop
+      comprises a sealed tube or system of tubes through which a pod may travel free
+      of air resistance or friction conveying people or objects at high speed while
+      being very efficient.
+
+      Elon Musk''s version of the concept, first publicly mentioned in 2012, incorporates
+      reduced-pressure tubes in which pressurized capsules ride on air bearings driven
+      by linear induction motors and air compressors.
+
+      The Hyperloop Alpha concept was first published in August 2013, proposing and
+      examining a route running from the Los Angeles region to the San Francisco Bay
+      Area roughly following the Interstate 5 corridor. The paper conceived of a hyperloop
+      system that would propel passengers along the route at an average speed of around
+      , with a top speed of , allowing for a travel time of 35 minutes, which is considerably
+      faster than current rail or air travel times. Preliminary cost estimates for
+      this LA-SF suggested route were included in the white paper-- for a passenger-only
+      version, and for a somewhat larger-diameter version transporting passengers
+      and vehicles--although transportation analysts had doubts that the system could
+      be constructed on that budget; some analysts claimed that the Hyperloop would
+      be several billion dollars overbudget, taking into consideration construction,
+      development and operation costs.
+
+      The Hyperloop concept has been explicitly "open-sourced" by Musk and SpaceX,
+      and others have been encouraged to take the ideas and further'
+    __selected-sentences__: []
+    bot_acts:
+    - display_top_docs:
+      - original_doc_str: 'What is Hyperloop The 700mph subsonic train explained_0
+          | What is Hyperloop? The 700mph subsonic train explained
+
+          Max Langridge and Elyse Betters | 13 October 2017
+
+          - Hyperloop is a high-speed train system
+
+          - Musk is planning two Hyperloop routes so far
+
+          - Meanwhile Virgin Hyperloop One has built a test track
+
+          Elon Musk has started the building revolution for a new train system.
+
+          Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+          to San Francisco in under 30 minutes. But what is it and how does it work?
+          Good questions. Musk has likened it to a vacuum tube system in a building
+          used to move documents from place to place. Confused? No worries. Here s
+          everything you need to know about the futuristic train coming from the founder
+          of Tesla and SpaceX.
+
+          We also delve into competitor systems, like Virgin Hyperloop One.
+
+          What is X.COM? Elon Musk s new website and project teased
+
+          What is SolarCity and why is Tesla buying it?
+
+          Tesla: Everything you need to know about its cars and more
+
+          Hyperloop is essentially a train system that Musk calls  a cross between
+          a Concorde, a railgun, and an air hockey table . It s based on the very
+          high-speed transit (VHST) system proposed in 1972, which combines a magnetic
+          levitation train and a low pressure transit tube. It evolves some of the
+          original ideas of VHST, but it still uses tunnels and pods or capsules to
+          move from place to place.
+
+          Musk has likened it to a vacuum tube system in a building used to move documents
+          from place to place.
+
+          What speeds have been proposed?
+
+          Hyperloop is being'
+        sentences:
+        - What is Hyperloop? The 700mph subsonic train explained
+        - Max Langridge and Elyse Betters | 13 October 2017
+        - '- Hyperloop is a high-speed train system'
+        - '- Musk is planning two Hyperloop routes so far'
+        - '- Meanwhile Virgin Hyperloop One has built a test track'
+        - Elon Musk has started the building revolution for a new train system.
+        - Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+          to San Francisco in under 30 minutes. But what is it and how does it work?
+          Good questions. Musk has likened it to a vacuum tube system in a building
+          used to move documents from place to place. Confused? No worries. Here s
+          everything you need to know about the futuristic train coming from the founder
+          of Tesla and SpaceX.
+        - We also delve into competitor systems, like Virgin Hyperloop One.
+        - What is X.COM? Elon Musk s new website and project teased
+        - What is SolarCity and why is Tesla buying it?
+        - 'Tesla: Everything you need to know about its cars and more'
+        - Hyperloop is essentially a train system that Musk calls  a cross between
+          a Concorde, a railgun, and an air hockey table . It s based on the very
+          high-speed transit (VHST) system proposed in 1972, which combines a magnetic
+          levitation train and a low pressure transit tube. It evolves some of the
+          original ideas of VHST, but it still uses tunnels and pods or capsules to
+          move from place to place.
+        - Musk has likened it to a vacuum tube system in a building used to move documents
+          from place to place.
+        - What speeds have been proposed?
+        - Hyperloop is being
+        title: What is Hyperloop The 700mph subsonic train explained_0
+      - original_doc_str: 'How the Hyperloop Works HowStuffWorks_0 | The Hyperloop
+          tube would stretch from San Francisco to Los Angeles, with pods that whisked
+          folks along for a 35-minute ride unlike any other.
+
+          Elon Musk, the billionaire founder of PayPal, has given us snazzy, new electric
+          cars courtesy of Tesla Motors and private spaceflight through his company
+          SpaceX. Now Musk envisions cutting the travel time between Los Angeles to
+          San Francisco to a mere 35 minutes. He has proposed building a high-speed
+          transportation system that would allow humans to travel 760 miles (1,223
+          kilometers) per hour, or Mach 0.91 (assuming 68 degrees F/20 degrees C).
+
+          If it sounds like something out of a sci-fi movie ( Logan s Run,  anyone?),
+          it is. Still, if Musk has his way, the futuristic Hyperloop will replace
+          bullet trains and revolutionize transportation just as the locomotive, automobile
+          and airplane did. The only problem is that no one really knows if the Hyperloop
+          will work and how much it will actually cost.
+
+          That s not stopping Musk from pushing the concept. He says the price tag
+          is a mere $6 billion. Many people are a bit skeptical. Some experts say
+          they couldn t build a decent-size bridge for such a paltry amount [source:
+          Bilton]. Moreover, California is now working on a plan to build a much slower
+          rail system between the two cities at a cost of $60 billion. It was this
+          proposal that drove Musk to envision the Hyperloop. The California plan,
+          Musk wrote in a 57-page white paper he published on the SpaceX site in August
+          2013, was expensive for'
+        sentences:
+        - The Hyperloop tube would stretch from San Francisco to Los Angeles, with
+          pods that whisked folks along for a 35-minute ride unlike any other.
+        - Elon Musk, the billionaire founder of PayPal, has given us snazzy, new electric
+          cars courtesy of Tesla Motors and private spaceflight through his company
+          SpaceX. Now Musk envisions cutting the travel time between Los Angeles to
+          San Francisco to a mere 35 minutes. He has proposed building a high-speed
+          transportation system that would allow humans to travel 760 miles (1,223
+          kilometers) per hour, or Mach 0.91 (assuming 68 degrees F/20 degrees C).
+        - If it sounds like something out of a sci-fi movie ( Logan s Run,  anyone?),
+          it is. Still, if Musk has his way, the futuristic Hyperloop will replace
+          bullet trains and revolutionize transportation just as the locomotive, automobile
+          and airplane did. The only problem is that no one really knows if the Hyperloop
+          will work and how much it will actually cost.
+        - 'That s not stopping Musk from pushing the concept. He says the price tag
+          is a mere $6 billion. Many people are a bit skeptical. Some experts say
+          they couldn t build a decent-size bridge for such a paltry amount [source:
+          Bilton]. Moreover, California is now working on a plan to build a much slower
+          rail system between the two cities at a cost of $60 billion. It was this
+          proposal that drove Musk to envision the Hyperloop. The California plan,
+          Musk wrote in a 57-page white paper he published on the SpaceX site in August
+          2013, was expensive for'
+        title: How the Hyperloop Works HowStuffWorks_0
+      - original_doc_str: 'Colorado Hyperloop Front Range Stations One Really Fast_0
+          | What is unique about our approach is that we introduced an interdisciplinary,
+          collaborative and participatory approach to developing a Hyperloop in Colorado.
+
+          We asked ourselves and hundreds of Coloradans, what if we could help design
+          this project in a way that is more human-centered? To design it in a way
+          that will help the communities and not hurt them.
+
+          The Hyperloop is all about connection. It is about eliminating borders and
+          going beyond the limitations of time and space. It is meant to empower communities
+          and that''s why we wanted to incorporate these future users.
+
+          We used social media and surveys to gather information about how Coloradans
+          might use a Front Range Hyperloop. Though these surveys we found:
+
+          Equal interest in a Northern route from Denver to Fort Collins as well as
+          a southern route from Denver to Pueblo.
+
+          Hyperloop construction would benefit Colorado infrastructure, energy and
+          technology sectors as well as tourism and quality of life measurements.
+          There was special interest in connecting Hyperloop with recreational areas
+          like National Parks, ski and rafting.
+
+          Current Colorado Hyperloop surveys:
+
+          Tell us your top NEEDs of a Colorado Hyperloop
+
+          What I love about my neighborhood in Colorado
+
+          Colorado Hyperloop is thrilled to see the Cheyenne-Denver-Pueblo corridor
+          advance to the final stage of the Hyperloop One Global Challenge. Colorado
+          Hyperloop also welcomes and supports all groups in their goals in making
+          Colorado a leading sustainable transportation technology state. We remain
+          committed to working with other public, private, professional, and passionate
+          teams to test the feasibility of a Hyperloop in our great state and ensure
+          that Coloradoans have a'
+        sentences:
+        - What is unique about our approach is that we introduced an interdisciplinary,
+          collaborative and participatory approach to developing a Hyperloop in Colorado.
+        - We asked ourselves and hundreds of Coloradans, what if we could help design
+          this project in a way that is more human-centered? To design it in a way
+          that will help the communities and not hurt them.
+        - The Hyperloop is all about connection. It is about eliminating borders and
+          going beyond the limitations of time and space. It is meant to empower communities
+          and that's why we wanted to incorporate these future users.
+        - 'We used social media and surveys to gather information about how Coloradans
+          might use a Front Range Hyperloop. Though these surveys we found:'
+        - Equal interest in a Northern route from Denver to Fort Collins as well as
+          a southern route from Denver to Pueblo.
+        - Hyperloop construction would benefit Colorado infrastructure, energy and
+          technology sectors as well as tourism and quality of life measurements.
+          There was special interest in connecting Hyperloop with recreational areas
+          like National Parks, ski and rafting.
+        - 'Current Colorado Hyperloop surveys:'
+        - Tell us your top NEEDs of a Colorado Hyperloop
+        - What I love about my neighborhood in Colorado
+        - Colorado Hyperloop is thrilled to see the Cheyenne-Denver-Pueblo corridor
+          advance to the final stage of the Hyperloop One Global Challenge. Colorado
+          Hyperloop also welcomes and supports all groups in their goals in making
+          Colorado a leading sustainable transportation technology state. We remain
+          committed to working with other public, private, professional, and passionate
+          teams to test the feasibility of a Hyperloop in our great state and ensure
+          that Coloradoans have a
+        title: Colorado Hyperloop Front Range Stations One Really Fast_0
+      id: BOT
+      improve_bucket: better_search_query
+      memories: []
+      search_queries: Hyperloop train
+      text: I don't think there are any, but it would be interesting to see how it
+        would work.
+      top_docs:
+      - 'What is Hyperloop The 700mph subsonic train explained_0 | What is Hyperloop?
+        The 700mph subsonic train explained
+
+        Max Langridge and Elyse Betters | 13 October 2017
+
+        - Hyperloop is a high-speed train system
+
+        - Musk is planning two Hyperloop routes so far
+
+        - Meanwhile Virgin Hyperloop One has built a test track
+
+        Elon Musk has started the building revolution for a new train system.
+
+        Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+        to San Francisco in under 30 minutes. But what is it and how does it work?
+        Good questions. Musk has likened it to a vacuum tube system in a building
+        used to move documents from place to place. Confused? No worries. Here s everything
+        you need to know about the futuristic train coming from the founder of Tesla
+        and SpaceX.
+
+        We also delve into competitor systems, like Virgin Hyperloop One.
+
+        What is X.COM? Elon Musk s new website and project teased
+
+        What is SolarCity and why is Tesla buying it?
+
+        Tesla: Everything you need to know about its cars and more
+
+        Hyperloop is essentially a train system that Musk calls  a cross between a
+        Concorde, a railgun, and an air hockey table . It s based on the very high-speed
+        transit (VHST) system proposed in 1972, which combines a magnetic levitation
+        train and a low pressure transit tube. It evolves some of the original ideas
+        of VHST, but it still uses tunnels and pods or capsules to move from place
+        to place.
+
+        Musk has likened it to a vacuum tube system in a building used to move documents
+        from place to place.
+
+        What speeds have been proposed?
+
+        Hyperloop is being'
+      - 'How the Hyperloop Works HowStuffWorks_0 | The Hyperloop tube would stretch
+        from San Francisco to Los Angeles, with pods that whisked folks along for
+        a 35-minute ride unlike any other.
+
+        Elon Musk, the billionaire founder of PayPal, has given us snazzy, new electric
+        cars courtesy of Tesla Motors and private spaceflight through his company
+        SpaceX. Now Musk envisions cutting the travel time between Los Angeles to
+        San Francisco to a mere 35 minutes. He has proposed building a high-speed
+        transportation system that would allow humans to travel 760 miles (1,223 kilometers)
+        per hour, or Mach 0.91 (assuming 68 degrees F/20 degrees C).
+
+        If it sounds like something out of a sci-fi movie ( Logan s Run,  anyone?),
+        it is. Still, if Musk has his way, the futuristic Hyperloop will replace bullet
+        trains and revolutionize transportation just as the locomotive, automobile
+        and airplane did. The only problem is that no one really knows if the Hyperloop
+        will work and how much it will actually cost.
+
+        That s not stopping Musk from pushing the concept. He says the price tag is
+        a mere $6 billion. Many people are a bit skeptical. Some experts say they
+        couldn t build a decent-size bridge for such a paltry amount [source: Bilton].
+        Moreover, California is now working on a plan to build a much slower rail
+        system between the two cities at a cost of $60 billion. It was this proposal
+        that drove Musk to envision the Hyperloop. The California plan, Musk wrote
+        in a 57-page white paper he published on the SpaceX site in August 2013, was
+        expensive for'
+      - 'Colorado Hyperloop Front Range Stations One Really Fast_0 | What is unique
+        about our approach is that we introduced an interdisciplinary, collaborative
+        and participatory approach to developing a Hyperloop in Colorado.
+
+        We asked ourselves and hundreds of Coloradans, what if we could help design
+        this project in a way that is more human-centered? To design it in a way that
+        will help the communities and not hurt them.
+
+        The Hyperloop is all about connection. It is about eliminating borders and
+        going beyond the limitations of time and space. It is meant to empower communities
+        and that''s why we wanted to incorporate these future users.
+
+        We used social media and surveys to gather information about how Coloradans
+        might use a Front Range Hyperloop. Though these surveys we found:
+
+        Equal interest in a Northern route from Denver to Fort Collins as well as
+        a southern route from Denver to Pueblo.
+
+        Hyperloop construction would benefit Colorado infrastructure, energy and technology
+        sectors as well as tourism and quality of life measurements. There was special
+        interest in connecting Hyperloop with recreational areas like National Parks,
+        ski and rafting.
+
+        Current Colorado Hyperloop surveys:
+
+        Tell us your top NEEDs of a Colorado Hyperloop
+
+        What I love about my neighborhood in Colorado
+
+        Colorado Hyperloop is thrilled to see the Cheyenne-Denver-Pueblo corridor
+        advance to the final stage of the Hyperloop One Global Challenge. Colorado
+        Hyperloop also welcomes and supports all groups in their goals in making Colorado
+        a leading sustainable transportation technology state. We remain committed
+        to working with other public, private, professional, and passionate teams
+        to test the feasibility of a Hyperloop in our great state and ensure that
+        Coloradoans have a'
+      - Hyperloop How Elon Musk s Tube Travel Concept Works_0 | Similarities between
+        the propulsion of maglev trains and Hyperloop are trumped by the promised
+        higher speeds of Musk s system. But the idea itself is obviously adapted from
+        available technologies and older concepts including the  vactrain  concept
+        from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+        Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+        waves, and out-competing air travel are similar.
+      - 'A hyperloop between Toronto and Montreal is moving closer_0 | A hyperloop
+        between Toronto and Montreal is moving closer to reality
+
+        Transport Canada is officially funding a study of the hyperloop train: an
+        electric tunnel that will be able to take passengers from Toronto to Montreal
+        in just 45 minutes.
+
+        The government agency has announced that it s looking for researchers to look
+        into the new transportation method, which is still in prototype mode.
+
+        Transport Canada released a call out for consultants who can gauge the safety
+        of hyperloop technology, as well as its cost-effectiveness in comparison to
+        high-speed rail.
+
+        A post shared by TransPod Hyperloop (@transpod_inc) on Apr 8, 2017 at 5:19am
+        PDT
+
+        The Elon Musk-introduced tech, which originally came via American company
+        Virgin Hyperloop One, has been featured in talks to arrive here since 2016,
+        when the company first launched its Hyperloop One Global Challenge.
+
+        Multiple hyperloop startups have sprung up worldwide since then, including
+        the Toronto-based TransPod, which has developed its own hyperloop prototype
+        that would see a network of tubes containing pods travelling at speeds greater
+        than 1,000 km/hour.
+
+        A post shared by TransPod Hyperloop (@transpod_inc) on Apr 10, 2017 at 5:30am
+        PDT
+
+        Hyperloop technology has been debated widely by transportation experts, some
+        who see the tube as more of a novel idea than a practical way of getting around.
+        There are no hyperloop systems currently operating anywhere in the world.
+
+        According to the TransPod website, a one-way trip on their hyperloop from
+        Toronto to Monreal would cost $80, if booked for a same-day trip.'
+    - display_top_docs:
+      - original_doc_str: Hyperloop How Elon Musk s Tube Travel Concept Works_0 |
+          Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        sentences:
+        - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        title: Hyperloop How Elon Musk s Tube Travel Concept Works_0
+      - original_doc_str: 'Elon Musk Is Building a Hyperloop and It s Great News for_0
+          | Great News for Everyone! Elon Musk Is Building a Hyperloop
+
+          Elon Musk is back in the loop.
+
+          Four years after encouraging anyone and everyone to try making his crazy
+          hyperloop idea work, the Silicon Valley titan has decided he s not too busy
+          to do it himself after all. You could see this coming last month, of course.
+          That s when Musk announced his tunneling outfit, the Boring Company, received  verbal
+          government approval  to dig a hyperloop tunnel between New York and Washington,
+          DC. When WIRED asked Musk via Twitter who might build the hyperloop that
+          would fill that tunnel, he replied,  the Boring Company.
+
+          Speculation ramped up last week when Bloomberg, citing  sources close to
+          Musk,  reported on his plans. On Monday, a spokesperson for the Boring Company
+          confirmed it to WIRED.
+
+          At the Boring Company, we plan to build low-cost, fast-to-dig tunnels that
+          will house new high-speed transportation systems,  the spokesperson wrote
+          in a statement.  Most will be standard pressurized tunnels with electric
+          skates going 125+ mph. For long-distance routes in straight lines, such
+          as NY to DC, it will make sense to use pressurized pods in a depressurized
+          tunnel to allow speeds up to approximately 600+ mph (aka Hyperloop).
+
+          Hyperhype
+
+          Slovakia s Hyperloop Moves a Step Closer to Not Being a Joke
+
+          A Pod Races Through the Hyperloop for the First Time Ever
+
+          Oh, Elon. Building Infrastructure for the Hyperloop Doesn t Work Like That
+
+          Now, this may annoy some of the people who heeded Musk s call to figure
+          out the best way to'
+        sentences:
+        - Great News for Everyone! Elon Musk Is Building a Hyperloop
+        - Elon Musk is back in the loop.
+        - Four years after encouraging anyone and everyone to try making his crazy
+          hyperloop idea work, the Silicon Valley titan has decided he s not too busy
+          to do it himself after all. You could see this coming last month, of course.
+          That s when Musk announced his tunneling outfit, the Boring Company, received  verbal
+          government approval  to dig a hyperloop tunnel between New York and Washington,
+          DC. When WIRED asked Musk via Twitter who might build the hyperloop that
+          would fill that tunnel, he replied,  the Boring Company.
+        - Speculation ramped up last week when Bloomberg, citing  sources close to
+          Musk,  reported on his plans. On Monday, a spokesperson for the Boring Company
+          confirmed it to WIRED.
+        - At the Boring Company, we plan to build low-cost, fast-to-dig tunnels that
+          will house new high-speed transportation systems,  the spokesperson wrote
+          in a statement.  Most will be standard pressurized tunnels with electric
+          skates going 125+ mph. For long-distance routes in straight lines, such
+          as NY to DC, it will make sense to use pressurized pods in a depressurized
+          tunnel to allow speeds up to approximately 600+ mph (aka Hyperloop).
+        - Hyperhype
+        - Slovakia s Hyperloop Moves a Step Closer to Not Being a Joke
+        - A Pod Races Through the Hyperloop for the First Time Ever
+        - Oh, Elon. Building Infrastructure for the Hyperloop Doesn t Work Like That
+        - Now, this may annoy some of the people who heeded Musk s call to figure
+          out the best way to
+        title: Elon Musk Is Building a Hyperloop and It s Great News for_0
+      - original_doc_str: 'What is Hyperloop The 700mph subsonic train explained_0
+          | What is Hyperloop? The 700mph subsonic train explained
+
+          Max Langridge and Elyse Betters | 13 October 2017
+
+          - Hyperloop is a high-speed train system
+
+          - Musk is planning two Hyperloop routes so far
+
+          - Meanwhile Virgin Hyperloop One has built a test track
+
+          Elon Musk has started the building revolution for a new train system.
+
+          Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+          to San Francisco in under 30 minutes. But what is it and how does it work?
+          Good questions. Musk has likened it to a vacuum tube system in a building
+          used to move documents from place to place. Confused? No worries. Here s
+          everything you need to know about the futuristic train coming from the founder
+          of Tesla and SpaceX.
+
+          We also delve into competitor systems, like Virgin Hyperloop One.
+
+          What is X.COM? Elon Musk s new website and project teased
+
+          What is SolarCity and why is Tesla buying it?
+
+          Tesla: Everything you need to know about its cars and more
+
+          Hyperloop is essentially a train system that Musk calls  a cross between
+          a Concorde, a railgun, and an air hockey table . It s based on the very
+          high-speed transit (VHST) system proposed in 1972, which combines a magnetic
+          levitation train and a low pressure transit tube. It evolves some of the
+          original ideas of VHST, but it still uses tunnels and pods or capsules to
+          move from place to place.
+
+          Musk has likened it to a vacuum tube system in a building used to move documents
+          from place to place.
+
+          What speeds have been proposed?
+
+          Hyperloop is being'
+        sentences:
+        - What is Hyperloop? The 700mph subsonic train explained
+        - Max Langridge and Elyse Betters | 13 October 2017
+        - '- Hyperloop is a high-speed train system'
+        - '- Musk is planning two Hyperloop routes so far'
+        - '- Meanwhile Virgin Hyperloop One has built a test track'
+        - Elon Musk has started the building revolution for a new train system.
+        - Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+          to San Francisco in under 30 minutes. But what is it and how does it work?
+          Good questions. Musk has likened it to a vacuum tube system in a building
+          used to move documents from place to place. Confused? No worries. Here s
+          everything you need to know about the futuristic train coming from the founder
+          of Tesla and SpaceX.
+        - We also delve into competitor systems, like Virgin Hyperloop One.
+        - What is X.COM? Elon Musk s new website and project teased
+        - What is SolarCity and why is Tesla buying it?
+        - 'Tesla: Everything you need to know about its cars and more'
+        - Hyperloop is essentially a train system that Musk calls  a cross between
+          a Concorde, a railgun, and an air hockey table . It s based on the very
+          high-speed transit (VHST) system proposed in 1972, which combines a magnetic
+          levitation train and a low pressure transit tube. It evolves some of the
+          original ideas of VHST, but it still uses tunnels and pods or capsules to
+          move from place to place.
+        - Musk has likened it to a vacuum tube system in a building used to move documents
+          from place to place.
+        - What speeds have been proposed?
+        - Hyperloop is being
+        title: What is Hyperloop The 700mph subsonic train explained_0
+      id: BOT
+      improve_bucket: perfect
+      memories: []
+      search_queries: who will build a hyper loop train
+      text: I don't think there are any planned, but elon musk's version of the concept,
+        first publicly mentioned in 2012, incorporates reduced-pressure tubes in which
+        pressurized capsules ride on air bearings driven by linear induction motors
+        and air compressors.
+      top_docs:
+      - Hyperloop How Elon Musk s Tube Travel Concept Works_0 | Similarities between
+        the propulsion of maglev trains and Hyperloop are trumped by the promised
+        higher speeds of Musk s system. But the idea itself is obviously adapted from
+        available technologies and older concepts including the  vactrain  concept
+        from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+        Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+        waves, and out-competing air travel are similar.
+      - 'Elon Musk Is Building a Hyperloop and It s Great News for_0 | Great News
+        for Everyone! Elon Musk Is Building a Hyperloop
+
+        Elon Musk is back in the loop.
+
+        Four years after encouraging anyone and everyone to try making his crazy hyperloop
+        idea work, the Silicon Valley titan has decided he s not too busy to do it
+        himself after all. You could see this coming last month, of course. That s
+        when Musk announced his tunneling outfit, the Boring Company, received  verbal
+        government approval  to dig a hyperloop tunnel between New York and Washington,
+        DC. When WIRED asked Musk via Twitter who might build the hyperloop that would
+        fill that tunnel, he replied,  the Boring Company.
+
+        Speculation ramped up last week when Bloomberg, citing  sources close to Musk,  reported
+        on his plans. On Monday, a spokesperson for the Boring Company confirmed it
+        to WIRED.
+
+        At the Boring Company, we plan to build low-cost, fast-to-dig tunnels that
+        will house new high-speed transportation systems,  the spokesperson wrote
+        in a statement.  Most will be standard pressurized tunnels with electric skates
+        going 125+ mph. For long-distance routes in straight lines, such as NY to
+        DC, it will make sense to use pressurized pods in a depressurized tunnel to
+        allow speeds up to approximately 600+ mph (aka Hyperloop).
+
+        Hyperhype
+
+        Slovakia s Hyperloop Moves a Step Closer to Not Being a Joke
+
+        A Pod Races Through the Hyperloop for the First Time Ever
+
+        Oh, Elon. Building Infrastructure for the Hyperloop Doesn t Work Like That
+
+        Now, this may annoy some of the people who heeded Musk s call to figure out
+        the best way to'
+      - 'What is Hyperloop The 700mph subsonic train explained_0 | What is Hyperloop?
+        The 700mph subsonic train explained
+
+        Max Langridge and Elyse Betters | 13 October 2017
+
+        - Hyperloop is a high-speed train system
+
+        - Musk is planning two Hyperloop routes so far
+
+        - Meanwhile Virgin Hyperloop One has built a test track
+
+        Elon Musk has started the building revolution for a new train system.
+
+        Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA
+        to San Francisco in under 30 minutes. But what is it and how does it work?
+        Good questions. Musk has likened it to a vacuum tube system in a building
+        used to move documents from place to place. Confused? No worries. Here s everything
+        you need to know about the futuristic train coming from the founder of Tesla
+        and SpaceX.
+
+        We also delve into competitor systems, like Virgin Hyperloop One.
+
+        What is X.COM? Elon Musk s new website and project teased
+
+        What is SolarCity and why is Tesla buying it?
+
+        Tesla: Everything you need to know about its cars and more
+
+        Hyperloop is essentially a train system that Musk calls  a cross between a
+        Concorde, a railgun, and an air hockey table . It s based on the very high-speed
+        transit (VHST) system proposed in 1972, which combines a magnetic levitation
+        train and a low pressure transit tube. It evolves some of the original ideas
+        of VHST, but it still uses tunnels and pods or capsules to move from place
+        to place.
+
+        Musk has likened it to a vacuum tube system in a building used to move documents
+        from place to place.
+
+        What speeds have been proposed?
+
+        Hyperloop is being'
+      - 'Richard Branson Wants To Build A High Speed Hyperloop In_0 | Richard Branson
+        Wants To Build A High-Speed Hyperloop In India
+
+        The proposed route between Mumbai and Pune could cut travel time from over
+        three hours to 25 minutes.
+
+        Richard Branson s project, Virgin Hyperloop One, seeks to decrease travel
+        time using vacuum-based underground tunnels.
+
+        British billionaire Richard Branson has announced plans to build a high-speed
+        shuttle in India that could potentially revolutionize travel in the country.
+
+        The proposed hyperloop route between Mumbai and Pune, two major cities in
+        the western state of Maharashtra, would reduce travel time from over three
+        hours by train to just 25 minutes, according to a Virgin press release.
+
+        Branson, co-founder of the British multinational conglomerate, signed a preliminary
+        agreement with Maharashtra''s government on Sunday, the Press Trust of India
+        reports. The project will now undergo an extensive feasibility study.
+
+        "I believe Virgin Hyperloop One could have the same impact upon India in the
+        21st century as trains did in the 20th century," Branson said in the press
+        release. "The Pune-Mumbai route is an ideal first corridor as part of a national
+        hyperloop network that will dramatically reduce travel times between most
+        of India''s major cities to under two hours."
+
+        A post shared by HyperloopOne (@hyperloopone) on Feb 17, 2018 at 9:26am PST
+
+        The hyperloop will also connect passengers to the proposed Navi Mumbai International
+        Airport, which is being built near Mumbai. Branson estimated that the shuttle
+        would support 150 million passenger trips per year and "create a thriving,
+        competitive megaregion."
+
+        Entrepreneur Elon Musk first published a white paper outlining his vision
+        for a vacuum-based, high-speed, underground shuttle system, or hyperloop,'
+      - 'Hyperloop Wikipedia_0 | Hyperloop
+
+        A Hyperloop is a proposed mode of passenger and/or freight transportation,
+        first used to describe an open-source vactrain design released by a joint
+        team from Tesla and SpaceX. Drawing heavily from Robert Goddard''s vactrain,
+        a hyperloop comprises a sealed tube or system of tubes through which a pod
+        may travel free of air resistance or friction conveying people or objects
+        at high speed while being very efficient.
+
+        Elon Musk''s version of the concept, first publicly mentioned in 2012, incorporates
+        reduced-pressure tubes in which pressurized capsules ride on air bearings
+        driven by linear induction motors and air compressors.
+
+        The Hyperloop Alpha concept was first published in August 2013, proposing
+        and examining a route running from the Los Angeles region to the San Francisco
+        Bay Area roughly following the Interstate 5 corridor. The paper conceived
+        of a hyperloop system that would propel passengers along the route at an average
+        speed of around , with a top speed of , allowing for a travel time of 35 minutes,
+        which is considerably faster than current rail or air travel times. Preliminary
+        cost estimates for this LA-SF suggested route were included in the white paper--
+        for a passenger-only version, and for a somewhat larger-diameter version transporting
+        passengers and vehicles--although transportation analysts had doubts that
+        the system could be constructed on that budget; some analysts claimed that
+        the Hyperloop would be several billion dollars overbudget, taking into consideration
+        construction, development and operation costs.
+
+        The Hyperloop concept has been explicitly "open-sourced" by Musk and SpaceX,
+        and others have been encouraged to take the ideas and further'
+    bot_gold:
+      search_query: []
+    bot_modular_failure:
+      search_query:
+      - Hyperloop train
+    bot_no_feedback:
+      search_query: []
+    domain: Business
+    episode_done: false
+    eval_labels:
+    - I don't think there are any planned, but elon musk's version of the concept,
+      first publicly mentioned in 2012, incorporates reduced-pressure tubes in which
+      pressurized capsules ride on air bearings driven by linear induction motors
+      and air compressors.
+    feedback_chain:
+    - better_search_query
+    - perfect
+    generic_topic: hyper loop
+    human_acts:
+    - feedback_text: ''
+      feedback_type: perfect
+      id: YOU
+      text: Are there any planned hyper loop trains?
+    - feedback_text: who will build a hyper loop train
+      feedback_type: better_search_query
+      id: YOU
+      text: who will build a Hyperloop train
+    human_revision:
+      search_query:
+      - who will build a hyper loop train
+      selected_sentences: []
+    id: fits_None_v1_seenFalse
+    last_nonperfect_feedback: better_search_query
+    search_query: who will build a hyper loop train
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: Are there any planned hyper loop trains?
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - U S Department of Defense_0
+    - Cat Parts Store Order Online_0
+    - Notes Hamish McKenzie_0
+    - Projects The Boring Company_0
+    - marconi instruments com_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - 'Explore - News & Features
+
+      Experience - Visual Storytelling
+
+      Engage - Quizzes
+
+      Watch - Videos & Live Events
+
+      Observe - Photos
+
+      About the DOD
+
+      #KnowYourMil
+
+      Spotlight on WWII
+
+      Cool Military Jobs
+
+      What We Do For Fun
+
+      FY19 Financial Report
+
+      DOD/Military Websites
+
+      Welcome toDefense.gov
+
+      Defense Secretary Dr. Mark T. Esper visited U.S. Strategic Command in Nebraska
+      for meetings with leaders and a tour of Stratcom s new command and control facility.
+
+      The nation s top military leaders discussed challenges to getting hypersonic
+      weapons from blueprint to production during a question-and-answer session at
+      a Washington think tank.
+
+      Aerial refueling -- the process of transferring fuel from a military tanker
+      aircraft to another military aircraft -- helps to make global reach a reality.
+
+      {{categoryLineOverride}} {{prettyContentTypeName}} | {{termName}}
+
+      Video: {{articleTitle}}
+
+      {{publishDateAp}}
+
+      {{articleSummary}}
+
+      Making a Mark - Army Marksmanship Unit - Imagine spending all day, every day,
+      practicing trick shots with a shotgun, taking out 10 moving targets with a pistol
+      in six seconds flat, or perfecting your shot toward a target the size of a period.
+
+      Making a Mark - Army Marksmanship Unit
+
+      Service members, eligible family members and U.S. citizens overseas have the
+      right to vote, and DOD has the tools and resources to help them do so -- from
+      anywhere in the world. - Service members, eligible family members and U.S. citizens
+      overseas have the right to vote, and DOD has the tools and resources to help
+      them do so -- from anywhere in the world.
+
+      You Can Vote From Anywhere
+
+      USS New York: A City on the Sea - USS New York: A City on the Sea
+
+      USS New York: A City on the Sea
+
+      A soldier holds an American flag on an'
+    - 'This username is not authorized at this dealership.
+
+      The account you are trying to access does not exist in Parts.Cat.Com.
+
+      Please Login with a different account or select Find Your Dealer to create a
+      new account.
+
+      Shop more than 1.4 million Cat parts
+
+      Find what you need faster by entering your information below:
+
+      shop batteries >
+
+      shop planned maintenance kits >
+
+      look up parts now >
+
+      big changes are here!
+
+      improved shopping cart
+
+      and quick order
+
+      page Type : HomePage'
+    - 'END NOTES FOR INSANE MODE
+
+      Chapter 1: Get Your Motor Runnin''
+
+      "I''m trying to allocate my efforts to that which I think would most affect
+      the future of humanity in a positive way" "PandoMonthly: Fireside Chat with
+      Elon Musk." PandoDaily YouTube Channel, July 17, 2012. https://www.youtube.com/watch?v=uegOUmgKB4E.
+
+      announced plans for a "fifth mode of transport" "Hyperloop" by Elon Musk. Tesla
+      Motors Blog, August 12, 2013. https://www.tesla.com/blog/hyperloop.
+
+      He wrote the blueprint for his so-called Hyperloop "Elon Musk Details 800-mph
+      Hyperloop Transportation System." Fox News, August 12, 2013. http://www.foxnews.com/science/2013/08/12/elon-musk-details-800-mph-hyperloop-transport.html;
+      "Hyperloop Revealed: Elon Musk Foresees Rapid Transit in a Tube." NBC News,
+      August 12, 2013. http://www.nbcnews.com/business/hyperloop-revealed-elon-musk-foresees-rapid-transit-tube-6C10902051;
+      "Elon Musk Unveils San Francisco-LA ''Hyperloop'' Idea." BBC News, August 12,
+      2013. http://www.bbc.com/news/world-us-canada-23677205.
+
+      Peel off the lid and you''ll see the batteries "Rare Look Inside A Tesla Model
+      S Battery Pack." InsideEVs, September 23, 2014. http://insideevs.com/look-inside-a-tesla-model-s-battery-pac/.
+
+      Chapter 2: A Rush of Electrons to the Head
+
+      Motor Trend''s Car of the Year "2013 Motor Trend Card of the Year: Tesla Model
+      S." Motor Trend, November 12, 2012. http://www.motortrend.com/news/2013-motor-trend-car-of-the-year-tesla-model-s/.
+
+      4,647-pound aluminum steed "Model S Specifications." Tesla Motors website. Accessed
+      October 27, 2016. https://www.tesla.com/support/model-s-specifications.
+
+      why electric cars just aren''t right for this world "Electric Cars Are an Extraordinarily
+      Bad Idea." Forbes.com, September 14, 2011. http://www.forbes.com/sites/louiswoodhill/2011/09/14/electric-cars-are-an-extraordinarily-bad-idea/#7ba197c86466;
+      "8 Reasons Why the Electric Car Will Not Be a Success Anytime Soon." Business
+      Insider, December 9, 2011. http://www.businessinsider.com/the-electric-car-why-it-is-not-ready-for-mass-consumption-2011-12?op=1;
+      "Why Electric Cars Don''t Have a Future." OilPrice.com, September 14, 2012.
+      http://oilprice.com/Alternative-Energy/Fuel-Cells/Why-Electric-Cars-Dont-have-a-Future.html.
+
+      no private company had ever returned a spacecraft from low-earth orbit "A Space-Age
+      First: A Commercial Craft Returns From Low-Earth Orbit." CNN.com, December 8,
+      2010. http://www.cnn.com/2010/US/12/08/space.flight/.
+
+      ''I think I can do it'''
+    - 'Test Tunnel - Hawthorne, CA
+
+      The initial Test Tunnel, located in Hawthorne, CA, is being used for the research
+      and development of The Boring Company s public transportation systems, Loop
+      and Hyperloop. Status: Complete
+
+      Dugout Loop - Los Angeles, CA
+
+      The Boring Company is proposing a project in Los Angeles, CA, that would transport
+      baseball fans and concertgoers directly to the Dodger Stadium from the Los Feliz,
+      East Hollywood, or Rampart Village neighborhoods. Status: In environmental review
+      and permitting
+
+      The Chicago Express Loop
+
+      The Boring Company has been selected by the Chicago Infrastructure Trust (CIT),
+      on behalf of the City of Chicago, to enter into exclusive negotiations to design,
+      build, finance, operate and maintain an O''Hare Express service. The Chicago
+      Express Loop will provide fast and convenient transportation between O''Hare
+      Airport (Terminals 1-3) and Block 37 in downtown Chicago. Status: In contract
+      review, environmental review and permitting
+
+      East Coast Loop - Washington D.C. to Maryland
+
+      The Boring Company is proposing a project on the East Coast from downtown DC
+      to Maryland, beneath New York Avenue and the Baltimore-Washington Parkway. Status:
+      Initial DC Pit constructed; tunnel in environmental review and permitting'
+    - 'J Berry albums MP3
+
+      artist: J Berry RSS feed
+
+      genre: r&b tracks: 5
+
+      FEEDBACKS for  J Berry  artist:
+
+      While I might normally agree, in such cases it can quite simple. Likewise, Wikipedia
+      possesses appear a long methods as it seemed to be bashed intended for letting
+      end users to be able to modify content, there are several squads associated
+      with moderators in which trail as well as deal a variety of mistakes usual end
+      users help to make when adding/editing a wiki content. ugg boots clearance http://www.uggbootstang.com
+
+      Questioned recently to put in writing about <a href=http://www.vaporultra.com/product_images/y/569/2cartomizer__37824_zoom.jpg>refill
+      electronic cigarette cartridge </a> , I have to confess that I had never listened
+      to of this kind of a factor. Some net analysis later on and that i discovered
+      that e-cigarettes are incredibly a great deal a speedily growing problem. A
+      Google lookup discovered there s no smoke with no hearth as practically 6 million
+      outcomes just for the phrase  electronic cigarette  ended up returned. Precisely
+      what is an ecigarette? The electric cigarette continues to be in existence for
+      nearly a few years and is particularly a clever machine aimed towards furnishing
+      people who smoke which has a healthier alternative. Apparently also helpful
+      in assisting to reduce and in truth stop using tobacco altogether. Now within
+      a fourth generation, electronic cigarettes have grown to be a great deal a lot
+      more consumer welcoming than earlier variations which most likely ended up just
+      a little way too substantial to encourage a mass current market charm. The  mini  is
+      among'
+    __selected-sentences__: []
+    better_response: No, I'm not aware of any construction going on at the moment.
+    bot_acts:
+    - display_top_docs:
+      - original_doc_str: 'U S Department of Defense_0 | Explore - News & Features
+
+          Experience - Visual Storytelling
+
+          Engage - Quizzes
+
+          Watch - Videos & Live Events
+
+          Observe - Photos
+
+          About the DOD
+
+          #KnowYourMil
+
+          Spotlight on WWII
+
+          Cool Military Jobs
+
+          What We Do For Fun
+
+          FY19 Financial Report
+
+          DOD/Military Websites
+
+          Welcome toDefense.gov
+
+          Defense Secretary Dr. Mark T. Esper visited U.S. Strategic Command in Nebraska
+          for meetings with leaders and a tour of Stratcom s new command and control
+          facility.
+
+          The nation s top military leaders discussed challenges to getting hypersonic
+          weapons from blueprint to production during a question-and-answer session
+          at a Washington think tank.
+
+          Aerial refueling -- the process of transferring fuel from a military tanker
+          aircraft to another military aircraft -- helps to make global reach a reality.
+
+          {{categoryLineOverride}} {{prettyContentTypeName}} | {{termName}}
+
+          Video: {{articleTitle}}
+
+          {{publishDateAp}}
+
+          {{articleSummary}}
+
+          Making a Mark - Army Marksmanship Unit - Imagine spending all day, every
+          day, practicing trick shots with a shotgun, taking out 10 moving targets
+          with a pistol in six seconds flat, or perfecting your shot toward a target
+          the size of a period.
+
+          Making a Mark - Army Marksmanship Unit
+
+          Service members, eligible family members and U.S. citizens overseas have
+          the right to vote, and DOD has the tools and resources to help them do so
+          -- from anywhere in the world. - Service members, eligible family members
+          and U.S. citizens overseas have the right to vote, and DOD has the tools
+          and resources to help them do so -- from anywhere in the world.
+
+          You Can Vote From Anywhere
+
+          USS New York: A City on the Sea - USS New York: A City on the Sea
+
+          USS New York: A City on the Sea
+
+          A soldier holds an American flag on an'
+        sentences:
+        - Explore - News & Features
+        - Experience - Visual Storytelling
+        - Engage - Quizzes
+        - Watch - Videos & Live Events
+        - Observe - Photos
+        - About the DOD
+        - '#KnowYourMil'
+        - Spotlight on WWII
+        - Cool Military Jobs
+        - What We Do For Fun
+        - FY19 Financial Report
+        - DOD/Military Websites
+        - Welcome toDefense.gov
+        - Defense Secretary Dr. Mark T. Esper visited U.S. Strategic Command in Nebraska
+          for meetings with leaders and a tour of Stratcom s new command and control
+          facility.
+        - The nation s top military leaders discussed challenges to getting hypersonic
+          weapons from blueprint to production during a question-and-answer session
+          at a Washington think tank.
+        - Aerial refueling -- the process of transferring fuel from a military tanker
+          aircraft to another military aircraft -- helps to make global reach a reality.
+        - '{{categoryLineOverride}} {{prettyContentTypeName}} | {{termName}}'
+        - 'Video: {{articleTitle}}'
+        - '{{publishDateAp}}'
+        - '{{articleSummary}}'
+        - Making a Mark - Army Marksmanship Unit - Imagine spending all day, every
+          day, practicing trick shots with a shotgun, taking out 10 moving targets
+          with a pistol in six seconds flat, or perfecting your shot toward a target
+          the size of a period.
+        - Making a Mark - Army Marksmanship Unit
+        - Service members, eligible family members and U.S. citizens overseas have
+          the right to vote, and DOD has the tools and resources to help them do so
+          -- from anywhere in the world. - Service members, eligible family members
+          and U.S. citizens overseas have the right to vote, and DOD has the tools
+          and resources to help them do so -- from anywhere in the world.
+        - You Can Vote From Anywhere
+        - 'USS New York: A City on the Sea - USS New York: A City on the Sea'
+        - 'USS New York: A City on the Sea'
+        - A soldier holds an American flag on an
+        title: U S Department of Defense_0
+      - original_doc_str: 'Cat Parts Store Order Online_0 | This username is not authorized
+          at this dealership.
+
+          The account you are trying to access does not exist in Parts.Cat.Com.
+
+          Please Login with a different account or select Find Your Dealer to create
+          a new account.
+
+          Shop more than 1.4 million Cat parts
+
+          Find what you need faster by entering your information below:
+
+          shop batteries >
+
+          shop planned maintenance kits >
+
+          look up parts now >
+
+          big changes are here!
+
+          improved shopping cart
+
+          and quick order
+
+          page Type : HomePage'
+        sentences:
+        - This username is not authorized at this dealership.
+        - The account you are trying to access does not exist in Parts.Cat.Com.
+        - Please Login with a different account or select Find Your Dealer to create
+          a new account.
+        - Shop more than 1.4 million Cat parts
+        - 'Find what you need faster by entering your information below:'
+        - shop batteries >
+        - shop planned maintenance kits >
+        - look up parts now >
+        - big changes are here!
+        - improved shopping cart
+        - and quick order
+        - 'page Type : HomePage'
+        title: Cat Parts Store Order Online_0
+      - original_doc_str: 'Notes Hamish McKenzie_0 | END NOTES FOR INSANE MODE
+
+          Chapter 1: Get Your Motor Runnin''
+
+          "I''m trying to allocate my efforts to that which I think would most affect
+          the future of humanity in a positive way" "PandoMonthly: Fireside Chat with
+          Elon Musk." PandoDaily YouTube Channel, July 17, 2012. https://www.youtube.com/watch?v=uegOUmgKB4E.
+
+          announced plans for a "fifth mode of transport" "Hyperloop" by Elon Musk.
+          Tesla Motors Blog, August 12, 2013. https://www.tesla.com/blog/hyperloop.
+
+          He wrote the blueprint for his so-called Hyperloop "Elon Musk Details 800-mph
+          Hyperloop Transportation System." Fox News, August 12, 2013. http://www.foxnews.com/science/2013/08/12/elon-musk-details-800-mph-hyperloop-transport.html;
+          "Hyperloop Revealed: Elon Musk Foresees Rapid Transit in a Tube." NBC News,
+          August 12, 2013. http://www.nbcnews.com/business/hyperloop-revealed-elon-musk-foresees-rapid-transit-tube-6C10902051;
+          "Elon Musk Unveils San Francisco-LA ''Hyperloop'' Idea." BBC News, August
+          12, 2013. http://www.bbc.com/news/world-us-canada-23677205.
+
+          Peel off the lid and you''ll see the batteries "Rare Look Inside A Tesla
+          Model S Battery Pack." InsideEVs, September 23, 2014. http://insideevs.com/look-inside-a-tesla-model-s-battery-pac/.
+
+          Chapter 2: A Rush of Electrons to the Head
+
+          Motor Trend''s Car of the Year "2013 Motor Trend Card of the Year: Tesla
+          Model S." Motor Trend, November 12, 2012. http://www.motortrend.com/news/2013-motor-trend-car-of-the-year-tesla-model-s/.
+
+          4,647-pound aluminum steed "Model S Specifications." Tesla Motors website.
+          Accessed October 27, 2016. https://www.tesla.com/support/model-s-specifications.
+
+          why electric cars just aren''t right for this world "Electric Cars Are an
+          Extraordinarily Bad Idea." Forbes.com, September 14, 2011. http://www.forbes.com/sites/louiswoodhill/2011/09/14/electric-cars-are-an-extraordinarily-bad-idea/#7ba197c86466;
+          "8 Reasons Why the Electric Car Will Not Be a Success Anytime Soon." Business
+          Insider, December 9, 2011. http://www.businessinsider.com/the-electric-car-why-it-is-not-ready-for-mass-consumption-2011-12?op=1;
+          "Why Electric Cars Don''t Have a Future." OilPrice.com, September 14, 2012.
+          http://oilprice.com/Alternative-Energy/Fuel-Cells/Why-Electric-Cars-Dont-have-a-Future.html.
+
+          no private company had ever returned a spacecraft from low-earth orbit "A
+          Space-Age First: A Commercial Craft Returns From Low-Earth Orbit." CNN.com,
+          December 8, 2010. http://www.cnn.com/2010/US/12/08/space.flight/.
+
+          ''I think I can do it'''
+        sentences:
+        - END NOTES FOR INSANE MODE
+        - 'Chapter 1: Get Your Motor Runnin'''
+        - '"I''m trying to allocate my efforts to that which I think would most affect
+          the future of humanity in a positive way" "PandoMonthly: Fireside Chat with
+          Elon Musk." PandoDaily YouTube Channel, July 17, 2012. https://www.youtube.com/watch?v=uegOUmgKB4E.'
+        - announced plans for a "fifth mode of transport" "Hyperloop" by Elon Musk.
+          Tesla Motors Blog, August 12, 2013. https://www.tesla.com/blog/hyperloop.
+        - 'He wrote the blueprint for his so-called Hyperloop "Elon Musk Details 800-mph
+          Hyperloop Transportation System." Fox News, August 12, 2013. http://www.foxnews.com/science/2013/08/12/elon-musk-details-800-mph-hyperloop-transport.html;
+          "Hyperloop Revealed: Elon Musk Foresees Rapid Transit in a Tube." NBC News,
+          August 12, 2013. http://www.nbcnews.com/business/hyperloop-revealed-elon-musk-foresees-rapid-transit-tube-6C10902051;
+          "Elon Musk Unveils San Francisco-LA ''Hyperloop'' Idea." BBC News, August
+          12, 2013. http://www.bbc.com/news/world-us-canada-23677205.'
+        - Peel off the lid and you'll see the batteries "Rare Look Inside A Tesla
+          Model S Battery Pack." InsideEVs, September 23, 2014. http://insideevs.com/look-inside-a-tesla-model-s-battery-pac/.
+        - 'Chapter 2: A Rush of Electrons to the Head'
+        - 'Motor Trend''s Car of the Year "2013 Motor Trend Card of the Year: Tesla
+          Model S." Motor Trend, November 12, 2012. http://www.motortrend.com/news/2013-motor-trend-car-of-the-year-tesla-model-s/.'
+        - 4,647-pound aluminum steed "Model S Specifications." Tesla Motors website.
+          Accessed October 27, 2016. https://www.tesla.com/support/model-s-specifications.
+        - why electric cars just aren't right for this world "Electric Cars Are an
+          Extraordinarily Bad Idea." Forbes.com, September 14, 2011. http://www.forbes.com/sites/louiswoodhill/2011/09/14/electric-cars-are-an-extraordinarily-bad-idea/#7ba197c86466;
+          "8 Reasons Why the Electric Car Will Not Be a Success Anytime Soon." Business
+          Insider, December 9, 2011. http://www.businessinsider.com/the-electric-car-why-it-is-not-ready-for-mass-consumption-2011-12?op=1;
+          "Why Electric Cars Don't Have a Future." OilPrice.com, September 14, 2012.
+          http://oilprice.com/Alternative-Energy/Fuel-Cells/Why-Electric-Cars-Dont-have-a-Future.html.
+        - 'no private company had ever returned a spacecraft from low-earth orbit
+          "A Space-Age First: A Commercial Craft Returns From Low-Earth Orbit." CNN.com,
+          December 8, 2010. http://www.cnn.com/2010/US/12/08/space.flight/.'
+        - '''I think I can do it'''
+        title: Notes Hamish McKenzie_0
+      id: BOT
+      improve_bucket: better_others
+      memories: []
+      search_queries: has construction started on a hyper loop train?
+      text: No, I'm not aware of any construction going on at the moment. What do
+        you know about it?
+      top_docs:
+      - 'U S Department of Defense_0 | Explore - News & Features
+
+        Experience - Visual Storytelling
+
+        Engage - Quizzes
+
+        Watch - Videos & Live Events
+
+        Observe - Photos
+
+        About the DOD
+
+        #KnowYourMil
+
+        Spotlight on WWII
+
+        Cool Military Jobs
+
+        What We Do For Fun
+
+        FY19 Financial Report
+
+        DOD/Military Websites
+
+        Welcome toDefense.gov
+
+        Defense Secretary Dr. Mark T. Esper visited U.S. Strategic Command in Nebraska
+        for meetings with leaders and a tour of Stratcom s new command and control
+        facility.
+
+        The nation s top military leaders discussed challenges to getting hypersonic
+        weapons from blueprint to production during a question-and-answer session
+        at a Washington think tank.
+
+        Aerial refueling -- the process of transferring fuel from a military tanker
+        aircraft to another military aircraft -- helps to make global reach a reality.
+
+        {{categoryLineOverride}} {{prettyContentTypeName}} | {{termName}}
+
+        Video: {{articleTitle}}
+
+        {{publishDateAp}}
+
+        {{articleSummary}}
+
+        Making a Mark - Army Marksmanship Unit - Imagine spending all day, every day,
+        practicing trick shots with a shotgun, taking out 10 moving targets with a
+        pistol in six seconds flat, or perfecting your shot toward a target the size
+        of a period.
+
+        Making a Mark - Army Marksmanship Unit
+
+        Service members, eligible family members and U.S. citizens overseas have the
+        right to vote, and DOD has the tools and resources to help them do so -- from
+        anywhere in the world. - Service members, eligible family members and U.S.
+        citizens overseas have the right to vote, and DOD has the tools and resources
+        to help them do so -- from anywhere in the world.
+
+        You Can Vote From Anywhere
+
+        USS New York: A City on the Sea - USS New York: A City on the Sea
+
+        USS New York: A City on the Sea
+
+        A soldier holds an American flag on an'
+      - 'Cat Parts Store Order Online_0 | This username is not authorized at this
+        dealership.
+
+        The account you are trying to access does not exist in Parts.Cat.Com.
+
+        Please Login with a different account or select Find Your Dealer to create
+        a new account.
+
+        Shop more than 1.4 million Cat parts
+
+        Find what you need faster by entering your information below:
+
+        shop batteries >
+
+        shop planned maintenance kits >
+
+        look up parts now >
+
+        big changes are here!
+
+        improved shopping cart
+
+        and quick order
+
+        page Type : HomePage'
+      - 'Notes Hamish McKenzie_0 | END NOTES FOR INSANE MODE
+
+        Chapter 1: Get Your Motor Runnin''
+
+        "I''m trying to allocate my efforts to that which I think would most affect
+        the future of humanity in a positive way" "PandoMonthly: Fireside Chat with
+        Elon Musk." PandoDaily YouTube Channel, July 17, 2012. https://www.youtube.com/watch?v=uegOUmgKB4E.
+
+        announced plans for a "fifth mode of transport" "Hyperloop" by Elon Musk.
+        Tesla Motors Blog, August 12, 2013. https://www.tesla.com/blog/hyperloop.
+
+        He wrote the blueprint for his so-called Hyperloop "Elon Musk Details 800-mph
+        Hyperloop Transportation System." Fox News, August 12, 2013. http://www.foxnews.com/science/2013/08/12/elon-musk-details-800-mph-hyperloop-transport.html;
+        "Hyperloop Revealed: Elon Musk Foresees Rapid Transit in a Tube." NBC News,
+        August 12, 2013. http://www.nbcnews.com/business/hyperloop-revealed-elon-musk-foresees-rapid-transit-tube-6C10902051;
+        "Elon Musk Unveils San Francisco-LA ''Hyperloop'' Idea." BBC News, August
+        12, 2013. http://www.bbc.com/news/world-us-canada-23677205.
+
+        Peel off the lid and you''ll see the batteries "Rare Look Inside A Tesla Model
+        S Battery Pack." InsideEVs, September 23, 2014. http://insideevs.com/look-inside-a-tesla-model-s-battery-pac/.
+
+        Chapter 2: A Rush of Electrons to the Head
+
+        Motor Trend''s Car of the Year "2013 Motor Trend Card of the Year: Tesla Model
+        S." Motor Trend, November 12, 2012. http://www.motortrend.com/news/2013-motor-trend-car-of-the-year-tesla-model-s/.
+
+        4,647-pound aluminum steed "Model S Specifications." Tesla Motors website.
+        Accessed October 27, 2016. https://www.tesla.com/support/model-s-specifications.
+
+        why electric cars just aren''t right for this world "Electric Cars Are an
+        Extraordinarily Bad Idea." Forbes.com, September 14, 2011. http://www.forbes.com/sites/louiswoodhill/2011/09/14/electric-cars-are-an-extraordinarily-bad-idea/#7ba197c86466;
+        "8 Reasons Why the Electric Car Will Not Be a Success Anytime Soon." Business
+        Insider, December 9, 2011. http://www.businessinsider.com/the-electric-car-why-it-is-not-ready-for-mass-consumption-2011-12?op=1;
+        "Why Electric Cars Don''t Have a Future." OilPrice.com, September 14, 2012.
+        http://oilprice.com/Alternative-Energy/Fuel-Cells/Why-Electric-Cars-Dont-have-a-Future.html.
+
+        no private company had ever returned a spacecraft from low-earth orbit "A
+        Space-Age First: A Commercial Craft Returns From Low-Earth Orbit." CNN.com,
+        December 8, 2010. http://www.cnn.com/2010/US/12/08/space.flight/.
+
+        ''I think I can do it'''
+      - 'Projects The Boring Company_0 | Test Tunnel - Hawthorne, CA
+
+        The initial Test Tunnel, located in Hawthorne, CA, is being used for the research
+        and development of The Boring Company s public transportation systems, Loop
+        and Hyperloop. Status: Complete
+
+        Dugout Loop - Los Angeles, CA
+
+        The Boring Company is proposing a project in Los Angeles, CA, that would transport
+        baseball fans and concertgoers directly to the Dodger Stadium from the Los
+        Feliz, East Hollywood, or Rampart Village neighborhoods. Status: In environmental
+        review and permitting
+
+        The Chicago Express Loop
+
+        The Boring Company has been selected by the Chicago Infrastructure Trust (CIT),
+        on behalf of the City of Chicago, to enter into exclusive negotiations to
+        design, build, finance, operate and maintain an O''Hare Express service. The
+        Chicago Express Loop will provide fast and convenient transportation between
+        O''Hare Airport (Terminals 1-3) and Block 37 in downtown Chicago. Status:
+        In contract review, environmental review and permitting
+
+        East Coast Loop - Washington D.C. to Maryland
+
+        The Boring Company is proposing a project on the East Coast from downtown
+        DC to Maryland, beneath New York Avenue and the Baltimore-Washington Parkway.
+        Status: Initial DC Pit constructed; tunnel in environmental review and permitting'
+      - 'marconi instruments com_0 | J Berry albums MP3
+
+        artist: J Berry RSS feed
+
+        genre: r&b tracks: 5
+
+        FEEDBACKS for  J Berry  artist:
+
+        While I might normally agree, in such cases it can quite simple. Likewise,
+        Wikipedia possesses appear a long methods as it seemed to be bashed intended
+        for letting end users to be able to modify content, there are several squads
+        associated with moderators in which trail as well as deal a variety of mistakes
+        usual end users help to make when adding/editing a wiki content. ugg boots
+        clearance http://www.uggbootstang.com
+
+        Questioned recently to put in writing about <a href=http://www.vaporultra.com/product_images/y/569/2cartomizer__37824_zoom.jpg>refill
+        electronic cigarette cartridge </a> , I have to confess that I had never listened
+        to of this kind of a factor. Some net analysis later on and that i discovered
+        that e-cigarettes are incredibly a great deal a speedily growing problem.
+        A Google lookup discovered there s no smoke with no hearth as practically
+        6 million outcomes just for the phrase  electronic cigarette  ended up returned.
+        Precisely what is an ecigarette? The electric cigarette continues to be in
+        existence for nearly a few years and is particularly a clever machine aimed
+        towards furnishing people who smoke which has a healthier alternative. Apparently
+        also helpful in assisting to reduce and in truth stop using tobacco altogether.
+        Now within a fourth generation, electronic cigarettes have grown to be a great
+        deal a lot more consumer welcoming than earlier variations which most likely
+        ended up just a little way too substantial to encourage a mass current market
+        charm. The  mini  is among'
+    - display_top_docs: []
+      id: BOT
+      improve_bucket: perfect
+      memories: []
+      search_queries: has construction started on a hyper loop train?
+      text: No, I'm not aware of any construction going on at the moment.
+      top_docs: No, I'm not aware of any construction going on at the moment.
+    bot_gold:
+      search_query: []
+    bot_modular_failure:
+      search_query: []
+    bot_no_feedback:
+      search_query: []
+    domain: Business
+    episode_done: false
+    eval_labels:
+    - No, I'm not aware of any construction going on at the moment.
+    feedback_chain:
+    - better_others
+    - perfect
+    generic_topic: hyper loop
+    human_acts:
+    - feedback_text: ''
+      feedback_type: perfect
+      id: YOU
+      text: has construction started on a hyper loop train?
+    - feedback_text: No, I'm not aware of any construction going on at the moment.
+      feedback_type: better_others
+      id: YOU
+      text: Not be sarcastic
+    human_revision:
+      search_query: []
+      selected_sentences: []
+    id: fits_None_v1_seenFalse
+    last_nonperfect_feedback: better_others
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: Has construction started on a hyper loop train?
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - Hyperloop How Elon Musk s Tube Travel Concept Works_0
+    - 11 U S Locations Under Consideration for Hyperloop Inc com_0
+    - How does Elon Musk s Hyperloop work New Atlas_0
+    - Elon Musk s high speed Hyperloop train makes more sense_0
+    - Hyperloop Wikipedia_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+      by the promised higher speeds of Musk s system. But the idea itself is obviously
+      adapted from available technologies and older concepts including the  vactrain  concept
+      from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+      Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+      waves, and out-competing air travel are similar.
+    - '11 U.S. Locations Under Consideration for Hyperloop
+
+      Hyperloop One says it s getting closer to its first full-scale test run.
+
+      A Hyperloop One tube in North Las Vegas, Nevada.
+
+      If you believe the hype, the Hyperloop is the future of long-distance travel.
+      For a while, however, it looked like that future would arrive first outside
+      of the United States.
+
+      Since its first public test run in Nevada in May 2016, Los Angeles-based Hyperloop
+      One has announced feasibility studies across the globe, in the United Arab Emirates,
+      the Netherlands, Finland, Sweden, Switzerland, the U.K., and Russia. While much
+      of the initial discussion when the company was founded in 2014 focused on a
+      potential Los Angeles-San Francisco route, the company s blueprint has been
+      bereft of any formal plan to deeply explore development in the U.S.
+
+      Now, the startup is turning its attention back to America. On Thursday, the
+      company announced that it has created a list of 35 potential routes from across
+      the globe vying to be the world s first route. Of those 35 routes, 11 are in
+      the U.S. They were chosen from submissions, largely put together by local governments.
+
+      According to a post on the company s website, the plan is to choose three of
+      those routes for further study. The teams behind those three routes will work
+      closely with Hyperloop One to analyze logistics and financing.
+
+      The candidates include routes linking:
+
+      Miami and Orlando
+
+      Boston and Providence
+
+      Chicago and Pittsburgh
+
+      Reno and Las Vegas
+
+      a triangle connecting Houston, Dallas, and Austin
+
+      three separate routes in the Rockies that run through Colorado
+
+      We always thought that North America'
+    - 'How does Elon Musk s Hyperloop work?
+
+      Urban TransportFeature
+
+      What is Elon Musk s Hyperloop? (Photo: Shutterstock)
+
+      Over the past year, Elon Musk, billionaire founder of PayPal, Tesla, and SpaceX,
+      has been floating the notion of a  Hyperloop  as a future replacement for bullet
+      trains; one that would get commuters from San Francisco to Los Angeles in as
+      little as 30 minutes. There has been much speculation over how the Hyperloop
+      works, as Musk has revealed very few details. So what has Musk actually said
+      and what might this translate to in the real world?
+
+      What has Musk actually revealed about the Hyperloop? Putting together the bits
+      and pieces from his comments over the past year amounts to something of a performance
+      brief for what the Hyperloop would be capable of. In addition to the killer
+      feature (downtown Los Angeles to downtown San Francisco in 30 minutes), we know
+      that Hyperloop would double the gate-to-gate average speed of an aircraft over
+      that distance, which is 560 km (350 miles). Musk has said Hyperloop is a non-scheduled
+      service which leaves when you arrive, is immune to the weather and never crashes.
+      The only specific technical hints Musk has provided is that it s not a vacuum
+      tunnel, but is a cross between Concorde, a railgun and an air hockey table.
+      This makes quite an impressive list of attributes. Naturally, there is a lot
+      of speculation as to what Musk s Hyperloop must be.
+
+      It s clear that he is proposing a system for subsonic transport. Travelling
+      between downtown LA and'
+    - 'Elon Musk''s high-speed Hyperloop train makes more sense for Mars than California
+
+      Leon Vanstone, University of Texas at Austin
+
+      Leon Vanstone
+
+      Post-doctoral Researcher, University of Texas at Austin
+
+      Leon Vanstone receives funding from the United States Air Force.
+
+      Hyperloop is still on the drawing board. SpaceX, CC BY
+
+      Ever wanted to ride to work in a screaming roller-coaster gun? If your answer
+      was yes: good news!
+
+      Elon Musk - of SpaceX and Tesla Motors fame - recently proposed the "Hyperloop,"
+      a high-speed floating train that''s accelerated by magnets and coasts between
+      destinations. Hailed as the train of the future, the concept is indeed pretty
+      fancy. Described by Musk himself as "the fifth mode of transport," it''s intended
+      to provide fast and safe transit, largely self-powered with electricity generated
+      by its own solar panels.
+
+      Musk recently announced his company would build a test track in California.
+      But I don''t think the Hyperloop is going to work well in California - or in
+      fact anywhere else on Earth. It could, however, work quite well on a different
+      planet. Mars, for instance. But to appreciate why, we need to take a closer
+      look at the train in more detail.
+
+      Buckle up for the Hyperloop ride. SpaceX, CC BY
+
+      How would Hyperloop work?
+
+      The Hyperloop train concept is based on the idea of a "vactrain." That''s a
+      high-speed train run in a tube that has had all the air removed, making it a
+      vacuum - hence the name. Having no air in the tube means (almost) no drag, the
+      aerodynamic force that pushes in the opposite direction from which a train'
+    - 'Hyperloop
+
+      A Hyperloop is a proposed mode of passenger and/or freight transportation, first
+      used to describe an open-source vactrain design released by a joint team from
+      Tesla and SpaceX. Drawing heavily from Robert Goddard''s vactrain, a hyperloop
+      comprises a sealed tube or system of tubes through which a pod may travel free
+      of air resistance or friction conveying people or objects at high speed while
+      being very efficient.
+
+      Elon Musk''s version of the concept, first publicly mentioned in 2012, incorporates
+      reduced-pressure tubes in which pressurized capsules ride on air bearings driven
+      by linear induction motors and air compressors.
+
+      The Hyperloop Alpha concept was first published in August 2013, proposing and
+      examining a route running from the Los Angeles region to the San Francisco Bay
+      Area roughly following the Interstate 5 corridor. The paper conceived of a hyperloop
+      system that would propel passengers along the route at an average speed of around
+      , with a top speed of , allowing for a travel time of 35 minutes, which is considerably
+      faster than current rail or air travel times. Preliminary cost estimates for
+      this LA-SF suggested route were included in the white paper-- for a passenger-only
+      version, and for a somewhat larger-diameter version transporting passengers
+      and vehicles--although transportation analysts had doubts that the system could
+      be constructed on that budget; some analysts claimed that the Hyperloop would
+      be several billion dollars overbudget, taking into consideration construction,
+      development and operation costs.
+
+      The Hyperloop concept has been explicitly "open-sourced" by Musk and SpaceX,
+      and others have been encouraged to take the ideas and further'
+    __selected-sentences__: []
+    bot_acts:
+    - display_top_docs:
+      - original_doc_str: Hyperloop How Elon Musk s Tube Travel Concept Works_0 |
+          Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        sentences:
+        - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+          by the promised higher speeds of Musk s system. But the idea itself is obviously
+          adapted from available technologies and older concepts including the  vactrain  concept
+          from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+          Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+          waves, and out-competing air travel are similar.
+        title: Hyperloop How Elon Musk s Tube Travel Concept Works_0
+      - original_doc_str: '11 U S Locations Under Consideration for Hyperloop Inc
+          com_0 | 11 U.S. Locations Under Consideration for Hyperloop
+
+          Hyperloop One says it s getting closer to its first full-scale test run.
+
+          A Hyperloop One tube in North Las Vegas, Nevada.
+
+          If you believe the hype, the Hyperloop is the future of long-distance travel.
+          For a while, however, it looked like that future would arrive first outside
+          of the United States.
+
+          Since its first public test run in Nevada in May 2016, Los Angeles-based
+          Hyperloop One has announced feasibility studies across the globe, in the
+          United Arab Emirates, the Netherlands, Finland, Sweden, Switzerland, the
+          U.K., and Russia. While much of the initial discussion when the company
+          was founded in 2014 focused on a potential Los Angeles-San Francisco route,
+          the company s blueprint has been bereft of any formal plan to deeply explore
+          development in the U.S.
+
+          Now, the startup is turning its attention back to America. On Thursday,
+          the company announced that it has created a list of 35 potential routes
+          from across the globe vying to be the world s first route. Of those 35 routes,
+          11 are in the U.S. They were chosen from submissions, largely put together
+          by local governments.
+
+          According to a post on the company s website, the plan is to choose three
+          of those routes for further study. The teams behind those three routes will
+          work closely with Hyperloop One to analyze logistics and financing.
+
+          The candidates include routes linking:
+
+          Miami and Orlando
+
+          Boston and Providence
+
+          Chicago and Pittsburgh
+
+          Reno and Las Vegas
+
+          a triangle connecting Houston, Dallas, and Austin
+
+          three separate routes in the Rockies that run through Colorado
+
+          We always thought that North America'
+        sentences:
+        - 11 U.S. Locations Under Consideration for Hyperloop
+        - Hyperloop One says it s getting closer to its first full-scale test run.
+        - A Hyperloop One tube in North Las Vegas, Nevada.
+        - If you believe the hype, the Hyperloop is the future of long-distance travel.
+          For a while, however, it looked like that future would arrive first outside
+          of the United States.
+        - Since its first public test run in Nevada in May 2016, Los Angeles-based
+          Hyperloop One has announced feasibility studies across the globe, in the
+          United Arab Emirates, the Netherlands, Finland, Sweden, Switzerland, the
+          U.K., and Russia. While much of the initial discussion when the company
+          was founded in 2014 focused on a potential Los Angeles-San Francisco route,
+          the company s blueprint has been bereft of any formal plan to deeply explore
+          development in the U.S.
+        - Now, the startup is turning its attention back to America. On Thursday,
+          the company announced that it has created a list of 35 potential routes
+          from across the globe vying to be the world s first route. Of those 35 routes,
+          11 are in the U.S. They were chosen from submissions, largely put together
+          by local governments.
+        - According to a post on the company s website, the plan is to choose three
+          of those routes for further study. The teams behind those three routes will
+          work closely with Hyperloop One to analyze logistics and financing.
+        - 'The candidates include routes linking:'
+        - Miami and Orlando
+        - Boston and Providence
+        - Chicago and Pittsburgh
+        - Reno and Las Vegas
+        - a triangle connecting Houston, Dallas, and Austin
+        - three separate routes in the Rockies that run through Colorado
+        - We always thought that North America
+        title: 11 U S Locations Under Consideration for Hyperloop Inc com_0
+      - original_doc_str: 'How does Elon Musk s Hyperloop work New Atlas_0 | How does
+          Elon Musk s Hyperloop work?
+
+          Urban TransportFeature
+
+          What is Elon Musk s Hyperloop? (Photo: Shutterstock)
+
+          Over the past year, Elon Musk, billionaire founder of PayPal, Tesla, and
+          SpaceX, has been floating the notion of a  Hyperloop  as a future replacement
+          for bullet trains; one that would get commuters from San Francisco to Los
+          Angeles in as little as 30 minutes. There has been much speculation over
+          how the Hyperloop works, as Musk has revealed very few details. So what
+          has Musk actually said and what might this translate to in the real world?
+
+          What has Musk actually revealed about the Hyperloop? Putting together the
+          bits and pieces from his comments over the past year amounts to something
+          of a performance brief for what the Hyperloop would be capable of. In addition
+          to the killer feature (downtown Los Angeles to downtown San Francisco in
+          30 minutes), we know that Hyperloop would double the gate-to-gate average
+          speed of an aircraft over that distance, which is 560 km (350 miles). Musk
+          has said Hyperloop is a non-scheduled service which leaves when you arrive,
+          is immune to the weather and never crashes. The only specific technical
+          hints Musk has provided is that it s not a vacuum tunnel, but is a cross
+          between Concorde, a railgun and an air hockey table. This makes quite an
+          impressive list of attributes. Naturally, there is a lot of speculation
+          as to what Musk s Hyperloop must be.
+
+          It s clear that he is proposing a system for subsonic transport. Travelling
+          between downtown LA and'
+        sentences:
+        - How does Elon Musk s Hyperloop work?
+        - Urban TransportFeature
+        - 'What is Elon Musk s Hyperloop? (Photo: Shutterstock)'
+        - Over the past year, Elon Musk, billionaire founder of PayPal, Tesla, and
+          SpaceX, has been floating the notion of a  Hyperloop  as a future replacement
+          for bullet trains; one that would get commuters from San Francisco to Los
+          Angeles in as little as 30 minutes. There has been much speculation over
+          how the Hyperloop works, as Musk has revealed very few details. So what
+          has Musk actually said and what might this translate to in the real world?
+        - What has Musk actually revealed about the Hyperloop? Putting together the
+          bits and pieces from his comments over the past year amounts to something
+          of a performance brief for what the Hyperloop would be capable of. In addition
+          to the killer feature (downtown Los Angeles to downtown San Francisco in
+          30 minutes), we know that Hyperloop would double the gate-to-gate average
+          speed of an aircraft over that distance, which is 560 km (350 miles). Musk
+          has said Hyperloop is a non-scheduled service which leaves when you arrive,
+          is immune to the weather and never crashes. The only specific technical
+          hints Musk has provided is that it s not a vacuum tunnel, but is a cross
+          between Concorde, a railgun and an air hockey table. This makes quite an
+          impressive list of attributes. Naturally, there is a lot of speculation
+          as to what Musk s Hyperloop must be.
+        - It s clear that he is proposing a system for subsonic transport. Travelling
+          between downtown LA and
+        title: How does Elon Musk s Hyperloop work New Atlas_0
+      id: BOT
+      improve_bucket: perfect
+      memories: []
+      search_queries: elon musks hyperloop train location
+      text: Elon musk's hyperloop is an open-source vactrain design released by a
+        joint team from tesla and spacex.
+      top_docs:
+      - Hyperloop How Elon Musk s Tube Travel Concept Works_0 | Similarities between
+        the propulsion of maglev trains and Hyperloop are trumped by the promised
+        higher speeds of Musk s system. But the idea itself is obviously adapted from
+        available technologies and older concepts including the  vactrain  concept
+        from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+        Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+        waves, and out-competing air travel are similar.
+      - '11 U S Locations Under Consideration for Hyperloop Inc com_0 | 11 U.S. Locations
+        Under Consideration for Hyperloop
+
+        Hyperloop One says it s getting closer to its first full-scale test run.
+
+        A Hyperloop One tube in North Las Vegas, Nevada.
+
+        If you believe the hype, the Hyperloop is the future of long-distance travel.
+        For a while, however, it looked like that future would arrive first outside
+        of the United States.
+
+        Since its first public test run in Nevada in May 2016, Los Angeles-based Hyperloop
+        One has announced feasibility studies across the globe, in the United Arab
+        Emirates, the Netherlands, Finland, Sweden, Switzerland, the U.K., and Russia.
+        While much of the initial discussion when the company was founded in 2014
+        focused on a potential Los Angeles-San Francisco route, the company s blueprint
+        has been bereft of any formal plan to deeply explore development in the U.S.
+
+        Now, the startup is turning its attention back to America. On Thursday, the
+        company announced that it has created a list of 35 potential routes from across
+        the globe vying to be the world s first route. Of those 35 routes, 11 are
+        in the U.S. They were chosen from submissions, largely put together by local
+        governments.
+
+        According to a post on the company s website, the plan is to choose three
+        of those routes for further study. The teams behind those three routes will
+        work closely with Hyperloop One to analyze logistics and financing.
+
+        The candidates include routes linking:
+
+        Miami and Orlando
+
+        Boston and Providence
+
+        Chicago and Pittsburgh
+
+        Reno and Las Vegas
+
+        a triangle connecting Houston, Dallas, and Austin
+
+        three separate routes in the Rockies that run through Colorado
+
+        We always thought that North America'
+      - 'How does Elon Musk s Hyperloop work New Atlas_0 | How does Elon Musk s Hyperloop
+        work?
+
+        Urban TransportFeature
+
+        What is Elon Musk s Hyperloop? (Photo: Shutterstock)
+
+        Over the past year, Elon Musk, billionaire founder of PayPal, Tesla, and SpaceX,
+        has been floating the notion of a  Hyperloop  as a future replacement for
+        bullet trains; one that would get commuters from San Francisco to Los Angeles
+        in as little as 30 minutes. There has been much speculation over how the Hyperloop
+        works, as Musk has revealed very few details. So what has Musk actually said
+        and what might this translate to in the real world?
+
+        What has Musk actually revealed about the Hyperloop? Putting together the
+        bits and pieces from his comments over the past year amounts to something
+        of a performance brief for what the Hyperloop would be capable of. In addition
+        to the killer feature (downtown Los Angeles to downtown San Francisco in 30
+        minutes), we know that Hyperloop would double the gate-to-gate average speed
+        of an aircraft over that distance, which is 560 km (350 miles). Musk has said
+        Hyperloop is a non-scheduled service which leaves when you arrive, is immune
+        to the weather and never crashes. The only specific technical hints Musk has
+        provided is that it s not a vacuum tunnel, but is a cross between Concorde,
+        a railgun and an air hockey table. This makes quite an impressive list of
+        attributes. Naturally, there is a lot of speculation as to what Musk s Hyperloop
+        must be.
+
+        It s clear that he is proposing a system for subsonic transport. Travelling
+        between downtown LA and'
+      - 'Elon Musk s high speed Hyperloop train makes more sense_0 | Elon Musk''s
+        high-speed Hyperloop train makes more sense for Mars than California
+
+        Leon Vanstone, University of Texas at Austin
+
+        Leon Vanstone
+
+        Post-doctoral Researcher, University of Texas at Austin
+
+        Leon Vanstone receives funding from the United States Air Force.
+
+        Hyperloop is still on the drawing board. SpaceX, CC BY
+
+        Ever wanted to ride to work in a screaming roller-coaster gun? If your answer
+        was yes: good news!
+
+        Elon Musk - of SpaceX and Tesla Motors fame - recently proposed the "Hyperloop,"
+        a high-speed floating train that''s accelerated by magnets and coasts between
+        destinations. Hailed as the train of the future, the concept is indeed pretty
+        fancy. Described by Musk himself as "the fifth mode of transport," it''s intended
+        to provide fast and safe transit, largely self-powered with electricity generated
+        by its own solar panels.
+
+        Musk recently announced his company would build a test track in California.
+        But I don''t think the Hyperloop is going to work well in California - or
+        in fact anywhere else on Earth. It could, however, work quite well on a different
+        planet. Mars, for instance. But to appreciate why, we need to take a closer
+        look at the train in more detail.
+
+        Buckle up for the Hyperloop ride. SpaceX, CC BY
+
+        How would Hyperloop work?
+
+        The Hyperloop train concept is based on the idea of a "vactrain." That''s
+        a high-speed train run in a tube that has had all the air removed, making
+        it a vacuum - hence the name. Having no air in the tube means (almost) no
+        drag, the aerodynamic force that pushes in the opposite direction from which
+        a train'
+      - 'Hyperloop Wikipedia_0 | Hyperloop
+
+        A Hyperloop is a proposed mode of passenger and/or freight transportation,
+        first used to describe an open-source vactrain design released by a joint
+        team from Tesla and SpaceX. Drawing heavily from Robert Goddard''s vactrain,
+        a hyperloop comprises a sealed tube or system of tubes through which a pod
+        may travel free of air resistance or friction conveying people or objects
+        at high speed while being very efficient.
+
+        Elon Musk''s version of the concept, first publicly mentioned in 2012, incorporates
+        reduced-pressure tubes in which pressurized capsules ride on air bearings
+        driven by linear induction motors and air compressors.
+
+        The Hyperloop Alpha concept was first published in August 2013, proposing
+        and examining a route running from the Los Angeles region to the San Francisco
+        Bay Area roughly following the Interstate 5 corridor. The paper conceived
+        of a hyperloop system that would propel passengers along the route at an average
+        speed of around , with a top speed of , allowing for a travel time of 35 minutes,
+        which is considerably faster than current rail or air travel times. Preliminary
+        cost estimates for this LA-SF suggested route were included in the white paper--
+        for a passenger-only version, and for a somewhat larger-diameter version transporting
+        passengers and vehicles--although transportation analysts had doubts that
+        the system could be constructed on that budget; some analysts claimed that
+        the Hyperloop would be several billion dollars overbudget, taking into consideration
+        construction, development and operation costs.
+
+        The Hyperloop concept has been explicitly "open-sourced" by Musk and SpaceX,
+        and others have been encouraged to take the ideas and further'
+    bot_gold:
+      search_query: []
+    bot_modular_failure:
+      search_query: []
+    bot_no_feedback:
+      search_query:
+      - elon musks hyperloop train location
+    domain: Business
+    episode_done: false
+    eval_labels:
+    - Elon musk's hyperloop is an open-source vactrain design released by a joint
+      team from tesla and spacex.
+    feedback_chain:
+    - perfect
+    generic_topic: hyper loop
+    human_acts:
+    - feedback_text: ''
+      feedback_type: perfect
+      id: YOU
+      text: Is there a location for elon musks hyper loop train?
+    human_revision:
+      search_query: []
+      selected_sentences: []
+    id: fits_None_v1_seenFalse
+    last_nonperfect_feedback: none
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: Is there a location for elon musks hyper loop train?
+    topic: Is it air, ground or water transportation
+num_episodes: 5592
+num_examples: 19868
