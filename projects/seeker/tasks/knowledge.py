@@ -8,7 +8,7 @@ SeeKeR Knowledge Tasks.
 """
 import os
 import json
-from typing import Optional
+from typing import Optional, List
 
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
@@ -32,16 +32,7 @@ import projects.seeker.tasks.mutators  # type: ignore
 
 class WoiKnowledgeTeacher(woi.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        mutators = '+'.join(
-            [
-                'flatten',
-                'woi_filter_no_passage_used',
-                'woi_checked_sentence_as_label',
-                'woi_chunk_retrieved_docs',
-                'woi_dropout_retrieved_docs',
-                'woi_filter_selected_knowledge_in_retrieved_docs',
-            ]
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
@@ -49,22 +40,21 @@ class WoiKnowledgeTeacher(woi.DefaultTeacher):
         super().__init__(opt, shared)
         self.id = "WoiKnowledgeTeacher"
 
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'flatten',
+            'woi_filter_no_passage_used',
+            'woi_checked_sentence_as_label',
+            'woi_chunk_retrieved_docs',
+            'woi_dropout_retrieved_docs',
+            'woi_filter_selected_knowledge_in_retrieved_docs',
+        ]
+
 
 class WowKnowledgeTeacher(wow.DefaultTeacher):
     def __init__(self, opt, shared=None):
         opt['add_missing_turns'] = 'all'
-        mutators = '+'.join(
-            [
-                'flatten',
-                'wow_filter_no_passage_used',
-                'wow_checked_sentence_as_label',
-                'wow_to_woi',
-                'woi_chunk_retrieved_docs',
-                'woi_dropout_retrieved_docs',
-                'woi_filter_selected_knowledge_in_retrieved_docs',
-                'add_selected_sentences_mutator',
-            ]
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
@@ -72,19 +62,22 @@ class WowKnowledgeTeacher(wow.DefaultTeacher):
         super().__init__(opt, shared)
         self.id = "WowKnowledgeTeacher"
 
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'flatten',
+            'wow_filter_no_passage_used',
+            'wow_checked_sentence_as_label',
+            'wow_to_woi',
+            'woi_chunk_retrieved_docs',
+            'woi_dropout_retrieved_docs',
+            'woi_filter_selected_knowledge_in_retrieved_docs',
+            'add_selected_sentences_mutator',
+        ]
+
 
 class MsMarcoKnowledgeTeacher(ms_marco.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        mutators = '+'.join(
-            [
-                'ms_marco_filter_has_answer',
-                'ms_marco_create_fid_docs',
-                'ms_marco_find_selected_sentence_for_knowledge',
-                'ms_marco_to_woi',
-                'woi_chunk_retrieved_docs',
-                'add_selected_sentences_mutator',
-            ]
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
@@ -92,16 +85,20 @@ class MsMarcoKnowledgeTeacher(ms_marco.DefaultTeacher):
         super().__init__(opt, shared)
         self.id = "MsMarcoKnowledgeTeacher"
 
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'ms_marco_filter_has_answer',
+            'ms_marco_create_fid_docs',
+            'ms_marco_find_selected_sentence_for_knowledge',
+            'ms_marco_to_woi',
+            'woi_chunk_retrieved_docs',
+            'add_selected_sentences_mutator',
+        ]
+
 
 class SquadKnowledgeTeacher(squad.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        mutators = '+'.join(
-            [
-                'squad_to_woi',
-                'woi_chunk_retrieved_docs',
-                'add_selected_sentences_mutator',
-            ]
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
@@ -109,16 +106,17 @@ class SquadKnowledgeTeacher(squad.DefaultTeacher):
         super().__init__(opt, shared)
         self.id = "SquadKnowledgeTeacher"
 
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'squad_to_woi',
+            'woi_chunk_retrieved_docs',
+            'add_selected_sentences_mutator',
+        ]
+
 
 class TriviaQAKnowledgeTeacher(triviaqa.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        mutators = '+'.join(
-            [
-                'triviaqa_to_woi',
-                'woi_chunk_retrieved_docs',
-                'add_selected_sentences_mutator',
-            ]
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
@@ -126,12 +124,17 @@ class TriviaQAKnowledgeTeacher(triviaqa.DefaultTeacher):
         super().__init__(opt, shared)
         self.id = "TriviaQAKnowledgeTeacher"
 
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'triviaqa_to_woi',
+            'woi_chunk_retrieved_docs',
+            'add_selected_sentences_mutator',
+        ]
+
 
 class NQKnowledgeTeacher(nq.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        mutators = '+'.join(
-            ['nq_to_woi', 'woi_chunk_retrieved_docs', 'add_selected_sentences_mutator']
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
@@ -139,22 +142,30 @@ class NQKnowledgeTeacher(nq.DefaultTeacher):
         super().__init__(opt, shared)
         self.id = "NQKnowledgeTeacher"
 
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'nq_to_woi',
+            'woi_chunk_retrieved_docs',
+            'add_selected_sentences_mutator',
+        ]
+
 
 class NQOpenKnowledgeTeacher(nq.NaturalQuestionsOpenTeacher):
     def __init__(self, opt, shared=None):
-        mutators = '+'.join(
-            [
-                'nqopen_to_woi',
-                'woi_chunk_retrieved_docs',
-                'add_selected_sentences_mutator',
-            ]
-        )
+        mutators = '+'.join(self.get_special_mutators())
         if opt.get('mutators'):
             mutators = '+'.join([mutators, opt['mutators']])
         logging.warning(f'overriding mutators to {mutators}')
         opt['mutators'] = mutators
         super().__init__(opt, shared)
         self.id = "NQOpenKnowledgeTeacher"
+
+    def get_special_mutators(self) -> List[str]:
+        return [
+            'nqopen_to_woi',
+            'woi_chunk_retrieved_docs',
+            'add_selected_sentences_mutator',
+        ]
 
 
 class NQOpenDialoguesKnowledgeTeacher(NQOpenKnowledgeTeacher):
@@ -220,32 +231,44 @@ def get_dialogue_task_mutators(opt: Opt) -> str:
 
 class Convai2KnowledgeTeacher(convai2.NormalizedTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators(opt)
+        opt['mutators'] = self.get_special_mutators(opt)
         opt['task'] += ':no_cands'
         super().__init__(opt, shared)
         self.id = 'Convai2KnowledgeTeacher'
 
+    def get_special_mutators(self, opt):
+        return get_dialogue_task_mutators(opt)
+
 
 class EDKnowledgeTeacher(ed.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators(opt)
+        opt['mutators'] = self.get_special_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'EDKnowledgeTeacher'
+
+    def get_special_mutators(self, opt):
+        return get_dialogue_task_mutators(opt)
 
 
 class BSTKnowledgeTeacher(bst.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators(opt)
+        opt['mutators'] = self.get_special_mutators(opt)
         super().__init__(opt, shared)
         self.id = 'BSTKnowledgeTeacher'
+
+    def get_special_mutators(self, opt):
+        return get_dialogue_task_mutators(opt)
 
 
 class MSCKnowledgeTeacher(msc.DefaultTeacher):
     def __init__(self, opt, shared=None):
-        opt['mutators'] = get_dialogue_task_mutators(opt)
+        opt['mutators'] = self.get_special_mutators(opt)
         opt['include_session1'] = False
         super().__init__(opt, shared)
         self.id = 'MSCKnowledgeTeacher'
+
+    def get_special_mutators(self, opt):
+        return get_dialogue_task_mutators(opt)
 
 
 class MSCKnowledgeOverlapTeacher(msc.DefaultTeacher):

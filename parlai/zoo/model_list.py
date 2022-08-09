@@ -2910,4 +2910,154 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             [GPT2ComboSearchQuery]: ParlAI: A new software platform for dialog research. Image credit: AI Research, ML Applications
         """,
     },
+    {
+        "title": "Search Query Generator trained on FITS",
+        "id": "fits",
+        "path": "zoo:fits/bart_sq_gen/model",
+        "agent": "bart",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "BART-Large 400m model for generating search queries (finetuned on FITS dataset)"
+        ),
+        "example": ("parlai i -mf zoo:fits/bart_sq_gen/model"),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[Bart]: dining options in New York City"
+        """,
+    },
+    {
+        "title": "BlenderBot2 + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/bb2_module_supervision/model",
+        "agent": "projects.blenderbot2.agents.blenderbot2:BlenderBot2FidAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "BlenderBot 2 finetuned with module supervision on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/bb2_module_supervision/model --query-generator-model-file zoo:fits/bart_sq_gen/model --search-server <YOUR_SEARCH_SERVER>"
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[BlenderBot2Fid]: Eliza dumais and peranakan mixed herb rice with dried shrimp, from kopitiam."
+        """,
+    },
+    {
+        "title": "BlenderBot2 + Director + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/director_bb2_module/model",
+        "agent": "projects.fits.agents.director_bb2:DirectorBlenderBot2FidAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "BlenderBot 2 + Director finetuned with module supervision on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/director_bb2_module/model --knowledge-access-method search_only --query-generator-model-file zoo:fits/bart_sq_gen/model --model projects.fits.agents.director_bb2:DirectorBlenderBot2FidAgent --rag-retriever-type search_engine --search-server <SEARCH_SERVER> --beam_block_full_context True --infer-mixing-weights 0.35 "
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[BlenderBot2Fid]: Eliza dumais and peranakan mixed herb rice with dried shrimp, from kopitiam."
+        """,
+    },
+    {
+        "title": "SeeKeR + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/seeker_module_supervision/model",
+        "agent": "projects.seeker.agents.seeker:SeekerAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": ("SeeKeR finetuned with module supervision on the FITS task"),
+        "example": (
+            "parlai i --init-opt gen/seeker_dialogue --model-file zoo:fits/seeker_module_supervision/model --search-decision always --search-server <SEARCH_SERVER>"
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[DirectorComboFidSearchQuery]: Chinatown is a great place to eat. You can get a full meal for under $10."
+        """,
+    },
+    {
+        "title": "SeeKeR + Director + Module Supervision on FITS task",
+        "id": "fits",
+        "path": "zoo:fits/director_seeker_module/model",
+        "agent": "projects.fits.agents.director_bb2:DirectorSeekerAgent",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "SeeKeR + Director finetuned with module supervision on the FITS task"
+        ),
+        "example": (
+            "parlai i --init-opt gen/seeker_dialogue --model-file zoo:fits/director_seeker_module/model --model projects.fits.agents.director_seeker:DirectorSeekerAgent --search-decision always --search-server <SEARCH_SERVER> --drm-infer-gamma 1.0 --drm-beam-size 10 "
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\n"
+            "[DirectorComboFidSearchQuery]: One of the best places to get sushi in new york city is maki sushi. They have the best sushi in the city."
+        """,
+    },
+    {
+        "title": "Dialogue Response Satisfaction Classifier",
+        "id": "fits",
+        "path": "zoo:fits/response_satisfaction/model",
+        "agent": "transformer/classifier",
+        "task": "fits",
+        "project": "https://parl.ai/projects/fits",
+        "description": (
+            "Dialogue Response Satisfaction Classifier finetuned on the FITS task"
+        ),
+        "example": (
+            "parlai i -mf zoo:fits/response_satisfaction/model --model transformer/classifier "
+        ),
+        "result": """
+            "Enter Your Message: I am looking for a good and affordable dining place in New York City.\nOne of the best places to get sushi in new york city is maki sushi. They have the best sushi in the city.\n"
+            "[TransformerClassifier]: __ok__"
+        """,
+    },
+    {
+        "title": "BlenderBot 3 3B",
+        "id": "bb3",
+        "path": "zoo:bb3/bb3_3B/model",
+        "agent": "projects.bb3.agents.r2c2_bb3_agent:BlenderBot3Agent",
+        "task": "projects.bb3.tasks.module_level_tasks:AlwaysSearchTeacher,projects.bb3.tasks.module_level_tasks:MaybeSearchTeacher,projects.bb3.tasks.module_level_tasks:MemoryDecisionTeacher,projects.bb3.tasks.module_level_tasks:SearchQueryGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:SearchKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:EntityKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:SearchDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:EntityDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:VanillaDialogueGenerationTeacher",
+        "project": "https://parl.ai/projects/bb3",
+        "description": (
+            "BB3 3B Model. Trained to perform an assortment of dialogue-related tasks."
+        ),
+        "example": (
+            "parlai i -mf zoo:bb3/bb3_3B/model -o gen/r2c2_bb3 --search-server <search_server>"
+        ),
+        "result": """
+            Enter Your Message: Hey, what you can tell me about ai research?
+            21:37:52 | Example 0, search_decision_agent: __do-search__
+            21:37:52 | Example 0, memory_decision_agent: __do-not-access-memory__
+            21:37:52 | Search Queries: ['AI research']
+            21:37:53 | Partner Memories: ['__NO__PERSONA__BEAM__MIN__LEN__20__']
+            21:37:53 | sending search request to SEARCH_SERVER
+            21:37:54 | URLS: [URLS]
+            21:37:57 | Search KNOWLEDGE for example 0: Computer science defines AI research as the study of intelligent agents
+            21:37:58 | Combined DIALOGUE response for example 0: Artificial intelligence (AI) is a field of computer science that studies intelligent agents, such as robots.; score: -7.90
+            21:38:00 | Self Memories: ['__NO__PERSONA__BEAM__MIN__LEN__20__']
+            [BlenderBot3]: Artificial intelligence (AI) is a field of computer science that studies intelligent agents, such as robots.
+        """,
+    },
+    {
+        "title": "Persona Summarizer",
+        "id": "bb3",
+        "path": "zoo:bb3/persona_summarizer/model",
+        "agent": "transformer/generator",
+        "task": "msc:PersonaSummary",
+        "project": "https://parl.ai/projects/bb3",
+        "description": (
+            "Persona Summarization Model. Generates summaries of memories based on prior context turns. "
+            "Used to build BB3 memory dialogue and memory knowledge tasks."
+        ),
+        "example": (
+            "parlai i -mf zoo:bb3/persona_summarizer/model --skip-generation false --inference beam --beam-size 3 --beam-block-ngram 3 --beam-min-length 10"
+        ),
+        "result": """
+            Enter Your Message: I love my job as an AI researcher - I get to work on so many cool problems!
+            [Bart]: I am an AI researcher. I love my job.
+        """,
+    },
 ]
