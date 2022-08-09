@@ -86,7 +86,7 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
             '--filter-want-to-talk-about-labels',
             type=bool,
             default=False,
-            help="Filter out episodes that end in an utterance asking 'want to talk about something else'."
+            help="Filter out episodes that end in an utterance asking 'do you want to talk about ...'."
             " This accounts for roughly 7k episodes.",
         )
         return parser
@@ -169,7 +169,7 @@ class BotAdversarialDialogueTeacher(ParlAIDialogTeacher):
                 f'your data.'
             )
 
-        # Filter out "do you want to talk about something else"
+        # Filter out "do you want to talk about ..."
         if self.opt['filter_want_to_talk_about_labels']:
 
             def filter_fn(episode):
