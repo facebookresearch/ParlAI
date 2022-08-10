@@ -166,13 +166,15 @@ class DirectorAgent(TransformerGeneratorAgent):
             '--train-gamma',
             type=float,
             default=0.5,
-            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and using \alpha (hopefully <1) to weight classifier.",
+            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and "
+            "using \alpha (hopefully <1) to weight classifier.",
         )
         group.add_argument(
             '--infer-gamma',
             type=float,
             default=None,
-            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and using \alpha (hopefully <1) to weight classifier.",
+            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and "
+            "using \alpha (hopefully <1) to weight classifier.",
         )
         group.add_argument(
             '--train-generator-with-pos-feedback-examples',
@@ -276,7 +278,8 @@ class DirectorAgent(TransformerGeneratorAgent):
         batch resulting in losses and num_target_tokens vectors that are smaller than
         the.
 
-        This method reshapes the losses and num_target_tokens vectors back to the batch size. This is needed to record local metrics as the metrics need to be of batch size.
+        This method reshapes the losses and num_target_tokens vectors back to the batch size.
+        This is needed to record local metrics as the metrics need to be of batch size.
 
         Args:
             batch: batch being processed in this iteration.
