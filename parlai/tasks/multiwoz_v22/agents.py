@@ -416,14 +416,16 @@ class MultiWOZv22DSTTeacher(tod_agents.TodUserSimulatorTeacher):
         "train--departure",
     }
 
-    rng = np.random.RandomState(SEED)
-
     def __init__(self, opt: Opt, shared=None, *args, **kwargs):
         self.opt = opt
         self.fold = opt["datatype"].split(":")[0]
         opt["datafile"] = self.fold
         self.dpath = os.path.join(opt["datapath"], "multiwoz_v22")
         self.id = "multiwoz_v22"
+        if self.opt["seed"]:
+            self.rng = np.random.RandomState(self.opt["seed"])
+        else:
+            self.rng = np.random.RandomState(SEED)
 
         if shared is None:
             build_.build(opt)
