@@ -62,7 +62,6 @@ commands:
           name: Fixes git
           command: |
             ( [[ "$CIRCLE_BRANCH" != "main" ]] && git branch -f main origin/main ) || true
-
   setup:
     description: Sets up the virtual environment
     steps:
@@ -74,7 +73,6 @@ commands:
             echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             python --version
-
   codecov:
     description: Coverage report
     steps:
@@ -84,7 +82,6 @@ commands:
           command: |
             python -m codecov --flags $CIRCLE_JOB
             mkdir -p ~/ParlAI/data
-
   installdeps:
     description: Install basic dependencies
     steps:
@@ -98,7 +95,6 @@ commands:
             pip install -v -r requirements.txt
             python setup.py develop
             python -c "import nltk; nltk.download('punkt')"
-
   installtorchgpu:
     description: Install torch GPU and dependencies
     steps:
@@ -116,7 +112,6 @@ commands:
             python -m torch.utils.collect_env
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
-
   installtorchcpuosx:
     description: Install torch CPU and dependencies
     steps:
@@ -127,7 +122,6 @@ commands:
             python -m pip install --progress-bar off 'torch==1.11.0'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
-
   installtorchcpu:
     description: Install torch CPU and dependencies
     steps:
@@ -138,7 +132,6 @@ commands:
             python -m pip install --progress-bar off 'transformers==4.3.3'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
-
   installcrowdsourcingdeps:
     description: Install Mephisto
     steps:
@@ -147,12 +140,10 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v1.0.1 -b stable
-              pip install -r requirements.txt
-              python setup.py develop
+              cd Mephisto; git checkout v1.0.3 -b stable
+              pip install -e .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
-
   setupcuda:
     description: Setup CUDA
     steps:
@@ -163,7 +154,6 @@ commands:
             pyenv versions
             nvidia-smi
             pyenv global 3.9.2
-
   findtests:
     description: Find tests to run
     parameters:
@@ -178,7 +168,6 @@ commands:
             mkdir -p ~/ParlAI/data/models
             python -m pytest -m << parameters.marker >> --collect-only | grep '<'  | sed "s/^ *//" | grep -v ':'> teststorun.txt
             cat teststorun.txt
-
   runtests:
     description: Run a full suite of unit tests
     parameters:
@@ -208,26 +197,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220615-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220805-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220615-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220805-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220615-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220805-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220615-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220805-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -244,12 +233,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220615-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220805-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220615-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220805-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -283,8 +272,6 @@ commands:
                s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" sync -f --delete-removed website/build/ "s3://parl.ai/"
                s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" setacl --acl-public --recursive "s3://parl.ai/"
                s3cmd --access_key="${S3_ACCESS_KEY}" --secret_key="${S3_SECRET_KEY}" modify --add-header="Content-type:text/css" 's3://parl.ai/static/css/*' 's3://parl.ai/docs/_static/*.css' 's3://parl.ai/docs/_static/css/*.css'
-
-
 # -------------------------------------------------------------------------------------
 # Actual jobs
 # -------------------------------------------------------------------------------------
@@ -302,10 +289,8 @@ jobs:
           no_output_timeout: 60m
           command: |
             python -m pip install --progress-bar off pip setuptools==62.3.4
-            python -m pip install -v -r requirements.txt
             python setup.py develop
             parlai display_data -t integration_tests
-
   unittests_osx:
     executor: osx_cpu38
     working_directory: ~/ParlAI
@@ -318,7 +303,7 @@ jobs:
   unittests_38:
     executor: standard_cpu38
     working_directory: ~/ParlAI
-    parallelism: 4
+    parallelism: 2
     steps:
       - runtests:
           more_installs:
@@ -341,7 +326,7 @@ jobs:
   long_gpu_tests:
     executor: gpu_medium
     working_directory: ~/ParlAI
-    parallelism: 32
+    parallelism: 8
     steps:
       - runtests:
           more_installs:
@@ -408,8 +393,6 @@ jobs:
             echo
             echo 'Testing docs css'
             curl -f -i 'https://parl.ai/docs/_static/css/parlai_theme.css'
-
-
 workflows:
   version: 2
   commit:
