@@ -130,12 +130,10 @@ class MultiHeadAttention(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
-        pad: bool = False,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
         Forward pass.
-
         :param query: attention query
         :param key: attention key
         :param value: attention value
@@ -154,22 +152,6 @@ class MultiHeadAttention(nn.Module):
           key/value-multiplied tensor before softmax,
         )
         """
-
-        def if_enc_self_att():
-            return len(mask.shape) == 2 and not value and not key
-
-        if if_enc_self_att and pad:
-            _, old_query_len, _ = query.size()
-            next_seq_len = 128 * math.ceil(old_query_len / 128)
-            query = F.pad(
-                query,
-                pad=(0, 0, 0, next_seq_len - old_query_len),
-                mode='constant',
-                value=0,
-            )
-            mask = F.pad(
-                mask, pad=(0, next_seq_len - old_query_len), mode='constant', value=0
-            )
 
         batch_size, query_len, dim = query.size()
         assert (
@@ -273,7 +255,7 @@ class MultiHeadAttention(nn.Module):
         attn_weights = self.attn_dropout(attn_weights)  # --attention-dropout
 
         attentioned = attn_weights.bmm(v)
-        out = (
+        attentioned = (
             attentioned.type_as(query)
             .view(batch_size, n_heads, query_len, dim_per_head)
             .transpose(1, 2)
@@ -281,10 +263,7 @@ class MultiHeadAttention(nn.Module):
             .view(batch_size, query_len, dim)
         )
 
-        if if_enc_self_att and pad:
-            out = out[:, :old_query_len, :]
-
-        out = self.out_lin(out)
+        out = self.out_lin(attentioned)
 
         return out, new_incr_state, dot_prod
 
