@@ -35,6 +35,7 @@ from parlai.utils.typing import TScalar, TVector
 
 DEFAULT_METRICS = {'bleu-4', 'accuracy', 'f1'}
 ROUGE_METRICS = {'rouge-1', 'rouge-2', 'rouge-L'}
+ROUGE_METRICS_MEASURES = {'r', 'f', 'p'}
 BLEU_METRICS = {'bleu-1', 'bleu-2', 'bleu-3', 'bleu-4'}
 DISTINCT_METRICS = {
     'interdistinct-1',
@@ -719,7 +720,7 @@ class RougeMetric(AverageMetric):
 
     @staticmethod
     def compute_many(
-        guess: str, answers: List[str]
+        guess: str, answers: List[str], measure: str = 'r'
     ) -> Tuple[Optional[RougeMetric], Optional[RougeMetric], Optional[RougeMetric]]:
         """
         Compute ROUGE score between guess and *any* answer.
@@ -728,6 +729,9 @@ class RougeMetric(AverageMetric):
 
         :return: (rouge-1, rouge-2, rouge-L)
         """
+        measure = measure.lower()
+        assert measure in ROUGE_METRICS_MEASURES, "Use one of recall 'r' (default), f1 'f', or precision 'p'."
+
         # possible global initialization
         try:
             import rouge
@@ -754,9 +758,9 @@ class RougeMetric(AverageMetric):
             )
             return None, None, None
 
-        scores_rouge1 = max(score['rouge-1']['r'] for score in scores)
-        scores_rouge2 = max(score['rouge-2']['r'] for score in scores)
-        scores_rougeL = max(score['rouge-l']['r'] for score in scores)
+        scores_rouge1 = max(score['rouge-1'][measure] for score in scores)
+        scores_rouge2 = max(score['rouge-2'][measure] for score in scores)
+        scores_rougeL = max(score['rouge-l'][measure] for score in scores)
         return (
             RougeMetric(scores_rouge1),
             RougeMetric(scores_rouge2),
