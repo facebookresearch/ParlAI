@@ -169,6 +169,11 @@ class Teacher(Agent):
             default=None,
             help='Apply one or more mutators to the data.',
         )
+        parser.add_argument(
+            '--seed',
+            default=None,
+            help='Set seed to fix data sampler.'
+        )
         mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
