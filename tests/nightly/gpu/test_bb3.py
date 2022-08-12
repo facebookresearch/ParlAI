@@ -115,13 +115,8 @@ class TestOptFtBase(unittest.TestCase):
     def setUp(self):
         self.opt = INIT_OPT
         for k, v in self.opt.items():
-            if (
-                v
-                == 'parlai_internal.projects.blenderbot3.agents.opt_prompt_agent:PromptAgent'
-            ):
-                self.opt[
-                    k
-                ] = 'parlai_internal.projects.blenderbot3.agents.opt_prompt_agent:MockPromptAgent'
+            if 'BB3OPTAgent' in v:
+                self.opt[k] = 'projects.bb3.agents.opt_api_agent:MockOptAgent'
 
         self.opt['search_server'] = 'test'
         self.opt['loglevel'] = 'debug'
