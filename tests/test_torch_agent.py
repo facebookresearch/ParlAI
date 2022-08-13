@@ -843,13 +843,6 @@ class TestTorchAgent(unittest.TestCase):
             'timestep': '00:00:20',
             'episode_done': False,
         }
-        obs3 = {
-            'speaker': 'Star-Lord',
-            'text': "I'm pretty sure the answer is 'I am Groot.'",
-            'labels': ['Groot!!!'],
-            'timestep': '00:00:30',
-            'episode_done': False,
-        }
 
         # try with unlimited history
         agent = get_agent(history_size=-1, timestep_field='timestep')
@@ -880,6 +873,14 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot.\t00:00:00')
 
+    def test_history_timestep_size1(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
         # now try with history size = 1
         agent = get_agent(history_size=1, timestep_field='timestep')
         # first exchange
@@ -900,6 +901,21 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot?\t00:00:10')
 
+    def test_history_timestep_size2(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
+        obs2 = {
+            'speaker': 'Groot',
+            'text': 'I am Groot!',
+            'labels': ['I am Groot!?'],
+            'timestep': '00:00:20',
+            'episode_done': False,
+        }
         # now try with history size = 2
         agent = get_agent(history_size=2, timestep_field='timestep')
 
@@ -915,6 +931,21 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot?\t00:00:10\nI am Groot!\t00:00:20')
 
+    def test_history_timestep_size3(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
+        obs2 = {
+            'speaker': 'Groot',
+            'text': 'I am Groot!',
+            'labels': ['I am Groot!?'],
+            'timestep': '00:00:20',
+            'episode_done': False,
+        }
         # now try with history size = 3
         agent = get_agent(history_size=3, timestep_field='timestep')
         # first exchange
@@ -930,15 +961,16 @@ class TestTorchAgent(unittest.TestCase):
             text, 'I am Groot.\t00:00:00\nI am Groot?\t00:00:10\nI am Groot!\t00:00:20'
         )
 
+    def test_history_timestep_alternate(self):
         # alternate between messages with and without timestep
-        _obs = {
+        obs = {
             'speaker': 'Groot',
             'text': 'I am Groot.',
             'labels': ['I am Groot?'],
             'timestep': '00:00:00',
             'episode_done': False,
         }
-        _obs2 = {
+        obs2 = {
             'speaker': 'Groot',
             'text': 'I am Groot!',
             'labels': ['I am Groot!?'],
@@ -947,21 +979,37 @@ class TestTorchAgent(unittest.TestCase):
         agent = get_agent(history_size=-1, timestep_field='timestep')
 
         # first exchange, with timestep
-        agent.history.update_history(_obs)
+        agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot.\t00:00:00')
 
         # second exchange, no timestep
-        agent.history.update_history(_obs2)
+        agent.history.update_history(obs2)
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot.\t00:00:00\nI am Groot!\t')
 
         # third exchange, with timestep
-        agent.history.update_history(_obs)
+        agent.history.update_history(obs)
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text, 'I am Groot.\t00:00:00\nI am Groot!\t\nI am Groot.\t00:00:00'
         )
+
+    def test_history_timestep_add_person_tokens(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
+        obs2 = {
+            'speaker': 'Star-Lord',
+            'text': "I'm pretty sure the answer is 'I am Groot.'",
+            'labels': ['Groot!!!'],
+            'timestep': '00:00:30',
+            'episode_done': False,
+        }
 
         # now test add_person_tokens
         agent = get_agent(
@@ -984,25 +1032,41 @@ class TestTorchAgent(unittest.TestCase):
         # second exchange, history should still contain the tokens
         agent.history.add_timestep('00:00:10')
         agent.history.add_reply('I am Groot?')
-        agent.history.update_history(obs3)
+        agent.history.update_history(obs2)
         text = agent.history.get_history_str()
         self.assertEqual(
             text,
             "{} I am Groot.\n{} I am Groot?\n{} I'm pretty sure the answer is 'I am Groot.'".format(
-                obs['speaker'], agent.P2_TOKEN, obs3['speaker']
+                obs['speaker'], agent.P2_TOKEN, obs2['speaker']
             ),
         )
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(
             text,
             "{} I am Groot.\t00:00:00\n{} I am Groot?\t00:00:10\n{} I'm pretty sure the answer is 'I am Groot.'\t00:00:30".format(
-                obs['speaker'], agent.P2_TOKEN, obs3['speaker']
+                obs['speaker'], agent.P2_TOKEN, obs2['speaker']
             ),
         )
         self.assertEqual(
             agent.history.speakers,
-            set([obs['speaker'], obs3['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
+            set([obs['speaker'], obs2['speaker'], agent.P1_TOKEN, agent.P2_TOKEN]),
         )
+
+    def test_history_timestep_add_p1_after_newln(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
+        obs2 = {
+            'speaker': 'Groot',
+            'text': 'I am Groot!',
+            'labels': ['I am Groot!?'],
+            'timestep': '00:00:20',
+            'episode_done': False,
+        }
 
         # now add add_p1_after_newln
         agent = get_agent(
@@ -1042,13 +1106,29 @@ class TestTorchAgent(unittest.TestCase):
             ),
         )
 
+    def test_history_timestep_vecs(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
+        obs2 = {
+            'speaker': 'Groot',
+            'text': 'I am Groot!',
+            'labels': ['I am Groot!?'],
+            'timestep': '00:00:20',
+            'episode_done': False,
+        }
+        agent = get_agent(
+            history_size=3,
+            person_tokens=True,
+            speaker_field='speaker',
+            add_p1_after_newln=True,
+            timestep_field='timestep',
+        )
         # test history timestep vecs
-        agent.history.reset()
-        agent.history.update_history(obs)
-        vec = agent.history.get_history_timestep_vec()
-        self.assertEqual(vec, [1])
-
-        agent.history.reset()
         agent.history.update_history(obs)
         vec = agent.history.get_history_timestep_vec()
         self.assertEqual(vec, [1])
@@ -1065,6 +1145,14 @@ class TestTorchAgent(unittest.TestCase):
         vecs = agent.history.get_history_timestep_list()
         self.assertEqual(vecs, [])
 
+    def test_history_timestep_delim(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
         # test delimiter
         agent = get_agent(history_size=-1, delimiter='\t', timestep_field='timestep')
         agent.history.update_history(obs)
@@ -1072,6 +1160,14 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot.\t00:00:00\tI am Groot.\t00:00:00')
 
+    def test_history_timestep_temp(self):
+        obs = {
+            'speaker': 'Groot',
+            'text': 'I am Groot.',
+            'labels': ['I am Groot?'],
+            'timestep': '00:00:00',
+            'episode_done': False,
+        }
         # test temp timestep
         agent = get_agent(
             history_size=-1,
@@ -1079,7 +1175,6 @@ class TestTorchAgent(unittest.TestCase):
             delimiter='__delim__',
             timestep_field='timestep',
         )
-        agent.history.reset()
         agent.history.update_history(obs, temp_timestep='__delim__00:00:40')
         text = agent.history.get_history_str_with_timesteps()
         self.assertEqual(text, 'I am Groot.\t00:00:00__delim__00:00:40')
@@ -1150,7 +1245,7 @@ class TestTorchAgent(unittest.TestCase):
         out = agent.observe(obs.copy())
         self.assertEqual(out['full_text'], "I'll be back.\nI'm back.\nI'll be back.")
 
-    def test_observe_timestep(self):
+    def test_observe_timestep_assertion(self):
         """
         Make sure agent stores and returns observation.
         """
@@ -1168,8 +1263,10 @@ class TestTorchAgent(unittest.TestCase):
         }
         with self.assertRaises(RuntimeError):
             agent.observe(obs.copy())
+
+    def test_observe_timestep(self):
         # okay, let's do it properly now
-        agent.reset()
+        agent = get_agent(timestep_field='timestep')
         obs = {
             'text': "I'll be back.",
             'timestep': '00:00:00',
@@ -1181,16 +1278,23 @@ class TestTorchAgent(unittest.TestCase):
         self.assertIsNotNone(agent.observation)
         self.assertEqual(out['text'], "I'll be back.")
         self.assertEqual(out['timestep'], "00:00:00")
+
+    def test_observe_timestep_not_done(self):
         # now try with episode not done
         agent = get_agent()
-        obs['episode_done'] = False
+        obs = {
+            'text': "I'll be back.",
+            'timestep': '00:00:00',
+            'labels': ["I'm back."],
+            'episode_done': False,
+        }
         out = agent.observe(obs.copy())
         self.assertIsNotNone(out)
         self.assertIsNotNone(agent.observation)
         self.assertEqual(out['text'], "I'll be back.")
         self.assertEqual(out['timestep'], "00:00:00")
 
-    def test_record_silence(self):
+    def test_record_silence_default(self):
         """
         Make sure silence token doesn't get added to the history during self_observe if
         the --record-silence cli flag is False.
@@ -1205,12 +1309,20 @@ class TestTorchAgent(unittest.TestCase):
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.\n__SILENCE__')
 
+    def test_record_silence_no_specify(self):
+        obs = Message({'text': 'I am Groot.', 'episode_done': False})
+        self_message = Message({'text': '__SILENCE__'})
+
         # Make sure behavior is fine without specifying silence token
         agent = get_agent()
         agent.observe(obs)
         agent.self_observe(self_message)
         text = agent.history.get_history_str()
         self.assertEqual(text, 'I am Groot.\n__SILENCE__')
+
+    def test_record_silence_no_record(self):
+        obs = Message({'text': 'I am Groot.', 'episode_done': False})
+        self_message = Message({'text': '__SILENCE__'})
 
         # Test behavior for not recording silence token
         agent = get_agent(silence_token='__SILENCE__', record_silence=False)
@@ -1469,7 +1581,7 @@ class TestTorchAgent(unittest.TestCase):
         agent.act()
         self.assertEqual(agent.history.get_history_str(), 'Call')
 
-    def test_use_reply_timestep(self):
+    def test_use_reply_timestep_label(self):
         # default is hybrid label-model, which uses the label if it's available, and
         # otherwise the label
         # first check if there is a label available
@@ -1489,8 +1601,10 @@ class TestTorchAgent(unittest.TestCase):
             agent.history.get_history_str_with_timesteps(),
             'Call\t00:00:00\nResponse\t00:00:00',
         )
+
+    def test_use_reply_timestep_no_label(self):
         # check if there is no label
-        agent.reset()
+        agent = get_agent(timestep_field='timestep')
         obs = Message({'text': 'Call', 'timestep': '00:00:00', 'episode_done': False})
         agent.observe(obs)
         _ = agent.act()
@@ -1501,7 +1615,9 @@ class TestTorchAgent(unittest.TestCase):
             agent.history.get_history_str_with_timesteps(),
             'Call\t00:00:00\nEvaluating 0 (responding to [[1]])!\t00:00:00',
         )
-        # now some of the other possible values of --use-reply
+
+    def test_use_reply_timestep_use_reply_model(self):
+        # now test some of the other possible values of --use-reply
         # --use-reply model. even if there is a label, we should see the model's out
         agent = get_agent(use_reply='model', timestep_field='timestep')
         obs = Message(
@@ -1519,6 +1635,8 @@ class TestTorchAgent(unittest.TestCase):
             agent.history.get_history_str_with_timesteps(),
             'Call\t00:00:00\nTraining 0!\t00:00:00',
         )
+
+    def test_use_reply_timestep_use_reply_none(self):
         # --use-reply none doesn't hear itself
         agent = get_agent(use_reply='none', timestep_field='timestep')
         obs = Message(
