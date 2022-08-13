@@ -608,7 +608,10 @@ class TorchAgent(ABC, Agent):
             '--record-silence',
             type='bool',
             default=True,
-            help='Whether to record silence token in the agent history when the agent self-observes. Defaults to True for backward-compatability.',
+            help=(
+                'Whether to record silence token in the agent history when the agent self-observes.'
+                ' Defaults to True for backward-compatability.'
+            ),
         )
         agent.add_argument(
             '--silence-token',
