@@ -395,7 +395,7 @@ class TestTritonAttentionKernel(unittest.TestCase):
             tri_out - out
         ).abs().max() < 0.01, "Triton and Parlai output differs for more than 0.01."
 
-    def test_self_attention_dropout(self):
+    def test_dropout(self):
         opt = Opt()
         Z, H, N_CTX, D_HEAD = 64, 16, 128, 32
         DIM = H * D_HEAD
