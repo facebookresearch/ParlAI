@@ -15,9 +15,11 @@ def _fwd_kernel(
     Q,
     K,
     V,
-    sm_scale,
     MASK,
-    debug,
+    DROPOUT,
+    sm_scale,
+    dropout_p,
+    add_dropout,
     TMP,
     L,
     M,  # NOTE: TMP is a scratchpad buffer to workaround a compiler bug
@@ -72,6 +74,7 @@ def _fwd_kernel(
     k_ptrs = K + off_k
     v_ptrs = V + off_v
     mask_ptrs = MASK + off_mask
+    dropout_ptrs = DROPOUT + off_mask  # mask and dropout shares the same blocks
     # initialize pointer to m and l
     t_ptrs = TMP + off_hz * N_CTX + offs_m
     m_i = tl.zeros([BLOCK_M], dtype=tl.float32) - float("inf")
@@ -85,6 +88,7 @@ def _fwd_kernel(
         # -- load k and mask ----
         k = tl.load(k_ptrs + start_n * stride_kn)
         mask = tl.load(mask_ptrs + start_n)
+        drop = tl.load(dropout_ptrs + start_n)
         # -- compute qk ----
         qk = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)
         qk = tl.dot(q, k, trans_b=True)
@@ -99,6 +103,8 @@ def _fwd_kernel(
         alpha = tl.exp(m_i - m_i_new)
         beta = tl.exp(m_ij - m_i_new)
         l_i_new = alpha * l_i + beta * l_ij
+        if add_dropout:
+            p *= tl.where(drop != 0, drop / (1 - dropout_p), 0.0)
         # -- update output accumulator --
         # scale p
         p_scale = beta / l_i_new
@@ -134,7 +140,7 @@ def _fwd_kernel(
 
 class _attention(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, q, k, v, mask, sm_scale):
+    def forward(ctx, q, k, v, mask, sm_scale, dmodel_size, dropout=None, dropout_p=0.0):
         BLOCK = 128
         # shape constraints
         Lq, Lk = q.shape[-1], k.shape[-1]
@@ -150,15 +156,22 @@ class _attention(torch.autograd.Function):
         m = torch.empty(
             (q.shape[0] * q.shape[1], q.shape[2]), device=q.device, dtype=torch.float32
         )
-        debug = torch.ones((4, 4), device=q.device, dtype=torch.float32)
-        # breakpoint()
+
+        add_dropout = True
+
+        if dropout == None:
+            dropout = torch.zeros(mask.shape, device=q.device, dtype=torch.float32)
+            add_dropout = False
+
         _fwd_kernel[grid](
             q,
             k,
             v,
-            sm_scale,
             mask,
-            debug,
+            dropout,
+            sm_scale,
+            dropout_p,
+            add_dropout,
             tmp,
             L,
             m,
@@ -188,7 +201,7 @@ class _attention(torch.autograd.Function):
             q.shape[2],
             BLOCK_M=BLOCK,
             BLOCK_N=BLOCK,
-            BLOCK_DMODEL=32,
+            BLOCK_DMODEL=dmodel_size,
             num_warps=4,
             num_stages=1,
         )
@@ -196,5 +209,5 @@ class _attention(torch.autograd.Function):
         ctx.BLOCK = BLOCK
         ctx.grid = grid
         ctx.sm_scale = sm_scale
-        ctx.BLOCK_DMODEL = 32
+        ctx.BLOCK_DMODEL = dmodel_size
         return o
