@@ -392,8 +392,7 @@ class Triton_MHA(nn.Module):
             .clone()
         )
 
-        attention = _attention.apply
-        out = attention(q, k, v, mask, scale)
+        out = _attention.apply(q, k, v, mask, scale, dim_per_head)
         if out.isnan().any():
             print("IMPORTANT: found nan in output, program halted")
             breakpoint()
