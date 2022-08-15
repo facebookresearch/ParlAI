@@ -84,6 +84,14 @@ These tasks are used to train BB3's modules, and are hence adapted slightly, e.g
 
 ## <a id="code">Code</a>
 
+### BB3 3B Model: Training
+
+The following command demonstrates how the BB3 3B model was trained:
+
+```
+python -m parlai.scripts.multiprocessing_train -t projects.bb3.tasks.module_level_tasks:AlwaysSearchTeacher,projects.bb3.tasks.module_level_tasks:MaybeSearchTeacher,projects.bb3.tasks.module_level_tasks:MemoryDecisionTeacher,projects.bb3.tasks.module_level_tasks:SearchQueryGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:SearchKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:EntityKnowledgeGenerationTeacher,projects.bb3.tasks.module_level_tasks:SearchDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:EntityDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:MemoryDialogueGenerationTeacher,projects.bb3.tasks.module_level_tasks:VanillaDialogueGenerationTeacher -et projects.bb3.tasks:WoiSearchQueryTeacher,projects.bb3.tasks:MSCMemoryGeneratorTeacher,projects.bb3.tasks:MSCMemoryKnowledgePersOverlapTeacher,projects.bb3.tasks:Convai2MemoryKnowledgePersOverlapTeacher,projects.bb3.tasks:WoiSearchKnowledgeTeacher,projects.bb3.tasks:WowSearchKnowledgeTeacher,projects.bb3.tasks:Convai2EntityKnowledgeTeacher,projects.bb3.tasks:WowSearchDialogueTeacher,projects.bb3.tasks:WoiSearchDialogueTeacher,projects.bb3.tasks:EDEntityDialogueTeacher,projects.bb3.tasks:BSTEntityDialogueTeacher,projects.bb3.tasks:MSCMemoryDialogueFromPersOverlapTeacher,projects.bb3.tasks:Convai2MemoryDialogueFromPersOverlapTeacher,projects.bb3.tasks:FitsSearchDialogueTeacher,projects.bb3.tasks:SaferdialoguesVanillaDialogueTeacher,projects.bb3.tasks:GoogleSgdSearchDialogueTeacher,projects.bb3.tasks:LightVanillaDialogueTeacher -vstep 1000 -lstep 50 --batchsize 1 --init-opt arch/r2c2_base_3B --init-model zoo:seeker/r2c2_blenderbot_3B/model --model projects.seeker.agents.seeker:ComboFidGoldDocumentAgent --n-docs 5 --text-truncate 1024 --label-truncate 128 --truncate 1024 --fp16 True -lr 1e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adamw --save-after-valid True --warmup-updates 100 --update-freq 1 --gradient-clip 1.0 --skip-generation True --dropout 0.1 --attention-dropout 0.0 -vp 10 -vmt ppl -vmm min -vme 100000 --load-from-checkpoint true --ddp-backend zero2 --checkpoint-activations true --model-file /path/to/model/
+```
+
 ### BB3 3B Model: Download + Interact
 
 We provide the BB3 3B model in ParlAI's model zoo. You can interact with the model via the following:
