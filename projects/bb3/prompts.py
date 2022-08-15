@@ -47,8 +47,6 @@ LIGHT_SETTING_DESC = "Setting Description"
 LIGHT_PARTNER_NAME = f"{PARTNER_PREFIX} is"
 LIGHT_SELF_NAME = f"{SELF_PREFIX} is"
 
-# parlai_internal.projects.blenderbot3.tasks:WoiSearchDecisionJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:AlwaysSearchTeacher
 SEARCH_DECISION_STRING = f"""
 {PARTNER_PREFIX}: Who directed 2001: A Space Odyssey?
 {SEARCH_DECISION}: {SEARCH}
@@ -78,7 +76,6 @@ SEARCH_DECISION_STRING = f"""
 {SEARCH_DECISION}: {SEARCH}"""
 
 
-# parlai_internal.projects.blenderbot3.tasks:MSCMemoryDecisionJsonTeacher
 MEMORY_DECISION_STRING = f"""
 {PARTNER_PREFIX}: I started reading a new novel series. It's very much like agatha christie. I think I found something to keep me going.
 {MEMORY_DECISION}: {ACCESS_MEMORY}
@@ -108,7 +105,6 @@ MEMORY_DECISION_STRING = f"""
 {MEMORY_DECISION}: {ACCESS_MEMORY}"""
 
 
-# parlai_internal.projects.blenderbot3.tasks:WoiSearchQueryJsonTeacher
 SEARCH_QUERY_STRING = f"""
 {PARTNER_PREFIX}: My favorite song is Rock On By David Essex. Most people don't even know this song, but it is amazing and everyone should hear it.
 {SELF_PREFIX}: I'm not too familiar with David Essex's Rock On. Tell me something about the song.
@@ -140,7 +136,6 @@ SEARCH_QUERY_STRING = f"""
 {QUERY_GEN_PREFIX}: Tom Hanks movies"""
 
 
-# parlai_internal.projects.blenderbot3.tasks:MSCMemoryGeneratorJsonTeacher
 MEMORY_GENERATOR_STRING = f"""
 {SELF_PREFIX}: Hello, whats your favorite color? Mine is yellow.
 {PARTNER_PREFIX}: Good, thank you! Tell me a secret about your life.
@@ -169,7 +164,6 @@ MEMORY_GENERATOR_STRING = f"""
 {MEMORY_GEN_PREFIX}: {NO_MEMORY}"""
 
 
-# parlai_internal.projects.blenderbot3.tasks:MSCPersonaKnowledgeJsonTeacher
 MEMORY_KNOWLEDGE_STRING = f"""
 {PARTNER_MEMORY_PREFIX} I do not have any pets. I like all sports. I enjoy coaching volleyball and my volleyball team is my favorite team.
 {PARTNER_MEMORY_PREFIX} I enjoy doing crosswords. I enjoy hiking.
@@ -220,7 +214,6 @@ MEMORY_KNOWLEDGE_STRING = f"""
 {MEMORY_KNOWLEDGE_PREFIX}: {SELF_PREFIX} has read the black stallion."""
 
 
-# parlai_internal.projects.blenderbot3.tasks:Convai2KnowledgeJsonTeacher
 CONTEXTUAL_KNOWLEDGE_STRING = f"""
 {SELF_PREFIX}: I like to remodel homes, go hunting, and shoot a bow.
 {SELF_PREFIX}: My favorite holiday is halloween.
@@ -256,9 +249,6 @@ CONTEXTUAL_KNOWLEDGE_STRING = f"""
 {CONTEXTUAL_KNOWLEDGE_PREFIX}: weekends"""
 
 
-# parlai_internal.projects.blenderbot3.tasks:WoiKnowledgeJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:WowKnowledgeJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:NQOpenKnowledgeJsonTeacher
 SEARCH_KNOWLEDGE_STRING = f"""
 {EXTERNAL_KNOWLEDGE_PREFIX}: His Military Charity Work. This Is Us: Susan Kelechi Watson on How Beth Is Finding Her Identity Apart From Randall. Lego’s new Toy Story 4 tie-in sets unveiled. Sun, Feb 17 12:30 AM EST on AMC (277). Agent Zigzag. A Wilderness of Monkeys. Untitled  Battle of the Sexes  Project. Untitled Barry Manilow Project. Editors  Picks: Our Favorites From the Week of Nov. 11. 10 Paul Newman Facts You May Not Know. Top 25 Best Performances By A Leading Man. Talented & Hardworking Artists. How much of Tom Hanks s work have
 {EXTERNAL_KNOWLEDGE_PREFIX}: “Forrest Gump” opens, wins Tom Hanks a second Oscar. On this day in 1994, the movie Forrest Gump opens in U.S. theaters. A huge box-office success, the film starred Tom Hanks in the title role of Forrest, a good-hearted man with a low I.Q. who winds up at the center of key cultural and historical events of the second half of the 20th century.. Forrest Gump was based on a 1986 novel of the same name by Winston Groom, who (like his main character) grew up in Alabama and served in the Army during Vietnam.
@@ -283,9 +273,6 @@ SEARCH_KNOWLEDGE_STRING = f"""
 {SEARCH_KNOWLEDGE_PREFIX}: You cross the arctice circle in Norway at Saltfjellet"""
 
 
-# parlai_internal.projects.blenderbot3.tasks:MSCDialogueJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:Convai2DialogueJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:EDDialogueJsonTeacher
 CONTEXTUAL_DIALOGUE_STRING = f"""
 {SELF_PREFIX}: Hello. What are you doing? I am cooking, I love to cook!
 {PARTNER_PREFIX}: Hello, I am trying to fix my friends computer right now
@@ -330,8 +317,6 @@ CONTEXTUAL_DIALOGUE_STRING = f"""
 {CONTEXTUAL_KNOWLEDGE_PREFIX}: fan
 {SELF_PREFIX}: Yes, I'm aware, but i'm a much bigger hockey fan."""
 
-# parlai_internal.projects.blenderbot3.tasks:Convai2DialogueFromPersonaOverlapMAMJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:MSCDialogueFromPersonaOverlapMAMJsonTeacher
 MEMORY_DIALOGUE_STRING = f"""
 {PARTNER_PREFIX}: Hi. How are you doing today?
 {SELF_PREFIX}: Hi I am great just finishing up some homework how are you
@@ -386,9 +371,6 @@ MEMORY_DIALOGUE_STRING = f"""
 {SELF_PREFIX}: I have social anxiety so the idea of being around all those people is pretty frightening for me."""
 
 
-# parlai_internal.projects.blenderbot3.tasks:WoiDialogueJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:WowDialogueJsonTeacher
-# parlai_internal.projects.blenderbot3.tasks:MSMarcoDialogueJsonTea
 SEARCH_DIALOGUE_STRING = f"""
 {PARTNER_PREFIX}: My favorite music band is pink floyd; I like to listen to their albums on vinyl. I'm currently listening to the dark side of the moon, it is my favorite album.
 {SELF_PREFIX}: do you listen to the pink Floyd album animals?
@@ -456,7 +438,6 @@ VANILLA_DIALOGUE_STRING = f"""
 {PARTNER_PREFIX}: get to meet lot of people , but hectic job
 {SELF_PREFIX}: yea its def stressful . can get frustrating"""
 
-# Taken from parlai_internal.projects.blenderbot3.decoder_only_tasks:BSTStyleGroundingDialogueDecoderOnlyJsonTeacher
 GROUNDED_DIALOGUE_STRING = f"""
 {PARTNER_PREFIX}: Oh, I love lasagne. I make my own noodles as well as the sauce.
 {SELF_PREFIX}: Wow.  That's amazing.  I read where lasagne originated in Italy during the Middle Ages.

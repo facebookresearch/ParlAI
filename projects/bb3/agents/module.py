@@ -183,7 +183,7 @@ class Module(Enum):
         """
         Final prefix to put after constructing context for OPT.
         """
-        import parlai_internal.projects.blenderbot3.agents.prompts as PROMPT
+        import projects.bb3.prompts as PROMPT
 
         return {
             'sdm': PROMPT.SEARCH_DECISION,
@@ -207,14 +207,14 @@ class Module(Enum):
         return PROMPT.SHOTS[self]
 
     def opt_pre_context_tok(self):
-        import parlai_internal.projects.blenderbot3.agents.prompts as PROMPT
+        import projects.bb3.prompts as PROMPT
 
         if self.is_knowledge() and self is not Module.CONTEXTUAL_KNOWLEDGE:
             return PROMPT.PRE_CONTEXT_TOK
         return ''
 
     def opt_post_context_tok(self):
-        import parlai_internal.projects.blenderbot3.agents.prompts as PROMPT
+        import projects.bb3.prompts as PROMPT
 
         if self.is_dialogue() and self not in [
             Module.VANILLA_DIALOGUE,

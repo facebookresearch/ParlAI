@@ -182,7 +182,7 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
             self.scaler.loss_scale = state_dict['loss_scaler']
         self.optimizer.load_state_dict(state_dict)
 
-    def backward(self, loss, update_main_grads=False):
+    def backward(self, loss, update_main_grads=False, retain_graph=False):
         """
         Computes the sum of gradients of the given tensor w.r.t. graph leaves.
 
@@ -191,7 +191,7 @@ class SafeFP16Optimizer(torch.optim.Optimizer):
         """
         if self.scaler is not None:
             loss = loss * self.scaler.loss_scale
-        loss.backward()
+        loss.backward(retain_graph=retain_graph)
         self._needs_sync = True
         if update_main_grads:
             self.update_main_grads()
