@@ -43,7 +43,6 @@ class Parlai_MHA(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
-        pad: bool = False,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
@@ -67,19 +66,6 @@ class Parlai_MHA(nn.Module):
           key/value-multiplied tensor before softmax,
         )
         """
-
-        if pad:
-            _, old_query_len, _ = query.size()
-            next_seq_len = 128 * math.ceil(old_query_len / 128)
-            query = F.pad(
-                query,
-                pad=(0, 0, 0, next_seq_len - old_query_len),
-                mode='constant',
-                value=0,
-            )
-            mask = F.pad(
-                mask, pad=(0, next_seq_len - old_query_len), mode='constant', value=0
-            )
 
         batch_size, query_len, dim = query.size()
 
@@ -189,9 +175,6 @@ class Parlai_MHA(nn.Module):
             .view(batch_size, query_len, dim)
         )
 
-        if pad:
-            out = out[:, :old_query_len, :]
-
         return out, new_incr_state, dot_prod
 
 
@@ -212,6 +195,7 @@ class Triton_MHA(nn.Module):
 
         self.n_heads = n_heads
         self.dim = dim
+        self.dropout = dropout
 
     def forward(
         self,
@@ -221,7 +205,7 @@ class Triton_MHA(nn.Module):
         mask: torch.Tensor = None,
         incr_state: Optional[Dict[str, torch.Tensor]] = None,
         static_kv: bool = False,
-        pad: bool = False,
+        pad: bool = True,
         **kwargs,
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
@@ -246,17 +230,33 @@ class Triton_MHA(nn.Module):
         )
         """
 
-        if pad:
-            _, old_query_len, _ = query.size()
-            next_seq_len = 128 * math.ceil(old_query_len / 128)
-            query = F.pad(
-                query,
-                pad=(0, 0, 0, next_seq_len - old_query_len),
+        def pad(tensor):
+            _, old, _ = tensor.size()
+            return F.pad(
+                tensor,
+                pad=(0, 0, 0, 128 * math.ceil(old / 128) - old),
                 mode='constant',
                 value=0,
             )
+
+        def add_padding(query, key, value, mask):
+            _, old_query_len, _ = query.size()
+            query = pad(query)
+            if key != None:
+                key = pad(key)
+            if value != None:
+                value = pad(value)
             mask = F.pad(
-                mask, pad=(0, next_seq_len - old_query_len), mode='constant', value=0
+                mask,
+                pad=(0, 128 * math.ceil(old_query_len / 128) - old_query_len),
+                mode='constant',
+                value=0,
+            )
+            return query, key, value, mask, old_query_len
+
+        if pad:
+            query, key, value, mask, old_query_len = add_padding(
+                query, key, value, mask
             )
 
         batch_size, query_len, dim = query.size()
@@ -268,7 +268,6 @@ class Triton_MHA(nn.Module):
         n_heads = self.n_heads
         dim_per_head = dim // n_heads
         scale = 1.0 / math.sqrt(dim_per_head)
-        p = 0
 
         if key is None and value is None:
             # self attention
@@ -299,8 +298,15 @@ class Triton_MHA(nn.Module):
             .clone()
         )
 
+        dropout = None
+        if self.dropout != 0:
+            binomial = torch.distributions.binomial.Binomial(probs=1 - self.dropout)
+            dropout = binomial.sample(
+                (batch_size, n_heads, query_len, query_len)
+            ).cuda()
+
         attention = _attention.apply
-        out = attention(q, k, v, mask, scale)
+        out = attention(q, k, v, mask, scale, dim_per_head, dropout, self.dropout)
 
         if pad:
             query_len = old_query_len
@@ -319,7 +325,7 @@ class Triton_MHA(nn.Module):
 
 class TestTritonAttentionKernel(unittest.TestCase):
     @testing_utils.skipUnlessGPU
-    def test_triton_mha(self):
+    def test_self_attention(self):
         opt = Opt()
         Z, H, N_CTX, D_HEAD = 64, 16, 128, 32
         DIM = H * D_HEAD
@@ -346,7 +352,77 @@ class TestTritonAttentionKernel(unittest.TestCase):
         assert not tri_out.isnan().any(), "Triton output contains Nan."
         assert (
             tri_out - out
-        ).max() < 0.01, "Triton and Parlai output differs for more than 0.01."
+        ).abs().max() < 0.01, "Triton and Parlai output differs for more than 0.01."
+
+    def test_enc_dec_attention(self):
+        # ENCODER-DECODER: mask = torch.Size([64, 24, 24])
+        opt = Opt()
+        Z, H, N_CTX, D_HEAD = 64, 16, 24, 32
+        DIM = H * D_HEAD
+        dtype = torch.float16
+        torch.manual_seed(42)
+        query = (
+            torch.empty((Z, N_CTX, DIM), dtype=dtype, device="cuda")
+            .normal_(mean=0, std=0.5)
+            .requires_grad_()
+        )
+        key = (
+            torch.empty((Z, N_CTX, DIM), dtype=dtype, device="cuda")
+            .normal_(mean=0, std=0.5)
+            .requires_grad_()
+        )
+        value = (
+            torch.empty((Z, N_CTX, DIM), dtype=dtype, device="cuda")
+            .normal_(mean=0, std=0.5)
+            .requires_grad_()
+        )
+        # mask = torch.randint(0, 2, (Z, N_CTX, N_CTX), dtype=torch.bool, device="cuda")
+        mask = torch.ones(Z, N_CTX, dtype=torch.bool, device="cuda")
+        mask[:, -5:] = False
+        opt['n_heads'] = H
+        opt['embedding_size'] = DIM
+        parlai_mha = Parlai_MHA(opt)
+        triton_mha = Triton_MHA(opt)
+
+        # parlai
+        out, _, _ = parlai_mha(query, key, value, mask=mask, pad=False)
+
+        # triton
+        tri_out, _ = triton_mha(query, key, value, mask=mask, pad=True)
+
+        assert not tri_out.isnan().any(), "Triton output contains Nan."
+        assert (
+            tri_out - out
+        ).abs().max() < 0.01, "Triton and Parlai output differs for more than 0.01."
+
+    def test_self_attention_dropout(self):
+        opt = Opt()
+        Z, H, N_CTX, D_HEAD = 64, 16, 128, 32
+        DIM = H * D_HEAD
+        dtype = torch.float16
+        torch.manual_seed(42)
+        query = (
+            torch.empty((Z, N_CTX, DIM), dtype=dtype, device="cuda")
+            .normal_(mean=0, std=0.5)
+            .requires_grad_()
+        )
+        mask = torch.ones(Z, N_CTX, dtype=torch.bool, device="cuda")
+        mask[:, -5:] = False
+        opt['n_heads'] = H
+        opt['embedding_size'] = DIM
+        parlai_mha = Parlai_MHA(opt, dropout=0.5)
+        triton_mha = Triton_MHA(opt, dropout=0.5)
+
+        # parlai
+        out, _, _ = parlai_mha(query, mask=mask, pad=False)
+
+        # triton
+        tri_out, _ = triton_mha(query, mask=mask, pad=False)
+
+        assert not tri_out.isnan().any(), "Triton output contains Nan."
+        assert (
+            tri_out - out
+        ).abs().max() < 0.01, "Triton and Parlai output differs for more than 0.01."
 
 
 # max head we can do right now is 42
