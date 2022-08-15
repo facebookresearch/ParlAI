@@ -75,6 +75,23 @@ class TransformerEncoderLayer(nn.Module):
                 dim=embedding_size,
                 dropout=attention_dropout,  # --attention-dropout
             )
+
+        # -------- for comparing parlai and triton results -----------
+        # self.triton_mha = Triton_MHA(  # type: ignore
+        #     opt=self.opt,
+        #     n_heads=n_heads,
+        #     dim=embedding_size,
+        #     dropout=attention_dropout,  # --attention-dropout
+        # )
+        # self.triton_mha.q_lin.weight = self.attention.q_lin.weight
+        # self.triton_mha.k_lin.weight = self.attention.k_lin.weight
+        # self.triton_mha.v_lin.weight = self.attention.v_lin.weight
+        # self.triton_mha.out_lin.weight = self.attention.out_lin.weight
+        # self.triton_mha.q_lin.bias = self.attention.q_lin.bias
+        # self.triton_mha.k_lin.bias = self.attention.k_lin.bias
+        # self.triton_mha.v_lin.bias = self.attention.v_lin.bias
+        # self.triton_mha.out_lin.bias = self.attention.out_lin.bias
+
         self.norm1 = torch.nn.LayerNorm(embedding_size, eps=LAYER_NORM_EPS)
         self.ffn = self.swappables.feedforward(  # type: ignore
             opt=self.opt,
@@ -97,6 +114,14 @@ class TransformerEncoderLayer(nn.Module):
             tensor = self.norm1(tensor)
         attended_tensor = self.attention(tensor, mask=mask)[0]
         tensor = residual + self.dropout(attended_tensor)
+
+        # -------- for comparing parlai and triton results -----------
+        # triton_attended_tensor = self.triton_mha(tensor.clone(), mask=mask)[0]
+        # diff = (attended_tensor - triton_attended_tensor).abs().sum(dim=-1)
+        # with open('diff.txt', 'a') as file:  # Use file to refer to the file object
+        #         file.write(str(diff.mean()))
+        #         file.write('\n')
+
         if self.variant == 'aiayn' or self.variant == 'xlm' or self.variant == 'bart':
             tensor = self.norm1(tensor)
         residual = tensor
