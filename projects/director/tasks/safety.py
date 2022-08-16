@@ -23,6 +23,7 @@ from parlai.core.mutators import (
 )
 import parlai.tasks.bot_adversarial_dialogue.agents as bad
 import parlai.tasks.dialogue_safety.agents as bibifi
+import parlai.utils.logging as logging
 
 from parlai.core.metrics import AverageMetric
 
@@ -226,30 +227,29 @@ class ClassifierMetricTeacher(bibifi.DefaultTeacher):
             self.data = self.data[: opt['limit_classifier_examples_at']]
         self.include_label_cand_only = opt['include_label_cand_only']
         self.truncate_prediction_at = opt['truncate_prediction_at']
-        if opt.get('eval_classifier_model_file'):
-
-            if not shared:
-                self.classifier = create_agent_from_model_file(
-                    opt['eval_classifier_model_file'],
-                    opt_overrides={
-                        'datatype': 'valid',
-                        'no_cuda': not opt['eval_classifier_use_cuda'],
-                    },
-                )
-                self.classifier.opt.log()
-            else:
-                print('Load the classifier from shared')
-                self.classifier = create_agent_from_shared(shared['classifier'])
-            self.context = []
-            DEFAULT_DELIM = '\n'
-            self.delimiter = opt.get('delimiter', DEFAULT_DELIM)
+        assert (
+            'eval_classifier_model_file' in opt
+            and opt['eval_classifier_model_file'] is not None
+        ), 'You must provide --eval-classifier-model-file for ClassifierMetricTeacher.'
+        if not shared:
+            self.classifier = create_agent_from_model_file(
+                opt['eval_classifier_model_file'],
+                opt_overrides={
+                    'datatype': 'valid',
+                    'no_cuda': not opt['eval_classifier_use_cuda'],
+                },
+            )
+            self.classifier.opt.log()
         else:
-            self.classifier = None
+            logging.info('Load the classifier from shared')
+            self.classifier = create_agent_from_shared(shared['classifier'])
+        self.context = []
+        DEFAULT_DELIM = '\n'
+        self.delimiter = opt.get('delimiter', DEFAULT_DELIM)
 
     def share(self):
         shared = super().share()
-        if self.classifier:
-            shared['classifier'] = self.classifier.share()
+        shared['classifier'] = self.classifier.share()
         return shared
 
     def predict(self, context: str) -> Message:
