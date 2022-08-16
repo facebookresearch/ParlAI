@@ -315,6 +315,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     text=message,
                     task_data=task_data,
                 )
+            print('NUM MESSAGES AFTER ROUND:')
+            print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
 
         # Have agents fill out the form
         for agent_idx, agent_id in enumerate(agent_ids):
@@ -328,17 +330,23 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 },
             )
             self.await_channel_requests()
+        print('NUM MESSAGES AFTER FORM FILL:')
+        print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
 
         # Submit the HIT
         for agent_id in agent_ids:
             self.server.submit_mock_unit(agent_id, {'final_data': {}})
             self.await_channel_requests()
+        print('NUM MESSAGES AFTER SUBMISSION:')
+        print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
 
         # # Check that the inputs and outputs are as expected
 
         # Get and filter actual messages
         time.sleep(self.message_sleep_time)
         actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+        print('AGENT STATE:')
+        print(self.db.find_agents()[0].state)
         filtered_actual_states = []
         for actual_state in actual_states:
             print('ACTUAL STATE MESSAGES, 20:')

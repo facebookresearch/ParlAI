@@ -38,7 +38,7 @@ FORM_TASK_DATA = ({"final_rating": 0},)
 
 MODEL_IMAGE_CHAT_CONFIG_NAME = "example_image_chat"
 
-try:
+if True:
 
     import parlai.crowdsourcing.tasks.model_chat.worlds_image_chat as world_module
     from parlai.crowdsourcing.tasks.model_chat.run import TASK_DIRECTORY
@@ -139,5 +139,6 @@ try:
                     data_regression=data_regression,
                 )
 
-except ImportError:
-    pass
+
+# except ImportError:
+#     pass
