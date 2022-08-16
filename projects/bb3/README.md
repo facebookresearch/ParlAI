@@ -86,6 +86,56 @@ These tasks are used to train BB3's modules, and are hence adapted slightly, e.g
 
 We describe below the top-level overview of how to download + interact with our models. For more detailed information, [visit this page](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3/agents/README.md).
 
+### BB3 3B Model: Training
+
+The following command demonstrates how the BB3 3B model was trained:
+
+```
+TASKS="projects.bb3.tasks.module_level_tasks:AlwaysSearchTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:MaybeSearchTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:MemoryDecisionTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:SearchQueryGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:MemoryGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:MemoryKnowledgeGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:SearchKnowledgeGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:EntityKnowledgeGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:SearchDialogueGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:EntityDialogueGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:MemoryDialogueGenerationTeacher"
+TASKS+=",projects.bb3.tasks.module_level_tasks:VanillaDialogueGenerationTeacher"
+
+EVAL_TASKS="projects.bb3.tasks:WoiSearchQueryTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:MSCMemoryGeneratorTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:MSCMemoryKnowledgePersOverlapTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:Convai2MemoryKnowledgePersOverlapTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:WoiSearchKnowledgeTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:WowSearchKnowledgeTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:Convai2EntityKnowledgeTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:WowSearchDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:WoiSearchDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:EDEntityDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:BSTEntityDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:BSTEntityDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:MSCMemoryDialogueFromPersOverlapTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:Convai2MemoryDialogueFromPersOverlapTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:FitsSearchDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:SaferdialoguesVanillaDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:GoogleSgdSearchDialogueTeacher"
+EVAL_TASKS+=",projects.bb3.tasks:LightVanillaDialogueTeacher"
+
+
+python -m parlai.scripts.multiprocessing_train \
+-t $TASKS -et $EVAL_TASKS \
+-vstep 1000 -lstep 50 --batchsize 1 --init-opt arch/r2c2_base_3B \
+--init-model zoo:seeker/r2c2_blenderbot_3B/model \
+--model projects.seeker.agents.seeker:ComboFidGoldDocumentAgent \
+--n-docs 5 --text-truncate 1024 --label-truncate 128 --truncate 1024 --fp16 True \
+-lr 1e-06 --lr-scheduler reduceonplateau --lr-scheduler-patience 3 --optimizer adamw \
+--save-after-valid True --warmup-updates 100 --update-freq 1 --gradient-clip 1.0 --skip-generation True \
+--dropout 0.1 --attention-dropout 0.0 -vp 10 -vmt ppl -vmm min -vme 100000 --load-from-checkpoint true \
+--ddp-backend zero2 --checkpoint-activations true --model-file /path/to/model/
+```
+
 ### BB3 3B Model: Download + Interact
 
 We provide the BB3 3B model in ParlAI's model zoo. You can interact with the model via the following:
@@ -159,5 +209,3 @@ See the [tech report](https://arxiv.org/abs/2208.03188) for full details and eva
 ## <a id="interaction-data">Sharing interaction data & model improvements: _coming next!_</a>
 
 We are committed to openly sharing participating de-identified organic conversational data collected from the live demo as well as model snapshots **in the future**, as soon as we have collected enough data and assessed quality, safety and other issues. The overall goal of this project is to help the community build ever-improving open AI systems that can interact with people in safer and more helpful ways.
-
-
