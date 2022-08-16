@@ -247,7 +247,7 @@ Knowledge sentence(s) on which to ground a dialogue response.
 
 ###  `CRM`: Contextual Response Module
 
-Given an extracted entity from the context, generate a dialogue response. Looks at the whole dialogue context. Default inference uses beam search in the 3B model and factual nucleus decoding in the 30B/175B models.
+Given an extracted entity from the context, generate a dialogue response. Looks at the whole dialogue context. Default inference uses beam search in the 3B model and [factual nucleus decoding](https://arxiv.org/abs/2206.04624) in the 30B/175B models.
 
 #### BB3 3B
 
@@ -282,7 +282,7 @@ A dialogue response conditioned on a specific phrase in the context.
 
 ###  `MRM`: Memory Response Module
 
-Given a memory from the long-term memory store, generate a dialogue response. Looks at the whole dialogue context. Default inference uses beam search in the 3B model and factual nucleus in the 30B/175B models.
+Given a memory from the long-term memory store, generate a dialogue response. Looks at the whole dialogue context. Default inference uses beam search in the 3B model and [factual nucleus decoding](https://arxiv.org/abs/2206.04624) in the 30B/175B models.
 
 #### BB3 3B
 
@@ -318,7 +318,7 @@ A dialogue response conditioned on a chosen memory from the long-term memory sto
 
 ###  `SRM`: Search Response Module
 
-Given a knowledge sentence, generate a dialogue response. Looks at the whole dialogue context, as well as retrieved documents from the internet. Default inference uses beam search in the 3B model and factual nucleus decoding in the 30B/175B models.
+Given a knowledge sentence, generate a dialogue response. Looks at the whole dialogue context, as well as retrieved documents from the internet. Default inference uses beam search in the 3B model and [factual nucleus decoding](https://arxiv.org/abs/2206.04624) in the 30B/175B models.
 
 #### BB3 3B
 
@@ -350,7 +350,7 @@ A dialogue response conditioned on a knowledge sentence.
 
 ###  `VRM`: Vanilla Response Module
 
-Generate a dialogue response. This response is *only* conditioned on the dialogue context. Default inference uses beam search in the 3B model and factual nucleus decoding in the 30B/175B models.
+Generate a dialogue response. This response is *only* conditioned on the dialogue context. Default inference uses beam search in the 3B model and [factual nucleus decoding](https://arxiv.org/abs/2206.04624) in the 30B/175B models.
 
 #### BB3 3B
 
