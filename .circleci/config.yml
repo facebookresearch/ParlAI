@@ -423,9 +423,7 @@ workflows:
       - long_gpu_tests:
           requires:
             - unittests_38
-      - crowdsourcing_tests:
-          requires:
-            - unittests_38
+      - crowdsourcing_tests
       - teacher_tests:
           requires:
             - unittests_38
