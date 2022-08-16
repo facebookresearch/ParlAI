@@ -62,7 +62,7 @@ try:
             # All code after this will be run upon teardown
             self._teardown()
 
-        @testing_utils.retry(ntries=3)
+        # @testing_utils.retry(ntries=3)
         def test_base_task(
             self, setup_teardown, data_regression: DataRegressionFixture
         ):
