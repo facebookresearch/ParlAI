@@ -30,8 +30,6 @@ from parlai.agents.fid.fid import (
 from parlai.agents.rag.args import setup_rag_args
 from parlai.agents.rag.retrievers import Document
 from parlai.core.agents import Agent, create_agent_from_shared, create_agent
-from parlai.core.build_data import modelzoo_path
-from parlai.core.loader import load_agent_module
 from parlai.core.message import Message
 from parlai.core.mutators import MessageMutator, Mutator
 from parlai.core.params import ParlaiParser
@@ -52,6 +50,7 @@ from projects.seeker.utils import (
     DO_SEARCH,
     DO_NOT_SEARCH,
 )
+from projects.seeker.agents.modular_agent import ModularAgentMixin
 
 
 class ComboFidAgent(FidAgent):
@@ -81,6 +80,12 @@ class ComboFidAgent(FidAgent):
             default=False,
             help='Whether to make model act output fully serializable.',
         )
+        combo_fid.add_argument(
+            '--force-skip-retrieval',
+            type='bool',
+            default=False,
+            help='If True, we force skip retrieval on any/all incoming examples',
+        )
 
     def build_model(self) -> ComboFidModel:
         """
@@ -107,9 +112,12 @@ class ComboFidAgent(FidAgent):
         batch = super().batchify(obs_batch, sort)
         valid_exs = [ex for ex in obs_batch if self.is_valid(ex)]
         if valid_exs:
-            skip_retrieval = [
-                ex.get(self.opt['skip_retrieval_key'], False) for ex in valid_exs
-            ]
+            if self.opt.get('force_skip_retrieval', False):
+                skip_retrieval = [True] * len(valid_exs)
+            else:
+                skip_retrieval = [
+                    ex.get(self.opt['skip_retrieval_key'], False) for ex in valid_exs
+                ]
             batch.skip_retrieval_vec = torch.BoolTensor(skip_retrieval)
             if any(ex.get('prior_knowledge_responses') for ex in valid_exs):
                 vecs, _lens = self._pad_tensor(
@@ -164,7 +172,7 @@ class ComboFidGoldDocumentAgent(ComboFidAgent, WizIntGoldDocRetrieverFiDAgent):
     pass
 
 
-class SeekerAgent(Agent):
+class SeekerAgent(ModularAgentMixin):
     """
     SeeKeR Agent.
 
@@ -448,15 +456,7 @@ class SeekerAgent(Agent):
         :param opt_key:
             which sub agent to create with the shared model.
         """
-        opt = self.opts[opt_key]
-        opt.update(opt['override'])
-        if 'model' in opt['override']:
-            model_class = load_agent_module(opt['override']['model'])
-        else:
-            model_class = type(self.knowledge_agent)
-        krm_shared = self.knowledge_agent.share()
-        krm_shared['opt'] = opt
-        return model_class(opt, krm_shared)
+        return super().init_shared_model(self.opts[opt_key], self.knowledge_agent)
 
     def _construct_subagent_opts(self, opt: Opt):
         """
@@ -518,29 +518,12 @@ class SeekerAgent(Agent):
         :param general_override_args:
             args specified for all agents
         """
-        if not filename.endswith('.opt'):
-            filename += '.opt'
-        opt = Opt.load(modelzoo_path(self.opt['datapath'], filename))
-        opt['override'] = {}
-        blocklist_general = ['model', 'model_file', 'init_model']
-        general_override_args['skip_generation'] = False
-
-        # Remove the prefix for the model for the specific override args.
-        specific_override_args = {
-            '_'.join(k.split('_')[1:]): v for k, v in specific_override_args.items()
-        }
-
-        override_args = {**general_override_args, **specific_override_args}
-
-        for k, v in override_args.items():
-            if k not in blocklist_general and k in opt:
-                logging.warning(f'Overriding {k} to {v} (old val: {opt[k]})')
-                opt['override'][k] = v
-            elif k in specific_override_args:
-                logging.warning(f'Key {k} not originally in opt, setting to {v}')
-                opt['override'][k] = v
-
-        return opt
+        return super().get_subagent_opt(
+            self.opt['datapath'],
+            filename,
+            specific_override_args,
+            general_override_args,
+        )
 
     def share(self):
         shared = super().share()
@@ -563,7 +546,9 @@ class SeekerAgent(Agent):
         for key in ['label_candidates', 'knowledge']:
             # Delete unnecessarily large keys
             observation.pop(key, '')
-        observation['knowledge_response'] = observation.get('checked_sentence', '')
+        observation.force_set(
+            'knowledge_response', observation.get('checked_sentence', '')
+        )
 
         raw_observation = copy.deepcopy(observation)
         # This part is *specifically* for document chunking.
@@ -674,36 +659,14 @@ class SeekerAgent(Agent):
         :return batch_reply:
             return the batch reply from the search query agent
         """
-        batch_reply_sqm = [{} for _ in range(len(observations))]
-        if self.search_query_agent and search_indices:
-            batch_replies_with_search = self.search_query_agent.batch_act(
-                [
-                    o
-                    for i, o in enumerate(
-                        [o['search_query_agent'] for o in observations]
-                    )
-                    if i in search_indices
-                ]
-            )
-            for i, reply in zip(search_indices, batch_replies_with_search):
-                batch_reply_sqm[i] = reply
-            search_queries = [o.get('text', '') for o in batch_reply_sqm]
-            if self.inject_query_string:
-                for i in range(len(search_queries)):
-                    if search_queries[i]:
-                        search_queries[i] = ' '.join(
-                            [search_queries[i], self.inject_query_string]
-                        )
-            logging.debug(f"Search Queries: {search_queries}")
-            self.knowledge_agent.model_api.set_search_queries(search_queries)
-        else:
-            try:
-                self.knowledge_agent.model_api.set_search_queries([])
-            except AttributeError:
-                # Gold Documents, most likely
-                pass
-
-        return batch_reply_sqm
+        return super().batch_act_search_query_generation(
+            observations,
+            [o['search_query_agent'] for o in observations],
+            search_indices,
+            self.search_query_agent,
+            self.knowledge_agent,
+            self.inject_query_string,
+        )
 
     def batch_act_krm(
         self,

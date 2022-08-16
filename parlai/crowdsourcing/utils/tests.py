@@ -260,7 +260,6 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         """
         Given an agent state, test that it is as expected.
         """
-        del state['times']  # Delete variable timestamps
         data_regression.check(state)
 
 
@@ -398,6 +397,16 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         self.await_channel_requests()
 
 
+def collapse_whitespace(in_string: str):
+    """
+    Helper function to remove extra whitespace that may make table outputs direct checks
+    fail.
+    """
+    while "  " in in_string:
+        in_string = in_string.replace("  ", " ")
+    return in_string
+
+
 def check_stdout(actual_stdout: str, expected_stdout_path: str):
     """
     Check that actual and expected stdouts match.
@@ -414,7 +423,10 @@ def check_stdout(actual_stdout: str, expected_stdout_path: str):
     with open(expected_stdout_path) as f:
         expected_stdout = f.read()
     for expected_line in expected_stdout.split('\n'):
-        if not any(expected_line in actual_line for actual_line in actual_stdout_lines):
+        if not any(
+            collapse_whitespace(expected_line) in collapse_whitespace(actual_line)
+            for actual_line in actual_stdout_lines
+        ):
             raise ValueError(
                 f'\n\tThe following line:\n\n{expected_line}\n\n\twas not found '
                 f'in the actual stdout:\n\n{actual_stdout}'

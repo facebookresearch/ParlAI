@@ -147,9 +147,8 @@ commands:
             command: |
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v1.0.1 -b stable
-              pip install -r requirements.txt
-              python setup.py develop
+              cd Mephisto; git checkout v1.0.3 -b stable
+              pip install -e .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
 
@@ -208,26 +207,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220615-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220805-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220615-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220805-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220615-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220805-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220615-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220805-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -244,12 +243,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220615-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220805-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220615-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220805-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"

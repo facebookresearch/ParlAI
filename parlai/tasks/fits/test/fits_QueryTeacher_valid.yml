@@ -1,0 +1,43 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - Who will build a hyper loop train
+    id: fits_query_None
+    text: 'What is a hyper loop, can you tell me who will ride them? Where will the
+      hyper loops go to and come from?
+
+      It''s a train that goes from one place to another in a tube. The current plans
+      call for one hyperloop in stockdale california.
+
+      How many people can ride on a hyper loop train?
+
+      I''m not sure, but I''m sure it''s a lot of fun.
+
+      Are there any planned hyper loop trains?'
+- - episode_done: true
+    eval_labels:
+    - Fescue grass cut height
+    id: fits_query_None
+    text: 'What height should I set my mower to cut grass?
+
+      It depends on the type of grass you have. If you have bermuda grass, it should
+      be at least 2 inches high.
+
+      I have a fescue lawn.'
+- - episode_done: true
+    eval_labels:
+    - List of administrative districts in paris
+    id: fits_query_None
+    text: How is the city of paris divided administratively?
+- - episode_done: true
+    eval_labels:
+    - Product to break down plastic quickly
+    id: fits_query_None
+    text: What is the fastest way to breakdown plastic?
+- - episode_done: true
+    eval_labels:
+    - Time it takes for plastic to break down
+    id: fits_query_None
+    text: Hi chatbot, why don't plastics break down in a short amount of time?
+num_episodes: 5592
+num_examples: 19868

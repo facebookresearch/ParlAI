@@ -166,13 +166,21 @@ class DirectorAgent(TransformerGeneratorAgent):
             '--train-gamma',
             type=float,
             default=0.5,
-            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and using \alpha (hopefully <1) to weight classifier.",
+            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and "
+            "using \alpha (hopefully <1) to weight classifier.",
         )
         group.add_argument(
             '--infer-gamma',
             type=float,
             default=None,
-            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and using \alpha (hopefully <1) to weight classifier.",
+            help="Implementing Sainaa's suggestion of keeping generator weight fixed (to 1) and "
+            "using \alpha (hopefully <1) to weight classifier.",
+        )
+        group.add_argument(
+            '--train-generator-with-pos-feedback-examples',
+            type=bool,
+            default=False,
+            help='Train the generation head with the positive examples from the feedback data.',
         )
         return parser
 
@@ -223,6 +231,7 @@ class DirectorAgent(TransformerGeneratorAgent):
         observation = super().observe(observation)
         if 'is_ltr' not in observation:
             observation['is_ltr'] = False
+            observation['train_generator'] = True
             observation['classifier_label'] = 'none'
             observation['classifier_label_idx'] = -1
             return observation
@@ -230,8 +239,12 @@ class DirectorAgent(TransformerGeneratorAgent):
         classifier_label = observation['classifier_label']
         if classifier_label == 'pos':
             observation['classifier_label_idx'] = 1
+            observation['train_generator'] = self.opt[
+                'train_generator_with_pos_feedback_examples'
+            ]
         elif classifier_label == 'neg':
             observation['classifier_label_idx'] = 0
+            observation['train_generator'] = False
         return observation
 
     def batchify(self, obs_batch, sort=False):
@@ -253,6 +266,9 @@ class DirectorAgent(TransformerGeneratorAgent):
         batch.is_ltr = torch.tensor(
             [[obs_batch[i].get('is_ltr', False)] for i in batch.valid_indices]
         )
+        batch.train_generator = torch.tensor(
+            [[obs_batch[i].get('train_generator', False)] for i in batch.valid_indices]
+        )
         return batch
 
     def _reshape_to_record_metrics(self, batch, losses, num_target_tokens, indices):
@@ -262,7 +278,8 @@ class DirectorAgent(TransformerGeneratorAgent):
         batch resulting in losses and num_target_tokens vectors that are smaller than
         the.
 
-        This method reshapes the losses and num_target_tokens vectors back to the batch size. This is needed to record local metrics as the metrics need to be of batch size.
+        This method reshapes the losses and num_target_tokens vectors back to the batch size.
+        This is needed to record local metrics as the metrics need to be of batch size.
 
         Args:
             batch: batch being processed in this iteration.
@@ -498,7 +515,7 @@ class DirectorAgent(TransformerGeneratorAgent):
         generator_losses = torch.zeros((bsz,), device=device)
         num_target_tokens = torch.zeros((bsz,), device=device, dtype=torch.long)
 
-        generation_idxs = torch.logical_not(batch.is_ltr[:, 0])
+        generation_idxs = batch.train_generator[:, 0]
         self.record_local_metric(
             'pct_generator_exs', AverageMetric.many(generation_idxs)
         )

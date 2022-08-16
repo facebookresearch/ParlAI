@@ -4,7 +4,21 @@ Here we list projects undertaken in the ParlAI framework that are shared publicl
 
 This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents), [tasks](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/main/parlai/zoo) for what else is in ParlAI.
 
-## Generative Models
+## BlenderBot (Putting Everything Together)
+
+- **BlenderBot 3** [[project]](http://parl.ai/projects/bb3).
+  _A 175B-parameter, publicly available chatbot that improves its skills & safety over time_
+
+- **BlenderBot 2** [[project]](http://parl.ai/projects/blenderbot2).
+  _Version 2 of our BlenderBot model with Internet search and long-term memory._
+
+- **BlenderBot 1 (Recipes for open-domain chatbots)** [[project]](https://parl.ai/projects/recipes).
+  _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
+
+
+## Generative Models & Architectures 
+
+- **Director** [[project]](https://parl.ai/projects/director/) _New architecture/method for training language models with positive and negative examples._
 
 - **Maintaining Identity** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/light_whoami/) _State-of-the-art dialogue models cannot maintain identity -- we study measurements & methods for this open problem._
 
@@ -21,16 +35,45 @@ This directory also contains subfolders for some of the projects which are house
 - **Retrieve and Refine** [[paper]](https://arxiv.org/abs/1808.04776).
   _Models for improved chitchat ability by combining retrieval with generative refinement._
 
-- **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
-  _Analysis of the performance of search in generative models for chitchat tasks._
-
-
-## Retrieval Models
 - **Poly-Encoders** [[project]](https://parl.ai/projects/polyencoder/) [[paper]](https://arxiv.org/abs/1905.01969).
   _State-of-the-art Transformer architectures + pretraining for dialogue retrieval._
 
+- **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
+  _Analysis of the performance of search in generative models for chitchat tasks._
+  
+## <a id="well-behaved">Well-Behaved</a> / Safety
 
-## Interactive Learning
+- **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
+  _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
+
+- **Safety for E2E Conversational AI workshops** _We have helped organize workshops in [2020](https://emdinan1.medium.com/a-recap-of-the-first-workshop-on-safety-for-conversational-ai-98201d257530) and [2021](https://sites.google.com/view/safety4convai/home) on Safety in Conversational AI._
+  
+- **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
+  _Benchmarks for evaluating the safety of English-language dialogue models_
+
+- **Recipes for Safety in Open-Domain Chatbots** [[project]](https://parl.ai/projects/safety_recipes/) [[paper]](https://arxiv.org/abs/2010.07079).
+  _Methods for improving the safety of open-domain chatbots._
+
+- **Build-It Break-It Fix-It for Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
+  _Task and method for improving the detection of offensive language in the context of dialogue._
+
+- **Multi-Dimensional Gender Bias Classification** [[project]](https://parl.ai/projects/md_gender/) [[paper]](https://arxiv.org/abs/2005.00614)
+  _Training fine-grained gender bias classifiers to identify gender bias in text._
+
+- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/) [[paper]](https://arxiv.org/abs/1911.03842).
+  _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
+
+- **Reducing conversational agents' overconfidence through linguistic calibration** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/metacognition) [[paper]](https://arxiv.org/abs/2012.14983).
+  _Analysis and methods for relating and correcting linguistice confidence and correctness in dialogue generation, using closed-book QA as a testbed._
+
+  
+## Interactive & Continual Learning
+
+- **Learning New Skills after Deployment** [[project]](http://parl.ai/projects/fits).
+  _Shows how to learn from Feedback for Interactive Talk & Search (FITS) + new dataset_
+
+- **Finding the Helpers and Ignoring the Trolls** [[project]](http://parl.ai/projects/trollhunting).
+  _Algorithms for learning from a mixture of adversarial and non-adversarial organic users_
 
 - **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
   _How an agent can learn from dialogue after deployment by imitating and asking for feedback._
@@ -41,17 +84,11 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Open-domain Dialogue
 
-- **BlenderBot 2.0** [[project]](http://parl.ai/projects/blenderbot2).
-  _Version 2 of our BlenderBot model with Internet search and long-term memory._
-
 - **Long-Term Open-Domain Conversation** [[project]](http://parl.ai/projects/msc) [[paper]](https://arxiv.org/abs/2107.07567).
   _Multi-session conversation task and memory-based models for long-form chat._
 
 - **Addressing Contradictions in Dialogue Modeling** [[project]](https://parl.ai/projects/contradiction).
   _A new task for contradiction detection and its use for non-contradicting generation._
-
-- **Recipes for open-domain chatbots** [[project]](https://parl.ai/projects/recipes).
-  _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
 
 - **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
   _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Dialogues and Wizard of Wikipedia elements._
@@ -70,30 +107,6 @@ _Competition on dialogue chitchat based on the PersonaChat task._
 
 - **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/personachat).
 _Task & models for chitchat with a given persona._
-
-
-## Well-Behaved
-
-- **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
-  _Task and method for teaching bots to react gracefully to feedbacks when safety failures happen_
-
-- **Anticipating Safety Issues in E2E Conversational AI** [[project]](https://parl.ai/projects/safety_bench/) [[paper]](https://arxiv.org/abs/2107.03451).
-  _Benchmarks for evaluating the safety of English-language dialogue models_
-
-- **Recipes for Safety in Open-Domain Chatbots** [[project]](https://parl.ai/projects/safety_recipes/) [[paper]](https://arxiv.org/abs/2010.07079).
-  _Methods for improving the safety of open-domain chatbots._
-
-- **Build-It Break-It Fix-It for Dialogue Safety** [[project]](https://parl.ai/projects/dialogue_safety/) [[paper]](https://arxiv.org/abs/1908.06083).
-  _Task and method for improving the detection of offensive language in the context of dialogue._
-
-- **Multi-Dimensional Gender Bias Classification** [[project]](https://parl.ai/projects/md_gender/) [[paper]](https://arxiv.org/abs/2005.00614)
-  _Training fine-grained gender bias classifiers to identify gender bias in text._
-
-- **Mitigating Genderation Bias** [[project]](https://parl.ai/projects/genderation_bias/) [[paper]](https://arxiv.org/abs/1911.03842).
-  _Analysis and methods for mitigating gender bias in dialogue generation, using LIGHT as a testbed._
-
-- **Reducing conversational agents' overconfidence through linguistic calibration** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/metacognition) [[paper]](https://arxiv.org/abs/2012.14983).
-  _Analysis and methods for relating and correcting linguistice confidence and correctness in dialogue generation, using closed-book QA as a testbed._
 
 
 ## Knowledge Grounded
@@ -146,8 +159,9 @@ _QA model for answering questions by retrieving and reading knowledge._
 
 ## Evaluation
 
-- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
-_ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method._
-
-- **Human Evaluation Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
+- **Human Evaluation Methods Comparison** [[project]](https://parl.ai/projects/humaneval) [[paper]](https://arxiv.org/abs/2201.04723).
 _Compares how well different human crowdworker evaluation techniques can detect relative performance differences among dialogue models._
+
+- **ACUTE-Eval** [[parlai task]](https://github.com/facebookresearch/ParlAI/tree/main/parlai/crowdsourcing/tasks/acute_eval) [[paper]](https://arxiv.org/abs/1909.03087).
+_ACUTE Eval is a sensitive human evaluation method for dialogue which evaluates whole conversations in a pair-wise fashion, and is our recommended method in many cases._
+
