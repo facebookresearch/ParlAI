@@ -336,6 +336,9 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
 
     def _remove_non_deterministic_keys(self, actual_state: dict) -> dict:
 
+        print('ACTUAL STATE MESSAGES, 50:')
+        print(actual_state['outputs']['messages'])
+
         actual_state = super()._remove_non_deterministic_keys(actual_state)
 
         for message in actual_state['outputs']['messages']:
@@ -362,6 +365,8 @@ class AbstractModelChatTest(AbstractParlAIChatTest):
 
         # TODO: in `self._check_output_key()`, there is other logic for ignoring
         #  keys with non-deterministic values. Consolidate all of that logic here!
+        print('ACTUAL STATE MESSAGES, 100:')
+        print(actual_state['outputs']['messages'])
         custom_data = self._get_custom_data(actual_state)
         # Delete keys that will change depending on when/where the test is run
         for key in ['model_file']:

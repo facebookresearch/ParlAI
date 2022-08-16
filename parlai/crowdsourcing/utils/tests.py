@@ -341,6 +341,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
         filtered_actual_states = []
         for actual_state in actual_states:
+            print('ACTUAL STATE MESSAGES, 20:')
+            print(actual_state['outputs']['messages'])
             filtered_actual_states.append(self._filter_agent_state_data(actual_state))
 
         # we save one yml file per unit test, thus we want to concat all of the
