@@ -84,6 +84,8 @@ These tasks are used to train BB3's modules, and are hence adapted slightly, e.g
 
 ## <a id="code">Code</a>
 
+We describe below the top-level overview of how to download + interact with our models. For more detailed information, [visit this page](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3/agents/README.md).
+
 ### BB3 3B Model: Training
 
 The following command demonstrates how the BB3 3B model was trained:
