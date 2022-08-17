@@ -11,13 +11,14 @@ import os
 import random
 import tempfile
 import time
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import torch
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.data_model.agent import Agent
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import augment_config_from_db
 from pytest_regressions.data_regression import DataRegressionFixture
@@ -139,12 +140,13 @@ class AbstractCrowdsourcingTest:
 
     def _register_mock_agents(
         self, num_agents: int = 1, assume_onboarding: bool = False
-    ) -> List[str]:
+    ) -> Tuple[List[Agent], List[str]]:
         """
         Register mock agents for testing and onboard them if needed, taking the place of
         crowdsourcing workers.
 
-        Specify the number of agents to register. Return the agents' IDs after creation.
+        Specify the number of agents to register. Return the agents and their IDs after
+        creation.
         """
 
         for idx in range(num_agents):
@@ -193,7 +195,7 @@ class AbstractCrowdsourcingTest:
             )
         agent_ids = [agent.db_id for agent in agents]
 
-        return agent_ids
+        return agents, agent_ids
 
     def await_channel_requests(self, timeout=2) -> None:
         time.sleep(0.1)
@@ -240,10 +242,10 @@ class AbstractOneTurnCrowdsourcingTest(AbstractCrowdsourcingTest):
         # Set up the mock human agent
         if self.config.mephisto.blueprint.get("onboarding_qualification", None):
             agent_id = self._register_mock_agents(num_agents=1, assume_onboarding=True)[
-                0
-            ]
+                1
+            ][0]
         else:
-            agent_id = self._register_mock_agents(num_agents=1)[0]
+            agent_id = self._register_mock_agents(num_agents=1)[1][0]
 
         # Set initial data
         self.await_channel_requests()
@@ -298,7 +300,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                 agent_task_data.append([{}] * len(message_round))
 
         # Set up the mock human agents
-        agent_ids = self._register_mock_agents(num_agents=num_agents)
+        agents, agent_ids = self._register_mock_agents(num_agents=num_agents)
 
         # # Feed messages to the agents
 
@@ -315,8 +317,9 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     text=message,
                     task_data=task_data,
                 )
-            print('NUM MESSAGES AFTER ROUND, FOO002:')
-            print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
+            data = agents[0].state.get_data()
+            print('NUM MESSAGES AFTER ROUND:')
+            print(len(data['outputs']['messages']))
 
         # Have agents fill out the form
         for agent_idx, agent_id in enumerate(agent_ids):
@@ -331,22 +334,22 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
             )
             self.await_channel_requests()
         print('NUM MESSAGES AFTER FORM FILL:')
-        print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
+        print(len(agents[0].state.get_data()['outputs']['messages']))
 
         # Submit the HIT
         for agent_id in agent_ids:
             self.server.submit_mock_unit(agent_id, {'final_data': {}})
             self.await_channel_requests()
         print('NUM MESSAGES AFTER SUBMISSION:')
-        print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
+        print(len(agents[0].state.get_data()['outputs']['messages']))
 
         # # Check that the inputs and outputs are as expected
 
         # Get and filter actual messages
         time.sleep(self.message_sleep_time)
-        actual_states = [agent.state.get_data() for agent in self.db.find_agents()]
+        actual_states = [agent.state.get_data() for agent in agents]
         print('AGENT STATE:')
-        print(self.db.find_agents()[0].state)
+        print(agents[0].state)
         filtered_actual_states = []
         for actual_state in actual_states:
             print('ACTUAL STATE MESSAGES, 20:')
