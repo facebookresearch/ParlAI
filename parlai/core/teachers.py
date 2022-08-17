@@ -169,6 +169,10 @@ class Teacher(Agent):
             default=None,
             help='Apply one or more mutators to the data.',
         )
+        parser.add_argument(
+            '--seed',
+            default=None
+        )
         mutators = Mutator.load_mutator_types(
             partial_opt.get('mutators') if partial_opt else None
         )
