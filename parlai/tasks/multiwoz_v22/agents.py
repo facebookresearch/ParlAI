@@ -422,7 +422,7 @@ class MultiWOZv22DSTTeacher(tod_agents.TodUserSimulatorTeacher):
         opt["datafile"] = self.fold
         self.dpath = os.path.join(opt["datapath"], "multiwoz_v22")
         self.id = "multiwoz_v22"
-        if self.opt["seed"]:
+        if self.opt.get("seed"):
             self.rng = np.random.RandomState(self.opt["seed"])
         else:
             self.rng = np.random.RandomState(SEED)

@@ -5,29 +5,23 @@
 # LICENSE file in the root directory of this source tree.
 """
 This module provides a set of teachers that deal with dialog.
-
     ``FixedDialogTeacher(Teacher)``
     Base class for teachers in tasks that have fixed dialog - i.e., dialog
     that is not dynamically generated but rather is pulled from set examples.
     However, the class can be extended to all tasks involved fixed data.
     Implements much of the basic functionality of these teachers, including
     ``observe()``, ``act()``, ``next_example()``
-
     ``DialogTeacher(FixedDialogTeacher)``
      Base teacher class for doing dialog specifically with fixed chat logs.
-
     ``ParlAIDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the ParlAI Dialog format.
      See the class description for more details.
-
      ``ConversationTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Conversations format.
      See the class description for more details.
-
     ``FbDeprecatedDialogTeacher(DialogTeacher)``
      Teacher class that provides access to data in the Facebook Dialog format.
      See the class description for more details. **This class is deprecated**.
-
 This module also includes ``DataLoader``, a threadpool data loader for
 ``FixedDialogTeacher``, and ``DialogData``/``StreamDialogData``, data
 structures for accessing textual dialog data and utilized by ``DialogTeacher``
@@ -79,10 +73,8 @@ ChunkOutput = TypeVar('ChunkOutput')
 class DataLoader(Thread):
     """
     A worker thread that provides a threadpool for data loading.
-
     A teacher may submit a request to the loader, which will return the
     appropriate data.
-
     To submit a request, a teacher should call ``request_load``.
     """
 
@@ -95,7 +87,6 @@ class DataLoader(Thread):
     def request_load(self, receive_fn, load_fn, args):
         """
         Queue a request for loading.
-
         :param receive_fn:
             a receive function (for receiving the data)
         :param load_fn:
@@ -132,7 +123,6 @@ class DataLoader(Thread):
 class _ErrorThrowingDataLoader(object):
     """
     A fake DataLoader which throws an exception when a work order is placed.
-
     Since threads cannot be mixed with spawn_method='fork', we need to disallow users
     from combining --num-workers with teachers that utilize threads. This placeholder
     object is only useful for ensuring the user sees a loud error message when they
@@ -155,7 +145,6 @@ class _ErrorThrowingDataLoader(object):
 class Teacher(Agent):
     """
     Basic Teacher agent that keeps track of how many times it's received messages.
-
     Teachers provide the ``report()`` method to get back metrics.
     """
 
@@ -169,7 +158,14 @@ class Teacher(Agent):
             default=None,
             help='Apply one or more mutators to the data.',
         )
-        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
+        parser.add_argument(
+            '--seed',
+            default=None,
+            help='Set seed to fix data sampler.'
+        )
+        mutators = Mutator.load_mutator_types(
+            partial_opt.get('mutators') if partial_opt else None
+        )
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
         return parser
@@ -205,7 +201,6 @@ class Teacher(Agent):
     def num_examples(self):
         """
         Return the number of examples (e.g. individual utterances) in the dataset.
-
         Default implementation returns `None`, indicating an unknown number.
         """
         return None
@@ -213,7 +208,6 @@ class Teacher(Agent):
     def num_episodes(self):
         """
         Return the number of episodes (e.g. conversations) in the dataset.
-
         Default implementation returns `None`, indicating an unknown number.
         """
         return None
@@ -264,47 +258,38 @@ class Teacher(Agent):
 class FixedDialogTeacher(Teacher):
     """
     A teacher agent for all teachers involved in tasks with fixed data.
-
     This class provides the following functionality for its subclasses:
-
     - Resets a teacher
     - Provides an observe method
     - Computes and retrieves the next episode index for a teacher
     - Provides a threadpool option for loading data (especially useful for
       large data, e.g. images)
-
     In order to take advantage of the first few features, all a subclass has to
     implement is three functions: ``num_episodes``, ``num_examples``, and
     ``get`` (which returns a specific example from a specific episode).
-
     To utilize the DataLoader for threadpool loading, a teacher should
     implement the ``submit_load_request`` function to send a load request
     to the DataLoader by calling ``self.data_loader.request_load`` with the
     appropriate arguments (``receive_fn, load_fn, args``). The DataLoader then
     returns the data to the teacher's ``data_queue``, which the teacher can
     poll in its ``act`` method.
-
     The following is an example of the DataLoader usage in the VQA-V1 teacher.
-
     1. In the teacher's ``init`` function, the teacher calls its
        ``submit_load_request`` function to preload an image.
     2. The ``submit_load_request`` function gets the next ``episode_idx``,
        and computes the image path for the load request.
     3. At the end of ``submit_load_request``, the teacher calls
        ``self.data_loader.request_load`` with three args:
-
         - ``self.receive_data`` - the function that the DataLoader calls to
           return the the loaded object
         - ``self.image_loader.load`` - the function used to load the image
           from the image path
         - ``[img_path]`` - a list of arguments for the load function, which
           in this case is the path of the image.
-
     4. In the teacher's ``act`` function, the teacher loads the data from
        its data queue.
     5. At the end of the ``act`` function, the teacher calls
        ``submit_load_request`` to preload an image for the next example.
-
     To see this in action, take a look at this teacher in ``tasks.vqa_v1.agents``.
     """
 
@@ -370,11 +355,9 @@ class FixedDialogTeacher(Teacher):
     def submit_load_request(self):
         """
         Submit a load request.
-
         An agent should implement this method to submit requests to the data
         loader. At the end of this method, the agent should call
         ``self.data_loader.request_load()`` with the appropriate args.
-
         By default, this method does nothing.
         """
         # TODO: mark as abstract
@@ -383,7 +366,6 @@ class FixedDialogTeacher(Teacher):
     def receive_data(self, future: concurrent.futures.Future):
         """
         Receive data from the data loader.
-
         :param future: result from the load request.
         """
         data = future.result()
@@ -411,7 +393,6 @@ class FixedDialogTeacher(Teacher):
     def next_episode_idx(self, num_eps=None, loop=None):
         """
         Return the next episode index.
-
         :param num_eps:
             default None uses ``num_episodes`` value.
         :param loop:
@@ -440,7 +421,6 @@ class FixedDialogTeacher(Teacher):
     def next_example(self):
         """
         Return the next example.
-
         If there are multiple examples in the same episode, returns the next one in that
         episode. If that episode is over, gets a new episode index and returns the first
         example of that episode.
@@ -517,10 +497,8 @@ class FixedDialogTeacher(Teacher):
     def get(self, episode_idx, entry_idx=0):
         """
         Get the specified episode and the specified entry in that episode.
-
         Children must override this method in order to inherit the
         `next_example` method.
-
         :param episode_idx:
             which episode to return examples from
         :param entry_idx:
@@ -558,10 +536,8 @@ class FixedDialogTeacher(Teacher):
     ) -> None:
         """
         A method designated for hooking custom evaluations into teachers.
-
         Generally, a user will want to use `self.metrics.add` to record any
         specialized metrics that only make sense for this one dataset.
-
         :param teacher_action:
             The message last sent from this teacher.
         :param labels:
@@ -583,7 +559,6 @@ class FixedDialogTeacher(Teacher):
     def get_orig_action(self) -> Message:
         """
         Get the unprocessed action and reset if needed.
-
         This function will return the raw action from `self.next_example()`, before the
         `self.last_act` and `self.lastY` attributes have been defined based on this
         action for metrics or custom evaluations. This is so that wrapper teachers can
@@ -627,12 +602,9 @@ class FixedDialogTeacher(Teacher):
 class DialogTeacher(FixedDialogTeacher):
     """
     A base teacher class for doing dialog with fixed chat logs.
-
     This class provides a set a basic functionality:
-
     - uses data class to store and query text data
     - generates action tables to send to the student agent from the data
-
     In order to subclass this class, you must implement ``setup_data()`` in
     your class, which reads your data file as an iterator.
     """
@@ -682,15 +654,12 @@ class DialogTeacher(FixedDialogTeacher):
     def setup_data(self, datafile: str):
         """
         The core method which the user should override.
-
         Yields the data, one message at a time, as well as markers indicating
         new episodes.
-
         :param str datafile:
             If the initializer set a 'datafile' field within the initialization,
             this will be provided here. Otherwise, datafile will be the fold:
             either "train", "valid", or "test".
-
         :return:
             Yields pairs (message, new_episode) containing a Message object
             and whether the message marks the beginning of a totally new
@@ -719,7 +688,6 @@ class DialogTeacher(FixedDialogTeacher):
     def label_candidates(self):
         """
         Provide consistent label candidates for all examples.
-
         Default implementation returns ``None`` always, but this may be overridden to
         provide candidates in all areas. See ``FbDialogueTeacher``.
         """
@@ -795,14 +763,11 @@ class DialogTeacher(FixedDialogTeacher):
 class DialogData(object):
     """
     Provides a data structure for accessing textual dialog data.
-
     This can be used whenever the dialog data is a fixed log of chats
     (i.e not a simulator setting). The logs can include dialog text and possibly
     supervised labels, candidate labels and rewards.
-
     All these are stored in this internal data format which is used by the
     ``DialogTeacher`` class.
-
     :param opt:
         options to initialize the class
     :param data_loader:
@@ -813,14 +778,11 @@ class DialogData(object):
         can be set to provide a list of candidate labels for every example in
         this dataset, which the agent can choose from (the correct answer
         should be in this set).
-
     :param random:
         tells the data class whether or not to visit episodes sequentially or
         randomly when returning examples to the caller.
-
     The contents of the ``((x, y, r, c, i), new_episode?)`` tuples returned by
     the data loader is the following:
-
     - ``x`` (str) is a query and possibly context
     - ``y`` (iter) is an iterable of label(s) for that query
     - ``r`` (str) is the str reward for getting that query correct
@@ -876,7 +838,6 @@ class DialogData(object):
     def _read_episode(self, data_loader):
         """
         Read one episode at a time from the provided iterable over entries.
-
         :param data_loader:
             an iterable which returns tuples in the format described in the
             class docstring.
@@ -895,7 +856,6 @@ class DialogData(object):
     def _load(self, data_loader, datafile):
         """
         Load up data from an iterable over tuples described in the class docs.
-
         :param iter data_loader:
             an iterator which returns tuples in the format described in the
             class docstring.
@@ -914,7 +874,6 @@ class DialogData(object):
     def num_examples(self):
         """
         Return total number of entries available.
-
         Each episode has at least one entry, but might have many more.
         """
         if hasattr(self, '_num_examples_cache'):
@@ -925,7 +884,6 @@ class DialogData(object):
     def get(self, episode_idx, entry_idx=0):
         """
         Get the specified episode and the specified entry in that episode.
-
         :param episode_idx:
             which episode to return examples from
         :param entry_idx:
@@ -952,7 +910,6 @@ class DialogData(object):
     def build_table(self, entry):
         """
         Packs an entry into an action-observation dictionary.
-
         :param entry: a tuple in the form described in the class docstring.
         """
         if isinstance(entry, (dict, Message)):
@@ -1027,13 +984,10 @@ class DialogData(object):
 class StreamDialogData(DialogData):
     """
     Provides a data structure for streaming textual dialog data.
-
     This can be used whenever the dialog data follows the format described in
     DialogData but cannot fit entirely into memory.
-
     Additional keyword-argument cycle defines if the stream should restart from
     the beginning after an epoch is finished (defaults to True).
-
     :param opt:
         options to initialize the class
     :param data_loader:
@@ -1135,7 +1089,6 @@ class StreamDialogData(DialogData):
     def load_length(self):
         """
         Calculate the length of the dataset and caches it in a file.
-
         Note that this can take some time for large datasets. Episode and entry indexes
         cannot be specified during streaming.
         """
@@ -1178,7 +1131,6 @@ class StreamDialogData(DialogData):
     def get(self):
         """
         Get the next entry from the stream.
-
         When episode is done returns first entry of next episode.
         """
         if self.cur_episode is self._FIRST_PASS:
@@ -1219,55 +1171,39 @@ class StreamDialogData(DialogData):
 class FbDeprecatedDialogTeacher(DialogTeacher):
     """
     This module provides access to data in the Facebook Dialog format.
-
     Subclasses ``DialogTeacher`` for functionality and provides an
     implementation of ``setup_data()`` which iterates over datasets in the
     "fbdialog" format. If your data is in the format below, use this class to
     handle file parsing for you.
-
     The way FB Dialog data is set up is as follows:
-
     ::
-
         1 Sam went to the kitchen.
         2 Pat gave Sam the milk.
         3 Where is the milk?<TAB>kitchen<TAB>1<TAB>hallway|kitchen|bathroom
         4 Sam went to the hallway.
         5 Pat went to the bathroom.
         6 Where is the milk?<TAB>hallway<TAB>1<TAB>hallway|kitchen|bathroom
-
     Lines 1-6 represent a single episode, with two different examples: the
     first example is lines 1-3, and the second is lines 4-6.
-
     Lines 1,2,4, and 5 represent contextual information.
-
     Lines 3 and 6 contain a query, a label, a reward for getting the question
     correct, and three label candidates.
-
     Since both of these examples are part of the same episode, the information
     provided in the first example is relevant to the query in the second
     example and therefore the agent must remember the first example in order to
     do well.
-
     In general dialog in this format can contain any speech, not just QA pairs:
-
     ::
-
         1 Hi how's it going?<TAB>It's going great. What's new?
         2 Well I'm working on a new project at work.<TAB>Oh me too!
         3 Oh cool!<TAB>Tell me about yours.
-
     etc.
-
     Note that dialogs are interpreted as being one-way. For example, consider
     this dialog:
-
     ::
-
         1 X1    Y1
         2 X2    Y2
         3 X3    Y3
-
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated.
     However, Y1 => X2 and Y2 => X3 are not created as separate examples by
     default. This makes sense for some data (we don't need to train on the idea
@@ -1302,7 +1238,6 @@ class FbDeprecatedDialogTeacher(DialogTeacher):
     def load_cands(self, path):
         """
         Load a global fixed set of candidates.
-
         The candidates will be provided by the teacher for every example (the true
         labels for a specific example are also added to this set, so that it's possible
         to get the right answer).
@@ -1341,25 +1276,17 @@ class FbDeprecatedDialogTeacher(DialogTeacher):
     def setup_data(self, path):
         r"""
         Read data in the fbdialog format.
-
         Returns ``((x,y,r,c), new_episode?)`` tuples.
-
         ``x`` represents a query, ``y`` represents the labels, ``r`` represents
         any reward, and ``c`` represents any label_candidates.
-
         The example above will be translated into the following tuples:
-
         ::
-
             x: 'Sam went to the kitchen\nPat gave Sam the milk\nWhere is the milk?'
             y: ['kitchen']
             r: '1'
             c: ['hallway', 'kitchen', 'bathroom']
             new_episode = True (this is the first example in the episode)
-
-
         ::
-
             x: 'Sam went to the hallway\\nPat went to the bathroom\\nWhere is the
                 milk?'
             y: ['hallway']
@@ -1454,16 +1381,12 @@ class FbDeprecatedDialogTeacher(DialogTeacher):
 class ParlAIDialogTeacher(FixedDialogTeacher):
     """
     This module provides access to data in the ParlAI Text Dialog format.
-
     Subclasses ``FixedDialogTeacher`` for functionality and provides an
     implementation of ``setup_data()`` which iterates over datasets in the
     "ParlAI text" format. If your data is in the format below, use this class to
     handle file parsing for you.
-
     The way the data is set up is as follows:
-
     ::
-
         text:Sam went to the kitchen. <NEWL>
         Pat gave Sam the milk. <NEWL>
         Where is the milk? <TAB> labels:kitchen <TAB> reward:1
@@ -1472,35 +1395,25 @@ class ParlAIDialogTeacher(FixedDialogTeacher):
         Pat went to the bathroom. <NEWL>
         Where is the milk? <TAB> labels:hallway <TAB> reward:1
         <TAB> label_candidates:hallway|kitchen|bathroom <TAB> episode_done:True
-
     Lines 1-2 represent a single episode, with a different example on each line.
     The lines contain a query and a label for getting the question
     correct, and three label candidates.
-
     Since both of these examples are part of the same episode, the information
     provided in the first example is relevant to the query in the second
     example and therefore the agent must remember the first example in order to
     do well.
-
     In general dialog this format can contain any speech, not just QA pairs:
-
     ::
-
         text:Hi how's it going?<TAB>labels:It's going great. What's new?
         text:Well I'm working on a new project at work.<TAB>labels:Oh me too!
         text:Oh cool!<TAB>labels:Tell me about yours.
-
     etc.
-
     Note that dialogs are interpreted as being one-way. For example, consider
     this dialog:
-
     ::
-
         1 X1    Y1
         2 X2    Y2
         3 X3    Y3
-
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated.
     However, Y1 => X2 and Y2 => X3 are not created as separate examples by
     default. This makes sense for some data (we don't need to train on the idea
@@ -1623,24 +1536,18 @@ class YamlTeacher(DialogTeacher):
 class ConversationTeacher(DialogTeacher):
     """
     This module provides access to data in the Conversations format.
-
     Subclasses ``DialogTeacher`` for functionality and provides an
     implementation of ``setup_data()`` which iterates over datasets in the
     "Conversations" format. If your data is in the format below, use this class to
     handle file parsing for you.
-
     The data should be set up so that each dialogue instance (or, episode)
     occupies one line of valid JSON. The way the data is set up is as follows:
-
     ::
     { "dialog": [ [ {"id": "partner1", "text": "hello!"},  {"id": "partner2", "text": "hi back!"}  ] ] }
-
     NOTE: If the data is not on one line per dialogue, it will not load.
     Further, note that by default, dialogs are interpreted as being one-way.
     For example, consider this dialog (not that the data below is not on:
-
     ::
-
         {
             "dialog":[ [
                 {"id":"modelx", "text": X1},
@@ -1651,10 +1558,8 @@ class ConversationTeacher(DialogTeacher):
                 {"id":"modely", "text": Y3},
             ] ]
         }
-
     (Note: we use line breaks for readability above, but this data will not load as
     stated, it must be on one line.)
-
     A set of examples X1 => Y1, X2 => Y2, and X3 => Y3 will be generated,
     forming one episode. However, Y1 => X2 and Y2 => X3 are not created as
     separate examples by default.
@@ -1736,28 +1641,20 @@ class ConversationTeacher(DialogTeacher):
 class AbstractImageTeacher(FixedDialogTeacher):
     """
     Abstract class to allow easier creation of image + dialogue tasks.
-
     This class handles creating image features via ImageLoader if applicable
     (resnet, resnext variants) or loading existing image features from a dict
     path as per get_image_features_path().
-
     Important methods and properties (override in subclass if needed):
-
     - get_data_path(): where data file is found (default: <datapath>/<task>)
     - get_image_path(): where images found (default: <datapath>/<task>/images)
     - get_image_features_path(): dict of image features (default:
       <datapath>/<task>/image_features)
     - @property image_id_key: which key in data file objects represents image_id
     - @property text_key: which key in data file objects represents text
-
     Note: Assumes data files are named <dt>.json
-
     @abstractmethod image_id_to_image_path() must be implemented in subclass
-
     Example with the key defaults (but the keys can be customized):
-
     .. code-block:: python
-
         obs = {
             'text': <caption>,
             'image': <image features if specified else image>
@@ -1812,7 +1709,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_available_image_mode_names(self):
         """
         Available image model names.
-
         resnet and resnext variants available from the ImageLoader. resnext101_XXXXX_wsl
         is the open-sourced FB AI model (960m images, 1.5k hashtags, finetuned on
         ImageNet).
@@ -1823,7 +1719,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def _validate_image_mode_name(self, a):
         """
         Validate the image_mode passed in.
-
         Needed because image_mode used elsewhere in ParlAI is not always consistent with
         what the image teacher allows.
         """
@@ -1869,7 +1764,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def image_id_key(self):
         """
         Which key in the input data dict objects uniquely identify each image.
-
         Common image keys are "image_id" or "image_num". May be implemented by subclass.
         """
         return 'image_id'
@@ -1878,7 +1772,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def text_key(self):
         """
         Which key in the input data dict objects identifies the text.
-
         Common keys are "text" or "comment". May be implemented by subclass.
         """
         return 'text'
@@ -1887,7 +1780,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def image_id_to_image_path(self, image_id):
         """
         Get the path of the image on disk.
-
         Must be implemented by subclass.
         """
         pass
@@ -1903,9 +1795,7 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_image_path(self, opt):
         """
         Return the path to the data directory and to the image directory.
-
         Is based on opt fields: task, datatype (train, valid, test), datapath.
-
         Subclass can override this.
         """
         data_path = self.get_data_path(opt)
@@ -1920,7 +1810,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_image_features_path(self, task, image_model_name, dt):
         """
         Image features for the dataset images are stored here.
-
         Can be overridden in subclass to use custom paths. Image features can be
         manually copied into this directory or in the case of ImageLoader eligible
         models, they will be built and stored here if not already there.
@@ -1937,7 +1826,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def is_image_mode_buildable(self, model_name):
         """
         Is buildable if features can be calculated by ImageLoader.
-
         Users may wish to compute features for the dataset offline and use in the model,
         in which case, the image model should return False and get_image_features()
         should be overridden in subclass.
@@ -1947,10 +1835,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def load_data(self, data_path, opt):
         """
         Loading the data file, which is the index to the images and text.
-
         It is often a .json file with the name of the <datatype>.json (i.e.
         train.json). Stores in self.data.
-
         Can be override by subclass.
         """
 
@@ -1980,11 +1866,9 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def setup_image_features(self, data_path):
         """
         Load text and image data.
-
         The image features all live in dicts by default in <data_path>/
         image_features/ but get_image_features_path() above can be overridden by
         subclass to put them elsewhere.
-
         In the (very odd) case that the resnet or resnext dicts (models
         buildable using ImageLoader) are not found, we build them.
         """
@@ -2031,7 +1915,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def _build_image_features_dict(self, data_path, dt, store_dict_path):
         """
         Build resne(x)t image features with ImageLoader.
-
         (Or anything handleable by ImageLoader) and save to path. Only called if we
         haven't already built the dict before.
         """
@@ -2076,7 +1959,6 @@ class AbstractImageTeacher(FixedDialogTeacher):
     def get_image_features(self, example):
         """
         Get image features for example.
-
         Can be overridden in subclass for different behavior. For large datasets, it may
         be more appropriate to use the ImageLoader.load() method to load image features
         (as this is essentially streaming the features from disk, so that we do not have
@@ -2125,12 +2007,10 @@ class AbstractImageTeacher(FixedDialogTeacher):
 class MultiTaskTeacher(Teacher):
     """
     MultiTaskTeacher which teaches multiple tasks.
-
     Creates a teacher that is actually a set of teachers each based on a task
     string -- each of these teachers will get called in turn,
     either randomly or in order.  They are all in the same world (they are the
     same agent switching tasks).
-
     The task string format is described for the ``create_task_agents()``
     function above.
     """
@@ -2280,7 +2160,6 @@ class MultiTaskTeacher(Teacher):
 class ChunkTeacher(FixedDialogTeacher, ABC):
     """
     Useful for loading large amounts of data.
-
     Data is separated into chunks and loaded one chunk at a time. Loads the data off of
     the main thread.
     """
@@ -2360,7 +2239,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def get_num_samples(self, opt: Opt) -> Tuple[int, int]:
         """
         [Abstract] Return the number of samples.
-
         Returns a tuple of (num_examples, num_episodes) based on the data split.
         """
         pass
@@ -2369,7 +2247,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def get_fold_chunks(self, opt: Opt) -> List[int]:  # type: ignore
         """
         [Abstract] Return a list of chunk IDs (integer).
-
         Given the datatype (train/test/valid), return the list of chunk IDs that
         correspond to that split.
         """
@@ -2378,7 +2255,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def get_buffersize(self):
         """
         Size of buffer.
-
         Override this in your child class to change the buffer size.
         """
         return 100000
@@ -2435,7 +2311,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def receive_data(self, future):
         """
         Receive loaded data and place it onto the sample queue.
-
         :param future:
             A Future object which will return a value from a call to get_chunk()
         """
@@ -2444,9 +2319,7 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def _process_data(self, output: Optional[Tuple[Any, int]]):
         """
         Loads data.
-
         Load data into self.samples until buffersize is reached.
-
         :param output:
             The output of an item from a call to get_chunk()
         """
@@ -2503,7 +2376,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def load_from_chunk(self, chunk_idx: int) -> List[ChunkOutput]:
         """
         [Abstract] Given the chunk index, load examples from that chunk.
-
         Return a list of tuples. The function `_create_message` will take these tuples
         to form the Message object that is returned by the teacher.
         """
@@ -2513,7 +2385,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
     def create_message(self, queue_output: ChunkOutput, entry_idx=0) -> 'Message':
         """
         [Abstract] Given the tuple output of the queue, return an act.
-
         May depend on entry index if queue output is a multi-turn episode.
         """
         pass
@@ -2615,7 +2486,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     """
     Handle task flags provided by the task name itself.
-
     With this you can set specific opts with `-t task:flag=foo`.
     """
     fl = flags.split(':')
@@ -2649,7 +2519,6 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
 def create_task_agent_from_taskname(opt: Opt):
     """
     Create task agent(s) assuming the input ``task_dir:teacher_class``.
-
     e.g. def_string is a shorthand path like ``babi:Task1k:1`` or ``#babi`` or a
     complete path like ``parlai.tasks.babi.agents:Task1kTeacher:1``, which essentially
     performs ``from parlai.tasks.babi import Task1kTeacher`` with the parameter ``1`` in
@@ -2672,4 +2541,4 @@ def create_task_agent_from_taskname(opt: Opt):
         task_agents = MultiTaskTeacher(opt)
         if type(task_agents) != list:
             task_agents = [task_agents]
-        return task_agents
+        return
