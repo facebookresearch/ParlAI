@@ -315,7 +315,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     text=message,
                     task_data=task_data,
                 )
-            print('NUM MESSAGES AFTER ROUND, FOO001:')
+            print('NUM MESSAGES AFTER ROUND, FOO002:')
             print(len(self.db.find_agents()[0].state.get_data()['outputs']['messages']))
 
         # Have agents fill out the form
