@@ -1,0 +1,1056 @@
+acts:
+- - __retrieved-docs-titles__:
+    - Hyperloop How Elon Musk s Tube Travel Concept Works_0
+    - Elon Musk s hyperloop dream may come true and soon_0
+    - What is Hyperloop The 700mph subsonic train explained_0
+    - Hyperloop at USC_0
+    - HyperLoopDesign for open source development of Hyperloop_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+      by the promised higher speeds of Musk s system. But the idea itself is obviously
+      adapted from available technologies and older concepts including the  vactrain  concept
+      from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+      Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+      waves, and out-competing air travel are similar.
+    - 'Elon Musk s hyperloop dream may come true -- and soon
+
+      It''s happening far faster than I would have ever expected, and it''s happening
+      all over the world.
+
+      Hyperloop Transportation Technologies capsule.Hyperloop Transportation Technologies
+
+      Elon Musk first described his idea for a futuristic transportation system that
+      would send passenger pods through tubes at speeds of hundreds of miles an hour
+      back in 2013. At the time, the idea of actually building and operating a so-called
+      "hyperloop" seemed far-fetched, to say the least.
+
+      But hyperloops are no longer quite so hypothetical. A handful of firms are now
+      competing to develop the necessary technology. And in addition to designing
+      the magnetically levitated pods and testing them on small-scale tracks, the
+      firms are taking preliminary steps to set up hyperloop routes in the U.S. and
+      abroad.
+
+      "It''s happening far faster than I would have ever expected, and it''s happening
+      all over the world," said Dr. David Goldsmith, a transportation researcher at
+      Virginia Tech.
+
+      One of the biggest players is Musk himself. His whimsically named Boring Company
+      is planning to dig a hyperloop tunnel that would make it possible to travel
+      from Washington, D.C. to New York City in half an hour (the fastest Amtrak trains
+      make the trip in just under three hours). Meanwhile, a pair of California-based
+      startups, Virgin Hyperloop One and Hyperloop Transportation Technologies, are
+      developing routes in North America, Asia, and Europe.
+
+      An electric skate will carry between 8 and 16 passengers.Boring Company
+
+      Many engineering and regulatory hurdles must be crossed before the first paying
+      customer boards a hyperloop pod and zooms off down'
+    - 'What is Hyperloop? The 700mph subsonic train explained
+
+      Max Langridge and Elyse Betters | 13 October 2017
+
+      - Hyperloop is a high-speed train system
+
+      - Musk is planning two Hyperloop routes so far
+
+      - Meanwhile Virgin Hyperloop One has built a test track
+
+      Elon Musk has started the building revolution for a new train system.
+
+      Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA to
+      San Francisco in under 30 minutes. But what is it and how does it work? Good
+      questions. Musk has likened it to a vacuum tube system in a building used to
+      move documents from place to place. Confused? No worries. Here s everything
+      you need to know about the futuristic train coming from the founder of Tesla
+      and SpaceX.
+
+      We also delve into competitor systems, like Virgin Hyperloop One.
+
+      What is X.COM? Elon Musk s new website and project teased
+
+      What is SolarCity and why is Tesla buying it?
+
+      Tesla: Everything you need to know about its cars and more
+
+      Hyperloop is essentially a train system that Musk calls  a cross between a Concorde,
+      a railgun, and an air hockey table . It s based on the very high-speed transit
+      (VHST) system proposed in 1972, which combines a magnetic levitation train and
+      a low pressure transit tube. It evolves some of the original ideas of VHST,
+      but it still uses tunnels and pods or capsules to move from place to place.
+
+      Musk has likened it to a vacuum tube system in a building used to move documents
+      from place to place.
+
+      What speeds have been proposed?
+
+      Hyperloop is being'
+    - 'Economical, Sustainable, and Insanely Fast
+
+      Hyperloop Outperforms All Other Modes of Transport.
+
+      Linear induction motors, axial compressors, and air bearings enable full-scale
+      Hyperloop Pods to sustain speeds upwards of 760 mph inside partially evacuated
+      tubes with a fraction of the aerodynamic losses experienced by planes, trains,
+      and automobiles. The result is a mass transportation system with faster travel
+      times, greater energy efficiency, and lower costs than any previous mode of
+      transportation.
+
+      Elon Musk s Hyperloop Alpha, a white paper released in 2013, was the first introduction
+      to the Hyperloop concept and an effort to inspire a transportation revolution.
+      Connecting Los Angeles and San Francisco at speeds up to 760 mph with total
+      construction and operation costs orders of magnitude lower than the California
+      High Speed Rail, Hyperloop Alpha readily exceeds traditional transportation
+      solutions in both performance and value.
+
+      Five minute station times, top speeds of 760 mph, isolated internal tube environments,
+      and a capacity of 840 passengers per hour make the Hyperloop the fastest, safest,
+      and most efficient mass transportation system ever proposed.
+
+      With approximately 594 acres of solar cell coverage on top of the tubes, the
+      all-electric Hyperloop is completely self powering during peak solar activity,
+      ensuring a responsible and reliable transportation solution for the future.
+
+      The LA-SF Hyperloop offers the fastest ground transportation ever proposed at
+      a total cost of just $6 billion, where as the California High Speed Rail project
+      costs an estimated $68 billion and has a maximum speed of only 220 mph.
+
+      Hyperloop Alpha White Paper
+
+      With a 35 minute travel time from Los Angeles to San Francisco, Hyperloop'
+    - 'HyperLoopDesign is a resource for Hyperloop engineers, looking at the design
+      challenges and solutions for final designs or sub-systems.
+
+      Hyperloop Alpha, August 2013.
+
+      Elon Musk s original proposed Hyperloop Alpha, which runs in a 2.23m (7ft4 )
+      diameter tube, at an absolute pressure of 100 Pa ( 1/1000 atmosphere). It used
+      air bearing skis, with an air compressor to provide air. Acceleration thrust
+      is from linear motors on limited sections of the track.
+
+      Cheetah is a design variation released by Richard Macfarlane in January 2014,
+      with a number of changes to simplify and solve problems.
+
+      Wheels are used which provide traction. Steam from the cooling system is ejected
+      into the tube, increasing the speed of sound, and reducing aerodynamic drag.
+
+      The pod is 3 seats wide, and the tube is now 2.6 - 2.8m diameter. The seats
+      are in 3 seating modules which roll out at the station.
+
+      Maglev and air bearing skis
+
+      Hyperloop Alpha originally proposed air ski bearings for levitation. But there
+      may be insufficient airflow in the near-vacuum. See air skis here.
+
+      The tube in the 2016 Pod Competition has an aluminium plate for maglev, but
+      any plate maglev will suffer high drag. See passive maglev plate here. See Arx
+      Pax here.
+
+      Maglev using copper coils along the whole route would be the ideal levitation
+      system, except for the extreme expense. See maglev coils here.
+
+      Cheetah links :-
+
+      Competition Pod - for the 2016 Pod Competition.
+
+      Wheels - the simpler and more achieveable option.
+
+      Elon Musk spoke at the 2016 Pod Competition, and recommended wheels.
+
+      Wheels have been proved at higher speeds than any other levitation
+
+      Pneumatic tires'
+    __selected-sentences__: []
+    bot_failure_text: It's a train that goes from one place to another in a tube.
+      _potentially_unsafe__
+    domain: Business
+    episode_done: true
+    eval_labels:
+    - Where are the hyper loops at, locations.
+    generic_topic: hyper loop
+    id: fits_feedback_None_botTurnFalse
+    last_nonperfect_feedback: better_others
+    search_queries: hyper loop
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: What is a hyper loop, can you tell me who will ride them? Where will the
+      hyper loops go to and come from?
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - What is Hyperloop The 700mph subsonic train explained_0
+    - How the Hyperloop Works HowStuffWorks_0
+    - Colorado Hyperloop Front Range Stations One Really Fast_0
+    - Hyperloop How Elon Musk s Tube Travel Concept Works_0
+    - A hyperloop between Toronto and Montreal is moving closer_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - 'What is Hyperloop? The 700mph subsonic train explained
+
+      Max Langridge and Elyse Betters | 13 October 2017
+
+      - Hyperloop is a high-speed train system
+
+      - Musk is planning two Hyperloop routes so far
+
+      - Meanwhile Virgin Hyperloop One has built a test track
+
+      Elon Musk has started the building revolution for a new train system.
+
+      Dubbed Hyperloop, it will allow you to get from London to Edinburgh or LA to
+      San Francisco in under 30 minutes. But what is it and how does it work? Good
+      questions. Musk has likened it to a vacuum tube system in a building used to
+      move documents from place to place. Confused? No worries. Here s everything
+      you need to know about the futuristic train coming from the founder of Tesla
+      and SpaceX.
+
+      We also delve into competitor systems, like Virgin Hyperloop One.
+
+      What is X.COM? Elon Musk s new website and project teased
+
+      What is SolarCity and why is Tesla buying it?
+
+      Tesla: Everything you need to know about its cars and more
+
+      Hyperloop is essentially a train system that Musk calls  a cross between a Concorde,
+      a railgun, and an air hockey table . It s based on the very high-speed transit
+      (VHST) system proposed in 1972, which combines a magnetic levitation train and
+      a low pressure transit tube. It evolves some of the original ideas of VHST,
+      but it still uses tunnels and pods or capsules to move from place to place.
+
+      Musk has likened it to a vacuum tube system in a building used to move documents
+      from place to place.
+
+      What speeds have been proposed?
+
+      Hyperloop is being'
+    - 'The Hyperloop tube would stretch from San Francisco to Los Angeles, with pods
+      that whisked folks along for a 35-minute ride unlike any other.
+
+      Elon Musk, the billionaire founder of PayPal, has given us snazzy, new electric
+      cars courtesy of Tesla Motors and private spaceflight through his company SpaceX.
+      Now Musk envisions cutting the travel time between Los Angeles to San Francisco
+      to a mere 35 minutes. He has proposed building a high-speed transportation system
+      that would allow humans to travel 760 miles (1,223 kilometers) per hour, or
+      Mach 0.91 (assuming 68 degrees F/20 degrees C).
+
+      If it sounds like something out of a sci-fi movie ( Logan s Run,  anyone?),
+      it is. Still, if Musk has his way, the futuristic Hyperloop will replace bullet
+      trains and revolutionize transportation just as the locomotive, automobile and
+      airplane did. The only problem is that no one really knows if the Hyperloop
+      will work and how much it will actually cost.
+
+      That s not stopping Musk from pushing the concept. He says the price tag is
+      a mere $6 billion. Many people are a bit skeptical. Some experts say they couldn
+      t build a decent-size bridge for such a paltry amount [source: Bilton]. Moreover,
+      California is now working on a plan to build a much slower rail system between
+      the two cities at a cost of $60 billion. It was this proposal that drove Musk
+      to envision the Hyperloop. The California plan, Musk wrote in a 57-page white
+      paper he published on the SpaceX site in August 2013, was expensive for'
+    - 'What is unique about our approach is that we introduced an interdisciplinary,
+      collaborative and participatory approach to developing a Hyperloop in Colorado.
+
+      We asked ourselves and hundreds of Coloradans, what if we could help design
+      this project in a way that is more human-centered? To design it in a way that
+      will help the communities and not hurt them.
+
+      The Hyperloop is all about connection. It is about eliminating borders and going
+      beyond the limitations of time and space. It is meant to empower communities
+      and that''s why we wanted to incorporate these future users.
+
+      We used social media and surveys to gather information about how Coloradans
+      might use a Front Range Hyperloop. Though these surveys we found:
+
+      Equal interest in a Northern route from Denver to Fort Collins as well as a
+      southern route from Denver to Pueblo.
+
+      Hyperloop construction would benefit Colorado infrastructure, energy and technology
+      sectors as well as tourism and quality of life measurements. There was special
+      interest in connecting Hyperloop with recreational areas like National Parks,
+      ski and rafting.
+
+      Current Colorado Hyperloop surveys:
+
+      Tell us your top NEEDs of a Colorado Hyperloop
+
+      What I love about my neighborhood in Colorado
+
+      Colorado Hyperloop is thrilled to see the Cheyenne-Denver-Pueblo corridor advance
+      to the final stage of the Hyperloop One Global Challenge. Colorado Hyperloop
+      also welcomes and supports all groups in their goals in making Colorado a leading
+      sustainable transportation technology state. We remain committed to working
+      with other public, private, professional, and passionate teams to test the feasibility
+      of a Hyperloop in our great state and ensure that Coloradoans have a'
+    - Similarities between the propulsion of maglev trains and Hyperloop are trumped
+      by the promised higher speeds of Musk s system. But the idea itself is obviously
+      adapted from available technologies and older concepts including the  vactrain  concept
+      from 1914 and a paper from the RAND Corporation think tank for a Very High-Speed
+      Transit (VHST) system in 1972. Its description of vacuum tubes, electromagnetic
+      waves, and out-competing air travel are similar.
+    - 'A hyperloop between Toronto and Montreal is moving closer to reality
+
+      Transport Canada is officially funding a study of the hyperloop train: an electric
+      tunnel that will be able to take passengers from Toronto to Montreal in just
+      45 minutes.
+
+      The government agency has announced that it s looking for researchers to look
+      into the new transportation method, which is still in prototype mode.
+
+      Transport Canada released a call out for consultants who can gauge the safety
+      of hyperloop technology, as well as its cost-effectiveness in comparison to
+      high-speed rail.
+
+      A post shared by TransPod Hyperloop (@transpod_inc) on Apr 8, 2017 at 5:19am
+      PDT
+
+      The Elon Musk-introduced tech, which originally came via American company Virgin
+      Hyperloop One, has been featured in talks to arrive here since 2016, when the
+      company first launched its Hyperloop One Global Challenge.
+
+      Multiple hyperloop startups have sprung up worldwide since then, including the
+      Toronto-based TransPod, which has developed its own hyperloop prototype that
+      would see a network of tubes containing pods travelling at speeds greater than
+      1,000 km/hour.
+
+      A post shared by TransPod Hyperloop (@transpod_inc) on Apr 10, 2017 at 5:30am
+      PDT
+
+      Hyperloop technology has been debated widely by transportation experts, some
+      who see the tube as more of a novel idea than a practical way of getting around.
+      There are no hyperloop systems currently operating anywhere in the world.
+
+      According to the TransPod website, a one-way trip on their hyperloop from Toronto
+      to Monreal would cost $80, if booked for a same-day trip.'
+    __selected-sentences__: []
+    bot_failure_text: I don't think there are any, but it would be interesting to
+      see how it would work.
+    domain: Business
+    episode_done: true
+    eval_labels:
+    - Who will build a hyperloop train
+    generic_topic: hyper loop
+    id: fits_feedback_None_botTurnFalse
+    last_nonperfect_feedback: better_search_query
+    search_queries: Hyperloop train
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: 'What is a hyper loop, can you tell me who will ride them? Where will the
+      hyper loops go to and come from?
+
+      It''s a train that goes from one place to another in a tube. The current plans
+      call for one hyperloop in stockdale california.
+
+      How many people can ride on a hyper loop train?
+
+      I''m not sure, but I''m sure it''s a lot of fun.
+
+      Are there any planned hyper loop trains?'
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - U S Department of Defense_0
+    - Cat Parts Store Order Online_0
+    - Notes Hamish McKenzie_0
+    - Projects The Boring Company_0
+    - marconi instruments com_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - 'Explore - News & Features
+
+      Experience - Visual Storytelling
+
+      Engage - Quizzes
+
+      Watch - Videos & Live Events
+
+      Observe - Photos
+
+      About the DOD
+
+      #KnowYourMil
+
+      Spotlight on WWII
+
+      Cool Military Jobs
+
+      What We Do For Fun
+
+      FY19 Financial Report
+
+      DOD/Military Websites
+
+      Welcome toDefense.gov
+
+      Defense Secretary Dr. Mark T. Esper visited U.S. Strategic Command in Nebraska
+      for meetings with leaders and a tour of Stratcom s new command and control facility.
+
+      The nation s top military leaders discussed challenges to getting hypersonic
+      weapons from blueprint to production during a question-and-answer session at
+      a Washington think tank.
+
+      Aerial refueling -- the process of transferring fuel from a military tanker
+      aircraft to another military aircraft -- helps to make global reach a reality.
+
+      {{categoryLineOverride}} {{prettyContentTypeName}} | {{termName}}
+
+      Video: {{articleTitle}}
+
+      {{publishDateAp}}
+
+      {{articleSummary}}
+
+      Making a Mark - Army Marksmanship Unit - Imagine spending all day, every day,
+      practicing trick shots with a shotgun, taking out 10 moving targets with a pistol
+      in six seconds flat, or perfecting your shot toward a target the size of a period.
+
+      Making a Mark - Army Marksmanship Unit
+
+      Service members, eligible family members and U.S. citizens overseas have the
+      right to vote, and DOD has the tools and resources to help them do so -- from
+      anywhere in the world. - Service members, eligible family members and U.S. citizens
+      overseas have the right to vote, and DOD has the tools and resources to help
+      them do so -- from anywhere in the world.
+
+      You Can Vote From Anywhere
+
+      USS New York: A City on the Sea - USS New York: A City on the Sea
+
+      USS New York: A City on the Sea
+
+      A soldier holds an American flag on an'
+    - 'This username is not authorized at this dealership.
+
+      The account you are trying to access does not exist in Parts.Cat.Com.
+
+      Please Login with a different account or select Find Your Dealer to create a
+      new account.
+
+      Shop more than 1.4 million Cat parts
+
+      Find what you need faster by entering your information below:
+
+      shop batteries >
+
+      shop planned maintenance kits >
+
+      look up parts now >
+
+      big changes are here!
+
+      improved shopping cart
+
+      and quick order
+
+      page Type : HomePage'
+    - 'END NOTES FOR INSANE MODE
+
+      Chapter 1: Get Your Motor Runnin''
+
+      "I''m trying to allocate my efforts to that which I think would most affect
+      the future of humanity in a positive way" "PandoMonthly: Fireside Chat with
+      Elon Musk." PandoDaily YouTube Channel, July 17, 2012. https://www.youtube.com/watch?v=uegOUmgKB4E.
+
+      announced plans for a "fifth mode of transport" "Hyperloop" by Elon Musk. Tesla
+      Motors Blog, August 12, 2013. https://www.tesla.com/blog/hyperloop.
+
+      He wrote the blueprint for his so-called Hyperloop "Elon Musk Details 800-mph
+      Hyperloop Transportation System." Fox News, August 12, 2013. http://www.foxnews.com/science/2013/08/12/elon-musk-details-800-mph-hyperloop-transport.html;
+      "Hyperloop Revealed: Elon Musk Foresees Rapid Transit in a Tube." NBC News,
+      August 12, 2013. http://www.nbcnews.com/business/hyperloop-revealed-elon-musk-foresees-rapid-transit-tube-6C10902051;
+      "Elon Musk Unveils San Francisco-LA ''Hyperloop'' Idea." BBC News, August 12,
+      2013. http://www.bbc.com/news/world-us-canada-23677205.
+
+      Peel off the lid and you''ll see the batteries "Rare Look Inside A Tesla Model
+      S Battery Pack." InsideEVs, September 23, 2014. http://insideevs.com/look-inside-a-tesla-model-s-battery-pac/.
+
+      Chapter 2: A Rush of Electrons to the Head
+
+      Motor Trend''s Car of the Year "2013 Motor Trend Card of the Year: Tesla Model
+      S." Motor Trend, November 12, 2012. http://www.motortrend.com/news/2013-motor-trend-car-of-the-year-tesla-model-s/.
+
+      4,647-pound aluminum steed "Model S Specifications." Tesla Motors website. Accessed
+      October 27, 2016. https://www.tesla.com/support/model-s-specifications.
+
+      why electric cars just aren''t right for this world "Electric Cars Are an Extraordinarily
+      Bad Idea." Forbes.com, September 14, 2011. http://www.forbes.com/sites/louiswoodhill/2011/09/14/electric-cars-are-an-extraordinarily-bad-idea/#7ba197c86466;
+      "8 Reasons Why the Electric Car Will Not Be a Success Anytime Soon." Business
+      Insider, December 9, 2011. http://www.businessinsider.com/the-electric-car-why-it-is-not-ready-for-mass-consumption-2011-12?op=1;
+      "Why Electric Cars Don''t Have a Future." OilPrice.com, September 14, 2012.
+      http://oilprice.com/Alternative-Energy/Fuel-Cells/Why-Electric-Cars-Dont-have-a-Future.html.
+
+      no private company had ever returned a spacecraft from low-earth orbit "A Space-Age
+      First: A Commercial Craft Returns From Low-Earth Orbit." CNN.com, December 8,
+      2010. http://www.cnn.com/2010/US/12/08/space.flight/.
+
+      ''I think I can do it'''
+    - 'Test Tunnel - Hawthorne, CA
+
+      The initial Test Tunnel, located in Hawthorne, CA, is being used for the research
+      and development of The Boring Company s public transportation systems, Loop
+      and Hyperloop. Status: Complete
+
+      Dugout Loop - Los Angeles, CA
+
+      The Boring Company is proposing a project in Los Angeles, CA, that would transport
+      baseball fans and concertgoers directly to the Dodger Stadium from the Los Feliz,
+      East Hollywood, or Rampart Village neighborhoods. Status: In environmental review
+      and permitting
+
+      The Chicago Express Loop
+
+      The Boring Company has been selected by the Chicago Infrastructure Trust (CIT),
+      on behalf of the City of Chicago, to enter into exclusive negotiations to design,
+      build, finance, operate and maintain an O''Hare Express service. The Chicago
+      Express Loop will provide fast and convenient transportation between O''Hare
+      Airport (Terminals 1-3) and Block 37 in downtown Chicago. Status: In contract
+      review, environmental review and permitting
+
+      East Coast Loop - Washington D.C. to Maryland
+
+      The Boring Company is proposing a project on the East Coast from downtown DC
+      to Maryland, beneath New York Avenue and the Baltimore-Washington Parkway. Status:
+      Initial DC Pit constructed; tunnel in environmental review and permitting'
+    - 'J Berry albums MP3
+
+      artist: J Berry RSS feed
+
+      genre: r&b tracks: 5
+
+      FEEDBACKS for  J Berry  artist:
+
+      While I might normally agree, in such cases it can quite simple. Likewise, Wikipedia
+      possesses appear a long methods as it seemed to be bashed intended for letting
+      end users to be able to modify content, there are several squads associated
+      with moderators in which trail as well as deal a variety of mistakes usual end
+      users help to make when adding/editing a wiki content. ugg boots clearance http://www.uggbootstang.com
+
+      Questioned recently to put in writing about <a href=http://www.vaporultra.com/product_images/y/569/2cartomizer__37824_zoom.jpg>refill
+      electronic cigarette cartridge </a> , I have to confess that I had never listened
+      to of this kind of a factor. Some net analysis later on and that i discovered
+      that e-cigarettes are incredibly a great deal a speedily growing problem. A
+      Google lookup discovered there s no smoke with no hearth as practically 6 million
+      outcomes just for the phrase  electronic cigarette  ended up returned. Precisely
+      what is an ecigarette? The electric cigarette continues to be in existence for
+      nearly a few years and is particularly a clever machine aimed towards furnishing
+      people who smoke which has a healthier alternative. Apparently also helpful
+      in assisting to reduce and in truth stop using tobacco altogether. Now within
+      a fourth generation, electronic cigarettes have grown to be a great deal a lot
+      more consumer welcoming than earlier variations which most likely ended up just
+      a little way too substantial to encourage a mass current market charm. The  mini  is
+      among'
+    __selected-sentences__: []
+    bot_failure_text: No, I'm not aware of any construction going on at the moment.
+      What do you know about it?
+    domain: Business
+    episode_done: true
+    eval_labels:
+    - Not be sarcastic
+    generic_topic: hyper loop
+    id: fits_feedback_None_botTurnFalse
+    last_nonperfect_feedback: better_others
+    search_queries: has construction started on a hyper loop train?
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: 'What is a hyper loop, can you tell me who will ride them? Where will the
+      hyper loops go to and come from?
+
+      It''s a train that goes from one place to another in a tube. The current plans
+      call for one hyperloop in stockdale california.
+
+      How many people can ride on a hyper loop train?
+
+      I''m not sure, but I''m sure it''s a lot of fun.
+
+      Are there any planned hyper loop trains?
+
+      I don''t think there are any planned, but elon musk''s version of the concept,
+      first publicly mentioned in 2012, incorporates reduced-pressure tubes in which
+      pressurized capsules ride on air bearings driven by linear induction motors
+      and air compressors.
+
+      Has construction started on a hyper loop train?'
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - Tired of the commute It might be time to take cars_0
+    - Express Online inexplicably decides to run article_0
+    - Transportation Archives 3D Printing Media Network The_0
+    - TNW The heart of tech_0
+    - Notes Hamish McKenzie_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - 'Tired of the commute? It might be time to take cars underground
+
+      Like many cities, London has a serious problem with gridlock. According to Eurostat''s
+      Urban Europe report, the city has the worst congestion in Europe - an average
+      commuter there spends 101 hours in traffic every year.
+
+      An obvious solution to this problem would be to upgrade or expand the existing
+      tube, train, and bus networks to be more efficient and far-reaching, so that
+      more locals use mass transit.
+
+      But PLP Architecture, a London-based firm, is proposing a more radical idea:
+      moving vehicles underground.
+
+      Called the CarTube, the firm''s concept envisions an underground tunnel of automated,
+      conveyor belt-like tracks.
+
+      Cars in the tubes would travel a steady speed of 50 mph, so there wouldn''t
+      be stop-and-go traffic, PLP''s director of research, Lars Hesselgren, tells
+      Business Insider. That would allow the network to cut down commute times by
+      up to 75%.
+
+      PLP wouldn''t disclose an estimate for the CarTube''s cost, but said it could
+      be built at a fraction of the price of Crossrail, a new high-capacity, 73-mile
+      (117 km) railway that''s under construction in London and the southeastern UK.
+      That project received PS14.8 billion ($15.7 billion) in funding.
+
+      There are no immediate plans to build the CarTube, but Hesselgren says the firm
+      is talking with a number of partners, including Google, about the concept. He
+      estimates that if the tube were to be built, construction would take less than
+      a decade.
+
+      The CarTube would be a 15.5-mile network of tunnels for automobiles. Hesselgren
+      says the system would be located 33 - 98 ft'
+    - 'Home Air Express Online inexplicably decides to run article claiming F-35 can''t
+      fly
+
+      Express Online inexplicably decides to run article claiming F-35 can''t fly
+
+      The Express Online, amazingly, has published an article on their website with
+      claims "new F-35 jets still can''t fly", this is embarrassingly incorrect for
+      the newspaper as they can indeed fly.
+
+      The cost of the F-35 Block 4 upgrade programme has quadrupled since August,
+      according to the latest estimates that emerged during a March the 7th congressional
+      hearing in the US. The upcoming block, Block 4, is about incorporating a large
+      number of additions and a number of new capabilities. It was always going to
+      cost more given that it adds more.
+
+      This upgrade has nothing to do with the original specification covered in Block
+      3F which is on-track. The aircraft certainly can fly and they''re flying operationally
+      with the United States already, something the Daily Expressed seemed to recognise
+      as it removed the article from its website after we objected.
+
+      Defence commentator Seb Haggart tweeted:
+
+      The damage being done to UK defence here is shocking with lies and wrong information.
+      Here is a picture of a F35b leaving a US amphibious assault ship last night
+      on exercise. They fly! pic.twitter.com/BxemS9bIE8
+
+      -- Seb Haggart (@sebh1981) March 13, 2018
+
+      Wing Commander Scott Williams, who will become Officer Commanding 207 Squadron
+      when it reforms in the summer of 2019, responded:
+
+      A headline and contradictory sub-para. Genius!
+
+      -- Scott Williams (@scottmox) March 13, 2018
+
+      UK declared the Block 3F software would be needed for IOC a long time ago. UK
+      weapons are therefore in 3F as'
+    - 'Tess Boissonneault December 5, 2019
+
+      First 3D printed safety-relevant part approved in the railway sector
+
+      Mobility goes Additive (MGA), a network dedicated to exploring the adoption
+      of AM in the mobility sector and pushing industrialization, has announced the
+      approval of the first additively manufactured, safety-relevant component for
+      the railway industry. The part in question, a brake suspension link for a metro
+      brake unit, is already...
+
+      Stratasys focuses on 3D printing in transport with Rail Industry Solution
+
+      At Frankfurt this week, 3D printing giant Stratasys announced a new additive-based
+      solution for the rail industry aimed at keeping passenger trains up and running.
+      Aptly called the Rail Industry Solution, the offering leverages Stratasys''
+      Fortus 3D printers and ULTEM 9085 and Antero 800NA materials to produce spare
+      parts for...
+
+      Could 3D printing revolutionize the UK rail industry?
+
+      UK-based infrastructure company Amey is the latest company exploring the use
+      of additive manufacturing for the maintenance of the transportation industry.
+      Unlike other companies we''ve seen, which are using 3D printing to produce spare
+      or replacement parts for trains, Amey is looking into the technology for maintaining
+      and renewing train tracks....
+
+      Neorizon: Airbus and LM Industries form future-thinking mobility startup
+
+      Aeronautics company Airbus has partnered with LM Industries to form a new company
+      dedicated to local mobility and autonomy, Neorizon. The mobility startup will
+      operate a microfactory designed to rapidly and efficiently build products for
+      new transportation and mobility solutions. LM Industries was founded last year
+      by Local Motors, the...
+
+      Stratasys and Angel Trains deploy first 3D printed parts on British passenger
+      trains
+
+      After partnering with Angel Trains, one of the UK''s'
+    - 'Study: Trump''s bravado isn''t an anomaly, it''s the culmination of a century-long
+      political trend
+
+      What is a Facebook ''legacy contact'' and why do you need one?
+
+      by Callum Booth
+
+      Latest funding rounds on Index.co
+
+      See more Get updates by email Add info
+
+      Search, +2 CITIC Capital
+
+      Student.com Raises Additional $10M in Series C+ Round on FinSMEs
+
+      Zeitgold
+
+      Artificial Intelligence, +2 Deutsche Bank, +4
+
+      Zeitgold Raises EUR10M in Funding on FinSMEs
+
+      Point of Sale Cota Capital, +2
+
+      Qu Raises $10M in Series B Funding on FinSMEs
+
+      SaaS, +2 Foundation Capital, +4
+
+      Mode Raises $23M in Series C Funding on FinSMEs
+
+      JP Morgan''s new digital  coin  is not a cryptocurrency, or even a stablecoin
+
+      Cryptocurrency influencers are even worse than normal influencers
+
+      More Bitcoin ETF hopes dashed after SEC says it s  inappropriate
+
+      The pros, cons, and taboo nature of enforcing smaller Bitcoin blocks
+
+      Intel takes on IBM and Microsoft with its own ''off-the-shelf'' blockchain packages
+
+      TikTok is under fire in India over alleged cyberbullying
+
+      How to crop your images to a specific size or aspect ratio
+
+      How to track timezones around the world with these free apps
+
+      Google Maps  AR navigation feature could solve the app s biggest little problem
+
+      Apple s crackdown on screen-recording apps is a privacy win
+
+      How to use Instagram collections like a makeshift Pinterest
+
+      Canon shows it s serious about full-frame mirrorless with the affordable EOS
+      RP
+
+      Video: The Cotodama Lyric Speaker is the ultimate novelty product
+
+      Asus  $190 ZenFone Max M2 Pro offers tremendous battery life - but little else
+
+      Focal s $3,000 Stellia aims to be the best portable headphone money can buy
+
+      Everything to expect from MWC 2019, the world s biggest smartphone'
+    - 'END NOTES FOR INSANE MODE
+
+      Chapter 1: Get Your Motor Runnin''
+
+      "I''m trying to allocate my efforts to that which I think would most affect
+      the future of humanity in a positive way" "PandoMonthly: Fireside Chat with
+      Elon Musk." PandoDaily YouTube Channel, July 17, 2012. https://www.youtube.com/watch?v=uegOUmgKB4E.
+
+      announced plans for a "fifth mode of transport" "Hyperloop" by Elon Musk. Tesla
+      Motors Blog, August 12, 2013. https://www.tesla.com/blog/hyperloop.
+
+      He wrote the blueprint for his so-called Hyperloop "Elon Musk Details 800-mph
+      Hyperloop Transportation System." Fox News, August 12, 2013. http://www.foxnews.com/science/2013/08/12/elon-musk-details-800-mph-hyperloop-transport.html;
+      "Hyperloop Revealed: Elon Musk Foresees Rapid Transit in a Tube." NBC News,
+      August 12, 2013. http://www.nbcnews.com/business/hyperloop-revealed-elon-musk-foresees-rapid-transit-tube-6C10902051;
+      "Elon Musk Unveils San Francisco-LA ''Hyperloop'' Idea." BBC News, August 12,
+      2013. http://www.bbc.com/news/world-us-canada-23677205.
+
+      Peel off the lid and you''ll see the batteries "Rare Look Inside A Tesla Model
+      S Battery Pack." InsideEVs, September 23, 2014. http://insideevs.com/look-inside-a-tesla-model-s-battery-pac/.
+
+      Chapter 2: A Rush of Electrons to the Head
+
+      Motor Trend''s Car of the Year "2013 Motor Trend Card of the Year: Tesla Model
+      S." Motor Trend, November 12, 2012. http://www.motortrend.com/news/2013-motor-trend-car-of-the-year-tesla-model-s/.
+
+      4,647-pound aluminum steed "Model S Specifications." Tesla Motors website. Accessed
+      October 27, 2016. https://www.tesla.com/support/model-s-specifications.
+
+      why electric cars just aren''t right for this world "Electric Cars Are an Extraordinarily
+      Bad Idea." Forbes.com, September 14, 2011. http://www.forbes.com/sites/louiswoodhill/2011/09/14/electric-cars-are-an-extraordinarily-bad-idea/#7ba197c86466;
+      "8 Reasons Why the Electric Car Will Not Be a Success Anytime Soon." Business
+      Insider, December 9, 2011. http://www.businessinsider.com/the-electric-car-why-it-is-not-ready-for-mass-consumption-2011-12?op=1;
+      "Why Electric Cars Don''t Have a Future." OilPrice.com, September 14, 2012.
+      http://oilprice.com/Alternative-Energy/Fuel-Cells/Why-Electric-Cars-Dont-have-a-Future.html.
+
+      no private company had ever returned a spacecraft from low-earth orbit "A Space-Age
+      First: A Commercial Craft Returns From Low-Earth Orbit." CNN.com, December 8,
+      2010. http://www.cnn.com/2010/US/12/08/space.flight/.
+
+      ''I think I can do it'''
+    __selected-sentences__: []
+    bot_failure_text: I am not sure when it will be built, but it is expected to be
+      completed by 2020.
+    domain: Business
+    episode_done: true
+    eval_labels:
+    - Realize that 2020 has past
+    generic_topic: hyper loop
+    id: fits_feedback_None_botTurnFalse
+    last_nonperfect_feedback: better_others
+    search_queries: When will a hyperloop train be built?
+    specific_task: Who will be the primary customers
+    task_requirement: Where will hyper loops be placed. Who will ride them and where
+      to and from
+    task_uid: 474
+    text: 'What is a hyper loop, can you tell me who will ride them? Where will the
+      hyper loops go to and come from?
+
+      It''s a train that goes from one place to another in a tube. The current plans
+      call for one hyperloop in stockdale california.
+
+      How many people can ride on a hyper loop train?
+
+      I''m not sure, but I''m sure it''s a lot of fun.
+
+      Are there any planned hyper loop trains?
+
+      I don''t think there are any planned, but elon musk''s version of the concept,
+      first publicly mentioned in 2012, incorporates reduced-pressure tubes in which
+      pressurized capsules ride on air bearings driven by linear induction motors
+      and air compressors.
+
+      Has construction started on a hyper loop train?
+
+      No, I''m not aware of any construction going on at the moment.
+
+      Is there a location for elon musks hyper loop train?
+
+      Elon musk''s hyperloop is an open-source vactrain design released by a joint
+      team from tesla and spacex.
+
+      When will a hyper loop train be built?'
+    topic: Is it air, ground or water transportation
+- - __retrieved-docs-titles__:
+    - India The Last Battle of the American Revolutionary War_0
+    - Battle of Long Island Summary Britannica_0
+    - Beer American History Institute_0
+    - The Meiji Restoration and Modernization Asia for_0
+    - Why did African Americans join the British Army during_0
+    __retrieved-docs-urls__:
+    - ''
+    - ''
+    - ''
+    - ''
+    - ''
+    __retrieved-docs__:
+    - 'India: The Last Battle of the American Revolutionary War
+
+      Siege of Cuddalore - June 1783 / By Richard Simkin, 1890 (Brown University)
+
+      The next time you''re in a trivia contest and the question comes up, "What was
+      the last battle of the American Revolutionary War?" the judges will probably
+      be looking for the predictable answer of "Yorktown."[1]
+
+      That''s the neat and tidy answer, but it''s not true. After the defeat at Yorktown,
+      King George III brushed it off as a minor stumbling block and decreed that the
+      war in America should continue. He wrote to the prime minister avowing that
+      he would "do what I can to save the Empire."[2] Gen. George Washington, not
+      having read twenty-first century schoolbooks, never knew Yorktown would be considered
+      the end of the war, or famously as the "last battle of the American Revolutionary
+      War." He smartly assumed the British were certainly wounded with Lord Cornwallis''
+      surrender, but that they wouldn''t quit. The war would continue. Washington
+      felt it was his absolute duty to keep the Continental Army together until there
+      was a final peace treaty signed and approved.
+
+      A preliminary treaty finally came on November 30, 1782, a year after Yorktown...
+      but there was still no formal treaty. Washington remembered what Ben Franklin
+      had said, "The British Nation seems... unable to carry on the War and too proud
+      to make peace."[3] The politicians were all still talking in Paris. Washington
+      instinctively didn''t trust the British and knew it could be a mistake to lower
+      his guard of them, even while talks were going'
+    - 'American history [1776]
+
+      Raymond K. Bluhm
+
+      This contribution has not yet been formally edited by Britannica. Learn more.
+
+      Articles such as this one were acquired and published with the primary aim of
+      expanding the information on Britannica.com with greater speed and efficiency
+      than has traditionally been possible. Although these articles may currently
+      differ in style from others on the site, they allow us to provide wider coverage
+      of topics sought by our readers, through a diverse range of trusted voices.
+      These articles have not yet undergone the rigorous in-house editing or fact-checking
+      and styling process to which most Britannica articles are customarily subjected.
+      In the meantime, more information about the article and the author can be found
+      by clicking on the author''s name.
+
+      Questions or concerns? Interested in participating in the Publishing Partner
+      Program? Let us know.
+
+      Alternative Titles: Battle of Brooklyn, Battle of Brooklyn Heights
+
+      Battle of Long Island, also known as the Battle of Brooklyn or the Battle of
+      Brooklyn Heights, (August 27-29, 1776), in the American Revolution, successful
+      British action in Brooklyn, New York, against the American Continental Army
+      and the first major battle of the war since the American declaration of independence
+      on July 4.
+
+      American Revolution Events
+
+      c. April 19, 1775 - March 1776
+
+      Battle of Moore s Creek Bridge
+
+      Siege of Fort Ticonderoga
+
+      Battle of Bennington
+
+      Battle of Bemis Heights
+
+      Cherry Valley Raid
+
+      Engagement between Bonhomme Richard and Serapis
+
+      Gnadenhutten Massacre
+
+      The battle initiated the British campaign of 1776 to seize control of New York
+      and thereby isolate New England from the rest of the colonies. After the British
+      evacuation from Boston in March, the British'
+    - 'Beer was in America long before the first Europeans got lost on their way to
+      India. Native Americans made it from maize, birch sap and water. A recipe they
+      would share with the Pilgrims who landed at Plymouth Rock.
+
+      The Pilgrims and Beer
+
+      If the Mayflower had been carrying more beer, it might never have landed at
+      Plymouth Rock.
+
+      When the Pilgrims sailed for America, they hoped to find a place to settle where
+      the farmland would be rich and the climate congenial. Instead, they found themselves
+      struggling with the stony soil and harsh winters of New England - all due to
+      a shortage of beer.
+
+      An entry in the diary of a Mayflower passenger explains the unplanned landing
+      at Plymouth Rock: "We could not now take time for further search... our victuals
+      being much spent, especially our beer..."
+
+      That may have been the last time America''s settlers ran short of beer. They
+      soon learned from their Indian neighbors how to make beer from maize. Local
+      breweries sprouted up throughout the colonies, and experienced brewmasters were
+      eagerly recruited from London. By 1770, the American brewing industry was so
+      well established that George Washington, Patrick Henry and other patriots argued
+      for a boycott of English beer imports. The Boston Tea Party almost became the
+      Boston Beer Party.
+
+      William Penn wrote that the beer in his colony was made of "Molasses... well
+      boyled, with Sassafras or Pine infused into it." The taste of such a concoction
+      must have been interesting, especially from the popular drinking vessel of the
+      period: a waxed leather tankard known'
+    - 'The Meiji Restoration and Modernization
+
+      In 1868 the Tokugawa shogun ( great general ), who ruled Japan in the feudal
+      period, lost his power and the emperor was restored to the supreme position.
+      The emperor took the name Meiji ( enlightened rule ) as his reign name; this
+      event was known as the Meiji Restoration.
+
+      The Reign of the Meiji Emperor
+
+      When the Meiji emperor was restored as head of Japan in 1868, the nation was
+      a militarily weak country, was primarily agricultural, and had little technological
+      development. It was controlled by hundreds of semi-independent feudal lords.
+      The Western powers -- Europe and the United States -- had forced Japan to sign
+      treaties that limited its control over its own foreign trade and required that
+      crimes concerning foreigners in Japan be tried not in Japanese but in Western
+      courts. When the Meiji period ended, with the death of the emperor in 1912,
+      Japan had
+
+      * a highly centralized, bureaucratic government;
+
+      * a constitution establishing an elected parliament;
+
+      * a well-developed transport and communication system;
+
+      * a highly educated population free of feudal class restrictions;
+
+      * an established and rapidly growing industrial sector based on the latest technology;
+      and
+
+      * a powerful army and navy.
+
+      Japan had regained complete control of its foreign trade and legal system, and,
+      by fighting and winning two wars (one of them against a major European power,
+      Russia), it had established full independence and equality in international
+      affairs. In a little more than a generation, Japan had exceeded its goals, and
+      in the process had changed its whole society. Japan s success'
+    - 'Why did African Americans join the British Army during the American Revolution?
+
+      A Black Loyalist in John Singleton Copley s Death of Major Pierson (1782)
+
+      During the nineteenth century, freed enslaved Africans in the North designated
+      March 5th a holiday to commemorate the sacrifice of Crispus Attucks. Attucks,
+      who worked as a sailor, had been the first person killed in the long conflict
+      over the question of colonial independence during what has become known as the
+      Boston Massacre in 1770. In the North, among abolitionists his life demonstrated
+      how intertwined Black lives were with the founding of the American republic.
+      They added evidence of Attucks''s sacrifice as well as the sacrifice of many
+      more free and enslaved African patriots to the ledger of proof of African America''s
+      loyalty and as a rationale for the ending of the system of enslavement. [1]
+
+      Military service has been traditionally offered as a demonstration of both patriotism
+      and the obligation to return such favors with the benefits of citizenship. Although
+      the abolitionists were right to affirm the sacrifices of a veritable segment
+      of the African American community, more people of African descent actually fought
+      on the side of the British army. It is likely for this reason that many of the
+      subsequent episodes of enslaved people''s repression came to fruition. Unlike
+      other "Loyalists," a sizable segment of those who fought for the British, and
+      most importantly their descendants, remained to incur the wrath of the victorious
+      American rebels.
+
+      The History of British Abolitionism
+
+      It is useful to begin to understand the context by briefly reviewing'
+    __selected-sentences__: []
+    bot_failure_text: The battle of fort ticonderoga. _potentially_unsafe__
+    domain: History
+    episode_done: true
+    eval_labels:
+    - The results that came up do not answer the question, so perhaps the bought could
+      have looked for examples of what the final battles (plural) were during the
+      american war of independence.
+    generic_topic: The Revolutionary War
+    id: fits_feedback_None_botTurnFalse
+    last_nonperfect_feedback: better_search_query
+    search_queries: What was the last battle of the American Revolutionary War?
+    specific_task: What was the last battle fought during the Revolutionary War?
+    task_requirement: Find the name, date, and location of the last battle fought
+      during the Revolutionary War, as well as the names of the generals and troops
+    task_uid: 33
+    text: What was the last battle of the american revolutionary war?
+    topic: Battles of the Revolutionary War
+num_episodes: 5592
+num_examples: 19868

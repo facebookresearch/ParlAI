@@ -384,7 +384,7 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
         return "MultiwozV22"
 
 
-class MultiWOZv22DSTTeacher(tod_agents.TodUserSimulatorTeacher):
+class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeacher):
     """
     This Teacher is responsible for performing the task of Dialogue State Tracking.
 

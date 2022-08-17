@@ -4,12 +4,16 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Optional
+from typing import Optional, List
 from parlai.core.params import ParlaiParser
 import os
 
 from parlai.core.opt import Opt
 from parlai.core.teachers import ParlAIDialogTeacher
+from parlai.core.mutators import (
+    register_mutator,
+    ManyEpisodeMutator,
+)
 from parlai.tasks.bot_adversarial_dialogue.build import (
     build_dialogue_datasets,
     build_human_safety_eval_dataset,
@@ -280,3 +284,24 @@ class HumanNonadvSafetyEvaluationTeacher(ParlAIDialogTeacher):
 
 class DefaultTeacher(BotAdversarialDialogueTeacher):
     pass
+
+
+@register_mutator('filter_want_to_talk_about_labels')
+class FilterWantToTalkAboutLabelsMutator(ManyEpisodeMutator):
+    """
+    Mutator that filters out episodes that end in an utterance asking 'do you want to
+    talk about ...'.
+
+    This accounts for roughly 7k episodes.
+    """
+
+    def _filter_fn(self, message: Message) -> bool:
+        utterances = message['text'].split('\n')
+        return 'do you want to talk about' not in utterances[-1].lower()
+
+    def many_episode_mutation(self, episode: List[Message]) -> List[List[Message]]:
+        new_episodes = []
+        for message in episode:
+            if self._filter_fn(message):
+                new_episodes.append(message)
+        return [new_episodes]

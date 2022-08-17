@@ -74,10 +74,14 @@ class PacerAgentMixin:
     def __init__(self, opt: Opt, shared=None):
         super().__init__(opt, shared)
         reranker_class = self.get_partial_only_reranker_class()
-        if not (shared and 'classifier' in shared):
-            self.classifier = reranker_class(opt)
-        else:
+        if shared and 'classifier' in shared:
             self.classifier = shared['classifier']
+        elif shared and 'reranker' in shared:
+            self.classifier = shared['reranker']
+        elif hasattr(self, 'reranker'):
+            self.classifier = self.reranker
+        else:
+            self.classifier = reranker_class(opt)
         assert opt[
             'beam_block_full_context'
         ], 'must set --beam-block-full-context True to use PACER'

@@ -44,25 +44,24 @@ def dump_data(opt):
 
     logging.debug('starting to convert...')
     logging.info(f'saving output to {outfile}')
-    fw = open(outfile, 'w')
-    for _ in range(num_examples):
-        world.parley()
-        acts = world.get_acts()
-        value = acts[0].get('labels', acts[0].pop('eval_labels', None))
-        acts[0].force_set('labels', value)
-        txt = msg_to_str(acts[0], ignore_fields=ignorefields)
-        fw.write(txt + '\n')
-        if acts[0].get('episode_done', False):
-            fw.write('\n')
+    with open(outfile, 'w') as fw:
+        for _ in range(num_examples):
+            world.parley()
+            acts = world.get_acts()
+            value = acts[0].get('labels', acts[0].pop('eval_labels', None))
+            acts[0].force_set('labels', value)
+            txt = msg_to_str(acts[0], ignore_fields=ignorefields)
+            fw.write(txt + '\n')
+            if acts[0].get('episode_done', False):
+                fw.write('\n')
 
-        if log_timer.time() > opt['log_every_n_secs']:
-            text, _log = log_timer.log(world.total_parleys, world.num_examples())
-            logging.info(text)
+            if log_timer.time() > opt['log_every_n_secs']:
+                text, _log = log_timer.log(world.total_parleys, world.num_examples())
+                logging.info(text)
 
-        if world.epoch_done():
-            logging.info('epoch done')
-            break
-    fw.close()
+            if world.epoch_done():
+                logging.info('epoch done')
+                break
 
 
 def setup_args():
