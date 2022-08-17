@@ -318,8 +318,6 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     task_data=task_data,
                 )
             data = agents[0].state.get_data()
-            print('NUM MESSAGES AFTER ROUND:')
-            print(len(data['outputs']['messages']))
 
         # Have agents fill out the form
         for agent_idx, agent_id in enumerate(agent_ids):
