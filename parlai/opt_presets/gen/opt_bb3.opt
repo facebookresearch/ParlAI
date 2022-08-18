@@ -192,5 +192,6 @@
   "include_prompt": false,
   "knowledge_chunk_size": 100,
   "max_prompt_len": 1912,
-  "all_vanilla_prompt": false
+  "all_vanilla_prompt": false,
+  "ignore_in_session_memories_mkm": false
 }

@@ -153,6 +153,13 @@ class BlenderBot3Agent(R2C2Agent):
             help='Number of times to retry on API request failures (< 0 for unlimited retry).',
         )
         parser.add_argument('--metaseq-server-timeout', default=20.0, type=float)
+        parser.add_argument(
+            '--ignore-in-session-memories-mkm',
+            type='bool',
+            default=False,
+            help='If true, we do not look at the in-session memories when '
+            'generating from the MKM',
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -173,6 +180,9 @@ class BlenderBot3Agent(R2C2Agent):
         self.dictionary = top_agent.dictionary
         # continue
         self.max_prompt_len = opt.get('max_prompt_len', PROMPT.MAX_PROMPT_LEN)
+        self.ignore_in_session_memories_mkm = opt.get(
+            'ignore_in_session_memories_mkm', False
+        )
         self.search_agent = SearchAgent(
             {
                 'server': self.opt.get('search_server', 'default'),
@@ -415,10 +425,10 @@ class BlenderBot3Agent(R2C2Agent):
             for module in Module:
                 obs = all_obs[module]
                 if module is Module.MEMORY_KNOWLEDGE and i in memory_indices:
-                    memories = MemoryUtils.get_available_memory(
-                        all_obs['raw'], self.dictionary
+                    memories = MemoryUtils.maybe_reduce_memories(
+                        all_obs['raw']['text'], available_memory[i], self.dictionary
                     )
-                    memories = '\n'.join(available_memory[i])
+                    memories = '\n'.join(memories)
                     new_prompt = self._check_and_limit_len(
                         obs['prompt'].replace(module.opt_pre_context_tok(), memories)
                     )
@@ -772,7 +782,15 @@ class BlenderBot3Agent(R2C2Agent):
             for _ in range(len(observations))
         ]
         # Step 1: determine whether we're searching or accessing memory
-        available_memory = [o['raw']['memories'] for o in observations]
+        all_memory = [o['raw']['memories'] for o in observations]
+        available_memory = [
+            MemoryUtils.get_available_memories(
+                o['raw']['memories'],
+                o['raw']['in_session_memories'],
+                self.ignore_in_session_memories_mkm,
+            )
+            for o in observations
+        ]
 
         batch_reply_sdm, search_indices = self.batch_act_decision(
             observations,
@@ -866,7 +884,7 @@ class BlenderBot3Agent(R2C2Agent):
             batch_reply_mgm_partner,
             batch_reply_knowledge,
             batch_reply_dialogue,
-            available_memory,
+            all_memory,
         )
         for i, reply in enumerate(batch_reply_final):
             reply.force_set('id', 'BlenderBot3')
@@ -900,8 +918,8 @@ class BlenderBot3Agent(R2C2Agent):
                 memory_candidate,
                 MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
             ):
-                self.memories.append(
-                    MemoryUtils.add_memory_prefix(
-                        memory_candidate, person, self.MODEL_TYPE
-                    )
+                memory_to_add = MemoryUtils.add_memory_prefix(
+                    memory_candidate, person, self.MODEL_TYPE
                 )
+                self.memories.append(memory_to_add)
+                self.in_session_memories.add(memory_to_add)
