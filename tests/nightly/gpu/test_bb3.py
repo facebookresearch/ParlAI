@@ -456,14 +456,14 @@ class TestIgnoreInSessionMemories(TestOptFtBase):
         agent.observe(self.opening_message)
         agent.act()
         assert all(m in agent.memories for m in agent.in_session_memories)
-        assert not all(m in agent.in_session_memories for m in agent.memories)
+        assert not any(m in agent.in_session_memories for m in agent.memories)
 
         # set ignore in session memories to True; ensure that final returned memories
         # still have all the memories, but that we don't use the memory module
         agent.in_session_memories = set()
         agent.ignore_in_session_memories_mkm = True
-        message3 = copy.deepcopy(self.message)
-        agent.observe(message3)
+        message = copy.deepcopy(self.message)
+        agent.observe(message)
         act = agent.act()
         assert all(
             m in act['memories']
