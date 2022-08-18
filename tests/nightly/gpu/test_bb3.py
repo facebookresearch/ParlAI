@@ -19,6 +19,9 @@ from projects.bb3.agents.utils import normal_tokenizer, no_overlap, MemoryUtils
 from projects.bb3.tests.opt_presets import INIT_OPT
 
 
+LOCAL = False
+
+
 def _self_memory(text):
     return f'{PROMPT.SELF_MEMORY_PREFIX}: {text}'
 
@@ -115,7 +118,7 @@ class TestOptFtBase(unittest.TestCase):
     def setUp(self):
         self.opt = INIT_OPT
         for k, v in self.opt.items():
-            if 'BB3OPTAgent' in v:
+            if 'BB3OPTAgent' in str(v):
                 self.opt[k] = 'projects.bb3.agents.opt_api_agent:MockOptAgent'
 
         self.opt['search_server'] = 'test'
@@ -340,8 +343,8 @@ class TestOptMainServerBase(TestOptFtBase):
         opt = copy.deepcopy(self.opt)
         overrides = {
             'knowledge_conditioning': 'combined',
-            'opt_server': 'http://18.117.126.138:3000',
-            'search_server': 'bing_cc',
+            'opt_server': 'http://localhost:6000',
+            'search_server': 'test',
         }
         for k, v in overrides.items():
             opt[k] = v
@@ -351,6 +354,7 @@ class TestOptMainServerBase(TestOptFtBase):
         self.batch_agent = create_agent(opt)
 
 
+@unittest.skipUnless(LOCAL, "must be local to specify opt server")
 class TestOptMainServerBatching(TestOptMainServerBase):
     def test_batching(self):
         self.batch_agent = create_agent(self.opt)
