@@ -1134,6 +1134,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return None
 
+    def _generation_activation(self, score: torch.Tensor) -> torch.float32:
+        return F.log_softmax(score, dim=-1, dtype=torch.float32)
+
     def _generate(
         self,
         batch: Batch,
@@ -1214,7 +1217,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if self.temperature != 1.0:
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
-            score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
+            score = self._generation_activation(score)  # type: ignore
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
