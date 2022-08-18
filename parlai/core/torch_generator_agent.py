@@ -1050,25 +1050,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
-    def _get_context(self, batch, batch_idx):
-        """
-        Set the beam context for n-gram context blocking.
-
-        Intentionally overridable for more complex model histories.
-        """
-        if self.beam_context_block_ngram <= 0:
-            # We aren't context blocking, return empty tensor
-            return torch.LongTensor()
-
-        ctxt = batch.text_vec[batch_idx]
-        if self.beam_block_full_context:
-            ctxt = batch.full_text_vec[batch_idx]
-        return ctxt
-
     def _get_batch_context(self, batch):
         """
         Version of TGA._get_context() that operates on full batches for speed.
         """
+        if hasattr(self, '_get_context'):
+            # Warn users that have subclassed with '_get_gontext
+            warn_once(
+                "WARNING: TGA._get_context() has been removed, use TGA.get_batch_context() instead"
+            )
+
         if self.beam_context_block_ngram <= 0:
             # We aren't context blocking, return empty tensor of the correct size
             return torch.zeros(batch.batchsize, 0, dtype=torch.long)
