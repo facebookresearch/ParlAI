@@ -1050,25 +1050,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
-    def _get_context(self, batch, batch_idx):
-        """
-        Set the beam context for n-gram context blocking.
-
-        Intentionally overridable for more complex model histories.
-        """
-        if self.beam_context_block_ngram <= 0:
-            # We aren't context blocking, return empty tensor
-            return torch.LongTensor()
-
-        ctxt = batch.text_vec[batch_idx]
-        if self.beam_block_full_context:
-            ctxt = batch.full_text_vec[batch_idx]
-        return ctxt
-
     def _get_batch_context(self, batch):
         """
         Version of TGA._get_context() that operates on full batches for speed.
         """
+        if hasattr(self, '_get_context'):
+            # Warn users that have subclassed with '_get_gontext
+            warn_once(
+                "WARNING: TGA._get_context() has been removed, use TGA.get_batch_context() instead"
+            )
+
         if self.beam_context_block_ngram <= 0:
             # We aren't context blocking, return empty tensor of the correct size
             return torch.zeros(batch.batchsize, 0, dtype=torch.long)
@@ -1133,6 +1124,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Returned tensor should be of dimension bsz x len(prefix)
         """
         return None
+
+    def _generation_activation(self, score: torch.Tensor) -> torch.float32:
+        return F.log_softmax(score, dim=-1, dtype=torch.float32)
 
     def _generate(
         self,
@@ -1214,7 +1208,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if self.temperature != 1.0:
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
-            score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
+            score = self._generation_activation(score)  # type: ignore
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
