@@ -407,15 +407,81 @@ class TestMemoryTFIDF(TestOptFtBase):
         agent = create_agent(self.opt)
         dictionary = agent.dictionary
         memories = self.memories * 100
-        new_memories = MemoryUtils.get_available_memory(
-            {'text': 'I wish I could see my cats again!', 'memories': memories},
+        new_memories = MemoryUtils.maybe_reduce_memories(
+            'I wish I could see my cats again!',
+            memories,
             dictionary,
         )
         assert "cats" in new_memories[0]
         assert len(new_memories) <= 32
-        new_memories = MemoryUtils.get_available_memory(
-            {'text': 'I hope the horses are faster today!', 'memories': memories},
+        new_memories = MemoryUtils.maybe_reduce_memories(
+            'I hope the horses are faster today!',
+            memories,
             dictionary,
         )
         assert "horses" in new_memories[0]
         assert len(new_memories) <= 32
+
+
+class TestIgnoreInSessionMemories(TestOptFtBase):
+    def test_in_session_memories(self):
+        opt = copy.deepcopy(self.opt)
+        opt['knowledge_conditioning'] = 'separate'
+        opt['override']['knowledge_conditioning'] = 'separate'
+        agent = create_agent(opt)
+        opt2 = copy.deepcopy(self.opt)
+        opt2['knowledge_conditioning'] = 'separate'
+        opt2['override']['knowledge_conditioning'] = 'separate'
+        opt2['ignore_in_session_memories_mkm'] = True
+        opt2['override']['ignore_in_session_memories_mkm'] = True
+        agent2 = create_agent(opt2)
+
+        # first, check with normal messages
+        agent1_acts = []
+        agent2_acts = []
+        for _ in range(5):
+            agent.observe(self.message)
+            agent2.observe(self.message)
+            agent1_acts.append(agent.act())
+            agent2_acts.append(agent2.act())
+
+        # ignore first message for agent1 since there aren't any memories
+        assert all(a[Module.MEMORY_DIALOGUE.message_name()] for a in agent1_acts[1:])
+        assert all(not a[Module.MEMORY_DIALOGUE.message_name()] for a in agent2_acts)
+
+        # Check that in session memories is strict subset of memories
+        # when using opening message
+        agent.reset()
+        original_memories = copy.deepcopy(self.memories)
+        agent.observe(self.opening_message)
+        agent.act()
+        assert all(m in agent.memories for m in agent.in_session_memories)
+        assert not all(m in agent.in_session_memories for m in agent.memories)
+
+        # set ignore in session memories to True; ensure that final returned memories
+        # still have all the memories, but that we don't use the memory module
+        agent.in_session_memories = set()
+        agent.ignore_in_session_memories_mkm = True
+        message3 = copy.deepcopy(self.message)
+        agent.observe(message3)
+        act = agent.act()
+        assert all(
+            m in act['memories']
+            for m in original_memories + list(agent.in_session_memories)
+        )
+        assert len(agent.in_session_memories) == (
+            len(act['memories']) - len(original_memories)
+        )
+
+    def test_memory_utils(self):
+        new_memories = ['in session memory 1', 'in session memory 2']
+        memories = self.memories + new_memories
+        in_session_memories = set(new_memories)
+        available_memories = MemoryUtils.get_available_memories(
+            memories, in_session_memories, ignore_in_session_memories=False
+        )
+        assert available_memories == memories
+        available_memories = MemoryUtils.get_available_memories(
+            memories, in_session_memories, ignore_in_session_memories=True
+        )
+        assert available_memories == self.memories
