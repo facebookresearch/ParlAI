@@ -348,6 +348,8 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         for agent in agents:
             # Reload saved data
             agent.state.load_data()
+        print('NUM MESSAGES AFTER RELOADING:')
+        print(len(agents[0].state.get_data()['outputs']['messages']))
         actual_states = [agent.state.get_data() for agent in agents]
         print('AGENT STATE:')
         print(agents[0].state)
