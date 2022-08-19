@@ -7,6 +7,7 @@
 Utilities for running tests.
 """
 
+import datetime  # TODO: remove
 import os
 import random
 import tempfile
@@ -336,7 +337,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # Submit the HIT
         for agent_id in agent_ids:
-            self.server.submit_mock_unit(agent_id, {'final_data': {}})
+            # self.server.submit_mock_unit(agent_id, {'final_data': {}})  # TODO: undo
             self.await_channel_requests()
         print('NUM MESSAGES AFTER SUBMISSION:')
         print(len(agents[0].state.get_data()['outputs']['messages']))
@@ -347,6 +348,9 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
         time.sleep(self.message_sleep_time)
         for agent in agents:
             # Reload saved data
+            print(
+                f"RELOADING SAVED DATA, {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}."
+            )
             agent.state.load_data()
         print('NUM MESSAGES AFTER RELOADING:')
         print(len(agents[0].state.get_data()['outputs']['messages']))
