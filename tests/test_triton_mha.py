@@ -1,5 +1,10 @@
+#!/usr/bin/env python3
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
+
 import math
-from typing import Dict, Tuple, Optional, Union
+from typing import Dict, Tuple, Optional
 
 import triton
 import torch
@@ -10,7 +15,6 @@ from parlai.core.opt import Opt
 from parlai.core.params import default
 from parlai.utils.torch import neginf
 from parlai.agents.transformer.modules import _attention
-import pytest
 import parlai.utils.testing as testing_utils
 import unittest
 
@@ -242,9 +246,9 @@ class Triton_MHA(nn.Module):
         def add_padding(query, key, value, mask):
             _, old_query_len, _ = query.size()
             query = pad(query)
-            if key != None:
+            if key is not None:
                 key = pad(key)
-            if value != None:
+            if value is not None:
                 value = pad(value)
             mask = F.pad(
                 mask,
@@ -472,12 +476,18 @@ def bench_flash_attention(
 
     if provider == "triton":
         triton_mha = Triton_MHA(opt)
-        fn = lambda: triton_mha.forward(q, mask=m, padding=True)
+
+        def fn():
+            return triton_mha.forward(q, mask=m, padding=True)
+
         ms = triton.testing.do_bench(fn, percentiles=None, warmup=warmup, rep=rep)
         return ms
     if provider == "parlai":
         parlai_mha = Parlai_MHA(opt)
-        fn = lambda: parlai_mha.forward(q, mask=m)
+
+        def fn():
+            return parlai_mha.forward(q, mask=m)
+
         ms = triton.testing.do_bench(fn, percentiles=None, warmup=warmup, rep=rep)
         return ms
 

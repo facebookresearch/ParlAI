@@ -730,7 +730,9 @@ class RougeMetric(AverageMetric):
         :return: (rouge-1, rouge-2, rouge-L)
         """
         measure = measure.lower()
-        assert measure in ROUGE_METRICS_MEASURES, "Use one of recall 'r' (default), f1 'f', or precision 'p'."
+        assert (
+            measure in ROUGE_METRICS_MEASURES
+        ), "Use one of recall 'r' (default), f1 'f', or precision 'p'."
 
         # possible global initialization
         try:
