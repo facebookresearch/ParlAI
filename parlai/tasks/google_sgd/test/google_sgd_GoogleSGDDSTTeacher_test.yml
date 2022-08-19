@@ -1,0 +1,537 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - ''
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: Find and book tickets to any cultural events in your area
+      intents:
+      - description: Find cultural events - concerts and plays - happening in a city
+        is_transactional: false
+        name: FindEvents
+        optional_slots:
+          date: dontcare
+        required_slots:
+        - event_type
+        - city
+        result_slots:
+        - event_type
+        - event_name
+        - date
+        - time
+        - price_per_ticket
+        - city
+        - venue
+        - venue_address
+      - description: Buy tickets for a cultural event and date in a given city
+        is_transactional: true
+        name: BuyEventTickets
+        optional_slots: {}
+        required_slots:
+        - event_name
+        - number_of_tickets
+        - date
+        - city
+        result_slots:
+        - event_name
+        - date
+        - time
+        - number_of_tickets
+        - price_per_ticket
+        - city
+        - venue
+        - venue_address
+      service_name: Events_3
+      slots:
+      - description: Type of cultural event
+        is_categorical: true
+        name: event_type
+        possible_values:
+        - Music
+        - Theater
+      - description: Name of artist or play
+        is_categorical: false
+        name: event_name
+        possible_values: []
+      - description: Date of event
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Start time of event
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Number of tickets to reserve for the event
+        is_categorical: true
+        name: number_of_tickets
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+        - '7'
+        - '8'
+        - '9'
+      - description: Price of each ticket
+        is_categorical: false
+        name: price_per_ticket
+        possible_values: []
+      - description: City where the event is taking place
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Exact venue of event
+        is_categorical: false
+        name: venue
+        possible_values: []
+      - description: Street address of event venue
+        is_categorical: false
+        name: venue_address
+        possible_values: []
+    slots: {}
+    text: <user> What can I go do I am bored sitting here. <system> What do you like
+      to do and where would you like to do it?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - city NYC, event_type Music
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: Find and book tickets to any cultural events in your area
+      intents:
+      - description: Find cultural events - concerts and plays - happening in a city
+        is_transactional: false
+        name: FindEvents
+        optional_slots:
+          date: dontcare
+        required_slots:
+        - event_type
+        - city
+        result_slots:
+        - event_type
+        - event_name
+        - date
+        - time
+        - price_per_ticket
+        - city
+        - venue
+        - venue_address
+      - description: Buy tickets for a cultural event and date in a given city
+        is_transactional: true
+        name: BuyEventTickets
+        optional_slots: {}
+        required_slots:
+        - event_name
+        - number_of_tickets
+        - date
+        - city
+        result_slots:
+        - event_name
+        - date
+        - time
+        - number_of_tickets
+        - price_per_ticket
+        - city
+        - venue
+        - venue_address
+      service_name: Events_3
+      slots:
+      - description: Type of cultural event
+        is_categorical: true
+        name: event_type
+        possible_values:
+        - Music
+        - Theater
+      - description: Name of artist or play
+        is_categorical: false
+        name: event_name
+        possible_values: []
+      - description: Date of event
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Start time of event
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Number of tickets to reserve for the event
+        is_categorical: true
+        name: number_of_tickets
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+        - '7'
+        - '8'
+        - '9'
+      - description: Price of each ticket
+        is_categorical: false
+        name: price_per_ticket
+        possible_values: []
+      - description: City where the event is taking place
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Exact venue of event
+        is_categorical: false
+        name: venue
+        possible_values: []
+      - description: Street address of event venue
+        is_categorical: false
+        name: venue_address
+        possible_values: []
+    slots:
+      city:
+      - NYC
+      event_type:
+      - Music
+    text: <user> What can I go do I am bored sitting here. <system> What do you like
+      to do and where would you like to do it? <user> I want something to do in or
+      around NYC and Musical shows are one of my favorites. <system> I pulled up a
+      list of 10 so far I think this one would interest you its on March 11th at 7:30
+      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there.
+    type: text
+- - episode_done: true
+    eval_labels:
+    - city NYC, date March 11th, event_name Abbi Jacobson, event_type Music
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: Find and book tickets to any cultural events in your area
+      intents:
+      - description: Find cultural events - concerts and plays - happening in a city
+        is_transactional: false
+        name: FindEvents
+        optional_slots:
+          date: dontcare
+        required_slots:
+        - event_type
+        - city
+        result_slots:
+        - event_type
+        - event_name
+        - date
+        - time
+        - price_per_ticket
+        - city
+        - venue
+        - venue_address
+      - description: Buy tickets for a cultural event and date in a given city
+        is_transactional: true
+        name: BuyEventTickets
+        optional_slots: {}
+        required_slots:
+        - event_name
+        - number_of_tickets
+        - date
+        - city
+        result_slots:
+        - event_name
+        - date
+        - time
+        - number_of_tickets
+        - price_per_ticket
+        - city
+        - venue
+        - venue_address
+      service_name: Events_3
+      slots:
+      - description: Type of cultural event
+        is_categorical: true
+        name: event_type
+        possible_values:
+        - Music
+        - Theater
+      - description: Name of artist or play
+        is_categorical: false
+        name: event_name
+        possible_values: []
+      - description: Date of event
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Start time of event
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Number of tickets to reserve for the event
+        is_categorical: true
+        name: number_of_tickets
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+        - '7'
+        - '8'
+        - '9'
+      - description: Price of each ticket
+        is_categorical: false
+        name: price_per_ticket
+        possible_values: []
+      - description: City where the event is taking place
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Exact venue of event
+        is_categorical: false
+        name: venue
+        possible_values: []
+      - description: Street address of event venue
+        is_categorical: false
+        name: venue_address
+        possible_values: []
+    slots:
+      city:
+      - NYC
+      date:
+      - March 11th
+      event_name:
+      - Abbi Jacobson
+      event_type:
+      - Music
+    text: <user> What can I go do I am bored sitting here. <system> What do you like
+      to do and where would you like to do it? <user> I want something to do in or
+      around NYC and Musical shows are one of my favorites. <system> I pulled up a
+      list of 10 so far I think this one would interest you its on March 11th at 7:30
+      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there. <user> That does
+      interest me. Is there a direct bus I can take to get there? <system> Would you
+      take the bus on March 11th?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - category direct, to_city NYC
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: Affordable and comfortable bus travel across the country
+      intents:
+      - description: Search for a bus itinerary between two places on a certain date
+        is_transactional: false
+        name: FindBus
+        optional_slots:
+          category: direct
+          num_passengers: '1'
+        required_slots:
+        - from_city
+        - to_city
+        - departure_date
+        result_slots:
+        - from_city
+        - to_city
+        - from_station
+        - to_station
+        - departure_date
+        - departure_time
+        - price
+        - num_passengers
+        - category
+      - description: Purchase the bus tickets
+        is_transactional: true
+        name: BuyBusTicket
+        optional_slots:
+          additional_luggage: 'False'
+        required_slots:
+        - from_city
+        - to_city
+        - departure_date
+        - departure_time
+        - num_passengers
+        result_slots:
+        - from_city
+        - to_city
+        - from_station
+        - to_station
+        - departure_date
+        - departure_time
+        - price
+        - additional_luggage
+        - num_passengers
+        - category
+      service_name: Buses_3
+      slots:
+      - description: The city to depart from
+        is_categorical: false
+        name: from_city
+        possible_values: []
+      - description: The destination city of the trip
+        is_categorical: false
+        name: to_city
+        possible_values: []
+      - description: Name of station of departure
+        is_categorical: false
+        name: from_station
+        possible_values: []
+      - description: Name of station of arrival
+        is_categorical: false
+        name: to_station
+        possible_values: []
+      - description: The date of departure
+        is_categorical: false
+        name: departure_date
+        possible_values: []
+      - description: The time of departure
+        is_categorical: false
+        name: departure_time
+        possible_values: []
+      - description: Ticket price per passenger
+        is_categorical: false
+        name: price
+        possible_values: []
+      - description: Whether to carry excess baggage in the bus
+        is_categorical: true
+        name: additional_luggage
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: The number of tickets for the trip
+        is_categorical: true
+        name: num_passengers
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+      - description: How many stops the route has
+        is_categorical: true
+        name: category
+        possible_values:
+        - direct
+        - one-stop
+    slots:
+      category:
+      - direct
+      to_city:
+      - NYC
+    text: <user> What can I go do I am bored sitting here. <system> What do you like
+      to do and where would you like to do it? <user> I want something to do in or
+      around NYC and Musical shows are one of my favorites. <system> I pulled up a
+      list of 10 so far I think this one would interest you its on March 11th at 7:30
+      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there. <user> That does
+      interest me. Is there a direct bus I can take to get there? <system> Would you
+      take the bus on March 11th?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - category direct, departure_date March 5th, to_city NYC
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: Affordable and comfortable bus travel across the country
+      intents:
+      - description: Search for a bus itinerary between two places on a certain date
+        is_transactional: false
+        name: FindBus
+        optional_slots:
+          category: direct
+          num_passengers: '1'
+        required_slots:
+        - from_city
+        - to_city
+        - departure_date
+        result_slots:
+        - from_city
+        - to_city
+        - from_station
+        - to_station
+        - departure_date
+        - departure_time
+        - price
+        - num_passengers
+        - category
+      - description: Purchase the bus tickets
+        is_transactional: true
+        name: BuyBusTicket
+        optional_slots:
+          additional_luggage: 'False'
+        required_slots:
+        - from_city
+        - to_city
+        - departure_date
+        - departure_time
+        - num_passengers
+        result_slots:
+        - from_city
+        - to_city
+        - from_station
+        - to_station
+        - departure_date
+        - departure_time
+        - price
+        - additional_luggage
+        - num_passengers
+        - category
+      service_name: Buses_3
+      slots:
+      - description: The city to depart from
+        is_categorical: false
+        name: from_city
+        possible_values: []
+      - description: The destination city of the trip
+        is_categorical: false
+        name: to_city
+        possible_values: []
+      - description: Name of station of departure
+        is_categorical: false
+        name: from_station
+        possible_values: []
+      - description: Name of station of arrival
+        is_categorical: false
+        name: to_station
+        possible_values: []
+      - description: The date of departure
+        is_categorical: false
+        name: departure_date
+        possible_values: []
+      - description: The time of departure
+        is_categorical: false
+        name: departure_time
+        possible_values: []
+      - description: Ticket price per passenger
+        is_categorical: false
+        name: price
+        possible_values: []
+      - description: Whether to carry excess baggage in the bus
+        is_categorical: true
+        name: additional_luggage
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: The number of tickets for the trip
+        is_categorical: true
+        name: num_passengers
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+      - description: How many stops the route has
+        is_categorical: true
+        name: category
+        possible_values:
+        - direct
+        - one-stop
+    slots:
+      category:
+      - direct
+      departure_date:
+      - March 5th
+      to_city:
+      - NYC
+    text: <user> What can I go do I am bored sitting here. <system> What do you like
+      to do and where would you like to do it? <user> I want something to do in or
+      around NYC and Musical shows are one of my favorites. <system> I pulled up a
+      list of 10 so far I think this one would interest you its on March 11th at 7:30
+      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there. <user> That does
+      interest me. Is there a direct bus I can take to get there? <system> Would you
+      take the bus on March 11th? <user> I think I'd make a week of it and take the
+      bus on March 5th. <system> Where did you want to get on the bus?
+    type: text
+num_episodes: 4201
+num_examples: 46498

@@ -11,14 +11,17 @@ Google The Schema-Guided Dialogue(SGD) Dataset implementation for ParlAI.
 import glob
 import json
 import os
-from typing import Optional
+from typing import Any, Dict, List, Optional
 
 import parlai.tasks.google_sgd.build as build_
 import parlai.core.tod.tod_core as tod
 import parlai.core.tod.tod_agents as tod_agents
 from parlai.core.tod.tod_core import SerializationHelpers
+from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
+from fuzzywuzzy import fuzz
 from parlai.utils.io import PathManager
 
 
@@ -197,6 +200,108 @@ class GoogleSGDParser(tod_agents.TodStructuredDataParser):
 
     def get_id_task_prefix(self):
         return "GoogleSGD"
+
+
+class GoogleSGDDSTTeacher(GoogleSGDParser, tod_agents.TodUserSimulatorTeacher):
+    """
+    This Teacher is responsible for performing the task of Dialogue State Tracking. It
+    can be used to evaluate LM on JGA (Joint Goal Accuracy) metric (as shown in.
+
+    [SimpleTOD](https://arxiv.org/abs/2005.00796) and
+    [Soloist](https://arxiv.org/abs/2005.05298)).
+    """
+
+    SLOT_ENTRY_SEPARATOR = ", "
+
+    def fuzzy_match(self, gt_strings: List[str], predicted_string: str) -> bool:
+        fuzzy_match_scores = [
+            fuzz.token_sort_ratio(gt_string, predicted_string) / 100.0
+            for gt_string in gt_strings
+        ]
+        return max(fuzzy_match_scores)
+
+    def compare_slot_values(self, gt_slots, predicted_slots, service_slot) -> bool:
+        service_slot_name = service_slot["name"]
+        if (
+            service_slot_name not in gt_slots
+            and service_slot_name not in predicted_slots
+        ):
+            return True
+        if service_slot["is_categorical"]:
+            return gt_slots.get(service_slot_name, [""])[0] == predicted_slots.get(
+                service_slot_name, ""
+            )
+
+        else:
+
+            return self.fuzzy_match(
+                gt_slots.get(service_slot_name, [""]),
+                predicted_slots.get(service_slot_name, ""),
+            )
+
+    def custom_evaluation(
+        self, teacher_action: Message, labels, model_response: Message
+    ):
+        """
+        Adapted from https://github.com/google-research/google-research/blob/4b5b9ceb480
+        f58fddb289618597187325e8540c3/schema_guided_dst/metrics.py#L245 Slot value is
+        considered equal if they match exactly for categorical slots or if they fuzzy
+        match for non categorical.
+        """
+
+        gt_slots = teacher_action["slots"]
+
+        predicted_slots = {}
+        if model_response.get("text"):
+            for slots in model_response["text"].split(self.SLOT_ENTRY_SEPARATOR):
+                if slots:
+                    slot_info = slots.split(" ", maxsplit=1)
+                    if len(slot_info) == 2:
+                        slot_name, slot_val = slot_info
+                        predicted_slots[slot_name] = slot_val
+
+        all_slots_correct = True
+
+        for service_slot in teacher_action["service"]["slots"]:
+            are_slots_equal = self.compare_slot_values(
+                gt_slots, predicted_slots, service_slot
+            )
+            all_slots_correct = all_slots_correct and are_slots_equal
+            if service_slot["name"] in predicted_slots:
+                self.metrics.add("slot_p", AverageMetric(are_slots_equal))
+            if service_slot["name"] in gt_slots:
+                self.metrics.add("slot_r", AverageMetric(are_slots_equal))
+
+        self.metrics.add("jga", AverageMetric(all_slots_correct))
+
+    def setup_data(self, fold):
+        schema_lookup, dialogues = self._load_data(fold)
+        for dialogue in dialogues:
+            turns = dialogue["turns"]
+            context = []
+            for turn_id in range(0, len(turns), 2):
+                frames = turns[turn_id]["frames"]
+                user_utterance = turns[turn_id]["utterance"]
+                sys_utterance = turns[turn_id + 1]["utterance"]
+                context.append(f"<user> {user_utterance} <system> {sys_utterance}")
+
+                for frame in frames:
+                    slot_values = frame["state"]["slot_values"]
+
+                    label = self.SLOT_ENTRY_SEPARATOR.join(
+                        [
+                            f"{slot_name} {slot_val[0]}"
+                            for slot_name, slot_val in slot_values.items()
+                        ]
+                    )
+
+                    yield {
+                        "text": " ".join(context),
+                        "label": label,
+                        "slots": slot_values,
+                        "type": "text",
+                        "service": schema_lookup[frame["service"]],
+                    }, True
 
 
 class SystemTeacher(GoogleSGDParser, tod_agents.TodSystemTeacher):

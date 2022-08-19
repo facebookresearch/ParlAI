@@ -1,0 +1,405 @@
+acts:
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - free_entry True
+    service:
+      description: The biggest database of tourist attractions and points of interest
+      intents:
+      - description: Browse attractions in a given city
+        is_transactional: false
+        name: FindAttractions
+        optional_slots:
+          category: dontcare
+          free_entry: dontcare
+          good_for_kids: dontcare
+        required_slots:
+        - location
+        result_slots:
+        - location
+        - attraction_name
+        - category
+        - phone_number
+        - free_entry
+        - good_for_kids
+      service_name: Travel_1
+      slots:
+      - description: City or town where the attraction is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: Common name of the attraction
+        is_categorical: false
+        name: attraction_name
+        possible_values: []
+      - description: Category to which the attraction belongs
+        is_categorical: true
+        name: category
+        possible_values:
+        - Place of Worship
+        - Theme Park
+        - Museum
+        - Historical Landmark
+        - Park
+        - Tourist Attraction
+        - Sports Venue
+        - Shopping Area
+        - Performing Arts Venue
+        - Nature Preserve
+      - description: Phone number to contact the attraction
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Boolean flag indicating whether entrance to attraction is free
+        is_categorical: true
+        name: free_entry
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating whether attraction is good for to take
+          kids to
+        is_categorical: true
+        name: good_for_kids
+        possible_values:
+        - 'True'
+        - 'False'
+    slots:
+      free_entry:
+      - 'True'
+    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
+      in particular?
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - category Tourist Attraction, free_entry True, location NYC
+    service:
+      description: The biggest database of tourist attractions and points of interest
+      intents:
+      - description: Browse attractions in a given city
+        is_transactional: false
+        name: FindAttractions
+        optional_slots:
+          category: dontcare
+          free_entry: dontcare
+          good_for_kids: dontcare
+        required_slots:
+        - location
+        result_slots:
+        - location
+        - attraction_name
+        - category
+        - phone_number
+        - free_entry
+        - good_for_kids
+      service_name: Travel_1
+      slots:
+      - description: City or town where the attraction is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: Common name of the attraction
+        is_categorical: false
+        name: attraction_name
+        possible_values: []
+      - description: Category to which the attraction belongs
+        is_categorical: true
+        name: category
+        possible_values:
+        - Place of Worship
+        - Theme Park
+        - Museum
+        - Historical Landmark
+        - Park
+        - Tourist Attraction
+        - Sports Venue
+        - Shopping Area
+        - Performing Arts Venue
+        - Nature Preserve
+      - description: Phone number to contact the attraction
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Boolean flag indicating whether entrance to attraction is free
+        is_categorical: true
+        name: free_entry
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating whether attraction is good for to take
+          kids to
+        is_categorical: true
+        name: good_for_kids
+        possible_values:
+        - 'True'
+        - 'False'
+    slots:
+      category:
+      - Tourist Attraction
+      free_entry:
+      - 'True'
+      location:
+      - NYC
+    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
+      in particular? <user> Something of a place of interest in NYC. <system> There's
+      a cool Tourist Attraction called Balto Statue.
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - category Tourist Attraction, free_entry True, location NYC
+    service:
+      description: The biggest database of tourist attractions and points of interest
+      intents:
+      - description: Browse attractions in a given city
+        is_transactional: false
+        name: FindAttractions
+        optional_slots:
+          category: dontcare
+          free_entry: dontcare
+          good_for_kids: dontcare
+        required_slots:
+        - location
+        result_slots:
+        - location
+        - attraction_name
+        - category
+        - phone_number
+        - free_entry
+        - good_for_kids
+      service_name: Travel_1
+      slots:
+      - description: City or town where the attraction is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: Common name of the attraction
+        is_categorical: false
+        name: attraction_name
+        possible_values: []
+      - description: Category to which the attraction belongs
+        is_categorical: true
+        name: category
+        possible_values:
+        - Place of Worship
+        - Theme Park
+        - Museum
+        - Historical Landmark
+        - Park
+        - Tourist Attraction
+        - Sports Venue
+        - Shopping Area
+        - Performing Arts Venue
+        - Nature Preserve
+      - description: Phone number to contact the attraction
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Boolean flag indicating whether entrance to attraction is free
+        is_categorical: true
+        name: free_entry
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating whether attraction is good for to take
+          kids to
+        is_categorical: true
+        name: good_for_kids
+        possible_values:
+        - 'True'
+        - 'False'
+    slots:
+      category:
+      - Tourist Attraction
+      free_entry:
+      - 'True'
+      location:
+      - NYC
+    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
+      in particular? <user> Something of a place of interest in NYC. <system> There's
+      a cool Tourist Attraction called Balto Statue. <user> Is it kid-friendly? <system>
+      It's not the best place for kids.
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - category Tourist Attraction, free_entry True, location NYC
+    service:
+      description: The biggest database of tourist attractions and points of interest
+      intents:
+      - description: Browse attractions in a given city
+        is_transactional: false
+        name: FindAttractions
+        optional_slots:
+          category: dontcare
+          free_entry: dontcare
+          good_for_kids: dontcare
+        required_slots:
+        - location
+        result_slots:
+        - location
+        - attraction_name
+        - category
+        - phone_number
+        - free_entry
+        - good_for_kids
+      service_name: Travel_1
+      slots:
+      - description: City or town where the attraction is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: Common name of the attraction
+        is_categorical: false
+        name: attraction_name
+        possible_values: []
+      - description: Category to which the attraction belongs
+        is_categorical: true
+        name: category
+        possible_values:
+        - Place of Worship
+        - Theme Park
+        - Museum
+        - Historical Landmark
+        - Park
+        - Tourist Attraction
+        - Sports Venue
+        - Shopping Area
+        - Performing Arts Venue
+        - Nature Preserve
+      - description: Phone number to contact the attraction
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Boolean flag indicating whether entrance to attraction is free
+        is_categorical: true
+        name: free_entry
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating whether attraction is good for to take
+          kids to
+        is_categorical: true
+        name: good_for_kids
+        possible_values:
+        - 'True'
+        - 'False'
+    slots:
+      category:
+      - Tourist Attraction
+      free_entry:
+      - 'True'
+      location:
+      - NYC
+    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
+      in particular? <user> Something of a place of interest in NYC. <system> There's
+      a cool Tourist Attraction called Balto Statue. <user> Is it kid-friendly? <system>
+      It's not the best place for kids. <user> All right, thanks. <system> Anything
+      else I can help with?
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - location NYC, number_of_rooms 2
+    service:
+      description: A leading provider for searching and booking hotel rooms
+      intents:
+      - description: Reserve a selected hotel for given dates
+        is_transactional: true
+        name: ReserveHotel
+        optional_slots:
+          number_of_rooms: '1'
+        required_slots:
+        - hotel_name
+        - location
+        - check_in_date
+        - check_out_date
+        result_slots:
+        - location
+        - number_of_rooms
+        - check_in_date
+        - check_out_date
+        - average_rating
+        - hotel_name
+        - street_address
+        - phone_number
+        - price
+        - pets_welcome
+      - description: Search for a hotel based on location
+        is_transactional: false
+        name: SearchHotel
+        optional_slots:
+          number_of_rooms: dontcare
+          pets_welcome: dontcare
+        required_slots:
+        - location
+        result_slots:
+        - location
+        - number_of_rooms
+        - average_rating
+        - hotel_name
+        - street_address
+        - phone_number
+        - price
+        - pets_welcome
+      service_name: Hotels_3
+      slots:
+      - description: Location of the hotel
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: Number of rooms to book
+        is_categorical: true
+        name: number_of_rooms
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+      - description: Start date for the hotel reservation
+        is_categorical: false
+        name: check_in_date
+        possible_values: []
+      - description: End date for the hotel reservation
+        is_categorical: false
+        name: check_out_date
+        possible_values: []
+      - description: Average review rating for the hotel
+        is_categorical: false
+        name: average_rating
+        possible_values: []
+      - description: Name of the hotel
+        is_categorical: false
+        name: hotel_name
+        possible_values: []
+      - description: Address of the hotel
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Phone number of the hotel
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Total price for the stay
+        is_categorical: false
+        name: price
+        possible_values: []
+      - description: Boolean flag indicating if pets are allowed in the hotel
+        is_categorical: true
+        name: pets_welcome
+        possible_values:
+        - 'True'
+        - 'False'
+    slots:
+      location:
+      - NYC
+      number_of_rooms:
+      - '2'
+    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
+      in particular? <user> Something of a place of interest in NYC. <system> There's
+      a cool Tourist Attraction called Balto Statue. <user> Is it kid-friendly? <system>
+      It's not the best place for kids. <user> All right, thanks. <system> Anything
+      else I can help with? <user> I'll be a 2 room hotel there. <system> How about
+      1 Hotel Brooklyn Bridge with its 4.5 rating?
+    type: text
+num_episodes: 16142
+num_examples: 181124
