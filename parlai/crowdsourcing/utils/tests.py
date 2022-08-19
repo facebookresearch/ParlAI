@@ -317,7 +317,7 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
                     text=message,
                     task_data=task_data,
                 )
-            data = agents[0].state.get_data()
+            data = agents[0].state.get_data()  # TODO: remove
 
         # Have agents fill out the form
         for agent_idx, agent_id in enumerate(agent_ids):
@@ -345,6 +345,9 @@ class AbstractParlAIChatTest(AbstractCrowdsourcingTest):
 
         # Get and filter actual messages
         time.sleep(self.message_sleep_time)
+        for agent in agents:
+            # Reload saved data
+            agent.state.load_data()
         actual_states = [agent.state.get_data() for agent in agents]
         print('AGENT STATE:')
         print(agents[0].state)
