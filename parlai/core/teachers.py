@@ -169,7 +169,9 @@ class Teacher(Agent):
             default=None,
             help='Apply one or more mutators to the data.',
         )
-        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
+        mutators = Mutator.load_mutator_types(
+            partial_opt.get('mutators') if partial_opt else None
+        )
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
         return parser

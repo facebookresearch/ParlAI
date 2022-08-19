@@ -36,10 +36,12 @@ class DefaultTeacher(DialogTeacher):
         self.characters = opt['characters'].split(',')
         self.character = opt['character']
         self.include_speaker_in_context = opt['include_speaker_in_context']
+        self.add_speaker_to_context_end = opt['add_speaker_to_context_end']
         self.silence_token_dropout = opt['silence_token_dropout']
         self.silence_token = opt['silence_token']
         self.use_start_token = opt['use_start_token']
         self.start_token = opt['start_token']
+        self.utterance_delimiter = opt['utterance_delimiter']
         super().__init__(opt, shared)
 
     def setup_data(self, datafile):
@@ -64,6 +66,7 @@ class DefaultTeacher(DialogTeacher):
                 sorted(list(characters))
             )  # sorted to ensure same order across runs
             last_utterance_index = len(utterances) - 1
+            speakers = []
 
             for index, utterance in enumerate(utterances):
                 if index == 0:
@@ -72,15 +75,23 @@ class DefaultTeacher(DialogTeacher):
 
                     else:  # skip the first utterance since there's no context
                         speaker = utterance['speaker']
-                        text = utterance['text']
-                        context = f'{speaker}: {text}'
+                        speakers.append(speaker)
+
+                        text = self._get_text(utterance)
+                        if self.include_speaker_in_context:
+                            context = f'{speaker}: {text}'
+                        else:
+                            context = text
                         continue
 
                 speaker = utterance['speaker']
-                text = utterance['text']
 
+                text = self._get_text(utterance)
                 prev_context = context
-                context += '\n' + f'{speaker}: {text}'
+                if self.include_speaker_in_context:
+                    context += self.utterance_delimiter + f'{speaker}: {text}'
+                else:
+                    context += self.utterance_delimiter + text
 
                 isConversationDone = index == last_utterance_index
 
@@ -89,23 +100,80 @@ class DefaultTeacher(DialogTeacher):
                 if (
                     self.character == 'All' and speaker in self.characters
                 ) or speaker == self.character:
+                    text, label, speakers, hasAddedSpeaker = self._get_message_fields(
+                        text, speaker, speakers, prev_context
+                    )
+                    _speakers = speakers[:]
+                    if not hasAddedSpeaker:
+                        speakers.append(speaker)
                     yield {
-                        "text": prev_context + f'\n{speaker}:'
-                        if self.include_speaker_in_context
-                        else prev_context,
-                        "label": text
-                        if self.include_speaker_in_context
-                        else f'{speaker}: {text}',
+                        "text": text,
+                        "label": label,
                         "characters": characters_string,
+                        "speakers": _speakers,
                     }, isConversationDone
                 elif random.random() > self.silence_token_dropout:
+                    text, label, speakers, hasAddedSpeaker = self._get_message_fields(
+                        self.silence_token, self.character, speakers, prev_context
+                    )
+                    _speakers = speakers[:]
+                    if not hasAddedSpeaker:
+                        speakers.append(speaker)
                     yield {
-                        "text": prev_context,
-                        "label": self.silence_token
-                        if self.include_speaker_in_context
-                        else f'{self.character}: {self.silence_token}',
+                        "text": text,
+                        "label": label,
                         "characters": characters_string,
+                        "speakers": _speakers,
                     }, isConversationDone
+                else:
+                    speakers.append(speaker)
+
+    def _get_text(self, utterance):
+        """
+        Replace newline character by whitespace so that the data format plays nicely
+        with BB2, which splits each utterance by newline and expects a corresponding
+        speaker label (if we don't replace the newline character here, we have to later
+        match each speaker label back to variable number of sentences, which overly
+        complicates things) c.f.
+
+        line 606 of projects/blenerbot2/agents/blenderbot2.py
+        """
+        return utterance['text'].replace('\n', ' ')
+
+    def _get_message_fields(self, text, speaker, speakers, prev_context):
+        """
+        If `include_speaker_in_context` is True, keep speaker ids in the text.
+
+        If `add_speaker_to_context_end` is True, add speaker ids at the end of text, and
+        remove speaker ids from the labels. If `include_speaker_in_context` is False,
+        but `add_speaker_to_context_end` is True, add an empty sentence at the end of
+        text and add the current speaker id to the list of speakers, to indicate the
+        speaker for the empty sentence.
+        """
+        hasAddedSpeaker = False
+        if self.include_speaker_in_context:
+            if self.add_speaker_to_context_end:
+                label = text
+                text = prev_context + f'{self.utterance_delimiter}{speaker}: '
+                # Save current spaker as the speaker for the empty utterance
+                speakers.append(speaker)
+                hasAddedSpeaker = True
+            else:
+                label = f'{speaker}: {text}'
+                text = prev_context
+        else:
+            if self.add_speaker_to_context_end:
+                label = text
+                # The whitespace is left at the end to indicate an empty utterance
+                text = prev_context + f'{self.utterance_delimiter} '
+                # Save current spaker as the speaker for the empty utterance
+                speakers.append(speaker)
+                hasAddedSpeaker = True
+            else:
+                label = f'{speaker}: {text}'
+                text = prev_context
+
+        return text, label, speakers, hasAddedSpeaker
 
     @classmethod
     def add_cmdline_args(
@@ -135,7 +203,19 @@ class DefaultTeacher(DialogTeacher):
             help='A comma-separated list of characters to train on when `--character` == `All`',
         )
         agent.add_argument(
+            '--utterance-delimiter',
+            type=str,
+            default='\n',
+            help="A string used to separate each utterance in the context. Defaults to newline. For example, 'A: Hello\nB: Hi there'.",
+        )
+        agent.add_argument(
             '--include-speaker-in-context',
+            type='bool',
+            default=True,
+            help="Whether to include speaker labels in the context. For example, message = { text: 'Rachel: Hi' } instead of message = { text: 'Hi' }",
+        )
+        agent.add_argument(
+            '--add-speaker-to-context-end',
             type='bool',
             default=True,
             help='Append speaker to the end of each context. Defaults to True.',

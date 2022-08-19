@@ -4,6 +4,18 @@ Here we list projects undertaken in the ParlAI framework that are shared publicl
 
 This directory also contains subfolders for some of the projects which are housed in the ParlAI repo, others are maintained via external websites. Please also refer to ParlAI's [agents](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents), [tasks](https://github.com/facebookresearch/ParlAI/tree/main/parlai/tasks) and [model zoo](https://github.com/facebookresearch/ParlAI/tree/main/parlai/zoo) for what else is in ParlAI.
 
+## BlenderBot (Putting Everything Together)
+
+- **BlenderBot 3** [[project]](http://parl.ai/projects/bb3).
+  _A 175B-parameter, publicly available chatbot that improves its skills & safety over time_
+
+- **BlenderBot 2** [[project]](http://parl.ai/projects/blenderbot2).
+  _Version 2 of our BlenderBot model with Internet search and long-term memory._
+
+- **BlenderBot 1 (Recipes for open-domain chatbots)** [[project]](https://parl.ai/projects/recipes).
+  _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
+
+
 ## Generative Models & Architectures 
 
 - **Director** [[project]](https://parl.ai/projects/director/) _New architecture/method for training language models with positive and negative examples._
@@ -29,48 +41,6 @@ This directory also contains subfolders for some of the projects which are house
 - **Importance of Search Strategy** [[paper]](https://arxiv.org/abs/1811.00907).
   _Analysis of the performance of search in generative models for chitchat tasks._
   
-## Interactive Learning
-
-- **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
-  _How an agent can learn from dialogue after deployment by imitating and asking for feedback._
-
-- **Beat-The-Bot Live Game** [[project]](https://parl.ai/projects/beat_the_bot/)
-  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._
-
-
-## Open-domain Dialogue
-
-- **BlenderBot 2.0** [[project]](http://parl.ai/projects/blenderbot2).
-  _Version 2 of our BlenderBot model with Internet search and long-term memory._
-
-- **Long-Term Open-Domain Conversation** [[project]](http://parl.ai/projects/msc) [[paper]](https://arxiv.org/abs/2107.07567).
-  _Multi-session conversation task and memory-based models for long-form chat._
-
-- **Addressing Contradictions in Dialogue Modeling** [[project]](https://parl.ai/projects/contradiction).
-  _A new task for contradiction detection and its use for non-contradicting generation._
-
-- **Recipes for open-domain chatbots** [[project]](https://parl.ai/projects/recipes).
-  _We open source 90M, 2.7B and 9.4B parameter generative models fine-tuned on [BST](https://parl.ai/projects/bst/)._
-
-- **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
-  _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Dialogues and Wizard of Wikipedia elements._
-
-- **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
-  _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._
-
-- **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
-  _Task and method for improving dialogue consistency._
-
-- **Empathetic Dialogues** [[paper]](https://arxiv.org/abs/1811.00207) [[external website]](https://github.com/facebookresearch/EmpatheticDialogues) [[video]](https://ai.facebook.com/blog/making-conversation-models-more-empathetic/).
-_Task & models for chitchat displaying empathy._
-
-- **ConvAI2 Competition** [[external website]](http://convai.io/).
-_Competition on dialogue chitchat based on the PersonaChat task._
-
-- **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/personachat).
-_Task & models for chitchat with a given persona._
-
-
 ## <a id="well-behaved">Well-Behaved</a> / Safety
 
 - **SaFeRDialogues: Taking Feedback Gracefully after Conversational Safety Failures** [[project]](https://parl.ai/projects/saferdialogues/) [[paper]](https://arxiv.org/abs/2110.07518).
@@ -95,6 +65,48 @@ _Task & models for chitchat with a given persona._
 
 - **Reducing conversational agents' overconfidence through linguistic calibration** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/metacognition) [[paper]](https://arxiv.org/abs/2012.14983).
   _Analysis and methods for relating and correcting linguistice confidence and correctness in dialogue generation, using closed-book QA as a testbed._
+
+  
+## Interactive & Continual Learning
+
+- **Learning New Skills after Deployment** [[project]](http://parl.ai/projects/fits).
+  _Shows how to learn from Feedback for Interactive Talk & Search (FITS) + new dataset_
+
+- **Finding the Helpers and Ignoring the Trolls** [[project]](http://parl.ai/projects/trollhunting).
+  _Algorithms for learning from a mixture of adversarial and non-adversarial organic users_
+
+- **Self-Feeding Chatbot** [[paper]](https://arxiv.org/abs/1901.05415)
+  _How an agent can learn from dialogue after deployment by imitating and asking for feedback._
+
+- **Beat-The-Bot Live Game** [[project]](https://parl.ai/projects/beat_the_bot/)
+  _A new data collection and model evaluation tool, a Messenger-based Chatbot game called Beat the Bot._
+
+
+## Open-domain Dialogue
+
+- **Long-Term Open-Domain Conversation** [[project]](http://parl.ai/projects/msc) [[paper]](https://arxiv.org/abs/2107.07567).
+  _Multi-session conversation task and memory-based models for long-form chat._
+
+- **Addressing Contradictions in Dialogue Modeling** [[project]](https://parl.ai/projects/contradiction).
+  _A new task for contradiction detection and its use for non-contradicting generation._
+
+- **Blended Skill Talk** [[project]](https://parl.ai/projects/bst/).
+  _Blending the skills of engagingness, personality, empathy and knowledge with a task that mixes PersonaChat, Empathetic Dialogues and Wizard of Wikipedia elements._
+
+- **_dodeca_ Dialogue** [[project]](https://parl.ai/projects/dodecadialogue/).
+  _Set of 12 (existing) tasks for building an agent that can see and talk. We build a strong baseline system with SOTA on many tasks._
+
+- **Dialogue Natural Language Inference** [[external website]](https://wellecks.github.io/dialogue_nli/).
+  _Task and method for improving dialogue consistency._
+
+- **Empathetic Dialogues** [[paper]](https://arxiv.org/abs/1811.00207) [[external website]](https://github.com/facebookresearch/EmpatheticDialogues) [[video]](https://ai.facebook.com/blog/making-conversation-models-more-empathetic/).
+_Task & models for chitchat displaying empathy._
+
+- **ConvAI2 Competition** [[external website]](http://convai.io/).
+_Competition on dialogue chitchat based on the PersonaChat task._
+
+- **Persona-Chat** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/personachat).
+_Task & models for chitchat with a given persona._
 
 
 ## Knowledge Grounded
