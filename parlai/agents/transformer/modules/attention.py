@@ -7,7 +7,6 @@
 Implementations of attention.
 """
 
-from cmath import nan
 import math
 from typing import Dict, Tuple, Optional, Union
 
@@ -134,6 +133,7 @@ class MultiHeadAttention(nn.Module):
     ) -> Tuple[torch.Tensor, Dict[str, torch.Tensor], torch.Tensor]:
         """
         Forward pass.
+
         :param query: attention query
         :param key: attention key
         :param value: attention value

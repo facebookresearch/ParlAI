@@ -160,7 +160,7 @@ class _attention(torch.autograd.Function):
 
         add_dropout = True
 
-        if dropout == None:
+        if dropout is None:
             dropout = torch.zeros(mask.shape, device=q.device, dtype=torch.float32)
             add_dropout = False
 
