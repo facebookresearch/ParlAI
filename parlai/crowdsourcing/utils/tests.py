@@ -7,7 +7,7 @@
 Utilities for running tests.
 """
 
-import datetime  # TODO: remove
+from datetime import datetime  # TODO: remove
 import os
 import random
 import tempfile
