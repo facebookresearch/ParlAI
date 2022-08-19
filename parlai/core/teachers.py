@@ -163,7 +163,7 @@ class Teacher(Agent):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        parser.add_argument('--seed', default=None)
+        parser.add_argument('--teacher_seed', default=None)
         parser.add_argument(
             '--mutators',
             '-mut',
