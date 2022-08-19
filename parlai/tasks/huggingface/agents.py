@@ -7,8 +7,7 @@
 from parlai.core.build_data import make_dir
 from parlai.core.teachers import DialogTeacher
 from parlai.utils.data import DatatypeHelper
-from typing import Dict, Iterable, List, Optional, Tuple
-from typing_extensions import TypedDict
+from typing import Dict, Iterable, Tuple
 import os
 
 # huggingface imports

@@ -12,7 +12,9 @@ import json
 from parlai.utils.io import PathManager
 
 RESOURCES = [
-    ########En########
+    ##################
+    #       En       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/En_persona_test.json',
         'En_test_tmp.json',
@@ -31,7 +33,9 @@ RESOURCES = [
         '08ed3d41c5b0681c2d125a5312b43d926a8a5aa1d10a5df655d17f4c56dab635',
         zipped=False,
     ),
-    #######Fr########
+    ##################
+    #       Fr       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/Fr_persona_train_corrected.json',
         'Fr_train_tmp.json',
@@ -50,7 +54,9 @@ RESOURCES = [
         '8ad86b05aabfadedba7863828b1cc4fdff0926ebf476121268089ac7ed9af149',
         zipped=False,
     ),
-    ########Id########
+    ##################
+    #       Id       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/Id_persona_train_corrected.json',
         'Id_train_tmp.json',
@@ -69,7 +75,9 @@ RESOURCES = [
         '8f70cab662f082ae3ee2abce9e9cac619ebc632a2820d93414a59005dbf75d7e',
         zipped=False,
     ),
-    ########It########
+    ##################
+    #       It       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/It_persona_train_corrected.json',
         'It_train_tmp.json',
@@ -88,7 +96,9 @@ RESOURCES = [
         '720dc91d3f9bc6a56ac229c6800cde63c71677a3db8d0ace7a59a7f94d89df3d',
         zipped=False,
     ),
-    ########Jp########
+    ##################
+    #       Jp       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/Jp_persona_train_corrected.json',
         'Jp_train_tmp.json',
@@ -107,7 +117,9 @@ RESOURCES = [
         'a86bb811364d100bc77ddc8038265df1e01bbc3be095e56c6ec8f179e6365d75',
         zipped=False,
     ),
-    ########Ko########
+    ##################
+    #       Ko       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/Ko_persona_train_corrected.json',
         'Ko_train_tmp.json',
@@ -126,7 +138,9 @@ RESOURCES = [
         '188470f863f639946bc8248a9f6aa1e589b41ec61792b88b81e7a95c72deeae0',
         zipped=False,
     ),
-    ########Zh########
+    ##################
+    #       Zh       #
+    ##################
     DownloadableFile(
         'https://raw.githubusercontent.com/HLTCHKUST/Xpersona/master/dataset/Zh_persona_train_corrected.json',
         'Zh_train_tmp.json',

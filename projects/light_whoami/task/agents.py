@@ -7,8 +7,6 @@
 Teachers used in the Am I Me or You task.
 """
 from abc import ABC
-from collections import deque
-import re
 from typing import Optional
 from parlai.core.build_data import modelzoo_path
 from parlai.core.message import Message
@@ -22,8 +20,6 @@ import parlai.utils.logging as logging
 import copy
 import os
 import random
-import torch
-import torch.nn
 import torch.nn.functional as F
 from typing import List, Dict, Tuple
 
@@ -553,7 +549,6 @@ class ResponseClassifierTeacher(SimpleMultiTeacher):
         predicted_character = classifier_act['text']
         correct_prediction = int(predicted_character == correct_character)
         self.metrics.add('character_accuracy', AverageMetric(correct_prediction))
-        scores = F.softmax(classifier_act['sorted_scores'].float(), dim=0)
         if teacher_action['episode_done']:
             self.context = []
         else:

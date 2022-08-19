@@ -16,7 +16,7 @@ E.g. `wizard_of_wikipedia:WizardDialogKnowledgeTeacher:random_split`
 """
 
 from __future__ import annotations
-from typing import Iterable, Optional, Tuple, Dict, Any
+from typing import Iterable, Optional, Tuple
 from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric, normalize_answer, F1Metric
 from parlai.core.params import ParlaiParser

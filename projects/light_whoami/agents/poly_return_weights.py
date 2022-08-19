@@ -9,7 +9,7 @@ Overrides the standard Polyencoder Agent to only return the attention weights.
 import torch
 import torch.nn
 import torch.nn.functional as F
-from typing import Optional, Tuple, Dict, Union
+from typing import Optional, Tuple, Union
 
 from parlai.agents.transformer.modules import (
     MultiHeadAttention,

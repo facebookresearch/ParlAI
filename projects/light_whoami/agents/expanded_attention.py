@@ -29,7 +29,7 @@ from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.core.torch_agent import Batch, TorchAgent, Output
+from parlai.core.torch_agent import Batch, TorchAgent
 import parlai.utils.logging as logging
 from parlai.utils.torch import PipelineHelper, neginf
 

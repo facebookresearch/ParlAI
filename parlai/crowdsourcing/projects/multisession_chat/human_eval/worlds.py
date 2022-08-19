@@ -14,7 +14,6 @@ from parlai.crowdsourcing.tasks.model_chat.worlds import (
     # ModelChatOnboardWorld,
     BaseModelChatWorld,
     get_bot_worker,
-    get_world_params,
 )
 
 import parlai.utils.logging as logging

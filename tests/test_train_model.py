@@ -382,10 +382,9 @@ class TestValidationImpatience(unittest.TestCase):
             kwargs['save_after_valid'] = True
             opt = TrainModel.setup_args().parse_kwargs(**kwargs)
 
-            logs_first = []
             main_loop = TrainLoop(opt)
 
-            for i, train_step_log in enumerate(main_loop.train_steps()):
+            for i, _train_step_log in enumerate(main_loop.train_steps()):
                 if i % 10 == 1:
                     # simulate preemption
                     # load from preempted and check variables are the same

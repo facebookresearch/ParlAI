@@ -11,7 +11,6 @@ Test models with reduced bias.
 import unittest
 
 import parlai.utils.testing as testing_utils
-from parlai.core.opt import Opt
 
 
 class TestDialogueBias(unittest.TestCase):

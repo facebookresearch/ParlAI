@@ -6,7 +6,6 @@
 
 from parlai.core.agents import create_agent
 import unittest
-import parlai.scripts.display_data as display_data
 from parlai.tasks.wizard_of_wikipedia.agents import TOKEN_KNOWLEDGE
 import parlai.utils.testing as testing_utils
 
