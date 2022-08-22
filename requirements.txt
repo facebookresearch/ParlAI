@@ -1,4 +1,4 @@
-# comment just to bump caches
+# comment to bump caches
 coloredlogs==14.0
 datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
@@ -42,7 +42,7 @@ Sphinx~=2.2.0
 subword-nmt==0.3.7
 tensorboardX==2.1
 tokenizers>=0.8.0
-tomli<2.0.0
+tomli>=2.0.0
 torchtext>=0.5.0
 tornado==6.0.4
 tqdm~=4.62.1
@@ -51,7 +51,7 @@ Unidecode==1.1.1
 urllib3>=1.26.5
 websocket-client==0.56.0
 jsonlines==1.2.0
-numpy<=1.21 # Used to be `==1.17.5` before but tests -- pulling in latest at 1.22 not happy
+numpy~=1.22 
 markdown<=3.3.2 # Pin to something that works so tests are happy
 jinja2==3.0.3
 ninja
