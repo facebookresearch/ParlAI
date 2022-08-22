@@ -10,9 +10,9 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - train leaveat 19:11 ; train day thursday ; attraction type college ; train bookpeople
-      8 ; train destination kings lynn ; attraction area centre ; train departure
-      cambridge
+    - train departure cambridge ; train leaveat 19:11 ; train destination kings lynn
+      ; attraction type college ; attraction area centre ; train bookpeople 8 ; train
+      day thursday
     text: <user> i am looking for multiple sports in the centre. <system> sorry i
       have no listing in centre,can i check another area? <user> no. how about colleges?
       are there any of those in the area? <system> there are thirteen colleges that
@@ -36,10 +36,10 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - taxi departure magdalene college ; taxi arriveby 12.00 ; attraction name magdalene
-      college ; taxi arriveby 12:00 ; restaurant booktime 12:00 ; restaurant name
-      sitar tandoori ; restaurant bookday sunday ; restaurant bookpeople 4 ; taxi
-      destination sitar tandoori ; restaurant area east ; restaurant food indian
+    - taxi arriveby 12:00 ; taxi destination sitar tandoori ; restaurant bookday sunday
+      ; taxi departure magdalene college ; restaurant area east ; restaurant bookpeople
+      4 ; taxi arriveby 12.00 ; restaurant booktime 12:00 ; restaurant food indian
+      ; restaurant name sitar tandoori ; attraction name magdalene college
     text: <user> what can you tell me about magdalene college? <system> magdalene
       college is located in the west area of town. there is no entrance fee. <user>
       thank you for your help. <system> you're welcome. let us know if you need anything
@@ -65,9 +65,9 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - hotel area centre ; hotel name university arms ; hotel parking yes ; hotel type
-      hotel ; hotel pricerange dontcare ; hotel stars 4 ; hotel name university arms
-      hotel
+    - hotel area centre ; hotel name university arms ; hotel type hotel ; hotel name
+      university arms hotel ; hotel parking yes ; hotel pricerange dontcare ; hotel
+      stars 4
     text: <user> i am looking for a place to stay. the hotel should have a star of
       4 and should include free parking. <system> do you have an area or price range
       in mind? and do you want a hotel or a guesthouse? <user> price doesn't really

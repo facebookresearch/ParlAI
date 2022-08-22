@@ -2,7 +2,7 @@ acts:
 - - dialogue_id: SNG0095.json
     episode_done: true
     eval_labels:
-    - taxi leaveat 12:15 ; taxi departure golden house
+    - taxi departure golden house ; taxi leaveat 12:15
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> hi, i'm looking for a taxi. i need to leave from golden house at
       12:15.
@@ -10,8 +10,8 @@ acts:
 - - dialogue_id: MUL2042.json
     episode_done: true
     eval_labels:
-    - train day monday ; train leaveat 10:30 ; hotel pricerange moderate ; train departure
-      london liverpool street ; train destination cambridge
+    - hotel pricerange moderate ; train departure london liverpool street ; train
+      destination cambridge ; train day monday ; train leaveat 10:30
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i am looking for a train going to cambridge and leaving after 10:30.
       <system> i would be happy to help you find a train. can you please tell me where
@@ -25,8 +25,8 @@ acts:
 - - dialogue_id: SNG0390.json
     episode_done: true
     eval_labels:
-    - train destination bishops stortford ; train day thursday ; train bookpeople
-      7 ; train departure cambridge ; train leaveat 20:15
+    - train departure cambridge ; train destination bishops stortford ; train leaveat
+      20:15 ; train bookpeople 7 ; train day thursday
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> can i get a train from cambridge to bishops stortford? <system> certainly.
       when would you like to depart? <user> on thursday after 20:15. <system> there
@@ -41,9 +41,9 @@ acts:
 - - dialogue_id: MUL2151.json
     episode_done: true
     eval_labels:
-    - hotel parking yes ; train arriveby 12:43 ; train departure stevenage ; train
-      leaveat 11:54 ; hotel pricerange expensive ; hotel area north ; train bookpeople
-      4 ; train destination cambridge ; train day wednesday
+    - hotel area north ; train bookpeople 4 ; hotel pricerange expensive ; train destination
+      cambridge ; train arriveby 12:43 ; train leaveat 11:54 ; train day wednesday
+      ; hotel parking yes ; train departure stevenage
     id: MultiwozV22_UserSimulatorTeacher
     text: '<user> hello! can you give me information about trains going to cambridge
       and leaving on wednesday? <system> there are over 200 trains leaving. do you
@@ -61,9 +61,9 @@ acts:
 - - dialogue_id: MUL1803.json
     episode_done: true
     eval_labels:
-    - train arriveby 12:07 ; train day sunday ; train destination ely ; train leaveat
-      11:50 ; attraction type architecture ; attraction name all saints church ; attraction
-      area centre ; train departure cambridge
+    - train departure cambridge ; train leaveat 11:50 ; attraction area centre ; train
+      day sunday ; train destination ely ; attraction name all saints church ; train
+      arriveby 12:07 ; attraction type architecture
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i am looking for a attraction to see in cambridge located in the
       centre <system> all saints church has some lovely architecture. does that suit
