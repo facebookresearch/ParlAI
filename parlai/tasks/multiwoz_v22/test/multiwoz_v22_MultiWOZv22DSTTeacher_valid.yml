@@ -2,9 +2,9 @@ acts:
 - - dialogue_id: MUL0337.json
     episode_done: true
     eval_labels:
-    - restaurant area centre ; train departure norwich ; train arriveby 08:15 ; train
-      arriveby 8:15 ; restaurant pricerange cheap ; train bookpeople 2 ; restaurant
-      food dontcare ; train destination cambridge ; train day wednesday
+    - restaurant pricerange cheap ; train departure norwich ; restaurant area centre
+      ; train bookpeople 2 ; train destination cambridge ; restaurant food dontcare
+      ; train day wednesday ; train arriveby 8:15 ; train arriveby 08:15
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> do you happen to know of any trains leaving for cambridge this wednesday?
       <system> yes. there are a total of 202 trains leaving for cambridge on wednesday.
@@ -29,8 +29,9 @@ acts:
 - - dialogue_id: MUL2699.json
     episode_done: true
     eval_labels:
-    - attraction type college ; attraction name christ college ; attraction name christ's
-      college ; hotel pricerange moderate ; attraction area centre ; hotel stars 4
+    - hotel pricerange moderate ; attraction type college ; attraction area centre
+      ; attraction name christ college ; attraction name christ's college ; hotel
+      stars 4
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i am looking for something to do in the centre. <system> is there
       a specific type of attraction you would like to visit? <user> i don't know a
@@ -46,7 +47,7 @@ acts:
 - - dialogue_id: PMUL3344.json
     episode_done: true
     eval_labels:
-    - train day tuesday ; train destination cambridge ; train arriveby 08:00 ; train
+    - train arriveby 08:00 ; train day tuesday ; train destination cambridge ; train
       departure bishops stortford
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> my car will be in the shop so i will need to take a train to work
@@ -60,9 +61,9 @@ acts:
 - - dialogue_id: PMUL1795.json
     episode_done: true
     eval_labels:
-    - hotel internet yes ; hotel name allenbell ; hotel bookday tuesday ; hotel area
-      dontcare ; hotel pricerange cheap ; train departure kings lynn ; hotel bookstay
-      2 ; hotel bookpeople 3 ; hotel parking yes
+    - hotel area dontcare ; hotel pricerange cheap ; hotel bookstay 2 ; hotel bookpeople
+      3 ; train departure kings lynn ; hotel bookday tuesday ; hotel internet yes
+      ; hotel parking yes ; hotel name allenbell
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i'm looking for a cheap hotel that includes free wifi. <system> that
       gives us about 10 options. to narrow it down some, do you have a certain area

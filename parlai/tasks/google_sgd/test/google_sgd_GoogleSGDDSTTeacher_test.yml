@@ -1,69 +1,95 @@
 acts:
 - - episode_done: true
     eval_labels:
-    - ''
+    - date the 8th
     id: GoogleSGD_UserSimulatorTeacher
     service:
-      description: Find and book tickets to any cultural events in your area
+      description: A popular restaurant search and reservation service
       intents:
-      - description: Find cultural events - concerts and plays - happening in a city
-        is_transactional: false
-        name: FindEvents
-        optional_slots:
-          date: dontcare
-        required_slots:
-        - event_type
-        - city
-        result_slots:
-        - event_type
-        - event_name
-        - date
-        - time
-        - price_per_ticket
-        - city
-        - venue
-        - venue_address
-      - description: Buy tickets for a cultural event and date in a given city
+      - description: Make a table reservation at a restaurant
         is_transactional: true
-        name: BuyEventTickets
-        optional_slots: {}
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
         required_slots:
-        - event_name
-        - number_of_tickets
-        - date
-        - city
+        - restaurant_name
+        - location
+        - time
         result_slots:
-        - event_name
+        - restaurant_name
         - date
         - time
-        - number_of_tickets
-        - price_per_ticket
-        - city
-        - venue
-        - venue_address
-      service_name: Events_3
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
       slots:
-      - description: Type of cultural event
-        is_categorical: true
-        name: event_type
-        possible_values:
-        - Music
-        - Theater
-      - description: Name of artist or play
+      - description: Name of the restaurant
         is_categorical: false
-        name: event_name
+        name: restaurant_name
         possible_values: []
-      - description: Date of event
+      - description: Tentative date of restaurant reservation
         is_categorical: false
         name: date
         possible_values: []
-      - description: Start time of event
+      - description: Tentative time of restaurant reservation
         is_categorical: false
         name: time
         possible_values: []
-      - description: Number of tickets to reserve for the event
+      - description: Whether the restaurant has outdoor seating available
         is_categorical: true
-        name: number_of_tickets
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
         possible_values:
         - '1'
         - '2'
@@ -71,467 +97,570 @@ acts:
         - '4'
         - '5'
         - '6'
-        - '7'
-        - '8'
-        - '9'
-      - description: Price of each ticket
-        is_categorical: false
-        name: price_per_ticket
-        possible_values: []
-      - description: City where the event is taking place
-        is_categorical: false
-        name: city
-        possible_values: []
-      - description: Exact venue of event
-        is_categorical: false
-        name: venue
-        possible_values: []
-      - description: Street address of event venue
-        is_categorical: false
-        name: venue_address
-        possible_values: []
-    slots: {}
-    text: <user> What can I go do I am bored sitting here. <system> What do you like
-      to do and where would you like to do it?
-    type: text
-- - episode_done: true
-    eval_labels:
-    - city NYC, event_type Music
-    id: GoogleSGD_UserSimulatorTeacher
-    service:
-      description: Find and book tickets to any cultural events in your area
-      intents:
-      - description: Find cultural events - concerts and plays - happening in a city
-        is_transactional: false
-        name: FindEvents
-        optional_slots:
-          date: dontcare
-        required_slots:
-        - event_type
-        - city
-        result_slots:
-        - event_type
-        - event_name
-        - date
-        - time
-        - price_per_ticket
-        - city
-        - venue
-        - venue_address
-      - description: Buy tickets for a cultural event and date in a given city
-        is_transactional: true
-        name: BuyEventTickets
-        optional_slots: {}
-        required_slots:
-        - event_name
-        - number_of_tickets
-        - date
-        - city
-        result_slots:
-        - event_name
-        - date
-        - time
-        - number_of_tickets
-        - price_per_ticket
-        - city
-        - venue
-        - venue_address
-      service_name: Events_3
-      slots:
-      - description: Type of cultural event
+      - description: Price range for the restaurant
         is_categorical: true
-        name: event_type
+        name: price_range
         possible_values:
-        - Music
-        - Theater
-      - description: Name of artist or play
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
         is_categorical: false
-        name: event_name
+        name: location
         possible_values: []
-      - description: Date of event
+      - description: The category of food offered by the restaurant
         is_categorical: false
-        name: date
-        possible_values: []
-      - description: Start time of event
-        is_categorical: false
-        name: time
-        possible_values: []
-      - description: Number of tickets to reserve for the event
-        is_categorical: true
-        name: number_of_tickets
-        possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
-        - '5'
-        - '6'
-        - '7'
-        - '8'
-        - '9'
-      - description: Price of each ticket
-        is_categorical: false
-        name: price_per_ticket
-        possible_values: []
-      - description: City where the event is taking place
-        is_categorical: false
-        name: city
-        possible_values: []
-      - description: Exact venue of event
-        is_categorical: false
-        name: venue
-        possible_values: []
-      - description: Street address of event venue
-        is_categorical: false
-        name: venue_address
+        name: category
         possible_values: []
     slots:
-      city:
-      - NYC
-      event_type:
-      - Music
-    text: <user> What can I go do I am bored sitting here. <system> What do you like
-      to do and where would you like to do it? <user> I want something to do in or
-      around NYC and Musical shows are one of my favorites. <system> I pulled up a
-      list of 10 so far I think this one would interest you its on March 11th at 7:30
-      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there.
-    type: text
-- - episode_done: true
-    eval_labels:
-    - city NYC, date March 11th, event_name Abbi Jacobson, event_type Music
-    id: GoogleSGD_UserSimulatorTeacher
-    service:
-      description: Find and book tickets to any cultural events in your area
-      intents:
-      - description: Find cultural events - concerts and plays - happening in a city
-        is_transactional: false
-        name: FindEvents
-        optional_slots:
-          date: dontcare
-        required_slots:
-        - event_type
-        - city
-        result_slots:
-        - event_type
-        - event_name
-        - date
-        - time
-        - price_per_ticket
-        - city
-        - venue
-        - venue_address
-      - description: Buy tickets for a cultural event and date in a given city
-        is_transactional: true
-        name: BuyEventTickets
-        optional_slots: {}
-        required_slots:
-        - event_name
-        - number_of_tickets
-        - date
-        - city
-        result_slots:
-        - event_name
-        - date
-        - time
-        - number_of_tickets
-        - price_per_ticket
-        - city
-        - venue
-        - venue_address
-      service_name: Events_3
-      slots:
-      - description: Type of cultural event
-        is_categorical: true
-        name: event_type
-        possible_values:
-        - Music
-        - Theater
-      - description: Name of artist or play
-        is_categorical: false
-        name: event_name
-        possible_values: []
-      - description: Date of event
-        is_categorical: false
-        name: date
-        possible_values: []
-      - description: Start time of event
-        is_categorical: false
-        name: time
-        possible_values: []
-      - description: Number of tickets to reserve for the event
-        is_categorical: true
-        name: number_of_tickets
-        possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
-        - '5'
-        - '6'
-        - '7'
-        - '8'
-        - '9'
-      - description: Price of each ticket
-        is_categorical: false
-        name: price_per_ticket
-        possible_values: []
-      - description: City where the event is taking place
-        is_categorical: false
-        name: city
-        possible_values: []
-      - description: Exact venue of event
-        is_categorical: false
-        name: venue
-        possible_values: []
-      - description: Street address of event venue
-        is_categorical: false
-        name: venue_address
-        possible_values: []
-    slots:
-      city:
-      - NYC
       date:
-      - March 11th
-      event_name:
-      - Abbi Jacobson
-      event_type:
-      - Music
-    text: <user> What can I go do I am bored sitting here. <system> What do you like
-      to do and where would you like to do it? <user> I want something to do in or
-      around NYC and Musical shows are one of my favorites. <system> I pulled up a
-      list of 10 so far I think this one would interest you its on March 11th at 7:30
-      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there. <user> That does
-      interest me. Is there a direct bus I can take to get there? <system> Would you
-      take the bus on March 11th?
+      - the 8th
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time?
     type: text
 - - episode_done: true
     eval_labels:
-    - category direct, to_city NYC
+    - date the 8th, location Corte Madera, restaurant_name P.f. Chang's, time afternoon
+      12
     id: GoogleSGD_UserSimulatorTeacher
     service:
-      description: Affordable and comfortable bus travel across the country
+      description: A popular restaurant search and reservation service
       intents:
-      - description: Search for a bus itinerary between two places on a certain date
-        is_transactional: false
-        name: FindBus
-        optional_slots:
-          category: direct
-          num_passengers: '1'
-        required_slots:
-        - from_city
-        - to_city
-        - departure_date
-        result_slots:
-        - from_city
-        - to_city
-        - from_station
-        - to_station
-        - departure_date
-        - departure_time
-        - price
-        - num_passengers
-        - category
-      - description: Purchase the bus tickets
+      - description: Make a table reservation at a restaurant
         is_transactional: true
-        name: BuyBusTicket
+        name: ReserveRestaurant
         optional_slots:
-          additional_luggage: 'False'
+          date: '2019-03-01'
+          number_of_seats: '2'
         required_slots:
-        - from_city
-        - to_city
-        - departure_date
-        - departure_time
-        - num_passengers
+        - restaurant_name
+        - location
+        - time
         result_slots:
-        - from_city
-        - to_city
-        - from_station
-        - to_station
-        - departure_date
-        - departure_time
-        - price
-        - additional_luggage
-        - num_passengers
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
         - category
-      service_name: Buses_3
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
       slots:
-      - description: The city to depart from
+      - description: Name of the restaurant
         is_categorical: false
-        name: from_city
+        name: restaurant_name
         possible_values: []
-      - description: The destination city of the trip
+      - description: Tentative date of restaurant reservation
         is_categorical: false
-        name: to_city
+        name: date
         possible_values: []
-      - description: Name of station of departure
+      - description: Tentative time of restaurant reservation
         is_categorical: false
-        name: from_station
+        name: time
         possible_values: []
-      - description: Name of station of arrival
-        is_categorical: false
-        name: to_station
-        possible_values: []
-      - description: The date of departure
-        is_categorical: false
-        name: departure_date
-        possible_values: []
-      - description: The time of departure
-        is_categorical: false
-        name: departure_time
-        possible_values: []
-      - description: Ticket price per passenger
-        is_categorical: false
-        name: price
-        possible_values: []
-      - description: Whether to carry excess baggage in the bus
+      - description: Whether the restaurant has outdoor seating available
         is_categorical: true
-        name: additional_luggage
+        name: has_seating_outdoors
         possible_values:
         - 'True'
         - 'False'
-      - description: The number of tickets for the trip
+      - description: Whether the restaurant has adequate vegetarian options
         is_categorical: true
-        name: num_passengers
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
         possible_values:
         - '1'
         - '2'
         - '3'
         - '4'
         - '5'
-      - description: How many stops the route has
+        - '6'
+      - description: Price range for the restaurant
         is_categorical: true
-        name: category
+        name: price_range
         possible_values:
-        - direct
-        - one-stop
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
     slots:
-      category:
-      - direct
-      to_city:
-      - NYC
-    text: <user> What can I go do I am bored sitting here. <system> What do you like
-      to do and where would you like to do it? <user> I want something to do in or
-      around NYC and Musical shows are one of my favorites. <system> I pulled up a
-      list of 10 so far I think this one would interest you its on March 11th at 7:30
-      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there. <user> That does
-      interest me. Is there a direct bus I can take to get there? <system> Would you
-      take the bus on March 11th?
+      date:
+      - the 8th
+      location:
+      - Corte Madera
+      restaurant_name:
+      - P.f. Chang's
+      time:
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th.
     type: text
 - - episode_done: true
     eval_labels:
-    - category direct, departure_date March 5th, to_city NYC
+    - date March 8th, location Corte Madera, number_of_seats 2, restaurant_name P.f.
+      Chang's, time 12 pm
     id: GoogleSGD_UserSimulatorTeacher
     service:
-      description: Affordable and comfortable bus travel across the country
+      description: A popular restaurant search and reservation service
       intents:
-      - description: Search for a bus itinerary between two places on a certain date
-        is_transactional: false
-        name: FindBus
-        optional_slots:
-          category: direct
-          num_passengers: '1'
-        required_slots:
-        - from_city
-        - to_city
-        - departure_date
-        result_slots:
-        - from_city
-        - to_city
-        - from_station
-        - to_station
-        - departure_date
-        - departure_time
-        - price
-        - num_passengers
-        - category
-      - description: Purchase the bus tickets
+      - description: Make a table reservation at a restaurant
         is_transactional: true
-        name: BuyBusTicket
+        name: ReserveRestaurant
         optional_slots:
-          additional_luggage: 'False'
+          date: '2019-03-01'
+          number_of_seats: '2'
         required_slots:
-        - from_city
-        - to_city
-        - departure_date
-        - departure_time
-        - num_passengers
+        - restaurant_name
+        - location
+        - time
         result_slots:
-        - from_city
-        - to_city
-        - from_station
-        - to_station
-        - departure_date
-        - departure_time
-        - price
-        - additional_luggage
-        - num_passengers
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
         - category
-      service_name: Buses_3
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
       slots:
-      - description: The city to depart from
+      - description: Name of the restaurant
         is_categorical: false
-        name: from_city
+        name: restaurant_name
         possible_values: []
-      - description: The destination city of the trip
+      - description: Tentative date of restaurant reservation
         is_categorical: false
-        name: to_city
+        name: date
         possible_values: []
-      - description: Name of station of departure
+      - description: Tentative time of restaurant reservation
         is_categorical: false
-        name: from_station
+        name: time
         possible_values: []
-      - description: Name of station of arrival
-        is_categorical: false
-        name: to_station
-        possible_values: []
-      - description: The date of departure
-        is_categorical: false
-        name: departure_date
-        possible_values: []
-      - description: The time of departure
-        is_categorical: false
-        name: departure_time
-        possible_values: []
-      - description: Ticket price per passenger
-        is_categorical: false
-        name: price
-        possible_values: []
-      - description: Whether to carry excess baggage in the bus
+      - description: Whether the restaurant has outdoor seating available
         is_categorical: true
-        name: additional_luggage
+        name: has_seating_outdoors
         possible_values:
         - 'True'
         - 'False'
-      - description: The number of tickets for the trip
+      - description: Whether the restaurant has adequate vegetarian options
         is_categorical: true
-        name: num_passengers
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
         possible_values:
         - '1'
         - '2'
         - '3'
         - '4'
         - '5'
-      - description: How many stops the route has
+        - '6'
+      - description: Price range for the restaurant
         is_categorical: true
-        name: category
+        name: price_range
         possible_values:
-        - direct
-        - one-stop
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
     slots:
-      category:
-      - direct
-      departure_date:
-      - March 5th
-      to_city:
-      - NYC
-    text: <user> What can I go do I am bored sitting here. <system> What do you like
-      to do and where would you like to do it? <user> I want something to do in or
-      around NYC and Musical shows are one of my favorites. <system> I pulled up a
-      list of 10 so far I think this one would interest you its on March 11th at 7:30
-      pm at the Kaufmann Concert Hall - Abbi Jacobson will be there. <user> That does
-      interest me. Is there a direct bus I can take to get there? <system> Would you
-      take the bus on March 11th? <user> I think I'd make a week of it and take the
-      bus on March 5th. <system> Where did you want to get on the bus?
+      date:
+      - March 8th
+      - the 8th
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - P.f. Chang's
+      time:
+      - 12 pm
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th. <user> Sure, that is great. <system> Sorry, your reservation could not
+      be made. Could I help you with something else?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date March 8th, location Corte Madera, number_of_seats 2, restaurant_name Benissimo,
+      time 12 pm
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - March 8th
+      - the 8th
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Benissimo
+      time:
+      - 12 pm
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th. <user> Sure, that is great. <system> Sorry, your reservation could not
+      be made. Could I help you with something else? <user> Could you try booking
+      a table at Benissimo instead? <system> Sure, please confirm your reservation
+      at Benissimo Restaurant & Bar in Corte Madera at 12 pm for 2 on March 8th.
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date March 8th, location Corte Madera, number_of_seats 2, restaurant_name Benissimo,
+      time 12 pm
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - March 8th
+      - the 8th
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Benissimo
+      - Benissimo Restaurant & Bar
+      time:
+      - 12 pm
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th. <user> Sure, that is great. <system> Sorry, your reservation could not
+      be made. Could I help you with something else? <user> Could you try booking
+      a table at Benissimo instead? <system> Sure, please confirm your reservation
+      at Benissimo Restaurant & Bar in Corte Madera at 12 pm for 2 on March 8th. <user>
+      Sure, may I know if they have vegetarian options and how expensive is their
+      food? <system> Your reservation has been made. Unfortunately, they do not serve
+      vegetarian options, although they are moderate priced.
     type: text
 num_episodes: 4201
 num_examples: 46498

@@ -2,404 +2,621 @@ acts:
 - - episode_done: true
     id: GoogleSGD_UserSimulatorTeacher
     labels:
-    - free_entry True
+    - ''
     service:
-      description: The biggest database of tourist attractions and points of interest
+      description: A leading provider for restaurant search and reservations
       intents:
-      - description: Browse attractions in a given city
-        is_transactional: false
-        name: FindAttractions
-        optional_slots:
-          category: dontcare
-          free_entry: dontcare
-          good_for_kids: dontcare
-        required_slots:
-        - location
-        result_slots:
-        - location
-        - attraction_name
-        - category
-        - phone_number
-        - free_entry
-        - good_for_kids
-      service_name: Travel_1
-      slots:
-      - description: City or town where the attraction is located
-        is_categorical: false
-        name: location
-        possible_values: []
-      - description: Common name of the attraction
-        is_categorical: false
-        name: attraction_name
-        possible_values: []
-      - description: Category to which the attraction belongs
-        is_categorical: true
-        name: category
-        possible_values:
-        - Place of Worship
-        - Theme Park
-        - Museum
-        - Historical Landmark
-        - Park
-        - Tourist Attraction
-        - Sports Venue
-        - Shopping Area
-        - Performing Arts Venue
-        - Nature Preserve
-      - description: Phone number to contact the attraction
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Boolean flag indicating whether entrance to attraction is free
-        is_categorical: true
-        name: free_entry
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating whether attraction is good for to take
-          kids to
-        is_categorical: true
-        name: good_for_kids
-        possible_values:
-        - 'True'
-        - 'False'
-    slots:
-      free_entry:
-      - 'True'
-    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
-      in particular?
-    type: text
-- - episode_done: true
-    id: GoogleSGD_UserSimulatorTeacher
-    labels:
-    - category Tourist Attraction, free_entry True, location NYC
-    service:
-      description: The biggest database of tourist attractions and points of interest
-      intents:
-      - description: Browse attractions in a given city
-        is_transactional: false
-        name: FindAttractions
-        optional_slots:
-          category: dontcare
-          free_entry: dontcare
-          good_for_kids: dontcare
-        required_slots:
-        - location
-        result_slots:
-        - location
-        - attraction_name
-        - category
-        - phone_number
-        - free_entry
-        - good_for_kids
-      service_name: Travel_1
-      slots:
-      - description: City or town where the attraction is located
-        is_categorical: false
-        name: location
-        possible_values: []
-      - description: Common name of the attraction
-        is_categorical: false
-        name: attraction_name
-        possible_values: []
-      - description: Category to which the attraction belongs
-        is_categorical: true
-        name: category
-        possible_values:
-        - Place of Worship
-        - Theme Park
-        - Museum
-        - Historical Landmark
-        - Park
-        - Tourist Attraction
-        - Sports Venue
-        - Shopping Area
-        - Performing Arts Venue
-        - Nature Preserve
-      - description: Phone number to contact the attraction
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Boolean flag indicating whether entrance to attraction is free
-        is_categorical: true
-        name: free_entry
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating whether attraction is good for to take
-          kids to
-        is_categorical: true
-        name: good_for_kids
-        possible_values:
-        - 'True'
-        - 'False'
-    slots:
-      category:
-      - Tourist Attraction
-      free_entry:
-      - 'True'
-      location:
-      - NYC
-    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
-      in particular? <user> Something of a place of interest in NYC. <system> There's
-      a cool Tourist Attraction called Balto Statue.
-    type: text
-- - episode_done: true
-    id: GoogleSGD_UserSimulatorTeacher
-    labels:
-    - category Tourist Attraction, free_entry True, location NYC
-    service:
-      description: The biggest database of tourist attractions and points of interest
-      intents:
-      - description: Browse attractions in a given city
-        is_transactional: false
-        name: FindAttractions
-        optional_slots:
-          category: dontcare
-          free_entry: dontcare
-          good_for_kids: dontcare
-        required_slots:
-        - location
-        result_slots:
-        - location
-        - attraction_name
-        - category
-        - phone_number
-        - free_entry
-        - good_for_kids
-      service_name: Travel_1
-      slots:
-      - description: City or town where the attraction is located
-        is_categorical: false
-        name: location
-        possible_values: []
-      - description: Common name of the attraction
-        is_categorical: false
-        name: attraction_name
-        possible_values: []
-      - description: Category to which the attraction belongs
-        is_categorical: true
-        name: category
-        possible_values:
-        - Place of Worship
-        - Theme Park
-        - Museum
-        - Historical Landmark
-        - Park
-        - Tourist Attraction
-        - Sports Venue
-        - Shopping Area
-        - Performing Arts Venue
-        - Nature Preserve
-      - description: Phone number to contact the attraction
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Boolean flag indicating whether entrance to attraction is free
-        is_categorical: true
-        name: free_entry
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating whether attraction is good for to take
-          kids to
-        is_categorical: true
-        name: good_for_kids
-        possible_values:
-        - 'True'
-        - 'False'
-    slots:
-      category:
-      - Tourist Attraction
-      free_entry:
-      - 'True'
-      location:
-      - NYC
-    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
-      in particular? <user> Something of a place of interest in NYC. <system> There's
-      a cool Tourist Attraction called Balto Statue. <user> Is it kid-friendly? <system>
-      It's not the best place for kids.
-    type: text
-- - episode_done: true
-    id: GoogleSGD_UserSimulatorTeacher
-    labels:
-    - category Tourist Attraction, free_entry True, location NYC
-    service:
-      description: The biggest database of tourist attractions and points of interest
-      intents:
-      - description: Browse attractions in a given city
-        is_transactional: false
-        name: FindAttractions
-        optional_slots:
-          category: dontcare
-          free_entry: dontcare
-          good_for_kids: dontcare
-        required_slots:
-        - location
-        result_slots:
-        - location
-        - attraction_name
-        - category
-        - phone_number
-        - free_entry
-        - good_for_kids
-      service_name: Travel_1
-      slots:
-      - description: City or town where the attraction is located
-        is_categorical: false
-        name: location
-        possible_values: []
-      - description: Common name of the attraction
-        is_categorical: false
-        name: attraction_name
-        possible_values: []
-      - description: Category to which the attraction belongs
-        is_categorical: true
-        name: category
-        possible_values:
-        - Place of Worship
-        - Theme Park
-        - Museum
-        - Historical Landmark
-        - Park
-        - Tourist Attraction
-        - Sports Venue
-        - Shopping Area
-        - Performing Arts Venue
-        - Nature Preserve
-      - description: Phone number to contact the attraction
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Boolean flag indicating whether entrance to attraction is free
-        is_categorical: true
-        name: free_entry
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating whether attraction is good for to take
-          kids to
-        is_categorical: true
-        name: good_for_kids
-        possible_values:
-        - 'True'
-        - 'False'
-    slots:
-      category:
-      - Tourist Attraction
-      free_entry:
-      - 'True'
-      location:
-      - NYC
-    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
-      in particular? <user> Something of a place of interest in NYC. <system> There's
-      a cool Tourist Attraction called Balto Statue. <user> Is it kid-friendly? <system>
-      It's not the best place for kids. <user> All right, thanks. <system> Anything
-      else I can help with?
-    type: text
-- - episode_done: true
-    id: GoogleSGD_UserSimulatorTeacher
-    labels:
-    - location NYC, number_of_rooms 2
-    service:
-      description: A leading provider for searching and booking hotel rooms
-      intents:
-      - description: Reserve a selected hotel for given dates
+      - description: Reserve a table at a restaurant
         is_transactional: true
-        name: ReserveHotel
+        name: ReserveRestaurant
         optional_slots:
-          number_of_rooms: '1'
+          date: '2019-03-01'
+          party_size: '2'
         required_slots:
-        - hotel_name
-        - location
-        - check_in_date
-        - check_out_date
+        - restaurant_name
+        - city
+        - time
         result_slots:
-        - location
-        - number_of_rooms
-        - check_in_date
-        - check_out_date
-        - average_rating
-        - hotel_name
-        - street_address
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
         - phone_number
-        - price
-        - pets_welcome
-      - description: Search for a hotel based on location
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
         is_transactional: false
-        name: SearchHotel
+        name: FindRestaurants
         optional_slots:
-          number_of_rooms: dontcare
-          pets_welcome: dontcare
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
         required_slots:
-        - location
+        - cuisine
+        - city
         result_slots:
-        - location
-        - number_of_rooms
-        - average_rating
-        - hotel_name
-        - street_address
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
         - phone_number
-        - price
-        - pets_welcome
-      service_name: Hotels_3
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
       slots:
-      - description: Location of the hotel
+      - description: Name of the restaurant
         is_categorical: false
-        name: location
+        name: restaurant_name
         possible_values: []
-      - description: Number of rooms to book
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
         is_categorical: true
-        name: number_of_rooms
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
         possible_values:
         - '1'
         - '2'
         - '3'
-      - description: Start date for the hotel reservation
-        is_categorical: false
-        name: check_in_date
-        possible_values: []
-      - description: End date for the hotel reservation
-        is_categorical: false
-        name: check_out_date
-        possible_values: []
-      - description: Average review rating for the hotel
-        is_categorical: false
-        name: average_rating
-        possible_values: []
-      - description: Name of the hotel
-        is_categorical: false
-        name: hotel_name
-        possible_values: []
-      - description: Address of the hotel
-        is_categorical: false
-        name: street_address
-        possible_values: []
-      - description: Phone number of the hotel
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Total price for the stay
-        is_categorical: false
-        name: price
-        possible_values: []
-      - description: Boolean flag indicating if pets are allowed in the hotel
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
         is_categorical: true
-        name: pets_welcome
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots: {}
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at?
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
         possible_values:
         - 'True'
         - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
     slots:
-      location:
-      - NYC
-      number_of_rooms:
-      - '2'
-    text: <user> I'm looking for some free attractions to check out. <system> Anywhere
-      in particular? <user> Something of a place of interest in NYC. <system> There's
-      a cool Tourist Attraction called Balto Statue. <user> Is it kid-friendly? <system>
-      It's not the best place for kids. <user> All right, thanks. <system> Anything
-      else I can help with? <user> I'll be a 2 room hotel there. <system> How about
-      1 Hotel Brooklyn Bridge with its 4.5 rating?
+      city:
+      - San Jose
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else?
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose, cuisine American
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+      cuisine:
+      - American
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else? <user> I usually
+      like eating the American type of food. <system> I see that at 71 Saint Peter
+      there is a good restaurant which is in San Jose.
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose, cuisine American
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+      cuisine:
+      - American
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else? <user> I usually
+      like eating the American type of food. <system> I see that at 71 Saint Peter
+      there is a good restaurant which is in San Jose. <user> Can you give me the
+      address of this restaurant. <system> If you want to go to this restaurant you
+      can find it at 71 North San Pedro Street.
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose, cuisine American
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+      cuisine:
+      - American
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else? <user> I usually
+      like eating the American type of food. <system> I see that at 71 Saint Peter
+      there is a good restaurant which is in San Jose. <user> Can you give me the
+      address of this restaurant. <system> If you want to go to this restaurant you
+      can find it at 71 North San Pedro Street. <user> Can you give me the phone number
+      that I can contact them with? <system> If you want to phone them you can at
+      408-971-8523.
     type: text
 num_episodes: 16142
 num_examples: 181124
