@@ -1468,6 +1468,7 @@ class TorchAgent(ABC, Agent):
                 obs['text_vec'] = history.get_history_vec()
                 obs['full_text_vec'] = history.get_history_vec()
 
+        # import pdb; pdb.set_trace()
         # check truncation
         if obs.get('text_vec') is not None:
             truncate_left = not self.history_reversed

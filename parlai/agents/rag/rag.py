@@ -237,6 +237,9 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                     pickle_module=parlai.utils.pickle,
                 )
             assert 'model' in states
+            import pdb
+
+            pdb.set_trace()
             model.load_state_dict(states['model'])
             if self.model_parallel:
                 ph = PipelineHelper()
@@ -427,17 +430,12 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                     state_dict[f'seq2seq_{k}'] = weights
         # 2. Retriever state
         if not [k for k in state_dict if 'retriever' in k]:
-            retriever_state = {
-                f"retriever.{k}": v
-                for k, v in model.retriever.state_dict().items()  # type: ignore
-            }
+            retriever_state = {f"retriever.{k}": v for k, v in model.retriever.state_dict().items()}  # type: ignore
             state_dict.update(retriever_state)
         # 3. Handle n_positional difference
         if opt.get('n_extra_positions', 0) > 0:
             key = 'seq2seq_encoder.position_embeddings.weight'
-            init_weight = (
-                model.seq2seq_encoder.position_embeddings.weight  # type: ignore
-            )
+            init_weight = model.seq2seq_encoder.position_embeddings.weight  # type: ignore
             if state_dict[key].size(0) < opt['n_positions'] + opt['n_extra_positions']:
                 # Make sure we're not adding more positions to a model trained
                 # with extra positions
@@ -478,10 +476,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         try:
             if self._should_override_dpr_model_weights(self.opt):
                 state_dict.update(
-                    {
-                        f"retriever.{k}": v
-                        for k, v in self.model.retriever.state_dict().items()  # type: ignore
-                    }
+                    {f"retriever.{k}": v for k, v in self.model.retriever.state_dict().items()}  # type: ignore
                 )
             self.model.load_state_dict(state_dict)
         except RuntimeError as msg:
@@ -654,9 +649,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
         Reason: the batchsize is artificially higher (n_docs * batchsize)
         """
         if hasattr(self._rag_model_interface, 'get_ctxt_index'):
-            batch_idx = self._rag_model_interface.get_ctxt_index(  # type: ignore
-                batch, batch_idx
-            )
+            batch_idx = self._rag_model_interface.get_ctxt_index(batch, batch_idx)  # type: ignore
         return self._generation_agent._get_context(self, batch, batch_idx)
 
     def _generate(
@@ -885,9 +878,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
             return output from model
         """
         if not self.regret:
-            model_output = self.model(
-                *self._model_input(batch), ys=batch.label_vec
-            )  # type: ignore
+            model_output = self.model(*self._model_input(batch), ys=batch.label_vec)  # type: ignore
             scores, preds, enc_state, *_ = model_output
         else:
             with torch.no_grad():
@@ -896,9 +887,7 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                 )
             regret_preds, _, _ = zip(*beam_preds_scores)
             new_batch = self._regret_rebatchify(batch, regret_preds)  # type: ignore
-            regret_model_output = self.model(
-                *self._model_input(new_batch), ys=batch.label_vec
-            )  # type: ignore
+            regret_model_output = self.model(*self._model_input(new_batch), ys=batch.label_vec)  # type: ignore
             regret_scores, preds, enc_state = regret_model_output
             scores = regret_scores
 
