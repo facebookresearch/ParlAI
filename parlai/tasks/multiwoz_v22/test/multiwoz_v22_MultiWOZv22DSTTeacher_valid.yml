@@ -1,78 +1,69 @@
 acts:
-- - dialogue_id: MUL0337.json
+- - dialogue_id: PMUL0698.json
     episode_done: true
     eval_labels:
-    - restaurant area centre ; train departure norwich ; train arriveby 08:15 ; train
-      arriveby 8:15 ; restaurant pricerange cheap ; train bookpeople 2 ; restaurant
-      food dontcare ; train destination cambridge ; train day wednesday
+    - restaurant food chinese ; restaurant area centre
     id: MultiwozV22_UserSimulatorTeacher
-    text: <user> do you happen to know of any trains leaving for cambridge this wednesday?
-      <system> yes. there are a total of 202 trains leaving for cambridge on wednesday.
-      where will you be departing from? <user> i will be leaving from norwich and
-      i need to arrive by 8:15. <system> the tr4203 is leaving from norwich to cambridge
-      at 05:16. would you like to book a ticket? <user> sure, can you book that for
-      2 people and provide my reference number? <system> your booking has been completed,
-      the reference number is fh111zqu . <user> thanks, i'm also looking for a restaurant
-      in the city centre. <system> there are 69 results for restaurants in the city
-      centre area. what type of food are you looking for, and what price range? <user>
-      i don't really care what kind of food, but i am on a budget so cheap would be
-      great.
-    turn_num: '8'
-- - dialogue_id: MUL1162.json
-    episode_done: true
-    eval_labels:
-    - attraction type nightclub ; attraction area centre
-    id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i'm visiting cambridge and looking to do the tourist thing! i'm interested
-      in information about potential nightclubs in the centre of town!
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food.
     turn_num: '0'
-- - dialogue_id: MUL2699.json
+- - dialogue_id: PMUL0698.json
     episode_done: true
     eval_labels:
-    - attraction type college ; attraction name christ college ; attraction name christ's
-      college ; hotel pricerange moderate ; attraction area centre ; hotel stars 4
+    - restaurant food chinese ; restaurant area centre
     id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i am looking for something to do in the centre. <system> is there
-      a specific type of attraction you would like to visit? <user> i don't know a
-      name, but i know i want the attraction to be in entertainment. do you have any
-      suggestions? <system> unfortunately there isn't any entertainment in the centre.
-      would you like to try another area perhaps? <user> how about a college to visit
-      in the centre of town instead? <system> i hear christ's college is nice, want
-      more info? <user> yes. can you give me the entrance fee, phone number, and address?
-      <system> it is free to enter. their phone number is 01223334900 and their address
-      is saint andrew's street. can i help with anything else? <user> i are also looking
-      for a place to stay, a 4-star hotel, moderate price range
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range.
+    turn_num: '2'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - train leaveat 16:15 ; restaurant food chinese ; restaurant area centre ; train
+      day sunday
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range. <system> ok how about charlie chan, located at regent street city
+      centre. postcode is cb21db with a cheap price. can i help you further today?
+      <user> i also need a train. the train should leave after 16:15 and should leave
+      on sunday.
+    turn_num: '4'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant food chinese ; train day sunday ; train departure cambridge ; train
+      leaveat 16:15 ; train destination norwich ; restaurant area centre
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range. <system> ok how about charlie chan, located at regent street city
+      centre. postcode is cb21db with a cheap price. can i help you further today?
+      <user> i also need a train. the train should leave after 16:15 and should leave
+      on sunday. <system> can i have more information for the train you're needing?
+      where are you departing from and arriving to? <user> i am leaving from cambridge
+      and going to norwich.
+    turn_num: '6'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant food chinese ; train day sunday ; train departure cambridge ; train
+      leaveat 16:15 ; train destination norwich ; restaurant area centre ; train bookpeople
+      5
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range. <system> ok how about charlie chan, located at regent street city
+      centre. postcode is cb21db with a cheap price. can i help you further today?
+      <user> i also need a train. the train should leave after 16:15 and should leave
+      on sunday. <system> can i have more information for the train you're needing?
+      where are you departing from and arriving to? <user> i am leaving from cambridge
+      and going to norwich. <system> i have train tr1840 leaving at 16:36 is that
+      okay? <user> book for 5 people and get me the reference number
     turn_num: '8'
-- - dialogue_id: PMUL3344.json
-    episode_done: true
-    eval_labels:
-    - train day tuesday ; train destination cambridge ; train arriveby 08:00 ; train
-      departure bishops stortford
-    id: MultiwozV22_UserSimulatorTeacher
-    text: <user> my car will be in the shop so i will need to take a train to work
-      in cambridge that day. i need to arrive by 08:00 <system> i'd be happy to help.
-      what day of the week will you be travelling? <user> i'll be leaving on tuesday.
-      <system> okay and where will you be departing from? <user> i will leave from
-      bishops stortford. <system> train tr8192 leaves that day at 05:29 and arrives
-      at 06:07. would you like me to book anything for you? <user> how much is the
-      price for that?
-    turn_num: '6'
-- - dialogue_id: PMUL1795.json
-    episode_done: true
-    eval_labels:
-    - hotel internet yes ; hotel name allenbell ; hotel bookday tuesday ; hotel area
-      dontcare ; hotel pricerange cheap ; train departure kings lynn ; hotel bookstay
-      2 ; hotel bookpeople 3 ; hotel parking yes
-    id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i'm looking for a cheap hotel that includes free wifi. <system> that
-      gives us about 10 options. to narrow it down some, do you have a certain area
-      of town you prefer? <user> i don't care about the area it is in, but i will
-      need free parking. <system> okay i could recommend the allenbell which is a
-      4 star guesthouse with free parking in the cheap price range located on the
-      east side. <user> ok, the allenbell will do. can you book me a room for 3 people,
-      2 nights starting tuesday please? <system> yes your booking was successful!
-      your reservation number is kq23hdj5 . <user> i also need a train leaving kings
-      lynn.
-    turn_num: '6'
 num_episodes: 999
 num_examples: 8366

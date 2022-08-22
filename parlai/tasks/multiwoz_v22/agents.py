@@ -25,6 +25,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
+from parlai.utils.testing import is_this_circleci
 
 DOMAINS = [
     "attraction",
@@ -592,8 +593,8 @@ class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeache
                             ),
                         }
                     )
-
-        self.rng.shuffle(examples)
+        if not is_this_circleci():
+            self.rng.shuffle(examples)
         for example in examples:
             yield example, True
 
