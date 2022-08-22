@@ -2,15 +2,24 @@ acts:
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
+<<<<<<< HEAD
     - train departure norwich ; train destination cambridge
+=======
+    - taxi departure golden house ; taxi leaveat 12:15
+>>>>>>> main
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge
     turn_num: '0'
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
+<<<<<<< HEAD
     - train day monday ; train arriveby 18:00 ; train departure norwich ; train destination
       cambridge
+=======
+    - hotel pricerange moderate ; train departure london liverpool street ; train
+      destination cambridge ; train day monday ; train leaveat 10:30
+>>>>>>> main
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge <system> i have
       133 trains matching your request. is there a specific day and time you would
@@ -48,8 +57,13 @@ acts:
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
+<<<<<<< HEAD
     - attraction name cineworld cinema ; train arriveby 18:00 ; train departure norwich
       ; train day monday ; train destination cambridge
+=======
+    - train departure cambridge ; train destination bishops stortford ; train leaveat
+      20:15 ; train bookpeople 7 ; train day thursday
+>>>>>>> main
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge <system> i have
       133 trains matching your request. is there a specific day and time you would
@@ -63,5 +77,49 @@ acts:
       the south part of town what information would you like on it? <user> yes, that
       was all i needed. thank you very much!
     turn_num: '8'
+<<<<<<< HEAD
+=======
+- - dialogue_id: MUL2151.json
+    episode_done: true
+    eval_labels:
+    - hotel area north ; train bookpeople 4 ; hotel pricerange expensive ; train destination
+      cambridge ; train arriveby 12:43 ; train leaveat 11:54 ; train day wednesday
+      ; hotel parking yes ; train departure stevenage
+    id: MultiwozV22_UserSimulatorTeacher
+    text: '<user> hello! can you give me information about trains going to cambridge
+      and leaving on wednesday? <system> there are over 200 trains leaving. do you
+      have a specific time you''d like to arrive by? <user> i am looking to depart
+      from steveage and leave after 11:15 please. <system> the first train after 11:15
+      is the tr6473, leaving stevenage 11:54, arriving cambridge 12:43. would this
+      be to your liking? <user> yes please can you book seats for 4 people and give
+      me the reference number? <system> your booking was completed and the total fee
+      is 51.2 gbp payable at the station . reference number is : hhbt7e2n . <user>
+      i also need a place to stay. can you recommend an expensive hotel in the north?
+      <system> unfortunately there are no expensive hotels in the north. i could check
+      another area if you would like. <user> are there any expensive places to stay
+      in the north? it doesn''t need to be a hotel, but i would like free parking.'
+    turn_num: '8'
+- - dialogue_id: MUL1803.json
+    episode_done: true
+    eval_labels:
+    - train departure cambridge ; train leaveat 11:50 ; attraction area centre ; train
+      day sunday ; train destination ely ; attraction name all saints church ; train
+      arriveby 12:07 ; attraction type architecture
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i am looking for a attraction to see in cambridge located in the
+      centre <system> all saints church has some lovely architecture. does that suit
+      your needs? <user> it might. can you please tell me the entrance fee, address,
+      and phone number of all saints church? <system> address is jesus lane,entry
+      fee is free,and the phone number is 01223452587. <user> i also need a train
+      to ely. <system> there are quite a few. can you tell me what day and time you'd
+      like to travel so i can narrow it down? <user> i need to travel sunday after
+      11:00 from cambridge. <system> i have train tr1159 that departs at 11:50 and
+      will arrive by 12:07. would that work for you? <user> yes, it would. can you
+      tell me what the travel time is? <system> the trip will be 17 minutes long.
+      <user> thank you can you please book it and send the reference number. <system>
+      yes how many ticket do you need? <user> i don't need to book at this time actually.
+      that's all that i needed. thank you for your help! goodbye!
+    turn_num: '12'
+>>>>>>> main
 num_episodes: 1000
 num_examples: 8372

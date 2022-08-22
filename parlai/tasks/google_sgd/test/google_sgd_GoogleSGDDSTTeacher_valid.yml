@@ -1,543 +1,666 @@
 acts:
 - - episode_done: true
     eval_labels:
-    - ''
+    - number_of_seats 2, time half past 11 in the morning
     id: GoogleSGD_UserSimulatorTeacher
     service:
-      description: A widely used service for finding apartments and scheduling visits
+      description: A popular restaurant search and reservation service
       intents:
-      - description: Find an apartment in a city for a given number of bedrooms
-        is_transactional: false
-        name: FindApartment
-        optional_slots:
-          furnished: dontcare
-          number_of_baths: dontcare
-          pets_allowed: dontcare
-        required_slots:
-        - area
-        - number_of_beds
-        result_slots:
-        - area
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - number_of_beds
-        - number_of_baths
-      - description: Schedule a visit for a given property on a particular date
+      - description: Make a table reservation at a restaurant
         is_transactional: true
-        name: ScheduleVisit
-        optional_slots: {}
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
         required_slots:
-        - property_name
-        - visit_date
+        - restaurant_name
+        - location
+        - time
         result_slots:
-        - address
-        - property_name
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
         - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - visit_date
-        - number_of_beds
-        - number_of_baths
-      service_name: Homes_1
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
       slots:
-      - description: City where the apartment is located
+      - description: Name of the restaurant
         is_categorical: false
-        name: area
+        name: restaurant_name
         possible_values: []
-      - description: Address of the apartment
+      - description: Tentative date of restaurant reservation
         is_categorical: false
-        name: address
+        name: date
         possible_values: []
-      - description: Name of the apartment
+      - description: Tentative time of restaurant reservation
         is_categorical: false
-        name: property_name
+        name: time
         possible_values: []
-      - description: Phone number of the apartment
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
         is_categorical: false
         name: phone_number
         possible_values: []
-      - description: Boolean flag indicating if the property is furnished
-        is_categorical: true
-        name: furnished
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating if pets are allowed
-        is_categorical: true
-        name: pets_allowed
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Rent per month of the apartment
+      - description: Average user rating for restaurant on a scale of 5
         is_categorical: false
-        name: rent
+        name: rating
         possible_values: []
-      - description: Date for the visit to the apartment
-        is_categorical: false
-        name: visit_date
-        possible_values: []
-      - description: Number of bed rooms
-        is_categorical: true
-        name: number_of_beds
-        possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
-      - description: Number of baths in the apartment
-        is_categorical: true
-        name: number_of_baths
-        possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
-    slots: {}
-    text: <user> I'm looking for apartments. <system> Which area are you looking in?
-    type: text
-- - episode_done: true
-    eval_labels:
-    - area San Jose
-    id: GoogleSGD_UserSimulatorTeacher
-    service:
-      description: A widely used service for finding apartments and scheduling visits
-      intents:
-      - description: Find an apartment in a city for a given number of bedrooms
-        is_transactional: false
-        name: FindApartment
-        optional_slots:
-          furnished: dontcare
-          number_of_baths: dontcare
-          pets_allowed: dontcare
-        required_slots:
-        - area
-        - number_of_beds
-        result_slots:
-        - area
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - number_of_beds
-        - number_of_baths
-      - description: Schedule a visit for a given property on a particular date
-        is_transactional: true
-        name: ScheduleVisit
-        optional_slots: {}
-        required_slots:
-        - property_name
-        - visit_date
-        result_slots:
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - visit_date
-        - number_of_beds
-        - number_of_baths
-      service_name: Homes_1
-      slots:
-      - description: City where the apartment is located
-        is_categorical: false
-        name: area
-        possible_values: []
-      - description: Address of the apartment
+      - description: Address of restaurant
         is_categorical: false
         name: address
         possible_values: []
-      - description: Name of the apartment
-        is_categorical: false
-        name: property_name
-        possible_values: []
-      - description: Phone number of the apartment
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Boolean flag indicating if the property is furnished
+      - description: Number of seats to reserve at the restaurant
         is_categorical: true
-        name: furnished
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating if pets are allowed
-        is_categorical: true
-        name: pets_allowed
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Rent per month of the apartment
-        is_categorical: false
-        name: rent
-        possible_values: []
-      - description: Date for the visit to the apartment
-        is_categorical: false
-        name: visit_date
-        possible_values: []
-      - description: Number of bed rooms
-        is_categorical: true
-        name: number_of_beds
+        name: number_of_seats
         possible_values:
         - '1'
         - '2'
         - '3'
         - '4'
-      - description: Number of baths in the apartment
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
         is_categorical: true
-        name: number_of_baths
+        name: price_range
         possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
     slots:
-      area:
-      - San Jose
-    text: <user> I'm looking for apartments. <system> Which area are you looking in?
-      <user> I want an apartment in San Jose. <system> How many bedrooms do you want?
-    type: text
-- - episode_done: true
-    eval_labels:
-    - area San Jose, number_of_beds 2
-    id: GoogleSGD_UserSimulatorTeacher
-    service:
-      description: A widely used service for finding apartments and scheduling visits
-      intents:
-      - description: Find an apartment in a city for a given number of bedrooms
-        is_transactional: false
-        name: FindApartment
-        optional_slots:
-          furnished: dontcare
-          number_of_baths: dontcare
-          pets_allowed: dontcare
-        required_slots:
-        - area
-        - number_of_beds
-        result_slots:
-        - area
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - number_of_beds
-        - number_of_baths
-      - description: Schedule a visit for a given property on a particular date
-        is_transactional: true
-        name: ScheduleVisit
-        optional_slots: {}
-        required_slots:
-        - property_name
-        - visit_date
-        result_slots:
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - visit_date
-        - number_of_beds
-        - number_of_baths
-      service_name: Homes_1
-      slots:
-      - description: City where the apartment is located
-        is_categorical: false
-        name: area
-        possible_values: []
-      - description: Address of the apartment
-        is_categorical: false
-        name: address
-        possible_values: []
-      - description: Name of the apartment
-        is_categorical: false
-        name: property_name
-        possible_values: []
-      - description: Phone number of the apartment
-        is_categorical: false
-        name: phone_number
-        possible_values: []
-      - description: Boolean flag indicating if the property is furnished
-        is_categorical: true
-        name: furnished
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating if pets are allowed
-        is_categorical: true
-        name: pets_allowed
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Rent per month of the apartment
-        is_categorical: false
-        name: rent
-        possible_values: []
-      - description: Date for the visit to the apartment
-        is_categorical: false
-        name: visit_date
-        possible_values: []
-      - description: Number of bed rooms
-        is_categorical: true
-        name: number_of_beds
-        possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
-      - description: Number of baths in the apartment
-        is_categorical: true
-        name: number_of_baths
-        possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
-    slots:
-      area:
-      - San Jose
-      number_of_beds:
+      number_of_seats:
       - '2'
-    text: <user> I'm looking for apartments. <system> Which area are you looking in?
-      <user> I want an apartment in San Jose. <system> How many bedrooms do you want?
-      <user> 2 bedrooms, please. <system> There's a nice property called Aegena at
-      1290 San Tomas Aquino Road. It has 2 bedrooms, 1 bath, and rents for $2,650
-      a month.
+      time:
+      - half past 11 in the morning
+    text: <user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant?
     type: text
 - - episode_done: true
     eval_labels:
-    - area Livermore, number_of_beds 3
+    - location San Jose, number_of_seats 2, restaurant_name Sino, time half past 11
+      in the morning
     id: GoogleSGD_UserSimulatorTeacher
     service:
-      description: A widely used service for finding apartments and scheduling visits
+      description: A popular restaurant search and reservation service
       intents:
-      - description: Find an apartment in a city for a given number of bedrooms
-        is_transactional: false
-        name: FindApartment
-        optional_slots:
-          furnished: dontcare
-          number_of_baths: dontcare
-          pets_allowed: dontcare
-        required_slots:
-        - area
-        - number_of_beds
-        result_slots:
-        - area
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - number_of_beds
-        - number_of_baths
-      - description: Schedule a visit for a given property on a particular date
+      - description: Make a table reservation at a restaurant
         is_transactional: true
-        name: ScheduleVisit
-        optional_slots: {}
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
         required_slots:
-        - property_name
-        - visit_date
+        - restaurant_name
+        - location
+        - time
         result_slots:
-        - address
-        - property_name
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
         - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - visit_date
-        - number_of_beds
-        - number_of_baths
-      service_name: Homes_1
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
       slots:
-      - description: City where the apartment is located
+      - description: Name of the restaurant
         is_categorical: false
-        name: area
+        name: restaurant_name
         possible_values: []
-      - description: Address of the apartment
+      - description: Tentative date of restaurant reservation
         is_categorical: false
-        name: address
+        name: date
         possible_values: []
-      - description: Name of the apartment
+      - description: Tentative time of restaurant reservation
         is_categorical: false
-        name: property_name
+        name: time
         possible_values: []
-      - description: Phone number of the apartment
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
         is_categorical: false
         name: phone_number
         possible_values: []
-      - description: Boolean flag indicating if the property is furnished
-        is_categorical: true
-        name: furnished
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating if pets are allowed
-        is_categorical: true
-        name: pets_allowed
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Rent per month of the apartment
+      - description: Average user rating for restaurant on a scale of 5
         is_categorical: false
-        name: rent
+        name: rating
         possible_values: []
-      - description: Date for the visit to the apartment
+      - description: Address of restaurant
         is_categorical: false
-        name: visit_date
+        name: address
         possible_values: []
-      - description: Number of bed rooms
+      - description: Number of seats to reserve at the restaurant
         is_categorical: true
-        name: number_of_beds
+        name: number_of_seats
         possible_values:
         - '1'
         - '2'
         - '3'
         - '4'
-      - description: Number of baths in the apartment
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
         is_categorical: true
-        name: number_of_baths
+        name: price_range
         possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
     slots:
-      area:
-      - Livermore
-      number_of_beds:
-      - '3'
-    text: <user> I'm looking for apartments. <system> Which area are you looking in?
-      <user> I want an apartment in San Jose. <system> How many bedrooms do you want?
-      <user> 2 bedrooms, please. <system> There's a nice property called Aegena at
-      1290 San Tomas Aquino Road. It has 2 bedrooms, 1 bath, and rents for $2,650
-      a month. <user> Can you find me a three bedroom apartment in Livermore? <system>
-      There's Acacia Capital Cor-Ironwood Ap at 5643 Charlotte Way. It has 3 bedrooms,
-      3 baths, and rents for $4,050 a month.
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today.'
     type: text
 - - episode_done: true
     eval_labels:
-    - area Livermore, number_of_beds 3, property_name Acacia Capital Cor-Ironwood
-      Ap
+    - date today, location San Jose, number_of_seats 2, restaurant_name Sino, time
+      11:30 am
     id: GoogleSGD_UserSimulatorTeacher
     service:
-      description: A widely used service for finding apartments and scheduling visits
+      description: A popular restaurant search and reservation service
       intents:
-      - description: Find an apartment in a city for a given number of bedrooms
-        is_transactional: false
-        name: FindApartment
-        optional_slots:
-          furnished: dontcare
-          number_of_baths: dontcare
-          pets_allowed: dontcare
-        required_slots:
-        - area
-        - number_of_beds
-        result_slots:
-        - area
-        - address
-        - property_name
-        - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - number_of_beds
-        - number_of_baths
-      - description: Schedule a visit for a given property on a particular date
+      - description: Make a table reservation at a restaurant
         is_transactional: true
-        name: ScheduleVisit
-        optional_slots: {}
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
         required_slots:
-        - property_name
-        - visit_date
+        - restaurant_name
+        - location
+        - time
         result_slots:
-        - address
-        - property_name
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
         - phone_number
-        - furnished
-        - pets_allowed
-        - rent
-        - visit_date
-        - number_of_beds
-        - number_of_baths
-      service_name: Homes_1
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
       slots:
-      - description: City where the apartment is located
+      - description: Name of the restaurant
         is_categorical: false
-        name: area
+        name: restaurant_name
         possible_values: []
-      - description: Address of the apartment
+      - description: Tentative date of restaurant reservation
         is_categorical: false
-        name: address
+        name: date
         possible_values: []
-      - description: Name of the apartment
+      - description: Tentative time of restaurant reservation
         is_categorical: false
-        name: property_name
+        name: time
         possible_values: []
-      - description: Phone number of the apartment
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
         is_categorical: false
         name: phone_number
         possible_values: []
-      - description: Boolean flag indicating if the property is furnished
-        is_categorical: true
-        name: furnished
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Boolean flag indicating if pets are allowed
-        is_categorical: true
-        name: pets_allowed
-        possible_values:
-        - 'True'
-        - 'False'
-      - description: Rent per month of the apartment
+      - description: Average user rating for restaurant on a scale of 5
         is_categorical: false
-        name: rent
+        name: rating
         possible_values: []
-      - description: Date for the visit to the apartment
+      - description: Address of restaurant
         is_categorical: false
-        name: visit_date
+        name: address
         possible_values: []
-      - description: Number of bed rooms
+      - description: Number of seats to reserve at the restaurant
         is_categorical: true
-        name: number_of_beds
+        name: number_of_seats
         possible_values:
         - '1'
         - '2'
         - '3'
         - '4'
-      - description: Number of baths in the apartment
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
         is_categorical: true
-        name: number_of_baths
+        name: price_range
         possible_values:
-        - '1'
-        - '2'
-        - '3'
-        - '4'
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
     slots:
-      area:
-      - Livermore
-      number_of_beds:
-      - '3'
-      property_name:
-      - Acacia Capital Cor-Ironwood Ap
-    text: <user> I'm looking for apartments. <system> Which area are you looking in?
-      <user> I want an apartment in San Jose. <system> How many bedrooms do you want?
-      <user> 2 bedrooms, please. <system> There's a nice property called Aegena at
-      1290 San Tomas Aquino Road. It has 2 bedrooms, 1 bath, and rents for $2,650
-      a month. <user> Can you find me a three bedroom apartment in Livermore? <system>
-      There's Acacia Capital Cor-Ironwood Ap at 5643 Charlotte Way. It has 3 bedrooms,
-      3 baths, and rents for $4,050 a month. <user> That one sounds good. Thanks,
-      that's all I need. <system> Have a nice day.
+      date:
+      - today
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - 11:30 am
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today. <user> Yes, thanks. What''s their
+      phone number? <system> Your reservation has been made. Their phone number is
+      408-247-8880.'
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date today, location San Jose, number_of_seats 2, restaurant_name Sino, time
+      11:30 am
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - today
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - 11:30 am
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today. <user> Yes, thanks. What''s their
+      phone number? <system> Your reservation has been made. Their phone number is
+      408-247-8880. <user> What''s their address? Do they have vegetarian options
+      on their menu? <system> The street address is 377 Santana Row #1000. They have
+      good vegetarian options.'
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date today, location San Jose, number_of_seats 2, restaurant_name Sino, time
+      11:30 am
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - today
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - 11:30 am
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today. <user> Yes, thanks. What''s their
+      phone number? <system> Your reservation has been made. Their phone number is
+      408-247-8880. <user> What''s their address? Do they have vegetarian options
+      on their menu? <system> The street address is 377 Santana Row #1000. They have
+      good vegetarian options. <user> Thanks very much. <system> Is there anything
+      else I can help you with?'
     type: text
 num_episodes: 2482
 num_examples: 26845

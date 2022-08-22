@@ -10,6 +10,7 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
+<<<<<<< HEAD
     - restaurant pricerange expensive ; restaurant area centre
     text: <user> i need a place to dine in the center thats expensive <system> i have
       several options for you; do you prefer african, asian, or british food? <user>
@@ -17,6 +18,24 @@ acts:
       the phone number for your recommendation?
     turn_num: '2'
 - - dialogue_id: PMUL4398.json
+=======
+    - train departure cambridge ; train leaveat 19:11 ; train destination kings lynn
+      ; attraction type college ; attraction area centre ; train bookpeople 8 ; train
+      day thursday
+    text: <user> i am looking for multiple sports in the centre. <system> sorry i
+      have no listing in centre,can i check another area? <user> no. how about colleges?
+      are there any of those in the area? <system> there are thirteen colleges that
+      are listed in the city's centre. <user> pick one! i just need to phone number,
+      postcode, and address, please. <system> christ college, 0122334900, saint andrews
+      street cb23bu. <user> thanks. i was also interested in finding a train from
+      cambridge. can you help me with that? <system> we will miss you! where are you
+      traveling to? <user> i need to go to kings lynn on thursday after 19:00. <system>
+      okay the tr0481 matches your needs. it leaves at 19:11. <user> that sounds good,
+      i will need a reservation for eight people and give me a reference number also
+      please.
+    turn_num: '10'
+- - dialogue_id: PMUL4577.json
+>>>>>>> main
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
@@ -33,6 +52,7 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
+<<<<<<< HEAD
     - hotel name university arms hotel ; restaurant name bedouin ; hotel pricerange
       expensive ; hotel type hotel ; restaurant area centre ; restaurant pricerange
       expensive
@@ -44,6 +64,48 @@ acts:
       i get that phone number? also, could you recommend me an expensive hotel? <system>
       bedouin's phone is 01223367660. as far as hotels go, i recommend the university
       arms hotel in the center of town. <user> yes. can you book it for me?
+=======
+    - taxi arriveby 12:00 ; taxi destination sitar tandoori ; restaurant bookday sunday
+      ; taxi departure magdalene college ; restaurant area east ; restaurant bookpeople
+      4 ; taxi arriveby 12.00 ; restaurant booktime 12:00 ; restaurant food indian
+      ; restaurant name sitar tandoori ; attraction name magdalene college
+    text: <user> what can you tell me about magdalene college? <system> magdalene
+      college is located in the west area of town. there is no entrance fee. <user>
+      thank you for your help. <system> you're welcome. let us know if you need anything
+      else. <user> i do, actually. i'd also like to find a good place to dine in the
+      east. do you know of any swiss restaurants in that area? <system> unfortunately
+      there doesn't seem to be any swiss options in the east. could i help you with
+      anything else? <user> hmm, i was really looking forward to swiss food. ok, how
+      about an indian restaurant in the east instead? <system> that we can do. we
+      have two moderately priced and two expensive indian restaurants in the east.
+      <user> what are the two expensive indian restaurants? <system> sitar tandoori
+      and pipasha restaurant are the expensive options. <user> could you please book
+      a table at sitar tandoori for 4 people on sunday? <system> of course! what time
+      would you prefer? <user> i would like the booking to be for 13:00 . <system>
+      i am sorry i was unable to book that. is there another day or time that works
+      for you? <user> that's okay, maybe 12:00 will work? try that please? <system>
+      i booked you for 4 at 12.00 on sunday. your reference number is yjctzh5f . can
+      i help you with anything else? <user> yes, i also need a taxi to take me from
+      the college to the restaurant by the reservation time. <system> ok i have a
+      blue toyota picking you up the contact number is 07029466414 <user> thank you
+      for all your help. i have all the information i need. goodbye
+    turn_num: '18'
+- - dialogue_id: PMUL3373.json
+    episode_done: true
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - hotel area centre ; hotel name university arms ; hotel type hotel ; hotel name
+      university arms hotel ; hotel parking yes ; hotel pricerange dontcare ; hotel
+      stars 4
+    text: <user> i am looking for a place to stay. the hotel should have a star of
+      4 and should include free parking. <system> do you have an area or price range
+      in mind? and do you want a hotel or a guesthouse? <user> price doesn't really
+      matter, but the centre of town might be better. <system> i have a cheap guesthouse
+      and an expensive hotel in the center. i recommend the hotel - the university
+      arms. <user> can you provide the address please? <system> it is located on regent
+      street. anything else i can help you with today? <user> what was their price
+      range again, please?
+>>>>>>> main
     turn_num: '6'
 - - dialogue_id: PMUL4398.json
     episode_done: true
