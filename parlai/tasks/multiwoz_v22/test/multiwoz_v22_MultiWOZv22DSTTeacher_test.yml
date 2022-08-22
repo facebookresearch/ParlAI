@@ -9,7 +9,7 @@ acts:
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
-    - train departure norwich ; train arriveby 18:00 ; train day monday ; train destination
+    - train arriveby 18:00 ; train day monday ; train departure norwich ; train destination
       cambridge
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge <system> i have
@@ -19,7 +19,7 @@ acts:
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
-    - train departure norwich ; train arriveby 18:00 ; train day monday ; train destination
+    - train arriveby 18:00 ; train day monday ; train departure norwich ; train destination
       cambridge
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge <system> i have
@@ -32,7 +32,7 @@ acts:
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
-    - train arriveby 18:00 ; train day monday ; attraction name cineworld cinema ;
+    - attraction name cineworld cinema ; train arriveby 18:00 ; train day monday ;
       train departure norwich ; train destination cambridge
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge <system> i have
@@ -48,7 +48,7 @@ acts:
 - - dialogue_id: MUL0484.json
     episode_done: true
     eval_labels:
-    - train arriveby 18:00 ; train day monday ; attraction name cineworld cinema ;
+    - attraction name cineworld cinema ; train arriveby 18:00 ; train day monday ;
       train departure norwich ; train destination cambridge
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i need train reservations from norwich to cambridge <system> i have

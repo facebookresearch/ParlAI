@@ -20,8 +20,8 @@ acts:
 - - dialogue_id: PMUL0698.json
     episode_done: true
     eval_labels:
-    - restaurant area centre ; train day sunday ; train leaveat 16:15 ; restaurant
-      food chinese
+    - restaurant area centre ; restaurant food chinese ; train day sunday ; train
+      leaveat 16:15
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i'm looking for a local place to dine in the centre that serves chinese
       food. <system> i have restaurants matching your criteria in all price ranges.
@@ -34,8 +34,8 @@ acts:
 - - dialogue_id: PMUL0698.json
     episode_done: true
     eval_labels:
-    - train departure cambridge ; train day sunday ; train destination norwich ; restaurant
-      area centre ; train leaveat 16:15 ; restaurant food chinese
+    - restaurant area centre ; restaurant food chinese ; train day sunday ; train
+      departure cambridge ; train destination norwich ; train leaveat 16:15
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i'm looking for a local place to dine in the centre that serves chinese
       food. <system> i have restaurants matching your criteria in all price ranges.
@@ -50,9 +50,9 @@ acts:
 - - dialogue_id: PMUL0698.json
     episode_done: true
     eval_labels:
-    - train departure cambridge ; train day sunday ; train destination norwich ; train
-      bookpeople 5 ; restaurant area centre ; train leaveat 16:15 ; restaurant food
-      chinese
+    - restaurant area centre ; restaurant food chinese ; train bookpeople 5 ; train
+      day sunday ; train departure cambridge ; train destination norwich ; train leaveat
+      16:15
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i'm looking for a local place to dine in the centre that serves chinese
       food. <system> i have restaurants matching your criteria in all price ranges.
