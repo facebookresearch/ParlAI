@@ -1,90 +1,49 @@
 acts:
-- - dialogue_id: MUL0484.json
+- - dialogue_id: SNG0095.json
     episode_done: true
     eval_labels:
-<<<<<<< HEAD
-    - train departure norwich ; train destination cambridge
-=======
     - taxi departure golden house ; taxi leaveat 12:15
->>>>>>> main
     id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i need train reservations from norwich to cambridge
+    text: <user> hi, i'm looking for a taxi. i need to leave from golden house at
+      12:15.
     turn_num: '0'
-- - dialogue_id: MUL0484.json
+- - dialogue_id: MUL2042.json
     episode_done: true
     eval_labels:
-<<<<<<< HEAD
-    - train day monday ; train arriveby 18:00 ; train departure norwich ; train destination
-      cambridge
-=======
     - hotel pricerange moderate ; train departure london liverpool street ; train
-      destination cambridge ; train day monday ; train leaveat 10:30
->>>>>>> main
+      destination cambridge ; train leaveat 10:30 ; train day monday
     id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i need train reservations from norwich to cambridge <system> i have
-      133 trains matching your request. is there a specific day and time you would
-      like to travel? <user> i'd like to leave on monday and arrive by 18:00.
-    turn_num: '2'
-- - dialogue_id: MUL0484.json
-    episode_done: true
-    eval_labels:
-    - train day monday ; train arriveby 18:00 ; train departure norwich ; train destination
-      cambridge
-    id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i need train reservations from norwich to cambridge <system> i have
-      133 trains matching your request. is there a specific day and time you would
-      like to travel? <user> i'd like to leave on monday and arrive by 18:00. <system>
-      there are 12 trains for the day and time you request. would you like to book
-      it now? <user> before booking, i would also like to know the travel time, price,
-      and departure time please.
-    turn_num: '4'
-- - dialogue_id: MUL0484.json
-    episode_done: true
-    eval_labels:
-    - attraction name cineworld cinema ; train arriveby 18:00 ; train departure norwich
-      ; train day monday ; train destination cambridge
-    id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i need train reservations from norwich to cambridge <system> i have
-      133 trains matching your request. is there a specific day and time you would
-      like to travel? <user> i'd like to leave on monday and arrive by 18:00. <system>
-      there are 12 trains for the day and time you request. would you like to book
-      it now? <user> before booking, i would also like to know the travel time, price,
-      and departure time please. <system> there are 12 trains meeting your needs with
-      the first leaving at 05:16 and the last one leaving at 16:16. do you want to
-      book one of these? <user> no hold off on booking for now. can you help me find
-      an attraction called cineworld cinema?
+    text: <user> i am looking for a train going to cambridge and leaving after 10:30.
+      <system> i would be happy to help you find a train. can you please tell me where
+      you will be departing from? <user> i'll be departing from london liverpool street.
+      <system> what day were you wanting to travel? <user> monday departing from london
+      liverpool st. can you give the arrival time on that train please? <system> tr7040
+      leaves at 11:39. it arrives at 13:07. would you like me to book that for you?
+      <user> no thank you. i do need to find a place to stay as well. i need something
+      moderately priced.
     turn_num: '6'
-- - dialogue_id: MUL0484.json
+- - dialogue_id: SNG0390.json
     episode_done: true
     eval_labels:
-<<<<<<< HEAD
-    - attraction name cineworld cinema ; train arriveby 18:00 ; train departure norwich
-      ; train day monday ; train destination cambridge
-=======
-    - train departure cambridge ; train destination bishops stortford ; train leaveat
-      20:15 ; train bookpeople 7 ; train day thursday
->>>>>>> main
+    - train departure cambridge ; train destination bishops stortford ; train day
+      thursday ; train leaveat 20:15 ; train bookpeople 7
     id: MultiwozV22_UserSimulatorTeacher
-    text: <user> i need train reservations from norwich to cambridge <system> i have
-      133 trains matching your request. is there a specific day and time you would
-      like to travel? <user> i'd like to leave on monday and arrive by 18:00. <system>
-      there are 12 trains for the day and time you request. would you like to book
-      it now? <user> before booking, i would also like to know the travel time, price,
-      and departure time please. <system> there are 12 trains meeting your needs with
-      the first leaving at 05:16 and the last one leaving at 16:16. do you want to
-      book one of these? <user> no hold off on booking for now. can you help me find
-      an attraction called cineworld cinema? <system> yes it is a cinema located in
-      the south part of town what information would you like on it? <user> yes, that
-      was all i needed. thank you very much!
+    text: <user> can i get a train from cambridge to bishops stortford? <system> certainly.
+      when would you like to depart? <user> on thursday after 20:15. <system> there
+      is a train leaving cambridge and heading to bishops stortford at 21:29 on thursday.
+      would you like more information or to book a ticket? <user> no. i need to depart
+      from bishops stortford and go to cambridge on thursday after 20:15. <system>
+      i have one train that leaves at 21:29 and arrives by 22:07 on thursday. do you
+      want me to book tickets? <user> yes, that train would work better for me. can
+      you book tickets for 7 people please? <system> booked! reference number is s6s3ln7b
+      . you will pay 70.7 gbp at the station. <user> great! thank you!
     turn_num: '8'
-<<<<<<< HEAD
-=======
 - - dialogue_id: MUL2151.json
     episode_done: true
     eval_labels:
-    - hotel area north ; train bookpeople 4 ; hotel pricerange expensive ; train destination
-      cambridge ; train arriveby 12:43 ; train leaveat 11:54 ; train day wednesday
-      ; hotel parking yes ; train departure stevenage
+    - train bookpeople 4 ; hotel area north ; train destination cambridge ; hotel
+      parking yes ; train arriveby 12:43 ; hotel pricerange expensive ; train departure
+      stevenage ; train leaveat 11:54 ; train day wednesday
     id: MultiwozV22_UserSimulatorTeacher
     text: '<user> hello! can you give me information about trains going to cambridge
       and leaving on wednesday? <system> there are over 200 trains leaving. do you
@@ -102,9 +61,9 @@ acts:
 - - dialogue_id: MUL1803.json
     episode_done: true
     eval_labels:
-    - train departure cambridge ; train leaveat 11:50 ; attraction area centre ; train
-      day sunday ; train destination ely ; attraction name all saints church ; train
-      arriveby 12:07 ; attraction type architecture
+    - attraction type architecture ; train destination ely ; train departure cambridge
+      ; attraction name all saints church ; train arriveby 12:07 ; train leaveat 11:50
+      ; train day sunday ; attraction area centre
     id: MultiwozV22_UserSimulatorTeacher
     text: <user> i am looking for a attraction to see in cambridge located in the
       centre <system> all saints church has some lovely architecture. does that suit
@@ -120,6 +79,5 @@ acts:
       yes how many ticket do you need? <user> i don't need to book at this time actually.
       that's all that i needed. thank you for your help! goodbye!
     turn_num: '12'
->>>>>>> main
 num_episodes: 1000
 num_examples: 8372
