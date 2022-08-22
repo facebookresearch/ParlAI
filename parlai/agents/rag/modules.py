@@ -28,7 +28,7 @@ from parlai.core.opt import Opt
 from parlai.core.torch_generator_agent import TorchGeneratorModel
 from parlai.utils.torch import padded_tensor
 
-from parlai.agents.rag.retrievers import retriever_factory, Document
+from parlai.agents.rag.retrievers import RagRetriever, retriever_factory, Document
 
 
 class RagModel(TorchGeneratorModel):
@@ -81,7 +81,7 @@ class RagModel(TorchGeneratorModel):
         self.min_doc_token_length = opt['min_doc_token_length']
 
         # modules
-        self.retriever = retriever_factory(opt, dictionary, shared=retriever_shared)
+        self.retriever = self.build_retriever(opt, dictionary, retriever_shared)
         self.seq2seq_encoder = self.build_encoder(
             opt,
             dictionary=dictionary,
@@ -129,6 +129,15 @@ class RagModel(TorchGeneratorModel):
             )
         else:
             return decoder_class(opt, *args, **kwargs)
+
+    @classmethod
+    def build_retriever(
+        cls,
+        opt: Opt,
+        dictionary: DictionaryAgent,
+        retriever_shared: Optional[Dict[str, Any]],
+    ) -> Optional[RagRetriever]:
+        return retriever_factory(opt, dictionary, shared=retriever_shared)
 
     def tokenize_query(self, query: str) -> List[int]:
         """

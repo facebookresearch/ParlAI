@@ -82,10 +82,14 @@ class BB3Model(ComboFidModel):
     Override the ComboFid model to allow memory computation.
     """
 
-    def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
-        super().__init__(opt, dictionary, retriever_shared)
-        self.retriever = bb3_retriever_factory(opt, dictionary, shared=retriever_shared)
-        self.top_docs = []
+    @classmethod
+    def build_retriever(
+        cls,
+        opt: Opt,
+        dictionary: DictionaryAgent,
+        retriever_shared: Optional[Dict[str, Any]],
+    ) -> Optional[RagRetriever]:
+        return bb3_retriever_factory(opt, dictionary, retriever_shared)
 
     def set_memory(self, memories: List[List[str]]):
         """

@@ -7,7 +7,7 @@
 Modules for SeeKeR.
 """
 import torch
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict, Any
 
 from parlai.agents.fid.fid import FidModel
 from parlai.agents.rag.args import RetrieverType
@@ -171,10 +171,16 @@ class ComboFidModel(FidModel):
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
         super().__init__(opt, dictionary, retriever_shared)
-        self.retriever = combo_fid_retriever_factory(
-            opt, dictionary, shared=retriever_shared
-        )
         self.top_docs = []
+
+    @classmethod
+    def build_retriever(
+        cls,
+        opt: Opt,
+        dictionary: DictionaryAgent,
+        retriever_shared: Optional[Dict[str, Any]],
+    ) -> Optional[RagRetriever]:
+        return combo_fid_retriever_factory(opt, dictionary, retriever_shared)
 
     def set_search_queries(self, queries: List[str]):
         """
