@@ -3,14 +3,14 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - restaurant pricerange expensive ; restaurant area centre
+    - restaurant area centre ; restaurant pricerange expensive
     text: <user> i need a place to dine in the center thats expensive
     turn_num: '0'
 - - dialogue_id: PMUL4398.json
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - restaurant pricerange expensive ; restaurant area centre
+    - restaurant area centre ; restaurant pricerange expensive
     text: <user> i need a place to dine in the center thats expensive <system> i have
       several options for you; do you prefer african, asian, or british food? <user>
       any sort of food would be fine, as long as it is a bit expensive. could i get
@@ -20,8 +20,8 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - restaurant name bedouin ; hotel type hotel ; restaurant pricerange expensive
-      ; hotel pricerange expensive ; restaurant area centre
+    - hotel pricerange expensive ; hotel type hotel ; restaurant area centre ; restaurant
+      name bedouin ; restaurant pricerange expensive
     text: <user> i need a place to dine in the center thats expensive <system> i have
       several options for you; do you prefer african, asian, or british food? <user>
       any sort of food would be fine, as long as it is a bit expensive. could i get
@@ -33,9 +33,8 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - hotel type hotel ; restaurant name bedouin ; restaurant pricerange expensive
-      ; hotel pricerange expensive ; restaurant area centre ; hotel name university
-      arms hotel
+    - hotel name university arms hotel ; hotel pricerange expensive ; hotel type hotel
+      ; restaurant area centre ; restaurant name bedouin ; restaurant pricerange expensive
     text: <user> i need a place to dine in the center thats expensive <system> i have
       several options for you; do you prefer african, asian, or british food? <user>
       any sort of food would be fine, as long as it is a bit expensive. could i get
@@ -49,9 +48,9 @@ acts:
     episode_done: true
     id: MultiwozV22_UserSimulatorTeacher
     labels:
-    - hotel bookday saturday ; hotel type hotel ; restaurant name bedouin ; restaurant
-      pricerange expensive ; hotel pricerange expensive ; restaurant area centre ;
-      hotel bookpeople 2 ; hotel bookstay 2 ; hotel name university arms hotel
+    - hotel bookday saturday ; hotel bookpeople 2 ; hotel bookstay 2 ; hotel name
+      university arms hotel ; hotel pricerange expensive ; hotel type hotel ; restaurant
+      area centre ; restaurant name bedouin ; restaurant pricerange expensive
     text: <user> i need a place to dine in the center thats expensive <system> i have
       several options for you; do you prefer african, asian, or british food? <user>
       any sort of food would be fine, as long as it is a bit expensive. could i get

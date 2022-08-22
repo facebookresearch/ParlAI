@@ -454,7 +454,7 @@ class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeache
                             domain, slot_type = domain_slot_type.split("-")
                             belief_state = f"{domain} {slot_type} {slot_value.lower()}"
                             belief_states.append(belief_state)
-        return list(set(belief_states))
+        return sorted(list(set(belief_states)))
 
     def _extract_slot_from_string(self, slots_string):
         """
@@ -590,9 +590,7 @@ class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeache
                             "dialogue_id": dialog["dialogue_id"],
                             "turn_num": turn["turn_id"],
                             "text": " ".join(context),
-                            "labels": self.BELIEF_STATE_DELIM.join(
-                                set(cum_belief_states)
-                            ),
+                            "labels": self.BELIEF_STATE_DELIM.join(cum_belief_states),
                         }
                     )
         if not is_this_circleci():
