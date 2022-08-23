@@ -19,6 +19,7 @@ from parlai.agents.rag.retrievers import (
     BLANK_DOC,
     SearchQuerySearchEngineRetriever,
     retriever_factory,
+    RagRetriever,
 )
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
@@ -189,9 +190,7 @@ class GPT2WithRetrieverModel(FidModel):
 
     def __init__(self, opt, dictionary, retriever_shared=None):
         self.add_start_token = opt["add_start_token"]
-        opt['converting'] = True  # set not to build the retriever
         FidModel.__init__(self, opt, dictionary, retriever_shared)
-        opt['converting'] = False
         self.config = self.seq2seq_decoder.transformer.config
         self.embedding_size = self.config.n_embd
         self.lm_head = torch.nn.Linear(
@@ -203,15 +202,23 @@ class GPT2WithRetrieverModel(FidModel):
         self.truncate = (
             opt['text_truncate'] if opt['text_truncate'] > -1 else opt['truncate']
         )
+
+    @classmethod
+    def build_retriever(
+        cls,
+        opt: Opt,
+        dictionary: DictionaryAgent,
+        retriever_shared: Optional[Dict[str, Any]],
+    ) -> Optional[RagRetriever]:
         if opt.get('filter_docs_with_label'):
             assert (
                 RetrieverType(opt['rag_retriever_type']) == RetrieverType.SEARCH_ENGINE
             )
-            self.retriever = FilterDocsForLabelSearchEngineRetrieverBase(
+            return FilterDocsForLabelSearchEngineRetrieverBase(
                 opt, dictionary, shared=retriever_shared
             )  # type: ignore
         else:
-            self.retriever = retriever_factory(opt, dictionary, shared=retriever_shared)
+            return retriever_factory(opt, dictionary, shared=retriever_shared)
 
     @classmethod
     def build_encoder(

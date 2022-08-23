@@ -23,7 +23,6 @@ from parlai.agents.bart.bart import BartAgent
 from parlai.agents.fid.fid import (
     FidAgent,
     GoldDocRetrieverFiDAgent,
-    SearchQueryFiDAgent,
     SearchQuerySearchEngineFiDAgent,
     WizIntGoldDocRetrieverFiDAgent,
 )
@@ -164,7 +163,7 @@ class ComboFidAgent(FidAgent):
         return output
 
 
-class ComboFidSearchQueryAgent(ComboFidAgent, SearchQueryFiDAgent):
+class ComboFidSearchQueryAgent(ComboFidAgent, SearchQuerySearchEngineFiDAgent):
     pass
 
 

@@ -9,10 +9,16 @@ The top level BB3 agents initialize a series of sub-agents that accomplish the n
 
 **Per-Module Interaction**: To interact with a module on its own (outside of a BB3 context), you can simply specify the following:
 
-_BB3 3B_
+_BB3 3B without search_
 ```bash
-parlai interactive --model projects.bb3.agents.r2c2_bb3_agent:BB3SubSearchAgent --module <MODULE_PREFIX>
+parlai interactive --model projects.bb3.agents.r2c2_bb3_agent:BB3SubSearchAgent --model-file zoo:bb3/bb3_3B/model --force-skip-retrieval True --search-server none
 ```
+
+_BB3 3B with search_
+```bash
+parlai interactive --model projects.bb3.agents.r2c2_bb3_agent:BB3SubSearchAgent --model-file zoo:bb3/bb3_3B/model --rag-retriever-type search_engine --search-server RELEVANT_SEARCH_SERVER
+```
+
 _BB3 30B/175B_
 ```bash
 parlai interactive --model projects.bb3.agents.opt_api_agent:BB3OPTAgent --module <MODULE_PREFIX>
