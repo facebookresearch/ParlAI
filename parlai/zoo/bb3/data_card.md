@@ -1,6 +1,6 @@
 # BlenderBot 3 175B data card
 
-## Motivation	
+## Motivation
 
 **For what purpose was the dataset created? Was there a specific task in mind? Was there a specific gap that needed to be filled? Please provide a description.** The several datasets used for fine-tuning BlenderBot 3 were created with various specific tasks in mind. The majority of the tasks are crowdsourced dialogue datasets designed to inform conversational models about how to handle skills within conversation (grounding responses on knowledge, displaying empathy and personality, roleplaying as a character). Other datasets are from the task-oriented domain, in which models must learn to complete tasks requested by humans. Finally, we include question answering data, which is meant to teach models how to answer factual questions. The collected demo deploy data will be used to continually improve future iterations of BlenderBot. This dataset provides organic user interaction data, which is sparingly available in the wild.
 
@@ -10,8 +10,8 @@
 
 **Any other comments?** N/A
 
-	
-## Composition	
+
+## Composition
 
 **What do the instances that comprise the dataset represent (e.g., documents, photos, people, countries)? Are there multiple types of instances (e.g., movies, users, and ratings; people and interactions between them; nodes and edges)? Please provide a description.** The instances are text-based conversational dialogues or question/answer pairs. The BB3 fine-tuning data comprise the following datasets:
 
@@ -19,27 +19,27 @@
   - MS MARCO (Nguyen et al., 2016)
   - SQuAD (Rajpurkar et al., 2016)
   - TriviaQA (Joshi et al., 2017)
-  - Natural Questions (Kwiatkowski et al., 2019) 
-  - Natural Questions (Open) (Lee et al., 2019) 
-  - Natural Questions (Open Dialogues) (Adolphs et al., 2021) 
+  - Natural Questions (Kwiatkowski et al., 2019)
+  - Natural Questions (Open) (Lee et al., 2019)
+  - Natural Questions (Open Dialogues) (Adolphs et al., 2021)
 - *Knowledge-Grounded Dialogue:*
   - Wizard of the Internet (Komeili et al., 2022)
   - Wizard of Wikipedia (Dinan et al., 2019b)
-  - Funpedia (Dinan et al., 2020b) 
+  - Funpedia (Dinan et al., 2020b)
 - *Open-Domain Dialogue:*
   - PersonaChat (Zhang et al., 2018)
   - Empathetic Dialogues (Rashkin et al., 2019)
   - Blended Skill Talk (Smith et al., 2020)
   - Multi-Session Chat (Xu et al., 2022a)
-  - LIGHT + WILD (Urbanek et al., 2019; Shuster et al., 2021b) 
+  - LIGHT + WILD (Urbanek et al., 2019; Shuster et al., 2021b)
 - *Recovery & Feedback:*
-  - SaFeRDialogues (Ung et al., 2022) 
+  - SaFeRDialogues (Ung et al., 2022)
   - FITS (Xu et al., 2022b)
 - *Task-Oriented Dialogue:*
-  - Google SGD (Rastogi et al., 2020) 
-  - Taskmaster (Byrne et al., 2019) 
-  - Taskmaster 2 (Byrne et al., 2019) 
-  - Taskmaster 3 (Byrne et al., 2019) 
+  - Google SGD (Rastogi et al., 2020)
+  - Taskmaster (Byrne et al., 2019)
+  - Taskmaster 2 (Byrne et al., 2019)
+  - Taskmaster 3 (Byrne et al., 2019)
 
 We additionally make use of a shard of OPT pre-training data: see the data card of [Zhang et al. (2022)](https://arxiv.org/pdf/2205.01068.pdf) for more details.
 
@@ -69,8 +69,8 @@ We additionally make use of a shard of OPT pre-training data: see the data card 
 
 **Any other comments?** No.
 
-	
-## Collection Process	
+
+## Collection Process
 
 **How was the data associated with each instance acquired? Was the data directly observable (e.g., raw text, movie ratings), reported by subjects (e.g., survey responses), or indirectly inferred/derived from other data (e.g., part-of-speech tags, model-based guesses for age or language)? If data was reported by subjects or indirectly inferred/derived from other data, was the data validated/verified? If so, please describe how.** For the fine-tuning data, we refer the reader to the various dataset papers for data instance collection details. For the demo deployment data, we collect conversations from organic interactions with our bot.
 
@@ -96,8 +96,8 @@ We additionally make use of a shard of OPT pre-training data: see the data card 
 
 **Any other comments?** N/A
 
-	
-## Preprocessing/cleaning/labeling	
+
+## Preprocessing/cleaning/labeling
 
 **Was any preprocessing/cleaning/labeling of the data done (e.g., discretization or bucketing, tokenization, part-of-speech tagging, SIFT feature extraction, removal of instances, processing of missing values)? If so, please provide a description. If not, you may skip the remainder of the questions in this section.** For the fine-tuning data, we process the data to reassign targets depending on the modular function for which we were training BB3. For the demo deployment data, we refer to the main BlenderBot 3 paper for release details.
 
@@ -105,8 +105,8 @@ We additionally make use of a shard of OPT pre-training data: see the data card 
 
 **Any other comments?** No.
 
-	
-## Uses	
+
+## Uses
 
 **Has the dataset been used for any tasks already? If so, please provide a description.** These datasets have been used for training BlenderBot 3.
 
@@ -120,8 +120,8 @@ We additionally make use of a shard of OPT pre-training data: see the data card 
 
 **Any other comments?** No.
 
-	
-## Distribution	
+
+## Distribution
 
 **Will the dataset be distributed to third parties outside of the entity (e.g., company, institution, organization) on behalf of which the dataset was created? If so, please provide a description.** The dataset from the chatbot demo will be made publicly available, and contributors to these datasets have consented to their release.
 
@@ -135,8 +135,8 @@ We additionally make use of a shard of OPT pre-training data: see the data card 
 
 **Any other comments?** No.
 
-	
-## Maintenance	
+
+## Maintenance
 
 **Who is supporting/hosting/maintaining the dataset?** Meta AI.
 
