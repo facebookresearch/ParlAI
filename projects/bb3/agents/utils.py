@@ -434,7 +434,6 @@ class MemoryUtils:
         :return memories:
             return memories with new memory
         """
-        # TODO: FIGURE THIS OUT
         if not memory:
             return memories
         assert memory not in memories

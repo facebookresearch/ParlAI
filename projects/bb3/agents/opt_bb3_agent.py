@@ -285,16 +285,7 @@ class BlenderBot3Agent(R2C2Agent):
             prefixed_memories,
             set(),
             dictionary=self.dictionary,
-            ignore_in_session_memories=self.opt.get(
-                'ignore_in_session_memories_mkm', False
-            ),
-            memory_overlap_threshold=self.opt.get('memory_overlap_threshold', 0.0),
-            memory_hard_block_for_n_turns=self.opt.get(
-                'memory_hard_block_for_n_turns', 0
-            ),
-            memory_soft_block_decay_factor=self.opt.get(
-                'memory_soft_block_decay_factor', 0.0
-            ),
+            **self._get_memory_heuristic_values(),
         )
         if not memories_to_use:
             # we need at least one memory to open with...
@@ -314,11 +305,11 @@ class BlenderBot3Agent(R2C2Agent):
         This function is designed to handle legacy cases where memories are
         presented as a list, rather than a dict.
 
-        :param observation:
-            incoming message
+        :param memories:
+            memories from the opening message
 
         :return opening_memories:
-            return the set of opening memories
+            return the set of true opening memories
         """
         opening_memories = None
         if memories:

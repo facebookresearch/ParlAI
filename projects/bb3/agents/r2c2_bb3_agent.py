@@ -671,6 +671,23 @@ class BlenderBot3Agent(ModularAgentMixin):
             ag_obs.force_set('text', '\n'.join([memories, ag_obs['text']]))
         return ag_obs
 
+    def _get_memory_heuristic_values(self) -> Dict[str, Union[str, float, bool]]:
+        """
+        Extract heuristics from self.opt
+        """
+        return {
+            'ignore_in_session_memories': self.opt.get(
+                'ignore_in_session_memories_mkm', False
+            ),
+            'memory_overlap_threshold': self.opt.get('memory_overlap_threshold', 0.0),
+            'memory_hard_block_for_n_turns': self.opt.get(
+                'memory_hard_block_for_n_turns', 0
+            ),
+            'memory_soft_block_decay_factor': self.opt.get(
+                'memory_soft_block_decay_factor', 0.0
+            ),
+        }
+
     def get_available_memories(
         self, observations: List[Dict[Union[str, Module], Message]]
     ) -> List[List[str]]:
@@ -689,16 +706,7 @@ class BlenderBot3Agent(ModularAgentMixin):
                 o['raw']['memories'],
                 o['raw']['in_session_memories'],
                 self.dictionary,
-                ignore_in_session_memories=self.opt.get(
-                    'ignore_in_session_memories_mkm', False
-                ),
-                memory_overlap_threshold=self.opt.get('memory_overlap_threshold', 0.0),
-                memory_hard_block_for_n_turns=self.opt.get(
-                    'memory_hard_block_for_n_turns', 0
-                ),
-                memory_soft_block_decay_factor=self.opt.get(
-                    'memory_soft_block_decay_factor', 0.0
-                ),
+                **self._get_memory_heuristic_values(),
             )
             for o in observations
         ]
@@ -962,8 +970,9 @@ class BlenderBot3Agent(ModularAgentMixin):
                 message[f'{Module.SEARCH_KNOWLEDGE.message_name()}_top_docs'] = docs
                 search_offset += 1
             if i in memory_indices:
-                memory_knowledge = batch_reply_mkm[memory_offset]['text']
-                message[Module.MEMORY_KNOWLEDGE.message_name()] = memory_knowledge
+                message[Module.MEMORY_KNOWLEDGE.message_name()] = batch_reply_mkm[
+                    memory_offset
+                ]['text']
                 logging.debug(
                     f"Memory KNOWLEDGE for example {i}: {message[Module.MEMORY_KNOWLEDGE.message_name()]}"
                 )
