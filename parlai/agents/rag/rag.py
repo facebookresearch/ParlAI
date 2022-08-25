@@ -237,9 +237,6 @@ class RagAgent(TransformerGeneratorRagAgent, BartRagAgent, T5RagAgent):
                     pickle_module=parlai.utils.pickle,
                 )
             assert 'model' in states
-            import pdb
-
-            pdb.set_trace()
             model.load_state_dict(states['model'])
             if self.model_parallel:
                 ph = PipelineHelper()
