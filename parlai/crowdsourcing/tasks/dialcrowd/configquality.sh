@@ -1,5 +1,6 @@
+#!/bin/bash
 # /*********************************************
-#  @ Jessica Huynh, Ting-Rui Chiang, Kyusong Lee 
+#  @ Jessica Huynh, Ting-Rui Chiang, Kyusong Lee
 #  Carnegie Mellon University 2022
 # *********************************************/
 
