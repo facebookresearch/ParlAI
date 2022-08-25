@@ -496,7 +496,8 @@ class BlenderBot2RagAgent(RagAgent):
         # 1. Retriever state
         if not [k for k in state_dict if 'long_term_memory' in k]:
             long_term_memory_state = {
-                f"long_term_memory.{k}": v for k, v in model.long_term_memory.state_dict().items()  # type: ignore
+                f"long_term_memory.{k}": v
+                for k, v in model.long_term_memory.state_dict().items()  # type: ignore
             }
             state_dict.update(long_term_memory_state)
         return state_dict
@@ -961,20 +962,6 @@ class BlenderBot2RagAgent(RagAgent):
 class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
     model: BlenderBot2FidModel
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt=partial_opt)
-        agent = parser.add_argument_group('BlenderBot2FidAgent')
-        agent.add_argument(
-            '-p',
-            '--prompt',
-            type=str,
-            default='',
-        )
-        return parser
-
     def build_model(self) -> Union[BlenderBot2FidModel, T5BlenderBot2FidModel]:
         if self.generation_model == 't5':
             model = T5BlenderBot2FidModel(self.opt, self.dict)
@@ -985,10 +972,6 @@ class BlenderBot2FidAgent(FidAgent, BlenderBot2RagAgent):
                 model.encoder.embeddings.weight, self.opt['embedding_type']
             )
         return model
-
-    def get_temp_history(self, observation):
-        # self.opt['prompt']
-        return self.opt['prompt']
 
 
 class BlenderBot2SearchQueryFiDAgent(BlenderBot2FidAgent):
