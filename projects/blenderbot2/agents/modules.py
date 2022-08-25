@@ -91,7 +91,9 @@ class BlenderBot2RagModel(RagModel):
             and opt['share_search_and_memory_query_encoder']
             else None
         )
-        self.long_term_memory = LongTermMemory(opt, dictionary, query_encoder)  # type: ignore
+        self.long_term_memory = LongTermMemory(
+            opt, dictionary, query_encoder
+        )  # type: ignore
         self.query_generator = QueryGenerator(opt)
         self.memory_decoder = MemoryDecoder(opt)
 
@@ -243,7 +245,9 @@ class BlenderBot2RagModel(RagModel):
             top_docs = top_doc_scores = None
 
         # Run through seq2seq encoder
-        tensor, mask = self.seq2seq_encoder(expanded_input, positions, segments)  # type: ignore
+        tensor, mask = self.seq2seq_encoder(
+            expanded_input, positions, segments
+        )  # type: ignore
 
         return tensor, mask, input_turns_cnt, top_docs, top_doc_scores
 
@@ -333,13 +337,21 @@ class BlenderBot2RagModel(RagModel):
         logging.debug(f'Begin encoder: {time.time() - start:.2f}')
         if input_turns_cnt is not None:
             if query_generator_vec is not None:
-                query_generator_vec = query_generator_vec.repeat_interleave(input_turns_cnt, dim=0)  # type: ignore
+                query_generator_vec = query_generator_vec.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
             if memory_vec is not None:
-                memory_vec = memory_vec.repeat_interleave(input_turns_cnt, dim=0)  # type: ignore
+                memory_vec = memory_vec.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
             if num_memories is not None:
-                num_memories = num_memories.repeat_interleave(input_turns_cnt, dim=0)  # type: ignore
+                num_memories = num_memories.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
             if memory_decoder_vec is not None:
-                memory_decoder_vec = memory_decoder_vec.repeat_interleave(input_turns_cnt, dim=0)  # type: ignore
+                memory_decoder_vec = memory_decoder_vec.repeat_interleave(
+                    input_turns_cnt, dim=0
+                )  # type: ignore
             if num_memory_decoder_vecs is not None:
                 num_memory_decoder_vecs = num_memory_decoder_vecs.repeat_interleave(
                     input_turns_cnt, dim=0
@@ -416,7 +428,9 @@ class BlenderBot2RagModel(RagModel):
             retrieval_type, RetrievalType.NONE
         )
         if no_search_indices.numel() > 0:
-            dummy_docs, dummy_scores = self.dummy_retriever.retrieve(query_vec[no_search_indices])  # type: ignore
+            dummy_docs, dummy_scores = self.dummy_retriever.retrieve(
+                query_vec[no_search_indices]  # type: ignore
+            )
             logging.debug('no search')
             self._fill_docs_and_scores(
                 top_docs, doc_scores, no_search_indices, dummy_docs, dummy_scores
@@ -425,7 +439,9 @@ class BlenderBot2RagModel(RagModel):
         # 2. Expand the input
         if input_turns_cnt is not None:
             input = input.repeat_interleave(input_turns_cnt, dim=0)  # type: ignore
-            input_lengths = input_lengths.repeat_interleave(input_turns_cnt, dim=0)  # type: ignore
+            input_lengths = input_lengths.repeat_interleave(
+                input_turns_cnt, dim=0
+            )  # type: ignore
 
         # Filtering empty doc_scores added due to dynamic batching (if used)
         doc_scores = [[s for s in ds if s is not None] for ds in doc_scores if ds]
@@ -535,7 +551,9 @@ class BlenderBot2RagModel(RagModel):
                 self.retriever, SearchQuerySearchEngineRetriever
             ) or isinstance(self.retriever, SearchQueryFAISSIndexRetriever)
             self.retriever.set_search_queries(search_queries)
-        search_docs, search_doc_scores = self.retriever.retrieve(query_vec[search_indices])  # type: ignore
+        search_docs, search_doc_scores = self.retriever.retrieve(
+            query_vec[search_indices]  # type: ignore
+        )
         return search_docs, search_doc_scores
 
     def access_long_term_memory(
@@ -590,7 +608,9 @@ class BlenderBot2RagModel(RagModel):
                 ]
                 if batch_id in memory_dict:
                     tokenized += memory_dict[batch_id].tolist()
-                new_mems_i, _ = padded_tensor(tokenized, pad_idx=self.dict[self.dict.null_token])  # type: ignore
+                new_mems_i, _ = padded_tensor(
+                    tokenized, pad_idx=self.dict[self.dict.null_token]  # type: ignore
+                )
                 memory_dict[batch_id] = new_mems_i.to(query_vec)
         if self.knowledge_access_method in [
             KnowledgeAccessMethod.ALL,
@@ -624,7 +644,9 @@ class BlenderBot2RagModel(RagModel):
             self.long_term_memory.write_memory(memory_dict)  # type: ignore
             logging.debug(f'Write Memory Complete: {time.time() - start:.2f}')
         if self.long_term_memory.has_memory():
-            memories, memory_scores = self.long_term_memory.retrieve(query_vec[memory_indices])  # type: ignore
+            memories, memory_scores = self.long_term_memory.retrieve(
+                query_vec[memory_indices]  # type: ignore
+            )
             logging.debug(f'Memory Retrieval Complete: {time.time() - start:.2f}')
             logging.debug(f'memories: {memories}')
             logging.verbose('Reading from Memory')
@@ -731,7 +753,9 @@ class LongTermMemory(RagRetriever):
             mem_encs = self.memory_encoder(mem_vecs)
             offset = 0
             for mem_slot, num_mems in zip(mem_dict.keys(), slot_num_mems):
-                self.memory_vec_dict[mem_slot] = mem_vecs[offset : offset + num_mems]  # type: ignore
+                self.memory_vec_dict[mem_slot] = mem_vecs[  # type: ignore
+                    offset : offset + num_mems
+                ]
                 self.memory_enc_dict[mem_slot] = mem_encs[offset : offset + num_mems]
                 offset += num_mems
 
@@ -813,7 +837,9 @@ class BlenderBot2FidModelMixin:
     retriever: RagRetriever
 
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
-        super().__init__(opt, dictionary, retriever_shared=retriever_shared)  # type: ignore
+        super().__init__(
+            opt, dictionary, retriever_shared=retriever_shared
+        )  # type: ignore
         self._rag_model_interface = BlenderBot2Fid(
             opt, dictionary[dictionary.null_token]
         )
