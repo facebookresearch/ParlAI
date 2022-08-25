@@ -5,6 +5,35 @@ acts:
     eval_labels:
     - Guys! Guys! I just saw two people having sex in a car right outside.
     id: friends:monica
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Monica Geller
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -70,13 +99,44 @@ acts:
       Phoebe Buffay: Yeah, her first day on a new spiritual plane and she''s gonna
       come to the coffeehouse!
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Ohh my God, I'm so sorry.
     id: friends:monica
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -146,13 +206,46 @@ acts:
 
       Ross Geller: Uhh, Pheebs'' Grandmother just died.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Not the way they're doing it. What, what happened? How did she die?
     id: friends:monica
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Phoebe Buffay
+    - Monica Geller
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -227,12 +320,18 @@ acts:
       Phoebe Buffay: It''s okay. Actually y''know what, it''s kinda cool. ''Cause
       it''s like y''know, one life ends and another begins.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - What happened to your teeth.
     id: friends:monica
+    speakers:
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Chandler Bing
+    - Monica Geller
     text: 'Ross Geller: Hey guys.
 
       Chandler Bing: Hey.
@@ -241,12 +340,22 @@ acts:
 
       Chandler Bing: You know...Oh My God.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Well, I think I shouldn't look directly at them.
     id: friends:monica
+    speakers:
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Chandler Bing
+    - Monica Geller
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Monica Geller
     text: 'Ross Geller: Hey guys.
 
       Chandler Bing: Hey.
@@ -263,6 +372,6 @@ acts:
 
       Ross Geller: Yeah. What do you think.
 
-      Monica Geller:'
-num_episodes: 308
-num_examples: 5855
+      Monica Geller: '
+num_episodes: 275
+num_examples: 4950

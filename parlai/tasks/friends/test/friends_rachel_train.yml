@@ -5,16 +5,26 @@ acts:
     labels:
     - Well, I did my best to convince him that I'm not some crazy girl who is dying
       to get married-I'm just going through a hard time.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:rachel
     labels:
     - Well uh, his answering machine was very understanding. Ugh. I feel blue.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -24,7 +34,7 @@ acts:
 
       Phoebe Buffay: What did he say?
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:rachel
@@ -32,6 +42,14 @@ acts:
     - Yeah, maybe, but I don't think I even care. I don't think he's the one I'm sad
       about. Y'know, I know that I said that I am totally okay with Ross getting married,
       but as it turns out, I don't think I'm handling it all that well.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -47,12 +65,22 @@ acts:
       Monica Geller: Ohh, sweetie! Hey, I bet you anything that he''s gonna call you
       again.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:rachel
     labels:
     - And I-I am just trying to figure out why.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -75,13 +103,25 @@ acts:
 
       Phoebe Buffay: Yeah, maybe.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:rachel
     labels:
     - Well, yeah, y'know how Ross and I were on again, off again, on again, off again?
       I guess I just figured that somewhere down the road, we would be on again.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -108,6 +148,6 @@ acts:
 
       Phoebe Buffay: Any luck?
 
-      Rachel Green:'
-num_episodes: 2427
-num_examples: 46610
+      Rachel Green: '
+num_episodes: 2138
+num_examples: 38815

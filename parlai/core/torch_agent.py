@@ -983,7 +983,6 @@ class TorchAgent(ABC, Agent):
             boolean indicating whether the optimizer failed to initialize with
             optim_states.
         """
-
         if hasattr(self, 'resized_embeddings') and self.resized_embeddings:
             optim_states = None
             logging.warning('Not loading optimizer due to resize in token embeddings')
@@ -2146,6 +2145,7 @@ class TorchAgent(ABC, Agent):
         """
         # BatchWorld handles calling self_observe, but we're in a Hogwild or Interactive
         # world, so we need to handle this ourselves.
+
         response = self.batch_act([self.observation])[0]
         self.self_observe(response)
         return response
@@ -2181,7 +2181,7 @@ class TorchAgent(ABC, Agent):
 
         self.is_training = batch.is_training
 
-        # truncation statistics
+        #  truncation statistics
         if batch._context_original_length is not None:
             self.record_local_metric(
                 'clen', AverageMetric.many(batch._context_original_length)
@@ -2252,7 +2252,7 @@ class TorchAgent(ABC, Agent):
         for k, values in self._local_metrics.items():
             if len(values) != len(batch.valid_indices):
                 raise IndexError(
-                    f"Batchsize mismatch on metric {k} got {len(values)}, "
+                    f"Batchsize mismatch on metric {k} (got {len(values)}, "
                     f"expected {len(batch.valid_indices)}"
                 )
             for i, value in zip(batch.valid_indices, values):
@@ -2297,7 +2297,7 @@ class TorchAgent(ABC, Agent):
             # Only print in the non-shared version.
             logging.info(f'{self.id}: full interactive mode on.')
 
-    def backward(self, loss):
+    def backward(self, loss, **kwargs):
         """
         Perform a backward pass.
 
@@ -2317,15 +2317,15 @@ class TorchAgent(ABC, Agent):
                 # accumulate without syncing
                 with self.model.no_sync():
                     if self.fp16:
-                        self.optimizer.backward(loss, update_main_grads=False)
+                        self.optimizer.backward(loss, update_main_grads=False, **kwargs)
                     else:
-                        loss.backward()
+                        loss.backward(**kwargs)
                 return
 
         if self.fp16:
-            self.optimizer.backward(loss, update_main_grads=False)
+            self.optimizer.backward(loss, update_main_grads=False, **kwargs)
         else:
-            loss.backward()
+            loss.backward(**kwargs)
 
     def update_params(self):
         """

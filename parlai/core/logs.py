@@ -14,18 +14,19 @@ extended to any other tool like visdom.
    tensorboard --logdir <PARLAI_DATA/tensorboard> --port 8888.
 """
 
-import os
-import re
-from typing import Optional
-from parlai.core.params import ParlaiParser
+import datetime
 import json
 import numbers
-import datetime
-from parlai.core.opt import Opt
-from parlai.core.metrics import Metric, dict_report, get_metric_display_data
-from parlai.utils.io import PathManager
-import parlai.utils.logging as logging
+import os
+import pathlib
+import re
+from typing import Optional
 
+import parlai.utils.logging as logging
+from parlai.core.metrics import Metric, dict_report, get_metric_display_data
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
+from parlai.utils.io import PathManager
 
 _TB_SUMMARY_INVALID_TAG_CHARACTERS = re.compile(r'[^-/\w\.]')
 
@@ -157,6 +158,14 @@ class WandbLogger(object):
             help='W&B entity name.',
             hidden=False,
         )
+
+        logger.add_argument(
+            '--wandb-log-model',
+            type=bool,
+            default=False,
+            help='Enable logging of model artifacts to weight and biases',
+            hidden=False,
+        )
         return logger
 
     def __init__(self, opt: Opt, model=None):
@@ -202,6 +211,7 @@ class WandbLogger(object):
                     if value is None or isinstance(value, (str, numbers.Number, tuple)):
                         setattr(self.run.config, key, value)
 
+        self.model_file = opt.get('model_file', None)
         if model is not None:
             self.run.watch(model)
 
@@ -234,6 +244,32 @@ class WandbLogger(object):
         }
         for key, value in report.items():
             self.run.summary[key] = value
+
+    def log_model(self, model_file=None):
+        if self.model_file is not None:
+            if not model_file:
+                model_file = self.model_file
+            model_file = pathlib.Path(model_file)
+            if model_file.exists():
+                self.run.log_artifact(
+                    str(model_file),
+                    name=f"{self.run.name}-{model_file.name}",
+                    type="model",
+                )
+            vocab_file = model_file.with_suffix('.dict')
+            if vocab_file.exists():
+                self.run.log_artifact(
+                    str(vocab_file),
+                    name=f"{self.run.name}-{vocab_file.name}",
+                    type="vocab",
+                )
+            stats_file = model_file.with_suffix('.trainstats')
+            if stats_file.exists():
+                self.run.log_artifact(
+                    str(stats_file),
+                    name=f"{self.run.name}-{stats_file.name}",
+                    type="stats",
+                )
 
     def finish(self):
         self.run.finish()

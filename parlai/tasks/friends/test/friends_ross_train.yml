@@ -4,15 +4,23 @@ acts:
     id: friends:ross
     labels:
     - Hi!
+    speakers:
+    - Phoebe Buffay
+    - Ross Geller
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
-      Ross Geller:'
+      Ross Geller: '
 - - characters: Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:ross
     labels:
     - What, that we had a baby? Come on let's give him a little credit, although,
       he did eat a piece of plastic fruit earlier.
+    speakers:
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!
@@ -20,12 +28,19 @@ acts:
       Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
       ''cause I didn''t know if he knew yet.
 
-      Ross Geller:'
+      Ross Geller: '
 - - characters: Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:ross
     labels:
     - What?
+    speakers:
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!
@@ -38,12 +53,21 @@ acts:
 
       Phoebe Buffay: No! No, that you and Rachel are engaged!
 
-      Ross Geller:'
+      Ross Geller: '
 - - characters: Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:ross
     labels:
     - Phoebe, there is no secret. Okay? I didn't propose.
+    speakers:
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!
@@ -61,12 +85,23 @@ acts:
       Phoebe Buffay: Oh, it''s a secret. Oh goodie! Yes! We haven''t done the secret
       thing in a long time.
 
-      Ross Geller:'
+      Ross Geller: '
 - - characters: Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:ross
     labels:
     - I am a doctor! Y'know what? I'm just gonna go and talk to Rachel myself.
+    speakers:
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
+    - Phoebe Buffay
+    - Ross Geller
     text: 'Phoebe Buffay: Oh hey! Wait up!
 
       Ross Geller: Hi!
@@ -89,6 +124,6 @@ acts:
       Phoebe Buffay: Are you lying? Is this like that time you tried to convince us
       that you were a doctor?
 
-      Ross Geller:'
-num_episodes: 2427
-num_examples: 46610
+      Ross Geller: '
+num_episodes: 2138
+num_examples: 38815

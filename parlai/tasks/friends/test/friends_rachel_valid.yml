@@ -6,6 +6,20 @@ acts:
     - Joey, if you wanna look good, why don't you just come down to the store? I'll
       help you out.
     id: friends:rachel
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -36,13 +50,29 @@ acts:
 
       Chandler Bing: Done.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Sure! God, please take those off!
     id: friends:rachel
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -78,13 +108,34 @@ acts:
 
       Joey Tribbiani: Great! Thanks, Rach!
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - What?
     id: friends:rachel
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -131,13 +182,40 @@ acts:
       Phoebe Buffay: Hey! Umm, well, only okay because I just got back from, from
       the hospital.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Well maybe, maybe she's with us right now?
     id: friends:rachel
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Rachel Green
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -198,13 +276,36 @@ acts:
       Phoebe Buffay: It''s okay, I mean she had a really incredible life. And it''s
       not like I''m never gonna see her again, y''know she''s gonna visit.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Chandler Bing,Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Yeah. Your teeth? Yes, I saw them from outside. You guys are never going to
       believe this. But, Phoebe made out with Ralph Lauren.
     id: friends:rachel
+    speakers:
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Chandler Bing
+    - Monica Geller
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Chandler Bing
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Chandler Bing
+    - Monica Geller
+    - Chandler Bing
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Hey guys.
 
       Chandler Bing: Hey.
@@ -247,6 +348,6 @@ acts:
 
       Ross Geller: Oh, hey, hey Rach, do you notice anything..ahh...
 
-      Rachel Green:'
-num_episodes: 308
-num_examples: 5855
+      Rachel Green: '
+num_episodes: 275
+num_examples: 4950

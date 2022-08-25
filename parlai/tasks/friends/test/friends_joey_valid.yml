@@ -5,17 +5,26 @@ acts:
     eval_labels:
     - Chandler, if it really hurts that bad you should just tell her.
     id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Whoa, dude, look out! You almost crushed my hat!
     id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -27,7 +36,7 @@ acts:
 
       Ross Geller: Hey.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
@@ -37,6 +46,16 @@ acts:
       everyone at the audition is gonna be wearing this kinda y'know, ultra-hip, high
       fashion stuff.
     id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -56,13 +75,25 @@ acts:
 
       Ross Geller: This would be the place where you explain the hat.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Yeah, like you could find something as sophisticated as this.
     id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -89,13 +120,28 @@ acts:
 
       Chandler Bing: And you''re gonna make them all disappear.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Great! Thanks, Rach!
     id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -129,6 +175,6 @@ acts:
       Rachel Green: Joey, if you wanna look good, why don''t you just come down to
       the store? I''ll help you out.
 
-      Joey Tribbiani:'
-num_episodes: 308
-num_examples: 5855
+      Joey Tribbiani: '
+num_episodes: 275
+num_examples: 4950

@@ -5,18 +5,28 @@ acts:
     - I'm gonna hold him a different way. Look I don't understand, if you hated it
       so much, why did you buy it in the first place?
     id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
     text: 'Chandler Bing: Hey look, are we gonna have to bring this out every time
       Ross comes over?
 
       Joey Tribbiani: He paid a lot of money for it.
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing,Joey Tribbiani
     episode_done: false
     eval_labels:
     - So is he housetrained or is he gonna leave little bathroom tiles all over the
       place? Stay. Good, STAY! Good fake dog.
     id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
     text: 'Chandler Bing: Hey look, are we gonna have to bring this out every time
       Ross comes over?
 
@@ -28,23 +38,40 @@ acts:
       Joey Tribbiani: Well, I had a whole ceramic zoo thing goin'' over there but
       now, without the other ones, it just looks tacky.
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay
     episode_done: false
     eval_labels:
     - You totally screwed him over.
     id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
     text: 'Chandler Bing: You told him to play the boxer gay!!
 
       Joey Tribbiani: Well, I-I might''ve said supergay.
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - You're an actor!
     id: friends:chandler
+    speakers:
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Phoebe Buffay
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Monica Geller
+    - Joey Tribbiani
+    - Chandler Bing
     text: 'Monica Geller: Hey you guys?
 
       Ross Geller: What?
@@ -70,16 +97,20 @@ acts:
       Joey Tribbiani: No way! Look, Halloween is so stupid! Dressing up, pretending
       to be someone you''re not...
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing,Joey Tribbiani
     episode_done: false
     eval_labels:
     - Hey-hey-hey. So what happened? A forest tick you off?
     id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
     text: 'Chandler Bing: Hey!
 
       Joey Tribbiani: Hey!
 
-      Chandler Bing:'
-num_episodes: 302
-num_examples: 5774
+      Chandler Bing: '
+num_episodes: 264
+num_examples: 4963

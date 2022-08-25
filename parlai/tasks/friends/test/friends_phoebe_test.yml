@@ -4,6 +4,10 @@ acts:
     eval_labels:
     - Alright... Susie, can I call you Susie?
     id: friends:phoebe
+    speakers:
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
     text: 'Phoebe Buffay: Okay, bye. Alright, so Mike''s on his way over. See, you
       thought you guys were meeting here, and he thought you were meeting at the restaurant,
       so you know... Doesn''t really matter who''s right or wrong. Point is... I''m
@@ -12,7 +16,7 @@ acts:
       Precious: I''m not letting you leave until you tell me what''s going on here.
       I mean, are you guys getting back together or something?
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Phoebe Buffay
     episode_done: false
     eval_labels:
@@ -21,6 +25,12 @@ acts:
       relationship with him. And he's very sorry about that and wishes you the best
       of luck in all your endeavours.
     id: friends:phoebe
+    speakers:
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
     text: 'Phoebe Buffay: Okay, bye. Alright, so Mike''s on his way over. See, you
       thought you guys were meeting here, and he thought you were meeting at the restaurant,
       so you know... Doesn''t really matter who''s right or wrong. Point is... I''m
@@ -33,12 +43,20 @@ acts:
 
       Precious: My name is Precious.
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Phoebe Buffay
     episode_done: false
     eval_labels:
     - Well, I don't...
     id: friends:phoebe
+    speakers:
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
     text: 'Phoebe Buffay: Okay, bye. Alright, so Mike''s on his way over. See, you
       thought you guys were meeting here, and he thought you were meeting at the restaurant,
       so you know... Doesn''t really matter who''s right or wrong. Point is... I''m
@@ -58,12 +76,22 @@ acts:
 
       Precious: I just can''t believe this... Why?
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Phoebe Buffay
     episode_done: false
     eval_labels:
     - Nothing, there's nothing wrong with you.
     id: friends:phoebe
+    speakers:
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
     text: 'Phoebe Buffay: Okay, bye. Alright, so Mike''s on his way over. See, you
       thought you guys were meeting here, and he thought you were meeting at the restaurant,
       so you know... Doesn''t really matter who''s right or wrong. Point is... I''m
@@ -87,12 +115,24 @@ acts:
 
       Precious: Oh, why would he do this? I mean, what''s wrong with me?
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Phoebe Buffay
     episode_done: false
     eval_labels:
     - Damn it woman, pull yourself together! Have some pride, for the love of God.
     id: friends:phoebe
+    speakers:
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
+    - Precious
+    - Phoebe Buffay
     text: 'Phoebe Buffay: Okay, bye. Alright, so Mike''s on his way over. See, you
       thought you guys were meeting here, and he thought you were meeting at the restaurant,
       so you know... Doesn''t really matter who''s right or wrong. Point is... I''m
@@ -120,6 +160,6 @@ acts:
 
       Precious: I mean, what the hell am I supposed to do now?
 
-      Phoebe Buffay:'
-num_episodes: 302
-num_examples: 5774
+      Phoebe Buffay: '
+num_episodes: 264
+num_examples: 4963

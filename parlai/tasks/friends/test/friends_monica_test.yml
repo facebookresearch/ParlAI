@@ -4,30 +4,45 @@ acts:
     eval_labels:
     - Joey, you're this guy's teacher. I mean how could you do this?
     id: friends:monica
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Monica Geller
     text: 'Chandler Bing: You told him to play the boxer gay!!
 
       Joey Tribbiani: Well, I-I might''ve said supergay.
 
       Chandler Bing: You totally screwed him over.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - I know it's last minute, but we decided to have a Halloween party.
     id: friends:monica
+    speakers:
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
     text: 'Monica Geller: Hey you guys?
 
       Ross Geller: What?
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - And everybody has to wear costumes. Come on! It'll be fun!
     id: friends:monica
+    speakers:
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Phoebe Buffay
+    - Monica Geller
     text: 'Monica Geller: Hey you guys?
 
       Ross Geller: What?
@@ -37,13 +52,24 @@ acts:
 
       Phoebe Buffay: Oh good!
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - You have to!
     id: friends:monica
+    speakers:
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Phoebe Buffay
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Monica Geller
     text: 'Monica Geller: Hey you guys?
 
       Ross Geller: What?
@@ -64,13 +90,27 @@ acts:
 
       Joey Tribbiani: Look, I''ll come to the party but I''m not dressing up.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - So Ross, are you gonna bring Mona?
     id: friends:monica
+    speakers:
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Phoebe Buffay
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Monica Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Monica Geller
     text: 'Monica Geller: Hey you guys?
 
       Ross Geller: What?
@@ -98,6 +138,6 @@ acts:
 
       Chandler Bing: You''re an actor!
 
-      Monica Geller:'
-num_episodes: 302
-num_examples: 5774
+      Monica Geller: '
+num_episodes: 264
+num_examples: 4963

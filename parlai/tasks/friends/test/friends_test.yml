@@ -4,25 +4,37 @@ acts:
     eval_labels:
     - Ooy.
     id: friends
+    speakers:
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - And to love. Ah, love. L-O-V-E, love. L is for life. And what is life without
       love?
     id: friends
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
 
-      Ross Geller:'
+      Ross Geller: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Oh my god, are we supposed to answer?
     id: friends
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -30,7 +42,7 @@ acts:
       Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
       life without love?
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
@@ -39,6 +51,12 @@ acts:
       you two are together. And now one day you might get married and have children
       of your own.
     id: friends
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -48,12 +66,19 @@ acts:
 
       Rachel Green: Oh my god, are we supposed to answer?
 
-      Ross Geller:'
+      Ross Geller: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Dude, are you okay?
     id: friends
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -68,6 +93,6 @@ acts:
       it. That you two are together. And now one day you might get married and have
       children of your own.
 
-      Joey Tribbiani:'
-num_episodes: 302
-num_examples: 5774
+      Joey Tribbiani: '
+num_episodes: 264
+num_examples: 4963

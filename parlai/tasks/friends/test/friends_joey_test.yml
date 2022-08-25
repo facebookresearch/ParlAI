@@ -4,6 +4,13 @@ acts:
     eval_labels:
     - Dude, are you okay?
     id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -18,12 +25,39 @@ acts:
       it. That you two are together. And now one day you might get married and have
       children of your own.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - You know what? I think I'm gonna stay here and make sure he's okay.
     id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Ross Geller
+    - Joey Tribbiani
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -83,12 +117,41 @@ acts:
 
       Ross Geller: I don''t even know what that''s for.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: true
     eval_labels:
     - Yeah. I'll see you in the morning.
     id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Ross Geller
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -153,12 +216,43 @@ acts:
 
       Rachel Green: Yeah, that''s probably a good idea.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - It doesn't look good, does it?
     id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Ross Geller
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -228,15 +322,18 @@ acts:
       Rachel Green: Uh-huh. Okay. You know what, Joey, I don''t think he''s ever gonna
       be okay with this.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Chandler Bing,Joey Tribbiani
     episode_done: false
     eval_labels:
     - He paid a lot of money for it.
     id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
     text: 'Chandler Bing: Hey look, are we gonna have to bring this out every time
       Ross comes over?
 
-      Joey Tribbiani:'
-num_episodes: 302
-num_examples: 5774
+      Joey Tribbiani: '
+num_episodes: 264
+num_examples: 4963

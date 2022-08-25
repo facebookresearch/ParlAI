@@ -4,15 +4,23 @@ acts:
     id: friends:joey
     labels:
     - Well, you must be new here. Why don't we get a table and I'll buy you a drink.
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
     text: 'The Casting Director: Any time you''re ready, Joey.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
     - Yeah, sure. Well, you must be new here. Maybe we should-I'm sorry, can I ask
       you something?
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
     text: 'The Casting Director: Any time you''re ready, Joey.
 
       Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
@@ -20,12 +28,19 @@ acts:
 
       The Casting Director: I''m sorry. Could you, could you try it without the purse?
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
     - Well, first it's not a purse.
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
     text: 'The Casting Director: Any time you''re ready, Joey.
 
       Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
@@ -38,12 +53,21 @@ acts:
 
       The Casting Director: Sure. What?
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
     - I mean if-if you're thinking it's a woman's bag, it's not. It's a man's bag!
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
     text: 'The Casting Director: Any time you''re ready, Joey.
 
       Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
@@ -60,13 +84,24 @@ acts:
 
       The Casting Director: Okay, anytime.
 
-      Joey Tribbiani:'
+      Joey Tribbiani: '
 - - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
     - All right look, let me show you the catalog! See? Huh? It's the latest thing!
       Everyone's got one! Men! Women! Children! Everyone's carrying them!
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
     text: 'The Casting Director: Any time you''re ready, Joey.
 
       Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
@@ -88,6 +123,6 @@ acts:
 
       The Casting Director: Okayyyy! Anddd, go!
 
-      Joey Tribbiani:'
-num_episodes: 2427
-num_examples: 46610
+      Joey Tribbiani: '
+num_episodes: 2138
+num_examples: 38815

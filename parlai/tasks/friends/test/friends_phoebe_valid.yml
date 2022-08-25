@@ -5,6 +5,26 @@ acts:
     eval_labels:
     - Hey! Umm, well, only okay because I just got back from, from the hospital.
     id: friends:phoebe
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -48,13 +68,37 @@ acts:
 
       Chandler Bing: Hey.
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Oh yeah, no-no-no. I'm fine. I'm okay, but umm, my Grandma sorta died.
     id: friends:phoebe
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -107,7 +151,7 @@ acts:
 
       Joey Tribbiani: Are you all right?
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
@@ -115,6 +159,32 @@ acts:
     - It's okay, I mean she had a really incredible life. And it's not like I'm never
       gonna see her again, y'know she's gonna visit.
     id: friends:phoebe
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -172,13 +242,41 @@ acts:
 
       Joey Tribbiani: Pheebs! Sorry!
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
     - Yeah, her first day on a new spiritual plane and she's gonna come to the coffeehouse!
     id: friends:phoebe
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -241,7 +339,7 @@ acts:
 
       Rachel Green: Well maybe, maybe she''s with us right now?
 
-      Phoebe Buffay:'
+      Phoebe Buffay: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
@@ -249,6 +347,38 @@ acts:
     - It's okay. Actually y'know what, it's kinda cool. 'Cause it's like y'know, one
       life ends and another begins.
     id: friends:phoebe
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Phoebe Buffay
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Joey Tribbiani
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Phoebe Buffay
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -320,6 +450,6 @@ acts:
 
       Monica Geller: Ohh my God, I''m so sorry.
 
-      Phoebe Buffay:'
-num_episodes: 308
-num_examples: 5855
+      Phoebe Buffay: '
+num_episodes: 275
+num_examples: 4950

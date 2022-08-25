@@ -4,6 +4,13 @@ acts:
     id: friends:monica
     labels:
     - Ohh, sweetie! Hey, I bet you anything that he's gonna call you again.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -16,12 +23,25 @@ acts:
       Rachel Green: Well uh, his answering machine was very understanding. Ugh. I
       feel blue.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
     - Again. Y'know what? I think we all did.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -52,12 +72,27 @@ acts:
       again, off again? I guess I just figured that somewhere down the road, we would
       be on again.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
     - Hey!
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -92,13 +127,49 @@ acts:
 
       Ross Geller: Hey!
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
     - Oh, I wish there was a job where I could wear this all the time. Maybe someday,
       there will be.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Rachel Green
+    - Monica Geller
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -177,12 +248,49 @@ acts:
 
       Rachel Green: Y''know, I gotta tell ya, this really does put in a better mood.
 
-      Monica Geller:'
+      Monica Geller: '
 - - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
     - Oh God! He's gonna come by and borrow some candles for his big date!
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Rachel Green
+    - Monica Geller
+    - Monica Geller
     text: 'Rachel Green: Well, I just called Joshua...
 
       Phoebe Buffay: Oh, how did it go?
@@ -264,6 +372,6 @@ acts:
       Monica Geller: Oh, I wish there was a job where I could wear this all the time.
       Maybe someday, there will be.
 
-      Monica Geller:'
-num_episodes: 2427
-num_examples: 46610
+      Monica Geller: '
+num_episodes: 2138
+num_examples: 38815

@@ -5,17 +5,27 @@ acts:
     labels:
     - Oh, no, no, I'm an intern, just like you guys... except for the tie, the briefcase...
       and the fact that I can rent a car.
+    speakers:
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
     text: 'Chandler Bing: Good morning, everybody.
 
       Intern: Can I get you a cup of coffee, Sir?
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
     - Yeah, well, I'm kinda heading into a new career direction and, you know, you
       gotta start at the bottom.
+    speakers:
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
     text: 'Chandler Bing: Good morning, everybody.
 
       Intern: Can I get you a cup of coffee, Sir?
@@ -25,13 +35,21 @@ acts:
 
       Intern: Seriously, you''re an intern?
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
     - Right. Look, I know I'm a little bit older than you guys, but it's not like
       I'm Bob Hope.
+    speakers:
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
     text: 'Chandler Bing: Good morning, everybody.
 
       Intern: Can I get you a cup of coffee, Sir?
@@ -46,12 +64,21 @@ acts:
 
       Intern: Dude!
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing
     episode_done: false
     id: friends:chandler
     labels:
     - The comedian? USO?!
+    speakers:
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
+    - Intern
+    - Chandler Bing
+    - Chandler Bing
     text: 'Chandler Bing: Good morning, everybody.
 
       Intern: Can I get you a cup of coffee, Sir?
@@ -69,14 +96,17 @@ acts:
       Chandler Bing: Right. Look, I know I''m a little bit older than you guys, but
       it''s not like I''m Bob Hope.
 
-      Chandler Bing:'
+      Chandler Bing: '
 - - characters: Chandler Bing,Phoebe Buffay,Ross Geller
     episode_done: false
     id: friends:chandler
     labels:
     - Oh, hey.
+    speakers:
+    - Phoebe Buffay
+    - Chandler Bing
     text: 'Phoebe Buffay: Um, Chandler, Ross, this is Robert.
 
-      Chandler Bing:'
-num_episodes: 2427
-num_examples: 46610
+      Chandler Bing: '
+num_episodes: 2138
+num_examples: 38815

@@ -4,14 +4,22 @@ acts:
     eval_labels:
     - Ooy.
     id: friends:rachel
+    speakers:
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Oh my god, are we supposed to answer?
     id: friends:rachel
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -19,12 +27,21 @@ acts:
       Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
       life without love?
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Ross, you don't seem okay.
     id: friends:rachel
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -43,12 +60,31 @@ acts:
 
       Ross Geller: Totally.
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - Oh, that's okay, girls tend not to like me.
     id: friends:rachel
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -90,12 +126,34 @@ acts:
 
       Charlie Wheeler: God, Rachel, what Ross just said that is just so..
 
-      Rachel Green:'
+      Rachel Green: '
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
     - You know what, Ross? I think we're gonna take off too.
     id: friends:rachel
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -143,6 +201,6 @@ acts:
 
       Ross Geller: Okay, I guess it''s just flan for three! Hey, hey, that rhymed!
 
-      Rachel Green:'
-num_episodes: 302
-num_examples: 5774
+      Rachel Green: '
+num_episodes: 264
+num_examples: 4963

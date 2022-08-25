@@ -1,0 +1,666 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - number_of_seats 2, time half past 11 in the morning
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      number_of_seats:
+      - '2'
+      time:
+      - half past 11 in the morning
+    text: <user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - location San Jose, number_of_seats 2, restaurant_name Sino, time half past 11
+      in the morning
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today.'
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date today, location San Jose, number_of_seats 2, restaurant_name Sino, time
+      11:30 am
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - today
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - 11:30 am
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today. <user> Yes, thanks. What''s their
+      phone number? <system> Your reservation has been made. Their phone number is
+      408-247-8880.'
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date today, location San Jose, number_of_seats 2, restaurant_name Sino, time
+      11:30 am
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - today
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - 11:30 am
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today. <user> Yes, thanks. What''s their
+      phone number? <system> Your reservation has been made. Their phone number is
+      408-247-8880. <user> What''s their address? Do they have vegetarian options
+      on their menu? <system> The street address is 377 Santana Row #1000. They have
+      good vegetarian options.'
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date today, location San Jose, number_of_seats 2, restaurant_name Sino, time
+      11:30 am
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - today
+      location:
+      - San Jose
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Sino
+      time:
+      - 11:30 am
+      - half past 11 in the morning
+    text: '<user> I want to make a restaurant reservation for 2 people at half past
+      11 in the morning. <system> What city do you want to dine in? Do you have a
+      preferred restaurant? <user> Please find restaurants in San Jose. Can you try
+      Sino? <system> Confirming: I will reserve a table for 2 people at Sino in San
+      Jose. The reservation time is 11:30 am today. <user> Yes, thanks. What''s their
+      phone number? <system> Your reservation has been made. Their phone number is
+      408-247-8880. <user> What''s their address? Do they have vegetarian options
+      on their menu? <system> The street address is 377 Santana Row #1000. They have
+      good vegetarian options. <user> Thanks very much. <system> Is there anything
+      else I can help you with?'
+    type: text
+num_episodes: 2482
+num_examples: 26845
