@@ -87,7 +87,7 @@ function getWorkerQuality(t) {
         var passes_duplicate = {'total': 0, 'passes': 0}
         var passes_golden = {'total': 0, 'passes': 0}
 
-        user['mephisto_data']['outputs']['final_data'].forEach((data, j) => {
+        user['mephisto_data']['outputs']['annotations'].forEach((data, j) => {
           try{
             if (!(data['id'])){}
             else{
