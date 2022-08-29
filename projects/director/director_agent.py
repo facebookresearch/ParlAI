@@ -45,7 +45,6 @@ class DirectorModel(TransformerGeneratorModel):
         self,
         opt: Opt,
         dictionary: DictionaryAgent,
-        use_shared_embedding=False,
         **kwargs,
     ):
         super().__init__(opt, dictionary, **kwargs)
@@ -53,7 +52,7 @@ class DirectorModel(TransformerGeneratorModel):
         vocabulary_size = len(dictionary)
 
         decoder_output_dim = self.decoder.out_dim
-        self.use_shared_embedding = use_shared_embedding
+        self.use_shared_embedding = opt.get('director_use_shared_embedding', False)
         if self.use_shared_embedding:
             self.classifier_heads = ScalarLayer()
         else:
@@ -248,11 +247,7 @@ class DirectorAgent(TransformerGeneratorAgent):
         """
         Build and return model.
         """
-        model = DirectorModel(
-            self.opt,
-            self.dict,
-            use_shared_embedding=self.opt['director_use_shared_embedding'],
-        )
+        model = DirectorModel(self.opt, self.dict)
         if self.opt['embedding_type'] != 'random':
             self._copy_embeddings(
                 model.encoder.embeddings.weight, self.opt['embedding_type']
