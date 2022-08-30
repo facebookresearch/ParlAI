@@ -400,15 +400,18 @@ class MemoryUtils:
             if ignore_in_session_memories and memory in in_session_memories:
                 continue
             # check overlap
-            non_stopword_memory = ' '.join(
-                normal_tokenizer(memory.split(':')[-1], include_pronouns=True)
-            )
-            non_stopword_text = ' '.join(normal_tokenizer(text, include_pronouns=True))
-            if (
-                F1Metric.compute(non_stopword_memory, [non_stopword_text]).value()
-                < memory_overlap_threshold
-            ):
-                continue
+            if memory_overlap_threshold > 0:
+                non_stopword_memory = ' '.join(
+                    normal_tokenizer(memory.split(':')[-1], include_pronouns=True)
+                )
+                non_stopword_text = ' '.join(
+                    normal_tokenizer(text, include_pronouns=True)
+                )
+                if (
+                    F1Metric.compute(non_stopword_memory, [non_stopword_text]).value()
+                    < memory_overlap_threshold
+                ):
+                    continue
             # check hard block
             if turns_since_used < memory_hard_block_for_n_turns:
                 continue
@@ -424,7 +427,7 @@ class MemoryUtils:
     @staticmethod
     def add_memory(memory: str, memories: Dict[str, int]) -> Dict[str, int]:
         """
-        Add memory to the memory store
+        Add memory to the memory store.
 
         :param memory:
             memory to add

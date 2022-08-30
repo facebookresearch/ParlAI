@@ -673,7 +673,7 @@ class BlenderBot3Agent(ModularAgentMixin):
 
     def _get_memory_heuristic_values(self) -> Dict[str, Union[str, float, bool]]:
         """
-        Extract heuristics from self.opt
+        Extract heuristics from self.opt.
         """
         return {
             'ignore_in_session_memories': self.opt.get(
