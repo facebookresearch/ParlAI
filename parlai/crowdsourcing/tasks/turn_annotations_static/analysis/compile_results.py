@@ -22,6 +22,10 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     Change PROBLEM_BUCKETS in task_config/annotations_config.json to be the buckets that
     you are asking crowdsource workers to annotate with.
+
+    NOTE this script directly accesses Mephisto files rather than using the DataBrowser.
+    This makes it fragile and not a great example for extension. It is a good candidate
+    for refactor.
     """
 
     NUM_SUBTASKS = 7
@@ -232,9 +236,21 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                 continue
 
             # HIT-level metric of HIT completion time has to be done here for now
-            task_completion_time_seconds = (
-                data['times']['task_end'] - data['times']['task_start']
-            )
+            try:
+                task_completion_time_seconds = (
+                    data['times']['task_end'] - data['times']['task_start']
+                )
+            except KeyError:
+                # We've been relying on non-mephisto API, and in 1.0.2 'times' was deprecated
+                # so this uses the new location
+                metadata_path = os.path.join(os.path.dirname(dp), 'agent_meta.json')
+                with open(metadata_path, 'rb') as f:
+                    metadata = json.load(f)
+
+                # HIT-level metric of HIT completion time has to be done here for now
+                task_completion_time_seconds = (
+                    metadata['task_end'] - metadata['task_start']
+                )
             print(task_completion_time_seconds)
 
             subtasks = data['outputs']['final_data']

@@ -9,7 +9,7 @@ import random
 import time
 import torch
 import torch.nn
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Any
 
 from parlai.agents.fid.fid import FidModel, T5FidModel, concat_enc_outs, Fid
 from parlai.agents.rag.args import RetrieverType
@@ -81,13 +81,9 @@ class BlenderBot2RagModel(RagModel):
     def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
         from .blenderbot2 import RAG_MODELS
 
-        # TODO: Get rid of this hack
-        opt['converting'] = True
         super().__init__(opt, dictionary, retriever_shared)
-        opt['converting'] = False
         self.opt = opt
         self.dummy_retriever = DummyRetriever(opt, dictionary)
-        self.retriever = retriever_factory(opt, dictionary, shared=retriever_shared)
         assert self.retriever is not None
         query_encoder = (
             self.retriever.query_encoder
@@ -117,6 +113,15 @@ class BlenderBot2RagModel(RagModel):
             self.knowledge_access_method
             not in [KnowledgeAccessMethod.MEMORY_ONLY, KnowledgeAccessMethod.NONE]
         )
+
+    @classmethod
+    def build_retriever(
+        cls,
+        opt: Opt,
+        dictionary: DictionaryAgent,
+        retriever_shared: Optional[Dict[str, Any]],
+    ) -> Optional[RagRetriever]:
+        return retriever_factory(opt, dictionary, retriever_shared)
 
     def has_query_generator(self) -> bool:
         """

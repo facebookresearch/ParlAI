@@ -328,8 +328,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
 
     TorchGeneratorAgent aims to handle much of the bookkeeping and infrastructure work
     for any generative models, like seq2seq or transformer. It implements the train_step
-    and eval_step. The only requirement is that your model *must* implemented the
-    interface TorchGeneratorModel interface.
+    and eval_step. The only requirement is that your model *must* be implemented with
+    the TorchGeneratorModel interface.
     """
 
     @classmethod
@@ -425,7 +425,14 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         )
         agent.add_argument(
             '--inference',
-            choices={'beam', 'greedy', 'topk', 'nucleus', 'delayedbeam'},
+            choices={
+                'beam',
+                'greedy',
+                'topk',
+                'nucleus',
+                'delayedbeam',
+                'delayednucleusbeam',
+            },
             default='greedy',
             help='Generation algorithm',
         )
@@ -994,6 +1001,22 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 verbose=verbose,
                 gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
             )
+        elif method == 'delayednucleusbeam':
+            return DelayedNucleusBeamSearch(
+                self.opt['topp'],
+                self.opt['beam_delay'],
+                beam_size,
+                min_length=self.beam_min_length,
+                block_ngram=self.beam_block_ngram,
+                context_block_ngram=self.beam_context_block_ngram,
+                length_penalty=self.opt.get('beam_length_penalty', 0.65),
+                padding_token=self.NULL_IDX,
+                bos_token=self.START_IDX,
+                eos_token=self.END_IDX,
+                device=device,
+                verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
+            )
         elif method == 'topk':
             return TopKSampling(
                 self.opt['topk'],
@@ -1027,25 +1050,16 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             raise ValueError(f"Can't use inference method {method}")
 
-    def _get_context(self, batch, batch_idx):
-        """
-        Set the beam context for n-gram context blocking.
-
-        Intentionally overridable for more complex model histories.
-        """
-        if self.beam_context_block_ngram <= 0:
-            # We aren't context blocking, return empty tensor
-            return torch.LongTensor()
-
-        ctxt = batch.text_vec[batch_idx]
-        if self.beam_block_full_context:
-            ctxt = batch.full_text_vec[batch_idx]
-        return ctxt
-
     def _get_batch_context(self, batch):
         """
         Version of TGA._get_context() that operates on full batches for speed.
         """
+        if hasattr(self, '_get_context'):
+            # Warn users that have subclassed with '_get_gontext
+            warn_once(
+                "WARNING: TGA._get_context() has been removed, use TGA.get_batch_context() instead"
+            )
+
         if self.beam_context_block_ngram <= 0:
             # We aren't context blocking, return empty tensor of the correct size
             return torch.zeros(batch.batchsize, 0, dtype=torch.long)
@@ -1110,6 +1124,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         Returned tensor should be of dimension bsz x len(prefix)
         """
         return None
+
+    def _generation_activation(self, score: torch.Tensor) -> torch.float32:
+        return F.log_softmax(score, dim=-1, dtype=torch.float32)
 
     def _generate(
         self,
@@ -1191,7 +1208,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             if self.temperature != 1.0:
                 score.div_(self.temperature)
             # force to fp32 to avoid overflow issues during search calculations
-            score = F.log_softmax(score, dim=-1, dtype=torch.float32)  # type: ignore
+            score = self._generation_activation(score)  # type: ignore
             if prefix_tokens is not None and _ts < prefix_tokens.size(1):
                 # generate prefix_tokens for every timestep that they exist
                 # achieve by setting score of all other tokens to be -inf
@@ -1856,6 +1873,21 @@ class DelayedBeamSearch(TreeSearch):
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
         if current_length < self.delay:
             return TopKSampling.select_paths(
+                self, logprobs, prior_scores, current_length
+            )
+        else:
+            return BeamSearch.select_paths(self, logprobs, prior_scores, current_length)
+
+
+class DelayedNucleusBeamSearch(TreeSearch):
+    def __init__(self, p, delay, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.p = p
+        self.delay = delay
+
+    def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
+        if current_length < self.delay:
+            return NucleusSampling.select_paths(
                 self, logprobs, prior_scores, current_length
             )
         else:

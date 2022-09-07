@@ -1,0 +1,69 @@
+acts:
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant area centre ; restaurant food chinese
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food.
+    turn_num: '0'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant area centre ; restaurant food chinese
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range.
+    turn_num: '2'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant area centre ; restaurant food chinese ; train day sunday ; train
+      leaveat 16:15
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range. <system> ok how about charlie chan, located at regent street city
+      centre. postcode is cb21db with a cheap price. can i help you further today?
+      <user> i also need a train. the train should leave after 16:15 and should leave
+      on sunday.
+    turn_num: '4'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant area centre ; restaurant food chinese ; train day sunday ; train
+      departure cambridge ; train destination norwich ; train leaveat 16:15
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range. <system> ok how about charlie chan, located at regent street city
+      centre. postcode is cb21db with a cheap price. can i help you further today?
+      <user> i also need a train. the train should leave after 16:15 and should leave
+      on sunday. <system> can i have more information for the train you're needing?
+      where are you departing from and arriving to? <user> i am leaving from cambridge
+      and going to norwich.
+    turn_num: '6'
+- - dialogue_id: PMUL0698.json
+    episode_done: true
+    eval_labels:
+    - restaurant area centre ; restaurant food chinese ; train bookpeople 5 ; train
+      day sunday ; train departure cambridge ; train destination norwich ; train leaveat
+      16:15
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i'm looking for a local place to dine in the centre that serves chinese
+      food. <system> i have restaurants matching your criteria in all price ranges.
+      do you have a preference on price? <user> i need the address, postcode and the
+      price range. <system> ok how about charlie chan, located at regent street city
+      centre. postcode is cb21db with a cheap price. can i help you further today?
+      <user> i also need a train. the train should leave after 16:15 and should leave
+      on sunday. <system> can i have more information for the train you're needing?
+      where are you departing from and arriving to? <user> i am leaving from cambridge
+      and going to norwich. <system> i have train tr1840 leaving at 16:36 is that
+      okay? <user> book for 5 people and get me the reference number
+    turn_num: '8'
+num_episodes: 999
+num_examples: 8366

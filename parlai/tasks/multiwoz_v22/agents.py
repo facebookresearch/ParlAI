@@ -5,23 +5,27 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-implementation for ParlAI.
+Multiwoz 2.2 Dataset implementation for ParlAI.
 """
 
-from parlai.core.params import ParlaiParser
 import copy
-import os
-import pandas as pd
-from parlai.core.opt import Opt
-import parlai.core.tod.tod_core as tod
 import json
+import os
 from typing import Optional
+
+import numpy as np
+import pandas as pd
+
+import parlai.core.tod.tod_agents as tod_agents
+import parlai.core.tod.tod_core as tod
+import parlai.tasks.multiwoz_v22.build as build_
+from parlai.core.message import Message
+from parlai.core.metrics import AverageMetric
+from parlai.core.opt import Opt
+from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
-
-import parlai.tasks.multiwoz_v22.build as build_
-import parlai.core.tod.tod_agents as tod_agents
-
+from parlai.utils.testing import is_this_circleci
 
 DOMAINS = [
     "attraction",
@@ -35,6 +39,14 @@ DOMAINS = [
 ]
 
 WELL_FORMATTED_DOMAINS = ["attraction", "bus", "hotel", "restaurant", "train", "taxi"]
+
+DATA_LEN = {"train": 17, "dev": 2, "test": 2}
+
+SEED = 42
+
+
+def fold_size(fold):
+    return DATA_LEN[fold]
 
 
 class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
@@ -371,6 +383,220 @@ class MultiwozV22Parser(tod_agents.TodStructuredDataParser):
 
     def get_id_task_prefix(self):
         return "MultiwozV22"
+
+
+class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeacher):
+    """
+    This Teacher is responsible for performing the task of Dialogue State Tracking.
+
+    It can be used to evaluate LM on JGA (Joint Goal Accuracy) metric (as shown in
+    [SimpleTOD](https://arxiv.org/abs/2005.00796) and
+    [Soloist](https://arxiv.org/abs/2005.05298)).
+    """
+
+    BELIEF_STATE_DELIM = " ; "
+
+    domains = [
+        "attraction",
+        "hotel",
+        "hospital",
+        "restaurant",
+        "police",
+        "taxi",
+        "train",
+    ]
+
+    named_entity_slots = {
+        "attraction--name",
+        "restaurant--name",
+        "hotel--name",
+        "bus--departure",
+        "bus--destination",
+        "taxi--departure",
+        "taxi--destination",
+        "train--departure",
+    }
+
+    def __init__(self, opt: Opt, shared=None, *args, **kwargs):
+        self.opt = opt
+        self.fold = opt["datatype"].split(":")[0]
+        opt["datafile"] = self.fold
+        self.dpath = os.path.join(opt["datapath"], "multiwoz_v22")
+        self.id = "multiwoz_v22"
+        if self.opt.get("teacher_seed"):
+            self.rng = np.random.RandomState(self.opt["teacher_seed"])
+        else:
+            self.rng = np.random.RandomState(SEED)
+
+        if shared is None:
+            build_.build(opt)
+        super().__init__(opt, shared)
+
+    def _load_data(self, fold):
+        dataset_fold = "dev" if fold == "valid" else fold
+        fold_path = os.path.join(self.dpath, dataset_fold)
+        dialogs = []
+        for file_id in range(1, fold_size(dataset_fold) + 1):
+            filename = os.path.join(fold_path, f"dialogues_{file_id:03d}.json")
+            with PathManager.open(filename, "r") as f:
+                dialogs += json.load(f)
+        return dialogs
+
+    def _get_curr_belief_states(self, turn):
+        belief_states = []
+        for frame in turn["frames"]:
+            if "state" in frame:
+                if "slot_values" in frame["state"]:
+                    for domain_slot_type in frame["state"]["slot_values"]:
+                        for slot_value in frame["state"]["slot_values"][
+                            domain_slot_type
+                        ]:
+                            domain, slot_type = domain_slot_type.split("-")
+                            belief_state = f"{domain} {slot_type} {slot_value.lower()}"
+                            belief_states.append(belief_state)
+        return sorted(list(set(belief_states)))
+
+    def _extract_slot_from_string(self, slots_string):
+        """
+        Either ground truth or generated result should be in the format: "dom slot_type
+        slot_val, dom slot_type slot_val, ..., dom slot_type slot_val," and this
+        function would reformat the string into list:
+
+        ["dom--slot_type--slot_val", ... ]
+        """
+
+        slots_list = []
+        per_domain_slot_lists = {}
+        named_entity_slot_lists = []
+
+        # split according to ";"
+        str_split = slots_string.split(self.BELIEF_STATE_DELIM)
+
+        if str_split[-1] == "":
+            str_split = str_split[:-1]
+
+        str_split = [slot.strip() for slot in str_split]
+
+        for slot_ in str_split:
+            slot = slot_.split()
+            if len(slot) > 2 and slot[0] in self.domains:
+                domain = slot[0]
+                slot_type = slot[1]
+                slot_val = " ".join(slot[2:])
+                if not slot_val == "dontcare":
+                    slots_list.append(domain + "--" + slot_type + "--" + slot_val)
+                if domain in per_domain_slot_lists:
+                    per_domain_slot_lists[domain].add(slot_type + "--" + slot_val)
+                else:
+                    per_domain_slot_lists[domain] = {slot_type + "--" + slot_val}
+                if domain + "--" + slot_type in self.named_entity_slots:
+                    named_entity_slot_lists.append(
+                        domain + "--" + slot_type + "--" + slot_val
+                    )
+        return slots_list, per_domain_slot_lists, named_entity_slot_lists
+
+    def custom_evaluation(
+        self, teacher_action: Message, labels, model_response: Message
+    ):
+        """
+        for dialog state tracking, we compute the joint goal accuracy, which is the
+        percentage of the turns where the model correctly and precisely predicts all
+        slots(domain, slot_type, slot_value).
+        """
+        resp = model_response.get("text")
+        if not resp:
+            return
+
+        # extract ground truth from labels
+        (
+            slots_truth,
+            slots_truth_per_domain,
+            slots_truth_named_entity,
+        ) = self._extract_slot_from_string(labels[0])
+
+        # extract generated slots from model_response
+        (
+            slots_pred,
+            slots_pred_per_domain,
+            slots_pred_named_entity,
+        ) = self._extract_slot_from_string(resp)
+
+        for gt_slot in slots_truth:
+            self.metrics.add("all/slot_r", AverageMetric(gt_slot in slots_pred))
+            curr_domain = gt_slot.split("--")[0]
+            self.metrics.add(
+                f"{curr_domain}/slot_r", AverageMetric(gt_slot in slots_pred)
+            )
+
+        for gt_slot in slots_pred_named_entity:
+            self.metrics.add(
+                "hallucination", AverageMetric(gt_slot not in slots_truth_named_entity)
+            )
+
+        for predicted_slot in slots_pred:
+            self.metrics.add("all/slot_p", AverageMetric(predicted_slot in slots_truth))
+            curr_domain = predicted_slot.split("--")[0]
+            self.metrics.add(
+                f"{curr_domain}/slot_p", AverageMetric(predicted_slot in slots_truth)
+            )
+
+        self.metrics.add("jga", AverageMetric(set(slots_truth) == set(slots_pred)))
+        self.metrics.add(
+            "named_entities/jga",
+            AverageMetric(
+                set(slots_truth_named_entity) == set(slots_pred_named_entity)
+            ),
+        )
+        for gt_slot in slots_truth_named_entity:
+            self.metrics.add("all_ne/slot_r", AverageMetric(gt_slot in slots_pred))
+            curr_domain = gt_slot.split("--")[0]
+            self.metrics.add(
+                f"{curr_domain}_ne/slot_r", AverageMetric(gt_slot in slots_pred)
+            )
+        for predicted_slot in slots_pred_named_entity:
+            self.metrics.add(
+                "all_ne/slot_p", AverageMetric(predicted_slot in slots_truth)
+            )
+            curr_domain = predicted_slot.split("--")[0]
+            self.metrics.add(
+                f"{curr_domain}_ne/slot_p", AverageMetric(predicted_slot in slots_truth)
+            )
+
+        for domain in slots_truth_per_domain:
+            if domain in slots_pred_per_domain:
+                self.metrics.add(
+                    f"{domain}/jga",
+                    AverageMetric(
+                        slots_truth_per_domain[domain] == slots_pred_per_domain[domain]
+                    ),
+                )
+
+    def setup_data(self, fold):
+        dialogs = self._load_data(fold)
+        examples = []
+        for dialog in dialogs:
+            context = []
+            for turn in dialog["turns"]:
+                curr_turn = turn["utterance"].lower()
+                curr_speaker = (
+                    "<user>" if turn["speaker"].lower() == "user" else "<system>"
+                )
+                curr_context = f"{curr_speaker} {curr_turn}"
+                context.append(curr_context)
+                cum_belief_states = self._get_curr_belief_states(turn)
+                if curr_speaker == "<user>":
+                    examples.append(
+                        {
+                            "dialogue_id": dialog["dialogue_id"],
+                            "turn_num": turn["turn_id"],
+                            "text": " ".join(context),
+                            "labels": self.BELIEF_STATE_DELIM.join(cum_belief_states),
+                        }
+                    )
+        if not is_this_circleci():
+            self.rng.shuffle(examples)
+        for example in examples:
+            yield example, True
 
 
 class UserSimulatorTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeacher):

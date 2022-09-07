@@ -3,59 +3,34 @@ acts:
       Geller
     episode_done: false
     eval_labels:
-    - 'Chandler Bing: __SILENCE__'
+    - Look, for the first time in my life I'm in a real relationship. Okay, I'm not
+      gonna screw that up by y'know, telling the truth.
     id: friends:chandler
-    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
-      it was like she was torturing me for information. And I wanted to give it up
-      I just-I didn''t know what it was!'
-- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
-      Geller
-    episode_done: false
-    eval_labels:
-    - 'Chandler Bing: Look, for the first time in my life I''m in a real relationship.
-      Okay, I''m not gonna screw that up by y''know, telling the truth.'
-    id: friends:chandler
-    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
-      it was like she was torturing me for information. And I wanted to give it up
-      I just-I didn''t know what it was!
-
-      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.'
-- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
-      Geller
-    episode_done: false
-    eval_labels:
-    - 'Chandler Bing: __SILENCE__'
-    id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
 
       Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
 
-      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
-      Okay, I''m not gonna screw that up by y''know, telling the truth.'
+      Chandler Bing: '
 - - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
       Geller
     episode_done: false
     eval_labels:
-    - 'Chandler Bing: __SILENCE__'
+    - And the bunny got away.
     id: friends:chandler
-    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
-      it was like she was torturing me for information. And I wanted to give it up
-      I just-I didn''t know what it was!
-
-      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
-
-      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
-      Okay, I''m not gonna screw that up by y''know, telling the truth.
-
-      Ross Geller: Hey.'
-- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
-      Geller
-    episode_done: false
-    eval_labels:
-    - 'Chandler Bing: __SILENCE__'
-    id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
     text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
       it was like she was torturing me for information. And I wanted to give it up
       I just-I didn''t know what it was!
@@ -67,6 +42,167 @@ acts:
 
       Ross Geller: Hey.
 
-      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!'
-num_episodes: 308
-num_examples: 5855
+      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!
+
+      Ross Geller: Sorry.
+
+      Chandler Bing: '
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - And you're gonna make them all disappear.
+    id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
+
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
+
+      Ross Geller: Hey.
+
+      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!
+
+      Ross Geller: Sorry.
+
+      Chandler Bing: And the bunny got away.
+
+      Ross Geller: This would be the place where you explain the hat.
+
+      Joey Tribbiani: Oh! Yeah, look there''s this play all right? And I''m up for
+      the part of this real cool like suave international guy. A real clothes horse.
+      So I figure that everyone at the audition is gonna be wearing this kinda y''know,
+      ultra-hip, high fashion stuff.
+
+      Chandler Bing: '
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - Done.
+    id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
+
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
+
+      Ross Geller: Hey.
+
+      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!
+
+      Ross Geller: Sorry.
+
+      Chandler Bing: And the bunny got away.
+
+      Ross Geller: This would be the place where you explain the hat.
+
+      Joey Tribbiani: Oh! Yeah, look there''s this play all right? And I''m up for
+      the part of this real cool like suave international guy. A real clothes horse.
+      So I figure that everyone at the audition is gonna be wearing this kinda y''know,
+      ultra-hip, high fashion stuff.
+
+      Chandler Bing: And you''re gonna make them all disappear.
+
+      Joey Tribbiani: Yeah, like you could find something as sophisticated as this.
+
+      Chandler Bing: '
+- - characters: Chandler Bing,Joey Tribbiani,Monica Geller,Phoebe Buffay,Rachel Green,Ross
+      Geller
+    episode_done: false
+    eval_labels:
+    - Hey.
+    id: friends:chandler
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    - Ross Geller
+    - Joey Tribbiani
+    - Chandler Bing
+    - Joey Tribbiani
+    - Chandler Bing
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Ross Geller
+    - Chandler Bing
+    text: 'Chandler Bing: I''m telling you, she gives the worst massages ever!! Okay,
+      it was like she was torturing me for information. And I wanted to give it up
+      I just-I didn''t know what it was!
+
+      Joey Tribbiani: Chandler, if it really hurts that bad you should just tell her.
+
+      Chandler Bing: Look, for the first time in my life I''m in a real relationship.
+      Okay, I''m not gonna screw that up by y''know, telling the truth.
+
+      Ross Geller: Hey.
+
+      Joey Tribbiani: Whoa, dude, look out! You almost crushed my hat!
+
+      Ross Geller: Sorry.
+
+      Chandler Bing: And the bunny got away.
+
+      Ross Geller: This would be the place where you explain the hat.
+
+      Joey Tribbiani: Oh! Yeah, look there''s this play all right? And I''m up for
+      the part of this real cool like suave international guy. A real clothes horse.
+      So I figure that everyone at the audition is gonna be wearing this kinda y''know,
+      ultra-hip, high fashion stuff.
+
+      Chandler Bing: And you''re gonna make them all disappear.
+
+      Joey Tribbiani: Yeah, like you could find something as sophisticated as this.
+
+      Chandler Bing: Done.
+
+      Rachel Green: Joey, if you wanna look good, why don''t you just come down to
+      the store? I''ll help you out.
+
+      Joey Tribbiani: Great! Thanks, Rach!
+
+      Rachel Green: Sure! God, please take those off!
+
+      Joey Tribbiani: All right.
+
+      Ross Geller: Hey Pheebs, how''s it going?
+
+      Chandler Bing: '
+num_episodes: 275
+num_examples: 4950

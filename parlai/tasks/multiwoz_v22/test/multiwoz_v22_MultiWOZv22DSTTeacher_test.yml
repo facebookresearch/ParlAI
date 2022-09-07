@@ -1,0 +1,67 @@
+acts:
+- - dialogue_id: MUL0484.json
+    episode_done: true
+    eval_labels:
+    - train departure norwich ; train destination cambridge
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i need train reservations from norwich to cambridge
+    turn_num: '0'
+- - dialogue_id: MUL0484.json
+    episode_done: true
+    eval_labels:
+    - train arriveby 18:00 ; train day monday ; train departure norwich ; train destination
+      cambridge
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i need train reservations from norwich to cambridge <system> i have
+      133 trains matching your request. is there a specific day and time you would
+      like to travel? <user> i'd like to leave on monday and arrive by 18:00.
+    turn_num: '2'
+- - dialogue_id: MUL0484.json
+    episode_done: true
+    eval_labels:
+    - train arriveby 18:00 ; train day monday ; train departure norwich ; train destination
+      cambridge
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i need train reservations from norwich to cambridge <system> i have
+      133 trains matching your request. is there a specific day and time you would
+      like to travel? <user> i'd like to leave on monday and arrive by 18:00. <system>
+      there are 12 trains for the day and time you request. would you like to book
+      it now? <user> before booking, i would also like to know the travel time, price,
+      and departure time please.
+    turn_num: '4'
+- - dialogue_id: MUL0484.json
+    episode_done: true
+    eval_labels:
+    - attraction name cineworld cinema ; train arriveby 18:00 ; train day monday ;
+      train departure norwich ; train destination cambridge
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i need train reservations from norwich to cambridge <system> i have
+      133 trains matching your request. is there a specific day and time you would
+      like to travel? <user> i'd like to leave on monday and arrive by 18:00. <system>
+      there are 12 trains for the day and time you request. would you like to book
+      it now? <user> before booking, i would also like to know the travel time, price,
+      and departure time please. <system> there are 12 trains meeting your needs with
+      the first leaving at 05:16 and the last one leaving at 16:16. do you want to
+      book one of these? <user> no hold off on booking for now. can you help me find
+      an attraction called cineworld cinema?
+    turn_num: '6'
+- - dialogue_id: MUL0484.json
+    episode_done: true
+    eval_labels:
+    - attraction name cineworld cinema ; train arriveby 18:00 ; train day monday ;
+      train departure norwich ; train destination cambridge
+    id: MultiwozV22_UserSimulatorTeacher
+    text: <user> i need train reservations from norwich to cambridge <system> i have
+      133 trains matching your request. is there a specific day and time you would
+      like to travel? <user> i'd like to leave on monday and arrive by 18:00. <system>
+      there are 12 trains for the day and time you request. would you like to book
+      it now? <user> before booking, i would also like to know the travel time, price,
+      and departure time please. <system> there are 12 trains meeting your needs with
+      the first leaving at 05:16 and the last one leaving at 16:16. do you want to
+      book one of these? <user> no hold off on booking for now. can you help me find
+      an attraction called cineworld cinema? <system> yes it is a cinema located in
+      the south part of town what information would you like on it? <user> yes, that
+      was all i needed. thank you very much!
+    turn_num: '8'
+num_episodes: 1000
+num_examples: 8372

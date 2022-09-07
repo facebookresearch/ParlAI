@@ -100,6 +100,22 @@ class WoiFilterNoPassageUsed(ManyEpisodeMutator):
         return out_episodes
 
 
+@register_mutator("woi_keep_only_no_passage_used")
+class WoiKeepOnlyNoPassageUsed(ManyEpisodeMutator):
+    """
+    Filter all examples where passages are used.
+    """
+
+    def many_episode_mutation(self, episode):
+        out_episodes = []
+        for e in episode:
+            checked_sentences = e.get(CONST.SELECTED_SENTENCES)
+            checked_sentences = ' '.join(checked_sentences)
+            if checked_sentences == CONST.NO_SELECTED_SENTENCES_TOKEN:
+                out_episodes.append([e])
+        return out_episodes
+
+
 @register_mutator("woi_filter_selected_knowledge_in_retrieved_docs")
 class WoiFilterSelectedKnowledgeInRetrievedDocs(ManyEpisodeMutator):
     """

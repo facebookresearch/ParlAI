@@ -163,13 +163,16 @@ class Teacher(Agent):
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
+        parser.add_argument('--teacher_seed', default=None, type=float)
         parser.add_argument(
             '--mutators',
             '-mut',
             default=None,
             help='Apply one or more mutators to the data.',
         )
-        mutators = Mutator.load_mutator_types(partial_opt.get('mutators'))
+        mutators = Mutator.load_mutator_types(
+            partial_opt.get('mutators') if partial_opt else None
+        )
         for m in mutators:
             m.add_cmdline_args(parser, partial_opt)
         return parser

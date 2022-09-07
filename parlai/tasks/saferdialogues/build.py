@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta Platforms, Inc. and affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -10,13 +10,13 @@ from parlai.core.build_data import DownloadableFile
 import parlai.core.build_data as build_data
 import os
 
-SAFERDIALOGUES_VERSION = "v0.1"
+SAFERDIALOGUES_VERSION = "v0.4"
 
 RESOURCES = [
     DownloadableFile(
         f'http://parl.ai/downloads/saferdialogues/saferdialogues_{SAFERDIALOGUES_VERSION}.tar.gz',
         f'saferdialogues_{SAFERDIALOGUES_VERSION}.tar.gz',
-        '7ecf062fdf3e0ddfd16c52998341f543331e0dbaa1fcdb27026e8b0b80446fed',
+        'ef6a5f85fdab1fdea4c8d50ba38644f41c7bad5d04611777b79bcd85d750c4c6',
     )
 ]
 

@@ -1,58 +1,377 @@
 acts:
-- - characters: Phoebe Buffay,Ross Geller
+- - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
-    - 'Monica Geller: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!'
-- - characters: Phoebe Buffay,Ross Geller
+    - Ohh, sweetie! Hey, I bet you anything that he's gonna call you again.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    text: 'Rachel Green: Well, I just called Joshua...
+
+      Phoebe Buffay: Oh, how did it go?
+
+      Rachel Green: Well, I did my best to convince him that I''m not some crazy girl
+      who is dying to get married-I''m just going through a hard time.
+
+      Phoebe Buffay: What did he say?
+
+      Rachel Green: Well uh, his answering machine was very understanding. Ugh. I
+      feel blue.
+
+      Monica Geller: '
+- - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
-    - 'Monica Geller: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Again. Y'know what? I think we all did.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    text: 'Rachel Green: Well, I just called Joshua...
 
-      Ross Geller: Hi!'
-- - characters: Phoebe Buffay,Ross Geller
+      Phoebe Buffay: Oh, how did it go?
+
+      Rachel Green: Well, I did my best to convince him that I''m not some crazy girl
+      who is dying to get married-I''m just going through a hard time.
+
+      Phoebe Buffay: What did he say?
+
+      Rachel Green: Well uh, his answering machine was very understanding. Ugh. I
+      feel blue.
+
+      Monica Geller: Ohh, sweetie! Hey, I bet you anything that he''s gonna call you
+      again.
+
+      Rachel Green: Yeah, maybe, but I don''t think I even care. I don''t think he''s
+      the one I''m sad about. Y''know, I know that I said that I am totally okay with
+      Ross getting married, but as it turns out, I don''t think I''m handling it all
+      that well.
+
+      Phoebe Buffay: Yeah, maybe.
+
+      Rachel Green: And I-I am just trying to figure out why.
+
+      Phoebe Buffay: Any luck?
+
+      Rachel Green: Well, yeah, y''know how Ross and I were on again, off again, on
+      again, off again? I guess I just figured that somewhere down the road, we would
+      be on again.
+
+      Monica Geller: '
+- - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
-    - 'Monica Geller: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Hey!
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    text: 'Rachel Green: Well, I just called Joshua...
 
-      Ross Geller: Hi!
+      Phoebe Buffay: Oh, how did it go?
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.'
-- - characters: Phoebe Buffay,Ross Geller
+      Rachel Green: Well, I did my best to convince him that I''m not some crazy girl
+      who is dying to get married-I''m just going through a hard time.
+
+      Phoebe Buffay: What did he say?
+
+      Rachel Green: Well uh, his answering machine was very understanding. Ugh. I
+      feel blue.
+
+      Monica Geller: Ohh, sweetie! Hey, I bet you anything that he''s gonna call you
+      again.
+
+      Rachel Green: Yeah, maybe, but I don''t think I even care. I don''t think he''s
+      the one I''m sad about. Y''know, I know that I said that I am totally okay with
+      Ross getting married, but as it turns out, I don''t think I''m handling it all
+      that well.
+
+      Phoebe Buffay: Yeah, maybe.
+
+      Rachel Green: And I-I am just trying to figure out why.
+
+      Phoebe Buffay: Any luck?
+
+      Rachel Green: Well, yeah, y''know how Ross and I were on again, off again, on
+      again, off again? I guess I just figured that somewhere down the road, we would
+      be on again.
+
+      Monica Geller: Again. Y''know what? I think we all did.
+
+      Ross Geller: Hey!
+
+      Monica Geller: '
+- - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
-    - 'Monica Geller: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Oh, I wish there was a job where I could wear this all the time. Maybe someday,
+      there will be.
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Rachel Green
+    - Monica Geller
+    text: 'Rachel Green: Well, I just called Joshua...
 
-      Ross Geller: Hi!
+      Phoebe Buffay: Oh, how did it go?
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
+      Rachel Green: Well, I did my best to convince him that I''m not some crazy girl
+      who is dying to get married-I''m just going through a hard time.
 
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.'
-- - characters: Phoebe Buffay,Ross Geller
+      Phoebe Buffay: What did he say?
+
+      Rachel Green: Well uh, his answering machine was very understanding. Ugh. I
+      feel blue.
+
+      Monica Geller: Ohh, sweetie! Hey, I bet you anything that he''s gonna call you
+      again.
+
+      Rachel Green: Yeah, maybe, but I don''t think I even care. I don''t think he''s
+      the one I''m sad about. Y''know, I know that I said that I am totally okay with
+      Ross getting married, but as it turns out, I don''t think I''m handling it all
+      that well.
+
+      Phoebe Buffay: Yeah, maybe.
+
+      Rachel Green: And I-I am just trying to figure out why.
+
+      Phoebe Buffay: Any luck?
+
+      Rachel Green: Well, yeah, y''know how Ross and I were on again, off again, on
+      again, off again? I guess I just figured that somewhere down the road, we would
+      be on again.
+
+      Monica Geller: Again. Y''know what? I think we all did.
+
+      Ross Geller: Hey!
+
+      Monica Geller: Hey!
+
+      Ross Geller: So, I got us some reservations for Sunday night, okay? How about,
+      Ernie''s at 9 o''clock?
+
+      Rachel Green: Yeah, well, you uh, better make it for three.
+
+      Ross Geller: Oh, see I-I don''t know if we''re gonna be hungry at three.
+
+      Rachel Green: Three people. Joshua''s not gonna be there.
+
+      Ross Geller: What happened?
+
+      Rachel Green: Uh, well, I think, I think he broke up with me.
+
+      Ross Geller: Noo. Why?
+
+      Rachel Green: Well, apparently he scares easy.
+
+      Ross Geller: Oh, Rachel, I''m-I''m sorry.
+
+      Rachel Green: It''s okay. Sometimes, things don''t work out the way you''d thought
+      they would.
+
+      Ross Geller: Come here.
+
+      Rachel Green: Oh, hey, don''t you have to go pick up Emily?
+
+      Ross Geller: Yeah.
+
+      Rachel Green: Yeah.
+
+      Ross Geller: You okay?
+
+      Rachel Green: Yeah! I got my girls.
+
+      Rachel Green: Ugh.
+
+      Phoebe Buffay: Hey, y''know what might cheer you up?
+
+      Rachel Green: What?
+
+      Rachel Green: Y''know, I gotta tell ya, this really does put in a better mood.
+
+      Monica Geller: '
+- - characters: Monica Geller,Phoebe Buffay,Rachel Green,Ross Geller
     episode_done: false
     id: friends:monica
     labels:
-    - 'Monica Geller: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Oh God! He's gonna come by and borrow some candles for his big date!
+    speakers:
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Monica Geller
+    - Ross Geller
+    - Monica Geller
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Rachel Green
+    - Phoebe Buffay
+    - Rachel Green
+    - Rachel Green
+    - Monica Geller
+    - Monica Geller
+    text: 'Rachel Green: Well, I just called Joshua...
 
-      Ross Geller: Hi!
+      Phoebe Buffay: Oh, how did it go?
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
+      Rachel Green: Well, I did my best to convince him that I''m not some crazy girl
+      who is dying to get married-I''m just going through a hard time.
 
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.
+      Phoebe Buffay: What did he say?
 
-      Phoebe Buffay: No! No, that you and Rachel are engaged!'
-num_episodes: 2427
-num_examples: 46610
+      Rachel Green: Well uh, his answering machine was very understanding. Ugh. I
+      feel blue.
+
+      Monica Geller: Ohh, sweetie! Hey, I bet you anything that he''s gonna call you
+      again.
+
+      Rachel Green: Yeah, maybe, but I don''t think I even care. I don''t think he''s
+      the one I''m sad about. Y''know, I know that I said that I am totally okay with
+      Ross getting married, but as it turns out, I don''t think I''m handling it all
+      that well.
+
+      Phoebe Buffay: Yeah, maybe.
+
+      Rachel Green: And I-I am just trying to figure out why.
+
+      Phoebe Buffay: Any luck?
+
+      Rachel Green: Well, yeah, y''know how Ross and I were on again, off again, on
+      again, off again? I guess I just figured that somewhere down the road, we would
+      be on again.
+
+      Monica Geller: Again. Y''know what? I think we all did.
+
+      Ross Geller: Hey!
+
+      Monica Geller: Hey!
+
+      Ross Geller: So, I got us some reservations for Sunday night, okay? How about,
+      Ernie''s at 9 o''clock?
+
+      Rachel Green: Yeah, well, you uh, better make it for three.
+
+      Ross Geller: Oh, see I-I don''t know if we''re gonna be hungry at three.
+
+      Rachel Green: Three people. Joshua''s not gonna be there.
+
+      Ross Geller: What happened?
+
+      Rachel Green: Uh, well, I think, I think he broke up with me.
+
+      Ross Geller: Noo. Why?
+
+      Rachel Green: Well, apparently he scares easy.
+
+      Ross Geller: Oh, Rachel, I''m-I''m sorry.
+
+      Rachel Green: It''s okay. Sometimes, things don''t work out the way you''d thought
+      they would.
+
+      Ross Geller: Come here.
+
+      Rachel Green: Oh, hey, don''t you have to go pick up Emily?
+
+      Ross Geller: Yeah.
+
+      Rachel Green: Yeah.
+
+      Ross Geller: You okay?
+
+      Rachel Green: Yeah! I got my girls.
+
+      Rachel Green: Ugh.
+
+      Phoebe Buffay: Hey, y''know what might cheer you up?
+
+      Rachel Green: What?
+
+      Rachel Green: Y''know, I gotta tell ya, this really does put in a better mood.
+
+      Monica Geller: Oh, I wish there was a job where I could wear this all the time.
+      Maybe someday, there will be.
+
+      Monica Geller: '
+num_episodes: 2138
+num_examples: 38815

@@ -1,58 +1,128 @@
 acts:
-- - characters: Phoebe Buffay,Ross Geller
+- - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!'
-- - characters: Phoebe Buffay,Ross Geller
+    - Well, you must be new here. Why don't we get a table and I'll buy you a drink.
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    text: 'The Casting Director: Any time you''re ready, Joey.
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Yeah, sure. Well, you must be new here. Maybe we should-I'm sorry, can I ask
+      you something?
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    text: 'The Casting Director: Any time you''re ready, Joey.
 
-      Ross Geller: Hi!'
-- - characters: Phoebe Buffay,Ross Geller
+      Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
+      buy you a drink.
+
+      The Casting Director: I''m sorry. Could you, could you try it without the purse?
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - Well, first it's not a purse.
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    text: 'The Casting Director: Any time you''re ready, Joey.
 
-      Ross Geller: Hi!
+      Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
+      buy you a drink.
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.'
-- - characters: Phoebe Buffay,Ross Geller
+      The Casting Director: I''m sorry. Could you, could you try it without the purse?
+
+      Joey Tribbiani: Yeah, sure. Well, you must be new here. Maybe we should-I''m
+      sorry, can I ask you something?
+
+      The Casting Director: Sure. What?
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - I mean if-if you're thinking it's a woman's bag, it's not. It's a man's bag!
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    text: 'The Casting Director: Any time you''re ready, Joey.
 
-      Ross Geller: Hi!
+      Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
+      buy you a drink.
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
+      The Casting Director: I''m sorry. Could you, could you try it without the purse?
 
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.'
-- - characters: Phoebe Buffay,Ross Geller
+      Joey Tribbiani: Yeah, sure. Well, you must be new here. Maybe we should-I''m
+      sorry, can I ask you something?
+
+      The Casting Director: Sure. What?
+
+      Joey Tribbiani: Well, first it''s not a purse.
+
+      The Casting Director: Okay, anytime.
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani
     episode_done: false
     id: friends:joey
     labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    text: 'Phoebe Buffay: Oh hey! Wait up!
+    - All right look, let me show you the catalog! See? Huh? It's the latest thing!
+      Everyone's got one! Men! Women! Children! Everyone's carrying them!
+    speakers:
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    - The Casting Director
+    - Joey Tribbiani
+    text: 'The Casting Director: Any time you''re ready, Joey.
 
-      Ross Geller: Hi!
+      Joey Tribbiani: Well, you must be new here. Why don''t we get a table and I''ll
+      buy you a drink.
 
-      Phoebe Buffay: Congratulations! I didn''t want to say anything in front of Joey
-      ''cause I didn''t know if he knew yet.
+      The Casting Director: I''m sorry. Could you, could you try it without the purse?
 
-      Ross Geller: What, that we had a baby? Come on let''s give him a little credit,
-      although, he did eat a piece of plastic fruit earlier.
+      Joey Tribbiani: Yeah, sure. Well, you must be new here. Maybe we should-I''m
+      sorry, can I ask you something?
 
-      Phoebe Buffay: No! No, that you and Rachel are engaged!'
-num_episodes: 2427
-num_examples: 46610
+      The Casting Director: Sure. What?
+
+      Joey Tribbiani: Well, first it''s not a purse.
+
+      The Casting Director: Okay, anytime.
+
+      Joey Tribbiani: I mean if-if you''re thinking it''s a woman''s bag, it''s not.
+      It''s a man''s bag!
+
+      The Casting Director: Okayyyy! Anddd, go!
+
+      Joey Tribbiani: '
+num_episodes: 2138
+num_examples: 38815

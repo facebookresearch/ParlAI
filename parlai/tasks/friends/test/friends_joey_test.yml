@@ -2,46 +2,15 @@ acts:
 - - characters: Joey Tribbiani,Rachel Green,Ross Geller
     episode_done: false
     eval_labels:
-    - 'Joey Tribbiani: __SILENCE__'
+    - Dude, are you okay?
     id: friends:joey
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
-    episode_done: false
-    eval_labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    id: friends:joey
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
-
-      Rachel Green: Ooy.'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
-    episode_done: false
-    eval_labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    id: friends:joey
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
-
-      Rachel Green: Ooy.
-
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
-    episode_done: false
-    eval_labels:
-    - 'Joey Tribbiani: __SILENCE__'
-    id: friends:joey
-    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
-
-      Rachel Green: Ooy.
-
-      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
-      life without love?
-
-      Rachel Green: Oh my god, are we supposed to answer?'
-- - characters: Joey Tribbiani,Rachel Green,Ross Geller
-    episode_done: false
-    eval_labels:
-    - 'Joey Tribbiani: Dude, are you okay?'
-    id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
     text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
 
       Rachel Green: Ooy.
@@ -54,6 +23,317 @@ acts:
       Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
       which I''m still fine with by the way. E is for how extremely normal I find
       it. That you two are together. And now one day you might get married and have
-      children of your own.'
-num_episodes: 302
-num_examples: 5774
+      children of your own.
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - You know what? I think I'm gonna stay here and make sure he's okay.
+    id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Ross Geller
+    - Joey Tribbiani
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.
+
+      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
+      life without love?
+
+      Rachel Green: Oh my god, are we supposed to answer?
+
+      Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
+      which I''m still fine with by the way. E is for how extremely normal I find
+      it. That you two are together. And now one day you might get married and have
+      children of your own.
+
+      Joey Tribbiani: Dude, are you okay?
+
+      Ross Geller: Totally.
+
+      Rachel Green: Ross, you don''t seem okay.
+
+      Ross Geller: I''m sorry, it must be the pressure of entertaining. I think everyone
+      would feel better if we had some flan.
+
+      Charlie Wheeler: Wait, Ross. Ross. I - I have to take off.
+
+      Ross Geller: No!
+
+      Charlie Wheeler: I''m sorry, I have a really early class in the morning, but
+      this has been lovely.
+
+      Ross Geller: Wasn''t it? And you thought it would be awkward with Joey and that
+      you never really liked Rachel.
+
+      Charlie Wheeler: You''re on fire! I''ll call you in the morning, okay?
+
+      Ross Geller: Okay.
+
+      Charlie Wheeler: Alright.
+
+      Charlie Wheeler: God, Rachel, what Ross just said that is just so..
+
+      Rachel Green: Oh, that''s okay, girls tend not to like me.
+
+      Charlie Wheeler: Bye.
+
+      Ross Geller: Okay, I guess it''s just flan for three! Hey, hey, that rhymed!
+
+      Rachel Green: You know what, Ross? I think we''re gonna take off too.
+
+      Ross Geller: Oh, oh. Of course. God, I''m so stupid. You guys are a couple now.
+      I mean, you probably just want to be alone.
+
+      Rachel Green: No, no, it''s just that it''s getting late...
+
+      Ross Geller: Hey, hey, it''s fine. It''s totally fine. We''ve got plenty of
+      margaritas. It''s all good.
+
+      Ross Geller: I don''t even know what that''s for.
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: true
+    eval_labels:
+    - Yeah. I'll see you in the morning.
+    id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Ross Geller
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.
+
+      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
+      life without love?
+
+      Rachel Green: Oh my god, are we supposed to answer?
+
+      Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
+      which I''m still fine with by the way. E is for how extremely normal I find
+      it. That you two are together. And now one day you might get married and have
+      children of your own.
+
+      Joey Tribbiani: Dude, are you okay?
+
+      Ross Geller: Totally.
+
+      Rachel Green: Ross, you don''t seem okay.
+
+      Ross Geller: I''m sorry, it must be the pressure of entertaining. I think everyone
+      would feel better if we had some flan.
+
+      Charlie Wheeler: Wait, Ross. Ross. I - I have to take off.
+
+      Ross Geller: No!
+
+      Charlie Wheeler: I''m sorry, I have a really early class in the morning, but
+      this has been lovely.
+
+      Ross Geller: Wasn''t it? And you thought it would be awkward with Joey and that
+      you never really liked Rachel.
+
+      Charlie Wheeler: You''re on fire! I''ll call you in the morning, okay?
+
+      Ross Geller: Okay.
+
+      Charlie Wheeler: Alright.
+
+      Charlie Wheeler: God, Rachel, what Ross just said that is just so..
+
+      Rachel Green: Oh, that''s okay, girls tend not to like me.
+
+      Charlie Wheeler: Bye.
+
+      Ross Geller: Okay, I guess it''s just flan for three! Hey, hey, that rhymed!
+
+      Rachel Green: You know what, Ross? I think we''re gonna take off too.
+
+      Ross Geller: Oh, oh. Of course. God, I''m so stupid. You guys are a couple now.
+      I mean, you probably just want to be alone.
+
+      Rachel Green: No, no, it''s just that it''s getting late...
+
+      Ross Geller: Hey, hey, it''s fine. It''s totally fine. We''ve got plenty of
+      margaritas. It''s all good.
+
+      Ross Geller: I don''t even know what that''s for.
+
+      Joey Tribbiani: You know what? I think I''m gonna stay here and make sure he''s
+      okay.
+
+      Rachel Green: Yeah, that''s probably a good idea.
+
+      Joey Tribbiani: '
+- - characters: Joey Tribbiani,Rachel Green,Ross Geller
+    episode_done: false
+    eval_labels:
+    - It doesn't look good, does it?
+    id: friends:joey
+    speakers:
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Joey Tribbiani
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Ross Geller
+    - Charlie Wheeler
+    - Charlie Wheeler
+    - Rachel Green
+    - Charlie Wheeler
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Rachel Green
+    - Ross Geller
+    - Ross Geller
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    - Rachel Green
+    - Joey Tribbiani
+    text: 'Ross Geller: Everyone? I would like to make a toast to Rachel and Joey.
+
+      Rachel Green: Ooy.
+
+      Ross Geller: And to love. Ah, love. L-O-V-E, love. L is for life. And what is
+      life without love?
+
+      Rachel Green: Oh my god, are we supposed to answer?
+
+      Ross Geller: O is for "oh, wow!" The V is for this very surprising turn of events,
+      which I''m still fine with by the way. E is for how extremely normal I find
+      it. That you two are together. And now one day you might get married and have
+      children of your own.
+
+      Joey Tribbiani: Dude, are you okay?
+
+      Ross Geller: Totally.
+
+      Rachel Green: Ross, you don''t seem okay.
+
+      Ross Geller: I''m sorry, it must be the pressure of entertaining. I think everyone
+      would feel better if we had some flan.
+
+      Charlie Wheeler: Wait, Ross. Ross. I - I have to take off.
+
+      Ross Geller: No!
+
+      Charlie Wheeler: I''m sorry, I have a really early class in the morning, but
+      this has been lovely.
+
+      Ross Geller: Wasn''t it? And you thought it would be awkward with Joey and that
+      you never really liked Rachel.
+
+      Charlie Wheeler: You''re on fire! I''ll call you in the morning, okay?
+
+      Ross Geller: Okay.
+
+      Charlie Wheeler: Alright.
+
+      Charlie Wheeler: God, Rachel, what Ross just said that is just so..
+
+      Rachel Green: Oh, that''s okay, girls tend not to like me.
+
+      Charlie Wheeler: Bye.
+
+      Ross Geller: Okay, I guess it''s just flan for three! Hey, hey, that rhymed!
+
+      Rachel Green: You know what, Ross? I think we''re gonna take off too.
+
+      Ross Geller: Oh, oh. Of course. God, I''m so stupid. You guys are a couple now.
+      I mean, you probably just want to be alone.
+
+      Rachel Green: No, no, it''s just that it''s getting late...
+
+      Ross Geller: Hey, hey, it''s fine. It''s totally fine. We''ve got plenty of
+      margaritas. It''s all good.
+
+      Ross Geller: I don''t even know what that''s for.
+
+      Joey Tribbiani: You know what? I think I''m gonna stay here and make sure he''s
+      okay.
+
+      Rachel Green: Yeah, that''s probably a good idea.
+
+      Joey Tribbiani: Yeah. I''ll see you in the morning.
+
+      Rachel Green: Uh-huh. Okay. You know what, Joey, I don''t think he''s ever gonna
+      be okay with this.
+
+      Joey Tribbiani: '
+- - characters: Chandler Bing,Joey Tribbiani
+    episode_done: false
+    eval_labels:
+    - He paid a lot of money for it.
+    id: friends:joey
+    speakers:
+    - Chandler Bing
+    - Joey Tribbiani
+    text: 'Chandler Bing: Hey look, are we gonna have to bring this out every time
+      Ross comes over?
+
+      Joey Tribbiani: '
+num_episodes: 264
+num_examples: 4963
