@@ -73,6 +73,10 @@
   "mkm_penalize_repetitions": true,
   "mkm_model": "projects.bb3.agents.opt_api_agent:BB3OPTAgent",
   "mkm_server": "opt_server",
+  "ignore_in_session_memories_mkm": false,
+  "memory_overlap_threshold": 0,
+  "memory_hard_block_for_n_turns": 0,
+  "memory_soft_block_decay_factor": 0,
 
   "contextual_knowledge_control_token": "",
   "contextual_knowledge_decision": "compute",
@@ -192,6 +196,5 @@
   "include_prompt": false,
   "knowledge_chunk_size": 100,
   "max_prompt_len": 1912,
-  "all_vanilla_prompt": false,
-  "ignore_in_session_memories_mkm": false
+  "all_vanilla_prompt": false
 }

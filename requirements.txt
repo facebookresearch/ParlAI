@@ -54,6 +54,7 @@ jsonlines==1.2.0
 numpy~=1.22 
 markdown<=3.3.2 # Pin to something that works so tests are happy
 jinja2==3.0.3
-ninja
+ninja~=1.10.2.3
 protobuf~=3.20
 contractions~=0.1.72
+fsspec~=2022.2.0
