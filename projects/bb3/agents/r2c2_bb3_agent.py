@@ -337,6 +337,33 @@ class BlenderBot3Agent(ModularAgentMixin):
             'separate: condition on all knowledge separately, re-ranke later'
             'both: do both combined and separate and re-rank final beam',
         )
+        parser.add_argument(
+            '--ignore-in-session-memories-mkm',
+            type='bool',
+            default=False,
+            help='If true, we do not look at the in-session memories when '
+            'generating from the MKM',
+        )
+        parser.add_argument(
+            '--memory-overlap-threshold',
+            type=float,
+            default=0.0,
+            help='Threshold word overlap between memory and incoming text. If '
+            'below this threshold, we exclude the memory from consideration.',
+        )
+        parser.add_argument(
+            '--memory-hard-block-for-n-turns',
+            type=int,
+            default=0,
+            help='If set > 0, we block memories from being used for n turns',
+        )
+        parser.add_argument(
+            '--memory-soft-block-decay-factor',
+            type=float,
+            default=0.0,
+            help='If set > 0, we randomly block a memory with probability '
+            '(decay ^ n_turns_since_used)',
+        )
         # Copied from Seeker
         group.add_argument(
             '--search-decision-do-search-reply',
@@ -424,7 +451,9 @@ class BlenderBot3Agent(ModularAgentMixin):
             self.agents[Module.SEARCH_KNOWLEDGE.agent_name()] = agent
             self.agents[Module.SEARCH_KNOWLEDGE] = agent
 
-        self.memories = []
+        self.dictionary = self.agents[Module.SEARCH_KNOWLEDGE.agent_name()].dictionary
+        # Memories is a mapping from memory to turns_since_used.
+        self.memories: Dict[str, int] = {}
         self.in_session_memories = set()
         self.search_knowledge_responses = ['__SILENCE__']
         self.memory_knowledge_responses = ['__SILENCE__']
@@ -533,7 +562,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             self.search_knowledge_responses = ['__SILENCE__']
             self.contextual_knowledge_responses = ['__SILENCE__']
             self.memory_knowledge_responses = ['__SILENCE__']
-            self.memories = []
+            self.memories = {}
             self.in_session_memories = set()
 
     def _construct_subagent_opts(self, opt: Opt):
@@ -641,6 +670,46 @@ class BlenderBot3Agent(ModularAgentMixin):
             memories = f"your persona: {' '.join(self_memories)}\npartner's persona: {' '.join(partner_memories)}"
             ag_obs.force_set('text', '\n'.join([memories, ag_obs['text']]))
         return ag_obs
+
+    def _get_memory_heuristic_values(self) -> Dict[str, Union[str, float, bool]]:
+        """
+        Extract heuristics from self.opt.
+        """
+        return {
+            'ignore_in_session_memories': self.opt.get(
+                'ignore_in_session_memories_mkm', False
+            ),
+            'memory_overlap_threshold': self.opt.get('memory_overlap_threshold', 0.0),
+            'memory_hard_block_for_n_turns': self.opt.get(
+                'memory_hard_block_for_n_turns', 0
+            ),
+            'memory_soft_block_decay_factor': self.opt.get(
+                'memory_soft_block_decay_factor', 0.0
+            ),
+        }
+
+    def get_available_memories(
+        self, observations: List[Dict[Union[str, Module], Message]]
+    ) -> List[List[str]]:
+        """
+        Get available memories for the agent.
+
+        :param observations:
+            incoming batch observations
+
+        :return memories:
+            return a list of memories for each batch item.
+        """
+        return [
+            MemoryUtils.get_available_memories(
+                o['raw']['text'],
+                o['raw']['memories'],
+                o['raw']['in_session_memories'],
+                self.dictionary,
+                **self._get_memory_heuristic_values(),
+            )
+            for o in observations
+        ]
 
     def observe(self, observation: Message) -> Dict[Module, Message]:
         """
@@ -1140,7 +1209,7 @@ class BlenderBot3Agent(ModularAgentMixin):
         batch_reply_mgm_partner: List[Message],
         batch_reply_knowledge: List[Message],
         batch_reply_dialogue: List[Message],
-        available_memory: List[List[str]],
+        available_memory: Union[List[List[str]], List[Dict[str, int]]],
     ) -> List[Message]:
         """
         Collate all of the batch acts from the various modules.
@@ -1184,35 +1253,20 @@ class BlenderBot3Agent(ModularAgentMixin):
                 f'{Module.MEMORY_GENERATOR.message_name()}_partner',
                 mgm_partner.get('text', ''),
             )
+            mems = copy.deepcopy(mems)
+            for message, person in zip([mgm_self, mgm_partner], ['self', 'partner']):
+                if MemoryUtils.is_valid_memory(
+                    mems,
+                    message.get('text', ''),
+                    MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
+                ):
+                    mems = MemoryUtils.add_memory(
+                        MemoryUtils.add_memory_prefix(
+                            message['text'], person, self.MODEL_TYPE
+                        ),
+                        mems,
+                    )
             reply.force_set('memories', mems)
-            if MemoryUtils.is_valid_memory(
-                reply['memories'],
-                mgm_self.get('text', ''),
-                MemoryUtils.get_memory_prefix('self', self.MODEL_TYPE),
-            ):
-                reply.force_set(
-                    'memories',
-                    reply['memories']
-                    + [
-                        MemoryUtils.add_memory_prefix(
-                            mgm_self['text'], 'self', self.MODEL_TYPE
-                        )
-                    ],
-                )
-            if MemoryUtils.is_valid_memory(
-                reply['memories'],
-                mgm_partner.get('text', ''),
-                MemoryUtils.get_memory_prefix('partner', self.MODEL_TYPE),
-            ):
-                reply.force_set(
-                    'memories',
-                    reply['memories']
-                    + [
-                        MemoryUtils.add_memory_prefix(
-                            mgm_partner['text'], 'partner', self.MODEL_TYPE
-                        )
-                    ],
-                )
             reply.force_set(
                 Module.SEARCH_KNOWLEDGE.message_name(),
                 km.get(Module.SEARCH_KNOWLEDGE.message_name(), ''),
@@ -1278,9 +1332,8 @@ class BlenderBot3Agent(ModularAgentMixin):
         """
         # First, determine whether we're searching or accessing memory
         try:
-            self.agents[Module.MEMORY_KNOWLEDGE].set_memory(
-                [o['raw']['memories'] for o in observations]
-            )
+            memory_to_set = self.get_available_memories(observations)
+            self.agents[Module.MEMORY_KNOWLEDGE].set_memory(memory_to_set)
             available_memory = self.agents[Module.MEMORY_KNOWLEDGE].get_memory()
         except AttributeError:
             # Gold Docs
@@ -1401,22 +1454,7 @@ class BlenderBot3Agent(ModularAgentMixin):
         self.memory_knowledge_responses.append(
             self_message.get(Module.MEMORY_KNOWLEDGE.message_name(), '')
         )
-        for person in ['self', 'partner']:
-            if MemoryUtils.is_valid_memory(
-                self.memories,
-                self_message.get(
-                    f'{Module.MEMORY_GENERATOR.message_name()}_{person}', ''
-                ),
-                MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
-            ):
-                memory_to_add = MemoryUtils.add_memory_prefix(
-                    self_message[f'{Module.MEMORY_GENERATOR.message_name()}_{person}'],
-                    person,
-                    self.MODEL_TYPE,
-                )
-
-                self.memories.append(memory_to_add)
-                self.in_session_memories.add(memory_to_add)
+        self.self_observe_memory(self_message)
         observation = {
             'text': clean_text(
                 self.agents[Module.SEARCH_KNOWLEDGE].history.get_history_str() or ''
@@ -1434,3 +1472,36 @@ class BlenderBot3Agent(ModularAgentMixin):
                 agent.history.update_history(
                     observation, temp_history=agent.get_temp_history(observation)
                 )
+
+    def self_observe_memory(self, self_message: Message):
+        """
+        Self observe memory for person.
+
+        First, add new memories to the memory.
+        Second, update memory usage.
+
+        :param memory:
+            potential memory
+        :param person:
+            whose memory it is
+        """
+        # add new memories
+        memory_key = Module.MEMORY_GENERATOR.message_name()
+        for person in ['self', 'partner']:
+            memory_candidate = self_message.get(f"{memory_key}_{person}")
+            if not memory_candidate:
+                continue
+            if MemoryUtils.is_valid_memory(
+                self.memories,
+                memory_candidate,
+                MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
+            ):
+                memory_to_add = MemoryUtils.add_memory_prefix(
+                    memory_candidate, person, self.MODEL_TYPE
+                )
+                self.memories = MemoryUtils.add_memory(memory_to_add, self.memories)
+                self.in_session_memories.add(memory_to_add)
+
+        # update mem usage
+        used_memory = self_message.get(Module.MEMORY_KNOWLEDGE.message_name(), '')
+        self.memories = MemoryUtils.update_memory_usage(used_memory, self.memories)
