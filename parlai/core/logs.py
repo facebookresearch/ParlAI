@@ -339,7 +339,7 @@ class ClearMLLogger(object):
             project_name=project_name,
             task_name=task_name,
             auto_connect_arg_parser=False,
-            auto_connect_frameworks={'tensorboard': False},
+            auto_connect_frameworks={'tensorboard': False, 'pytorch': False},
         )
 
         # Report Hyperparameter Configurations
