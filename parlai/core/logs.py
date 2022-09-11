@@ -418,15 +418,17 @@ class ClearMLLogger(object):
 
     def upload_artifact(self, artifact_name, artifact_path):
         """
-        Upload custom artifacts to ClearML.
+        Upload custom artifacts/models to ClearML.
 
         :param artifact_name:
-            Name of artifact to log or display in ClearML WebUI
+            Name of artifact/model to log or display in ClearML WebUI
         :param artifact_path:
-            The disk location of the artifact for uploading.
+            The disk location of the artifact/model for uploading.
         """
 
-        self.clearml_task.upload_artifact(artifact_name, artifact_path)
+        self.clearml_task.update_output_model(
+            model_path=artifact_path, model_name=artifact_name, auto_delete_file=False
+        )
 
     def flush(self):
         """
