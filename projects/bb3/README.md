@@ -141,7 +141,7 @@ python -m parlai.scripts.multiprocessing_train \
 We provide the BB3 3B model in ParlAI's model zoo. You can interact with the model via the following:
 
 ```bash
-parlai interactive --model-file zoo:bb3/bb3_3B/model --init-opt gen/r2c2_bb3
+parlai safe_interactive --model-file zoo:bb3/bb3_3B/model --init-opt gen/r2c2_bb3
 ```
 
 ### BB3 30B Model: Download
@@ -193,7 +193,7 @@ wget https://github.com/facebookresearch/metaseq/raw/main/projects/OPT/assets/gp
 Once you have an API up and running, you can utilize the BB3 agents we provide to interact with the model:
 
 ```
-parlai interactive --init-opt gen/opt_bb3 --opt-server API_SERVER --loglevel debug --raw-search-server RELEVANT_SEARCH_SERVER
+parlai safe_interactive --init-opt gen/opt_bb3 --opt-server API_SERVER --loglevel debug --raw-search-server RELEVANT_SEARCH_SERVER
 ```
 
 ### Holistic Bias
