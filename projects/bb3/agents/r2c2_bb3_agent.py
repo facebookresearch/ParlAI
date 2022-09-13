@@ -1341,7 +1341,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             memory_to_set = self.get_available_memories(observations)
             self.agents[Module.MEMORY_KNOWLEDGE].set_memory(memory_to_set)
             available_memory = self.agents[Module.MEMORY_KNOWLEDGE].get_memory()
-        except AttributeError as e:
+        except AttributeError:
             # Gold Docs
             available_memory = [[]] * len(observations)
             pass
