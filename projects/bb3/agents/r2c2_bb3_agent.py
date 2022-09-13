@@ -451,7 +451,12 @@ class BlenderBot3Agent(ModularAgentMixin):
             self.agents[Module.SEARCH_KNOWLEDGE.agent_name()] = agent
             self.agents[Module.SEARCH_KNOWLEDGE] = agent
 
-        self.dictionary = self.agents[Module.SEARCH_KNOWLEDGE.agent_name()].dictionary
+        if hasattr(agent, 'dictionary'):
+            # OPT
+            self.dictionary = agent.dictionary
+        else:
+            # R2C2
+            self.dictionary = agent.dict
         # Memories is a mapping from memory to turns_since_used.
         self.memories: Dict[str, int] = {}
         self.in_session_memories = set()
@@ -1335,9 +1340,10 @@ class BlenderBot3Agent(ModularAgentMixin):
             memory_to_set = self.get_available_memories(observations)
             self.agents[Module.MEMORY_KNOWLEDGE].set_memory(memory_to_set)
             available_memory = self.agents[Module.MEMORY_KNOWLEDGE].get_memory()
-        except AttributeError:
+        except AttributeError as e:
             # Gold Docs
-            available_memory = [[]] * len(observations)
+            logging.debug(f'Unable to access memories: {e}')
+            available_memory = [{}] * len(observations)
             pass
         batch_reply_sdm, search_indices = self.batch_act_decision(
             observations, Module.SEARCH_DECISION, self.agents[Module.SEARCH_DECISION]
