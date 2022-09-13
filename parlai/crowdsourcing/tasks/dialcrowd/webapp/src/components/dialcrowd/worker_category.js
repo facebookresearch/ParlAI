@@ -104,7 +104,7 @@ class WorkerCategory extends React.Component {
       this.setState({submitted: true});
       this.annotations.push({feedback: this.feedback});
       // send the annotation to the backend
-      this.props.onSubmit(this.annotations);
+      this.props.onSubmit({"annotations": this.annotations});
     }
     
   }
