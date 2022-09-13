@@ -1336,14 +1336,14 @@ class BlenderBot3Agent(ModularAgentMixin):
             return batchsize-length list of final replies.
         """
         # First, determine whether we're searching or accessing memory
+        all_memory: List[Dict[str, int]] = [o['raw']['memories'] for o in observations]
         try:
             memory_to_set = self.get_available_memories(observations)
             self.agents[Module.MEMORY_KNOWLEDGE].set_memory(memory_to_set)
             available_memory = self.agents[Module.MEMORY_KNOWLEDGE].get_memory()
         except AttributeError as e:
             # Gold Docs
-            logging.debug(f'Unable to access memories: {e}')
-            available_memory = [{}] * len(observations)
+            available_memory = [[]] * len(observations)
             pass
         batch_reply_sdm, search_indices = self.batch_act_decision(
             observations, Module.SEARCH_DECISION, self.agents[Module.SEARCH_DECISION]
@@ -1431,7 +1431,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             batch_reply_mgm_partner,
             batch_reply_knowledge,
             batch_reply_dialogue,
-            available_memory,
+            all_memory,
         )
 
         return final_batch_reply
