@@ -611,6 +611,8 @@ class TestMemorySoftBlockThreshold(TestOptFtBase):
 
     def test_memory_utils(self):
         memories = self.memories
+        # test that it works with floats as well
+        memories = {m: float(t) for m, t in memories.items()}
         decay_factor = 0.99
         success = False
         for _ in range(10):

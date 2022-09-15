@@ -396,6 +396,7 @@ class MemoryUtils:
         """
         available_memory = []
         for memory, turns_since_used in memories.items():
+            turns_since_used = int(turns_since_used)
             # check if we should ignore in session memories
             if ignore_in_session_memories and memory in in_session_memories:
                 continue
