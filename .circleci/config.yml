@@ -340,7 +340,7 @@ jobs:
   long_gpu_tests:
     executor: gpu_medium
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 32
     steps:
       - runtests:
           more_installs:
