@@ -1,0 +1,666 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - date the 8th
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - the 8th
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date the 8th, location Corte Madera, restaurant_name P.f. Chang's, time afternoon
+      12
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - the 8th
+      location:
+      - Corte Madera
+      restaurant_name:
+      - P.f. Chang's
+      time:
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th.
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date March 8th, location Corte Madera, number_of_seats 2, restaurant_name P.f.
+      Chang's, time 12 pm
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - March 8th
+      - the 8th
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - P.f. Chang's
+      time:
+      - 12 pm
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th. <user> Sure, that is great. <system> Sorry, your reservation could not
+      be made. Could I help you with something else?
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date March 8th, location Corte Madera, number_of_seats 2, restaurant_name Benissimo,
+      time 12 pm
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - March 8th
+      - the 8th
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Benissimo
+      time:
+      - 12 pm
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th. <user> Sure, that is great. <system> Sorry, your reservation could not
+      be made. Could I help you with something else? <user> Could you try booking
+      a table at Benissimo instead? <system> Sure, please confirm your reservation
+      at Benissimo Restaurant & Bar in Corte Madera at 12 pm for 2 on March 8th.
+    type: text
+- - episode_done: true
+    eval_labels:
+    - date March 8th, location Corte Madera, number_of_seats 2, restaurant_name Benissimo,
+      time 12 pm
+    id: GoogleSGD_UserSimulatorTeacher
+    service:
+      description: A popular restaurant search and reservation service
+      intents:
+      - description: Make a table reservation at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          number_of_seats: '2'
+        required_slots:
+        - restaurant_name
+        - location
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - number_of_seats
+        - price_range
+        - location
+        - category
+      - description: Find restaurants by location and by category
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_seating_outdoors: dontcare
+          has_vegetarian_options: dontcare
+          price_range: dontcare
+        required_slots:
+        - category
+        - location
+        result_slots:
+        - restaurant_name
+        - has_seating_outdoors
+        - has_vegetarian_options
+        - phone_number
+        - rating
+        - address
+        - price_range
+        - location
+        - category
+      service_name: Restaurants_2
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Tentative date of restaurant reservation
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Tentative time of restaurant reservation
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Whether the restaurant has outdoor seating available
+        is_categorical: true
+        name: has_seating_outdoors
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Whether the restaurant has adequate vegetarian options
+        is_categorical: true
+        name: has_vegetarian_options
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number to contact restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Average user rating for restaurant on a scale of 5
+        is_categorical: false
+        name: rating
+        possible_values: []
+      - description: Address of restaurant
+        is_categorical: false
+        name: address
+        possible_values: []
+      - description: Number of seats to reserve at the restaurant
+        is_categorical: true
+        name: number_of_seats
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - cheap
+        - moderate
+        - pricey
+        - ultra high-end
+      - description: City where the restaurant is located
+        is_categorical: false
+        name: location
+        possible_values: []
+      - description: The category of food offered by the restaurant
+        is_categorical: false
+        name: category
+        possible_values: []
+    slots:
+      date:
+      - March 8th
+      - the 8th
+      location:
+      - Corte Madera
+      number_of_seats:
+      - '2'
+      restaurant_name:
+      - Benissimo
+      - Benissimo Restaurant & Bar
+      time:
+      - 12 pm
+      - afternoon 12
+    text: <user> Hi, could you get me a restaurant booking on the 8th please? <system>
+      Any preference on the restaurant, location and time? <user> Could you get me
+      a reservation at P.f. Chang's in Corte Madera at afternoon 12? <system> Please
+      confirm your reservation at P.f. Chang's in Corte Madera at 12 pm for 2 on March
+      8th. <user> Sure, that is great. <system> Sorry, your reservation could not
+      be made. Could I help you with something else? <user> Could you try booking
+      a table at Benissimo instead? <system> Sure, please confirm your reservation
+      at Benissimo Restaurant & Bar in Corte Madera at 12 pm for 2 on March 8th. <user>
+      Sure, may I know if they have vegetarian options and how expensive is their
+      food? <system> Your reservation has been made. Unfortunately, they do not serve
+      vegetarian options, although they are moderate priced.
+    type: text
+num_episodes: 4201
+num_examples: 46498

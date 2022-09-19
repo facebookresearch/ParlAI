@@ -82,10 +82,14 @@ class BB3Model(ComboFidModel):
     Override the ComboFid model to allow memory computation.
     """
 
-    def __init__(self, opt: Opt, dictionary: DictionaryAgent, retriever_shared=None):
-        super().__init__(opt, dictionary, retriever_shared)
-        self.retriever = bb3_retriever_factory(opt, dictionary, shared=retriever_shared)
-        self.top_docs = []
+    @classmethod
+    def build_retriever(
+        cls,
+        opt: Opt,
+        dictionary: DictionaryAgent,
+        retriever_shared: Optional[Dict[str, Any]],
+    ) -> Optional[RagRetriever]:
+        return bb3_retriever_factory(opt, dictionary, retriever_shared)
 
     def set_memory(self, memories: List[List[str]]):
         """
@@ -421,6 +425,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             self.agents[Module.SEARCH_KNOWLEDGE] = agent
 
         self.memories = []
+        self.in_session_memories = set()
         self.search_knowledge_responses = ['__SILENCE__']
         self.memory_knowledge_responses = ['__SILENCE__']
         self.contextual_knowledge_responses = ['__SILENCE__']
@@ -529,6 +534,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             self.contextual_knowledge_responses = ['__SILENCE__']
             self.memory_knowledge_responses = ['__SILENCE__']
             self.memories = []
+            self.in_session_memories = set()
 
     def _construct_subagent_opts(self, opt: Opt):
         """
@@ -657,6 +663,7 @@ class BlenderBot3Agent(ModularAgentMixin):
 
         raw_observation = copy.deepcopy(observation)
         raw_observation['memories'] = self.memories
+        raw_observation['in_session_memories'] = self.in_session_memories
         observations['raw'] = raw_observation
 
         if observation.get('episode_done'):
@@ -1402,15 +1409,14 @@ class BlenderBot3Agent(ModularAgentMixin):
                 ),
                 MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
             ):
-                self.memories.append(
-                    MemoryUtils.add_memory_prefix(
-                        self_message[
-                            f'{Module.MEMORY_GENERATOR.message_name()}_{person}'
-                        ],
-                        person,
-                        self.MODEL_TYPE,
-                    )
+                memory_to_add = MemoryUtils.add_memory_prefix(
+                    self_message[f'{Module.MEMORY_GENERATOR.message_name()}_{person}'],
+                    person,
+                    self.MODEL_TYPE,
                 )
+
+                self.memories.append(memory_to_add)
+                self.in_session_memories.add(memory_to_add)
         observation = {
             'text': clean_text(
                 self.agents[Module.SEARCH_KNOWLEDGE].history.get_history_str() or ''

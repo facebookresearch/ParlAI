@@ -1,0 +1,622 @@
+acts:
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - ''
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots: {}
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at?
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else?
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose, cuisine American
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+      cuisine:
+      - American
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else? <user> I usually
+      like eating the American type of food. <system> I see that at 71 Saint Peter
+      there is a good restaurant which is in San Jose.
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose, cuisine American
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+      cuisine:
+      - American
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else? <user> I usually
+      like eating the American type of food. <system> I see that at 71 Saint Peter
+      there is a good restaurant which is in San Jose. <user> Can you give me the
+      address of this restaurant. <system> If you want to go to this restaurant you
+      can find it at 71 North San Pedro Street.
+    type: text
+- - episode_done: true
+    id: GoogleSGD_UserSimulatorTeacher
+    labels:
+    - city San Jose, cuisine American
+    service:
+      description: A leading provider for restaurant search and reservations
+      intents:
+      - description: Reserve a table at a restaurant
+        is_transactional: true
+        name: ReserveRestaurant
+        optional_slots:
+          date: '2019-03-01'
+          party_size: '2'
+        required_slots:
+        - restaurant_name
+        - city
+        - time
+        result_slots:
+        - restaurant_name
+        - date
+        - time
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - party_size
+        - price_range
+        - city
+        - cuisine
+      - description: Find a restaurant of a particular cuisine in a city
+        is_transactional: false
+        name: FindRestaurants
+        optional_slots:
+          has_live_music: dontcare
+          price_range: dontcare
+          serves_alcohol: dontcare
+        required_slots:
+        - cuisine
+        - city
+        result_slots:
+        - restaurant_name
+        - serves_alcohol
+        - has_live_music
+        - phone_number
+        - street_address
+        - price_range
+        - city
+        - cuisine
+      service_name: Restaurants_1
+      slots:
+      - description: Name of the restaurant
+        is_categorical: false
+        name: restaurant_name
+        possible_values: []
+      - description: Date for the reservation or to find availability
+        is_categorical: false
+        name: date
+        possible_values: []
+      - description: Time for the reservation or to find availability
+        is_categorical: false
+        name: time
+        possible_values: []
+      - description: Boolean flag indicating if the restaurant serves alcohol
+        is_categorical: true
+        name: serves_alcohol
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Boolean flag indicating if the restaurant has live music
+        is_categorical: true
+        name: has_live_music
+        possible_values:
+        - 'True'
+        - 'False'
+      - description: Phone number of the restaurant
+        is_categorical: false
+        name: phone_number
+        possible_values: []
+      - description: Address of the restaurant
+        is_categorical: false
+        name: street_address
+        possible_values: []
+      - description: Party size for a reservation
+        is_categorical: true
+        name: party_size
+        possible_values:
+        - '1'
+        - '2'
+        - '3'
+        - '4'
+        - '5'
+        - '6'
+      - description: Price range for the restaurant
+        is_categorical: true
+        name: price_range
+        possible_values:
+        - inexpensive
+        - moderate
+        - expensive
+        - very expensive
+      - description: City in which the restaurant is located
+        is_categorical: false
+        name: city
+        possible_values: []
+      - description: Cuisine of food served in the restaurant
+        is_categorical: false
+        name: cuisine
+        possible_values:
+        - Mexican
+        - Chinese
+        - Indian
+        - American
+        - Italian
+    slots:
+      city:
+      - San Jose
+      cuisine:
+      - American
+    text: <user> I am feeling hungry so I would like to find a place to eat. <system>
+      Do you have a specific which you want the eating place to be located at? <user>
+      I would like for it to be in San Jose. <system> Is there a specific cuisine
+      type you enjoy, such as Mexican, Italian or something else? <user> I usually
+      like eating the American type of food. <system> I see that at 71 Saint Peter
+      there is a good restaurant which is in San Jose. <user> Can you give me the
+      address of this restaurant. <system> If you want to go to this restaurant you
+      can find it at 71 North San Pedro Street. <user> Can you give me the phone number
+      that I can contact them with? <system> If you want to phone them you can at
+      408-971-8523.
+    type: text
+num_episodes: 16142
+num_examples: 181124

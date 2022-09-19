@@ -1,0 +1,66 @@
+acts:
+- - dialogue_id: PMUL4398.json
+    episode_done: true
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - restaurant area centre ; restaurant pricerange expensive
+    text: <user> i need a place to dine in the center thats expensive
+    turn_num: '0'
+- - dialogue_id: PMUL4398.json
+    episode_done: true
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - restaurant area centre ; restaurant pricerange expensive
+    text: <user> i need a place to dine in the center thats expensive <system> i have
+      several options for you; do you prefer african, asian, or british food? <user>
+      any sort of food would be fine, as long as it is a bit expensive. could i get
+      the phone number for your recommendation?
+    turn_num: '2'
+- - dialogue_id: PMUL4398.json
+    episode_done: true
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - hotel pricerange expensive ; hotel type hotel ; restaurant area centre ; restaurant
+      name bedouin ; restaurant pricerange expensive
+    text: <user> i need a place to dine in the center thats expensive <system> i have
+      several options for you; do you prefer african, asian, or british food? <user>
+      any sort of food would be fine, as long as it is a bit expensive. could i get
+      the phone number for your recommendation? <system> there is an afrian place
+      named bedouin in the centre. how does that sound? <user> sounds good, could
+      i get that phone number? also, could you recommend me an expensive hotel?
+    turn_num: '4'
+- - dialogue_id: PMUL4398.json
+    episode_done: true
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - hotel name university arms hotel ; hotel pricerange expensive ; hotel type hotel
+      ; restaurant area centre ; restaurant name bedouin ; restaurant pricerange expensive
+    text: <user> i need a place to dine in the center thats expensive <system> i have
+      several options for you; do you prefer african, asian, or british food? <user>
+      any sort of food would be fine, as long as it is a bit expensive. could i get
+      the phone number for your recommendation? <system> there is an afrian place
+      named bedouin in the centre. how does that sound? <user> sounds good, could
+      i get that phone number? also, could you recommend me an expensive hotel? <system>
+      bedouin's phone is 01223367660. as far as hotels go, i recommend the university
+      arms hotel in the center of town. <user> yes. can you book it for me?
+    turn_num: '6'
+- - dialogue_id: PMUL4398.json
+    episode_done: true
+    id: MultiwozV22_UserSimulatorTeacher
+    labels:
+    - hotel bookday saturday ; hotel bookpeople 2 ; hotel bookstay 2 ; hotel name
+      university arms hotel ; hotel pricerange expensive ; hotel type hotel ; restaurant
+      area centre ; restaurant name bedouin ; restaurant pricerange expensive
+    text: <user> i need a place to dine in the center thats expensive <system> i have
+      several options for you; do you prefer african, asian, or british food? <user>
+      any sort of food would be fine, as long as it is a bit expensive. could i get
+      the phone number for your recommendation? <system> there is an afrian place
+      named bedouin in the centre. how does that sound? <user> sounds good, could
+      i get that phone number? also, could you recommend me an expensive hotel? <system>
+      bedouin's phone is 01223367660. as far as hotels go, i recommend the university
+      arms hotel in the center of town. <user> yes. can you book it for me? <system>
+      sure, when would you like that reservation? <user> i want to book it for 2 people
+      and 2 nights starting from saturday.
+    turn_num: '8'
+num_episodes: 7913
+num_examples: 63025

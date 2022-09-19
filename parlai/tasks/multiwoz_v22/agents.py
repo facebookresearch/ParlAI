@@ -25,6 +25,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.data import DatatypeHelper
 from parlai.utils.io import PathManager
+from parlai.utils.testing import is_this_circleci
 
 DOMAINS = [
     "attraction",
@@ -416,14 +417,16 @@ class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeache
         "train--departure",
     }
 
-    rng = np.random.RandomState(SEED)
-
     def __init__(self, opt: Opt, shared=None, *args, **kwargs):
         self.opt = opt
         self.fold = opt["datatype"].split(":")[0]
         opt["datafile"] = self.fold
         self.dpath = os.path.join(opt["datapath"], "multiwoz_v22")
         self.id = "multiwoz_v22"
+        if self.opt.get("teacher_seed"):
+            self.rng = np.random.RandomState(self.opt["teacher_seed"])
+        else:
+            self.rng = np.random.RandomState(SEED)
 
         if shared is None:
             build_.build(opt)
@@ -451,7 +454,7 @@ class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeache
                             domain, slot_type = domain_slot_type.split("-")
                             belief_state = f"{domain} {slot_type} {slot_value.lower()}"
                             belief_states.append(belief_state)
-        return list(set(belief_states))
+        return sorted(list(set(belief_states)))
 
     def _extract_slot_from_string(self, slots_string):
         """
@@ -587,13 +590,11 @@ class MultiWOZv22DSTTeacher(MultiwozV22Parser, tod_agents.TodUserSimulatorTeache
                             "dialogue_id": dialog["dialogue_id"],
                             "turn_num": turn["turn_id"],
                             "text": " ".join(context),
-                            "labels": self.BELIEF_STATE_DELIM.join(
-                                set(cum_belief_states)
-                            ),
+                            "labels": self.BELIEF_STATE_DELIM.join(cum_belief_states),
                         }
                     )
-
-        self.rng.shuffle(examples)
+        if not is_this_circleci():
+            self.rng.shuffle(examples)
         for example in examples:
             yield example, True
 

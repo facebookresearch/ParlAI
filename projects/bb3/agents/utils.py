@@ -13,7 +13,7 @@ from nltk.stem import PorterStemmer
 import os
 import string
 import time
-from typing import List, Tuple, Optional, Dict, Any
+from typing import List, Tuple, Optional, Dict, Any, Set
 
 from parlai.agents.ir_baseline.ir_baseline import score_match, MaxPriorityQueue
 from parlai.core.dict import DictionaryAgent
@@ -332,8 +332,8 @@ class MemoryUtils:
         return rep
 
     @staticmethod
-    def get_available_memory(
-        observation: Message, dictionary: DictionaryAgent
+    def maybe_reduce_memories(
+        text: str, memories: List[str], dictionary: DictionaryAgent
     ) -> List[str]:
         """
         TFIDF-Match memories with the textual input to reduce num memories.
@@ -347,16 +347,39 @@ class MemoryUtils:
             return - potentially shortened - list of memories
         """
         new_memories = []
-        mems = observation['memories']
-        if not mems or len(mems) < 32:  # 512 / 16, assuming 16 tokens max per memory
-            return mems
+        if (
+            not memories or len(memories) < 32
+        ):  # 512 / 16, assuming 16 tokens max per memory
+            return memories
         mpq = MaxPriorityQueue(1000)
-        query = MemoryUtils._build_query_representation(observation['text'], dictionary)
-        for m in mems:
+        query = MemoryUtils._build_query_representation(text, dictionary)
+        for m in memories:
             score = score_match(query, m, 0, dictionary)
             mpq.add(m, score)
         new_memories = list(reversed(mpq))[:32]
         return new_memories
+
+    @staticmethod
+    def get_available_memories(
+        memories: List[str],
+        in_session_memories: Set[str],
+        ignore_in_session_memories: bool,
+    ) -> List[str]:
+        """
+        Return available memories.
+
+        :param memories:
+            list of all memories
+        :param in_session_memories:
+            set of memories generated within the current conversation session
+        :param ignore_in_session_memories:
+            whether to ignore memories generated within the session
+        """
+        return [
+            m
+            for m in memories
+            if m not in in_session_memories or not ignore_in_session_memories
+        ]
 
 
 #################
