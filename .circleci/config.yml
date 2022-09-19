@@ -98,6 +98,7 @@ commands:
             pip install -v -r requirements.txt
             python setup.py develop
             python -c "import nltk; nltk.download('punkt')"
+            python -c "import nltk; nltk.download('stopwords')"
 
   installtorchgpu:
     description: Install torch GPU and dependencies
@@ -207,26 +208,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220819c-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220831-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220819c-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20220831-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220819c-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220831-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220819c-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20220831-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -243,12 +244,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220819c-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220831-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220819c-bw-{{ checksum "requirements.txt" }}
+          key: deps-20220831-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -339,7 +340,7 @@ jobs:
   long_gpu_tests:
     executor: gpu_medium
     working_directory: ~/ParlAI
-    parallelism: 8
+    parallelism: 32
     steps:
       - runtests:
           more_installs:

@@ -153,13 +153,6 @@ class BlenderBot3Agent(R2C2Agent):
             help='Number of times to retry on API request failures (< 0 for unlimited retry).',
         )
         parser.add_argument('--metaseq-server-timeout', default=20.0, type=float)
-        parser.add_argument(
-            '--ignore-in-session-memories-mkm',
-            type='bool',
-            default=False,
-            help='If true, we do not look at the in-session memories when '
-            'generating from the MKM',
-        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -177,12 +170,8 @@ class BlenderBot3Agent(R2C2Agent):
             self.agents[Module.SEARCH_KNOWLEDGE.agent_name()] = top_agent
             self.agents[Module.SEARCH_KNOWLEDGE] = top_agent
 
-        self.dictionary = top_agent.dictionary
         # continue
         self.max_prompt_len = opt.get('max_prompt_len', PROMPT.MAX_PROMPT_LEN)
-        self.ignore_in_session_memories_mkm = opt.get(
-            'ignore_in_session_memories_mkm', False
-        )
         self.search_agent = SearchAgent(
             {
                 'server': self.opt.get('search_server', 'default'),
@@ -270,7 +259,7 @@ class BlenderBot3Agent(R2C2Agent):
         return ag_obs
 
     def get_orm_observation(
-        self, observation: Message, opening_memories: List[str]
+        self, observation: Message, opening_memories: Dict[str, int]
     ) -> Message:
         """
         Return the appropriate ORM observation.
@@ -285,27 +274,65 @@ class BlenderBot3Agent(R2C2Agent):
         """
         agent = self.agents[Module.OPENING_DIALOGUE]
         agent.reset()
-        for i, mem in enumerate(opening_memories):
+        prefixed_memories = {}
+        for mem, val in opening_memories.items():
             mem = MemoryUtils.maybe_add_memory_prefix(mem, 'partner', self.MODEL_TYPE)
-            opening_memories[i] = mem
+            prefixed_memories[mem] = val
 
         new_obs = copy.deepcopy(observation)
-        new_obs.force_set(
-            'text', self._check_and_limit_len('\n'.join(opening_memories))
+        memories_to_use = MemoryUtils.get_available_memories(
+            '',
+            prefixed_memories,
+            set(),
+            dictionary=self.dictionary,
+            **self._get_memory_heuristic_values(),
         )
-        new_obs.force_set('memories', opening_memories)
+        if not memories_to_use:
+            # we need at least one memory to open with...
+            memories_to_use = random.sample(list(prefixed_memories.keys()), 1)
+
+        new_obs.force_set('text', self._check_and_limit_len('\n'.join(memories_to_use)))
+        new_obs.force_set('memories', prefixed_memories)
 
         return agent.observe(new_obs)
+
+    def get_opening_memories(
+        self, memories: Optional[Union[List[str], Dict[str, int]]]
+    ) -> Optional[Dict[str, int]]:
+        """
+        Get the opening memories, if applicable.
+
+        This function is designed to handle legacy cases where memories are
+        presented as a list, rather than a dict.
+
+        :param memories:
+            memories from the opening message
+
+        :return opening_memories:
+            return the set of true opening memories
+        """
+        opening_memories = None
+        if memories:
+            if isinstance(memories, dict):
+                opening_memories = {mem: int(turns) for mem, turns in memories.items()}
+            elif isinstance(memories, list):
+                opening_memories = {}
+                for mem in memories:
+                    opening_memories = MemoryUtils.add_memory(mem, opening_memories)
+
+        assert not opening_memories or isinstance(opening_memories, dict)
+        return opening_memories
 
     def observe(self, observation: Message) -> Dict[Module, Message]:
         # handle passed memories as well
         observation = Message(observation)
-        opening_memories = observation.pop('memories', None)
+        opening_memories = self.get_opening_memories(observation.pop('memories', None))
         observations = super().observe(observation)
         for m in Module.dialogue_modules():
             ag_obs = copy.deepcopy(observation)
             observations[m] = self.agents[m].observe(ag_obs)
         if is_opener(observation['text'], opening_memories):
+            assert opening_memories
             orm_obs = self.get_orm_observation(observation, opening_memories)
             self.memories = orm_obs['memories']
             observations[Module.OPENING_DIALOGUE] = orm_obs
@@ -425,10 +452,7 @@ class BlenderBot3Agent(R2C2Agent):
             for module in Module:
                 obs = all_obs[module]
                 if module is Module.MEMORY_KNOWLEDGE and i in memory_indices:
-                    memories = MemoryUtils.maybe_reduce_memories(
-                        all_obs['raw']['text'], available_memory[i], self.dictionary
-                    )
-                    memories = '\n'.join(memories)
+                    memories = '\n'.join(available_memory[i])
                     new_prompt = self._check_and_limit_len(
                         obs['prompt'].replace(module.opt_pre_context_tok(), memories)
                     )
@@ -701,7 +725,15 @@ class BlenderBot3Agent(R2C2Agent):
             retries += 1
             n_mems = [min(1, len(obs['memories']) // 3) for obs in opening_obs]
             for i, o in enumerate(opening_obs):
-                o.force_set('memories', random.sample(o['memories'], n_mems[i]))
+                mem_indices = random.sample(range(len(o['memories'])), n_mems[i])
+                o.force_set(
+                    'memories',
+                    {
+                        m: v
+                        for i, (m, v) in enumerate(o['memories'].items())
+                        if i in mem_indices
+                    },
+                )
         if _failed_messages(batch_act):
             for reply in batch_act:
                 text = reply.pop('text')
@@ -782,15 +814,8 @@ class BlenderBot3Agent(R2C2Agent):
             for _ in range(len(observations))
         ]
         # Step 1: determine whether we're searching or accessing memory
-        all_memory = [o['raw']['memories'] for o in observations]
-        available_memory = [
-            MemoryUtils.get_available_memories(
-                o['raw']['memories'],
-                o['raw']['in_session_memories'],
-                self.ignore_in_session_memories_mkm,
-            )
-            for o in observations
-        ]
+        all_memory: List[Dict[str, int]] = [o['raw']['memories'] for o in observations]
+        available_memory = self.get_available_memories(observations)
 
         batch_reply_sdm, search_indices = self.batch_act_decision(
             observations,
@@ -908,18 +933,4 @@ class BlenderBot3Agent(R2C2Agent):
                 agent.self_observe(self_message)
         if self.vanilla:
             return
-        memory_key = Module.MEMORY_GENERATOR.message_name()
-        for person in ['self', 'partner']:
-            memory_candidate = self_message.get(f"{memory_key}_{person}")
-            if not memory_candidate:
-                continue
-            if MemoryUtils.is_valid_memory(
-                self.memories,
-                memory_candidate,
-                MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
-            ):
-                memory_to_add = MemoryUtils.add_memory_prefix(
-                    memory_candidate, person, self.MODEL_TYPE
-                )
-                self.memories.append(memory_to_add)
-                self.in_session_memories.add(memory_to_add)
+        self.self_observe_memory(self_message)

@@ -8,16 +8,19 @@ import asyncio
 from enum import Enum
 import json
 import math
+from nltk.corpus import stopwords as nltk_stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import PorterStemmer
 import os
+import random
 import string
 import time
-from typing import List, Tuple, Optional, Dict, Any, Set
+from typing import List, Tuple, Optional, Dict, Any, Set, Union
 
 from parlai.agents.ir_baseline.ir_baseline import score_match, MaxPriorityQueue
 from parlai.core.dict import DictionaryAgent
 from parlai.core.message import Message
+from parlai.core.metrics import F1Metric
 from parlai.core.torch_generator_agent import PPLMetric
 import parlai.utils.logging as logging
 import projects.bb3.constants as CONST
@@ -58,8 +61,14 @@ _STOP_WORDS = set(
 )
 
 
+_STOP_WORDS_WITH_PRONOUNS = set(nltk_stopwords.words('english')).union(_STOP_WORDS)
+
+
 def normal_tokenizer(
-    text: str, remove_contractions: bool = True, stem=True
+    text: str,
+    remove_contractions: bool = True,
+    stem=True,
+    include_pronouns: bool = False,
 ) -> List[str]:
     """
     Returns normalized tokens for `text`
@@ -76,7 +85,8 @@ def normal_tokenizer(
 
     if stem:
         tokens = [STEMMER.stem(t) for t in tokens]
-    tokens = [t for t in tokens if t not in _STOP_WORDS]
+    stop_words = _STOP_WORDS if not include_pronouns else _STOP_WORDS_WITH_PRONOUNS
+    tokens = [t for t in tokens if t not in stop_words]
 
     return tokens
 
@@ -138,14 +148,14 @@ class Decision(Enum):
     COMPUTE = 'compute'
 
 
-def is_opener(text: str, mems: Optional[List[str]]):
+def is_opener(text: str, mems: Optional[Dict[str, int]]):
     """
     Return if message is an opener!
     """
     return (
         text == PROMPT.OPENING_PREFIX
         and mems is not None
-        and isinstance(mems, list)
+        and (isinstance(mems, list) or isinstance(mems, dict))
         and len(mems) > 0
     )
 
@@ -221,7 +231,9 @@ class MemoryUtils:
 
     @staticmethod
     def is_valid_memory(
-        chatbot_memory: List[str], new_memory: str, new_memory_prefix: str
+        chatbot_memory: Union[List[str], Dict[str, int]],
+        new_memory: str,
+        new_memory_prefix: str,
     ) -> bool:
         """
         Return whether the memory is valid.
@@ -361,13 +373,20 @@ class MemoryUtils:
 
     @staticmethod
     def get_available_memories(
-        memories: List[str],
+        text: str,
+        memories: Dict[str, int],
         in_session_memories: Set[str],
-        ignore_in_session_memories: bool,
+        dictionary: Optional[DictionaryAgent] = None,
+        ignore_in_session_memories: bool = False,
+        memory_overlap_threshold: float = 0.0,
+        memory_hard_block_for_n_turns: int = 0,
+        memory_soft_block_decay_factor: float = 0.0,
     ) -> List[str]:
         """
         Return available memories.
 
+        :param text:
+            incoming partner text
         :param memories:
             list of all memories
         :param in_session_memories:
@@ -375,11 +394,78 @@ class MemoryUtils:
         :param ignore_in_session_memories:
             whether to ignore memories generated within the session
         """
-        return [
-            m
-            for m in memories
-            if m not in in_session_memories or not ignore_in_session_memories
-        ]
+        available_memory = []
+        for memory, turns_since_used in memories.items():
+            turns_since_used = int(turns_since_used)
+            # check if we should ignore in session memories
+            if ignore_in_session_memories and memory in in_session_memories:
+                continue
+            # check overlap
+            if memory_overlap_threshold > 0:
+                non_stopword_memory = ' '.join(
+                    normal_tokenizer(memory.split(':')[-1], include_pronouns=True)
+                )
+                non_stopword_text = ' '.join(
+                    normal_tokenizer(text, include_pronouns=True)
+                )
+                if (
+                    F1Metric.compute(non_stopword_memory, [non_stopword_text]).value()
+                    < memory_overlap_threshold
+                ):
+                    continue
+            # check hard block
+            if turns_since_used < memory_hard_block_for_n_turns:
+                continue
+            # check soft block
+            if memory_soft_block_decay_factor > 0 and random.random() < (
+                memory_soft_block_decay_factor**turns_since_used
+            ):
+                continue
+
+            available_memory.append(memory)
+        return MemoryUtils.maybe_reduce_memories(text, available_memory, dictionary)
+
+    @staticmethod
+    def add_memory(memory: str, memories: Dict[str, int]) -> Dict[str, int]:
+        """
+        Add memory to the memory store.
+
+        :param memory:
+            memory to add
+        :param memories:
+            all the memories
+
+        :return memories:
+            return memories with new memory
+        """
+        if not memory:
+            return memories
+        assert memory not in memories
+        memories[memory] = 0
+        return memories
+
+    @staticmethod
+    def update_memory_usage(
+        used_memory: str, memories: Dict[str, int]
+    ) -> Dict[str, int]:
+        """
+        Update memories to indicate that a memory was used.
+
+        :param memory:
+            used memory
+        :param memories:
+            all the memories
+
+        :return memories:
+            return memories with usage updated
+        """
+        assert not used_memory or used_memory in memories
+        for mem in memories:
+            if mem == used_memory:
+                memories[mem] = 0
+            else:
+                memories[mem] += 1
+        return memories
 
 
 #################

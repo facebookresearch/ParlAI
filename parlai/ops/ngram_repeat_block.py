@@ -9,6 +9,7 @@
 """
 Wrapper for ngram_repeat_block cuda extension.
 """
+import parlai.utils.logging as logging
 import torch
 from torch import nn
 
@@ -20,13 +21,19 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-ngram_repeat_block_cuda = load(
-    name='ngram_repeat_block_cuda',
-    sources=[
-        '../clib/cuda/ngram_repeat_block_cuda.cpp',
-        '../clib/cuda/ngram_repeat_block_cuda_kernel.cu',
-    ],
-)
+
+try:
+    ngram_repeat_block_cuda = load(
+        name='ngram_repeat_block_cuda',
+        sources=[
+            '../clib/cuda/ngram_repeat_block_cuda.cpp',
+            '../clib/cuda/ngram_repeat_block_cuda_kernel.cu',
+        ],
+    )
+except Exception as e:
+    logging.warning(f"Unable to load ngram blocking on GPU: {e}")
+    ngram_repeat_block_cuda = None
+
 os.chdir(current)
 
 

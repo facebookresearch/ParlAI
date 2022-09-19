@@ -128,13 +128,16 @@ class TestOptFtBase(unittest.TestCase):
         self.message = Message({'text': 'Hey, how is it going?', 'episode_done': False})
 
         # Opening
-        self.memories = [
-            MemoryUtils.add_memory_prefix("I am a chatbot", "partner", 'OPT')
-        ]
+        self.memories = dict()
+        self.memories = MemoryUtils.add_memory(
+            MemoryUtils.add_memory_prefix("I am a chatbot", "partner", 'OPT'),
+            self.memories,
+        )
         for animal in ['cats', 'dogs', 'horses', 'parrots']:
             action = random.choice(['like', 'hate', 'have'])
-            self.memories.append(
-                MemoryUtils.add_memory_prefix(f"I {action} {animal}", 'partner', 'OPT')
+            MemoryUtils.add_memory(
+                MemoryUtils.add_memory_prefix(f"I {action} {animal}", 'partner', 'OPT'),
+                self.memories,
             )
         self.opening_message = Message(
             {
@@ -275,7 +278,9 @@ class TestOptOpening(TestOptFtBase):
         agent.observe(self.opening_message)
         prompt = agent.observations[Module.OPENING_DIALOGUE].get('prompt')
         assert prompt
-        assert prompt == '\n'.join(self.memories + [f"{PROMPT.OPENING_PREFIX}:"])
+        assert prompt == '\n'.join(
+            list(self.memories.keys()) + [f"{PROMPT.OPENING_PREFIX}:"]
+        )
         act = agent.act()
         assert_all_keys_in_replies(act, Module.OPENING_DIALOGUE)
 
@@ -285,7 +290,7 @@ class TestOptOpening(TestOptFtBase):
         agent.observe(message2)
         act = agent.act()
         # memories now has one more entry
-        assert len(agent.memories) == len(self.memories)
+        assert len(agent.memories) == len(self.memories) + 1
         assert_all_keys_in_replies(act, Module.SEARCH_DIALOGUE)
         assert_all_keys_in_replies(act, Module.MEMORY_DIALOGUE)
 
@@ -293,7 +298,7 @@ class TestOptOpening(TestOptFtBase):
         message3 = copy.deepcopy(self.message)
         agent.observe(message3)
         agent.act()
-        assert len(agent.memories) == len(self.memories)
+        assert len(agent.memories) == len(self.memories) + 1
 
         # check we do not get an opener if we send OPENING_PREFIX, but no memories
         agent.reset()
@@ -349,7 +354,7 @@ class TestOptMainServerBase(TestOptFtBase):
         for k, v in overrides.items():
             opt[k] = v
             opt['override'][k] = v
-        self.opt = opt
+        self.opt = copy.deepcopy(opt)
 
         self.batch_agent = create_agent(opt)
 
@@ -357,7 +362,8 @@ class TestOptMainServerBase(TestOptFtBase):
 @unittest.skipUnless(LOCAL, "must be local to specify opt server")
 class TestOptMainServerBatching(TestOptMainServerBase):
     def test_batching(self):
-        self.batch_agent = create_agent(self.opt)
+        opt = copy.deepcopy(self.opt)
+        self.batch_agent = create_agent(opt)
         agents = [self.batch_agent.clone() for _ in range(8)]
         observations = [a.observe(self.opening_message) for a in agents]
         assert_all_keys_in_obs(observations)
@@ -408,9 +414,11 @@ class TestInjectQueryString(TestOptFtBase):
 
 class TestMemoryTFIDF(TestOptFtBase):
     def test_memory_tfidf(self):
-        agent = create_agent(self.opt)
+        opt = copy.deepcopy(self.opt)
+        agent = create_agent(opt)
         dictionary = agent.dictionary
-        memories = self.memories * 100
+        memories = {f"{m}_{i}": v for m, v in self.memories.items() for i in range(100)}
+        memories = {**self.memories, **memories}
         new_memories = MemoryUtils.maybe_reduce_memories(
             'I wish I could see my cats again!',
             memories,
@@ -471,21 +479,153 @@ class TestIgnoreInSessionMemories(TestOptFtBase):
         act = agent.act()
         assert all(
             m in act['memories']
-            for m in original_memories + list(agent.in_session_memories)
+            for m in list(original_memories.keys()) + list(agent.in_session_memories)
         )
         assert len(agent.in_session_memories) == (
             len(act['memories']) - len(original_memories)
         )
 
     def test_memory_utils(self):
-        new_memories = ['in session memory 1', 'in session memory 2']
-        memories = self.memories + new_memories
+        new_memories = {'in session memory 1': 1, 'in session memory 2': 1}
+        memories = {**self.memories, **new_memories}
         in_session_memories = set(new_memories)
         available_memories = MemoryUtils.get_available_memories(
-            memories, in_session_memories, ignore_in_session_memories=False
+            '', memories, in_session_memories, ignore_in_session_memories=False
         )
-        assert available_memories == memories
+        assert available_memories == list(memories.keys())
         available_memories = MemoryUtils.get_available_memories(
-            memories, in_session_memories, ignore_in_session_memories=True
+            '', memories, in_session_memories, ignore_in_session_memories=True
         )
-        assert available_memories == self.memories
+        assert available_memories == list(self.memories.keys())
+
+
+class TestMemoryOverlapThresholdBlocking(TestOptFtBase):
+    def test_overlap_threshold_blocking(self):
+        opt = copy.deepcopy(self.opt)
+        opt['knowledge_conditioning'] = 'separate'
+        opt['override']['knowledge_conditioning'] = 'separate'
+        threshold = 0.1
+        opt['memory_overlap_threshold'] = threshold
+        opt['override']['memory_overlap_threshold'] = threshold
+        agent = create_agent(opt)
+
+        # first, check with text with no overlap with memories
+        agent.observe(self.opening_message)
+        agent.act()
+        message = copy.deepcopy(self.message)
+        text = 'I am traveling to Japan'
+        message.force_set('text', text)
+        agent.observe(message)
+        act = agent.act()
+        # this memory does not overlap with the memories, so nothing should be there
+        assert not act[Module.MEMORY_DIALOGUE.message_name()]
+
+        # next, check with text with some overlap with memories
+        message = copy.deepcopy(self.message)
+        text = 'I love chatbots'
+        message.force_set('text', text)
+        agent.observe(message)
+        act = agent.act()
+        assert act[Module.MEMORY_DIALOGUE.message_name()]
+
+    def test_memory_utils(self):
+        memories = self.memories
+        available_memories = MemoryUtils.get_available_memories(
+            'I am traveling to Japan', memories, set(), memory_overlap_threshold=0.1
+        )
+        assert not available_memories
+        available_memories = MemoryUtils.get_available_memories(
+            'I love my cat', memories, set(), memory_overlap_threshold=0.1
+        )
+        assert len(available_memories) >= 1
+
+
+class TestMemoryNTurnsHardBlocking(TestOptFtBase):
+    def test_hard_blocking(self):
+        opt = copy.deepcopy(self.opt)
+        opt['knowledge_conditioning'] = 'separate'
+        opt['override']['knowledge_conditioning'] = 'separate'
+        n_turns_hardblock = 5
+        opt['memory_hard_block_for_n_turns'] = n_turns_hardblock
+        opt['override']['memory_hard_block_for_n_turns'] = n_turns_hardblock
+        agent = create_agent(opt)
+
+        agent.observe(self.opening_message)
+        agent.act()
+
+        acts = []
+        for _ in range(n_turns_hardblock):
+            agent.observe(self.message)
+            acts.append(agent.act())
+
+        assert all(not a[Module.MEMORY_DIALOGUE.message_name()] for a in acts[:-1])
+        assert acts[-1][Module.MEMORY_DIALOGUE.message_name()]
+
+    def test_memory_utils(self):
+        memories = self.memories
+        n_turns = 2
+        available_memories = MemoryUtils.get_available_memories(
+            '', memories, set(), memory_hard_block_for_n_turns=n_turns
+        )
+        assert not available_memories
+        for mem in memories:
+            memories[mem] = n_turns + 1
+        available_memories = MemoryUtils.get_available_memories(
+            '', memories, set(), memory_hard_block_for_n_turns=n_turns
+        )
+        assert available_memories == list(memories.keys())
+
+
+class TestMemorySoftBlockThreshold(TestOptFtBase):
+    def test_softblocking(self):
+        opt = copy.deepcopy(self.opt)
+        opt['knowledge_conditioning'] = 'separate'
+        opt['override']['knowledge_conditioning'] = 'separate'
+        decay_factor = 0.99
+        opt['memory_soft_block_decay_factor'] = decay_factor
+        opt['override']['memory_soft_block_decay_factor'] = decay_factor
+        agent = create_agent(opt)
+
+        success = False
+        for _ in range(5):
+            # basically, we're hoping that probabilistically we'll have
+            # fewer turns here using memory than not.
+            agent.reset()
+            agent.observe(self.opening_message)
+            agent.act()
+            acts = []
+            for _ in range(10):
+                agent.observe(self.message)
+                acts.append(agent.act())
+            n_with_memory = len(
+                [a for a in acts if a[Module.MEMORY_DIALOGUE.message_name()]]
+            )
+            n_without_mem = len(
+                [a for a in acts if not a[Module.MEMORY_DIALOGUE.message_name()]]
+            )
+            if n_with_memory < n_without_mem:
+                success = True
+                break
+
+        assert success
+
+    def test_memory_utils(self):
+        memories = self.memories
+        # test that it works with floats as well
+        memories = {m: float(t) for m, t in memories.items()}
+        decay_factor = 0.99
+        success = False
+        for _ in range(10):
+            available_memories = MemoryUtils.get_available_memories(
+                '', memories, set(), memory_hard_block_for_n_turns=decay_factor
+            )
+            if not available_memories:
+                success = True
+                break
+        assert success
+        for mem in memories:
+            memories[mem] = 1000000
+        available_memories = MemoryUtils.get_available_memories(
+            '', memories, set(), memory_hard_block_for_n_turns=decay_factor
+        )
+        assert available_memories == list(memories.keys())

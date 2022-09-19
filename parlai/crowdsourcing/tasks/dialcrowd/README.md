@@ -35,7 +35,7 @@ You can customize the colors, fonts, and text size associated with your HIT to h
 
 ### Annotation Page
 ![screenshot](images/annotation1.png)
-We show the worker the background for your study, as well as the instructions and the table of intents with their respective definitions, examples, counterexamples, and explanations. 
+We show the worker the background for your study, as well as the instructions and the table of intents with their respective definitions, examples, counterexamples, and explanations.
 
 ***
 
