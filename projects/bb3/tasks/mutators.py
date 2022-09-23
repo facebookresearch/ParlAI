@@ -97,7 +97,7 @@ def build_summarizer(opt: Opt) -> Agent:
     Build the Persona Summarizer.
     """
     return create_agent_from_model_file(
-        modelzoo_path(opt['datapath', 'zoo:bb3/persona_summarizer/model']),
+        modelzoo_path(opt['datapath'], 'zoo:bb3/persona_summarizer/model'),
         opt_overrides={
             'skip_generation': False,
             'inference': 'beam',
