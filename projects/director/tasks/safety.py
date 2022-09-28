@@ -183,7 +183,7 @@ class PosOnlyMutator(ManyEpisodeMutator):
         return new_episodes
 
 
-class ClassifierMetricTeacher(bibifi.DefaultTeacher):
+class ClassifierMetricTeacher:
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -235,7 +235,7 @@ class ClassifierMetricTeacher(bibifi.DefaultTeacher):
             self.classifier = create_agent_from_model_file(
                 opt['eval_classifier_model_file'],
                 opt_overrides={
-                    'datatype': 'valid',
+                    'datatype': opt['datatype'],
                     'no_cuda': not opt['eval_classifier_use_cuda'],
                 },
             )
@@ -304,8 +304,10 @@ class ClassifierMetricTeacher(bibifi.DefaultTeacher):
         if 'text' in classifier_act:
             predicted_class = classifier_act['text']
             correct_prediction = int(predicted_class == correct_class)
+            pos_prediction = int(predicted_class == '__ok__')
 
             self.metrics.add('classifier_accuracy', AverageMetric(correct_prediction))
+            self.metrics.add('pos_classifier_prediction', AverageMetric(pos_prediction))
 
         if teacher_action['episode_done']:
             self.context = []
@@ -314,7 +316,7 @@ class ClassifierMetricTeacher(bibifi.DefaultTeacher):
             self.context.append(labels[0])
 
 
-class SafeWikiToxicEvalTeacher(ClassifierMetricTeacher):
+class SafeWikiToxicEvalTeacher(ClassifierMetricTeacher, bibifi.DefaultTeacher):
     pass
 
 
