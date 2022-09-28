@@ -135,7 +135,7 @@ class EDCLeftToRightMutatorEmpty(ManyEpisodeMutator):
             utterances = text.split('\n')
 
             if len(utterances) < 2:
-                utterances.insert(0, "")
+                utterances.insert(0, " ")
 
             new_message = message.copy()
             new_message.force_set('is_ltr', True)
