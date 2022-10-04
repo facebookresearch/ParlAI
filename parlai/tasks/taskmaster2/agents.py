@@ -175,6 +175,8 @@ class Taskmaster2Parser(tod_agents.TodStructuredDataParser):
                         api_resp_machine=api_resp,
                         sys_utt=sys_utt,
                     )
+                    if len(api_call) > 0:
+                        goal_calls.append(api_call)
                 else:
                     cum_api_call = self.process_call_for_cumlative_standalone_api(
                         api_call, cum_api_call
@@ -182,13 +184,12 @@ class Taskmaster2Parser(tod_agents.TodStructuredDataParser):
                     r = tod.TodStructuredRound(
                         user_utt=user_utt,
                         api_call_machine=cum_api_call if len(api_resp) > 0 else {},
-                        api_resp_machine=api_resp if len(api_resp) > 0 else {},
+                        api_resp_machine=api_resp if len(cum_api_call) > 0 else {},
                         sys_utt=sys_utt,
                     )
-
+                    if len(cum_api_call) > 0:
+                        goal_calls.append(cum_api_call)
                 rounds.append(r)
-                if len(api_call) > 0:
-                    goal_calls.append(api_call)
 
             episode = tod.TodStructuredEpisode(
                 domain=tod.SerializationHelpers.inner_list_join(row["domain"]),
