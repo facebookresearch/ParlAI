@@ -1,0 +1,24 @@
+{
+    "config": {
+        "bucket_0": {
+            "name": "Bucket 0",
+            "description": "this response implies something...0"
+        },
+        "bucket_1": {
+            "name": "Bucket 1",
+            "description": "this response implies something...1"
+        },
+        "bucket_2": {
+            "name": "Bucket 2",
+            "description": "this response implies something...2"
+        },
+        "bucket_3": {
+            "name": "Bucket 3",
+            "description": "this response implies something...3"
+        },
+        "bucket_4": {
+            "name": "Bucket 4",
+            "description": "this response implies something...4"
+        }
+    }
+}

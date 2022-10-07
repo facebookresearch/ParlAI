@@ -39,23 +39,23 @@ class AliceAgent(Agent):
             )
 
         super().__init__(opt)
-        self.id = 'Alice'
+        self.id = "Alice"
         self.kern = None
         if shared is None:
             self._load_alice()
         else:
-            self.kern = shared['kern']
+            self.kern = shared["kern"]
 
     def share(self):
         shared = super().share()
-        shared['kern'] = self.kern
+        shared["kern"] = self.kern
         return shared
 
     def _load_alice(self):
         self.kern = aiml.Kernel()
         self.kern.verbose(False)
         self.kern.setTextEncoding(None)
-        chdir = os.path.join(aiml.__path__[0], 'botdata', 'alice')
+        chdir = os.path.join(aiml.__path__[0], "botdata", "alice")
         self.kern.bootstrap(
             learnFiles="startup.xml", commands="load alice", chdir=chdir
         )
@@ -71,11 +71,11 @@ class AliceAgent(Agent):
 
         obs = self.observation
         if obs is None:
-            return {'text': 'Nothing to reply to yet.'}
+            return {"text": "Nothing to reply to yet."}
 
         reply = {}
-        reply['id'] = self.getID()
-        query = obs.get('text', "I don't know")
-        reply['text'] = self.kern.respond(query)
+        reply["id"] = self.getID()
+        query = obs.get("text", "I don't know")
+        reply["text"] = self.kern.respond(query)
 
         return reply

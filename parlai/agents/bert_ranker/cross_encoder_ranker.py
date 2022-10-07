@@ -30,16 +30,16 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         add_common_args(parser)
         parser.set_defaults(
             encode_candidate_vecs=True,
-            candidates='inline',
+            candidates="inline",
             dict_maxexs=0,  # skip building dictionary
         )
         return parser
 
     def __init__(self, opt, shared=None):
         # download pretrained models
-        download(opt['datapath'])
+        download(opt["datapath"])
         self.pretrained_path = os.path.join(
-            opt['datapath'], 'models', 'bert_models', MODEL_PATH
+            opt["datapath"], "models", "bert_models", MODEL_PATH
         )
 
         super().__init__(opt, shared)
@@ -53,9 +53,9 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         return BertWrapper(
             BertModel.from_pretrained(self.pretrained_path),
             1,
-            add_transformer_layer=self.opt['add_transformer_layer'],
-            layer_pulled=self.opt['pull_from_layer'],
-            aggregation=self.opt['bert_aggregation'],
+            add_transformer_layer=self.opt["add_transformer_layer"],
+            layer_pulled=self.opt["pull_from_layer"],
+            aggregation=self.opt["bert_aggregation"],
         )
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
@@ -91,11 +91,11 @@ class CrossEncoderRankerAgent(TorchRankerAgent):
         # concatenate the [CLS] and [SEP] tokens
         if (
             obs is not None
-            and 'text_vec' in obs
-            and 'added_start_end_tokens' not in obs
+            and "text_vec" in obs
+            and "added_start_end_tokens" not in obs
         ):
             obs.force_set(
-                'text_vec', surround(obs['text_vec'], self.START_IDX, self.END_IDX)
+                "text_vec", surround(obs["text_vec"], self.START_IDX, self.END_IDX)
             )
-            obs['added_start_end_tokens'] = True
+            obs["added_start_end_tokens"] = True
         return obs

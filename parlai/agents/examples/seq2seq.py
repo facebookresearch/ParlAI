@@ -202,9 +202,9 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
         super().add_cmdline_args(parser, partial_opt=partial_opt)
 
         # Add custom arguments only for this model.
-        group = parser.add_argument_group('Example TGA Agent')
+        group = parser.add_argument_group("Example TGA Agent")
         group.add_argument(
-            '-hid', '--hidden-size', type=int, default=1024, help='Hidden size.'
+            "-hid", "--hidden-size", type=int, default=1024, help="Hidden size."
         )
         return parser
 
@@ -213,8 +213,8 @@ class Seq2seqAgent(tga.TorchGeneratorAgent):
         Construct the model.
         """
 
-        model = ExampleModel(self.dict, self.opt['hidden_size'])
+        model = ExampleModel(self.dict, self.opt["hidden_size"])
         # Optionally initialize pre-trained embeddings by copying them from another
         # source: GloVe, fastText, etc.
-        self._copy_embeddings(model.embeddings.weight, self.opt['embedding_type'])
+        self._copy_embeddings(model.embeddings.weight, self.opt["embedding_type"])
         return model

@@ -49,20 +49,20 @@ class BartAgent(TransformerGeneratorAgent):
         Override to add init-fairseq-model arg.
         """
         super().add_cmdline_args(parser, partial_opt=partial_opt)
-        group = parser.add_argument_group('Bart Args')
+        group = parser.add_argument_group("Bart Args")
         group.add_argument(
-            '--init-fairseq-model',
+            "--init-fairseq-model",
             type=str,
             default=None,
-            help='fairseq checkpoint for bart',
+            help="fairseq checkpoint for bart",
         )
         group.add_argument(
-            '--output-conversion-path',
+            "--output-conversion-path",
             type=str,
             default=None,
-            help='where to save fairseq conversion',
+            help="where to save fairseq conversion",
         )
-        parser.set_defaults(dict_tokenizer='gpt2')
+        parser.set_defaults(dict_tokenizer="gpt2")
         parser.set_defaults(**BART_ARGS)
         return parser
 
@@ -84,14 +84,14 @@ class BartAgent(TransformerGeneratorAgent):
             return opt with BART-specific args.
         """
         init_model, _ = self._get_init_model(opt, None)
-        if not opt.get('converting') and (
+        if not opt.get("converting") and (
             init_model is None or not PathManager.exists(init_model)
         ):
-            download(opt['datapath'])
-            opt['init_model'] = os.path.join(
-                opt['datapath'], 'models/bart/bart_large/model'
+            download(opt["datapath"])
+            opt["init_model"] = os.path.join(
+                opt["datapath"], "models/bart/bart_large/model"
             )
-        if opt.get('init_fairseq_model'):
+        if opt.get("init_fairseq_model") and opt.get("init_fairseq_model") != "None":
             opt = self._convert_model(opt)
 
         compare_init_model_opts(opt, opt)
@@ -107,17 +107,17 @@ class BartAgent(TransformerGeneratorAgent):
         :return args:
             returns dictionary of args to send to conversion script.
         """
-        model_name = os.path.split(opt['init_fairseq_model'])[-1]
+        model_name = os.path.split(opt["init_fairseq_model"])[-1]
         args = CONVERSION_ARGS.copy()
 
-        args['input'] = [opt['init_fairseq_model']]
-        if opt.get('model_file') and not os.path.exists(opt['model_file']):
-            args['output'] = opt['model_file']
-        elif opt.get('output_conversion_path'):
-            args['output'] = opt['output_conversion_path']
+        args["input"] = [opt["init_fairseq_model"]]
+        if opt.get("model_file") and not os.path.exists(opt["model_file"]):
+            args["output"] = opt["model_file"]
+        elif opt.get("output_conversion_path"):
+            args["output"] = opt["output_conversion_path"]
         else:
-            args['output'] = os.path.join(
-                opt['datapath'], 'models/converted_fairseq_models/', model_name
+            args["output"] = os.path.join(
+                opt["datapath"], "models/converted_fairseq_models/", model_name
             )
 
         return args
@@ -134,7 +134,7 @@ class BartAgent(TransformerGeneratorAgent):
         """
         args = self._get_conversion_args(opt)
         ConversionScript.main(**args)
-        opt['init_model'] = args['output']
+        opt["init_model"] = args["output"]
         return opt
 
     def build_model(self) -> BartModel:
@@ -142,9 +142,9 @@ class BartAgent(TransformerGeneratorAgent):
         Build and return model.
         """
         model = BartModel(self.opt, self.dict)
-        if self.opt['embedding_type'] != 'random':
+        if self.opt["embedding_type"] != "random":
             self._copy_embeddings(
-                model.encoder.embeddings.weight, self.opt['embedding_type']
+                model.encoder.embeddings.weight, self.opt["embedding_type"]
             )
         return model
 
@@ -155,21 +155,21 @@ class BartAgent(TransformerGeneratorAgent):
         Override to prepend start token and append end token.
         """
         obs = super()._set_text_vec(obs, history, truncate)
-        if 'text' not in obs or 'text_vec' not in obs:
+        if "text" not in obs or "text_vec" not in obs:
             return obs
-        vec = obs['text_vec']
+        vec = obs["text_vec"]
 
         # add start/end tokens
-        if 'added_start_end_tokens' not in obs:
+        if "added_start_end_tokens" not in obs:
             if truncate is not None:
                 vec = torch.LongTensor(  # type: ignore
-                    self._check_truncate(obs['text_vec'], truncate - 2, True)
+                    self._check_truncate(obs["text_vec"], truncate - 2, True)
                 )
             obs.force_set(
-                'text_vec',
+                "text_vec",
                 self._add_start_end_tokens(vec, add_start=True, add_end=True),
             )
-            obs['added_start_end_tokens'] = True
+            obs["added_start_end_tokens"] = True
 
         return obs
 

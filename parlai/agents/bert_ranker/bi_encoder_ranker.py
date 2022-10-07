@@ -38,11 +38,11 @@ class BiEncoderRankerAgent(TorchRankerAgent):
 
     def __init__(self, opt, shared=None):
         # download pretrained models
-        download(opt['datapath'])
+        download(opt["datapath"])
         self.pretrained_path = os.path.join(
-            opt['datapath'], 'models', 'bert_models', MODEL_PATH
+            opt["datapath"], "models", "bert_models", MODEL_PATH
         )
-        opt['pretrained_path'] = self.pretrained_path
+        opt["pretrained_path"] = self.pretrained_path
 
         self.clip = -1
 
@@ -68,13 +68,13 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         self.vocab_candidates will contain a [num_cands] list of strings
         self.vocab_candidate_vecs will contain a [num_cands, 1] LongTensor
         """
-        self.opt['encode_candidate_vecs'] = True
+        self.opt["encode_candidate_vecs"] = True
         if shared:
-            self.vocab_candidates = shared['vocab_candidates']
-            self.vocab_candidate_vecs = shared['vocab_candidate_vecs']
-            self.vocab_candidate_encs = shared['vocab_candidate_encs']
+            self.vocab_candidates = shared["vocab_candidates"]
+            self.vocab_candidate_vecs = shared["vocab_candidate_vecs"]
+            self.vocab_candidate_encs = shared["vocab_candidate_encs"]
         else:
-            if 'vocab' in (self.opt['candidates'], self.opt['eval_candidates']):
+            if "vocab" in (self.opt["candidates"], self.opt["eval_candidates"]):
                 cands = []
                 vecs = []
                 for ind in range(1, len(self.dict)):
@@ -94,10 +94,10 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                     "[ Loaded fixed candidate set (n = {}) from vocabulary ]"
                     "".format(len(self.vocab_candidates))
                 )
-                enc_path = self.opt.get('model_file') + '.vocab.encs'
+                enc_path = self.opt.get("model_file") + ".vocab.encs"
                 if PathManager.exists(enc_path):
                     self.vocab_candidate_encs = self.load_candidates(
-                        enc_path, cand_type='vocab encodings'
+                        enc_path, cand_type="vocab encodings"
                     )
                 else:
                     cand_encs = []
@@ -113,7 +113,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
                         cand_encs.append(self.encode_candidates(vec_batch))
                     self.vocab_candidate_encs = torch.cat(cand_encs, 0)
                     self.save_candidates(
-                        self.vocab_candidate_encs, enc_path, cand_type='vocab encodings'
+                        self.vocab_candidate_encs, enc_path, cand_type="vocab encodings"
                     )
                 if self.use_cuda:
                     self.vocab_candidate_vecs = self.vocab_candidate_vecs.cuda()
@@ -149,13 +149,13 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         # concatenate the [CLS] and [SEP] tokens
         if (
             obs is not None
-            and 'text_vec' in obs
-            and 'added_start_end_tokens' not in obs
+            and "text_vec" in obs
+            and "added_start_end_tokens" not in obs
         ):
             obs.force_set(
-                'text_vec', surround(obs['text_vec'], self.START_IDX, self.END_IDX)
+                "text_vec", surround(obs["text_vec"], self.START_IDX, self.END_IDX)
             )
-            obs['added_start_end_tokens'] = True
+            obs["added_start_end_tokens"] = True
         return obs
 
     def score_candidates(self, batch, cand_vecs, cand_encs=None):
@@ -211,7 +211,7 @@ class BiEncoderRankerAgent(TorchRankerAgent):
         Share model parameters.
         """
         shared = super().share()
-        shared['vocab_candidate_encs'] = self.vocab_candidate_encs
+        shared["vocab_candidate_encs"] = self.vocab_candidate_encs
         return shared
 
 
@@ -223,18 +223,18 @@ class BiEncoderModule(torch.nn.Module):
     def __init__(self, opt):
         super(BiEncoderModule, self).__init__()
         self.context_encoder = BertWrapper(
-            BertModel.from_pretrained(opt['pretrained_path']),
-            opt['out_dim'],
-            add_transformer_layer=opt['add_transformer_layer'],
-            layer_pulled=opt['pull_from_layer'],
-            aggregation=opt['bert_aggregation'],
+            BertModel.from_pretrained(opt["pretrained_path"]),
+            opt["out_dim"],
+            add_transformer_layer=opt["add_transformer_layer"],
+            layer_pulled=opt["pull_from_layer"],
+            aggregation=opt["bert_aggregation"],
         )
         self.cand_encoder = BertWrapper(
-            BertModel.from_pretrained(opt['pretrained_path']),
-            opt['out_dim'],
-            add_transformer_layer=opt['add_transformer_layer'],
-            layer_pulled=opt['pull_from_layer'],
-            aggregation=opt['bert_aggregation'],
+            BertModel.from_pretrained(opt["pretrained_path"]),
+            opt["out_dim"],
+            add_transformer_layer=opt["add_transformer_layer"],
+            layer_pulled=opt["pull_from_layer"],
+            aggregation=opt["bert_aggregation"],
         )
 
     def forward(

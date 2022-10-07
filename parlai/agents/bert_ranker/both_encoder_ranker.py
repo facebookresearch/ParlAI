@@ -28,30 +28,30 @@ class BothEncoderRankerAgent(TorchAgent):
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
         add_common_args(parser)
-        parser = parser.add_argument_group('Bert Ranker Arguments')
+        parser = parser.add_argument_group("Bert Ranker Arguments")
         parser.add_argument(
-            '--biencoder-model-file',
+            "--biencoder-model-file",
             type=str,
             default=None,
-            help='path to biencoder model. Default to model-file_bi',
+            help="path to biencoder model. Default to model-file_bi",
         )
         parser.add_argument(
-            '--biencoder-top-n',
+            "--biencoder-top-n",
             type=int,
             default=10,
-            help='default number of elements to keep from the biencoder response',
+            help="default number of elements to keep from the biencoder response",
         )
         parser.add_argument(
-            '--crossencoder-model-file',
+            "--crossencoder-model-file",
             type=str,
             default=None,
-            help='path to crossencoder model. Default to model-file_cross',
+            help="path to crossencoder model. Default to model-file_cross",
         )
         parser.add_argument(
-            '--crossencoder-batchsize',
+            "--crossencoder-batchsize",
             type=int,
             default=-1,
-            help='crossencoder will be fed those many elements at train or eval time.',
+            help="crossencoder will be fed those many elements at train or eval time.",
         )
         parser.set_defaults(
             encode_candidate_vecs=True, dict_maxexs=0  # skip building dictionary
@@ -59,14 +59,14 @@ class BothEncoderRankerAgent(TorchAgent):
         return parser
 
     def __init__(self, opt, shared=None):
-        opt['lr_scheduler'] = 'none'
-        self.path_biencoder = opt.get('biencoder_model_file', None)
+        opt["lr_scheduler"] = "none"
+        self.path_biencoder = opt.get("biencoder_model_file", None)
         if self.path_biencoder is None:
-            self.path_biencoder = opt['model_file'] + '_bi'
-        self.path_crossencoder = opt.get('crossencoder_model_file', None)
+            self.path_biencoder = opt["model_file"] + "_bi"
+        self.path_crossencoder = opt.get("crossencoder_model_file", None)
         if self.path_crossencoder is None:
-            self.path_crossencoder = opt['model_file'] + '_cross'
-        self.top_n_bi = opt['biencoder_top_n']
+            self.path_crossencoder = opt["model_file"] + "_cross"
+        self.top_n_bi = opt["biencoder_top_n"]
 
         super().__init__(opt, shared)
         self.NULL_IDX = self.dict.pad_idx
@@ -74,15 +74,15 @@ class BothEncoderRankerAgent(TorchAgent):
         self.END_IDX = self.dict.end_idx
         if shared is None:
             opt_biencoder = dict(opt)
-            opt_biencoder['model_file'] = self.path_biencoder
+            opt_biencoder["model_file"] = self.path_biencoder
             self.biencoder = BiEncoderRankerAgent(opt_biencoder)
             opt_crossencoder = dict(opt)
-            opt_crossencoder['model_file'] = self.path_crossencoder
-            opt_crossencoder['batchsize'] = opt['batchsize']
-            opt_crossencoder['eval_candidates'] = 'inline'
-            if opt['crossencoder_batchsize'] != -1:
-                opt_crossencoder['batchsize'] = opt['crossencoder_batchsize']
-            self.crossencoder_batchsize = opt_crossencoder['batchsize']
+            opt_crossencoder["model_file"] = self.path_crossencoder
+            opt_crossencoder["batchsize"] = opt["batchsize"]
+            opt_crossencoder["eval_candidates"] = "inline"
+            if opt["crossencoder_batchsize"] != -1:
+                opt_crossencoder["batchsize"] = opt["crossencoder_batchsize"]
+            self.crossencoder_batchsize = opt_crossencoder["batchsize"]
             self.crossencoder = CrossEncoderRankerAgent(opt_crossencoder)
 
     @staticmethod
