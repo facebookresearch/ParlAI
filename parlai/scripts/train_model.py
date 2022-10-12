@@ -222,6 +222,15 @@ def setup_args(parser=None) -> ParlaiParser:
         help='the direction in which to optimize the validation metric, i.e. maximize or minimize',
     )
     train.add_argument(
+        '-vmf',
+        '--validation-metric-fn',
+        type=str,
+        default='prod',
+        choices=['prod', 'sum'],
+        help='the validation metric function to use when more than one metric is provided,'
+        'i.e. product or sum',
+    )
+    train.add_argument(
         '-vcut',
         '--validation-cutoff',
         type=float,
@@ -572,10 +581,12 @@ class TrainLoop:
             self.agent.receive_metrics(valid_report)
 
         # check which metric to look at
-        new_valid = valid_report[opt['validation_metric']]
-
-        if isinstance(new_valid, Metric):
-            new_valid = new_valid.value()
+        metric_keys = opt['validation_metric'].split(',')
+        if all([isinstance(valid_report[k], Metric) for k in metric_keys]):
+            new_valid_values = [valid_report[k].value() for k in metric_keys]
+            new_valid = {'prod': np.prod, 'sum': np.sum,}[
+                opt['validation_metric_fn']
+            ](new_valid_values)
 
         # check if this is the best validation so far
         if (
