@@ -8,7 +8,6 @@ from copy import deepcopy
 from typing import Optional, List
 from types import MethodType
 from collections import defaultdict
-import nltk
 from nltk.tokenize import sent_tokenize
 from nltk.corpus import stopwords
 import random
