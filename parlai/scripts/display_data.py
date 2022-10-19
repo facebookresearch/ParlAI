@@ -51,9 +51,13 @@ def simple_display(opt, world, turn):
     act = world.get_acts()[0]
     if turn == 0:
         text = "- - - NEW EPISODE: " + act.get('id', "[no agent id]") + " - - -"
-        print(colorize(text, 'highlight'))
+        print(
+            colorize(
+                text.encode('utf-16', 'surrogatepass').decode('utf-16'), 'highlight'
+            )
+        )
     text = act.get('text', '[no text field]')
-    print(colorize(text, 'text'))
+    print(colorize(text.encode('utf-16', 'surrogatepass').decode('utf-16'), 'text'))
     labels = act.get('labels', act.get('eval_labels', ['[no labels field]']))
     labels = '|'.join(labels)
     print('   ' + colorize(labels, 'labels'))
