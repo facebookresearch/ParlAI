@@ -13,6 +13,7 @@ All AI models are susceptible to learning biases in data that they are trained o
 ## Code
 
 - `projects.dialogue_bias.agents:NoBiasStyleGenAgent`: Agent that appends a `"no_bias"` string to the context of every example in order to perform controllable generation.
+- In `util.py`, `get_gender_name_list()` and `get_race_ethnicity_gender_name_list()` will process and output the two sets of names used in our work. They require as inputs the raw datasets of names from the papers that we drew names from: see docstrings for details.
 
 ## Models
 
