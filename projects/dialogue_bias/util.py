@@ -158,8 +158,10 @@ def get_race_ethnicity_name_list_given_tzioumis_data(
 ) -> List[str]:
     """
     Given input Tzioumis data (percent_df) and a set of names split by gender and
-    race/ethnicity from Milkman et al. (2012), Caliskan et al. (2017), and Guo and
-    Caliskan (2020)., get a list of names for the given race/ethnicity.
+    race/ethnicity from Milkman et al.
+
+    (2012), Caliskan et al. (2017), and Guo and Caliskan (2020)., get a list of names
+    for the given race/ethnicity.
     """
 
     # Params
