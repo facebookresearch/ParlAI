@@ -91,7 +91,9 @@ def get_baby_name_counts_by_gender(baby_name_folder: str) -> Dict[str, Dict[str,
     Return a dictionary whose keys are baby names and whose values are counts of the
     number of babies given that name, split by gender.
 
-    Baby name folder from https://catalog.data.gov/dataset/baby-names-from-social-security-card-applications-national-data, accessed 2021-04-02.
+    Baby name folder from https://catalog.data.gov/dataset/
+    baby-names-from-social-security-card-applications-national-data,
+    accessed 2021-04-02.
     """
 
     # Params
