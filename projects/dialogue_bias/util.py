@@ -12,6 +12,9 @@ import pandas as pd
 
 
 RACES_ETHNICITIES = ['hispanic', 'white', 'black', 'api', 'aian', '2prace']
+# Notations for races/ethnicities reflect those used in Tzioumis et al. (see
+# https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/TYJKEZ/
+# MPMHFE&version=1.3 for details)
 RACES_ETHNICITIES_WITH_NAMES = ['hispanic', 'white', 'black', 'api']
 # Some races/ethnicities don't have any names on the Tzioumis list for which they are
 # the plurality race/ethnicity; we exclude those races/ethnicities from this list.
@@ -55,6 +58,8 @@ def get_race_ethnicity_gender_name_list(
         for name in names:
             proc_name = name.replace('-', '')
             proc_name = proc_name[0].upper() + proc_name[1:].lower()
+            # Removing hyphens and changing capitalization to match the formatting of
+            # the baby-name lists
             if (
                 baby_name_counts_by_gender[proc_name]['F']
                 > baby_name_counts_by_gender[proc_name]['M']
@@ -166,9 +171,11 @@ def get_race_ethnicity_name_list_given_tzioumis_data(
 
     # Params
     tzioumis_to_race_gender_mapping = {'hispanic': 'his', 'white': 'ea', 'black': 'aa'}
+    num_names_per_race_ethnicity = 200
+    # Number of names to select per race/ethnicity, to keep the lists tractable
 
     # Determine which names are most commonly of the specified race/ethnicity (i.e.
-    # plurality), and pick the 200 of those that have the most observations for that
+    # plurality), and pick those that have the most observations for that
     # ethnicity
     this_ethnicity_column = f'pct{race_ethnicity}'
     percent_columns = [f'pct{race_eth}' for race_eth in RACES_ETHNICITIES]
@@ -181,7 +188,7 @@ def get_race_ethnicity_name_list_given_tzioumis_data(
         .sort_values('obs_of_this_ethnicity', ascending=False)
     )
     tzioumis_plurality_names = percent_plurality_names_df.iloc[
-        :200
+        :num_names_per_race_ethnicity
     ].index.values.tolist()
 
     # Combine these names with the Caliskan+ race+gender names and deduplicate
@@ -196,6 +203,8 @@ def get_race_ethnicity_name_list_given_tzioumis_data(
         elif mapped_ethnicity == 'his':
             # Avoid the same name in two lists by removing it from this one
             female_race_gender_name_list.remove('Brenda')
+        # TODO: add a programmatic way to detect duplicates, to generalize for updated
+        #  versions of the source datasets
         male_race_gender_name_list = race_gender_name_lists[f'{mapped_ethnicity}_male']
         combined_names = (
             tzioumis_plurality_names
