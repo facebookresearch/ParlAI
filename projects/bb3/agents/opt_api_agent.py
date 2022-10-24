@@ -433,8 +433,14 @@ class SimpleOPTAgent(Agent):
             # for-else means we execute this unless we were missing labels
             results = self.get_echo_results(observations)
             label_ppls, all_ppls = APIUtils.compute_perplexities(observations, results)
-            for ppl, ctxt_ppl, msg in zip(label_ppls, all_ppls, messages):
+            for ppl, ctxt_ppl, msg, r in zip(label_ppls, all_ppls, messages, results):
                 msg['metrics'] = {'ppl': ppl, 'ctxt_label_ppl': ctxt_ppl}
+                if self.opt['skip_generation']:
+                    msg['text'] = r['choices'][0]['text'].strip()
+                    msg['logprobs'] = sum(r['choices'][0]['logprobs']['token_logprobs'])
+                    msg['token_logprobs'] = r['choices'][0]['logprobs'][
+                        'token_logprobs'
+                    ]
 
         # actual generations
         if not self.opt['skip_generation']:
@@ -484,6 +490,7 @@ class SimpleOPTAgent(Agent):
                     else:
                         m['text'] = r['choices'][0]['text'].strip()
                     m['logprobs'] = sum(r['choices'][0]['logprobs']['token_logprobs'])
+                    m['token_logprobs'] = r['choices'][0]['logprobs']['token_logprobs']
 
         # we might have batch padding that we skipped earlier. collate it back.
         messages_out = []
