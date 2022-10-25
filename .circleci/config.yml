@@ -99,6 +99,8 @@ commands:
             python setup.py develop
             python -c "import nltk; nltk.download('punkt')"
             python -c "import nltk; nltk.download('stopwords')"
+            python -c "import nltk; nltk.download('omw-1.4')"
+            python -m spacy download en_core_web_s
 
   installtorchgpu:
     description: Install torch GPU and dependencies
