@@ -8,19 +8,22 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from typing import Optional
 
-from .base import (
+from parlai.tasks.reasoning.base import (
     AbstractReasoningTeacher,
     AbstractReason,
     AbstractQuestionAnswer,
 )
 
-from .question_answer import (
+from parlai.tasks.reasoning.question_answer import (
     SimpleQuestionAnswer,
     PremiseHypothesisQuestionAnswer,
 )
 
-from .reason_types.step_by_step import StepByStepReason, MWPStepsReason
-from .reason_types.free_form import FreeFormReason
+from parlai.tasks.reasoning.reason_types.step_by_step import (
+    StepByStepReason,
+    MWPStepsReason,
+)
+from parlai.tasks.reasoning.reason_types.free_form import FreeFormReason
 
 
 class StepByStepReasoningTeacher(AbstractReasoningTeacher):

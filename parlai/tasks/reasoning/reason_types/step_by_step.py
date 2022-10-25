@@ -22,7 +22,7 @@ import nltk
 
 import spacy
 from checklist.perturb import Perturb
-from ..base import t_REASON_PROCESSED_RESULT, AbstractReason
+from parlai.tasks.reasoning.base import t_REASON_PROCESSED_RESULT, AbstractReason
 
 
 class StepPerturbation:

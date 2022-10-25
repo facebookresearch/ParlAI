@@ -8,7 +8,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from typing import Dict, Optional, Tuple
 
-from ..base import (
+from parlai.tasks.reasoning.base import (
     t_REASON_PREFIX_TOKEN,
     t_REASON,
     AbstractReason,
