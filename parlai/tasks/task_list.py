@@ -1443,7 +1443,9 @@ task_list = [
         "task": "taskmaster3",
         "tags": ["Goal"],
         "description": (
-            "Taskmaster3 is a dataset of movie ticket dialogues collected in a self-chat manner. To induce conversational variety, crowd workers were asked to generate conversations given dozens of different instructions of different level of specificity, some purposefully including conversational  errors."
+            "Taskmaster3 is a dataset of movie ticket dialogues collected in a self-chat manner. To induce conversational"
+            + "variety, crowd workers were asked to generate conversations given dozens of different instructions of"
+            + "different level of specificity, some purposefully including conversational  errors."
         ),
     },
     {
@@ -1540,7 +1542,8 @@ task_list = [
         "task": "casino",
         "tags": ["Negotiation"],
         "description": (
-            "A dataset of 1030 negotiation dialogues. Two participants take the role of campsite neighbors and negotiate for Food, Water, and Firewood packages, based on their individual preferences and requirements."
+            "A dataset of 1030 negotiation dialogues. Two participants take the role of campsite neighbors and negotiate for"
+            + "Food, Water, and Firewood packages, based on their individual preferences and requirements."
         ),
         "links": {
             "paper": "https://aclanthology.org/2021.naacl-main.254.pdf",
@@ -1588,7 +1591,8 @@ task_list = [
         "display_name": "SPOLIN",
         "task": "spolin",
         "tags": ["all", "engaging", "improv", "open-ended", "common ground"],
-        "description": "Conversation pairs from the SPOLIN dataset. The pairs abide by the Yes-and principle of improvisational theatre (improv).",
+        "description": "Conversation pairs from the SPOLIN dataset. The pairs abide by the Yes-and principle of"
+        + "improvisational theatre (improv).",
         "links": {
             "arXiv": "https://arxiv.org/abs/2004.09544",
             "website": "https://justin-cho.com/spolin",
@@ -1599,7 +1603,7 @@ task_list = [
         "display_name": "FITS",
         "task": "fits",
         "tags": ["all", "engaging", "improve", "open-ended"],
-        "description": "A human-model dialogue dataset consist of 14k dialogues where human speakers give feedbacks on bot responses. ",
+        "description": "A human-model dialogue dataset consist of 14k dialogues where human speakers give feedbacks on bot responses.",
     },
     {
         "id": "EntailmentBank",
@@ -1650,8 +1654,8 @@ task_list = [
         "description": ("Reasoning chains for multihop question-answering set QASC."),
     },
     {
-        "id": "Reasoning",
-        "display_name": "Reasoning",
+        "id": "ReasoningFramework",
+        "display_name": "Reasoning Framework",
         "task": "reasoning",
         "tags": ["Reasoning"],
         "description": ("Reasoning teacher framework."),
@@ -1666,7 +1670,8 @@ task_list = [
             "website": "https://allenai.org/data/proofwriter",
         },
         "description": (
-            "A synthentically dataset of initial clauses and rules, with questions about statements that these initial clauses and rules imply."
+            "A synthentically dataset of initial clauses and rules, with questions about statements that these initial"
+            + "clauses and rules imply."
         ),
     },
 ]

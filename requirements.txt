@@ -59,4 +59,3 @@ protobuf~=3.20.1
 contractions~=0.1.72
 fsspec~=2022.2.0
 spacy>=3.4.2
-checklist>=0.0.11
