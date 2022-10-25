@@ -1,0 +1,37 @@
+# Reasoning Teacher Framework 
+
+## Context for why this exists
+Even without adding reasoning into the mix, datasets that use prompts can be a pain. One has to configure details like special tokens (e.g. "Question:"/"Answer:" vs "Q:"/"A:"), ordering of components, presence of task prompts and exemplars, etc; this is all in addition to defining the content itself.
+
+While one could build this one-off for every single dataset, this can start becoming a pain once you are trying to work with a bunch of them. Existing ParlAI Teacher infrastructure like mutators are insufficient because we would have to write complicated regexes in order to support some of the variability necessary. 
+
+Enter the Reasoning Teacher Framework. This moves a lot of the common bookkeeping out of individual teachers and into a core set of abstractions, setting sane defaults for pesky details like special tokens while also exposing + handling common configuration options. Rather than focusing on the bookkeeping, individual downstream teachers only need to focus on content. 
+
+## How to Use
+This section assumes some familiarity with ParlAI Teachers including at a minimum `add_cmdline_args`. 
+
+The quickest way to see how things fit together is probably looking at `StepByStepReasoningTeacher` then looking at `Gsm8kStepByStepReasoningTeacher`. 
+
+** For most downstream teachers, inheriting from a teacher within `agents.py` and implementing `get_data_for_fold(self, fold)` should be enough. ** 
+
+If this is *not* enough, one can also extend `AbstractReasoningTeacher` directly in a similar fashion to `agents.py`. There exist predefined `AbstractQuestionAnswer` classes in `question_answer.py` and predefind `AbstractionReason` classes in `reason_types/`; these two classes can also be extended if necessary. 
+
+One should generally avoid changing code in `base.py`. Note that these classes currently *do not* add the special tokens to models' dictionaries, since that must occur on the model side.
+
+## Dependency Setup
+
+Assuming you already have the ParlAI environment set up, these commands should install the remaining dependencies of this particular task:
+```
+pip install -r tasks/reasoning/requirements.txt
+python -c "import nltk; nltk.download('omw-1.4')"
+python -m spacy download en_core_web_sm
+```
+
+## Tests
+
+Tests live in `tests/reasoning_teacher` and can be run with `pytest` as normal. (Ie, `pytest <test>.py` or `pytest .` while in that directory.)
+
+## Perturbations
+
+See `reason_types/step_by_step.py` for a sketch of how perturbations can be done to modify a dataset. 
+
