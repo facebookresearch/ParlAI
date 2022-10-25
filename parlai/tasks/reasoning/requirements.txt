@@ -1,3 +1,2 @@
-checklist
 sentence-transformers
 simcse
