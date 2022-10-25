@@ -8,7 +8,8 @@ Restore perturbed synthetic data to maintain certain percent of perturbations.
 
 Usage:
 with perturbation IDs file:
-python projects/roscoe/roscoe_data/restore_data.py --dataset-path ~/test --perturbation-ids projects/roscoe/roscoe_data/unperturbed_ids.json --percentage 50 --out-dir ~/test
+python projects/roscoe/roscoe_data/restore_data.py --dataset-path ~/test --perturbation-ids \
+projects/roscoe/roscoe_data/unperturbed_ids.json --percentage 50 --out-dir ~/test
 
 random perturbations:
 python projects/roscoe/roscoe_data/restore_data.py --dataset-path ~/test --percentage 50 --out-dir ~/test
@@ -167,7 +168,8 @@ if __name__ == '__main__':
         '-p',
         type=str,
         required=True,
-        help='Percentage of data to leave perturbed. 100 means keep all perturbations, 0 means restore all to ground truth. If perturbation-ids file provided, only used to generate the perturbed file name',
+        help='Percentage of data to leave perturbed. 100 means keep all perturbations, 0 means restore all to ground truth.'
+        + 'If perturbation-ids file provided, only used to generate the perturbed file name',
     )
     parser.add_argument(
         '--out-dir',

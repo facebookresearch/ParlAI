@@ -3,9 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Tests for implementations of AbstractQuestionAnswer
-"""
 import unittest
 from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils

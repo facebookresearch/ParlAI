@@ -6,8 +6,8 @@
 
 """
 Imported from https://github.com/chaochun/nlu-asdiv-dataset
-Paper: "A Diverse Corpus for Evaluating and Developing English Math Word Problem Solvers" (Miao et al 2021) https://aclanthology.org/2020.acl-main.92.pdf
-
+Paper: "A Diverse Corpus for Evaluating and Developing English Math Word Problem Solvers" (Miao et al 2021)
+https://aclanthology.org/2020.acl-main.92.pdf
 """
 
 import xml.etree.ElementTree as ET

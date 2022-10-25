@@ -6,7 +6,8 @@
 
 """
 Imported from https://github.com/harsh19/Reasoning-Chains-MultihopQA
-Paper: "Learning to Explain: Datasets and Models for Identifying Valid Reasoning Chains in Multihop Question-Answering" (Jhamtani and Clark 2020) https://aclanthology.org/2020.emnlp-main.10.pdf
+Paper: "Learning to Explain: Datasets and Models for Identifying Valid Reasoning Chains in Multihop Question-Answering"
+(Jhamtani and Clark 2020) https://aclanthology.org/2020.emnlp-main.10.pdf
 
 Multihop Explanations for QASC dataset.
 """

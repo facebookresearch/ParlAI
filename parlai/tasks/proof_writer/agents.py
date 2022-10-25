@@ -70,7 +70,8 @@ class ProofWriterTeacher(DialogTeacher):
                 "depth-3ext-NatLang",
             ],
             help="""The different proofwriter datasets. Descriptions:
-            * depth-N (N=0, 1, 2, 3, 5): Questions with rulebases in synthetic language reasoning paths up to depth N, as defined in the paper.
+            * depth-N (N=0, 1, 2, 3, 5): Questions with rulebases in synthetic language reasoning paths up to depth N, as
+            defined in the paper.
             * birds-electricity: Questions with "birds" and "electricity" rulebases.
             * NatLang: Questions with rulebases in crowdsourced natural language.
             * depth-3ext: The Depth3 dataset augmented with 10% each of the depth=0, depth=1, and depth-2 datasets.
@@ -98,7 +99,9 @@ class ProofWriterTeacher(DialogTeacher):
             '--proofwriter-data-verbose',
             type=bool,
             default=False,
-            help="Copy *all* the metadata for facts, rules, and questions into the Message. Useful for enabling some mutators. Kept also to keep track of which relevant fields out of ProofWriter that we might want to use have or have not been used.",
+            help="Copy *all* the metadata for facts, rules, and questions into the Message. Useful for enabling some"
+            + "mutators. Kept also to keep track of which relevant fields out of ProofWriter that we might want to use"
+            + "have or have not been used.",
         )
         return parser
 
@@ -268,7 +271,8 @@ class ProofWriterStepByStepReasoningTeacher(
                 "depth-3ext-NatLang",
             ],
             help="""The different proofwriter datasets. Descriptions:
-            * depth-N (N=0, 1, 2, 3, 5): Questions with rulebases in synthetic language reasoning paths up to depth N, as defined in the paper.
+            * depth-N (N=0, 1, 2, 3, 5): Questions with rulebases in synthetic language reasoning paths up to depth N, as
+            defined in the paper.
             * birds-electricity: Questions with "birds" and "electricity" rulebases.
             * NatLang: Questions with rulebases in crowdsourced natural language.
             * depth-3ext: The Depth3 dataset augmented with 10% each of the depth=0, depth=1, and depth-2 datasets.
