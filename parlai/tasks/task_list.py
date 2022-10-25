@@ -1601,4 +1601,72 @@ task_list = [
         "tags": ["all", "engaging", "improve", "open-ended"],
         "description": "A human-model dialogue dataset consist of 14k dialogues where human speakers give feedbacks on bot responses. ",
     },
+    {
+        "id": "EntailmentBank",
+        "display_name": "EntailmentBank",
+        "task": "entailment_bank",
+        "tags": ["Entailment", "Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2021.emnlp-main.585.pdf",
+            "website": "https://allenai.org/data/entailmentbank",
+        },
+        "description": (
+            "2k multi-step entailment trees, explaining the answers to ARC science questions."
+        ),
+    },
+    {
+        "id": "ASDIV",
+        "display_name": "ASDIV",
+        "task": "asdiv",
+        "tags": ["Math", "Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2020.acl-main.92.pdf",
+            "website": "https://github.com/chaochun/nlu-asdiv-dataset",
+        },
+        "description": (
+            "A diverse corpus for evaluating and developing English math Wword problem solvers."
+        ),
+    },
+    {
+        "id": "MathDataset",
+        "display_name": "MathDataset",
+        "task": "math_dataset",
+        "tags": ["Math", "Reasoning"],
+        "links": {
+            "paper": "https://arxiv.org/pdf/2103.03874.pdf",
+            "website": "https://github.com/hendrycks/math/",
+        },
+        "description": ("12,500 challenging competition mathematics problems."),
+    },
+    {
+        "id": "EQASC",
+        "display_name": "EQASC",
+        "task": "eqasc",
+        "tags": ["QA", "Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2020.emnlp-main.10.pdf",
+            "website": "https://github.com/harsh19/Reasoning-Chains-MultihopQA",
+        },
+        "description": ("Reasoning chains for multihop question-answering set QASC."),
+    },
+    {
+        "id": "Reasoning",
+        "display_name": "Reasoning",
+        "task": "reasoning",
+        "tags": ["Reasoning"],
+        "description": ("Reasoning teacher framework."),
+    },
+    {
+        "id": "ProofWriter",
+        "display_name": "ProofWriter",
+        "task": "proof_writer",
+        "tags": ["Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2021.findings-acl.317.pdf",
+            "website": "https://allenai.org/data/proofwriter",
+        },
+        "description": (
+            "A synthentically dataset of initial clauses and rules, with questions about statements that these initial clauses and rules imply."
+        ),
+    },
 ]
