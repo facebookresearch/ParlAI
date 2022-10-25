@@ -3,26 +3,32 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-"""
-Usage:
-pytest tests/nightly/cpu/test_roscoe.py
-"""
-
 import unittest
 from unittest.mock import patch
 
 import numpy as np
 
-from projects.roscoe.score import (
-    Chain,
-    Evaluator,
-    LANGUAGE_MODEL_SCORES,
-    PPL_CHAIN,
-    PPL_STEP,
-    PPL_STEP_MAX,
+try:
+    import transformers  # noqa
+    from sentence_transformers import SentenceTransformer  # noqa
+    from simcse import SimCSE  # noqa
+    from projects.roscoe.score import (
+        Chain,
+        Evaluator,
+        LANGUAGE_MODEL_SCORES,
+        PPL_CHAIN,
+        PPL_STEP,
+        PPL_STEP_MAX,
+    )
+
+    DEPENDENCIES_AVAILABLE = True
+except ImportError:
+    DEPENDENCIES_AVAILABLE = False
+
+
+@unittest.skipUnless(
+    DEPENDENCIES_AVAILABLE, 'Must install transformers and simcse to run this test'
 )
-
-
 class TestEvaluator(unittest.TestCase):
     """
     Basic tests for some simple functionality.
@@ -50,8 +56,7 @@ class TestEvaluator(unittest.TestCase):
             [
                 np.array([[0.1, 0.1], [0.2, 0.2]]),  # sentence 1
                 np.array([[0.1, 0.1]]),  # sentence 2
-            ],
-            dtype=object,
+            ]
         )
         desired_similarity = 1.0
         similarity = self.reasoning_evaluator.repetitions(input_word_embeddings)
@@ -86,7 +91,7 @@ class TestEvaluator(unittest.TestCase):
         similarity = self.reasoning_evaluator.repetitions(input_sentence_embeddings)
         self.assertAlmostEqual(desired_similarity, similarity, places=2)
 
-    @patch("projects.roscoe.score.Evaluator.contradiction_probability")
+    @patch("parlai_internal.projects.roscoe.score.Evaluator.contradiction_probability")
     def test_max_contradiction(self, mock_contradiction_probability):
         mock_contradiction_probability.return_value = [1.0]
         context = ["a", "b"]
@@ -96,7 +101,7 @@ class TestEvaluator(unittest.TestCase):
         probs = self.reasoning_evaluator.max_contradiction(context, hypo, batch_size)
         self.assertEqual(desired_probs_size, len(probs))
 
-    @patch("projects.roscoe.score.Evaluator.contradiction_probability")
+    @patch("parlai_internal.projects.roscoe.score.Evaluator.contradiction_probability")
     def test_contradiction_steps(self, mock_contradiction_probability):
         mock_contradiction_probability.return_value = [1.0]
         chain = ["a", "b"]
@@ -105,7 +110,7 @@ class TestEvaluator(unittest.TestCase):
         probs = self.reasoning_evaluator.contradiction_steps(chain, batch_size)
         self.assertEqual(desired_probs_size, len(probs))
 
-    @patch("projects.roscoe.score.Evaluator.perplexity")
+    @patch("parlai_internal.projects.roscoe.score.Evaluator.perplexity")
     def test_compute_ppl_scores(self, mock_perplexity):
         mock_perplexity.return_value = [(2, 2), (20, 2)]
         score_types = LANGUAGE_MODEL_SCORES

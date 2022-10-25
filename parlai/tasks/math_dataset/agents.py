@@ -16,7 +16,7 @@ import os
 import random
 import re
 
-from .build import build
+from parlai.tasks.math_dataset.build import build
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.io import PathManager
