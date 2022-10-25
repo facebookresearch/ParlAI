@@ -8,7 +8,7 @@ Tests for AbstractReasoningTeacher.
 """
 import unittest
 from parlai.core.params import ParlaiParser
-from tasks.math_dataset.agents import (
+from parlai.tasks.math_dataset.agents import (
     MathDatasetStepByStepReasoningTeacher,
 )
 

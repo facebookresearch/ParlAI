@@ -9,7 +9,7 @@ Tests for implementations of AbstractQuestionAnswer
 import unittest
 from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
-from tasks.reasoning.question_answer import (
+from parlai.tasks.reasoning.question_answer import (
     MultipleChoiceQuestionAnswer,
 )
 from dataclasses import dataclass

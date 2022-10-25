@@ -9,7 +9,7 @@ Tests for AbstractReasoningTeacher.
 import unittest
 from parlai.core.params import ParlaiParser
 import parlai.utils.testing as testing_utils
-from tasks.reasoning.base import (
+from parlai.tasks.reasoning.base import (
     AbstractQuestionAnswer,
     AbstractReason,
     AbstractReasoningTeacher,

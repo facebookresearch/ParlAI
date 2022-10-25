@@ -9,7 +9,7 @@ Tests for AbstractReasoningTeacher.
 from typing import List
 import unittest
 from parlai.core.params import ParlaiParser
-from tasks.reasoning.reason_types.step_by_step import (
+from parlai.tasks.reasoning.reason_types.step_by_step import (
     StepByStepReason,
     MWPStepsReason,
 )
