@@ -22,7 +22,7 @@ from parlai.core.params import ParlaiParser
 from parlai.utils.io import PathManager
 from typing import Optional
 
-from tasks.reasoning.agents import MWPStepsReasoningTeacher
+from parlai.tasks.reasoning.agents import MWPStepsReasoningTeacher
 
 
 DOMAINS = [
