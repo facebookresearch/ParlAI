@@ -369,6 +369,11 @@ jobs:
     working_directory: ~/ParlAI
     parallelism: 16
     steps:
+      - run:
+          name: Additional dependency
+          no_output_timeout: 60m
+          command: |
+            python -m pip install --progress-bar off checklist
       - runtests:
           more_installs:
             - installtorchcpu
