@@ -6,14 +6,18 @@
 
 import random
 from typing import Optional
-from parlai.tasks.reasoning.agents import MWPStepsReasoningTeacher
-from parlai.tasks.reasoning.base import (
-    AbstractQuestionAnswer,
-    AbstractReason,
-    AbstractReasoningTeacher,
-)
-from parlai.tasks.reasoning.question_answer import MultipleChoiceQuestionAnswer
-from parlai.tasks.reasoning.reason_types.step_by_step import StepByStepReason
+
+try:
+    from parlai.tasks.reasoning.agents import MWPStepsReasoningTeacher
+    from parlai.tasks.reasoning.base import (
+        AbstractQuestionAnswer,
+        AbstractReason,
+        AbstractReasoningTeacher,
+    )
+    from parlai.tasks.reasoning.question_answer import MultipleChoiceQuestionAnswer
+    from parlai.tasks.reasoning.reason_types.step_by_step import StepByStepReason
+except ImportError:
+    DEPENDENCIES_AVAILABLE = False
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import DialogTeacher

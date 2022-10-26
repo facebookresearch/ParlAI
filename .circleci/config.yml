@@ -101,7 +101,6 @@ commands:
             python -c "import nltk; nltk.download('stopwords')"
             python -c "import nltk; nltk.download('omw-1.4')"
             python -m spacy download en_core_web_sm
-            python -m pip install --progress-bar off checklist
 
   installtorchgpu:
     description: Install torch GPU and dependencies
