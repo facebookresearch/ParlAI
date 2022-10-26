@@ -155,6 +155,15 @@ commands:
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
 
+  installchecklist:
+    description: Install checklist and dependencies
+    steps:
+      - run:
+          name: Install checklist and dependencies
+          command: |
+            python -m pip install --user --progress-bar off jupyter
+            python -m pip install --user --progress-bar off checklist
+
   setupcuda:
     description: Setup CUDA
     steps:
@@ -369,15 +378,10 @@ jobs:
     working_directory: ~/ParlAI
     parallelism: 16
     steps:
-      - run:
-          name: Additional dependency
-          no_output_timeout: 60m
-          command: |
-            python -m pip install --user --progress-bar off jupyter
-            python -m pip install --user --progress-bar off checklist
       - runtests:
           more_installs:
             - installtorchcpu
+            - installchecklist
           cachename: teacher
           marker: teacher
           pytest_flags: -v -s
