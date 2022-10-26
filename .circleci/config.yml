@@ -373,7 +373,7 @@ jobs:
           name: Additional dependency
           no_output_timeout: 60m
           command: |
-            python -m pip install --user --progress-bar off jupiter
+            python -m pip install --user --progress-bar off jupyter
             python -m pip install --user --progress-bar off checklist
       - runtests:
           more_installs:
