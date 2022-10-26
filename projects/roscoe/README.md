@@ -148,7 +148,7 @@ If you encounter any problems when using the code, or want to report a bug, you 
 ```bibtex
 @inproceedings{golovneva2022roscoe,
    title={{ROSCOE}: A Suite of Metrics for Scoring Step-by-Step Reasoning},
-   author={Gao, Tianyu and Yao, Xingcheng and Chen, Danqi}{Golovneva, Olga and Chen, Moya and Poff, Spencer and Corredor, Martin and Zettlemoyer, Luke and Fazel-Zarandi, Maryam and Celikyilmaz, Asli},
+   author={Golovneva, Olga and Chen, Moya and Poff, Spencer and Corredor, Martin and Zettlemoyer, Luke and Fazel-Zarandi, Maryam and Celikyilmaz, Asli},
    year={2022}
 }
 ```

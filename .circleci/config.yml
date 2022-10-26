@@ -100,6 +100,7 @@ commands:
             python -c "import nltk; nltk.download('punkt')"
             python -c "import nltk; nltk.download('stopwords')"
             python -c "import nltk; nltk.download('omw-1.4')"
+            python -m pip install --progress-bar off spacy
             python -m spacy download en_core_web_sm
 
   installtorchgpu:

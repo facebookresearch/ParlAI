@@ -58,4 +58,3 @@ ninja~=1.10.2.3
 protobuf<=3.19.6,>=3.19.5
 contractions~=0.1.72
 fsspec~=2022.2.0
-spacy>=3.4.2
