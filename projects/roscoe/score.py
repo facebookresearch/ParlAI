@@ -58,7 +58,7 @@ SIM_SCE_MODELS_DICT = {
     "princeton-nlp/sup-simcse-roberta-large": "roberta-large",
     "princeton-nlp/sup-simcse-roberta-base": "roberta-base",
     "princeton-nlp/sup-simcse-bert-base-uncased": "bert-base-uncased",
-    "./projects/roscoe/model/roscoe-512-roberta-base": "roberta-base",
+    "facebook/roscoe-512-roberta-base": "roberta-base",
 }
 EMBEDDING_MODELS = list(TRANSFORMER_MODELS_DICT.keys()) + list(
     SIM_SCE_MODELS_DICT.keys()
@@ -715,12 +715,10 @@ class Evaluator:
 
                 # unflatten
                 loss = loss.view(bsz, -1)
-                # find number of new tokens that are being scored in this step
-                new_tokens = mask[:, -target_len:].sum(-1) - 1
-                # average loss per sequence
-                loss = loss.sum(-1) / new_tokens
-                # weigh loss of this step by number of new tokens
-                neg_log_likelihood = loss * new_tokens
+                # first token is never scored, and masked tokens in the target sequence aren't scored
+                new_tokens = mask[:, 1:][:, -target_len:].sum(-1)
+                # accumulate loss, which will later be divided by the total token count
+                neg_log_likelihood = loss.sum(-1)
 
             nlls.append(neg_log_likelihood)
             total_tokens_scored += new_tokens

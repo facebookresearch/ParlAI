@@ -41,13 +41,13 @@ Make sure your data is downloaded to ParlAI/projects/roscoe/roscoe_data/. As an 
 
 To run run evaluation on data using our fine-tuned model, use the following command:
 ```bash
- python projects/roscoe/roscoe.py -t sim_sce -m ./projects/roscoe/model/roscoe-512-roberta-base
+ python projects/roscoe/roscoe.py -t sim_sce -m facebook/roscoe-512-roberta-base
 ```
 
 To specify custom path to data use `--dataset-path` option, and `--datasets` to list datasets to use. Note that is it expected for files to be in `json` format, and each file name should start with the name of the corresponging dataset.
 
 ### Fine-tuned model
-You can import our fine-tuned model by using the simcse package or HuggingFace's Transformers.
+You can import our [fine-tuned model](https://huggingface.co/facebook/roscoe-512-roberta-base) by using the simcse package or HuggingFace's Transformers.
 You can use other supported sentence embedding models, or add your favorite one with corresponding word embedding model to the `TRANSFORMER_MODELS_DICT` or `SIM_SCE_MODELS_DICT` lists in `score.py` script.
 
 ## Steps to reproduce results
@@ -102,13 +102,12 @@ Use  `--dataset` parameter to limit sets you want to run scoring on.
 
 ### ROSCOE scoring
 **Human annotated data: Pending data release approval**
-**roscoe-512-roberta-base model: Pending model release**
 
 To run ROSCOE evaluation on all human annotated datasets, use the following commands:
 ```bash
 python projects/roscoe/roscoe.py
 python projects/roscoe/roscoe.py -t sim_sce -m princeton-nlp/sup-simcse-roberta-base
-python projects/roscoe/roscoe.py -t sim_sce -m ./projects/roscoe/model/roscoe-512-roberta-base
+python projects/roscoe/roscoe.py -t sim_sce -m facebook/roscoe-512-roberta-base
 ```
 
 To run ROSCOE evaluation on AQUA dataset (one of the datasets that was synthetically perturbed), use the following command:
@@ -118,7 +117,7 @@ bash projects/roscoe/synthetic_evaluation/synthetic_roscoe.py -p ./projects/rosc
 
 To run ROSCOE evaluation on all synthetic datasets, use the following command:
 ```bash
-bash projects/roscoe/synthetic_evaluation/score_all.sh sim_sce ./projects/roscoe/model/roscoe-512-roberta-base
+bash projects/roscoe/synthetic_evaluation/score_all.sh sim_sce facebook/roscoe-512-roberta-base
 ```
 
 By default, function will use `all-mpnet-base-v2` sentence embedding model, if not specified otherwise as in the example above.

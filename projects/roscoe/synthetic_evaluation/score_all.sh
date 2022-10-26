@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Example:
-# sh projects/roscoe/synthetic_evaluation/score_all.sh sim_sce ./projects/roscoe/model/roscoe-512-roberta-base
+# sh projects/roscoe/synthetic_evaluation/score_all.sh sim_sce facebook/roscoe-512-roberta-base
 
 print_usage() {
   printf "Usage: score_all.sh model_type model_name"
