@@ -94,12 +94,8 @@ INFORM_CHAIN = "informativeness_chain"
 # Uses NLI model to predict probability of contradiction of each step in hypothesis and each sentence in the context.
 # Returns maximum of all these.
 DISCOURSE_REPRESENTATION = "discourse_representation"
-# Average probability of contradiction of each step in the chain given all previous steps. Predicted with an NLI model.
-COHERENCE_STEP = "coherence_step"
 # Max probability of contradiction of each step in the chain to each of the previous steps. Predicted with an NLI model.
 COHERENCE_STEP_VS_STEP = "coherence_step_vs_step"
-# Max probability of contradiction of each step in the chain given all previous steps. Predicted with an NLI model.
-COHERENCE_MAX = "coherence_max"
 # Perplexity of each step, averaged over the chain.
 PPL_STEP = "perplexity_step"
 # Maximum of the perplexities of each step, where each step is scored individually.
@@ -137,9 +133,7 @@ UNSUPERVISED_SCORES = [
     INFORM_STEP,
     INFORM_CHAIN,
     DISCOURSE_REPRESENTATION,
-    COHERENCE_STEP,
     COHERENCE_STEP_VS_STEP,
-    COHERENCE_MAX,
     PPL_STEP,
     PPL_CHAIN,
     GRAMMAR_STEP,
@@ -194,9 +188,7 @@ EMB_MODEL_SCORES = [
 
 NLI_MODEL_NAME = "MoritzLaurer/DeBERTa-v3-large-mnli-fever-anli-ling-wanli"
 NLI_MODEL_SCORES = [
-    COHERENCE_STEP,
     DISCOURSE_REPRESENTATION,
-    COHERENCE_MAX,
     COHERENCE_STEP_VS_STEP,
 ]
 ROSCOE_LI = NLI_MODEL_SCORES
@@ -590,33 +582,6 @@ class Evaluator:
         """
         return self.max_contradiction(chain, chain, batch_size)
 
-    def contradiction_steps(self, chain: List[str], batch_size: int) -> List[float]:
-        """
-        Contradiction probability of each step.
-
-        Retruns [nli(y_k | y_[1, .., k-1])]
-        """
-        if len(chain) < 2:
-            return [0.0]
-        ref = []
-        hypo = []
-        for i in range(len(chain) - 1):
-            ref.append(chain[i + 1])
-            hypo.append(". ".join(chain[: i + 1]))
-        probs = []
-        ind = 0
-        # split into batch size ~batch_size
-        nli_batch = batch_size
-        while ind < len(ref):
-            probs.extend(
-                self.contradiction_probability(
-                    ref[ind : min(ind + nli_batch, len(ref))],
-                    hypo[ind : min(ind + nli_batch, len(ref))],
-                )
-            )
-            ind += nli_batch
-        return probs
-
     def cross_entropy(
         self, steps: List[str], batch_size: int = 16
     ) -> List[Tuple[float, int]]:
@@ -912,6 +877,34 @@ class Evaluator:
 
         return scores
 
+    def compute_nli_scores(
+        self,
+        context: Chain,
+        hypo: Chain,
+        score_types: List[str],
+        scores: Dict[str, List],
+    ):
+        if DISCOURSE_REPRESENTATION in score_types:
+            scores[DISCOURSE_REPRESENTATION].append(
+                self.discourse_represenation(
+                    context.chain, hypo.chain, self.discourse_batch
+                )
+            )
+
+        if COHERENCE_STEP_VS_STEP in score_types:
+            scores[COHERENCE_STEP_VS_STEP].append(
+                # same batch as discourse
+                (
+                    1
+                    - max(
+                        self.contradiction_step_vs_step(
+                            hypo.chain, self.discourse_batch
+                        )
+                    )
+                )
+            )
+        return scores
+
     def compute_ppl_scores(
         self,
         hypo: Chain,
@@ -996,36 +989,12 @@ class Evaluator:
                     scores=scores,
                 )
 
-            # NLI model scores
-            if DISCOURSE_REPRESENTATION in score_types:
-                scores[DISCOURSE_REPRESENTATION].append(
-                    self.discourse_represenation(
-                        self.context[i].chain, self.hypos[i].chain, self.discourse_batch
-                    )
-                )
-            if any(s in score_types for s in (COHERENCE_STEP, COHERENCE_MAX)):
-                step_contradict_probs = self.contradiction_steps(
-                    self.hypos[i].chain, self.coherence_batch
-                )
-            if COHERENCE_STEP in score_types:
-                # sum_k [ nli(y_k, y_[1, .., k-1)] ] / K-1
-                scores[COHERENCE_STEP].append(
-                    1 - sum(step_contradict_probs) / len(step_contradict_probs)
-                )
-            if COHERENCE_MAX in score_types:
-                scores[COHERENCE_MAX].append(1 - max(step_contradict_probs))
-
-            if COHERENCE_STEP_VS_STEP in score_types:
-                scores[COHERENCE_STEP_VS_STEP].append(
-                    # same batch as discourse
-                    (
-                        1
-                        - max(
-                            self.contradiction_step_vs_step(
-                                self.hypos[i].chain, self.discourse_batch
-                            )
-                        )
-                    )
+            if contains_nli_scores(score_types):
+                scores = self.compute_nli_scores(
+                    hypo=self.hypos[i],
+                    context=self.context[i],
+                    score_types=score_types,
+                    scores=scores,
                 )
 
             if contains_ppl_scores(score_types):

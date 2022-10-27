@@ -91,7 +91,7 @@ class TestEvaluator(unittest.TestCase):
         similarity = self.reasoning_evaluator.repetitions(input_sentence_embeddings)
         self.assertAlmostEqual(desired_similarity, similarity, places=2)
 
-    @patch("parlai_internal.projects.roscoe.score.Evaluator.contradiction_probability")
+    @patch("projects.roscoe.score.Evaluator.contradiction_probability")
     def test_max_contradiction(self, mock_contradiction_probability):
         mock_contradiction_probability.return_value = [1.0]
         context = ["a", "b"]
@@ -101,16 +101,7 @@ class TestEvaluator(unittest.TestCase):
         probs = self.reasoning_evaluator.max_contradiction(context, hypo, batch_size)
         self.assertEqual(desired_probs_size, len(probs))
 
-    @patch("parlai_internal.projects.roscoe.score.Evaluator.contradiction_probability")
-    def test_contradiction_steps(self, mock_contradiction_probability):
-        mock_contradiction_probability.return_value = [1.0]
-        chain = ["a", "b"]
-        batch_size = 1
-        desired_probs_size = len(chain) - 1
-        probs = self.reasoning_evaluator.contradiction_steps(chain, batch_size)
-        self.assertEqual(desired_probs_size, len(probs))
-
-    @patch("parlai_internal.projects.roscoe.score.Evaluator.perplexity")
+    @patch("projects.roscoe.score.Evaluator.perplexity")
     def test_compute_ppl_scores(self, mock_perplexity):
         mock_perplexity.return_value = [(2, 2), (20, 2)]
         score_types = LANGUAGE_MODEL_SCORES
