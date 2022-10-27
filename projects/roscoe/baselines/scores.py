@@ -26,7 +26,10 @@ import re
 
 from importlib.machinery import SourceFileLoader
 
-BART_SCORE_REPO = "/path_to/BARTScore/bart_score.py"
+BART_SCORE_REPO = "/path_to/BARTScore/"
+PRISM_SCORE_REPO = "/path_to/SUM"
+BLEURT_SCORE_REPO = "/path_to/bleurt"
+
 ######### Base functionality
 SCORES_TO_CLASS = {}
 
@@ -111,9 +114,7 @@ except ImportError:
 @register_scorer([BLEURT])
 class BleurtBaselineScorer(BaselineScorer):
     def __init__(self):
-        self.scorer = bleurt_score.BleurtScorer(
-            "/private/home/aslic/Evaluation/BARTScore_old/bleurt/bleurt/test_checkpoint"
-        )
+        self.scorer = bleurt_score.BleurtScorer(BLEURT_SCORE_REPO + "/test_checkpoint")
 
     def get_scores(self, score_me):
         scores = self.scorer.score(
@@ -146,7 +147,9 @@ class BertBaselineScorer(BaselineScorer):
 # HuggingFace is the major one
 # Second argument here should be path to `bart_score.py` of the BARTScore repo
 try:
-    bart_score = SourceFileLoader("bart_score", BART_SCORE_REPO).load_module()
+    bart_score = SourceFileLoader(
+        "bart_score", BART_SCORE_REPO + "/bart_score.py"
+    ).load_module()
     from bart_score import BARTScorer
 except ImportError:
     raise ImportError(f"Run `bart-score not found. Make sure it's in {BART_SCORE_REPO}")
@@ -188,7 +191,7 @@ class BartscoreCNNParaBaselineScorer(BartscoreBase):
             device=DEFAULT_DEVICE, checkpoint='facebook/bart-large-cnn'
         )
         # Path here should be to fine tuned BART model from https://github.com/neulab/BARTScore#direct-use
-        self.scorer.load("/private/home/mpchen/BARTScore/bart_score_para_finetuned.pth")
+        self.scorer.load(BART_SCORE_REPO + "/bart_score_para_finetuned.pth")
         self.score_type = BARTSCORE_CNN_PARA_F
 
 
@@ -215,9 +218,7 @@ class BartscoreFineTunedBaselineScorer(BartscoreBase):
             device=DEFAULT_DEVICE, checkpoint='facebook/bart-large-cnn'
         )
         # Path here to fine-tuend BART Model
-        self.scorer.load(
-            "/private/home/mpchen/BARTScore/train/reproduce/trained/bart_6000.pth"
-        )
+        self.scorer.load(BART_SCORE_REPO + "/train/reproduce/trained/bart_6000.pth")
         self.score_type = BARTSCORE_FINETUNED_F
 
 
@@ -227,16 +228,14 @@ class BartscoreFineTunedBaselineScorer(BartscoreBase):
 # fairseq==0.9.0
 # sacrebleu>=1.4.8#
 # torch>=1.4.0
-prism = SourceFileLoader(
-    "prism", "/private/home/aslic/Evaluation/BARTScore/SUM/prism.py"
-).load_module()
+prism = SourceFileLoader("prism", PRISM_SCORE_REPO + "/prism.py").load_module()
 
 
 @register_scorer([PRISM_AVG])
 class PrismBaselineScorer(BaselineScorer):
     def __init__(self):
         self.scorer = prism.Prism(
-            model_dir='/private/home/aslic/Evaluation/BARTScore/SUM/models/m39v1/',
+            model_dir=PRISM_SCORE_REPO + '/models/m39v1/',
             lang='en',
         )
 

@@ -453,7 +453,6 @@ class SemanticChangeStep(StepPerturbation):
     Change the semantics of one step in example by replacing entities.
 
     Dependencies:
-    pip3 install checklist
     python -m spacy download en_core_web_sm
     """
 
