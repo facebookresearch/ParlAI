@@ -92,7 +92,7 @@ transformers==4.6.1
 typing-extensions==3.7.4.3
 uctools==1.3.0
 unbabel-comet>=0.1.0
-urllib3==1.26.4
+urllib3==1.26.5
 Werkzeug==2.0.1
 wrapt==1.12.1
 zipp==3.4.1
