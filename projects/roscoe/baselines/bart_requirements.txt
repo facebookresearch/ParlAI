@@ -48,7 +48,7 @@ openfile==0.0.7
 opt-einsum==3.3.0
 packaging==20.9
 pandas==1.2.4
-Pillow==8.2.0
+Pillow==9.0.1
 portalocker==2.0.0
 protobuf==3.17.0
 pyasn1==0.4.8
