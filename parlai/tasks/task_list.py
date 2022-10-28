@@ -1443,7 +1443,9 @@ task_list = [
         "task": "taskmaster3",
         "tags": ["Goal"],
         "description": (
-            "Taskmaster3 is a dataset of movie ticket dialogues collected in a self-chat manner. To induce conversational variety, crowd workers were asked to generate conversations given dozens of different instructions of different level of specificity, some purposefully including conversational  errors."
+            "Taskmaster3 is a dataset of movie ticket dialogues collected in a self-chat manner. To induce conversational"
+            + "variety, crowd workers were asked to generate conversations given dozens of different instructions of"
+            + "different level of specificity, some purposefully including conversational  errors."
         ),
     },
     {
@@ -1540,7 +1542,8 @@ task_list = [
         "task": "casino",
         "tags": ["Negotiation"],
         "description": (
-            "A dataset of 1030 negotiation dialogues. Two participants take the role of campsite neighbors and negotiate for Food, Water, and Firewood packages, based on their individual preferences and requirements."
+            "A dataset of 1030 negotiation dialogues. Two participants take the role of campsite neighbors and negotiate for"
+            + "Food, Water, and Firewood packages, based on their individual preferences and requirements."
         ),
         "links": {
             "paper": "https://aclanthology.org/2021.naacl-main.254.pdf",
@@ -1588,7 +1591,8 @@ task_list = [
         "display_name": "SPOLIN",
         "task": "spolin",
         "tags": ["all", "engaging", "improv", "open-ended", "common ground"],
-        "description": "Conversation pairs from the SPOLIN dataset. The pairs abide by the Yes-and principle of improvisational theatre (improv).",
+        "description": "Conversation pairs from the SPOLIN dataset. The pairs abide by the Yes-and principle of"
+        + "improvisational theatre (improv).",
         "links": {
             "arXiv": "https://arxiv.org/abs/2004.09544",
             "website": "https://justin-cho.com/spolin",
@@ -1599,6 +1603,75 @@ task_list = [
         "display_name": "FITS",
         "task": "fits",
         "tags": ["all", "engaging", "improve", "open-ended"],
-        "description": "A human-model dialogue dataset consist of 14k dialogues where human speakers give feedbacks on bot responses. ",
+        "description": "A human-model dialogue dataset consist of 14k dialogues where human speakers give feedbacks on bot responses.",
+    },
+    {
+        "id": "EntailmentBank",
+        "display_name": "EntailmentBank",
+        "task": "entailment_bank",
+        "tags": ["Entailment", "Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2021.emnlp-main.585.pdf",
+            "website": "https://allenai.org/data/entailmentbank",
+        },
+        "description": (
+            "2k multi-step entailment trees, explaining the answers to ARC science questions."
+        ),
+    },
+    {
+        "id": "ASDIV",
+        "display_name": "ASDIV",
+        "task": "asdiv",
+        "tags": ["Math", "Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2020.acl-main.92.pdf",
+            "website": "https://github.com/chaochun/nlu-asdiv-dataset",
+        },
+        "description": (
+            "A diverse corpus for evaluating and developing English math Wword problem solvers."
+        ),
+    },
+    {
+        "id": "MathDataset",
+        "display_name": "MathDataset",
+        "task": "math_dataset",
+        "tags": ["Math", "Reasoning"],
+        "links": {
+            "paper": "https://arxiv.org/pdf/2103.03874.pdf",
+            "website": "https://github.com/hendrycks/math/",
+        },
+        "description": ("12,500 challenging competition mathematics problems."),
+    },
+    {
+        "id": "EQASC",
+        "display_name": "EQASC",
+        "task": "eqasc",
+        "tags": ["QA", "Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2020.emnlp-main.10.pdf",
+            "website": "https://github.com/harsh19/Reasoning-Chains-MultihopQA",
+        },
+        "description": ("Reasoning chains for multihop question-answering set QASC."),
+    },
+    {
+        "id": "ReasoningFramework",
+        "display_name": "Reasoning Framework",
+        "task": "reasoning",
+        "tags": ["Reasoning"],
+        "description": ("Reasoning teacher framework."),
+    },
+    {
+        "id": "ProofWriter",
+        "display_name": "ProofWriter",
+        "task": "proof_writer",
+        "tags": ["Reasoning"],
+        "links": {
+            "paper": "https://aclanthology.org/2021.findings-acl.317.pdf",
+            "website": "https://allenai.org/data/proofwriter",
+        },
+        "description": (
+            "A synthentically dataset of initial clauses and rules, with questions about statements that these initial"
+            + "clauses and rules imply."
+        ),
     },
 ]
