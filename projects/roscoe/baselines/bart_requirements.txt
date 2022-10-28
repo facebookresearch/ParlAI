@@ -41,7 +41,7 @@ Markdown==3.3.4
 matplotlib==3.4.2
 mosestokenizer==1.1.0
 nltk==3.6.2
-numpy==1.18.5
+numpy==1.22.0
 oauthlib==3.1.0
 omegaconf==2.0.6
 openfile==0.0.7
