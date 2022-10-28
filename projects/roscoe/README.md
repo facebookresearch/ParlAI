@@ -93,6 +93,7 @@ pip install -r projects/roscoe/baselines/requirements.txt
 pip install -r projects/roscoe/baselines/bart_requirements.txt
 ```
 Follow BLEURT [installation quidelines](https://github.com/google-research/bleurt#installation)
+Upload fine-tuned [BART model](https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth)
 
 Then you can run baselines on all datasets, scores, and use of reference (when possible) with the following:
 ```bash
