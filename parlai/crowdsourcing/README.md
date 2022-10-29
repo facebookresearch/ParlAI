@@ -3,7 +3,7 @@
 Code for crowdsourcing tasks that use Mephisto. See the [Mephisto quick start guide](https://mephisto.ai/docs/guides/quickstart/) to quickly get started with Mephisto. **Please install Mephisto via poetry to avoid depdency conflits with ParlAI.**
 ```
 # install poetry
-$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+$ curl -sSL https://install.python-poetry.org/ | python
 # from the root dir, install Mephisto:
 $ poetry install
 ```
