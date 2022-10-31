@@ -21,7 +21,7 @@ from parlai.core.message import Message
 from parlai.core.metrics import AverageMetric
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
-from fuzzywuzzy import fuzz
+from rapidfuzz import process, fuzz
 from parlai.utils.io import PathManager
 
 
@@ -214,11 +214,10 @@ class GoogleSGDDSTTeacher(GoogleSGDParser, tod_agents.TodUserSimulatorTeacher):
     SLOT_ENTRY_SEPARATOR = ", "
 
     def fuzzy_match(self, gt_strings: List[str], predicted_string: str) -> bool:
-        fuzzy_match_scores = [
-            fuzz.token_sort_ratio(gt_string, predicted_string) / 100.0
-            for gt_string in gt_strings
-        ]
-        return max(fuzzy_match_scores)
+        _, score, _ = process.extractOne(
+            predicted_string, gt_strings, scorer=fuzz.token_sort_ratio, processor=None
+        )
+        return score / 100.0
 
     def compare_slot_values(self, gt_slots, predicted_slots, service_slot) -> bool:
         service_slot_name = service_slot["name"]
