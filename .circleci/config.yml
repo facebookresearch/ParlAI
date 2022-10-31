@@ -99,6 +99,9 @@ commands:
             python setup.py develop
             python -c "import nltk; nltk.download('punkt')"
             python -c "import nltk; nltk.download('stopwords')"
+            python -c "import nltk; nltk.download('omw-1.4')"
+            python -m pip install --progress-bar off spacy
+            python -m spacy download en_core_web_sm
 
   installtorchgpu:
     description: Install torch GPU and dependencies
@@ -152,6 +155,14 @@ commands:
               pip install -e .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
+
+  installchecklist:
+    description: Install checklist and dependencies
+    steps:
+      - run:
+          name: Install checklist and dependencies
+          command: |
+            python -m pip install --progress-bar off checklist
 
   setupcuda:
     description: Setup CUDA
@@ -208,26 +219,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20220831-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20221027-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20220831-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20221027-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20220831-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20221027-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20220831-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20221027-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - codecov
@@ -244,12 +255,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20220831-bw-{{ checksum "requirements.txt" }}
+          key: deps-20221027-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - installtorchgpu
       - save_cache:
-          key: deps-20220831-bw-{{ checksum "requirements.txt" }}
+          key: deps-20221027-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -370,6 +381,7 @@ jobs:
       - runtests:
           more_installs:
             - installtorchcpu
+            - installchecklist
           cachename: teacher
           marker: teacher
           pytest_flags: -v -s
