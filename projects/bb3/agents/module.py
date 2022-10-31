@@ -209,7 +209,9 @@ class Module(Enum):
     def opt_pre_context_tok(self):
         import projects.bb3.prompts as PROMPT
 
-        if self.is_knowledge() and self is not Module.CONTEXTUAL_KNOWLEDGE:
+        if (
+            self.is_knowledge() and self is not Module.CONTEXTUAL_KNOWLEDGE
+        ) or self is Module.GROUNDED_DIALOGUE:
             return PROMPT.PRE_CONTEXT_TOK
         return ''
 
@@ -219,6 +221,7 @@ class Module(Enum):
         if self.is_dialogue() and self not in [
             Module.VANILLA_DIALOGUE,
             Module.OPENING_DIALOGUE,
+            Module.GROUNDED_DIALOGUE,
         ]:
             return PROMPT.POST_CONTEXT_TOK
         return ''

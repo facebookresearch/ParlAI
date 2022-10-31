@@ -11,6 +11,16 @@ from parlai.core.message import Message
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.teachers import MultiTaskTeacher
+from parlai.tasks.convai2.agents import NormalizedTeacher
+from parlai.tasks.fits.agents import FitsBaseTeacher
+from parlai.tasks.light_dialog.agents import DefaultTeacher as LightTeacher
+from parlai.tasks.light_dialog_wild.agents import DefaultTeacher as LightWildTeacher
+from parlai.tasks.msc.agents import (
+    SessionBaseMscTeacher,
+    SessionBasePersonaSummaryTeacher,
+)
+from parlai.tasks.saferdialogues.agents import SaferDialoguesTeacher
+from parlai.tasks.taskmaster2.agents import Taskmaster2Parser
 
 #########
 # Mixin #
@@ -110,6 +120,15 @@ class AlwaysSearchTeacher(BB3MultitaskTeacher):
 
 
 class MaybeSearchTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'WowSearchDecisionTeacher',
@@ -127,6 +146,15 @@ class MaybeSearchTeacher(BB3MultitaskTeacher):
 
 
 class MemoryDecisionTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'Convai2MemoryDecisionTeacher',
@@ -143,6 +171,14 @@ class MemoryDecisionTeacher(BB3MultitaskTeacher):
 
 
 class SearchQueryGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        FitsBaseTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return ['WoiSearchQueryTeacher', 'FitsSearchQueryTeacher']
 
@@ -154,8 +190,16 @@ class SearchQueryGenerationTeacher(BB3MultitaskTeacher):
 
 
 class MemoryGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        SessionBasePersonaSummaryTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
-        return ['MSCMemoryGeneratorTeacher']
+        return ['MscMemoryGenerationTeacher']
 
     def get_multitask_weights(self) -> Union[List[int], str]:
         return [1]
@@ -165,6 +209,15 @@ class MemoryGenerationTeacher(BB3MultitaskTeacher):
 
 
 class MemoryKnowledgeGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'BSTMemoryKnowledgePersOverlapTeacher',
@@ -214,6 +267,15 @@ class SearchKnowledgeGenerationTeacher(BB3MultitaskTeacher):
 
 
 class EntityKnowledgeGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'BSTEntityKnowledgeTeacher',
@@ -230,6 +292,15 @@ class EntityKnowledgeGenerationTeacher(BB3MultitaskTeacher):
 
 
 class SearchDialogueGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        Taskmaster2Parser.add_cmdline_args(parser, partial_opt)
+        FitsBaseTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'MsMarcoSearchDialogueTeacher',
@@ -240,7 +311,7 @@ class SearchDialogueGenerationTeacher(BB3MultitaskTeacher):
             'Taskmaster2SearchDialogueTeacher',
             'Taskmaster3SearchDialogueTeacher',
             'FitsSearchDialogueTeacher',
-            'FunpediaWithStyleSearchDialogueTeacher',
+            'FunpediaSearchDialogueTeacher',
         ]
 
     def get_multitask_weights(self) -> Union[List[int], str]:
@@ -251,6 +322,15 @@ class SearchDialogueGenerationTeacher(BB3MultitaskTeacher):
 
 
 class EntityDialogueGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'BSTEntityDialogueTeacher',
@@ -274,6 +354,15 @@ class EntityDialogueGenerationTeacher(BB3MultitaskTeacher):
 
 
 class MemoryDialogueGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'BSTMemoryDialogueFromPersOverlapTeacher',
@@ -299,6 +388,18 @@ class MemoryDialogueGenerationTeacher(BB3MultitaskTeacher):
 
 
 class VanillaDialogueGenerationTeacher(BB3MultitaskTeacher):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        super().add_cmdline_args(parser, partial_opt)
+        NormalizedTeacher.add_cmdline_args(parser, partial_opt)
+        SessionBaseMscTeacher.add_cmdline_args(parser, partial_opt)
+        SaferDialoguesTeacher.add_cmdline_args(parser, partial_opt)
+        LightTeacher.add_cmdline_args(parser, partial_opt)
+        LightWildTeacher.add_cmdline_args(parser, partial_opt)
+        return parser
+
     def get_teachers(self) -> List[str]:
         return [
             'WowVanillaDialogueTeacher',
@@ -317,7 +418,7 @@ class VanillaDialogueGenerationTeacher(BB3MultitaskTeacher):
         """
         Justification:
 
-        Split up Convai2 into half with personas, half without
+        All equal
         """
         return [1] * len(self.get_teachers())
 

@@ -1,0 +1,8 @@
+rouge-score
+bert-score
+ctc_score
+sentencepiece>=0.1.86
+fairseq==0.9.0
+sacrebleu>=1.4.8
+torch>=1.4.0
+ctc_score

@@ -314,7 +314,7 @@ class BlenderBot3Agent(R2C2Agent):
         opening_memories = None
         if memories:
             if isinstance(memories, dict):
-                opening_memories = memories
+                opening_memories = {mem: int(turns) for mem, turns in memories.items()}
             elif isinstance(memories, list):
                 opening_memories = {}
                 for mem in memories:
