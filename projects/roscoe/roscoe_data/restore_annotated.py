@@ -12,7 +12,7 @@ import os
 import re
 import xmltodict
 
-from parlai.core.params import ParlaiParser, default
+from parlai.core.params import ParlaiParser
 
 PATH_TO_DATA = "./projects/roscoe/roscoe_data/raw/"
 PATH_TO_GENERATIONS = "./projects/roscoe/roscoe_data/generated/"
@@ -218,81 +218,77 @@ def parse_semeval(fn, reasoning, savefile):
         ins["id"] = id
         ins["premise"] = context
 
-        try:
-            ins["questions"] = []
+        ins["questions"] = []
 
-            for question in instance['questions']["question"]:
-                quu1 = {
-                    "premise": "",
-                    "hypothesis": "",
-                    "answer": "",
-                    "gpt-3": "",
-                    "dataset": "",
-                }
-                quu2 = {
-                    "premise": "",
-                    "hypothesis": "",
-                    "answer": "",
-                    "gpt-3": "",
-                    "dataset": "",
-                }
+        for question in instance['questions']["question"]:
+            quu1 = {
+                "premise": "",
+                "hypothesis": "",
+                "answer": "",
+                "gpt-3": "",
+                "dataset": "",
+            }
+            quu2 = {
+                "premise": "",
+                "hypothesis": "",
+                "answer": "",
+                "gpt-3": "",
+                "dataset": "",
+            }
 
-                q = question["@text"]
-                quu1["key"] = (
-                    instance["@id"]
-                    + "\t"
-                    + question["@id"]
-                    + "\t"
-                    + question["answer"][0]["@id"]
-                )
-                quu2["key"] = (
-                    instance["@id"]
-                    + "\t"
-                    + question["@id"]
-                    + "\t"
-                    + question["answer"][1]["@id"]
-                )
+            q = question["@text"]
+            quu1["key"] = (
+                instance["@id"]
+                + "\t"
+                + question["@id"]
+                + "\t"
+                + question["answer"][0]["@id"]
+            )
+            quu2["key"] = (
+                instance["@id"]
+                + "\t"
+                + question["@id"]
+                + "\t"
+                + question["answer"][1]["@id"]
+            )
 
-                if question["answer"][0]["@correct"] == "False":
-                    quu1["hypothesis"] = question["answer"][0]["@text"]
-                    quu1["answer"] = "no"
-                else:
-                    quu1["hypothesis"] = question["answer"][0]["@text"]
-                    quu1["answer"] = "yes"
+            if question["answer"][0]["@correct"] == "False":
+                quu1["hypothesis"] = question["answer"][0]["@text"]
+                quu1["answer"] = "no"
+            else:
+                quu1["hypothesis"] = question["answer"][0]["@text"]
+                quu1["answer"] = "yes"
 
-                if question["answer"][1]["@correct"] == "False":
-                    quu2["answer"] = "no"
-                    quu2["hypothesis"] = question["answer"][1]["@text"]
-                else:
-                    quu2["hypothesis"] = question["answer"][1]["@text"]
-                    quu2["answer"] = "yes"
+            if question["answer"][1]["@correct"] == "False":
+                quu2["answer"] = "no"
+                quu2["hypothesis"] = question["answer"][1]["@text"]
+            else:
+                quu2["hypothesis"] = question["answer"][1]["@text"]
+                quu2["answer"] = "yes"
 
-                quu1["premise"] = context + " " + q
-                quu2["premise"] = context + " " + q
+            quu1["premise"] = context + " " + q
+            quu2["premise"] = context + " " + q
 
-                if quu1["key"] in reasonings:
-                    reasoning = reasonings[quu1["key"]]["reasoning"]
-                    quu1["gpt-3"] = reasoning
-                    # TODO: TMP, remove!
-                    quu1["dataset"] = "semevalcommonsense_gpt3_expl"
-                    structs.append(quu1)
-                else:
-                    val = quu1["key"]
-                    print(f"No reasoning found for key {val}")
+            if quu1["key"] in reasonings:
+                reasoning = reasonings[quu1["key"]]["reasoning"]
+                quu1["gpt-3"] = reasoning
+                # TODO: TMP, remove!
+                quu1["dataset"] = "semevalcommonsense_gpt3_expl"
+                structs.append(quu1)
+            else:
+                val = quu1["key"]
+                print(f"No reasoning found for key {val}")
 
-                if quu2["key"] in reasonings:
-                    reasoning = reasonings[quu2["key"]]["reasoning"]
-                    quu2["gpt-3"] = reasoning
-                    # TODO: TMP, remove!
-                    quu2["dataset"] = "semevalcommonsense_gpt3_expl"
-                    structs.append(quu2)
-                else:
-                    val = quu2["key"]
-                    print(f"No reasoning found for key {val}")
-            cnt += 1
-
-        except:
-            print(f"Unexpected error")
+            if quu2["key"] in reasonings:
+                reasoning = reasonings[quu2["key"]]["reasoning"]
+                quu2["gpt-3"] = reasoning
+                # TODO: TMP, remove!
+                quu2["dataset"] = "semevalcommonsense_gpt3_expl"
+                structs.append(quu2)
+            else:
+                val = quu2["key"]
+                print(f"No reasoning found for key {val}")
+        cnt += 1
 
     write_to_file(structs, savefile)
 
