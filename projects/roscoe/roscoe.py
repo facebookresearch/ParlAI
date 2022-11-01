@@ -32,7 +32,7 @@ from projects.roscoe.utils import (
 
 from parlai.core.params import ParlaiParser
 
-DEFAULT_INPUT_PATH = f"./projects/roscoe/roscoe_data/"
+DEFAULT_INPUT_PATH = f"./projects/roscoe/roscoe_data/generated/"
 DEFAULT_OUTPUT_PATH = f"./projects/roscoe/scores/"
 
 DATASETS = ["drop", "esnli", "cosmos", "gsm8k", "semeval"]
