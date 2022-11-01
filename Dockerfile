@@ -1,7 +1,7 @@
 # Copyright (c) Meta, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu18.04 AS install_parlai_prereqs
+FROM nvidia/cuda:11.1.1-cudnn8-devel-ubuntu18.04
 
 # Installing the required packages
 RUN apt update -y
@@ -22,7 +22,7 @@ RUN python -m spacy download en_core_web_sm
 RUN echo "import nltk; nltk.download(\"stopwords\"); nltk.download(\"punkt\")" > nltk_dl_script.py
 RUN python nltk_dl_script.py
 
-# Download the Github repo for ParlAI base
+# Download the ParlAI Github repo
 RUN git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
 
 # Running ParlAI install
