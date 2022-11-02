@@ -1,8 +1,6 @@
-rouge-score
-bert-score
-ctc_score
+rouge-score>=0.1.2
+bert-score>=0.3.9
 sentencepiece>=0.1.86
 fairseq==0.9.0
 sacrebleu>=1.4.8
-torch>=1.4.0
 ctc_score
