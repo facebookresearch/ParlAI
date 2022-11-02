@@ -226,7 +226,8 @@ class BartscoreFineTunedBaselineScorer(BartscoreBase):
             self.scorer.load(BART_SCORE_REPO + "/train/reproduce/trained/bart_6000.pth")
         except FileNotFoundError:
             raise FileNotFoundError(
-                f"Path here should be to fine tuned BART model from https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth"
+                f"Path here should be to fine tuned BART model from"
+                + "https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth"
             )
         self.score_type = BARTSCORE_FINETUNED_F
 
