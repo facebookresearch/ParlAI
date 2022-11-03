@@ -23,8 +23,6 @@ DATASETS = ["drop", "esnli", "cosmos", "semevalcommonsense", "gsm8k"]
 def write_to_file(list_of_json_dict, output_path):
     with open(output_path, 'w') as outfile:
         for line in list_of_json_dict:
-            # TODO: TMP, remove
-            line.pop("key")
             json.dump(line, outfile)
             outfile.write('\n')
 
@@ -181,8 +179,6 @@ def parse_cosmos(fn, reasoning, savefile):
             if struct["key"] in reasonings:
                 reasoning = reasonings[struct["key"]]["reasoning"]
                 struct["gpt-3"] = reasoning
-                # TODO: TMP, remove!
-                struct["dataset"] = "cosmos_valid_gpt3_expl.NEW"
                 structs.append(struct)
             else:
                 val = struct["key"]
@@ -272,8 +268,6 @@ def parse_semeval(fn, reasoning, savefile):
             if quu1["key"] in reasonings:
                 reasoning = reasonings[quu1["key"]]["reasoning"]
                 quu1["gpt-3"] = reasoning
-                # TODO: TMP, remove!
-                quu1["dataset"] = "semevalcommonsense_gpt3_expl"
                 structs.append(quu1)
             else:
                 val = quu1["key"]
@@ -282,8 +276,6 @@ def parse_semeval(fn, reasoning, savefile):
             if quu2["key"] in reasonings:
                 reasoning = reasonings[quu2["key"]]["reasoning"]
                 quu2["gpt-3"] = reasoning
-                # TODO: TMP, remove!
-                quu2["dataset"] = "semevalcommonsense_gpt3_expl"
                 structs.append(quu2)
             else:
                 val = quu2["key"]
@@ -336,11 +328,9 @@ def main(opt):
             parse_esnli(input_file, model_output_reasoning, save_file)
             print(f"Saved E-SNLI dataset in {save_file}")
         elif dataset == 'cosmos':
-            # input_file = '/private/home/aslic/scorer/data/cosmosqa/data/valid.csv'
             parse_cosmos(input_file, model_output_reasoning, save_file)
             print(f"Saved COSMOSQA dataset in {save_file}")
         elif dataset == 'semevalcommonsense':
-            # input_file = '/private/home/aslic/scorer/data/semevalcomsense/train_filter_maryam.xml'
             parse_semeval(input_file, model_output_reasoning, save_file)
             print(f"Saved SEMEVAL dataset in {save_file}")
         elif dataset == 'gsm8k':
