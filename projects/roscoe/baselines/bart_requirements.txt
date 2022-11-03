@@ -40,7 +40,7 @@ kiwisolver==1.3.1
 Markdown==3.3.4
 matplotlib==3.4.2
 mosestokenizer==1.1.0
-nltk==3.6.2
+nltk==3.6.6
 numpy==1.18.5
 oauthlib==3.1.0
 omegaconf==2.0.6
