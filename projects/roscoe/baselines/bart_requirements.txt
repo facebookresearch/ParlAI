@@ -32,7 +32,7 @@ idna==2.10
 importlib-metadata==4.0.1
 importlib-resources==5.1.4
 jmespath==0.10.0
-joblib==1.0.1
+joblib==1.2.0
 jsonlines==2.0.0
 keras-nightly==2.5.0.dev2021032900
 Keras-Preprocessing==1.1.2
