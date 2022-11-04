@@ -21,7 +21,7 @@ class TestBertModel(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
         # set seeds for reproducibility
-        torch.manual_seed(random_seed=42)
+        torch.manual_seed(seed=42)
 
     def test_biencoder(self):
         valid, test = testing_utils.train_model(
