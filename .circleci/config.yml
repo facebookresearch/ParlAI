@@ -100,7 +100,7 @@ commands:
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('punkt')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('omw-1.4')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off spacy && s=0 && break || s=$? && sleep 10; done; (exit $s)
-            for i in $(seq 1 3); do python -m python -m spacy download en_core_web_sm && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -m spacy download en_core_web_sm && s=0 && break || s=$? && sleep 10; done; (exit $s)
 
   installtorchgpu:
     description: Install torch GPU and dependencies
