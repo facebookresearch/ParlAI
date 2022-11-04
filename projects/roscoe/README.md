@@ -83,18 +83,16 @@ bash projects/roscoe/roscoe_data/download_annotated.sh
 
 ### Baseline scoring
 One-time setup: 
-It is higly recommended to run baseline scoring from a separate conda environment.
-```bash
-conda create --name roscoe_baselines python=3.8
-conda activate roscoe_baselines
-```
+Follow BLEURT [installation quidelines](https://github.com/google-research/bleurt#installation).
+Clone [BartScore repo](https://github.com/neulab/BARTScore) and update path in projects/roscoe/baselines/score.py. Install Bart_score requirements.
+Upload fine-tuned [BART model](https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth).
+Download PRISM [installation quidelines](https://github.com/thompsonb/prism) and download the model. Do not install requirements.
 Install requirements to run baselines:
 ```bash
+python -c "import nltk; nltk.download('punkt')"
+python -c "import nltk; nltk.download('stopwords')"
 pip install -r projects/roscoe/baselines/requirements.txt
-pip install -r projects/roscoe/baselines/bart_requirements.txt
 ```
-Follow BLEURT [installation quidelines](https://github.com/google-research/bleurt#installation)
-Upload fine-tuned [BART model](https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth)
 
 Then you can run baselines on all datasets, scores, and use of reference (when possible) with the following:
 ```bash
