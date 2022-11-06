@@ -671,7 +671,7 @@ task_list = [
             "Dialogs between an Ubuntu user and an expert trying to fix issue, "
             "we use the V2 version, which cleaned the data to some extent. "
         ),
-        "links": {"arXiv": "https://arxiv.org/abs/1506.08909."},
+        "links": {"arXiv": "https://arxiv.org/abs/1506.08909"},
     },
     {
         "id": "WebQuestions",

@@ -235,7 +235,7 @@ if __name__ == '__main__':
         type=str,
         choices=[x.value for x in UseRef],
         nargs="+",
-        default=[x.value for x in UseRef],
+        default=UseRef.NO.value,
         help='do we want to generate reference-based or reference-free scores',
     )
     parser.add_argument(

@@ -107,52 +107,52 @@ NEGATIVE_ANNOTATIONS = {
 DATASET_TO_CONFIG = {
     "drop": {
         "human_labels": {
-            "labels": f"{DEFAULT_FILE_PATH}/drop_final_09-17.csv",
+            "labels": f"{DEFAULT_FILE_PATH}/drop.csv",
             "skip_indices": [],
         },
         "baseline_scores": f"{DEFAULT_BASELINE_PATH}/drop_test_merged_scores.csv",
         "alignment_scores": [
             os.path.join(
-                f"{DEFAULT_SCORE_PATH}",
+                DEFAULT_SCORE_PATH,
                 m,
-                "scores_drop_valid_gpt3_expl.tsv",
+                "scores_drop.tsv",
             )
             for m in MODELS
         ],
     },
     "gsm8k": {
         "human_labels": {
-            "labels": f"{DEFAULT_FILE_PATH}/ReasoningResultsCompiler__20220918_182356.csv",
+            "labels": f"{DEFAULT_FILE_PATH}/gsm8k.csv",
             "skip_indices": [],
         },
         "baseline_scores": f"{DEFAULT_BASELINE_PATH}/gsm8k_test_merged_scores.csv",
         "alignment_scores": [
             os.path.join(
-                f"{DEFAULT_SCORE_PATH}",
+                DEFAULT_SCORE_PATH,
                 m,
-                "scores_gsm8k_valid_gpt3_expl.tsv",
+                "scores_gsm8k.tsv",
             )
             for m in MODELS
         ],
     },
     "esnli": {
         "human_labels": {
-            "labels": f"{DEFAULT_FILE_PATH}/ReasoningResultsCompiler__20220924_070103.csv",
+            "labels": f"{DEFAULT_FILE_PATH}/esnli.csv",
             "skip_indices": [],
         },
         "baseline_scores": f"{DEFAULT_BASELINE_PATH}/esnli_test_merged_scores.csv",
         "alignment_scores": [
             os.path.join(
-                f"{DEFAULT_SCORE_PATH}",
+                DEFAULT_SCORE_PATH,
                 m,
-                "scores_esnli_valid_gpt3_expl.tsv",
+                "scores_esnli.tsv",
             )
             for m in MODELS
         ],
     },
     "cosmos": {
         "human_labels": {
-            "labels": f"{DEFAULT_FILE_PATH}/ReasoningResultsCompiler__20220926_094334.csv",
+            "labels": f"{DEFAULT_FILE_PATH}/cosmos.csv",
             "skip_indices": [
                 '145',
                 '147',
@@ -175,16 +175,16 @@ DATASET_TO_CONFIG = {
         "baseline_scores": f"{DEFAULT_BASELINE_PATH}/cosmos_test_merged_scores.csv",
         "alignment_scores": [
             os.path.join(
-                f"{DEFAULT_SCORE_PATH}",
+                DEFAULT_SCORE_PATH,
                 m,
-                "scores_cosmos_valid_gpt3_expl.tsv",
+                "scores_cosmos.tsv",
             )
             for m in MODELS
         ],
     },
     "semeval": {
         "human_labels": {
-            "labels": f"{DEFAULT_FILE_PATH}/ReasoningResultsCompiler__20220921_072211.csv",
+            "labels": f"{DEFAULT_FILE_PATH}/semeval.csv",
             "skip_indices": [
                 '8',
                 '11',
@@ -203,9 +203,9 @@ DATASET_TO_CONFIG = {
         "baseline_scores": f"{DEFAULT_BASELINE_PATH}/semeval_test_merged_scores.csv",
         "alignment_scores": [
             os.path.join(
-                f"{DEFAULT_SCORE_PATH}",
+                DEFAULT_SCORE_PATH,
                 m,
-                "scores_semevalcommonsense_gpt3_expl.tsv",
+                "scores_semevalcommonsense.tsv",
             )
             for m in MODELS
         ],

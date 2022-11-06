@@ -59,7 +59,7 @@ There are several steps involved:
 
 ### Synthetic data generation
 Assuming you already have the ParlAI environment set up, these commands should install the remaining dependencies of this particular task:
-```
+```bash
 pip install -r parlai/tasks/reasoning/requirements.txt
 python -c "import nltk; nltk.download('omw-1.4')"
 python -m spacy download en_core_web_sm
@@ -71,7 +71,10 @@ bash projects/roscoe/roscoe_data/generate_perturbed_data.sh
 ```
 
 ### Human annotated datasets
-**Pending data release approval**
+One-time setup: install requirements.
+```bash
+pip install xmltodict
+```
 
 To dowload human annotated datasets used in our paper, please use the following command:
 ```bash
@@ -79,21 +82,17 @@ bash projects/roscoe/roscoe_data/download_annotated.sh
 ```
 
 ### Baseline scoring
-**Human annotated data: Pending data release approval**
-
 One-time setup: 
-It is higly recommended to run baseline scoring from a separate conda environment.
-```bash
-conda create --name roscoe_baselines python=3.8
-conda activate roscoe_baselines
-```
+Follow BLEURT [installation quidelines](https://github.com/google-research/bleurt#installation).
+Clone [BartScore repo](https://github.com/neulab/BARTScore) and update path in projects/roscoe/baselines/score.py. Install Bart_score requirements.
+Upload fine-tuned [BART model](https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth).
+Download PRISM [installation quidelines](https://github.com/thompsonb/prism) and download the model. Do not install requirements.
 Install requirements to run baselines:
 ```bash
+python -c "import nltk; nltk.download('punkt')"
+python -c "import nltk; nltk.download('stopwords')"
 pip install -r projects/roscoe/baselines/requirements.txt
-pip install -r projects/roscoe/baselines/bart_requirements.txt
 ```
-Follow BLEURT [installation quidelines](https://github.com/google-research/bleurt#installation)
-Upload fine-tuned [BART model](https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth)
 
 Then you can run baselines on all datasets, scores, and use of reference (when possible) with the following:
 ```bash
@@ -102,8 +101,6 @@ python projects/roscoe/baselines/run.py
 Use  `--dataset` parameter to limit sets you want to run scoring on.
 
 ### ROSCOE scoring
-**Human annotated data: Pending data release approval**
-
 To run ROSCOE evaluation on all human annotated datasets, use the following commands:
 ```bash
 python projects/roscoe/roscoe.py
@@ -124,7 +121,6 @@ bash projects/roscoe/synthetic_evaluation/score_all.sh sim_sce facebook/roscoe-5
 By default, function will use `all-mpnet-base-v2` sentence embedding model, if not specified otherwise as in the example above.
 
 ### Meta evaluation
-**Human annotated data: Pending data release approval**
 To run meta evaluation on all human annotated datasets, use the following command:
 ```bash
 python projects/roscoe/meta_evaluation/roscoe_correlations.py
