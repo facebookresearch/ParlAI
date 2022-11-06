@@ -38,7 +38,10 @@ class GoogleSGDParser(tod_agents.TodStructuredDataParser):
             "--filter-dialogue-by-id",
             default="",
             type=str,
-            help="Path to a json file of `dialogue_id`s for which we will filter from. Assumes it will contain a map where the keys are a fold and the value is a list of ids",
+            help=(
+                "Path to a json file of `dialogue_id`s for which we will filter from. "
+                "Assumes it will contain a map where the keys are a fold and the value is a list of ids"
+            ),
         )
         return parser
 
@@ -76,9 +79,11 @@ class GoogleSGDParser(tod_agents.TodStructuredDataParser):
                 for dialogue in dialogues:
                     if dialogue["dialogue_id"] in dialogues_to_get:
                         filtered.append(dialogue)
-                assert len(filtered) == len(
-                    dialogues_to_get
-                ), f"Different number of dialogues found than requested. Are you sure you've got the right form of Google SGD? Did you filter for dialogue ids correctly? len(filtered) = {len(filtered)}, len(dialogues_to_get) = {len(dialogues_to_get)}"
+                assert len(filtered) == len(dialogues_to_get), (
+                    "Different number of dialogues found than requested. Are you sure you've got the right form of Google SGD?"
+                    f"Did you filter for dialogue ids correctly? len(filtered) = {len(filtered)}, "
+                    f"len(dialogues_to_get) = {len(dialogues_to_get)}"
+                )
             dialogues = filtered
         return schema_lookup, dialogues
 
