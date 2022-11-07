@@ -91,17 +91,17 @@ commands:
       - run:
           name: Installs basic dependencies
           command: |
-            python -m pip install --progress-bar off pip setuptools==62.3.4
-            python -m pip install --progress-bar off coverage
-            python -m pip install --progress-bar off codecov
+            for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools==62.3.4 && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -m pip install --progress-bar off coverage && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -m pip install --progress-bar off codecov && s=0 && break || s=$? && sleep 10; done; (exit $s)
             mkdir -p ~/ParlAI/test-results
-            pip install -v -r requirements.txt
-            python setup.py develop
-            python -c "import nltk; nltk.download('punkt')"
-            python -c "import nltk; nltk.download('stopwords')"
-            python -c "import nltk; nltk.download('omw-1.4')"
-            python -m pip install --progress-bar off spacy
-            python -m spacy download en_core_web_sm
+            for i in $(seq 1 3); do pip install -v -r requirements.txt && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python setup.py develop && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -c "import nltk; nltk.download('punkt')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -c "import nltk; nltk.download('stopwords')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -c "import nltk; nltk.download('omw-1.4')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -m pip install --progress-bar off spacy && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -m spacy download en_core_web_sm && s=0 && break || s=$? && sleep 10; done; (exit $s)
 
   installtorchgpu:
     description: Install torch GPU and dependencies
