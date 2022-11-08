@@ -17,7 +17,7 @@ ENV PATH="/root/anaconda3/bin:$PATH"
 RUN conda install pytorch torchvision torchaudio -c pytorch-lts -c nvidia
 RUN pip install spacy==3.2.4 tokenizers pandas transformers fairseq contractions boto3==1.17.95 botocore==1.20.95
 
-# Setting env config for packages
+# Configuring packages for English
 RUN python -m spacy download en_core_web_sm
 RUN echo "import nltk; nltk.download(\"stopwords\"); nltk.download(\"punkt\")" > nltk_dl_script.py
 RUN python nltk_dl_script.py
