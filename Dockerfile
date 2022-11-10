@@ -14,7 +14,7 @@ RUN bash anaconda_installer.sh -b -p
 ENV PATH="/root/anaconda3/bin:$PATH"
 
 # Installing recommmended pre-requirements
-RUN conda install pytorch torchvision torchaudio -c pytorch-lts -c nvidia
+RUN conda install "pytorch<1.13.0,>=1.4.0" torchvision torchaudio -c pytorch-lts -c nvidia
 RUN pip install spacy==3.2.4 tokenizers pandas transformers fairseq contractions boto3==1.17.95 botocore==1.20.95
 
 # Setting env config for packages
