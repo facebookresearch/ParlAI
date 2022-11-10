@@ -8,7 +8,7 @@ Standard language model training employs gold human documents or human-human int
 treats all training data as positive examples. 
 Growing evidence shows that even with very large amounts of positive training data, issues remain
 that can be alleviated with relatively small amounts of negative data -- examples of what the model should not do.
-In this work, we propose a novel procedure to train with such data called the Cringe loss
+In this work, we propose a novel procedure to train with such data called the CRINGE loss
 (ContRastive Iterative Negative GEneration).
   We show the effectiveness of this approach across three different experiments on the tasks of safe generation,
   contradiction avoidance, and open-domain dialogue. Our models outperform multiple strong baselines and are
