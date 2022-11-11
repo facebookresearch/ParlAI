@@ -86,7 +86,18 @@ class T5Agent(TorchGeneratorAgent):
             '--t5-model-arch',
             type=str,
             default='t5-base',
-            choices=["t5-small", "t5-base", "t5-large", "t5-3b", "t5-11b"],
+            choices=[
+                "t5-small",
+                "t5-base",
+                "t5-large",
+                "t5-3b",
+                "t5-11b",
+                "google/flan-t5-small",
+                "google/flan-t5-base",
+                "google/flan-t5-large",
+                "google/flan-t5-xl",
+                "google/flan-t5-xxl",
+            ],
         )
         group.add_argument(
             '--t5-model-parallel',
