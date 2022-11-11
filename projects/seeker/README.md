@@ -177,7 +177,7 @@ $ python -m parlai.scripts.multiprocessing_train \
 Same command as above, except specify the following for `--init-opt` and `--init-model`:
 
 ```shell
---init-opt arc/r2c2_base_400M --init-model zoo:seeker/r2c2_blenderbot_400M/model
+--init-opt arch/r2c2_base_400M --init-model zoo:seeker/r2c2_blenderbot_400M/model
 ```
 
 ### SeeKeR LM Training
