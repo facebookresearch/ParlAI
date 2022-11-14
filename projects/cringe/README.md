@@ -16,8 +16,9 @@ In this work, we propose a novel procedure to train with such data called the CR
 
 ## Paper Link
 
-Coming soon
 
+* [The CRINGE Loss: Learning what language not to model](https://arxiv.org/abs/2211.05826).
+Leonard Adolphs, Tianyu Gao, Jing Xu, Kurt Shuster, Sainbayar Sukhbaatar, Jason Weston
 
 ## Train a CRINGE (single iter.) model on the safe generation task
 ```

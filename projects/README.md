@@ -18,7 +18,9 @@ This directory also contains subfolders for some of the projects which are house
 
 ## Generative Models & Architectures 
 
-- **Director** [[project]](https://parl.ai/projects/director/) _New architecture/method for training language models with positive and negative examples._
+- **CRINGE Loss** [[project]](https://parl.ai/projects/cringe/) _New loss for training language models with negative examples (with no architecture change)._
+
+- **Director** [[project]](https://parl.ai/projects/director/) _New architecture for training language models with positive and negative examples using LM+classifier heads._
 
 - **Maintaining Identity** [[project]](https://github.com/facebookresearch/ParlAI/tree/main/projects/light_whoami/) _State-of-the-art dialogue models cannot maintain identity -- we study measurements & methods for this open problem._
 
