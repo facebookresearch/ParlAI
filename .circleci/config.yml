@@ -231,7 +231,7 @@ commands:
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20221031-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20221115-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
