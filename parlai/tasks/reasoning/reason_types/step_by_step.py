@@ -301,14 +301,7 @@ class GrammaticalErrorStep(StepPerturbation):
         super().__init__(opt, cache)
         self.lemmatizer = WordNetLemmatizer()
 
-    def lemmatize_step(self, step):
-        try:
-            words = nltk.word_tokenize(str(step))
-        except IndexError:
-            print(
-                f"WARNING: could not lemmatize step {str(step)}. Proceeding to the next perturbation."
-            )
-            return str(step)
+    def lemmatize_step(self, words):
         lemmatized_output = ' '.join([self.lemmatizer.lemmatize(w, 'v') for w in words])
         # remove extraneous spaces after joining strings back
         clean_lemmatized_output = re.sub(
@@ -316,14 +309,7 @@ class GrammaticalErrorStep(StepPerturbation):
         )
         return clean_lemmatized_output
 
-    def drop_verb(self, step):
-        try:
-            words = nltk.word_tokenize(str(step))
-        except IndexError:
-            print(
-                f"WARNING: could not lemmatize step {str(step)}. Proceeding to the next perturbation."
-            )
-            return str(step)
+    def drop_verb(self, words):
         tags = nltk.pos_tag(words)
         verb_indices = []
         for i, tag in enumerate(tags):
@@ -338,14 +324,7 @@ class GrammaticalErrorStep(StepPerturbation):
         clean_result = re.sub(r'\s([?.!"](?:\s|$))', r'\1', result)
         return clean_result
 
-    def swap_words(self, step):
-        try:
-            tokenized_step = nltk.word_tokenize(str(step))
-        except IndexError:
-            print(
-                f"WARNING: could not lemmatize step {str(step)}. Proceeding to next perturbation."
-            )
-            return str(step)
+    def swap_words(self, tokenized_step):
         tags = nltk.pos_tag(tokenized_step)
         word_indices = []
         for i, tag in enumerate(tags):
@@ -374,15 +353,22 @@ class GrammaticalErrorStep(StepPerturbation):
         grammatical_error_steps = []
 
         for i, step in enumerate(steps):
+            try:
+                tok_step = nltk.word_tokenize(str(step))
+            except IndexError:
+                print(
+                    f"WARNING: could not tokenize step {str(step)}. Proceeding to next chain."
+                )
+                return str(step)
             # perform all possible grammatical errors on each step, then randomly choose 1
-            lemmatized_step = self.lemmatize_step(step)
-            if str(step) != lemmatized_step:
+            lemmatized_step = self.lemmatize_step(tok_step)
+            if tok_step != lemmatized_step:
                 grammatical_error_steps.append((i, lemmatized_step))
-            dropped_verb_step = self.drop_verb(step)
-            if dropped_verb_step != "" and str(step) != dropped_verb_step:
+            dropped_verb_step = self.drop_verb(tok_step)
+            if dropped_verb_step != "" and tok_step != dropped_verb_step:
                 grammatical_error_steps.append((i, dropped_verb_step))
-            swapped_word_step = self.swap_words(step)
-            if swapped_word_step != "" and str(step) != swapped_word_step:
+            swapped_word_step = self.swap_words(tok_step)
+            if swapped_word_step != "" and tok_step != swapped_word_step:
                 grammatical_error_steps.append((i, swapped_word_step))
 
         if not grammatical_error_steps:

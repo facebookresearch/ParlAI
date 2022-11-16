@@ -109,7 +109,10 @@ class MathDatasetStepByStepReasoningTeacher(MWPStepsReasoningTeacher):
                 rand_steps = self._clean_steps(
                     self.math_random.choice(data)["solution"]
                 ).split(". ")
-                random_step = self.math_random.choice(rand_steps)
+                random_step = ""
+                # find non-empty random step
+                while random_step == "" or random_step == " ":
+                    random_step = self.math_random.choice(rand_steps)
             if convert:
                 question = self._latex_conversion(question)
                 final_answer = self._latex_conversion(final_answer)
