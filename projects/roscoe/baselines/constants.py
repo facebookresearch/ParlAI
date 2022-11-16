@@ -65,14 +65,14 @@ BASELINE_SCORES = [  # Use this to hide metrics we don't want to use anymore
     CTC_CONSISTENCY_SUMMARY,
 ]
 
-DEFAULT_INPUT_PATH = f"./projects/roscoe/roscoe_data/"
+DEFAULT_INPUT_PATH = f"./projects/roscoe/roscoe_data/generated"
 ################ Datasets
 INPUT_DATA_FILES_HUMAN = {
-    "drop": f"{DEFAULT_INPUT_PATH}/drop_valid_gpt3_expl.jsonl",
-    "esnli": f"{DEFAULT_INPUT_PATH}/esnli_valid_gpt3_expl.jsonl",
-    "cosmos": f"{DEFAULT_INPUT_PATH}/cosmos_valid_gpt3_expl.jsonl",
-    "gsm8k": f"{DEFAULT_INPUT_PATH}/gsm8k_valid_gpt3_expl.jsonl",
-    "semeval": f"{DEFAULT_INPUT_PATH}/semevalcommonsense_gpt3_expl.jsonl",
+    "drop": f"{DEFAULT_INPUT_PATH}/drop.json",
+    "esnli": f"{DEFAULT_INPUT_PATH}/esnli.json",
+    "cosmos": f"{DEFAULT_INPUT_PATH}/cosmos.json",
+    "gsm8k": f"{DEFAULT_INPUT_PATH}/gsm8k.json",
+    "semeval": f"{DEFAULT_INPUT_PATH}/semevalcommonsense.json",
 }
 INPUT_DATA_HUMAN = list(INPUT_DATA_FILES_HUMAN.keys())
 

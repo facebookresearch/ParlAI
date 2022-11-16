@@ -26,8 +26,8 @@ import re
 
 from importlib.machinery import SourceFileLoader
 
-BART_SCORE_REPO = "/path_to/BARTScore/"
-PRISM_SCORE_REPO = "/path_to/SUM"
+BART_SCORE_REPO = "/path_to/BARTScore"
+PRISM_SCORE_REPO = "/path_to/prism"
 BLEURT_SCORE_REPO = "/path_to/bleurt"
 
 ######### Base functionality
@@ -114,7 +114,9 @@ except ImportError:
 @register_scorer([BLEURT])
 class BleurtBaselineScorer(BaselineScorer):
     def __init__(self):
-        self.scorer = bleurt_score.BleurtScorer(BLEURT_SCORE_REPO + "/test_checkpoint")
+        self.scorer = bleurt_score.BleurtScorer(
+            BLEURT_SCORE_REPO + "/bleurt/test_checkpoint"
+        )
 
     def get_scores(self, score_me):
         scores = self.scorer.score(
@@ -143,8 +145,6 @@ class BertBaselineScorer(BaselineScorer):
 
 
 ######### BartScore (and its variants)
-# Note: You might have to load some of its dependencies yourself.
-# HuggingFace is the major one
 # Second argument here should be path to `bart_score.py` of the BARTScore repo
 try:
     bart_score = SourceFileLoader(
@@ -190,8 +190,12 @@ class BartscoreCNNParaBaselineScorer(BartscoreBase):
         self.scorer = BARTScorer(
             device=DEFAULT_DEVICE, checkpoint='facebook/bart-large-cnn'
         )
-        # Path here should be to fine tuned BART model from https://github.com/neulab/BARTScore#direct-use
-        self.scorer.load(BART_SCORE_REPO + "/bart_score_para_finetuned.pth")
+        try:
+            self.scorer.load(BART_SCORE_REPO + "/bart_score_para_finetuned.pth")
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Path here should be to fine tuned BART model from https://github.com/neulab/BARTScore#direct-use"
+            )
         self.score_type = BARTSCORE_CNN_PARA_F
 
 
@@ -218,16 +222,17 @@ class BartscoreFineTunedBaselineScorer(BartscoreBase):
             device=DEFAULT_DEVICE, checkpoint='facebook/bart-large-cnn'
         )
         # Path here to fine-tuend BART Model
-        self.scorer.load(BART_SCORE_REPO + "/train/reproduce/trained/bart_6000.pth")
+        try:
+            self.scorer.load(BART_SCORE_REPO + "/train/reproduce/trained/bart_6000.pth")
+        except FileNotFoundError:
+            raise FileNotFoundError(
+                f"Path here should be to fine tuned BART model from"
+                + "https://dl.fbaipublicfiles.com/parlai/projects/roscoe/fine_tuned_bartscore.pth"
+            )
         self.score_type = BARTSCORE_FINETUNED_F
 
 
 ######### Prism
-# Prism deps (minimal set)
-# sentencepiece>=0.1.86
-# fairseq==0.9.0
-# sacrebleu>=1.4.8#
-# torch>=1.4.0
 prism = SourceFileLoader("prism", PRISM_SCORE_REPO + "/prism.py").load_module()
 
 
@@ -235,7 +240,7 @@ prism = SourceFileLoader("prism", PRISM_SCORE_REPO + "/prism.py").load_module()
 class PrismBaselineScorer(BaselineScorer):
     def __init__(self):
         self.scorer = prism.Prism(
-            model_dir=PRISM_SCORE_REPO + '/models/m39v1/',
+            model_dir=PRISM_SCORE_REPO + '/m39v1/',
             lang='en',
         )
 

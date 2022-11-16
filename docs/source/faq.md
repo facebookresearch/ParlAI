@@ -41,3 +41,8 @@ results) with:
 
 `pytest --force-regen parlai/tasks/TASK_NAME_HERE/test.py`
 
+## Can I use ParlAI on Windows
+ParlAI is optimized for using with Linux and to some extent Mac.
+For using ParlAI on Windows (or any other non-optimized operating system),
+we recommend you try our Docker image.
+Check out [this Tutorial](./tutorial_docker.md) for more info.

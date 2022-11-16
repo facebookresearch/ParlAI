@@ -169,7 +169,7 @@ $ python -m parlai.scripts.multiprocessing_train \
 --fp16 True -lr 1e-06 --lr-scheduler reduceonplateau --optimizer adamw --save-after-valid True \
 --warmup-updates 100 --update-freq 1 --gradient-clip 1.0 --skip-generation True --dropout 0.1 \
 --attention-dropout 0.0 --load-from-checkpoint true --ddp-backend zero2 \
---checkpoint-activations true--model-file /tmp/my_seeker_dialogue_model
+--checkpoint-activations true --model-file /tmp/my_seeker_dialogue_model
 ```
 
 **SeeKeR 400M**
@@ -177,7 +177,7 @@ $ python -m parlai.scripts.multiprocessing_train \
 Same command as above, except specify the following for `--init-opt` and `--init-model`:
 
 ```shell
---init-opt arc/r2c2_base_400M --init-model zoo:seeker/r2c2_blenderbot_400M/model
+--init-opt arch/r2c2_base_400M --init-model zoo:seeker/r2c2_blenderbot_400M/model
 ```
 
 ### SeeKeR LM Training

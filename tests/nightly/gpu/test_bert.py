@@ -6,6 +6,7 @@
 
 import unittest
 import parlai.utils.testing as testing_utils
+import torch
 
 
 @testing_utils.skipUnlessGPU
@@ -16,6 +17,11 @@ class TestBertModel(unittest.TestCase):
     Checks that Both Biencoder and CrossEncoder of Bert can be trained for about 100
     samples on convai2
     """
+
+    def setUp(self) -> None:
+        super().setUp()
+        # set seeds for reproducibility
+        torch.manual_seed(seed=42)
 
     def test_biencoder(self):
         valid, test = testing_utils.train_model(
