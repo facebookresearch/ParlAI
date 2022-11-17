@@ -20,7 +20,7 @@ from parlai.tasks.math_dataset.build import build
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.utils.io import PathManager
-from typing import Optional
+from typing import List, Optional
 
 from parlai.tasks.reasoning.agents import MWPStepsReasoningTeacher
 
@@ -72,7 +72,7 @@ class MathDatasetStepByStepReasoningTeacher(MWPStepsReasoningTeacher):
         self.math_random = random.Random(42)
         super().__init__(opt, shared)
 
-    def load_data(self, domains):
+    def load_data(self, domains) -> List[str]:
         data = []
         data_path = self.opt['datafile']
         for domain in domains:
@@ -106,10 +106,7 @@ class MathDatasetStepByStepReasoningTeacher(MWPStepsReasoningTeacher):
             answer_blob = self._clean_steps(answer_blob)
             steps = answer_blob.split(". ")
             if extrinsic_step:
-                rand_steps = self._clean_steps(
-                    self.math_random.choice(data)["solution"]
-                ).split(". ")
-                random_step = self.math_random.choice(rand_steps)
+                random_step = self._find_nonempty_random_step(data)
             if convert:
                 question = self._latex_conversion(question)
                 final_answer = self._latex_conversion(final_answer)
@@ -224,6 +221,29 @@ class MathDatasetStepByStepReasoningTeacher(MWPStepsReasoningTeacher):
             final_answer = final_answer.replace(',', '')
 
         return final_answer
+
+    def _find_nonempty_random_step(self, dataset: List[str]) -> str:
+        '''Here we *ASSUME* that the whole dataset contains at least one non-empty step
+        Otherwise it will go into infinite loop looking for the one
+        '''
+        # what we call an empty step
+        empty_steps = ["", " "]
+        # first find chain with at least one non-empty step
+        rand_steps = self._clean_steps(
+            self.math_random.choice(dataset)["solution"]
+        ).split(". ")
+        # make sure this chain has at least one non-empty step
+        i = 0
+        while i < len(rand_steps) and rand_steps[i] in empty_steps:
+            i += 1
+        # if it doesn't, try again
+        if i == len(rand_steps):
+            return self._find_nonempty_random_step(dataset)
+        random_step = empty_steps[0]
+        # find non-empty random step (and we know it exists in this chain)
+        while random_step in empty_steps:
+            random_step = self.math_random.choice(rand_steps)
+        return random_step
 
     def get_boxed_answer(self, answer):
         boxed_idx = answer.find("boxed{")
