@@ -227,15 +227,25 @@ class MyHandler(BaseHTTPRequestHandler):
             model act dictionary
         """
         reply = {}
-        reply["text"] = data["personality"][0].decode()
-        text = data["text"][0].decode()
+        if type(data["personality"][0]) is bytes:
+            reply["text"] = data["personality"][0].decode("utf-8")
+        else:
+            reply["text"] = data["personality"][0]
+        if type(data["text"][0]) is bytes:
+            text = data["text"][0].decode("utf-8")
+        else:
+            text = data["text"][0]
         if text:
             reply["text"] = "\n".join(SHARED["dialog_history"] + [text, reply["text"]])
             SHARED["dialog_history"].append(text)
         if SHARED["image_feats"] is None:
-
-            img_data = str(data["image"][0])
-            _, encoded = img_data.split(",", 1)
+            if type(data["image"][0]) is bytes:
+                img_data = data["image"][0].decode("utf-8")
+                _, encoded = img_data.split(",", 1)
+                encoded = encoded[2:-1]
+            else:
+                img_data = data["image"][0]
+                _, encoded = img_data.split(",", 1)
             image = Image.open(io.BytesIO(b64decode(encoded))).convert("RGB")
             SHARED["image_feats"] = SHARED["image_loader"].extract(image)
 
@@ -261,7 +271,7 @@ class MyHandler(BaseHTTPRequestHandler):
         ctype, pdict = cgi.parse_header(self.headers["content-type"])
         pdict["boundary"] = bytes(pdict["boundary"], "utf-8")
         postvars = cgi.parse_multipart(self.rfile, pdict)
-        if postvars["image"][0].decode() != "":
+        if postvars["image"][0] != "":
             SHARED["dialog_history"] = []
             SHARED["image_feats"] = None
         model_response = self.interactive_running(postvars)
