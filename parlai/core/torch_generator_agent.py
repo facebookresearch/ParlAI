@@ -1636,7 +1636,7 @@ class TreeSearch(object):
             hyp_device = self.partial_hyps.get_device()
         self.partial_hyps = torch.cat(
             (
-                self.partial_hyps[path_selection.hypothesis_ids.long().to(hyp_device)],
+                self.partial_hyps[path_selection.hypothesis_ids.long()],
                 path_selection.token_ids.view(path_selection.token_ids.shape[0], -1).to(
                     hyp_device
                 ),
@@ -2074,6 +2074,16 @@ class FactualNucleusSampling(NucleusSampling):
         self.p_reset = p_reset
 
     def update_p(self, tokens: torch.Tensor):
+        """
+        Updates sampling P value according to tokens generated.
+
+        When tokens are *not* punctuation, p is decayed by lambda_decay factor.
+
+        Otherwise, we reset the p value.
+
+        :param tokens:
+            sampled tokens.
+        """
         for i, t in enumerate(tokens):
             if self.full_stop_list.to(tokens.device).eq(t).sum() > 0:
                 self.toks_since_reset[i] = 0
