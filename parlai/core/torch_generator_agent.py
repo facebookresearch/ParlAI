@@ -1393,11 +1393,10 @@ class TreeSearch(object):
         self.eos_top = False
         self.eos_top_ts = None
         self.n_best_counter = 0
-        self.gpu_beam_blocking = gpu_beam_blocking
+        self.gpu_beam_blocking = gpu_beam_blocking and torch.cuda.is_available()
         self.partial_hyps = torch.tensor([[self.bos] for i in range(beam_size)])
         if self.gpu_beam_blocking:
             self.partial_hyps = self.partial_hyps.cuda()
-        if torch.cuda.is_available():
             self.no_repeat_ngram_op = NGramRepeatBlock()
 
     def set_context(self: TSType, context: torch.LongTensor) -> TSType:
