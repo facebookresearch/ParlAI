@@ -542,7 +542,7 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1706.07503"},
     },
     {
-        "id": "prosocial-dialog",
+        "id": "prosocial_dialog",
         "display_name": "Prosocial Dialog",
         "task": "prosocial_dialog",
         "tags": [],
