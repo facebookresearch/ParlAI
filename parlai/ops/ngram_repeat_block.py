@@ -16,26 +16,6 @@ from torch import nn
 import os
 from torch.utils.cpp_extension import load
 
-current = os.getcwd()
-abspath = os.path.abspath(__file__)
-dname = os.path.dirname(abspath)
-os.chdir(dname)
-
-
-try:
-    ngram_repeat_block_cuda = load(
-        name='ngram_repeat_block_cuda',
-        sources=[
-            '../clib/cuda/ngram_repeat_block_cuda.cpp',
-            '../clib/cuda/ngram_repeat_block_cuda_kernel.cu',
-        ],
-    )
-except Exception as e:
-    logging.warning(f"Unable to load ngram blocking on GPU: {e}")
-    ngram_repeat_block_cuda = None
-
-os.chdir(current)
-
 
 class NGramRepeatBlock(nn.Module):
     """
@@ -44,6 +24,24 @@ class NGramRepeatBlock(nn.Module):
 
     def __init__(self):
         super(NGramRepeatBlock, self).__init__()
+        current = os.getcwd()
+        abspath = os.path.abspath(__file__)
+        dname = os.path.dirname(abspath)
+        os.chdir(dname)
+
+        try:
+            self.ngram_repeat_block_cuda = load(
+                name='ngram_repeat_block_cuda',
+                sources=[
+                    '../clib/cuda/ngram_repeat_block_cuda.cpp',
+                    '../clib/cuda/ngram_repeat_block_cuda_kernel.cu',
+                ],
+            )
+        except Exception as e:
+            logging.warning(f"Unable to load ngram blocking on GPU: {e}")
+            self.ngram_repeat_block_cuda = None
+
+        os.chdir(current)
 
     def forward(
         self,
@@ -75,7 +73,7 @@ class NGramRepeatBlock(nn.Module):
         hypothesis = hypothesis.contiguous()
         context = context.contiguous()
         lprobs = lprobs.contiguous()
-        return ngram_repeat_block_cuda.forward(
+        return self.ngram_repeat_block_cuda.forward(
             hypothesis,
             context,
             lprobs,
