@@ -1816,11 +1816,8 @@ class GreedySearch(TreeSearch):
         if self.beam_size != 1:
             raise ValueError('Greedy search can only be run with beam size 1.')
 
-    def get_logprobs(self, logprobs: torch.Tensor) -> torch.Tensor:
-        return logprobs
-
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
-        tok_scores, tok_ids = self.get_logprobs(logprobs).max(1)
+        tok_scores, tok_ids = logprobs
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0), device=logprobs.device)
 
