@@ -77,13 +77,6 @@ class ProsocialDialogBinarySafetyTeacher(ProsocialDialogSafetyTeacher):
     Casual is __ok__ and Needs Caution and Needs Intervention is __notok__
     """
 
-    @classmethod
-    def add_cmdline_args(
-        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
-    ) -> ParlaiParser:
-        super().add_cmdline_args(parser, partial_opt)
-        return parser
-
     def setup_data(self, path):
         print('loading: ' + path)
         f = open(path)
@@ -102,12 +95,6 @@ class ProsocialDialogBinarySafetyTeacher(ProsocialDialogSafetyTeacher):
                 y = "__ok__" if ex['safety_label'] == "__casual__" else "__notok__"
                 m = {'text': x, 'labels': y}
                 yield m, True
-
-    def num_episodes(self):
-        return sum([len(x) for x in self.json_data])
-
-    def num_examples(self):
-        return sum([len(x) for x in self.json_data])
 
 
 class ProsocialDialogTeacher(DialogTeacher):
