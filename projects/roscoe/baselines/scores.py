@@ -223,7 +223,9 @@ class BartscoreFineTunedBaselineScorer(BartscoreBase):
         )
         # Path here to fine-tuend BART Model
         try:
-            self.scorer.load(BART_SCORE_REPO + "/train/reproduce/trained/bart_6000.pth")
+            self.scorer.load(
+                BART_SCORE_REPO + "/train/reproduce/trained/fine_tuned_bartscore.pth"
+            )
         except FileNotFoundError:
             raise FileNotFoundError(
                 f"Path here should be to fine tuned BART model from"
