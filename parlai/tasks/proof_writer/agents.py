@@ -328,8 +328,14 @@ class ProofWriterStepByStepReasoningTeacher(
 
         for m in messages:
             if extrinsic_step:
-                rand_steps = self.proofwriter_random.choice(messages)["steps"]
-                random_step = self.proofwriter_random.choice(rand_steps)
+                random_step = None
+                # make sure new step is from a different context
+                # here we aasume that there is at least one step in the set
+                # with different context, otherwise it will go in the
+                # infinite loop
+                while not random_step or random_step in m["question"]:
+                    rand_steps = self.proofwriter_random.choice(messages)["steps"]
+                    random_step = self.proofwriter_random.choice(rand_steps)
                 m["extrinsic_step"] = random_step
                 yield m
             else:
