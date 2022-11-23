@@ -5,13 +5,16 @@
 # LICENSE file in the root directory of this source tree.
 
 """
-Training script for ParlAI. The standard way to train a model. After training, also
-computes validation and test error. The user must provide a model (with `--model`) and a
-task (with `--task`).
-
-## Examples ```shell parlai train_model --model ir_baseline --task dialog_babi:Task:1
---model-file /tmp/model parlai train_model --model seq2seq --task babi:Task10k:1
---model-file '/tmp/model' --batchsize 32 --learningrate 0.5 ```
+Training script for ParlAI.
+The standard way to train a model. After training, also computes
+validation and test error.
+The user must provide a model (with `--model`) and a task (with
+`--task`).
+## Examples
+```shell
+parlai train_model --model ir_baseline --task dialog_babi:Task:1 --model-file /tmp/model
+parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/model' --batchsize 32 --learningrate 0.5
+```
 """  # noqa: E501
 
 # TODO List:
@@ -72,7 +75,6 @@ def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
 def setup_args(parser=None) -> ParlaiParser:
     """
     Build the ParlAI parser, adding command line args if necessary.
-
     :param ParlaiParser parser:
         Preexisting parser to append options to. Will be created if needed.
     :returns:
@@ -286,10 +288,9 @@ def set_seed(seed):
 
 def load_eval_worlds(agent, opt, datatype):
     """
-    Create a new eval world for the agent and the given opt. Overrides the datatype
-    options for doing this.  Handles some magic overrides of other special options for
-    the training script.
-
+    Create a new eval world for the agent and the given opt.
+    Overrides the datatype options for doing this.  Handles some magic
+    overrides of other special options for the training script.
     :param Agent agent:
         The model being trained.
     :param Opt opt:
@@ -530,7 +531,6 @@ class TrainLoop:
     def validate(self):
         """
         Perform a validation run, checking whether we should stop training.
-
         :return: boolean indicating whether training should stop
         :rtype: bool
         """
@@ -692,7 +692,6 @@ class TrainLoop:
     ):
         """
         Eval on validation/test data.
-
         :param valid_world:
             list of the pre-created validation worlds.
         :param opt:
@@ -777,7 +776,6 @@ class TrainLoop:
     def _sync_metrics(self, metrics):
         """
         Sync training metrics across workers.
-
         A handful of special cases are handled as exceptions, and the remaining metrics
         are simply averaged across workers.
         """
@@ -792,7 +790,6 @@ class TrainLoop:
     ):
         """
         Compute the estimated seconds remaining in training.
-
         :param float epochs_completed: number of epochs already completed.
         :param float time_elapsed: total time spent already, in seconds.
         :return: ETA in seconds, or None if not computable
@@ -821,10 +818,10 @@ class TrainLoop:
 
     def _get_time(self, world: World) -> Tuple[float, float, float]:
         """
-        Return train, log, and validate timing. If relying on the time for
-        validation/logging/max train time purposes, we sync and return primary worker's
-        time. Otherwise, it's not super relevant what we do here.
-
+        Return train, log, and validate timing.
+        If relying on the time for validation/logging/max train time purposes,
+        we sync and return primary worker's time.
+        Otherwise, it's not super relevant what we do here.
         **SIDE EFFECT**: Update _total_epochs trained.
         :param world:
             current running world
@@ -915,7 +912,6 @@ class TrainLoop:
     def train_steps(self):
         """
         Core training loop.
-
         Yields a metrics dict with each log.
         """
         logging.info('training...')
@@ -1014,7 +1010,6 @@ class TrainLoop:
     def train(self):
         """
         Perform a training run.
-
         :return: tuple of reports (validation_report, test_report)
         """
         opt = self.opt
