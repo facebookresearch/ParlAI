@@ -1596,7 +1596,7 @@ class TreeSearch(object):
             hyp_device = self.partial_hyps.get_device()
         self.partial_hyps = torch.cat(
             (
-                self.partial_hyps[path_selection.hypothesis_ids.long()],
+                self.partial_hyps[path_selection.hypothesis_ids.long().to(hyp_device)],
                 path_selection.token_ids.view(path_selection.token_ids.shape[0], -1).to(
                     hyp_device
                 ),
