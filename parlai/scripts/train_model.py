@@ -6,11 +6,15 @@
 
 """
 Training script for ParlAI.
+
 The standard way to train a model. After training, also computes
 validation and test error.
+
 The user must provide a model (with `--model`) and a task (with
 `--task`).
+
 ## Examples
+
 ```shell
 parlai train_model --model ir_baseline --task dialog_babi:Task:1 --model-file /tmp/model
 parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/model' --batchsize 32 --learningrate 0.5
@@ -20,20 +24,16 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 import copy
-import random
-import torch
 import json
 import os
+import numpy as np
 import signal
 from typing import Tuple
 
-import numpy as np
-
-import parlai.utils.logging as logging
+from parlai.core.metrics import Metric
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger, WandbLogger, ClearMLLogger
-from parlai.core.metrics import Metric
 from parlai.core.metrics import (
     aggregate_named_reports,
     aggregate_unnamed_reports,
@@ -41,7 +41,6 @@ from parlai.core.metrics import (
 )
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, print_announcements
-from parlai.core.script import ParlaiScript, register_script
 from parlai.core.worlds import create_task, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.scripts.eval_model import get_task_world_logs
@@ -53,9 +52,11 @@ from parlai.utils.distributed import (
     get_rank,
     num_workers,
 )
-from parlai.utils.io import PathManager
 from parlai.utils.misc import Timer, nice_report
 from parlai.utils.world_logging import WorldLogger
+from parlai.core.script import ParlaiScript, register_script
+import parlai.utils.logging as logging
+from parlai.utils.io import PathManager
 
 
 def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
@@ -75,8 +76,10 @@ def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
 def setup_args(parser=None) -> ParlaiParser:
     """
     Build the ParlAI parser, adding command line args if necessary.
+
     :param ParlaiParser parser:
         Preexisting parser to append options to. Will be created if needed.
+
     :returns:
         the ParlaiParser with CLI options added.
     """
@@ -271,7 +274,6 @@ def setup_args(parser=None) -> ParlaiParser:
         default='conversations',
         choices=['conversations', 'parlai'],
     )
-    train.add_argument('--seed', type=int, default=None)
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
@@ -281,20 +283,19 @@ def setup_args(parser=None) -> ParlaiParser:
     return parser
 
 
-def set_seed(seed):
-    random.seed(seed)
-    torch.manual_seed(seed)
-
-
 def load_eval_worlds(agent, opt, datatype):
     """
     Create a new eval world for the agent and the given opt.
+
     Overrides the datatype options for doing this.  Handles some magic
     overrides of other special options for the training script.
+
     :param Agent agent:
         The model being trained.
+
     :param Opt opt:
         The global CLI opts.
+
     :param string datatype:
         The new datatype.
     """
@@ -491,8 +492,6 @@ class TrainLoop:
             try:
                 self.agent.save(fn)
                 self._save_train_stats(suffix)
-                if self.opt['wandb_log'] and self.opt["wandb_log_model"]:
-                    self.wb_logger.log_model(fn)
                 break
             except KeyboardInterrupt:
                 pass
@@ -531,6 +530,7 @@ class TrainLoop:
     def validate(self):
         """
         Perform a validation run, checking whether we should stop training.
+
         :return: boolean indicating whether training should stop
         :rtype: bool
         """
@@ -692,6 +692,7 @@ class TrainLoop:
     ):
         """
         Eval on validation/test data.
+
         :param valid_world:
             list of the pre-created validation worlds.
         :param opt:
@@ -776,6 +777,7 @@ class TrainLoop:
     def _sync_metrics(self, metrics):
         """
         Sync training metrics across workers.
+
         A handful of special cases are handled as exceptions, and the remaining metrics
         are simply averaged across workers.
         """
@@ -790,6 +792,7 @@ class TrainLoop:
     ):
         """
         Compute the estimated seconds remaining in training.
+
         :param float epochs_completed: number of epochs already completed.
         :param float time_elapsed: total time spent already, in seconds.
         :return: ETA in seconds, or None if not computable
@@ -819,12 +822,17 @@ class TrainLoop:
     def _get_time(self, world: World) -> Tuple[float, float, float]:
         """
         Return train, log, and validate timing.
+
         If relying on the time for validation/logging/max train time purposes,
         we sync and return primary worker's time.
+
         Otherwise, it's not super relevant what we do here.
+
         **SIDE EFFECT**: Update _total_epochs trained.
+
         :param world:
             current running world
+
         :return (train, log, valid):
             return time for each of train, log, and validation
         """
@@ -912,6 +920,7 @@ class TrainLoop:
     def train_steps(self):
         """
         Core training loop.
+
         Yields a metrics dict with each log.
         """
         logging.info('training...')
@@ -1010,6 +1019,7 @@ class TrainLoop:
     def train(self):
         """
         Perform a training run.
+
         :return: tuple of reports (validation_report, test_report)
         """
         opt = self.opt
@@ -1070,8 +1080,6 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
-        if self.opt['seed'] is not None:
-            set_seed(self.opt['seed'])
         return self.train_loop.train()
 
 
