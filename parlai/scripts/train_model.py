@@ -24,16 +24,20 @@ parlai train_model --model seq2seq --task babi:Task10k:1 --model-file '/tmp/mode
 # TODO List:
 # * More logging (e.g. to files), make things prettier.
 import copy
+import random
+import torch
 import json
 import os
-import numpy as np
 import signal
 from typing import Tuple
 
-from parlai.core.metrics import Metric
+import numpy as np
+
+import parlai.utils.logging as logging
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
 from parlai.core.logs import TensorboardLogger, WandbLogger, ClearMLLogger
+from parlai.core.metrics import Metric
 from parlai.core.metrics import (
     aggregate_named_reports,
     aggregate_unnamed_reports,
@@ -41,6 +45,7 @@ from parlai.core.metrics import (
 )
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser, print_announcements
+from parlai.core.script import ParlaiScript, register_script
 from parlai.core.worlds import create_task, World
 from parlai.scripts.build_dict import build_dict, setup_args as setup_dict_args
 from parlai.scripts.eval_model import get_task_world_logs
@@ -52,11 +57,9 @@ from parlai.utils.distributed import (
     get_rank,
     num_workers,
 )
+from parlai.utils.io import PathManager
 from parlai.utils.misc import Timer, nice_report
 from parlai.utils.world_logging import WorldLogger
-from parlai.core.script import ParlaiScript, register_script
-import parlai.utils.logging as logging
-from parlai.utils.io import PathManager
 
 
 def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
@@ -274,13 +277,18 @@ def setup_args(parser=None) -> ParlaiParser:
         default='conversations',
         choices=['conversations', 'parlai'],
     )
+    train.add_argument('--seed', type=int, default=None)
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
     ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
-
     parser = setup_dict_args(parser)
     return parser
+
+
+def set_seed(seed):
+    random.seed(seed)
+    torch.manual_seed(seed)
 
 
 def load_eval_worlds(agent, opt, datatype):
@@ -356,7 +364,6 @@ class TrainLoop:
         ):
             opt['init_model'] = opt['model_file'] + '.checkpoint'
             trainstats_suffix = '.checkpoint.trainstats'
-
         # Possibly build a dictionary (not all models do this).
         if not (opt.get('dict_file') or opt.get('model_file')):
             raise RuntimeError(
@@ -492,6 +499,8 @@ class TrainLoop:
             try:
                 self.agent.save(fn)
                 self._save_train_stats(suffix)
+                if self.opt['wandb_log'] and self.opt["wandb_log_model"]:
+                    self.wb_logger.log_model(fn)
                 break
             except KeyboardInterrupt:
                 pass
@@ -551,14 +560,12 @@ class TrainLoop:
         v['total_exs'] = self._total_exs
         v['total_epochs'] = self._total_epochs
         self.valid_reports.append(v)
-
         # logging
         if opt['tensorboard_log'] and is_primary_worker():
             valid_report['total_exs'] = self._total_exs
             self.tb_logger.log_metrics('valid', self.parleys, valid_report)
             # flush on a validation
             self.tb_logger.flush()
-
         if opt['wandb_log'] and is_primary_worker():
             valid_report['total_exs'] = self._total_exs
             self.wb_logger.log_metrics('valid', self.parleys, valid_report)
@@ -630,9 +637,7 @@ class TrainLoop:
             return True
         return False
 
-    def _run_single_eval(
-        self, opt, valid_world, max_exs, datatype, is_multitask, task, index
-    ):
+    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
 
         # run evaluation on a single world
         valid_world.reset()
@@ -648,20 +653,17 @@ class TrainLoop:
 
         cnt = 0
         max_cnt = max_exs if max_exs > 0 else float('inf')
-
         while not valid_world.epoch_done() and cnt < max_cnt:
             valid_world.parley()
             if world_logger is not None:
                 world_logger.log(valid_world)
             if cnt == 0 and opt['display_examples']:
                 print(valid_world.display() + '\n~~')
-
+                print(valid_world.report())
                 if opt['clearml_log'] and is_primary_worker():
                     self.clearml_logger.log_debug_samples(
                         datatype, valid_world.display()
                     )
-
-                print(valid_world.report())
             cnt = valid_world.report().get('exs') or 0
 
         if world_logger is not None:
@@ -723,7 +725,6 @@ class TrainLoop:
 
         tasks = [world.getID() for world in valid_worlds]
         named_reports = dict(zip(tasks, reports))
-
         report = aggregate_named_reports(
             named_reports, micro_average=self.opt.get('aggregate_micro', False)
         )
@@ -768,7 +769,6 @@ class TrainLoop:
         )
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_final(final_datatype, final_valid_report)
-
         if opt['clearml_log'] and is_primary_worker():
             self.clearml_logger.log_final(final_datatype, final_valid_report)
 
@@ -1034,7 +1034,6 @@ class TrainLoop:
             valid_worlds, opt, 'valid', max_exs, write_log=True
         )
         test_worlds = load_eval_worlds(self.agent, opt, 'test')
-
         self.final_test_report = self._run_eval(
             test_worlds, opt, 'test', max_exs, write_log=True
         )
@@ -1043,7 +1042,6 @@ class TrainLoop:
             self.wb_logger.log_final('valid', self.final_valid_report)
             self.wb_logger.log_final('test', self.final_test_report)
             self.wb_logger.finish()
-
         if opt['clearml_log'] and is_primary_worker():
             self.clearml_logger.log_final('Validation Report', self.final_valid_report)
             self.clearml_logger.log_final('Test Report', self.final_test_report)
@@ -1080,6 +1078,8 @@ class TrainModel(ParlaiScript):
 
     def run(self):
         self.train_loop = TrainLoop(self.opt)
+        if self.opt['seed'] is not None:
+            set_seed(self.opt['seed'])
         return self.train_loop.train()
 
 
