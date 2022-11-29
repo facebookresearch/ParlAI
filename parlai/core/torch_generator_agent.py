@@ -34,7 +34,7 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
+from parlai.core.metrics import Metric, SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 import parlai.utils.fsdp as fsdp_utils
 from parlai.utils.torch import (
@@ -710,28 +710,32 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
         scores, preds, *_ = model_output
         score_view = scores.reshape(-1, scores.size(-1))
-        loss = self.criterion(score_view, batch.label_vec.view(-1))
-        loss = loss.view(scores.shape[:-1]).sum(dim=1)
-        # save loss to metrics
+        loss_flattened = self.criterion(score_view, batch.label_vec.view(-1))
+        loss_per_token = loss_flattened.view(scores.shape[:-1])
         notnull = batch.label_vec.ne(self.NULL_IDX)
-        target_tokens = notnull.long().sum(dim=-1)
-        correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
 
+        # save loss to metrics
         # cross entropy loss
-        self.record_local_metric('loss', AverageMetric.many(loss, target_tokens))
+        self.record_local_metric(
+            'loss', AverageMetric.from_mask(loss_per_token, notnull)
+        )
         # perplexity
-        self.record_local_metric('ppl', PPLMetric.many(loss, target_tokens))
+        self.record_local_metric('ppl', PPLMetric.from_mask(loss_per_token, notnull))
         # token-wise accuracy
         self.record_local_metric(
-            'token_acc', AverageMetric.many(correct, target_tokens)
+            'token_acc', AverageMetric.from_mask(batch.label_vec == preds, notnull)
         )
         # utterance-wise exact match
+        num_target_tokens = notnull.long().sum(dim=-1)
+        num_tokens_correct = ((batch.label_vec == preds) * notnull).sum(dim=-1)
         self.record_local_metric(
-            'token_em', AverageMetric.many(correct == target_tokens)
+            'token_em', AverageMetric.many(num_tokens_correct == num_target_tokens)
         )
+
         # actually do backwards loss
+        loss = loss_per_token.sum(dim=1)
         loss = loss.sum()
-        loss /= target_tokens.sum()  # average loss per token
+        loss /= num_target_tokens.sum()  # average loss per token
         if return_output:
             return (loss, model_output)
         else:
@@ -1440,7 +1444,7 @@ class TreeSearch(object):
 
     def get_output_from_current_step(self):
         """
-        Get the outputput at the current step.
+        Get the output at the current step.
         """
         return self.outputs[-1]
 
