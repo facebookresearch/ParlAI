@@ -289,7 +289,7 @@ class Metric(ABC):
 
     @classmethod
     def from_mask(
-        cls, metric_per_token: torch.Tensor, mask: torch.Tensor, MyMetric: Type[Metric]
+        cls, metric_per_token: torch.Tensor, mask: torch.Tensor
     ) -> List[Metric]:
         """
         From token-level metrics, returns an aggregate MyMetric per example in the batch.
@@ -298,14 +298,12 @@ class Metric(ABC):
             a (batchsize x num_tokens) Tensor
         :param mask:
             a (batchsize x num_tokens) Tensor to mask out tokens that should *not* be considered in the aggregate metric calculation.
-        :param MyMetric:
-            a subclass of Metric
         :return:
             a (batchsize) Tensor
         """
         tokens_per_ex = mask.long().sum(dim=-1)
         metric_per_ex = (metric_per_token * mask).sum(dim=-1)
-        metrics = MyMetric.many(metric_per_ex, tokens_per_ex)
+        metrics = cls.many(metric_per_ex, tokens_per_ex)
         return metrics
 
 

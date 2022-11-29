@@ -172,7 +172,7 @@ class TestMetric(unittest.TestCase):
         ]
 
         for token_values, token_mask, output in input_and_outputs:
-            actual_output = Metric.from_mask(token_values, token_mask, AverageMetric)
+            actual_output = AverageMetric.from_mask(token_values, token_mask)
             self.assertEqual(len(actual_output), len(output))
             # Because Metric.from_mask() calls Metric.many(), which in turn converts tensors to lists,
             # it possible for the actual and expected outputs to be close to each other but not exactly equal.
@@ -201,7 +201,7 @@ class TestMetric(unittest.TestCase):
             PPLMetric(0.6, 6),
             PPLMetric(0, 0),
         ]
-        actual_output = Metric.from_mask(token_values, token_mask, PPLMetric)
+        actual_output = PPLMetric.from_mask(token_values, token_mask)
 
         self.assertEqual(len(actual_output), len(output))
         # Because Metric.from_mask() calls Metric.many(), which in turn converts tensors to lists,

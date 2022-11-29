@@ -717,16 +717,13 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         # save loss to metrics
         # cross entropy loss
         self.record_local_metric(
-            'loss', Metric.from_mask(loss_per_token, notnull, AverageMetric)
+            'loss', AverageMetric.from_mask(loss_per_token, notnull)
         )
         # perplexity
-        self.record_local_metric(
-            'ppl', Metric.from_mask(loss_per_token, notnull, PPLMetric)
-        )
+        self.record_local_metric('ppl', PPLMetric.from_mask(loss_per_token, notnull))
         # token-wise accuracy
         self.record_local_metric(
-            'token_acc',
-            Metric.from_mask(batch.label_vec == preds, notnull, AverageMetric),
+            'token_acc', AverageMetric.from_mask(batch.label_vec == preds, notnull)
         )
         # utterance-wise exact match
         num_target_tokens = notnull.long().sum(dim=-1)
