@@ -42,9 +42,18 @@ def build_t5(opt: Opt) -> T5ForConditionalGeneration:
     if not check_hf_version(HF_VERSION):
         raise RuntimeError('Must use transformers package >= 4.3 to use t5')
     torch_dtype = torch.float16 if opt['fp16'] else torch.float32
-    return T5ForConditionalGeneration.from_pretrained(
-        opt['t5_model_arch'], dropout_rate=opt['t5_dropout'], torch_dtype=torch_dtype
-    )
+    try:
+        return T5ForConditionalGeneration.from_pretrained(
+            opt['t5_model_arch'],
+            dropout_rate=opt['t5_dropout'],
+            torch_dtype=torch_dtype,
+        )
+    except TypeError:
+        # it's not clear when HF added the `torch_dtype` option, but it is not
+        # available in 4.3.3, which is the earliest we support.
+        return T5ForConditionalGeneration.from_pretrained(
+            opt['t5_model_arch'], dropout_rate=opt['t5_dropout']
+        )
 
 
 def set_device(func):
