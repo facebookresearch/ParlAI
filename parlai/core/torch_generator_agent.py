@@ -1082,6 +1082,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 eos_token=self.END_IDX,
                 device=device,
                 verbose=verbose,
+                gpu_beam_blocking=self.opt.get('gpu_beam_blocking', False),
                 dict=self.dict,
             )
         else:
@@ -1817,7 +1818,7 @@ class GreedySearch(TreeSearch):
             raise ValueError('Greedy search can only be run with beam size 1.')
 
     def select_paths(self, logprobs, prior_scores, current_length) -> _PathSelection:
-        tok_scores, tok_ids = logprobs
+        tok_scores, tok_ids = logprobs.max(1)
         best_scores = tok_scores + prior_scores
         hyp_ids = torch.arange(logprobs.size(0), device=logprobs.device)
 
