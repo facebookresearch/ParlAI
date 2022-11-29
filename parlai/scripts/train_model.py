@@ -637,7 +637,9 @@ class TrainLoop:
             return True
         return False
 
-    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
+    def _run_single_eval(
+        self, opt, valid_world, max_exs, datatype, is_multitask, task, index
+    ):
 
         # run evaluation on a single world
         valid_world.reset()
@@ -662,7 +664,7 @@ class TrainLoop:
                 print(valid_world.report())
                 if opt['clearml_log'] and is_primary_worker():
                     self.clearml_logger.log_debug_samples(
-                        datatype, valid_world.display()
+                        datatype, valid_world.display(), index=index
                     )
             cnt = valid_world.report().get('exs') or 0
 
