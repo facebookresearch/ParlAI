@@ -49,10 +49,10 @@ tornado==6.0.4
 tqdm~=4.62.1
 typing-extensions==3.7.4.3
 Unidecode==1.1.1
-urllib3>=1.26.5
+urllib3<1.27,>=1.26.5
 websocket-client==0.56.0
 jsonlines==1.2.0
-numpy~=1.22 
+numpy~=1.22
 markdown<=3.3.2 # Pin to something that works so tests are happy
 jinja2==3.0.3
 ninja~=1.10.2.3
