@@ -13,6 +13,7 @@ from parlai.core.metrics import (
     AverageMetric,
     SumMetric,
     FixedMetric,
+    Metric,
     Metrics,
     GlobalAverageMetric,
     MacroAverageMetric,
@@ -28,6 +29,7 @@ from parlai.core.torch_classifier_agent import (
     WeightedF1Metric,
     AUCMetrics,
 )
+from parlai.core.torch_generator_agent import PPLMetric
 import parlai.utils.testing as testing_utils
 
 
@@ -70,7 +72,6 @@ class TestMetric(unittest.TestCase):
             self.assertAlmostEqual(actual_output, output, places=6)
 
     def test_average_metric_inputs(self):
-
         passing_inputs_and_outputs = [
             ((2, 4), 0.5),
             ((17.0, 10.0), 1.7),
@@ -91,7 +92,6 @@ class TestMetric(unittest.TestCase):
                 AverageMetric(input_[0], input_[1])
 
     def test_average_metric_additions(self):
-
         input_pairs_and_outputs = [
             ((2, 4), (1.5, 1), 0.7),
             (
@@ -119,6 +119,96 @@ class TestMetric(unittest.TestCase):
 
         assert (m1 + m2) == AverageMetric(4, 7)
         assert MacroAverageMetric({'a': m1, 'b': m2}) == 0.5 * (1.0 / 3 + 3.0 / 4)
+
+    def test_average_metric_from_mask(self) -> None:
+        # first test case. batchsize=3, num_tokens=10
+        token_values_1 = torch.FloatTensor(
+            [
+                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                [-10, -8, -6, -4, -2, 0, 2, 4, 6, 8],
+                [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0],
+            ]
+        )
+        token_mask_1 = torch.LongTensor(
+            [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+                [1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+            ]
+        )
+        output_1 = [
+            AverageMetric(55, 10),
+            AverageMetric(-30, 6),
+            AverageMetric(12.5, 5),
+        ]
+
+        # second test case. batchsize=4, num_tokens=5
+        token_values_2 = torch.FloatTensor(
+            [
+                [1, 2, 3, 4, 5],
+                [1.5, 0, -1, 3, -4],
+                [-3, -2, -1, 0, 1],
+                [4, 5, 6, 7, 8],
+            ]
+        )
+        token_mask_2 = torch.LongTensor(
+            [
+                [1, 1, 1, 1, 1],
+                [1, 1, 1, 0, 0],
+                [1, 0, 1, 0, 1],
+                [0, 0, 0, 0, 0],
+            ]
+        )
+        output_2 = [
+            AverageMetric(15, 5),
+            AverageMetric(0.5, 3),
+            AverageMetric(-3, 3),
+            AverageMetric(0, 0),
+        ]
+
+        input_and_outputs = [
+            (token_values_1, token_mask_1, output_1),
+            (token_values_2, token_mask_2, output_2),
+        ]
+
+        for token_values, token_mask, output in input_and_outputs:
+            actual_output = AverageMetric.from_mask(token_values, token_mask)
+            self.assertEqual(len(actual_output), len(output))
+            # Because Metric.from_mask() calls Metric.many(), which in turn converts tensors to lists,
+            # it possible for the actual and expected outputs to be close to each other but not exactly equal.
+            for a, o in zip(actual_output, output):
+                self.assertIsInstance(a, type(o))
+                self.assertAlmostEqual(a.value(), o.value(), places=6)
+
+    def test_ppl_metric_from_mask(self) -> None:
+        # batchsize=3, num_tokens=10
+        token_values = torch.FloatTensor(
+            [
+                [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
+                [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+                [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+            ]
+        )
+        token_mask = torch.LongTensor(
+            [
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            ]
+        )
+        output = [
+            PPLMetric(4.5, 10),
+            PPLMetric(0.6, 6),
+            PPLMetric(0, 0),
+        ]
+        actual_output = PPLMetric.from_mask(token_values, token_mask)
+
+        self.assertEqual(len(actual_output), len(output))
+        # Because Metric.from_mask() calls Metric.many(), which in turn converts tensors to lists,
+        # it possible for the actual and expected outputs to be close to each other but not exactly equal.
+        for a, o in zip(actual_output, output):
+            self.assertIsInstance(a, type(o))
+            self.assertAlmostEqual(a.value(), o.value(), places=6)
 
 
 class TestMetrics(unittest.TestCase):
