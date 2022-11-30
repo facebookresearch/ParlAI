@@ -651,7 +651,9 @@ class APIUtils:
             assert len(start_label) > 0
             start_label = start_label[-1]
             all_log_probs = [
-                lp for lp in result['choices'][0]['logprobs']['token_logprobs'] if lp
+                lp
+                for lp in result['choices'][0]['logprobs']['token_logprobs']
+                if lp is not None
             ]
             if not all(l <= 0 for l in all_log_probs):
                 logging.warning(
