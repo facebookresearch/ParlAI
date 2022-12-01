@@ -526,20 +526,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                     states = {}
                 return states
 
-            init_model_loaded = False
-            self.model = self.build_model()
-            if (
-                fsdp_utils.should_use_fsdp(opt)
-                and opt.get('ddp_backend') == 'zero3'
-                and opt.get('accelerate_load', False)
-            ):
-                # load the model params, FIRST
-                states = load_init_model()
-                init_model_loaded = True
-                self.model.cpu()
-
-            with fsdp_utils.maybe_fsdp_wrap(opt, self.model):
-                self.model = fsdp_utils.fsdp_wrap(self.model)
+            with fsdp_utils.maybe_fsdp_wrap(opt):
+                self.model = fsdp_utils.fsdp_wrap(self.build_model())
                 if self.fp16 and not fsdp_utils.delay_halving(opt):
                     self.model = self.model.half()
 
@@ -568,11 +556,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
 
-            if init_model is not None and not init_model_loaded:
+            if init_model is not None:
                 # load model parameters if available
                 logging.info(f'Loading existing model params from {init_model}')
                 states = self.load(init_model)
-            elif not init_model_loaded:
+            else:
                 states = {}
 
         if shared is not None:

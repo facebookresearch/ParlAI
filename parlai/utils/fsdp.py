@@ -16,7 +16,6 @@ import torch.nn
 
 from parlai.scripts.train_model import TrainLoop
 from parlai.utils.distributed import is_distributed, get_dist_group
-import parlai.utils.logging as logging
 
 try:
     import torch
@@ -69,7 +68,7 @@ def should_use_fsdp(opt):
 
 
 @contextlib.contextmanager
-def maybe_fsdp_wrap(opt, model: torch.nn.Module):
+def maybe_fsdp_wrap(opt):
     """
     Context manager for enabling wrapping in FullyShardedDataParallel.
     """
@@ -105,9 +104,7 @@ def maybe_fsdp_wrap(opt, model: torch.nn.Module):
         else:
             mp_strategy = None
 
-        # in theory, we can cleverly wrap transformers
-        # see https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html#transformer-wrapping-policy
-        # this does not seem to work in our setup.
+        # autowrap policy.
         auto_wrap_policy = None
         ignored_modules = None
         if opt['model'] in ['bart', 'transformer/generator']:
@@ -132,7 +129,7 @@ def maybe_fsdp_wrap(opt, model: torch.nn.Module):
 
         # CPU offloading; this can offload parameters to the CPU
         cpu_offload = None
-        logging.info(f"I am on gpu: {opt['gpu']}")
+
         fsdp_args = dict(
             process_group=get_dist_group(),
             sharding_strategy=sharding_strategy,
@@ -227,7 +224,7 @@ def get_state_dict(model):
 
 
 @contextlib.contextmanager
-def proc_join(*args):
+def fsdp_join(*args):
     with Join([*args]):
         yield
 
@@ -259,7 +256,7 @@ class JoinableTrainLoop(TrainLoop, Joinable):
         return TrainLoopJoinHook(self)
 
     @property
-    def join_device(self) -> torch.device:  # type: ignore
+    def join_device(self) -> torch.device:
         return self.__device
 
     @property
@@ -271,20 +268,14 @@ class TrainLoopJoinHook(JoinHook):
     """
     Join hook for train loop.
 
-    Taken from https://pytorch.org/tutorials/advanced/generic_join.html
+    Adapted from https://pytorch.org/tutorials/advanced/generic_join.html
     """
 
     def __init__(self, train_loop: JoinableTrainLoop):
         self.train_loop = train_loop
 
     def main_hook(self):
-        """
-        Nothing.
-        """
         pass
 
     def post_hook(self, is_last_joiner: bool):
-        """
-        Nothing.
-        """
         pass

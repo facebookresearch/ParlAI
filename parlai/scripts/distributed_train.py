@@ -53,7 +53,7 @@ class DistributedTrain(ParlaiScript):
     def run(self):
         with distributed_utils.slurm_distributed_context(self.opt) as opt:
             self.train_loop = fsdp_utils.JoinableTrainLoop(opt)
-            with fsdp_utils.proc_join(self.train_loop):
+            with fsdp_utils.fsdp_join(self.train_loop):
                 return self.train_loop.train()
 
 

@@ -44,7 +44,7 @@ def multiprocess_train(
         opt['multiprocessing'] = True
         loop = fsdp_utils.JoinableTrainLoop(opt)
         try:
-            with fsdp_utils.proc_join(loop):
+            with fsdp_utils.fsdp_join(loop):
                 return loop.train()
         except Exception:
             import parlai.utils.logging as logging

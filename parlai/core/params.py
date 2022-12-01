@@ -773,12 +773,6 @@ class ParlaiParser(argparse.ArgumentParser):
             '--distributed-world-size', type=int, help='Number of workers.'
         )
         grp.add_argument(
-            '--accelerate-load',
-            type='bool',
-            default=False,
-            help='whether to use accelerate loading',
-        )
-        grp.add_argument(
             '--ddp-backend',
             choices=['ddp', 'zero2', 'zero3'],
             default='ddp',

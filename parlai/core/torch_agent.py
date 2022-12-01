@@ -2080,17 +2080,6 @@ class TorchAgent(ABC, Agent):
         """
         import parlai.utils.pickle
 
-        if (
-            self.opt.get('ddp_backend') == 'zero3'
-            and should_use_fsdp(self.opt)
-            and self.opt.get('accelerate_load', False)
-        ):
-            from accelerate import load_checkpoint_and_dispatch
-
-            filepath = PathManager.get_local_path(path)
-            load_checkpoint_and_dispatch(self.model, filepath, device_map='auto')
-            return {}
-
         with PathManager.open(path, 'rb') as f:
             states = torch.load(
                 f, map_location=lambda cpu, _: cpu, pickle_module=parlai.utils.pickle
