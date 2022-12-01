@@ -1097,6 +1097,8 @@ class TeacherMetrics(Metrics):
         # User-reported metrics
         if 'metrics' in observation:
             for uk, v in observation['metrics'].items():
+                if v is None:
+                    continue
                 if uk in ALL_METRICS:
                     # don't let the user override our metrics
                     uk = f'USER_{uk}'
