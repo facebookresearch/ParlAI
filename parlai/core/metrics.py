@@ -292,7 +292,8 @@ class Metric(ABC):
         cls, metric_per_token: torch.Tensor, mask: torch.Tensor
     ) -> List[Metric]:
         """
-        From token-level metrics, returns an aggregate MyMetric per example in the batch.
+        From token-level metrics, returns an aggregate MyMetric per example in the
+        batch.
 
         :param metric_per_token:
             a (batchsize x num_tokens) Tensor
