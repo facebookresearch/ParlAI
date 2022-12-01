@@ -773,9 +773,14 @@ class ParlaiParser(argparse.ArgumentParser):
             '--distributed-world-size', type=int, help='Number of workers.'
         )
         grp.add_argument(
+            '--accelerate-load',
+            type='bool',
+            default=False,
+            help='whether to use accelerate loading',
+        )
+        grp.add_argument(
             '--ddp-backend',
-            # TODO: add in zero3. https://github.com/facebookresearch/ParlAI/issues/3753
-            choices=['ddp', 'zero2'],
+            choices=['ddp', 'zero2', 'zero3'],
             default='ddp',
             help=(
                 'Distributed backend. Zero2 can be faster but is more experimental. '

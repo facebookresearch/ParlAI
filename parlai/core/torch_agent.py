@@ -36,7 +36,14 @@ from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
-from parlai.utils.fsdp import should_sync_gradnorm, is_fsdp, DEFAULT_DDP_BACKEND
+from parlai.utils.fsdp import (
+    should_sync_gradnorm,
+    is_fsdp,
+    DEFAULT_DDP_BACKEND,
+    PYTORCH_FSDP_AVAILABLE,
+    get_state_dict,
+    should_use_fsdp,
+)
 from parlai.utils.fp16 import (
     SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
@@ -1981,8 +1988,11 @@ class TorchAgent(ABC, Agent):
             if hasattr(self.model, 'module') and not is_fsdp(self.model):
                 # did we wrap in a DistributedDataParallel or DataParallel
                 states['model'] = self.model.module.state_dict()
+            elif is_fsdp(self.model) and PYTORCH_FSDP_AVAILABLE:
+                # Pytorch FSDP. Fancy Saving
+                states['model'] = get_state_dict(self.model)
             else:
-                # regular model or FSDP
+                # regular model or non-Pytorch FSDP
                 states['model'] = self.model.state_dict()
 
         if hasattr(self, 'optimizer'):
@@ -2069,6 +2079,17 @@ class TorchAgent(ABC, Agent):
         Override this method for more specific loading.
         """
         import parlai.utils.pickle
+
+        if (
+            self.opt.get('ddp_backend') == 'zero3'
+            and should_use_fsdp(self.opt)
+            and self.opt.get('accelerate_load', False)
+        ):
+            from accelerate import load_checkpoint_and_dispatch
+
+            filepath = PathManager.get_local_path(path)
+            load_checkpoint_and_dispatch(self.model, filepath, device_map='auto')
+            return {}
 
         with PathManager.open(path, 'rb') as f:
             states = torch.load(

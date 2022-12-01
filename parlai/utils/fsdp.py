@@ -7,22 +7,47 @@
 """
 Utility functions for FullyShardedDataParallel.
 """
-
 import contextlib
+import functools
+import torch
+import torch.distributed
+from torch.distributed.algorithms.join import Join, Joinable, JoinHook
 import torch.nn
+
+from parlai.scripts.train_model import TrainLoop
 from parlai.utils.distributed import is_distributed, get_dist_group
+import parlai.utils.logging as logging
 
 try:
-    from fairscale.nn.wrap.auto_wrap import wrap
-    from fairscale.nn.wrap.auto_wrap import enable_wrap as fairscale_enable_wrap
-    from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
+    import torch
+    import torch.distributed
+    import torch.distributed.fsdp
+    from torch.distributed.fsdp.wrap import (
+        wrap,
+        enable_wrap,
+        transformer_auto_wrap_policy,
+    )
+    from torch.distributed.fsdp.fully_sharded_data_parallel import (
+        FullyShardedDataParallel as FSDP,
+        ShardingStrategy,
+        MixedPrecision,
+        BackwardPrefetch,
+    )
 
+    PYTORCH_FSDP_AVAILABLE = True
     FSDP_AVAILABLE = True
 except ImportError:
-    FSDP_AVAILABLE = False
+    PYTORCH_FSDP_AVAILABLE = False
+    try:
+        from fairscale.nn.wrap.auto_wrap import wrap, enable_wrap
+        from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
 
-    def wrap(module, **kwargs):
-        return module
+        FSDP_AVAILABLE = True
+    except ImportError:
+        FSDP_AVAILABLE = False
+
+        def wrap(module, **kwargs):
+            return module
 
 
 DEFAULT_DDP_BACKEND = "ddp"
@@ -44,7 +69,7 @@ def should_use_fsdp(opt):
 
 
 @contextlib.contextmanager
-def maybe_fsdp_wrap(opt):
+def maybe_fsdp_wrap(opt, model: torch.nn.Module):
     """
     Context manager for enabling wrapping in FullyShardedDataParallel.
     """
@@ -53,26 +78,94 @@ def maybe_fsdp_wrap(opt):
         yield
         return
 
-    # zero3 not supported at this time. Throw an exception
-    if opt['ddp_backend'] == 'zero3':
-        raise NotImplementedError(
-            '--ddp-backend zero3 is not supported at this time. For details, see '
-            'https://github.com/facebookresearch/ParlAI/issues/3753.'
+    mixed_precision = opt['fp16'] and opt['fp16_impl'] == 'safe'
+
+    if PYTORCH_FSDP_AVAILABLE:
+        # settings as of pytorch 1.13
+        # There is a warning in pytorch 1.13 for FSDP that is unavoidable;
+        # at the risk of suppressing valid warnings, just going to suppress that one.
+        import warnings
+
+        warnings.filterwarnings("ignore")
+
+        # sharding strategy determines zero2 or zero3
+        sharding_strategy = (
+            ShardingStrategy.FULL_SHARD
+            if opt['ddp_backend'] == 'zero3'
+            else ShardingStrategy.SHARD_GRAD_OP
         )
 
-    reshard_after_forward = opt['ddp_backend'] == 'zero3'
-    compute_dtype = torch.float16 if opt['fp16'] else torch.float32
-    mixed_precision = opt['fp16'] and opt['fp16_impl'] == 'safe'
-    fsdp_args = dict(
-        reshard_after_forward=reshard_after_forward,
-        mixed_precision=mixed_precision,
-        compute_dtype=compute_dtype,
-        state_dict_device=torch.device('cpu'),
-        flatten_parameters=True,
-        process_group=get_dist_group(),
-    )
-    with fairscale_enable_wrap(wrapper_cls=FSDP, **fsdp_args):
-        yield
+        # mp determines how to mix precision
+        if mixed_precision:
+            mp_strategy = MixedPrecision(
+                reduce_dtype=torch.float16,
+                param_dtype=torch.float16,
+                buffer_dtype=torch.float16,
+            )
+        else:
+            mp_strategy = None
+
+        # in theory, we can cleverly wrap transformers
+        # see https://pytorch.org/tutorials/intermediate/FSDP_adavnced_tutorial.html#transformer-wrapping-policy
+        # this does not seem to work in our setup.
+        auto_wrap_policy = None
+        ignored_modules = None
+        if opt['model'] in ['bart', 'transformer/generator']:
+            from parlai.agents.transformer.modules.encoder import (
+                TransformerEncoderLayer,
+            )
+            from parlai.agents.transformer.modules.decoder import (
+                TransformerDecoderLayer,
+            )
+
+            auto_wrap_policy = functools.partial(
+                transformer_auto_wrap_policy,
+                transformer_layer_cls={
+                    TransformerEncoderLayer,
+                    TransformerDecoderLayer,
+                },
+            )
+
+        # backward prefetch; determines when to fetch the parameters during backward pass
+        # set to BACKWARD_PRE to increase throughput, at the cost of memory
+        backward_prefetch = BackwardPrefetch.BACKWARD_POST
+
+        # CPU offloading; this can offload parameters to the CPU
+        cpu_offload = None
+        logging.info(f"I am on gpu: {opt['gpu']}")
+        fsdp_args = dict(
+            process_group=get_dist_group(),
+            sharding_strategy=sharding_strategy,
+            cpu_offload=cpu_offload,
+            auto_wrap_policy=auto_wrap_policy,
+            backward_prefetch=backward_prefetch,
+            mixed_precision=mp_strategy,
+            ignored_modules=ignored_modules,
+            param_init_fn=None,
+            device_id=opt['gpu'],
+            sync_module_states=False,  # need this for syncing the first call; specify False because we do it manually after cuda
+            forward_prefetch=False,  # specify true for CPU-heavy workload
+            limit_all_gathers=False,  # specifying the default here
+        )
+        with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
+            yield
+    else:
+        if opt['ddp_backend'] == 'zero3':
+            raise NotImplementedError(
+                '--ddp-backend zero3 is only supported on later versions of Pytorch (>= 1.12)'
+            )
+
+        compute_dtype = torch.float16 if opt['fp16'] else torch.float32
+        fsdp_args = dict(
+            reshard_after_forward=False,  # hard code False; only use fairscale for backwards compatibility.
+            mixed_precision=mixed_precision,
+            compute_dtype=compute_dtype,
+            state_dict_device=torch.device('cpu'),
+            flatten_parameters=True,
+            process_group=get_dist_group(),
+        )
+        with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
+            yield
 
 
 def delay_halving(opt):
@@ -109,3 +202,89 @@ def fsdp_wrap(module):
     Helper function for wrapping the outermost root module.
     """
     return wrap(module)
+
+
+def get_state_dict(model):
+    """
+    Get the state dict from the model.
+
+    When using Pytorch FSDP, we can offload to CPU.
+    """
+
+    if PYTORCH_FSDP_AVAILABLE:
+        from torch.distributed.fsdp.fully_sharded_data_parallel import (
+            FullStateDictConfig,
+            StateDictType,
+        )
+
+        save_policy = FullStateDictConfig(offload_to_cpu=True, rank0_only=True)
+        with FSDP.state_dict_type(model, StateDictType.FULL_STATE_DICT, save_policy):
+            state = model.state_dict()
+    else:
+        state = model.state_dict()
+
+    return state
+
+
+@contextlib.contextmanager
+def proc_join(*args):
+    with Join([*args]):
+        yield
+
+
+class JoinableTrainLoop(TrainLoop, Joinable):
+    """
+    Joinable train loop.
+    """
+
+    def __init__(self, opt):
+        import parlai.utils.distributed as dist_utils
+
+        super().__init__(opt)
+        self.__device = opt['gpu']
+        self.__group = dist_utils.get_dist_group()
+
+    def __call__(self):
+        """
+        Join caller.
+
+        For now, don't do anything.
+        """
+        Join.notify_join_context(self)
+
+    def join_hook(self, **kwargs) -> JoinHook:
+        """
+        Return our fake join hook.
+        """
+        return TrainLoopJoinHook(self)
+
+    @property
+    def join_device(self) -> torch.device:  # type: ignore
+        return self.__device
+
+    @property
+    def join_process_group(self):
+        return self.__group
+
+
+class TrainLoopJoinHook(JoinHook):
+    """
+    Join hook for train loop.
+
+    Taken from https://pytorch.org/tutorials/advanced/generic_join.html
+    """
+
+    def __init__(self, train_loop: JoinableTrainLoop):
+        self.train_loop = train_loop
+
+    def main_hook(self):
+        """
+        Nothing.
+        """
+        pass
+
+    def post_hook(self, is_last_joiner: bool):
+        """
+        Nothing.
+        """
+        pass

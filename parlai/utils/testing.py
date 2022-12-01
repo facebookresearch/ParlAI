@@ -130,6 +130,15 @@ def skipUnlessFairseq(testfn, reason='fairseq not installed'):
     return unittest.skipUnless(FAIRSEQ_AVAILABLE, reason)(testfn)
 
 
+def skipUnlessPytorchFSDP(testfn, reason='pytorch fsdp unavailable'):
+    """
+    Decorate a test to skip unless fairseq is installed.
+    """
+    from parlai.utils.fsdp import PYTORCH_FSDP_AVAILABLE
+
+    return unittest.skipUnless(PYTORCH_FSDP_AVAILABLE, reason)(testfn)
+
+
 class retry(object):
     """
     Decorator for flaky tests. Test is run up to ntries times, retrying on failure.

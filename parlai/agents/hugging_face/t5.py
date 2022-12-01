@@ -27,7 +27,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch, TorchAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
-from parlai.utils.fsdp import is_fsdp
+from parlai.utils.fsdp import is_fsdp, delay_halving
 
 
 def check_hf_version(v: Tuple[int, int]) -> bool:
@@ -41,7 +41,9 @@ def check_hf_version(v: Tuple[int, int]) -> bool:
 def build_t5(opt: Opt) -> T5ForConditionalGeneration:
     if not check_hf_version(HF_VERSION):
         raise RuntimeError('Must use transformers package >= 4.3 to use t5')
-    torch_dtype = torch.float16 if opt['fp16'] else torch.float32
+    torch_dtype = (
+        torch.float16 if (opt['fp16'] and not delay_halving(opt)) else torch.float32
+    )
     try:
         return T5ForConditionalGeneration.from_pretrained(
             opt['t5_model_arch'],

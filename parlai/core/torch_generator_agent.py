@@ -20,7 +20,7 @@ Contains the following utilities:
 from typing_extensions import TypedDict
 from parlai.core.params import ParlaiParser
 from abc import ABC, abstractmethod
-from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable
+from typing import TypeVar, List, Dict, Optional, Tuple, Set, Iterable, Any
 import math
 from operator import attrgetter
 
@@ -516,8 +516,30 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
-            with fsdp_utils.maybe_fsdp_wrap(opt):
-                self.model = fsdp_utils.fsdp_wrap(self.build_model())
+
+            def load_init_model() -> Dict[str, Any]:
+                if init_model is not None:
+                    # load model parameters if available
+                    logging.info(f'Loading existing model params from {init_model}')
+                    states = self.load(init_model)
+                else:
+                    states = {}
+                return states
+
+            init_model_loaded = False
+            self.model = self.build_model()
+            if (
+                fsdp_utils.should_use_fsdp(opt)
+                and opt.get('ddp_backend') == 'zero3'
+                and opt.get('accelerate_load', False)
+            ):
+                # load the model params, FIRST
+                states = load_init_model()
+                init_model_loaded = True
+                self.model.cpu()
+
+            with fsdp_utils.maybe_fsdp_wrap(opt, self.model):
+                self.model = fsdp_utils.fsdp_wrap(self.model)
                 if self.fp16 and not fsdp_utils.delay_halving(opt):
                     self.model = self.model.half()
 
@@ -546,11 +568,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 f"Total parameters: {total_params:,d} ({train_params:,d} trainable)"
             )
 
-            if init_model is not None:
+            if init_model is not None and not init_model_loaded:
                 # load model parameters if available
                 logging.info(f'Loading existing model params from {init_model}')
                 states = self.load(init_model)
-            else:
+            elif not init_model_loaded:
                 states = {}
 
         if shared is not None:
