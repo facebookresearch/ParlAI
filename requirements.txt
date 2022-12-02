@@ -55,7 +55,7 @@ jsonlines==1.2.0
 numpy~=1.22
 markdown<=3.3.2 # Pin to something that works so tests are happy
 jinja2==3.0.3
-protobuf>=3.8.0
+protobuf<=3.20.1,>=3.8.0
 contractions~=0.1.72
 fsspec~=2022.2.0
-google-api-core~=2.11.0 # Latest 2.10.2 requires latest protobuf
+google-api-core<=2.9.0 # Latest 2.10.2 requires latest protobuf
