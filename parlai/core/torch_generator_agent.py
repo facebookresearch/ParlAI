@@ -34,7 +34,7 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-from parlai.core.metrics import Metric, SumMetric, AverageMetric, FairseqBleuMetric
+from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 import parlai.utils.fsdp as fsdp_utils
 from parlai.utils.torch import (
