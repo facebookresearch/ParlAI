@@ -258,7 +258,7 @@ class TrainLoopJoinHook(JoinHook):
 
 class JoinableEvaluator(Evaluator, Joinable):
     """
-    Joinable Evaluator
+    Joinable Evaluator.
     """
 
     def __init__(self, opt):
