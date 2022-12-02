@@ -40,7 +40,7 @@ from parlai.utils.fsdp import (
     should_sync_gradnorm,
     is_fsdp,
     DEFAULT_DDP_BACKEND,
-    PYTORCH_FSDP_AVAILABLE,
+    FSDP_AVAILABLE,
     get_state_dict,
     should_use_fsdp,
 )
@@ -1988,11 +1988,11 @@ class TorchAgent(ABC, Agent):
             if hasattr(self.model, 'module') and not is_fsdp(self.model):
                 # did we wrap in a DistributedDataParallel or DataParallel
                 states['model'] = self.model.module.state_dict()
-            elif is_fsdp(self.model) and PYTORCH_FSDP_AVAILABLE:
-                # Pytorch FSDP. Fancy Saving
+            elif is_fsdp(self.model) and FSDP_AVAILABLE:
+                # FSDP Model; use fancy saving
                 states['model'] = get_state_dict(self.model)
             else:
-                # regular model or non-Pytorch FSDP
+                # regular model
                 states['model'] = self.model.state_dict()
 
         if hasattr(self, 'optimizer'):

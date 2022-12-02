@@ -7,14 +7,12 @@
 """
 Utility functions for FullyShardedDataParallel.
 """
-from abc import abstractmethod
 import contextlib
 import functools
 import torch
 import torch.distributed
 from torch.distributed.algorithms.join import Join, Joinable, JoinHook
 import torch.nn
-from typing import Optional
 
 from parlai.scripts.eval_model import Evaluator
 from parlai.scripts.train_model import TrainLoop
@@ -36,20 +34,11 @@ try:
         BackwardPrefetch,
     )
 
-    PYTORCH_FSDP_AVAILABLE = True
     FSDP_AVAILABLE = True
 except ImportError:
-    PYTORCH_FSDP_AVAILABLE = False
-    try:
-        from fairscale.nn.wrap.auto_wrap import wrap, enable_wrap
-        from fairscale.nn.data_parallel import FullyShardedDataParallel as FSDP
 
-        FSDP_AVAILABLE = True
-    except ImportError:
-        FSDP_AVAILABLE = False
-
-        def wrap(module, **kwargs):
-            return module
+    def wrap(module, **kwargs):
+        return module
 
 
 DEFAULT_DDP_BACKEND = "ddp"
@@ -82,90 +71,72 @@ def maybe_fsdp_wrap(opt):
 
     mixed_precision = opt['fp16'] and opt['fp16_impl'] == 'safe'
 
-    if PYTORCH_FSDP_AVAILABLE:
-        # settings as of pytorch 1.13
-        # There is a warning in pytorch 1.13 for FSDP that is unavoidable;
-        # at the risk of suppressing valid warnings, just going to suppress that one.
-        import warnings
+    # settings as of pytorch 1.13
+    # There is a warning in pytorch 1.13 for FSDP that is unavoidable;
+    # at the risk of suppressing valid warnings, just going to suppress that one.
+    import warnings
 
-        warnings.filterwarnings("ignore")
+    warnings.filterwarnings("ignore")
 
-        # sharding strategy determines zero2 or zero3
-        sharding_strategy = (
-            ShardingStrategy.FULL_SHARD
-            if opt['ddp_backend'] == 'zero3'
-            else ShardingStrategy.SHARD_GRAD_OP
+    # sharding strategy determines zero2 or zero3
+    sharding_strategy = (
+        ShardingStrategy.FULL_SHARD
+        if opt['ddp_backend'] == 'zero3'
+        else ShardingStrategy.SHARD_GRAD_OP
+    )
+
+    # mp determines how to mix precision
+    if mixed_precision:
+        mp_strategy = MixedPrecision(
+            reduce_dtype=torch.float16,
+            param_dtype=torch.float16,
+            buffer_dtype=torch.float16,
         )
-
-        # mp determines how to mix precision
-        if mixed_precision:
-            mp_strategy = MixedPrecision(
-                reduce_dtype=torch.float16,
-                param_dtype=torch.float16,
-                buffer_dtype=torch.float16,
-            )
-        else:
-            mp_strategy = None
-
-        # autowrap policy.
-        auto_wrap_policy = None
-        ignored_modules = None
-        if opt['model'] in ['bart', 'transformer/generator']:
-            from parlai.agents.transformer.modules.encoder import (
-                TransformerEncoderLayer,
-            )
-            from parlai.agents.transformer.modules.decoder import (
-                TransformerDecoderLayer,
-            )
-
-            auto_wrap_policy = functools.partial(
-                transformer_auto_wrap_policy,
-                transformer_layer_cls={
-                    TransformerEncoderLayer,
-                    TransformerDecoderLayer,
-                },
-            )
-
-        # backward prefetch; determines when to fetch the parameters during backward pass
-        # set to BACKWARD_PRE to increase throughput, at the cost of memory
-        backward_prefetch = BackwardPrefetch.BACKWARD_POST
-
-        # CPU offloading; this can offload parameters to the CPU
-        cpu_offload = None
-
-        fsdp_args = dict(
-            process_group=get_dist_group(),
-            sharding_strategy=sharding_strategy,
-            cpu_offload=cpu_offload,
-            auto_wrap_policy=auto_wrap_policy,
-            backward_prefetch=backward_prefetch,
-            mixed_precision=mp_strategy,
-            ignored_modules=ignored_modules,
-            param_init_fn=None,
-            device_id=opt['gpu'],
-            sync_module_states=False,  # need this for syncing the first call; specify False because we do it manually after cuda
-            forward_prefetch=False,  # specify true for CPU-heavy workload
-            limit_all_gathers=False,  # specifying the default here
-        )
-        with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
-            yield
     else:
-        if opt['ddp_backend'] == 'zero3':
-            raise NotImplementedError(
-                '--ddp-backend zero3 is only supported on later versions of Pytorch (>= 1.12)'
-            )
+        mp_strategy = None
 
-        compute_dtype = torch.float16 if opt['fp16'] else torch.float32
-        fsdp_args = dict(
-            reshard_after_forward=False,  # hard code False; only use fairscale for backwards compatibility.
-            mixed_precision=mixed_precision,
-            compute_dtype=compute_dtype,
-            state_dict_device=torch.device('cpu'),
-            flatten_parameters=True,
-            process_group=get_dist_group(),
+    # autowrap policy.
+    auto_wrap_policy = None
+    ignored_modules = None
+    if opt['model'] in ['bart', 'transformer/generator']:
+        from parlai.agents.transformer.modules.encoder import (
+            TransformerEncoderLayer,
         )
-        with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
-            yield
+        from parlai.agents.transformer.modules.decoder import (
+            TransformerDecoderLayer,
+        )
+
+        auto_wrap_policy = functools.partial(
+            transformer_auto_wrap_policy,
+            transformer_layer_cls={
+                TransformerEncoderLayer,
+                TransformerDecoderLayer,
+            },
+        )
+
+    # backward prefetch; determines when to fetch the parameters during backward pass
+    # set to BACKWARD_PRE to increase throughput, at the cost of memory
+    backward_prefetch = BackwardPrefetch.BACKWARD_POST
+
+    # CPU offloading; this can offload parameters to the CPU
+    cpu_offload = None
+
+    fsdp_args = dict(
+        process_group=get_dist_group(),
+        sharding_strategy=sharding_strategy,
+        cpu_offload=cpu_offload,
+        auto_wrap_policy=auto_wrap_policy,
+        backward_prefetch=backward_prefetch,
+        mixed_precision=mp_strategy,
+        ignored_modules=ignored_modules,
+        param_init_fn=None,
+        device_id=opt['gpu'],
+        sync_module_states=False,  # need this for syncing the first call; specify False because we do it manually after cuda
+        forward_prefetch=False,  # specify true for CPU-heavy workload
+        limit_all_gathers=False,  # specifying the default here
+    )
+    with enable_wrap(wrapper_cls=FSDP, **fsdp_args):
+        yield
 
 
 def delay_halving(opt):
@@ -211,7 +182,7 @@ def get_state_dict(model):
     When using Pytorch FSDP, we can offload to CPU.
     """
 
-    if PYTORCH_FSDP_AVAILABLE:
+    if FSDP_AVAILABLE:
         from torch.distributed.fsdp.fully_sharded_data_parallel import (
             FullStateDictConfig,
             StateDictType,

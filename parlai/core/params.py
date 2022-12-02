@@ -778,6 +778,7 @@ class ParlaiParser(argparse.ArgumentParser):
             default='ddp',
             help=(
                 'Distributed backend. Zero2 can be faster but is more experimental. '
+                'Zero3 significantly reduces memory pressure. '
                 'DDP is the most tested.'
             ),
         )
