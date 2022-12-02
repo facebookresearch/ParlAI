@@ -88,9 +88,7 @@ class ContrastiveCrossEntropyLoss(CrossEntropyLoss):
 
         # concatenate the logits of the preds with the actual label's logits
         x_target = x[torch.arange(x.shape[0]), y]
-        x_ct = torch.concat(
-            [x_target.unsqueeze(1), sample_preds_values.unsqueeze(1)], -1
-        )
+        x_ct = torch.cat([x_target.unsqueeze(1), sample_preds_values.unsqueeze(1)], -1)
         # get the y's for the x_ct (the correct label is index 0 if
         # the target is positive and index 1 if the target is negative)
         y_ct = torch.abs(torch.abs(classifier_labels) - 1).type(y.dtype).to(x_ct.device)
