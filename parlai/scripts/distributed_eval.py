@@ -31,10 +31,10 @@ srun python -u -m parlai.scripts.distributed_eval \
   -m seq2seq -t convai2 --dict-file /path/to/dict-file
 ```
 """
-
-import parlai.scripts.eval_model as eval_model
 from parlai.core.script import ParlaiScript
+import parlai.scripts.eval_model as eval_model
 import parlai.utils.distributed as distributed_utils
+import parlai.utils.fsdp as fsdp_utils
 
 
 def setup_args():
@@ -51,7 +51,9 @@ class DistributedEval(ParlaiScript):
 
     def run(self):
         with distributed_utils.slurm_distributed_context(self.opt) as opt:
-            return eval_model.eval_model(opt)
+            self.evaluator = fsdp_utils.JoinableEvaluator(opt)
+            with fsdp_utils.fsdp_join(self.evaluator):
+                return self.evaluator.eval_model()
 
 
 if __name__ == '__main__':

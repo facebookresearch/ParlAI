@@ -517,17 +517,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
 
-            def load_init_model() -> Dict[str, Any]:
-                if init_model is not None:
-                    # load model parameters if available
-                    logging.info(f'Loading existing model params from {init_model}')
-                    states = self.load(init_model)
-                else:
-                    states = {}
-                return states
-
+            self.model = self.build_model()
             with fsdp_utils.maybe_fsdp_wrap(opt):
-                self.model = fsdp_utils.fsdp_wrap(self.build_model())
+                self.model = fsdp_utils.fsdp_wrap(self.model)
                 if self.fp16 and not fsdp_utils.delay_halving(opt):
                     self.model = self.model.half()
 

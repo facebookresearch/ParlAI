@@ -7,13 +7,16 @@
 """
 Utility functions for FullyShardedDataParallel.
 """
+from abc import abstractmethod
 import contextlib
 import functools
 import torch
 import torch.distributed
 from torch.distributed.algorithms.join import Join, Joinable, JoinHook
 import torch.nn
+from typing import Optional
 
+from parlai.scripts.eval_model import Evaluator
 from parlai.scripts.train_model import TrainLoop
 from parlai.utils.distributed import is_distributed, get_dist_group
 
@@ -273,6 +276,52 @@ class TrainLoopJoinHook(JoinHook):
 
     def __init__(self, train_loop: JoinableTrainLoop):
         self.train_loop = train_loop
+
+    def main_hook(self):
+        pass
+
+    def post_hook(self, is_last_joiner: bool):
+        pass
+
+
+class JoinableEvaluator(Evaluator, Joinable):
+    """
+    Joinable Evaluator
+    """
+
+    def __init__(self, opt):
+        import parlai.utils.distributed as dist_utils
+
+        super().__init__(opt)
+        self.__device = opt['gpu']
+        self.__group = dist_utils.get_dist_group()
+
+    def __call__(self):
+        """
+        Join caller.
+
+        For now, don't do anything.
+        """
+        Join.notify_join_context(self)
+
+    def join_hook(self, **kwargs) -> JoinHook:
+        """
+        Return our fake join hook.
+        """
+        return EvaluatorJoinHook(self)
+
+    @property
+    def join_device(self) -> torch.device:
+        return self.__device
+
+    @property
+    def join_process_group(self):
+        return self.__group
+
+
+class EvaluatorJoinHook(JoinHook):
+    def __init__(self, evaluator: JoinableEvaluator):
+        self.evaluator = evaluator
 
     def main_hook(self):
         pass
