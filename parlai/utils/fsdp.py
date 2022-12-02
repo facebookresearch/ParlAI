@@ -36,6 +36,7 @@ try:
 
     FSDP_AVAILABLE = True
 except ImportError:
+    FSDP_AVAILABLE = False
 
     def wrap(module, **kwargs):
         return module
