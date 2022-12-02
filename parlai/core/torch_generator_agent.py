@@ -715,6 +715,12 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         """
         return self._model_input(batch)
 
+    def custom_loss_metrics(self, batch, loss_per_token):
+        """
+        Override this method for custom loss values that require loss_per_token.
+        """
+        pass
+
     def compute_loss(self, batch, return_output=False):
         """
         Compute and return the loss for the given batch.
@@ -750,6 +756,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.record_local_metric(
             'token_em', AverageMetric.many(num_tokens_correct == num_target_tokens)
         )
+        self.custom_loss_metrics(batch, loss_per_token)
 
         # actually do backwards loss
         loss = loss_per_token.sum(dim=1)
