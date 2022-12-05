@@ -42,7 +42,6 @@ from parlai.utils.fsdp import (
     DEFAULT_DDP_BACKEND,
     FSDP_AVAILABLE,
     get_state_dict,
-    should_use_fsdp,
 )
 from parlai.utils.fp16 import (
     SafeFP16Optimizer,
