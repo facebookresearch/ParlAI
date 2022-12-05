@@ -29,6 +29,7 @@ import signal
 import traceback
 import parlai.scripts.train_model as single_train
 import parlai.utils.distributed as distributed_utils
+import parlai.utils.fsdp as fsdp_utils
 from parlai.core.script import ParlaiScript, register_script
 
 
@@ -41,8 +42,10 @@ def multiprocess_train(
     ) as opt:
         # Run the actual training
         opt['multiprocessing'] = True
+        loop = fsdp_utils.JoinableTrainLoop(opt)
         try:
-            return single_train.TrainLoop(opt).train()
+            with fsdp_utils.fsdp_join(loop):
+                return loop.train()
         except Exception:
             import parlai.utils.logging as logging
 

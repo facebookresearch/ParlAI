@@ -34,7 +34,7 @@ from parlai.core.torch_agent import TorchAgent, Batch, Output, DictionaryAgent
 from parlai.utils.misc import warn_once
 from parlai.utils.io import PathManager
 import parlai.utils.logging as logging
-from parlai.core.metrics import Metric, SumMetric, AverageMetric, FairseqBleuMetric
+from parlai.core.metrics import SumMetric, AverageMetric, FairseqBleuMetric
 from parlai.utils.fp16 import FP16SafeCrossEntropy
 import parlai.utils.fsdp as fsdp_utils
 from parlai.utils.torch import (
@@ -516,8 +516,10 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         else:
             # this is not a shared instance of this class, so do full init
             self.criterion = self.build_criterion()
+
+            self.model = self.build_model()
             with fsdp_utils.maybe_fsdp_wrap(opt):
-                self.model = fsdp_utils.fsdp_wrap(self.build_model())
+                self.model = fsdp_utils.fsdp_wrap(self.model)
                 if self.fp16 and not fsdp_utils.delay_halving(opt):
                     self.model = self.model.half()
 
@@ -2054,7 +2056,7 @@ class NucleusSampling(TreeSearch):
 
 class FactualNucleusSampling(NucleusSampling):
     """
-    Factual Nucleus Sampling
+    Factual Nucleus Sampling.
 
     See https://arxiv.org/pdf/2206.04624.pdf for more information
     """

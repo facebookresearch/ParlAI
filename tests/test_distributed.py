@@ -169,11 +169,8 @@ class TestZero2(TestDistributed):
     base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero2'}
 
 
-@unittest.skip
 @testing_utils.skipUnlessGPU
 class TestZero3(TestDistributed):
-    # Not supported at this time. See:
-    # https://github.com/facebookresearch/ParlAI/pull/3740
     base_config = {**TestDistributed.base_config, 'ddp_backend': 'zero3'}
 
 

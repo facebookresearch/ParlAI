@@ -36,7 +36,13 @@ from parlai.core.message import Message
 from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.io import PathManager
-from parlai.utils.fsdp import should_sync_gradnorm, is_fsdp, DEFAULT_DDP_BACKEND
+from parlai.utils.fsdp import (
+    should_sync_gradnorm,
+    is_fsdp,
+    DEFAULT_DDP_BACKEND,
+    FSDP_AVAILABLE,
+    get_state_dict,
+)
 from parlai.utils.fp16 import (
     SafeFP16Optimizer,
     MemoryEfficientFP16Optimizer,
@@ -1981,8 +1987,11 @@ class TorchAgent(ABC, Agent):
             if hasattr(self.model, 'module') and not is_fsdp(self.model):
                 # did we wrap in a DistributedDataParallel or DataParallel
                 states['model'] = self.model.module.state_dict()
+            elif is_fsdp(self.model) and FSDP_AVAILABLE:
+                # FSDP Model; use fancy saving
+                states['model'] = get_state_dict(self.model)
             else:
-                # regular model or FSDP
+                # regular model
                 states['model'] = self.model.state_dict()
 
         if hasattr(self, 'optimizer'):
