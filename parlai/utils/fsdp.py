@@ -99,7 +99,7 @@ def maybe_fsdp_wrap(opt):
     # autowrap policy.
     auto_wrap_policy = None
     ignored_modules = None
-    if opt['model'] in ['bart', 'transformer/generator']:
+    if 'hugging_face' not in opt['model']:
         from parlai.agents.transformer.modules.encoder import (
             TransformerEncoderLayer,
         )
