@@ -25,8 +25,9 @@ parlai multiprocessing_eval --model-file "zoo:tutorial_transformer_generator/mod
 import torch
 import os
 import signal
-import parlai.utils.distributed as distributed_utils
 import parlai.scripts.eval_model as eval_model
+import parlai.utils.distributed as distributed_utils
+import parlai.utils.fsdp as fsdp_utils
 from parlai.core.script import ParlaiScript, register_script
 
 
@@ -43,7 +44,9 @@ def multiprocess_eval(
         rank, opt, rank_offset, gpu, init_method=init_method
     ) as opt:
         opt['multiprocessing'] = True
-        return eval_model.eval_model(opt)
+        evaluator = fsdp_utils.JoinableEvaluator(opt)
+        with fsdp_utils.fsdp_join(evaluator):
+            return evaluator.eval_model()
 
 
 def launch_and_eval(opt, port):

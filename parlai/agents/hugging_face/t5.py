@@ -27,7 +27,7 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.core.torch_agent import Batch, TorchAgent
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
-from parlai.utils.fsdp import is_fsdp
+from parlai.utils.fsdp import is_fsdp, delay_halving
 
 
 def check_hf_version(v: Tuple[int, int]) -> bool:
@@ -41,9 +41,21 @@ def check_hf_version(v: Tuple[int, int]) -> bool:
 def build_t5(opt: Opt) -> T5ForConditionalGeneration:
     if not check_hf_version(HF_VERSION):
         raise RuntimeError('Must use transformers package >= 4.3 to use t5')
-    return T5ForConditionalGeneration.from_pretrained(
-        opt['t5_model_arch'], dropout_rate=opt['t5_dropout']
+    torch_dtype = (
+        torch.float16 if (opt['fp16'] and not delay_halving(opt)) else torch.float32
     )
+    try:
+        return T5ForConditionalGeneration.from_pretrained(
+            opt['t5_model_arch'],
+            dropout_rate=opt['t5_dropout'],
+            torch_dtype=torch_dtype,
+        )
+    except TypeError:
+        # it's not clear when HF added the `torch_dtype` option, but it is not
+        # available in 4.3.3, which is the earliest we support.
+        return T5ForConditionalGeneration.from_pretrained(
+            opt['t5_model_arch'], dropout_rate=opt['t5_dropout']
+        )
 
 
 def set_device(func):
@@ -86,7 +98,18 @@ class T5Agent(TorchGeneratorAgent):
             '--t5-model-arch',
             type=str,
             default='t5-base',
-            choices=["t5-small", "t5-base", "t5-large", "t5-3b", "t5-11b"],
+            choices=[
+                "t5-small",
+                "t5-base",
+                "t5-large",
+                "t5-3b",
+                "t5-11b",
+                "google/flan-t5-small",
+                "google/flan-t5-base",
+                "google/flan-t5-large",
+                "google/flan-t5-xl",
+                "google/flan-t5-xxl",
+            ],
         )
         group.add_argument(
             '--t5-model-parallel',
@@ -348,7 +371,7 @@ class ParlaiT5Model(TorchGeneratorModel):
         """
         # Taken directly from HuggingFace
         # Rescale output before projecting on vocab
-        # See https://github.com/tensorflow/mesh/blob/fa19d69eafc9a482aff0b59ddd96b025c0cb207d/mesh_tensorflow/transformer/transformer.py#L586
+        # See https://github.com/tensorflow/mesh/blob/fa19d69/mesh_tensorflow/transformer/transformer.py#L586
         tensor = tensor * (self.t5.model_dim**-0.5)
         lm_logits = self.t5.lm_head(tensor)
         return lm_logits

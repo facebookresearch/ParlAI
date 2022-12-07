@@ -24,6 +24,7 @@ from parlai.core.metrics import (
     aggregate_unnamed_reports,
     Metric,
 )
+from parlai.core.opt import Opt
 from parlai.core.worlds import create_task
 from parlai.utils.misc import TimeLogger, nice_report
 from parlai.utils.world_logging import WorldLogger
@@ -77,7 +78,10 @@ def setup_args(parser=None):
         '-auc',
         type=int,
         default=-1,
-        help='a positive number indicates to calculate the area under the roc curve and it also determines how many decimal digits of the predictions to keep (higher numbers->more precise); also used to determine whether or not to calculate the AUC metric',
+        help='a positive number indicates to calculate the area under the '
+        'roc curve and it also determines how many decimal digits of the '
+        'predictions to keep (higher numbers->more precise); also used '
+        'to determine whether or not to calculate the AUC metric',
     )
     parser.add_argument(
         '--area-under-curve-class',
@@ -291,6 +295,14 @@ def eval_model(opt):
     return report
 
 
+class Evaluator:
+    def __init__(self, opt: Opt):
+        self.opt = opt
+
+    def eval_model(self):
+        return eval_model(self.opt)
+
+
 @register_script('eval_model', aliases=['em', 'eval'])
 class EvalModel(ParlaiScript):
     @classmethod
@@ -298,7 +310,8 @@ class EvalModel(ParlaiScript):
         return setup_args()
 
     def run(self):
-        return eval_model(self.opt)
+        self.evaluator = Evaluator(self.opt)
+        return self.evaluator.eval_model()
 
 
 if __name__ == '__main__':
