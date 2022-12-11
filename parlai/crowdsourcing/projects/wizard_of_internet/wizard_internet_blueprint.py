@@ -68,7 +68,7 @@ class WizardOfInternetBlueprintArgs(ParlAIChatBlueprintArgs):
     persona_counts_file: str = field(
         default=MISSING,
         metadata={
-            'help': 'A semicolon seperated list of personas and their count (file)'
+            'help': 'A semicolon separated list of personas and their count (file)'
         },
     )
 
