@@ -954,9 +954,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             retval.text_token_info = text_token_info
         return retval
 
-    def _treesearch_factory(self, device, verbose=False):
-        method = self.opt.get('inference', 'greedy')
-        beam_size = self.opt.get('beam_size', 1)
+    def _treesearch_factory(self, method, beam_size, min_length, device, verbose=False):
+        # method = self.opt.get('inference', 'greedy')
+        # beam_size = self.opt.get('beam_size', 1)
         if method == 'greedy':
             return GreedySearch(
                 beam_size,
@@ -974,7 +974,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         elif method == 'beam':
             return BeamSearch(
                 beam_size,
-                min_length=self.beam_min_length,
+                min_length=min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
                 length_penalty=self.opt.get('beam_length_penalty', 0.65),
@@ -990,7 +990,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.opt['topk'],
                 self.opt['beam_delay'],
                 beam_size,
-                min_length=self.beam_min_length,
+                min_length=min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
                 length_penalty=self.opt.get('beam_length_penalty', 0.65),
@@ -1006,7 +1006,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 self.opt['topp'],
                 self.opt['beam_delay'],
                 beam_size,
-                min_length=self.beam_min_length,
+                min_length=min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
                 length_penalty=self.opt.get('beam_length_penalty', 0.65),
@@ -1021,7 +1021,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             return TopKSampling(
                 self.opt['topk'],
                 beam_size,
-                min_length=self.beam_min_length,
+                min_length=min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
                 length_penalty=self.opt.get('beam_length_penalty', 0.65),
@@ -1036,7 +1036,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             return NucleusSampling(
                 self.opt['topp'],
                 beam_size,
-                min_length=self.beam_min_length,
+                min_length=min_length,
                 block_ngram=self.beam_block_ngram,
                 context_block_ngram=self.beam_context_block_ngram,
                 length_penalty=self.opt.get('beam_length_penalty', 0.65),
@@ -1168,11 +1168,23 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             dev = batch.label_vec.device
 
         bsz = batch.batchsize
+        method = self.opt.get('inference', 'greedy')
+        beam_size = self.beam_size
+
+        min_length = (
+            self.beam_min_length
+            if prefix_tokens is None
+            else prefix_tokens.size(-1) + self.beam_min_length
+        )
+        max_ts = max(max_ts, min_length)
+
         if batch.text_vec is not None:
             batchsize = batch.batchsize
             batch_context_list = self._get_batch_context(batch)
             beams = [
-                self._treesearch_factory(dev, verbose=self.show_token_details)
+                self._treesearch_factory(
+                    method, beam_size, min_length, dev, verbose=self.show_token_details
+                )
                 .set_batch_context(
                     batch_context_list,
                     batch_idx,
@@ -1183,7 +1195,9 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             ]
         else:
             beams = [
-                self._treesearch_factory(dev, verbose=self.show_token_details)
+                self._treesearch_factory(
+                    method, beam_size, min_length, dev, verbose=self.show_token_details
+                )
                 for _ in range(bsz)
             ]
 

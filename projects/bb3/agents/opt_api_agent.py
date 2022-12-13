@@ -56,7 +56,8 @@ class SimplePromptHistory(object):
             self.turns.insert(end_of_context, f'{speaker}: {line}')
 
     def render_prompt(self) -> str:
-        flattened = "\n".join(self.turns + [f'{self.SPEAKER_SELF}:'])
+        # flattened = "\n".join(self.turns + [f'{self.SPEAKER_SELF}:'])
+        flattened = "\n".join(self.turns)
         if self.prompt:
             flattened = f'{self.prompt}{flattened}'
         return flattened
@@ -185,7 +186,10 @@ class BB3PromptHistory(SimplePromptHistory):
         pre_context = f"{self.pre_context_tok}\n" if self.pre_context_tok else ''
         style = f"\n{self.style_string}" if self.style_string else ''
         shots = self.shots if self.shots else ''
-        final = f'{self.prompt}{shots}{pre_context}{flattened_turns}{post_context}{style}\n{self.final_prefix}'
+        # final = f'{self.prompt}{shots}{pre_context}{flattened_turns}{post_context}{style}\n{self.final_prefix}'
+        final = (
+            f'{self.prompt}{shots}{pre_context}{flattened_turns}{post_context}{style}'
+        )
         return final
 
     def render_prompt(self) -> str:
@@ -306,6 +310,12 @@ class SimpleOPTAgent(Agent):
             type=int,
             help='Timeout (s) for the API request to the GPTZ/OPT workers.',
         )
+        parser.add_argument(
+            '--echo',
+            default=False,
+            type=bool,
+            help='Enable echo when generating completions.',
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -326,6 +336,7 @@ class SimpleOPTAgent(Agent):
         self.passed_in_prompt = prompt
         self.history = SimplePromptHistory(prompt=prompt)
         self.request_delay = opt.get('request_delay', 0.5)
+        self.echo = opt.get('echo', False)
 
     def observe(self, obs):
         if not obs.get('batch_padding'):
@@ -407,7 +418,7 @@ class SimpleOPTAgent(Agent):
         ppls = []
         for choice in result['choices']:
             logprobs = choice['logprobs']['token_logprobs']
-            if logprobs[0] > 0:
+            if logprobs[0] is None or logprobs[0] > 0:
                 logprobs = logprobs[1:]
             ppls.append(PPLMetric(-sum(logprobs), len(logprobs)).value())
         ppls = torch.tensor(ppls)
@@ -465,7 +476,7 @@ class SimpleOPTAgent(Agent):
                 'min_tokens': self.opt['beam_min_length'],
                 'max_tokens': self.opt['beam_max_length'],
                 'stop': "\n",
-                'echo': False,
+                'echo': self.echo,
                 'lambda_decay': self.opt['lambda_decay'],
                 'omega_bound': self.opt['omega_bound'],
                 'alpha_presence': self.opt['alpha_presence'],
@@ -489,8 +500,22 @@ class SimpleOPTAgent(Agent):
                         m['text'] = self.rank_samples(r)
                     else:
                         m['text'] = r['choices'][0]['text'].strip()
-                    m['logprobs'] = sum(r['choices'][0]['logprobs']['token_logprobs'])
-                    m['token_logprobs'] = r['choices'][0]['logprobs']['token_logprobs']
+                    # API returns null logprob for EOS when echoing
+                    token_logprobs = r['choices'][0]['logprobs']['token_logprobs']
+                    if self.echo and token_logprobs[0] is None:
+                        token_logprobs = token_logprobs[1:]
+                    m['logprobs'] = sum(token_logprobs)
+                    m['token_logprobs'] = token_logprobs
+                    # Interface parity with TorchGeneratorAgent
+                    m['text_token_info'] = [
+                        (token, {"token_logprob": logprob})
+                        for token, logprob in zip(
+                            r['choices'][0]["logprobs"]["tokens"],
+                            r['choices'][0]["logprobs"]["token_logprobs"],
+                        )
+                        # API returns null logprob for EOS token
+                        if logprob is not None
+                    ]
 
         # we might have batch padding that we skipped earlier. collate it back.
         messages_out = []
@@ -691,23 +716,25 @@ class BB3OPTAgent(SimpleOPTAgent):
             if not APIUtils.is_request_failed_response(r):
                 r['choices'][0]['text'] = r['choices'][0]['text'].strip("\n")
 
-        if any(
-            '\n' in res['choices'][0]['text']
-            for res in results
-            if not APIUtils.is_request_failed_response(res)
-        ):
-            if self.opt.get('generation_take_last_newline', True):
-                logging.warning("Generation contains newline; taking last utterance")
-            else:
-                logging.warning("Generation contains newline; taking first utterance")
-            for result in results:
-                if APIUtils.is_request_failed_response(result):
-                    continue
-                result['choices'][0]['text'] = (
-                    result['choices'][0]['text'].split('\n')[-1].split(":")[-1]
-                    if self.opt.get('generation_take_last_newline', True)
-                    else result['choices'][0]['text'].split('\n')[0].split(":")[-1]
-                )
+        # Allow newlines in return sequence
+        # TODO: add an option to allow choosing one way or the other
+        # if any(
+        #     '\n' in res['choices'][0]['text']
+        #     for res in results
+        #     if not APIUtils.is_request_failed_response(res)
+        # ):
+        #     if self.opt.get('generation_take_last_newline', True):
+        #         logging.warning("Generation contains newline; taking last utterance")
+        #     else:
+        #         logging.warning("Generation contains newline; taking first utterance")
+        #     for result in results:
+        #         if APIUtils.is_request_failed_response(result):
+        #             continue
+        #         result['choices'][0]['text'] = (
+        #             result['choices'][0]['text'].split('\n')[-1].split(":")[-1]
+        #             if self.opt.get('generation_take_last_newline', True)
+        #             else result['choices'][0]['text'].split('\n')[0].split(":")[-1]
+        #         )
         return results
 
     def batch_act(self, observations):
