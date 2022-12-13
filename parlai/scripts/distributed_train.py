@@ -35,6 +35,7 @@ srun python -u -m parlai.scripts.distributed_train \
 import parlai.scripts.train_model as single_train
 from parlai.core.script import ParlaiScript
 import parlai.utils.distributed as distributed_utils
+import parlai.utils.fsdp as fsdp_utils
 
 
 def setup_args():
@@ -51,8 +52,9 @@ class DistributedTrain(ParlaiScript):
 
     def run(self):
         with distributed_utils.slurm_distributed_context(self.opt) as opt:
-            self.train_loop = single_train.TrainLoop(opt)
-            return self.train_loop.train()
+            self.train_loop = fsdp_utils.JoinableTrainLoop(opt)
+            with fsdp_utils.fsdp_join(self.train_loop):
+                return self.train_loop.train()
 
 
 if __name__ == '__main__':

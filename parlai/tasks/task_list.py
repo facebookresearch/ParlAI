@@ -542,6 +542,18 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1706.07503"},
     },
     {
+        "id": "prosocial_dialog",
+        "display_name": "Prosocial Dialog",
+        "task": "prosocial_dialog",
+        "tags": [],
+        "description": (
+            "Prosocial Dialog dataset of 58K dialogues between a speaker showing "
+            "potentially unsafe behavior and a speaker giving constructive feedback "
+            "for more socially acceptable behavior."
+        ),
+        "links": {"arXiv": "https://arxiv.org/abs/2205.12688"},
+    },
+    {
         "id": "QACNN",
         "display_name": "QA CNN",
         "task": "qacnn",

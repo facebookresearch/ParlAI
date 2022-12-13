@@ -24,6 +24,7 @@ from typing import (
     Optional,
     Set,
     Tuple,
+    Type,
     Union,
 )
 
@@ -272,7 +273,7 @@ class Metric(ABC):
         """
         Construct many of a Metric from the base parts.
 
-        Useful if you separately compute numerators and denomenators, etc.
+        Useful if you separately compute numerators and denominators, etc.
         """
         lengths = [len(o) for o in objs]
         objs = list(objs)  # convert from tuple for inplace modification
@@ -285,6 +286,26 @@ class Metric(ABC):
         if len(set(lengths)) != 1:
             raise IndexError(f'Uneven {cls.__name__} constructions: {lengths}')
         return [cls(*items) for items in zip(*objs)]
+
+    @classmethod
+    def from_mask(
+        cls, metric_per_token: torch.Tensor, mask: torch.Tensor
+    ) -> List[Metric]:
+        """
+        From token-level metrics, returns an aggregate MyMetric per example in the
+        batch.
+
+        :param metric_per_token:
+            a (batchsize x num_tokens) Tensor
+        :param mask:
+            a (batchsize x num_tokens) Tensor to mask out tokens that should *not* be considered in the aggregate metric calculation.
+        :return:
+            a (batchsize) Tensor
+        """
+        tokens_per_ex = mask.long().sum(dim=-1)
+        metric_per_ex = (metric_per_token * mask).sum(dim=-1)
+        metrics = cls.many(metric_per_ex, tokens_per_ex)
+        return metrics
 
 
 class FixedMetric(Metric):
@@ -1077,6 +1098,8 @@ class TeacherMetrics(Metrics):
         # User-reported metrics
         if 'metrics' in observation:
             for uk, v in observation['metrics'].items():
+                if v is None:
+                    continue
                 if uk in ALL_METRICS:
                     # don't let the user override our metrics
                     uk = f'USER_{uk}'
