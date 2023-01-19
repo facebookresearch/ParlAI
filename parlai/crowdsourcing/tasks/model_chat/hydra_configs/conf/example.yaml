@@ -17,7 +17,6 @@ mephisto:
     conversation_start_mode: 'hi'
     annotation_question: Does this comment from your partner have any of the following attributes? (Check all that apply)
     conversations_needed_string: "blender_90M:10"
-    emoji_picker: false
   task:
     allowed_concurrent: 1
     assignment_duration_in_seconds: 600

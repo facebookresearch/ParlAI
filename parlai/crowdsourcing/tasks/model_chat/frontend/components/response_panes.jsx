@@ -8,7 +8,6 @@
 
 import React from "react";
 
-import InputEmoji from 'react-input-emoji'
 import { Button, Col, ControlLabel, Form, FormControl, FormGroup } from "react-bootstrap";
 
 
@@ -161,7 +160,7 @@ function FinalSurvey({ taskConfig, onMessageSend, active, currentCheckboxes }) {
   }
 }
 
-function CheckboxTextResponse({ onMessageSend, taskConfig, active, currentCheckboxes }) {
+function CheckboxTextResponse({ onMessageSend, active, currentCheckboxes }) {
   const [textValue, setTextValue] = React.useState("");
   const [sending, setSending] = React.useState(false);
 
@@ -197,56 +196,32 @@ function CheckboxTextResponse({ onMessageSend, taskConfig, active, currentCheckb
     [tryMessageSend]
   );
 
-  if (taskConfig.emoji_picker){
-    return (
-      <div className="response-type-module">
-        <div className="response-bar">
-        <InputEmoji
-            value={textValue}
-            className="response-text-input"
-            onEnter={(e) => handleKeyPress(e)}
-            onChange={setTextValue}
-            placeholder="Please enter here..."
-          /> 
-          <Button
-            className="btn btn-primary submit-response"
-            id="id_send_msg_button"
-            disabled={textValue === "" || !active || sending}
-            onClick={() => tryMessageSend()}
-          >
-            Send
-          </Button>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className="response-type-module">
-        <div className="response-bar">
+  return (
+    <div className="response-type-module">
+      <div className="response-bar">
         <FormControl
-            type="text"
-            className="response-text-input"
-            inputRef={(ref) => {
-              inputRef.current = ref;
-            }}
-            value={textValue}
-            placeholder="Please enter here..."
-            onKeyPress={(e) => handleKeyPress(e)}
-            onChange={(e) => setTextValue(e.target.value)}
-            disabled={!active || sending}
-          /> 
-          <Button
-            className="btn btn-primary submit-response"
-            id="id_send_msg_button"
-            disabled={textValue === "" || !active || sending}
-            onClick={() => tryMessageSend()}
-          >
-            Send
-          </Button>
-        </div>
+          type="text"
+          className="response-text-input"
+          inputRef={(ref) => {
+            inputRef.current = ref;
+          }}
+          value={textValue}
+          placeholder="Please enter here..."
+          onKeyPress={(e) => handleKeyPress(e)}
+          onChange={(e) => setTextValue(e.target.value)}
+          disabled={!active || sending}
+        />
+        <Button
+          className="btn btn-primary submit-response"
+          id="id_send_msg_button"
+          disabled={textValue === "" || !active || sending}
+          onClick={() => tryMessageSend()}
+        >
+          Send
+        </Button>
       </div>
-    );    
-  }
+    </div>
+  );
 }
 
 function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
@@ -272,7 +247,6 @@ function ResponseComponent({ taskConfig, appSettings, onMessageSend, active }) {
     return (
       <CheckboxTextResponse
         onMessageSend={onMessageSend}
-        taskConfig={taskConfig}
         active={computedActive}
         currentCheckboxes={lastMessageAnnotations}
       />
