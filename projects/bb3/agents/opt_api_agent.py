@@ -222,12 +222,12 @@ class SimpleOPTAgent(Agent):
         )
         parser.add_argument(
             '--self-prefix',
-            default='Person 2',
+            default=PROMPT.SELF_PREFIX,
             help="Prefix token indicating 'self' turn",
         )
         parser.add_argument(
             '--partner-prefix',
-            default='Person 1',
+            default=PROMPT.PARTNER_PREFIX,
             help="Prefix token indicating 'partner' turn",
         )
         parser.add_argument(

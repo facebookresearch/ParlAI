@@ -204,7 +204,7 @@ class Module(Enum):
             'vrm': PROMPT.SELF_PREFIX,
             'grm': PROMPT.SELF_PREFIX,
             'orm': PROMPT.OPENING_PREFIX,
-            'brm': PROMPT.BOT_PREFIX,
+            'brm': PROMPT.SELF_PREFIX,
         }[self.value]
 
     def opt_shots(self) -> str:

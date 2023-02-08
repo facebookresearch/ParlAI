@@ -35,7 +35,6 @@ from projects.bb3.agents.search_agent import SearchAgent
 from projects.bb3.agents.utils import (
     Decision,
     APIUtils,
-    MemoryUtils,
     is_opener,
     DisplayUtils,
     set_failed_reply,
@@ -312,11 +311,13 @@ class BlenderBot3Agent(R2C2Agent):
         agent.reset()
         prefixed_memories = {}
         for mem, val in opening_memories.items():
-            mem = MemoryUtils.maybe_add_memory_prefix(mem, 'partner', self.MODEL_TYPE)
+            mem = self.memory_utils.maybe_add_memory_prefix(
+                mem, 'partner', self.MODEL_TYPE
+            )
             prefixed_memories[mem] = val
 
         new_obs = copy.deepcopy(observation)
-        memories_to_use = MemoryUtils.get_available_memories(
+        memories_to_use = self.memory_utils.get_available_memories(
             '',
             prefixed_memories,
             set(),
@@ -354,7 +355,9 @@ class BlenderBot3Agent(R2C2Agent):
             elif isinstance(memories, list):
                 opening_memories = {}
                 for mem in memories:
-                    opening_memories = MemoryUtils.add_memory(mem, opening_memories)
+                    opening_memories = self.memory_utils.add_memory(
+                        mem, opening_memories
+                    )
 
         assert not opening_memories or isinstance(opening_memories, dict)
         return opening_memories
@@ -528,7 +531,7 @@ class BlenderBot3Agent(R2C2Agent):
                 true_memory = ''
                 for memory in available_memory[i]:
                     raw_mem = (
-                        MemoryUtils.split_prefix_memory(memory)[-1]
+                        self.memory_utils.split_prefix_memory(memory)[-1]
                         if do_split
                         else memory
                     )
@@ -834,8 +837,6 @@ class BlenderBot3Agent(R2C2Agent):
         """
         Override batch act for OPT BB3.
         """
-        for o in observations[0].items():
-            logging.info(f"{o}\n\n")
         if self.vanilla:
             return self.batch_act_simple(observations, Module.VANILLA_DIALOGUE)
 
