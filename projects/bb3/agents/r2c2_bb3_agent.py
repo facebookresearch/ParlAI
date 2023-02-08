@@ -337,6 +337,13 @@ class BlenderBot3Agent(ModularAgentMixin):
             'separate: condition on all knowledge separately, re-ranke later'
             'both: do both combined and separate and re-rank final beam',
         )
+        group.add_argument(
+            '--combined-dialogue-module',
+            type=str,
+            choices=[m.tag() for m in Module.dialogue_modules()],
+            default=Module.SEARCH_DIALOGUE.tag(),
+            help='Specify which agent module handles the final dialogue response',
+        )
         parser.add_argument(
             '--ignore-in-session-memories-mkm',
             type='bool',
@@ -470,6 +477,8 @@ class BlenderBot3Agent(ModularAgentMixin):
         )
         self.inject_query_string = opt.get('inject_query_string', '')
         self.knowledge_conditioning = opt['knowledge_conditioning']
+        self.combined_dialogue_module = Module(opt['combined_dialogue_module'])
+        self.memory_utils = MemoryUtils
 
         for m in Module:
             agent = self._init_shared_model(m)
@@ -706,7 +715,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             return a list of memories for each batch item.
         """
         return [
-            MemoryUtils.get_available_memories(
+            self.memory_utils.get_available_memories(
                 o['raw']['text'],
                 o['raw']['memories'],
                 o['raw']['in_session_memories'],
@@ -1016,7 +1025,7 @@ class BlenderBot3Agent(ModularAgentMixin):
             for o in observations
         ]
         clones = self.clones[Module.SEARCH_DIALOGUE]
-        agent = self.agents[Module.SEARCH_DIALOGUE]
+        agent = self.agents[self.combined_dialogue_module]
         dialogue_agent_observations = []
         for i, (obs, knowledge_obs) in enumerate(
             zip(observations, batch_reply_knowledge)
@@ -1260,13 +1269,13 @@ class BlenderBot3Agent(ModularAgentMixin):
             )
             mems = copy.deepcopy(mems)
             for message, person in zip([mgm_self, mgm_partner], ['self', 'partner']):
-                if MemoryUtils.is_valid_memory(
+                if self.memory_utils.is_valid_memory(
                     mems,
                     message.get('text', ''),
-                    MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
+                    self.memory_utils.get_memory_prefix(person, self.MODEL_TYPE),
                 ):
-                    mems = MemoryUtils.add_memory(
-                        MemoryUtils.add_memory_prefix(
+                    mems = self.memory_utils.add_memory(
+                        self.memory_utils.add_memory_prefix(
                             message['text'], person, self.MODEL_TYPE
                         ),
                         mems,
@@ -1497,17 +1506,21 @@ class BlenderBot3Agent(ModularAgentMixin):
             memory_candidate = self_message.get(f"{memory_key}_{person}")
             if not memory_candidate:
                 continue
-            if MemoryUtils.is_valid_memory(
+            if self.memory_utils.is_valid_memory(
                 self.memories,
                 memory_candidate,
-                MemoryUtils.get_memory_prefix(person, self.MODEL_TYPE),
+                self.memory_utils.get_memory_prefix(person, self.MODEL_TYPE),
             ):
-                memory_to_add = MemoryUtils.add_memory_prefix(
+                memory_to_add = self.memory_utils.add_memory_prefix(
                     memory_candidate, person, self.MODEL_TYPE
                 )
-                self.memories = MemoryUtils.add_memory(memory_to_add, self.memories)
+                self.memories = self.memory_utils.add_memory(
+                    memory_to_add, self.memories
+                )
                 self.in_session_memories.add(memory_to_add)
 
         # update mem usage
         used_memory = self_message.get(Module.MEMORY_KNOWLEDGE.message_name(), '')
-        self.memories = MemoryUtils.update_memory_usage(used_memory, self.memories)
+        self.memories = self.memory_utils.update_memory_usage(
+            used_memory, self.memories
+        )

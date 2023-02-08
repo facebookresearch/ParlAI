@@ -176,61 +176,68 @@ def set_failed_reply(reply: Message) -> Message:
 
 
 class MemoryUtils:
-    @staticmethod
-    def is_opt_ft_mem_format(memory_text: str) -> bool:
+    self_memory_prefix: str = PROMPT.SELF_MEMORY_PREFIX
+    partner_memory_prefix: str = PROMPT.PARTNER_MEMORY_PREFIX
+
+    self_prefix: str = PROMPT.SELF_PREFIX
+    partner_prefix: str = PROMPT.PARTNER_PREFIX
+
+    @classmethod
+    def is_opt_ft_mem_format(cls, memory_text: str) -> bool:
         return (
             ':' in memory_text
-            and memory_text.startswith(PROMPT.SELF_MEMORY_PREFIX)
-            or memory_text.startswith(PROMPT.PARTNER_MEMORY_PREFIX)
+            and memory_text.startswith(cls.self_memory_prefix)
+            or memory_text.startswith(cls.partner_memory_prefix)
         )
 
-    @staticmethod
-    def _is_r2c2_format(memory_text: str) -> bool:
+    @classmethod
+    def _is_r2c2_format(cls, memory_text: str) -> bool:
         return (
             ':' in memory_text
             and memory_text.startswith("your persona")
             or memory_text.startswith("partner's persona")
         )
 
-    @staticmethod
-    def _is_opt_prompt_format(memory_text: str) -> bool:
-        return memory_text.startswith(PROMPT.SELF_PREFIX) or memory_text.startswith(
-            PROMPT.PARTNER_PREFIX
+    @classmethod
+    def _is_opt_prompt_format(cls, memory_text: str) -> bool:
+        return memory_text.startswith(cls.self_prefix) or memory_text.startswith(
+            cls.partner_prefix
         )
 
-    @staticmethod
-    def validate_memory_format(memory_text: str):
+    @classmethod
+    def validate_memory_format(cls, memory_text: str):
         assert (
             MemoryUtils._is_r2c2_format(memory_text)
             or MemoryUtils._is_opt_prompt_format(memory_text)
             or MemoryUtils.is_opt_ft_mem_format(memory_text)
         ), f'Provided memory "{memory_text}" has invalid format for chatbot memory field.'
 
-    @staticmethod
-    def split_prefix_memory(memory_text: str) -> Tuple[str, str]:
+    @classmethod
+    def split_prefix_memory(cls, memory_text: str) -> Tuple[str, str]:
         MemoryUtils.validate_memory_format(memory_text)
         try:
             prfx, mem = memory_text.split(':', 1)
         except ValueError:
             # prompt agent sometimes says things like,
             # "Person 2 is"...
-            assert memory_text.startswith(PROMPT.SELF_PREFIX) or memory_text.startswith(
-                PROMPT.PARTNER_PREFIX
+            assert memory_text.startswith(cls.self_prefix) or memory_text.startswith(
+                cls.partner_prefix
             )
-            if memory_text.startswith(PROMPT.SELF_PREFIX):
+            if memory_text.startswith(cls.self_prefix):
                 prfx, mem = (
-                    memory_text[: len(PROMPT.SELF_PREFIX)],
-                    memory_text[len(PROMPT.SELF_PREFIX) + 1 :],
+                    memory_text[: len(cls.self_prefix)],
+                    memory_text[len(cls.self_prefix) + 1 :],
                 )
             else:
                 prfx, mem = (
-                    memory_text[: len(PROMPT.PARTNER_PREFIX)],
-                    memory_text[len(PROMPT.PARTNER_PREFIX) + 1 :],
+                    memory_text[: len(cls.partner_prefix)],
+                    memory_text[len(cls.partner_prefix) + 1 :],
                 )
         return prfx.strip(), mem.strip()
 
-    @staticmethod
+    @classmethod
     def is_valid_memory(
+        cls,
         chatbot_memory: Union[List[str], Dict[str, int]],
         new_memory: str,
         new_memory_prefix: str,
@@ -265,28 +272,26 @@ class MemoryUtils:
 
         return no_overlap(person_memories, new_memory)
 
-    @staticmethod
-    def get_memory_prefix(self_or_partner: str, model_type: str) -> str:
+    @classmethod
+    def get_memory_prefix(cls, self_or_partner: str, model_type: str) -> str:
         """
         Return memory prefix.
         """
         assert self_or_partner in ['self', 'partner']
         assert model_type in ['R2C2', 'OPT']
-        self_prefix = (
-            'your persona' if model_type == 'R2C2' else PROMPT.SELF_MEMORY_PREFIX
-        )
+        self_prefix = 'your persona' if model_type == 'R2C2' else cls.self_memory_prefix
         partner_prefix = (
-            "partner's persona"
-            if model_type == 'R2C2'
-            else PROMPT.PARTNER_MEMORY_PREFIX
+            "partner's persona" if model_type == 'R2C2' else cls.partner_memory_prefix
         )
         if self_or_partner == 'self':
             return self_prefix
         else:
             return partner_prefix
 
-    @staticmethod
-    def add_memory_prefix(memory: str, self_or_partner: str, model_type: str) -> str:
+    @classmethod
+    def add_memory_prefix(
+        cls, memory: str, self_or_partner: str, model_type: str
+    ) -> str:
         """
         Ensure that the memory has a "persona" prefix.
 
@@ -317,9 +322,9 @@ class MemoryUtils:
 
         return memory
 
-    @staticmethod
+    @classmethod
     def maybe_add_memory_prefix(
-        memory: str, self_or_partner: str, model_type: str
+        cls, memory: str, self_or_partner: str, model_type: str
     ) -> str:
         """
         Maybe add it if it's not there.
@@ -328,9 +333,9 @@ class MemoryUtils:
             memory = MemoryUtils.add_memory_prefix(memory, self_or_partner, model_type)
         return memory
 
-    @staticmethod
+    @classmethod
     def _build_query_representation(
-        query: str, dictionary: DictionaryAgent
+        cls, query: str, dictionary: DictionaryAgent
     ) -> Dict[str, Any]:
         rep = {}
         rep['words'] = {}
@@ -343,9 +348,9 @@ class MemoryUtils:
         rep['norm'] = math.sqrt(len(words))
         return rep
 
-    @staticmethod
+    @classmethod
     def maybe_reduce_memories(
-        text: str, memories: List[str], dictionary: DictionaryAgent
+        cls, text: str, memories: List[str], dictionary: DictionaryAgent
     ) -> List[str]:
         """
         TFIDF-Match memories with the textual input to reduce num memories.
@@ -371,8 +376,9 @@ class MemoryUtils:
         new_memories = list(reversed(mpq))[:32]
         return new_memories
 
-    @staticmethod
+    @classmethod
     def get_available_memories(
+        cls,
         text: str,
         memories: Dict[str, int],
         in_session_memories: Set[str],
@@ -425,8 +431,8 @@ class MemoryUtils:
             available_memory.append(memory)
         return MemoryUtils.maybe_reduce_memories(text, available_memory, dictionary)
 
-    @staticmethod
-    def add_memory(memory: str, memories: Dict[str, int]) -> Dict[str, int]:
+    @classmethod
+    def add_memory(cls, memory: str, memories: Dict[str, int]) -> Dict[str, int]:
         """
         Add memory to the memory store.
 
@@ -444,9 +450,9 @@ class MemoryUtils:
         memories[memory] = 0
         return memories
 
-    @staticmethod
+    @classmethod
     def update_memory_usage(
-        used_memory: str, memories: Dict[str, int]
+        cls, used_memory: str, memories: Dict[str, int]
     ) -> Dict[str, int]:
         """
         Update memories to indicate that a memory was used.

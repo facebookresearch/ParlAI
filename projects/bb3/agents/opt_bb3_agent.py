@@ -146,6 +146,30 @@ class BlenderBot3Agent(R2C2Agent):
             default=PROMPT.MAX_PROMPT_LEN,
             help='Longest sequence to send to API',
         )
+        group.add_argument(
+            '--self-prefix',
+            type=str,
+            default=PROMPT.SELF_PREFIX,
+            help='Token for prefixing self responses',
+        )
+        group.add_argument(
+            '--self-memory-prefix',
+            type=str,
+            default=PROMPT.SELF_MEMORY_PREFIX,
+            help='Token for prefixing self memories',
+        )
+        group.add_argument(
+            '--partner-prefix',
+            type=str,
+            default=PROMPT.PARTNER_PREFIX,
+            help='Token for prefixing self responses',
+        )
+        group.add_argument(
+            '--partner-memory-prefix',
+            type=str,
+            default=PROMPT.PARTNER_MEMORY_PREFIX,
+            help='Token for prefixing self memories',
+        )
         parser.add_argument(
             '--metaseq-max-retry-api',
             default=-1,
@@ -158,6 +182,18 @@ class BlenderBot3Agent(R2C2Agent):
     def __init__(self, opt, shared=None):
         opt['model_file'] = 'zoo:'
         super().__init__(opt, shared)
+        self.self_prefix = opt.get('self_prefix', PROMPT.SELF_PREFIX)
+        self.partner_prefix = opt.get('partner_prefix', PROMPT.PARTNER_PREFIX)
+        self.self_memory_prefix = opt.get(
+            'self_memory_prefix', PROMPT.SELF_MEMORY_PREFIX
+        )
+        self.partner_memory_prefix = opt.get(
+            'partner_memory_prefix', PROMPT.PARTNER_MEMORY_PREFIX
+        )
+        self.memory_utils.self_prefix = self.self_prefix
+        self.memory_utils.partner_prefix = self.partner_prefix
+        self.memory_utils.self_memory_prefix = self.self_memory_prefix
+        self.memory_utils.partner_memory_prefix = self.partner_memory_prefix
         # Always init search agent
         if not shared:
             agent_opts = self.opts[Module.SEARCH_KNOWLEDGE]
@@ -240,19 +276,19 @@ class BlenderBot3Agent(R2C2Agent):
         original_text = ag_obs['text']
         self_memory_text, partner_memory_text = '', ''
         self_memories = [
-            m.replace(f"{PROMPT.SELF_MEMORY_PREFIX}: ", '')
+            m.replace(f"{self.self_memory_prefix}: ", '')
             for m in self.memories
-            if m.startswith(PROMPT.SELF_MEMORY_PREFIX)
+            if m.startswith(self.self_memory_prefix)
         ]
         if self_memories:
-            self_memory_text = f"{PROMPT.MEMORY_KNOWLEDGE_PREFIX}: {PROMPT.SELF_MEMORY_PREFIX}: {' '.join(self_memories)}\n"
+            self_memory_text = f"{PROMPT.MEMORY_KNOWLEDGE_PREFIX}: {self.self_memory_prefix}: {' '.join(self_memories)}\n"
         partner_memories = [
-            m.replace(f"{PROMPT.PARTNER_MEMORY_PREFIX}: ", '')
+            m.replace(f"{self.partner_memory_prefix}: ", '')
             for m in self.memories
-            if m.startswith(PROMPT.PARTNER_MEMORY_PREFIX)
+            if m.startswith(self.partner_memory_prefix)
         ]
         if partner_memories:
-            partner_memory_text = f"{PROMPT.MEMORY_KNOWLEDGE_PREFIX}: {PROMPT.PARTNER_MEMORY_PREFIX}: {' '.join(partner_memories)}\n"
+            partner_memory_text = f"{PROMPT.MEMORY_KNOWLEDGE_PREFIX}: {self.partner_memory_prefix}: {' '.join(partner_memories)}\n"
 
         new_text = f"{self_memory_text}{partner_memory_text}{original_text}"
         ag_obs.force_set('text', new_text)
@@ -485,7 +521,7 @@ class BlenderBot3Agent(R2C2Agent):
                 do_split = True
                 if any(
                     text.startswith(p)
-                    for p in [PROMPT.PARTNER_MEMORY_PREFIX, PROMPT.SELF_MEMORY_PREFIX]
+                    for p in [self.partner_memory_prefix, self.self_memory_prefix]
                 ):
                     # no need to split the memory to find it
                     do_split = False
@@ -631,9 +667,8 @@ class BlenderBot3Agent(R2C2Agent):
                     '\n'.join(old_prompt[:-1] + extra_knowledge + old_prompt[-1:]),
                 )
                 combined_obs.append(primary_obs)
-            dialogue_replies = self.batch_agents[Module.SEARCH_DIALOGUE].batch_act(
-                [o[-1] for o in combined_obs]
-            )
+            batch_agent = self.batch_agents[self.combined_dialogue_module]
+            dialogue_replies = batch_agent.batch_act([o[-1] for o in combined_obs])
             dialogue_obs = combined_obs
         else:
             raise NotImplementedError('Both is not implemented')
@@ -706,12 +741,12 @@ class BlenderBot3Agent(R2C2Agent):
             return batch act from the opening dialogue agent.
         """
         module = Module.OPENING_DIALOGUE
-        batch_act = [Message({'text': PROMPT.SELF_PREFIX})] * len(observations)
+        batch_act = [Message({'text': self.self_prefix})] * len(observations)
 
         def _failed_messages(replies):
             return any(
                 p in o['text']
-                for p in [PROMPT.SELF_PREFIX, PROMPT.PARTNER_PREFIX]
+                for p in [self.self_prefix, self.partner_prefix]
                 for o in replies
             )
 
@@ -738,10 +773,10 @@ class BlenderBot3Agent(R2C2Agent):
             for reply in batch_act:
                 text = reply.pop('text')
                 for p in [
-                    PROMPT.SELF_MEMORY_PREFIX,
-                    PROMPT.PARTNER_MEMORY_PREFIX,
-                    PROMPT.SELF_PREFIX,
-                    PROMPT.PARTNER_PREFIX,
+                    self.self_memory_prefix,
+                    self.partner_memory_prefix,
+                    self.self_prefix,
+                    self.partner_prefix,
                 ]:
                     text = text.replace(f"{p}:", '').replace(p, '')
                 reply['text'] = text
@@ -799,6 +834,8 @@ class BlenderBot3Agent(R2C2Agent):
         """
         Override batch act for OPT BB3.
         """
+        for o in observations[0].items():
+            logging.info(f"{o}\n\n")
         if self.vanilla:
             return self.batch_act_simple(observations, Module.VANILLA_DIALOGUE)
 
