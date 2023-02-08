@@ -27,6 +27,7 @@ class Module(Enum):
     VANILLA_DIALOGUE = 'vrm'
     GROUNDED_DIALOGUE = 'grm'
     OPENING_DIALOGUE = 'orm'
+    BOT_DIALOGUE = 'brm'
 
     @staticmethod
     def dialogue_modules() -> List['Module']:
@@ -36,6 +37,7 @@ class Module(Enum):
             Module.SEARCH_DIALOGUE,
             Module.VANILLA_DIALOGUE,
             Module.GROUNDED_DIALOGUE,
+            Module.BOT_DIALOGUE,
             Module.OPENING_DIALOGUE,
         ]
 
@@ -115,6 +117,7 @@ class Module(Enum):
             'vrm': 'vanilla_dialogue',
             'grm': 'grounded_dialogue',
             'orm': 'opening_dialogue',
+            'brm': 'bot_dialogue',
         }
 
     ##############
@@ -138,6 +141,7 @@ class Module(Enum):
             'vrm': '',
             'grm': '',
             'orm': '',
+            'brm': '',
         }[self.value]
 
     def special_tokens(self):
@@ -177,6 +181,7 @@ class Module(Enum):
             'vrm': "A conversation between two persons.\n\n",
             'grm': "A conversation between two persons. Person 2 responds in a given style.\n\n",
             'orm': "A conversation between two persons. Person 2 begins the conversation given information about Person 1.\n\n",
+            'brm': "A conversation between two persons.\n\n",
         }[self.value]
 
     def opt_final_prefix(self):
@@ -199,6 +204,7 @@ class Module(Enum):
             'vrm': PROMPT.SELF_PREFIX,
             'grm': PROMPT.SELF_PREFIX,
             'orm': PROMPT.OPENING_PREFIX,
+            'brm': PROMPT.SELF_PREFIX,
         }[self.value]
 
     def opt_shots(self) -> str:
@@ -210,8 +216,10 @@ class Module(Enum):
         import projects.bb3.prompts as PROMPT
 
         if (
-            self.is_knowledge() and self is not Module.CONTEXTUAL_KNOWLEDGE
-        ) or self is Module.GROUNDED_DIALOGUE:
+            (self.is_knowledge() and self is not Module.CONTEXTUAL_KNOWLEDGE)
+            or self is Module.GROUNDED_DIALOGUE
+            or self is Module.BOT_DIALOGUE
+        ):
             return PROMPT.PRE_CONTEXT_TOK
         return ''
 
@@ -222,6 +230,7 @@ class Module(Enum):
             Module.VANILLA_DIALOGUE,
             Module.OPENING_DIALOGUE,
             Module.GROUNDED_DIALOGUE,
+            Module.BOT_DIALOGUE,
         ]:
             return PROMPT.POST_CONTEXT_TOK
         return ''
