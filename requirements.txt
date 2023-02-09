@@ -12,7 +12,7 @@ google-cloud-storage==1.43.0
 importlib-metadata<4.3
 iopath~=0.1.8
 gitdb2==2.0.5
-GitPython==3.0.3
+GitPython==3.1.30
 hydra-core>=1.1.0
 ipython==7.31.1
 torch<1.13.0,>=1.4.0
