@@ -56,7 +56,7 @@ class SimplePromptHistory(object):
             self.turns.insert(end_of_context, f'{speaker}: {line}')
 
     def render_prompt(self) -> str:
-        flattened = "\n".join(self.turns + [f'{self.SPEAKER_SELF}: '])
+        flattened = "\n".join(self.turns + [f'{self.SPEAKER_SELF}:'])
         if self.prompt:
             flattened = f'{self.prompt}{flattened}'
         return flattened
