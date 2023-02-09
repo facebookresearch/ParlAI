@@ -120,6 +120,8 @@ class BB3PromptHistory(SimplePromptHistory):
         self.final_prefix = f"{self.module.opt_final_prefix()}:"
         if opt.get('final_prefix'):
             self.final_prefix = f"{opt['final_prefix']}:"
+        if opt.get('final_prefix_space'):
+            self.final_prefix = f"{self.final_prefix} "
         self.pre_context_tok = self.module.opt_pre_context_tok()
         self.post_context_tok = self.module.opt_post_context_tok()
         self.style_string = (
@@ -232,6 +234,11 @@ class SimpleOPTAgent(Agent):
         )
         parser.add_argument(
             '--final-prefix', default=None, help="Specify to override the final prefix."
+        )
+        parser.add_argument(
+            '--final-prefix-space',
+            default=False,
+            help="Specify to include a space after the final prefix.",
         )
         parser.add_argument(
             '--raw-prompt', default=None, help='Use to manually specify a raw prompt.'
