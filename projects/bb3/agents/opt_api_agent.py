@@ -86,6 +86,12 @@ class BB3PromptHistory(SimplePromptHistory):
         super().__init__(prompt)
         assert opt is not None
         self.add_speaker_prefixes = opt.get('add_speaker_prefixes', True)
+        self.SPEAKER_SELF = (
+            opt.get('self_prefix', self.SPEAKER_SELF) or self.SPEAKER_SELF
+        )
+        self.SPEAKER_OTHER = (
+            opt.get('partner_prefix', self.SPEAKER_OTHER) or self.SPEAKER_OTHER
+        )
         self.max_prompt_len = opt.get('max_prompt_len', PROMPT.MAX_PROMPT_LEN)
         self.module = Module(opt['module'])
         self.dictionary = dictionary
@@ -112,6 +118,10 @@ class BB3PromptHistory(SimplePromptHistory):
                     '\n\n'.join(self.shots.split('\n\n')[:effective_shots]) + '\n\n'
                 )
         self.final_prefix = f"{self.module.opt_final_prefix()}:"
+        if opt.get('final_prefix'):
+            self.final_prefix = f"{opt['final_prefix']}:"
+        if opt.get('final_prefix_space'):
+            self.final_prefix = f"{self.final_prefix} "
         self.pre_context_tok = self.module.opt_pre_context_tok()
         self.post_context_tok = self.module.opt_post_context_tok()
         self.style_string = (
@@ -139,8 +149,8 @@ class BB3PromptHistory(SimplePromptHistory):
             p in lines[0]
             for p in [
                 'your persona',
-                PROMPT.SELF_MEMORY_PREFIX,
-                PROMPT.PARTNER_MEMORY_PREFIX,
+                f"{self.SPEAKER_SELF}'s Persona",
+                f"{self.SPEAKER_OTHER}'s Persona",
             ]
         ):
             self.turns.append(lines.pop(0))
@@ -211,6 +221,24 @@ class SimpleOPTAgent(Agent):
             choices=PROMPTS.keys(),
             default='none',
             help='Pre-made prompts. Use --raw-prompt to manually write one.',
+        )
+        parser.add_argument(
+            '--self-prefix',
+            default=PROMPT.SELF_PREFIX,
+            help="Prefix token indicating 'self' turn",
+        )
+        parser.add_argument(
+            '--partner-prefix',
+            default=PROMPT.PARTNER_PREFIX,
+            help="Prefix token indicating 'partner' turn",
+        )
+        parser.add_argument(
+            '--final-prefix', default=None, help="Specify to override the final prefix."
+        )
+        parser.add_argument(
+            '--final-prefix-space',
+            default=False,
+            help="Specify to include a space after the final prefix.",
         )
         parser.add_argument(
             '--raw-prompt', default=None, help='Use to manually specify a raw prompt.'
@@ -293,6 +321,7 @@ class SimpleOPTAgent(Agent):
             help='penalty applied to the logits for frequency of previous tokens in the context',
         )
         parser.add_argument('--temperature', default=1.0, type=float)
+        parser.add_argument('--stop-token', default="\n", type=str)
         parser.add_argument('--server', default=APIUtils.DEFAULT_SERVER, type=str)
         parser.add_argument(
             '--max-retry-api',
@@ -458,7 +487,7 @@ class SimpleOPTAgent(Agent):
                 'temperature': self.opt['temperature'],
                 'min_tokens': self.opt['beam_min_length'],
                 'max_tokens': self.opt['beam_max_length'],
-                'stop': "\n",
+                'stop': self.opt['stop_token'],
                 'echo': False,
                 'lambda_decay': self.opt['lambda_decay'],
                 'omega_bound': self.opt['omega_bound'],
