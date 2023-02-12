@@ -333,15 +333,17 @@ class ClearMLLogger(object):
         project_name = opt.get('clearml_project_name')
         # Set ClearML Task Name
         task_name = opt.get('clearml_task_name')
-
         # Instantiate CleaML Task
-        self.clearml_task = Task.init(
-            project_name=project_name,
-            task_name=task_name,
-            auto_connect_arg_parser=False,
-            auto_connect_frameworks={'tensorboard': False},
-            output_uri=True,
-        )
+        if Task.current_task():
+            self.clearml_task = Task.current_task()
+        else:
+            self.clearml_task = Task.init(
+                project_name=project_name,
+                task_name=task_name,
+                auto_connect_arg_parser=False,
+                auto_connect_frameworks={'tensorboard': False},
+                output_uri=True,
+            )
 
         # Report Hyperparameter Configurations
         self.clearml_task.connect(opt)
