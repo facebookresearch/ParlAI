@@ -600,6 +600,12 @@ class BB3OPTAgent(SimpleOPTAgent):
             'set False to take first new line.',
         )
         parser.add_argument(
+            '--generation-allow-newline',
+            type='bool',
+            default=False,
+            help='if a generation is returned with a newline character, set True to return all generated tokens.',
+        )
+        parser.add_argument(
             '--memory-decision-use-memories',
             type='bool',
             default=False,
@@ -713,7 +719,7 @@ class BB3OPTAgent(SimpleOPTAgent):
             if not APIUtils.is_request_failed_response(r):
                 r['choices'][0]['text'] = r['choices'][0]['text'].strip("\n")
 
-        if any(
+        if not self.opt.get('generation_allow_newline') and any(
             '\n' in res['choices'][0]['text']
             for res in results
             if not APIUtils.is_request_failed_response(res)
