@@ -29,14 +29,19 @@ def allow_list_filter(allow_qual: str = None):
     qualification you used for marking the workers.
     """
 
+    # Some minimal cache to avoid checking workers with the DB everytime.
+    mem = dict()
+
     def evaluator(worker, unit=None):
         if not allow_qual:
             return True
-        logging.info(
-            f'Looking up worker {worker.worker_name} from allowed workers list.'
-        )
-        found = worker.get_granted_qualification(allow_qual) is not None
-        logging.info(f'{worker.worker_name} is in the allow list? Result: {found}.')
+
+        wname = worker.worker_name
+        if not mem.get(wname):
+            logging.info(f'Looking up worker {wname} from allowed workers list.')
+            found = worker.get_granted_qualification(allow_qual) is not None
+            logging.info(f'{wname} is in the allow list? Result: {found}.')
+            mem[wname] = found
         return found
 
     return evaluator
