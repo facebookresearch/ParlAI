@@ -37,12 +37,12 @@ def allow_list_filter(allow_qual: str = None):
             return True
 
         wname = worker.worker_name
-        if not mem.get(wname):
+        if not wname not in mem:
             logging.info(f'Looking up worker {wname} from allowed workers list.')
             found = worker.get_granted_qualification(allow_qual) is not None
             logging.info(f'{wname} is in the allow list? Result: {found}.')
             mem[wname] = found
-        return found
+        return mem[wname]
 
     return evaluator
 
