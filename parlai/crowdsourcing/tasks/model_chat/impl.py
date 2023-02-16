@@ -19,6 +19,16 @@ import parlai.utils.logging as logging
 
 
 def allow_list_filter(allow_qual: str = None):
+    """
+    Returns an evaluator function to filter for allowed users.
+
+    You must have marked the allowed workers in your Mephistor DB.
+    Use `direct_assign_qual_mturk_workers` from
+    `mephisto.abstractions.providers.mturk.utils.script_utils` to mark workers who are allowed
+    to participate. Then set the value of `allowed_worker_qualification` to the name of the
+    qualification you used for marking the workers.
+    """
+
     def evaluator(worker, unit=None):
         if not allow_qual:
             return True

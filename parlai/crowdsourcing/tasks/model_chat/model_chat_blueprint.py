@@ -157,7 +157,7 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     allowed_worker_qualification: Optional[str] = field(
         default=None,
-        metadata="The qualification name for worker that are exclusively allowed to do the HITs from this task.",
+        metadata="The qualification name for the workers that are exclusively allowed to do the HITs from this task.",
     )
 
 
