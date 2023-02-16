@@ -155,6 +155,10 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
             "in order to override the parlai parser defaults."
         },
     )
+    allowed_worker_qualification: Optional[str] = field(
+        default=None,
+        metadata="The qualification name for worker that are exclusively allowed to do the HITs from this task.",
+    )
 
 
 class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):

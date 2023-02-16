@@ -15,6 +15,21 @@ from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
     SharedModelChatTaskState,
 )
+import parlai.utils.logging as logging
+
+
+def allow_list_filter(allow_qual: str = None):
+    def evaluator(worker, unit=None):
+        if not allow_qual:
+            return True
+        logging.info(
+            f'Looking up worker {worker.worker_name} from allowed workers list.'
+        )
+        found = worker.get_granted_qualification(allow_qual) is not None
+        logging.info(f'{worker.worker_name} is in the allow list? Result: {found}.')
+        return found
+
+    return evaluator
 
 
 def run_task(cfg: DictConfig, task_directory: str, world_module=None):
@@ -48,6 +63,9 @@ def run_task(cfg: DictConfig, task_directory: str, world_module=None):
 
     # Init
     shared_state = SharedModelChatTaskState(world_module=world_module)
+    shared_state.worker_can_do_unit = allow_list_filter(
+        cfg.mephisto.blueprint.allowed_worker_qualification
+    )
 
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)
