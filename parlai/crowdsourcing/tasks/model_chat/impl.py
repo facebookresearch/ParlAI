@@ -7,44 +7,17 @@
 import os
 import random
 
+from omegaconf import DictConfig, OmegaConf
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
-from omegaconf import DictConfig, OmegaConf
+from mephisto.data_model.qualification import QUAL_EXISTS
+from mephisto.utils.qualifications import make_qualification_dict
 
 from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
     SharedModelChatTaskState,
 )
 import parlai.utils.logging as logging
-
-
-def allow_list_filter(allow_qual: str = None):
-    """
-    Returns an evaluator function to filter for allowed users.
-
-    You must have marked the allowed workers in your Mephistor DB.
-    Use `direct_assign_qual_mturk_workers` from
-    `mephisto.abstractions.providers.mturk.utils.script_utils` to mark workers who are allowed
-    to participate. Then set the value of `allowed_worker_qualification` to the name of the
-    qualification you used for marking the workers.
-    """
-
-    # Some minimal cache to avoid checking workers with the DB everytime.
-    mem = dict()
-
-    def evaluator(worker, unit=None):
-        if not allow_qual:
-            return True
-
-        wname = worker.worker_name
-        if wname not in mem:
-            logging.info(f'Looking up worker {wname} from allowed workers list.')
-            found = worker.get_granted_qualification(allow_qual) is not None
-            logging.info(f'{wname} is in the allow list? Result: {found}.')
-            mem[wname] = found
-        return mem[wname]
-
-    return evaluator
 
 
 def run_task(cfg: DictConfig, task_directory: str, world_module=None):
@@ -77,10 +50,17 @@ def run_task(cfg: DictConfig, task_directory: str, world_module=None):
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
     # Init
-    shared_state = SharedModelChatTaskState(world_module=world_module)
-    shared_state.worker_can_do_unit = allow_list_filter(
-        cfg.mephisto.blueprint.allowed_worker_qualification
-    )
+    if cfg.mephisto.blueprint.allowed_worker_qualification is not None:
+        use_qualifications = [
+            make_qualification_dict(
+                cfg.mephisto.blueprint.allowed_worker_qualification, QUAL_EXISTS, None
+            ),
+        ]
+        shared_state = SharedModelChatTaskState(
+            world_module=world_module, qualifications=use_qualifications
+        )
+    else:
+        shared_state = SharedModelChatTaskState(world_module=world_module)
 
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)
