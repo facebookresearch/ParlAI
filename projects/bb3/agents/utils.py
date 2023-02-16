@@ -631,12 +631,10 @@ class APIUtils:
     ) -> Tuple[List[PPLMetric], List[PPLMetric]]:
         """
         Compute perplexities from API call.
-
         :param observations:
             incoming observations
         :param results:
             results from API call
-
         :return ppls:
             return list of perplexities
         """
@@ -650,7 +648,11 @@ class APIUtils:
             start_label = [i for i, off in enumerate(text_off) if off <= prompt_len]
             assert len(start_label) > 0
             start_label = start_label[-1]
-            all_log_probs = result['choices'][0]['logprobs']['token_logprobs']
+            all_log_probs = [
+                lp
+                for lp in result['choices'][0]['logprobs']['token_logprobs']
+                if lp is not None
+            ]
             if not all(l <= 0 for l in all_log_probs):
                 logging.warning(
                     f'Out of {len(all_log_probs)} log probs, {len([l for l in all_log_probs if l > 0])} are > 0. '

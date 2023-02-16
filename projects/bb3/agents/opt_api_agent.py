@@ -448,7 +448,11 @@ class SimpleOPTAgent(Agent):
                 msg['metrics'] = {'ppl': ppl, 'ctxt_label_ppl': ctxt_ppl}
                 if self.opt['skip_generation']:
                     msg['text'] = r['choices'][0]['text'].strip()
-                    msg['logprobs'] = sum(r['choices'][0]['logprobs']['token_logprobs'])
+                    # API returns null logprob for EOS when echoing
+                    token_logprobs = r['choices'][0]['logprobs']['token_logprobs']
+                    if self.echo and token_logprobs[0] is None:
+                        token_logprobs = token_logprobs[1:]
+                    msg['logprobs'] = sum(token_logprobs)
                     msg['token_logprobs'] = r['choices'][0]['logprobs'][
                         'token_logprobs'
                     ]
