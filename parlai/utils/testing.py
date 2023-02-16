@@ -62,14 +62,6 @@ except ImportError:
     FAIRSEQ_AVAILABLE = False
 
 
-try:
-    import mephisto  # noqa: F401
-
-    MEPHISTO_AVAILABLE = True
-except ImportError:
-    MEPHISTO_AVAILABLE = False
-
-
 def is_this_circleci():
     """
     Return if we are currently running in CircleCI.
@@ -136,13 +128,6 @@ def skipUnlessFairseq(testfn, reason='fairseq not installed'):
     Decorate a test to skip unless fairseq is installed.
     """
     return unittest.skipUnless(FAIRSEQ_AVAILABLE, reason)(testfn)
-
-
-def skipUnlessMephisto(testfn, reason='mephisto not installed'):
-    """
-    Decorate a test to skip unless mephisto is installed.
-    """
-    return unittest.skipUnless(MEPHISTO_AVAILABLE, reason)(testfn)
 
 
 class retry(object):
