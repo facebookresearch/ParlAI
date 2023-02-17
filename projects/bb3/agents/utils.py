@@ -630,11 +630,13 @@ class APIUtils:
         observations: List[Message], results: List[Dict[str, Any]]
     ) -> Tuple[List[PPLMetric], List[PPLMetric]]:
         """
+
         Compute perplexities from API call.
         :param observations:
             incoming observations
         :param results:
             results from API call
+
         :return ppls:
             return list of perplexities
         """
