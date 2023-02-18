@@ -40,21 +40,26 @@ function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate, askReason }
     reasonComponent = '';
   }
   let input_type = annotationBuckets.type !== undefined ? annotationBuckets.type : "checkbox";
+  const showLineBreaks = true;  // pass this in in annotationBuckets
+  const numBuckets = Object.keys(annotationBuckets.config).length;
   return (
     <div key={'checkboxes_' + turnIdx}>
       {
-        Object.keys(annotationBuckets.config).map(c => (
-          <span key={'span_' + c + '_' + turnIdx}>
-            <input
-              type={input_type}
-              id={c + '_' + turnIdx}
-              name={'checkbox_group_' + turnIdx}
-              onChange={(evt) => handleCheckboxChange(evt, annotationBuckets, onUserInputUpdate)}
-            />
-            <span style={{ marginRight: '15px' }}>
-              {annotationBuckets.config[c].name}
+        Object.keys(annotationBuckets.config).map((c, checkboxIdx) => (
+          <>
+            <span key={'span_' + c + '_' + turnIdx}>
+              <input
+                type={input_type}
+                id={c + '_' + turnIdx}
+                name={'checkbox_group_' + turnIdx}
+                onChange={(evt) => handleCheckboxChange(evt, annotationBuckets, onUserInputUpdate)}
+              />
+              <span style={{ marginRight: '15px' }}>
+                {annotationBuckets.config[c].name}
+              </span>
             </span>
-          </span>
+            {(showLineBreaks && checkboxIdx < numBuckets - 1) ? <br></br> : ''}
+          </>
         ))
       }
       <div id={'checkbox_description_' + turnIdx} style={{ height: '24px' }}></div>
@@ -62,5 +67,6 @@ function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate, askReason }
     </div>
   )
 }
+// showLineBreaks: show a line break after every checkbox other than the final one
 
 export { Checkboxes };

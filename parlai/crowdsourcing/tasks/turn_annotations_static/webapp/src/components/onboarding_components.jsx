@@ -90,7 +90,7 @@ function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, t
     }
     return (
         <div className={`alert ${turnIdx % 2 == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${turnIdx % 2 == 0 ? "right" : "left"}`, display: 'table' }}>
-            <span className="onboarding-text"><b>{turnIdx % 2 == 0 ? 'YOU' : 'THEM'}:</b> {text}
+            <span className="onboarding-text"><b>{turnIdx % 2 == 0 ? 'SENTENCE' : 'QUESTION'}:</b> {text}
                 <ErrorBoundary>
                     {extraElements}
                 </ErrorBoundary>
@@ -105,7 +105,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
             <OnboardingDirections>
                 <h3>Task Description</h3>
                 <div>
-                    To first learn about the labeling task, please evaluate the "THEM" speaker in the conversation below, choosing the correct checkboxes.</div>
+                    To first learn about the labeling task, please evaluate the sentences below, choosing the correct option for each one.</div>
             </OnboardingDirections>
             <div style={{ width: '850px', margin: '0px auto', clear: 'both' }}>
                 <ErrorBoundary>

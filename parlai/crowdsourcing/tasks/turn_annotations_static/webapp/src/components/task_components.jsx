@@ -170,7 +170,7 @@ var handleSubtaskSubmit = function (subtaskIndex, setIndex, numSubtasks, initial
       alert('Unable to submit task due to malformed data. Please contact requester.');
       return;
     }
-    mephistoSubmit(window.workerAnswers);
+    mephistoSubmit({final_data: window.workerAnswers});
   }
   showDisableCssNextButton();
   setIndex(subtaskIndex + 1); 
@@ -220,7 +220,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
   var extraElements = '';
   var responseInputElement = '';
   if (speakerLabel == null) {	
-    speakerLabel = turnIdx % 2 == 0 ? 'YOU' : 'THEM'
+    speakerLabel = turnIdx % 2 == 0 ? 'SENTENCE' : 'QUESTION'
   }	
   var speakerElements = (	
     <div>	
