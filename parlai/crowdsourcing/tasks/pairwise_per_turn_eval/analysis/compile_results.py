@@ -49,7 +49,6 @@ class PerTurnEvalResultsCompiler(AbstractResultsCompiler):
         super().__init__(opt)
 
         # Input args
-        os.makedirs(self.output_folder, exist_ok=True)
         self.worker_block_list = opt['worker_block_list'].split(',')
 
         # Save paths

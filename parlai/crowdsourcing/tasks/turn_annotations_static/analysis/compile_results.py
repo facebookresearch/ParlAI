@@ -8,12 +8,24 @@ import copy
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+from mephisto.data_model.worker import Worker
 
+from parlai.crowdsourcing.tasks.turn_annotations_static.turn_annotations_blueprint import (
+    STATIC_BLUEPRINT_TYPE,
+    STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE,
+)
+from parlai.crowdsourcing.utils.acceptability import AcceptabilityChecker
 from parlai.crowdsourcing.utils.analysis import AbstractTurnAnnotationResultsCompiler
+
+
+# Importing blueprint type strings to force registration of the blueprints; we're not
+# using the strings themselves
+_ = STATIC_BLUEPRINT_TYPE
+_ = STATIC_IN_FLIGHT_QA_BLUEPRINT_TYPE
 
 
 class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler):
@@ -22,31 +34,41 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
 
     Change PROBLEM_BUCKETS in task_config/annotations_config.json to be the buckets that
     you are asking crowdsource workers to annotate with.
-
-    NOTE this script directly accesses Mephisto files rather than using the DataBrowser.
-    This makes it fragile and not a great example for extension. It is a good candidate
-    for refactor.
     """
 
-    NUM_SUBTASKS = 7
-    LIVE_ONBOARDING_IS_LAST_SUBTASK = True
     LIVE_ONBOARDING_THRESHOLD = 0.5
     INFLIGHT_ONBOARDING_DATA = None
-    NUM_ANNOTATIONS = 5
 
     FILENAME_STUB = 'results'
     CALCULATE_STATS_INTERANNOTATOR_AGREEMENT = True
+
+    NONE_STRING = '(none)'  # Indicates the absence of a field
 
     @classmethod
     def setup_args(cls):
         parser = super().setup_args()
         parser.add_argument(
-            '--results-folders', type=str, help='Comma-separated list of result folders'
+            '--num-subtasks',
+            type=int,
+            default=7,
+            help='Number of subtasks run per HIT',
+        )
+        parser.add_argument(
+            '--num-annotations',
+            type=int,
+            default=5,
+            help='Minimum number of annotations required per utterance',
+        )
+        parser.add_argument(
+            '--remove-unacceptable-responses',
+            action='store_true',
+            help='Check quality of responses and filter out unacceptable ones',
         )
         parser.add_argument(
             '--onboarding-in-flight-data-file',
             type=str,
-            help='Path to JSONL file containing onboarding in-flight conversations',
+            default=None,
+            help='Path to JSONL file containing onboarding in-flight conversations. Unset if no in-flight conversations.',
         )
         parser.add_argument(
             '--gold-annotations-file',
@@ -59,67 +81,37 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
     def __init__(self, opt: Dict[str, Any]):
         super().__init__(opt)
 
-        if 'results_folders' in opt:
-            self.results_folders = opt['results_folders'].split(',')
-        else:
-            self.results_folders = None
-
-        # Validate problem buckets
-        if self.use_problem_buckets and 'none_all_good' not in self.problem_buckets:
-            # The code relies on a catchall "none" category if the user selects no other
-            # annotation bucket
-            raise ValueError(
-                'There must be a "none_all_good" category in self.problem_buckets!'
-            )
-        self.onboarding_in_flight_data_file = opt.get('onboarding_in_flight_data_file')
-        self.gold_annotations_file = opt.get('gold_annotations_file')
+        self.use_none_all_good = 'none_all_good' in self.problem_buckets
         if not self.use_problem_buckets:
             raise ValueError(
                 'Problem buckets must be used when analyzing results from the static turn annotations task!'
             )
 
-    def get_data_paths_mephisto(self, task_run_id_folder):
-        """
-        Get all the individual folders with data from the <task_run_id> path we are
-        given as input.
-
-        In Mephisto the structure is:
-        /<project_id>/<task_run_id>/<assignment_id>/<agent_id>/
-
-        Side note: assignment_id == HIT ID
-        """
-        # TODO: replace direct folder access with a call to
-        #  mephisto.tools.data_browser.DataBrowser
-        read_folders = []
-        for assignment_id in os.listdir(task_run_id_folder):
-            if assignment_id in ['onboarding', 'reservations', 'build', '.', '..']:
-                continue
-            assignment_folder = os.path.join(task_run_id_folder, assignment_id)
-            if os.path.isdir(assignment_folder):
-                if len(os.listdir(assignment_folder)) > 2:
-                    print(
-                        f'Had more than one HIT in folder: {assignment_folder}, had {len(os.listdir(assignment_folder))} folders.'
-                    )
-                for agent_id in os.listdir(assignment_folder):
-                    if os.path.isdir(os.path.join(assignment_folder, agent_id)):
-                        full_path = os.path.join(
-                            task_run_id_folder,
-                            assignment_id,
-                            agent_id,
-                            'agent_data.json',
-                        )
-                        read_folders.append(full_path)
-        return read_folders
-
-    def get_results_path_base(self) -> str:
-        now = datetime.now()
-        return os.path.join(
-            self.output_folder, f'{self.FILENAME_STUB}_{now.strftime("%Y%m%d_%H%M%S")}'
+        self.num_subtasks = opt['num_subtasks']
+        self.num_annotations = opt['num_annotations']
+        self.remove_unacceptable_responses = opt['remove_unacceptable_responses']
+        self.onboarding_in_flight_data_file = opt['onboarding_in_flight_data_file']
+        self.live_onboarding_is_last_subtask = (
+            self.onboarding_in_flight_data_file is not None
         )
+        self.gold_annotations_file = opt.get('gold_annotations_file')
+
+        # Set up acceptability checking of responses
+        self.acceptability_checker = AcceptabilityChecker(min_words=5)
+        # EMS: from inspection, it's hard to consistently give good justifications in
+        # less than 5 words
+        self.violation_types = ['min_words', 'all_caps', 'exact_match']
+        # EMS: crowdsourcing workers have been known to give too few words, use all
+        # caps, or repeat their reason on every turn. I haven't seen an issue with
+        # obscene responses yet
+        self.acceptability_violations_warning = 'Acceptability violation(s)'
+        # Include this at the start of an acceptability violation warning
+        self.unacceptable_workers = set()
+        # Will contain all workers delivering unacceptable responses
 
     def compile_results(self) -> pd.DataFrame:
         # Loads data from files and gets rid of incomplete or malformed convos
-        conversations = self.compile_initial_results(self.results_folders)
+        conversations = self.compile_initial_results()
         main_dataframe = self.process_data_into_dataframe(conversations)
         self.calculate_basic_interannotator_agreement(main_dataframe)
         if self.gold_annotations_file is not None:
@@ -131,6 +123,27 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         if self.CALCULATE_STATS_INTERANNOTATOR_AGREEMENT:
             self.calculate_stats_interannotator_agreement(main_dataframe)
 
+        if (~main_dataframe['other_metadata'].isna()).sum() > 0:
+            metadata_grouped = main_dataframe.groupby('other_metadata').agg(
+                {
+                    bucket: (lambda sr: sr[~(sr == '')].astype(int).mean())
+                    for bucket in self.problem_buckets
+                }
+            )
+            print('\nMean bucket selection rates grouped by metadata value:')
+            print(metadata_grouped)
+            output_path = os.path.join(
+                self.output_folder,
+                self.FILENAME_STUB + '.metadata_grouped.csv',
+            )
+            metadata_grouped.to_csv(output_path)
+
+        if self.remove_unacceptable_responses:
+            print(
+                f'{len(self.unacceptable_workers):d} workers with unacceptable responses found:'
+            )
+            for mturk_worker_id in sorted(list(self.unacceptable_workers)):
+                print(mturk_worker_id)
         return main_dataframe
 
     def _validate_hit(self, hit_data) -> Tuple[bool, Optional[str]]:
@@ -143,7 +156,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             return False, 'Malformed HIT'
 
         subtasks = hit_data['outputs']['final_data']
-        if len(subtasks) != self.NUM_SUBTASKS:
+        if len(subtasks) != self.num_subtasks:
             return False, f'Incomplete HIT with subtask length {len(subtasks)}.'
 
         return True, None
@@ -179,7 +192,27 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                     f'Bot utterance was malformed and had no problem annotation fields (Failed to find key: {self.problem_buckets[0]}).',
                 )
 
-        return True, None
+        # Check the responses for acceptability
+        if self.remove_unacceptable_responses:
+            responses = [
+                utt['input_response'] for utt in subtask_data if utt['agent_idx'] == 1
+            ]
+            acceptability_violations_0 = self.acceptability_checker.check_messages(
+                messages=responses,
+                is_worker_0=False,
+                violation_types=self.violation_types,
+            )
+            # `is_worker_0` only applies to the 'penalize_greetings' violation, which
+            # we're not using anyway
+            if acceptability_violations_0 == '':
+                return True, None
+            else:
+                return (
+                    False,
+                    f'{self.acceptability_violations_warning}: {acceptability_violations_0}',
+                )
+        else:
+            return True, None
 
     def _get_inflight_onboarding_success_from_subtask(self, subtask):
         if self.INFLIGHT_ONBOARDING_DATA is None:
@@ -198,63 +231,40 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
                         num_incorrect += 1
         return num_correct / num_answers
 
-    def compile_initial_results(self, results_folders) -> list:
+    def compile_initial_results(self) -> List[dict]:
         """
-        Do initial loading and processing of crowdsource data Loads data from all the
-        worker ID files and gets rid of incomplete or malformed convos.
+        Do initial loading and processing of crowdsource data. Loads data from
+        DataBrowser and gets rid of incomplete or malformed convos.
 
-        Also adds fields such as worker_id, assignment_id, etc for convenience
+        Also adds fields such as worker_id, assignment_id, etc. for convenience
         :return: list of JSON objects which represent a conversation with
         annotations d["data"] of each has an array of utterance level data
         """
         print('Starting compile_initial_results...')
-        all_data_paths = []
-        for f in results_folders:
-            # Each one is a HIT completed by a given worker (so if
-            # units-per-assignment > 1), then will include the same conversations
-            # multiple times annotated by different workers
-            data_paths = self.get_data_paths_mephisto(f)
-            all_data_paths.extend(data_paths)
-        print(f'Got {len(all_data_paths)} folders to read.')
+        task_units_data = self.get_task_data()
 
         conversations = []
         task_completion_times = []
-        for dp in all_data_paths:
-            # Read in file
-            with open(os.path.join(dp), 'rb') as f:
-                data = json.load(f)
+        for task_unit in task_units_data:
 
-            worker_id = dp.split('/')[-2]
-            hit_id = dp.split('/')[-3]
-            _ = dp.split('/')[-4]  # Task run
+            worker_id = task_unit['worker_id']
+            assignment_id = task_unit['assignment_id']
+            data = task_unit['data']
 
             (is_valid_hit, reason) = self._validate_hit(data)
             if not is_valid_hit:
                 print(
-                    f'Skipping invalid HIT {hit_id}, worker_id: {worker_id} for reason: {reason}.'
+                    f'Skipping invalid HIT {assignment_id}, worker_id: {worker_id} for reason: {reason}.'
                 )
                 continue
 
             # HIT-level metric of HIT completion time has to be done here for now
-            try:
-                task_completion_time_seconds = (
-                    data['times']['task_end'] - data['times']['task_start']
-                )
-            except KeyError:
-                # We've been relying on non-mephisto API, and in 1.0.2 'times' was deprecated
-                # so this uses the new location
-                metadata_path = os.path.join(os.path.dirname(dp), 'agent_meta.json')
-                with open(metadata_path, 'rb') as f:
-                    metadata = json.load(f)
-
-                # HIT-level metric of HIT completion time has to be done here for now
-                task_completion_time_seconds = (
-                    metadata['task_end'] - metadata['task_start']
-                )
-            print(task_completion_time_seconds)
+            task_completion_time_seconds = (
+                task_unit['task_end'] - task_unit['task_start']
+            )
 
             subtasks = data['outputs']['final_data']
-            if self.LIVE_ONBOARDING_IS_LAST_SUBTASK:
+            if self.live_onboarding_is_last_subtask:
                 qc_success_pct = self._get_inflight_onboarding_success_from_subtask(
                     subtasks[-1]
                 )
@@ -263,25 +273,29 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             for subtask_idx, d in enumerate(subtasks):
                 if (
                     subtask_idx == (len(subtasks) - 1)
-                    and self.LIVE_ONBOARDING_IS_LAST_SUBTASK
+                    and self.live_onboarding_is_last_subtask
                 ):
                     # Last subtask is inflight onboarding; don't include it
                     continue
                 subtask_data = copy.deepcopy(d)
                 # Structure of each subtask is {'subtask_index': XX, 'data': [...]}
                 (is_valid_subtask, reason) = self._validate_subtask(d['data'])
+                if reason is not None and reason.startswith(
+                    self.acceptability_violations_warning
+                ):
+                    mturk_worker_id = Worker.get(
+                        self.get_mephisto_db(), worker_id
+                    ).worker_name
+                    self.unacceptable_workers.add(mturk_worker_id)
                 if not is_valid_subtask:
                     print(
-                        f'Skipping invalid subtask within HIT: {hit_id}, worker_id: {worker_id} for reason: {reason}.'
+                        f'Skipping invalid subtask within HIT: {assignment_id}, worker_id: {worker_id} for reason: {reason}.'
                     )
                     continue
 
                 subtask_data['worker_id'] = worker_id
-                subtask_data['hit_id'] = hit_id
-                subtask_data['folder'] = dp
+                subtask_data['assignment_id'] = assignment_id
                 subtask_data['subtask_idx'] = subtask_idx
-                experimental_design = 'self_chat'
-                subtask_data['model_nickname'] = experimental_design + '/' + 'TODO'
                 subtask_data['qc_success_pct'] = qc_success_pct
                 conversations.append(subtask_data)
 
@@ -308,24 +322,27 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         for _, convo in enumerate(conversations):
             for turn_idx, utt in enumerate(convo['data']):
                 row = {
-                    'annotation_id': f'{convo["hit_id"]}_{convo["subtask_idx"]}_{turn_idx}_{convo["worker_id"]}',
-                    'conversation_id': f'{convo["hit_id"]}_{convo["subtask_idx"]}',
-                    'utterance_id': f'{convo["hit_id"]}_{convo["subtask_idx"]}_{turn_idx}',
+                    'annotation_id': f'{convo["assignment_id"]}_{convo["subtask_idx"]}_{turn_idx}_{convo["worker_id"]}',
+                    'conversation_id': f'{convo["assignment_id"]}_{convo["subtask_idx"]}',
+                    'utterance_id': f'{convo["assignment_id"]}_{convo["subtask_idx"]}_{turn_idx}',
                     'turn_idx': turn_idx,
                     'agent_idx': utt['agent_idx'],
-                    'folder': convo['folder'],
                     'worker_id': convo['worker_id'],
-                    'hit_id': convo['hit_id'],
-                    'model_nickname': convo['model_nickname'],
+                    'mturk_worker_id': Worker.get(
+                        self.get_mephisto_db(), convo['worker_id']
+                    ).worker_name,
+                    'assignment_id': convo['assignment_id'],
+                    'other_metadata': utt.get('other_metadata') or self.NONE_STRING,
                     'qc_success_pct': convo['qc_success_pct'],
                     'text': utt['text'],
+                    'response': utt.get('input_response') or self.NONE_STRING,
                 }
                 row = self._add_additional_columns(row=row, utt=utt)
                 for k in self.problem_buckets:
                     row[k] = utt[k] if utt['agent_idx'] == 1 else ''
                 rows.append(row)
         df = pd.DataFrame(rows)
-        print(f'Returning dataframe with {len(df)} annotations.')
+        print(f'Returning dataframe with {len(df):d} conversation turns.')
         return df
 
     def _add_additional_columns(self, row: Dict[str, Any], utt: dict) -> Dict[str, Any]:
@@ -349,22 +366,23 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         bot_only_df = bot_only_df.fillna(value=np.nan)
         bot_only_df = bot_only_df.dropna()
 
-        bot_only_df = self._problem_bucket_specific_filtering(bot_only_df)
+        if self.use_none_all_good:
+            bot_only_df = self._problem_bucket_specific_filtering(bot_only_df)
 
         # Group at the utterance level (summing across workers)
         bot_only_df = bot_only_df.replace(True, 1)
         bot_only_df = bot_only_df.replace(False, 0)
         all_bot_annotations_count = len(bot_only_df)
 
-        # Remove utterances that don't have self.NUM_ANNOTATIONS annotations
+        # Remove utterances that don't have self.num_annotations annotations
         counted_df = bot_only_df.groupby(['utterance_id']).count()
-        counted_df = counted_df[counted_df == self.NUM_ANNOTATIONS].dropna()
+        counted_df = counted_df[counted_df == self.num_annotations].dropna()
         bot_only_df = bot_only_df[bot_only_df['utterance_id'].isin(counted_df.index)]
         print(
-            f'Removed {all_bot_annotations_count - len(bot_only_df)} that did not have annotations by {self.NUM_ANNOTATIONS} workers. {len(bot_only_df)} annotations remaining.'
+            f'Removed {all_bot_annotations_count - len(bot_only_df)} that did not have annotations by {self.num_annotations} workers. {len(bot_only_df)} annotations remaining.'
         )
 
-        if self.LIVE_ONBOARDING_IS_LAST_SUBTASK:
+        if self.live_onboarding_is_last_subtask:
             # Remove those that didn't get enough right on live onboarding
             bot_only_df = bot_only_df[
                 bot_only_df['qc_success_pct'] >= self.LIVE_ONBOARDING_THRESHOLD
@@ -376,23 +394,24 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
         utterance_ids = bot_only_df['utterance_id'].unique()
         print(f'Number of unique utterance_ids: {len(utterance_ids)}.')
 
-        if 'any_problem' in summed_df:
-            # We've computed a column marking if any problem exists, so include this
-            extended_problem_buckets = self.problem_buckets + ['any_problem']
-        else:
-            extended_problem_buckets = self.problem_buckets
-        for k in extended_problem_buckets:
-            one_annotator = len(summed_df[summed_df[k] == 1])
-            two_annotators = len(summed_df[summed_df[k] == 2])
-            three_annotators = len(summed_df[summed_df[k] >= 3])
-            total_problem_annotations = (
-                one_annotator + two_annotators + three_annotators
-            )
-            total_utterances = len(summed_df[k])
-            if total_problem_annotations > 0:
-                print(
-                    f'Bucket: {k}, total unique problem utterances: {total_problem_annotations} ({total_problem_annotations/total_utterances:.1%} of all), one annotator: {one_annotator} ({one_annotator/total_problem_annotations:.1%}), two_annotators: {two_annotators} ({two_annotators/total_problem_annotations:.1%}), three+ annotators: {three_annotators} ({three_annotators/total_problem_annotations:.1%})'
+        if len(utterance_ids) > 0:
+            if 'any_problem' in summed_df:
+                # We've computed a column marking if any problem exists, so include this
+                extended_problem_buckets = self.problem_buckets + ['any_problem']
+            else:
+                extended_problem_buckets = self.problem_buckets
+            for k in extended_problem_buckets:
+                one_annotator = len(summed_df[summed_df[k] == 1])
+                two_annotators = len(summed_df[summed_df[k] == 2])
+                three_annotators = len(summed_df[summed_df[k] >= 3])
+                total_problem_annotations = (
+                    one_annotator + two_annotators + three_annotators
                 )
+                total_utterances = len(summed_df[k])
+                if total_problem_annotations > 0:
+                    print(
+                        f'Bucket: {k}, total unique problem utterances: {total_problem_annotations} ({total_problem_annotations/total_utterances:.1%} of all), one annotator: {one_annotator} ({one_annotator/total_problem_annotations:.1%}), two_annotators: {two_annotators} ({two_annotators/total_problem_annotations:.1%}), three+ annotators: {three_annotators} ({three_annotators/total_problem_annotations:.1%})'
+                    )
 
     def _problem_bucket_specific_filtering(
         self, bot_only_df: pd.DataFrame
@@ -507,7 +526,7 @@ class TurnAnnotationsStaticResultsCompiler(AbstractTurnAnnotationResultsCompiler
             )
             try:
                 fleiss_kappa = self.compute_fleiss_kappa(
-                    kappa_df, [True, False], self.NUM_ANNOTATIONS
+                    kappa_df, [True, False], self.num_annotations
                 )
             except Exception as exc:
                 print(f'Exception calculating Fleiss Kappa: {exc}. Skipping.')
