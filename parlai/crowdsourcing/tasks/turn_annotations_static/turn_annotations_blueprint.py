@@ -306,6 +306,10 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                         'other_metadata': full_turn[0].get('other_metadata'),
                     }
                 )
+                if 'annotation_buckets' in full_turn[0]:
+                    new_dialogue[-1]['annotation_buckets'] = full_turn[0][
+                        'annotation_buckets'
+                    ]
                 adjusted_turn_idx += 1
             if 'your persona:' not in full_turn[1]['text']:
                 if annotation_indices:
@@ -321,6 +325,10 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                         'other_metadata': full_turn[1].get('other_metadata'),
                     }
                 )
+                if 'annotation_buckets' in full_turn[1]:
+                    new_dialogue[-1]['annotation_buckets'] = full_turn[1][
+                        'annotation_buckets'
+                    ]
                 adjusted_turn_idx += 1
         if max_turn_to_show is not None and adjusted_turn_idx < max_turn_to_show:
             raise Exception(
