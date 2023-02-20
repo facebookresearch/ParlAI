@@ -90,7 +90,7 @@ function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, t
     }
     return (
         <div className={`alert ${turnIdx % 2 == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${turnIdx % 2 == 0 ? "right" : "left"}`, display: 'table' }}>
-            <span className="onboarding-text"><b>{turnIdx % 2 == 0 ? 'SENTENCE' : 'QUESTION'}:</b> {text}
+            <span className="onboarding-text"><b>{turnIdx % 2 == 0 ? 'TEXT' : 'QUESTION(S)'}:</b> {text}
                 <ErrorBoundary>
                     {extraElements}
                 </ErrorBoundary>
