@@ -250,7 +250,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
             marginBottom: "40px"
         }}
         onChange={(e) => {onUserInputUpdate();}}
-        placeholder={"Please enter your response here"}
+        placeholder={"Why? Please explain briefly"}
         onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste. You must manually respond to each message.")}}
         autoComplete="off"
       />
@@ -259,7 +259,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
   }
   return (
     <div>
-      <div className={`alert ${agentIdx == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${agentIdx == 0 ? "right" : "left"}`, display: 'table', minWidth: `${agentIdx == 0 ? "30%" : "80%"}`, marginTop: "auto" }}>
+      <div className={`alert ${agentIdx == 0 ? "alert-info" : "alert-warning"}`} style={{ float: 'left', display: 'table', minWidth: `${agentIdx == 0 ? "30%" : "80%"}`, marginTop: "auto" }}>
         <span>
           {speakerElements}
           <ErrorBoundary>

@@ -9,7 +9,7 @@
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
-const ONBOARDING_MIN_CORRECT = 3;
+const ONBOARDING_MIN_CORRECT = 4;
 const ONBOARDING_MAX_INCORRECT = 1;
 const ONBOARDING_MAX_FAILURES_ALLOWED = 2;
 var onboardingFailuresCount = 0;
@@ -89,7 +89,7 @@ function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, t
         </span>)
     }
     return (
-        <div className={`alert ${turnIdx % 2 == 0 ? "alert-info" : "alert-warning"}`} style={{ float: `${turnIdx % 2 == 0 ? "right" : "left"}`, display: 'table' }}>
+        <div className={`alert ${turnIdx % 2 == 0 ? "alert-info" : "alert-warning"}`} style={{ float: 'left', display: 'table' }}>
             <span className="onboarding-text"><b>{turnIdx % 2 == 0 ? 'TEXT' : 'QUESTION(S)'}:</b> {text}
                 <ErrorBoundary>
                     {extraElements}
