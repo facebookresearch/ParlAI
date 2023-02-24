@@ -54,6 +54,8 @@ Some options for running human+model image chat are as follows:
 - `mephisto.blueprint.stack_folder`: a folder in which to store a stack file that will keep track of which crowdsource workers have chatted with which models about which images. The stack will ensure that no worker chats about the same image more than once and that conversations about images are collected uniformly among all models.
 - `mephisto.blueprint.evals_per_image_model_combo`: the maximum number of conversations collected for each combination of image and model. For instance, if this is set to 3 and your 2 models are `model_1` and `model_2`, each image will have 6 conversations collected about it, 3 with `model_1` and 3 with `model_2`.
 - `mephisto.blueprint.world_file`: the path to the Python module containing the class definition for the chat World, used for setting the logic for each turn of the conversation, when to end the conversation, actions upon shutdown, etc. (The onboarding World, if it exists, will be defined in this module as well.) Modify this value if you would like to write your own World class without having to create a new Blueprint class.
+- `allowed_worker_qualification`: use this qualification to restrict the task to an exclusive list of workers. Note that you must first grant this qualification to the workers who are allowed to participate.
+Use `direct_assign_qual_mturk_workers` function from `mephisto.abstractions.providers.mturk.utils.script_utils` to mark workers who are allowed to participate.
 
 Note that onboarding is not currently supported with human+model image chat: use `ModelChatOnboardWorld` in `worlds.py` as a guide for how to set up onboarding for your specific task.
 
