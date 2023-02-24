@@ -9,8 +9,8 @@
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
-const ONBOARDING_MIN_CORRECT = 4;
-const ONBOARDING_MAX_INCORRECT = 1;
+const ONBOARDING_MIN_CORRECT = 3;
+const ONBOARDING_MAX_INCORRECT = 2;
 const ONBOARDING_MAX_FAILURES_ALLOWED = 2;
 var onboardingFailuresCount = 0;
 
