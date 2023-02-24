@@ -50,6 +50,7 @@ from projects.seeker.utils import (
     DO_NOT_SEARCH,
 )
 from projects.seeker.agents.modular_agent import ModularAgentMixin
+import time
 
 
 class ComboFidAgent(FidAgent):
@@ -727,7 +728,7 @@ class SeekerAgent(ModularAgentMixin):
             )
 
         self.knowledge_agent.beam_min_length = old_min_length
-
+        # print(batch_reply_krm)
         return batch_reply_krm
 
     def batch_act_drm(
@@ -793,21 +794,33 @@ class SeekerAgent(ModularAgentMixin):
         """
         knowledge_agent_observations = [o['knowledge_agent'] for o in observations]
         # First, determine whether we're searching
+        init_time = time.time()
         (
             batch_reply_sdm,
             search_indices,
             knowledge_agent_observations,
         ) = self.batch_act_sdm(observations, knowledge_agent_observations)
+#         print("sdm time profile: ", time.time() - init_time)
+        init_time = time.time()
         # Second, generate search queries
         batch_reply_sqm = self.batch_act_sqm(observations, search_indices)
-
+#         print("sqm time profile: ", time.time() - init_time)
+        init_time = time.time()
+        
         # Third, generate the knowledge sentence
         batch_reply_krm = self.batch_act_krm(
             observations, knowledge_agent_observations, search_indices
         )
+#         batch_reply_krm = [{} for _ in batch_reply_sqm]
+#         print("krm time profile: ", time.time() - init_time)
+#         print("batch_reply_krm", len(batch_reply_krm), batch_reply_krm)
+        init_time = time.time()
 
         # Fourth, generate the dialogue response!
         batch_reply_drm = self.batch_act_drm(observations, batch_reply_krm)
+#         print("drm time profile: ", time.time() - init_time)
+#         print("batch_reply_drm", len(batch_reply_drm), batch_reply_drm)
+        init_time = time.time()
 
         # Finaly, combine them all in the drm batch reply.
         for sdm, sqm, krm, drm in zip(
@@ -823,7 +836,7 @@ class SeekerAgent(ModularAgentMixin):
             drm.force_set('doc_content', [d.get_text() for d in docs])
             drm.force_set('doc_urls', [d.get_id() for d in docs])
 
-        return batch_reply_drm
+        return batch_reply_drm, batch_reply_krm
 
     def act(self):
         """
