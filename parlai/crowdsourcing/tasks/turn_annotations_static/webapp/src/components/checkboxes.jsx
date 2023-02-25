@@ -42,18 +42,6 @@ function Checkboxes({ annotationBuckets, turnIdx, onUserInputUpdate, askReason }
   let input_type = annotationBuckets.type !== undefined ? annotationBuckets.type : "checkbox";
   const showLineBreaks = true;  // pass this in in annotationBuckets
   const numBuckets = Object.keys(annotationBuckets.config).length;
-  if turnIdx == 0 {
-    annotationBuckets.config = {
-        yes: {
-            name: 'Yes',
-            description: 'Yes'
-        },
-        no: {
-            name: 'No',
-            description: 'No'
-        }
-    }
-  }
   return (
     <div key={'checkboxes_' + turnIdx}>
       {

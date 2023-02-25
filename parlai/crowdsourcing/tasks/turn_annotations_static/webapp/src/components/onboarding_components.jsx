@@ -21,7 +21,7 @@ var renderOnboardingFail = function () {
     alert('Sorry, you\'ve exceeded the maximum amount of tries to label the sample conversation correctly, and thus we don\'t believe you can complete the task correctly. Please return the HIT.')
 }
 
-var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, onSubmit }) {
+var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesNoBuckets, onSubmit }) {
     // OVERRIDE: Re-implement this to change onboarding success criteria
     console.log('handleOnboardingSubmit');
     var countCorrect = 0;
@@ -34,7 +34,11 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, onSu
         } else {
             var utteranceIdx = turnIdx * 2 + 1;
             console.log('Checking answers for turn: ' + utteranceIdx);
-            var checkboxStubNames = Object.keys(annotationBuckets.config);
+            if (turnIdx == 0) {
+                var checkboxStubNames = Object.keys(yesNoBuckets.config);
+            } else {
+                var checkboxStubNames = Object.keys(annotationBuckets.config);
+            }
             for (var j = 0; j < checkboxStubNames.length; j++) {
                 var c = checkboxStubNames[j];
                 var checkbox = document.getElementById(c + '_' + utteranceIdx);
@@ -100,6 +104,17 @@ function OnboardingUtterance({ annotationBuckets, annotationQuestion, turnIdx, t
 }
 
 function OnboardingComponent({ onboardingData, annotationBuckets, annotationQuestion, onSubmit }) {
+    let yesNoBuckets = Object.assign({}, annotationBuckets);
+    yesNoBuckets.config = {
+        yes: {
+            name: 'Yes',
+            description: 'Yes'
+        },
+        no: {
+            name: 'No',
+            description: 'No'
+        }
+    };
     return (
         <div id="onboarding-main-pane">
             <OnboardingDirections>
@@ -121,7 +136,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
                                         text={turn[0].text} />
                                     <OnboardingUtterance
                                         key={idx * 2 + 1}
-                                        annotationBuckets={annotationBuckets}
+                                        annotationBuckets={idx == 0 ? yesNoBuckets : annotationBuckets}
                                         annotationQuestion={annotationQuestion}
                                         turnIdx={idx * 2 + 1}
                                         text={turn[1].text} />
@@ -136,7 +151,7 @@ function OnboardingComponent({ onboardingData, annotationBuckets, annotationQues
             <div style={{ textAlign: 'center' }}>
                 <button id="onboarding-submit-button"
                     className="button is-link btn-lg"
-                    onClick={() => handleOnboardingSubmit({ onboardingData, annotationBuckets, onSubmit })}
+                    onClick={() => handleOnboardingSubmit({ onboardingData, annotationBuckets, yesNoBuckets, onSubmit })}
                 >
                     Submit Answers
                 </button>
