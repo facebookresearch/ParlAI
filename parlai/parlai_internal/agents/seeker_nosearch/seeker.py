@@ -794,33 +794,19 @@ class SeekerAgent(ModularAgentMixin):
         """
         knowledge_agent_observations = [o['knowledge_agent'] for o in observations]
         # First, determine whether we're searching
-        init_time = time.time()
         (
             batch_reply_sdm,
             search_indices,
             knowledge_agent_observations,
         ) = self.batch_act_sdm(observations, knowledge_agent_observations)
-#         print("sdm time profile: ", time.time() - init_time)
-        init_time = time.time()
         # Second, generate search queries
         batch_reply_sqm = self.batch_act_sqm(observations, search_indices)
-#         print("sqm time profile: ", time.time() - init_time)
-        init_time = time.time()
-        
         # Third, generate the knowledge sentence
         batch_reply_krm = self.batch_act_krm(
             observations, knowledge_agent_observations, search_indices
         )
-#         batch_reply_krm = [{} for _ in batch_reply_sqm]
-#         print("krm time profile: ", time.time() - init_time)
-#         print("batch_reply_krm", len(batch_reply_krm), batch_reply_krm)
-        init_time = time.time()
-
         # Fourth, generate the dialogue response!
         batch_reply_drm = self.batch_act_drm(observations, batch_reply_krm)
-#         print("drm time profile: ", time.time() - init_time)
-#         print("batch_reply_drm", len(batch_reply_drm), batch_reply_drm)
-        init_time = time.time()
 
         # Finaly, combine them all in the drm batch reply.
         for sdm, sqm, krm, drm in zip(
@@ -843,6 +829,8 @@ class SeekerAgent(ModularAgentMixin):
         Call batch_act with the singleton batch.
         """
         response = self.batch_act([self.observations])[0]
+        if type(response) == list:
+            response = response[0]
         self.self_observe(response)
         # print("!!!!!!!!!!!!!!!!!!!!!!act in seeker agent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return response
