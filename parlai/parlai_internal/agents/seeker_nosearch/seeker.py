@@ -828,9 +828,8 @@ class SeekerAgent(ModularAgentMixin):
         """
         Call batch_act with the singleton batch.
         """
-        response = self.batch_act([self.observations])
+        response = self.batch_act([self.observations])[0]
         self.self_observe(response)
-        # print("!!!!!!!!!!!!!!!!!!!!!!act in seeker agent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return response
 
     def self_observe(self, self_message: Message):
