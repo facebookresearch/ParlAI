@@ -822,15 +822,13 @@ class SeekerAgent(ModularAgentMixin):
             drm.force_set('doc_content', [d.get_text() for d in docs])
             drm.force_set('doc_urls', [d.get_id() for d in docs])
 
-        return batch_reply_drm, batch_reply_krm
+        return batch_reply_drm
 
     def act(self):
         """
         Call batch_act with the singleton batch.
         """
-        response = self.batch_act([self.observations])[0]
-        if type(response) == list:
-            response = response[0]
+        response = self.batch_act([self.observations])
         self.self_observe(response)
         # print("!!!!!!!!!!!!!!!!!!!!!!act in seeker agent!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return response
