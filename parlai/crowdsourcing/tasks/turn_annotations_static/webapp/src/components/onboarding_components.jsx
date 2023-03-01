@@ -9,8 +9,8 @@
 import React from "react";
 import { ErrorBoundary } from './error_boundary.jsx';
 import { Checkboxes } from './checkboxes.jsx';
-const ONBOARDING_MIN_CORRECT = 3;
-const ONBOARDING_MAX_INCORRECT = 2;
+const ONBOARDING_MIN_CORRECT = 4;
+const ONBOARDING_MAX_INCORRECT = 1;
 const ONBOARDING_MAX_FAILURES_ALLOWED = 2;
 var onboardingFailuresCount = 0;
 
@@ -26,9 +26,11 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesN
     console.log('handleOnboardingSubmit');
     var countCorrect = 0;
     var countIncorrect = 0;
+    var responses = [];
     for (var turnIdx = 0; turnIdx < onboardingData.dialog.length; turnIdx++) {
         var modelUtteranceForTurn = onboardingData.dialog[turnIdx][1];
         var answersForTurn = modelUtteranceForTurn.answers;
+        var responsesForTurn = []
         if (!answersForTurn) {
             continue
         } else {
@@ -43,12 +45,14 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesN
                 var c = checkboxStubNames[j];
                 var checkbox = document.getElementById(c + '_' + utteranceIdx);
                 if (checkbox.checked) {
+                    responsesForTurn.push([turnIdx, utteranceIdx, j, c, 'checked'])
                     if (answersForTurn.indexOf(c) > -1) {
                         countCorrect += 1
                     } else {
                         countIncorrect += 1
                     }
                 } else {
+                    responsesForTurn.push([turnIdx, utteranceIdx, j, c, 'unchecked'])
                     if (answersForTurn.indexOf(c) > - 1) {
                         countIncorrect += 1
                     }
@@ -57,17 +61,18 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesN
                 }
             }
         }
+        responses.push(responsesForTurn)
     }
     console.log('correct: ' + countCorrect + ', incorrect: ' + countIncorrect);
     if (countCorrect >= ONBOARDING_MIN_CORRECT && countIncorrect <= ONBOARDING_MAX_INCORRECT) {
-        onSubmit({ success: true });
+        onSubmit({ success: true, responses: responses });
     } else {
         if (onboardingFailuresCount < ONBOARDING_MAX_FAILURES_ALLOWED) {
             onboardingFailuresCount += 1;
             alert('You did not label the sample conversation well enough. Please try one more time!');
         } else {
             renderOnboardingFail();
-            onSubmit({ success: false })
+            onSubmit({ success: false, responses: responses })
         }
     }
 }
