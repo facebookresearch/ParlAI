@@ -7,9 +7,11 @@
 import os
 import random
 
+from omegaconf import DictConfig, OmegaConf
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import load_db_and_process_config
-from omegaconf import DictConfig, OmegaConf
+from mephisto.data_model.qualification import QUAL_EXISTS
+from mephisto.utils.qualifications import make_qualification_dict
 
 from parlai.crowdsourcing.utils.mturk import soft_block_mturk_workers
 from parlai.crowdsourcing.tasks.model_chat.model_chat_blueprint import (
@@ -46,8 +48,18 @@ def run_task(cfg: DictConfig, task_directory: str, world_module=None):
     # Default to a task-specific name to avoid soft-block collisions
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
-    # Init
-    shared_state = SharedModelChatTaskState(world_module=world_module)
+    # TODO: this maybe moved to the parent class: SharedModelChatTaskState 
+    if cfg.mephisto.blueprint.allowed_worker_qualification is not None:
+        use_qualifications = [
+            make_qualification_dict(
+                cfg.mephisto.blueprint.allowed_worker_qualification, QUAL_EXISTS, None
+            ),
+        ]
+        shared_state = SharedModelChatTaskState(
+            world_module=world_module, qualifications=use_qualifications
+        )
+    else:
+        shared_state = SharedModelChatTaskState(world_module=world_module)
 
     operator = Operator(db)
     operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)
