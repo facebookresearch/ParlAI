@@ -8,7 +8,7 @@ import os
 from dataclasses import dataclass, field
 
 import hydra
-from omegaconf import DictConfig
+from omegaconf import DictConfig, MISSING
 
 # From the Mephisto repo
 from examples.parlai_chat_task_demo.parlai_test_script import (
