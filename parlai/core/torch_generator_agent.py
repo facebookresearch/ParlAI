@@ -953,8 +953,8 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                                 )
                             )
                         beam_texts[-1].append((self._v2t(tokens), score.item()))
-                    except KeyError:
-                        logging.error("Decoding error: %s", tokens)
+                    except KeyError as e:
+                        logging.error("Decoding error: %s", tokens, str(e))
                         continue
 
         cand_choices = None

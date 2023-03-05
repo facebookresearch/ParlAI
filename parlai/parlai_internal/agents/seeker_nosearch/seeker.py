@@ -101,6 +101,12 @@ class ComboFidAgent(FidAgent):
             )
         return model
 
+    def get_prefix_tokens(self, batch: Batch) -> Optional[torch.LongTensor]:
+        if hasattr(batch, "prefix") and batch.prefix != None:
+            return batch.prefix
+        else:
+            return None
+    
     def batchify(self, obs_batch: List[Message], sort: bool = False) -> Batch:
         """
         Overrides FidAgent.batchify to add skip retrieval input vec.
@@ -127,6 +133,12 @@ class ComboFidAgent(FidAgent):
                     ]
                 )
                 batch.prior_knowledge_responses_vec = vecs
+        if 'prefix' in obs_batch[-1]:
+            prefix_tokens = torch.LongTensor([self.dict.txt2vec(obs.get('prefix', "")) for obs in obs_batch])
+            batch.prefix_txt = [obs.get('prefix', "") for obs in obs_batch]
+            batch.prefix = prefix_tokens
+        else:
+            batch.prefix = None
         return batch
 
     def _model_input(
@@ -728,7 +740,6 @@ class SeekerAgent(ModularAgentMixin):
             )
 
         self.knowledge_agent.beam_min_length = old_min_length
-        # print(batch_reply_krm)
         return batch_reply_krm
 
     def batch_act_drm(
@@ -761,6 +772,10 @@ class SeekerAgent(ModularAgentMixin):
         for i, obs in enumerate(observations):
             drm_obs = copy.deepcopy(obs['raw'])
             drm_obs.force_set(
+                'prefix',
+                obs.get('prefix', None)
+            )
+            drm_obs.force_set(
                 'temp_history',
                 f"\n{TOKEN_KNOWLEDGE} {batch_reply_krm[i].get('text', '')} {TOKEN_END_KNOWLEDGE}",
             )
@@ -782,7 +797,7 @@ class SeekerAgent(ModularAgentMixin):
 
         return batch_reply_drm
 
-    def batch_act(self, observations: List[Dict[str, Message]]) -> List[Message]:
+    def batch_act(self, observations: List[Dict[str, Message]], prefixes = None) -> List[Message]:
         """
         Full batch_act pipeline.
 
@@ -792,6 +807,13 @@ class SeekerAgent(ModularAgentMixin):
         :return reply:
             return batchsize-length list of final replies.
         """
+        if prefixes :
+            if len(prefixes) != len(observations):
+                print("prefix length mismatch")
+            else:
+                for i in range(len(observations)):
+                    observations[i]["prefix"] = prefixes[i]
+
         knowledge_agent_observations = [o['knowledge_agent'] for o in observations]
         # First, determine whether we're searching
         (
@@ -824,11 +846,11 @@ class SeekerAgent(ModularAgentMixin):
 
         return batch_reply_drm
 
-    def act(self):
+    def act(self, prefix = None):
         """
         Call batch_act with the singleton batch.
         """
-        response = self.batch_act([self.observations])[0]
+        response = self.batch_act([self.observations], prefixes = [prefix])[0]
         self.self_observe(response)
         return response
 
