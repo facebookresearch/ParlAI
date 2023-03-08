@@ -634,7 +634,7 @@ class TrainLoop:
             ):
             self.impatience = 0
             model_rank = sum(new_valid < saved_model_prop[1] for saved_model_prop in self.best_k_models)
-            model_suffix = '_' + ordinal(model_rank) + '.' + str(self._train_steps)
+            model_suffix = '_' + ordinal(model_rank+1) + '.' + str(self._train_steps)
             self.best_k_models.insert(model_rank, (self.opt['model_file']+model_suffix, new_valid))
             self.save_model(model_suffix) # Save model as "model_nth.<number_of_train_steps>"
             self._modify_next_rank_checkpoints(model_rank)
@@ -670,7 +670,7 @@ class TrainLoop:
         for ind in range(model_rank+1, len(self.best_k_models)):
             prev_model_path = self.best_k_models[-1][0]
             model_train_steps = prev_model_path.split('.')[-1]
-            new_model_path = self.opt['model_file'] + '_' + ordinal(ind-1) + '.' + model_train_steps
+            new_model_path = self.opt['model_file'] + '_' + ordinal(ind) + '.' + model_train_steps
             os.rename(self.best_k_models[-1][0], new_model_path)
 
 
