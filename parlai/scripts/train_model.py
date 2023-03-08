@@ -61,6 +61,10 @@ from parlai.utils.io import PathManager
 from parlai.utils.misc import Timer, nice_report, ordinal
 from parlai.utils.world_logging import WorldLogger
 
+import debugpy 
+
+debugpy.listen(5678)
+debugpy.wait_for_client()
 
 def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
     if opt[key] > 0:
@@ -135,7 +139,7 @@ def setup_args(parser=None) -> ParlaiParser:
         help='End training after n model updates',
     )
     train.add_argument(
-        '-topk',
+        '-stopk',
         '--save-top-k-checkpoints',
         type=int,
         default=1,
@@ -628,10 +632,8 @@ class TrainLoop:
                     # if new validation metric is better than kth saved model metric
                 )
             ):
-            model_rank = sum(
-                    new_valid < saved_model_prop[1] for saved_model_prop in self.best_k_models
-                
-            model_suffix = '_'+ordinal(model_rank)+'.'+self._train_steps
+            model_rank = sum(new_valid < saved_model_prop[1] for saved_model_prop in self.best_k_models)
+            model_suffix = '_'+ordinal(model_rank)+'.'+str(self._train_steps)
             self.best_k_models.insert(model_rank, (self.opt['model_file']+model_suffix, new_valid))
             self.save_model(model_suffix) # Save model as "model_nth.<number_of_train_steps>"
             self._modify_next_rank_checkpoints(model_rank)
