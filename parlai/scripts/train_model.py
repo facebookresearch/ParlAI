@@ -632,6 +632,7 @@ class TrainLoop:
                     # if new validation metric is better than kth saved model metric
                 )
             ):
+            self.impatience = 0
             model_rank = sum(new_valid < saved_model_prop[1] for saved_model_prop in self.best_k_models)
             model_suffix = '_' + ordinal(model_rank) + '.' + str(self._train_steps)
             self.best_k_models.insert(model_rank, (self.opt['model_file']+model_suffix, new_valid))
