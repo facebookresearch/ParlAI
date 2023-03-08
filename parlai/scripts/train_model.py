@@ -670,7 +670,7 @@ class TrainLoop:
         for ind in range(model_rank+1, len(self.best_k_models)):
             prev_model_path = self.best_k_models[-1][0]
             model_train_steps = prev_model_path.split('.')[-1]
-            new_model_path = self.opt['model_file'] + '_' + ordinal(ind) + '.' + model_train_steps
+            new_model_path = self.opt['model_file'] + '_' + ordinal(ind+1) + '.' + model_train_steps
             os.rename(self.best_k_models[-1][0], new_model_path)
 
 
