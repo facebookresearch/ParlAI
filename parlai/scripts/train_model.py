@@ -668,10 +668,10 @@ class TrainLoop:
             os.remove(self.best_k_models[-1][0])
             del self.best_k_models[-1]
         for ind in range(model_rank+1, len(self.best_k_models)):
-            prev_model_path = self.best_k_models[-1][0]
+            prev_model_path = self.best_k_models[ind][0]
             model_train_steps = prev_model_path.split('.')[-1]
             new_model_path = self.opt['model_file'] + '_' + ordinal(ind+1) + '.' + model_train_steps
-            os.rename(self.best_k_models[-1][0], new_model_path)
+            os.rename(self.best_k_models[ind][0], new_model_path)
 
 
     def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
