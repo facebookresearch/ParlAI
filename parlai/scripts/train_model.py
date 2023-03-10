@@ -28,6 +28,7 @@ import random
 import torch
 import json
 import os
+from pathlib import Path
 import signal
 from typing import Tuple
 
@@ -635,7 +636,7 @@ class TrainLoop:
             self.impatience = 0
             model_rank = sum(new_valid < saved_model_prop[1] for saved_model_prop in self.best_k_models)
             model_suffix = '_' + ordinal(model_rank+1) + '.' + str(self._train_steps)
-            self.best_k_models.insert(model_rank, (self.opt['model_file']+model_suffix, new_valid))
+            self.best_k_models.insert(model_rank, [self.opt['model_file']+model_suffix, new_valid])
             self.save_model(model_suffix) # Save model as "model_nth.<number_of_train_steps>"
             self._modify_next_rank_checkpoints(model_rank)
                 
@@ -662,16 +663,22 @@ class TrainLoop:
             return True
         return False
     
+        
+
     def _modify_next_rank_checkpoints(self, model_rank):
-        if len(self.best_k_models) >= self.save_top_k:
-            #remove kth best model from disk and best_k_models list to make space for new model
-            os.remove(self.best_k_models[-1][0])
+        if len(self.best_k_models) > self.save_top_k:
+            #remove last best model and its files from disk and best_k_models list to make space for new model
+            last_path = Path(self.best_k_models[-1][0])
+            for file in last_path.parent.glob(last_path.name + '*'):
+                file.unlink()
             del self.best_k_models[-1]
         for ind in range(model_rank+1, len(self.best_k_models)):
-            prev_model_path = self.best_k_models[ind][0]
-            model_train_steps = prev_model_path.split('.')[-1]
-            new_model_path = self.opt['model_file'] + '_' + ordinal(ind+1) + '.' + model_train_steps
-            os.rename(self.best_k_models[ind][0], new_model_path)
+            prev_model_path = Path(self.best_k_models[ind][0])
+            model_train_steps = prev_model_path.suffix[1:]
+            new_model_path = Path(self.opt['model_file'] + '_' + ordinal(ind+1) + '.' + model_train_steps)
+            for file in prev_model_path.parent.glob(prev_model_path.name + '*'):
+                file.rename(str(new_model_path) + ''.join(file.suffixes[1:]))
+            self.best_k_models[ind][0] = str(new_model_path)
 
 
     def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
