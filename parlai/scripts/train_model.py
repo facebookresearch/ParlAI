@@ -62,10 +62,6 @@ from parlai.utils.io import PathManager
 from parlai.utils.misc import Timer, nice_report, ordinal
 from parlai.utils.world_logging import WorldLogger
 
-import debugpy 
-
-debugpy.listen(5678)
-debugpy.wait_for_client()
 
 def _num_else_inf(opt: Opt, key: str, distributed_warn=False):
     if opt[key] > 0:
@@ -640,7 +636,15 @@ class TrainLoop:
             self.save_model(model_suffix) # Save model as "model_nth.<number_of_train_steps>"
             self.saved = True
             self._modify_next_rank_checkpoints(model_rank)
-            
+            if (
+                opt['validation_metric_mode'] == 'max'
+                and self.best_k_models[-1][1] >= opt['validation_cutoff']
+            ) or (
+                opt['validation_metric_mode'] == 'min'
+                and self.best_k_models[-1][1] <= opt['validation_cutoff']
+            ):
+                logging.info('task solved! stopping.')
+                return True
         else:
             self.impatience += 1
             if self.save_top_k == 1:
