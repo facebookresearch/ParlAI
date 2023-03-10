@@ -639,14 +639,21 @@ class TrainLoop:
             self.best_k_models.insert(model_rank, [self.opt['model_file']+model_suffix, new_valid])
             self.save_model(model_suffix) # Save model as "model_nth.<number_of_train_steps>"
             self._modify_next_rank_checkpoints(model_rank)
-                
+            
         else:
             self.impatience += 1
-            logging.report(
-                'did not beat best {}: {} impatience: {}'.format(
-                    opt['validation_metric'], round(self.best_valid, 4), self.impatience
+            if self.save_top_k == 1:
+                logging.report(
+                    'did not beat best {}: {} impatience: {}'.format(
+                        opt['validation_metric'], round(self.best_valid, 4), self.impatience
+                    )
                 )
-            )
+            else:
+                logging.report(
+                    'did not beat {} model\'s {}: {} impatience: {}'.format(
+                        ordinal(self.save_top_k), opt['validation_metric'], round(self.best_k_models[-1][1], 4), self.impatience
+                    )
+                )
         self.validate_time.reset()
 
         # saving
