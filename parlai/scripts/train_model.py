@@ -638,6 +638,7 @@ class TrainLoop:
             model_suffix = '_' + ordinal(model_rank+1) + '.' + str(self._train_steps)
             self.best_k_models.insert(model_rank, [self.opt['model_file']+model_suffix, new_valid])
             self.save_model(model_suffix) # Save model as "model_nth.<number_of_train_steps>"
+            self.saved = True
             self._modify_next_rank_checkpoints(model_rank)
             
         else:
