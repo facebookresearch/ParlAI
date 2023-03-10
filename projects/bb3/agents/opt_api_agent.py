@@ -238,6 +238,7 @@ class SimpleOPTAgent(Agent):
         parser.add_argument(
             '--final-prefix-space',
             default=False,
+            type='bool',
             help="Specify to include a space after the final prefix.",
         )
         parser.add_argument(
