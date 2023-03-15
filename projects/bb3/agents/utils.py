@@ -515,6 +515,9 @@ class APIUtils:
         alpha_presence_src: float = 0.0,
         alpha_frequency_src: float = 0.0,
         alpha_src_penalty_end_idx: int = -1,
+        # added self-debiasing args
+        self_debiasing: bool = False,
+        num_debiasing_prefixes: int = 0,
     ):
         data = {
             'prompt': prompt,
@@ -532,6 +535,9 @@ class APIUtils:
             'alpha_presence_src': alpha_presence_src,
             'alpha_frequency_src': alpha_frequency_src,
             "alpha_src_penalty_end_idx": alpha_src_penalty_end_idx,
+            # added self-debiasing args
+            "self_debiasing": self_debiasing,
+            "num_debiasing_prefixes": num_debiasing_prefixes,
         }
         init_request_delay = request_delay
         past_exceptions = []

@@ -72,6 +72,9 @@ BB3_OPT_GEN_KEYS = [
     'alpha_frequency',
     'alpha_presence_src',
     'alpha_frequency_src',
+    # added for self-debiasing
+    "self_debiasing",
+    "num_debiasing_prefixes",
 ]
 
 
