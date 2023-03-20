@@ -250,7 +250,7 @@ function ChatMessage({ text, agentIdx, annotationQuestion, annotationBuckets, tu
             marginBottom: "40px"
         }}
         onChange={(e) => {onUserInputUpdate();}}
-        placeholder={"Why? Please explain briefly"}
+        placeholder={"Why? Please explain briefly, or state any other issues with this text."}
         onPaste={(e) => {e.preventDefault(); alert("Please do not copy and paste. You must manually respond to each message.")}}
         autoComplete="off"
       />
