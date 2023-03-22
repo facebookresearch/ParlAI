@@ -70,6 +70,14 @@ except ImportError:
     MEPHISTO_AVAILABLE = False
 
 
+try:
+    import clearml
+
+    CLEARML__AVAILABLE = True
+except ImportError:
+    CLEARML__AVAILABLE = False
+
+
 def is_this_circleci():
     """
     Return if we are currently running in CircleCI.
@@ -143,6 +151,13 @@ def skipUnlessMephisto(testfn, reason='mephisto not installed'):
     Decorate a test to skip unless mephisto is installed.
     """
     return unittest.skipUnless(MEPHISTO_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessClearML(testfn, reason='clearml not installed'):
+    """
+    Decorate a test to skip unless clearml is installed.
+    """
+    return unittest.skipUnless(CLEARML__AVAILABLE, reason)(testfn)
 
 
 class retry(object):
