@@ -1,0 +1,5 @@
+random_bb1: >
+    --model parlai_internal.agents.multiparty.agents:MultipartyModelChatAgent
+    --decision-agent parlai_internal.agents.multiparty.agents:RandomSpeakerDecicionsAgent
+    --speech-model-file zoo:blender/blender_90M/model
+    --context-format light

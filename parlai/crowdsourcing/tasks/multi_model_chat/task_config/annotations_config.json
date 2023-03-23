@@ -1,0 +1,33 @@
+{
+    "config": {
+        "consistent": {
+            "name": "Consistent",
+            "description": "Does the response 1) make sense in the context of the conversation; 2) make sense in and of itself?"
+        },
+        "engaging": {
+            "name": "Engaging",
+            "description": "Are you engaged by the response? Do you want to continue the conversation?"
+        },
+        "out_of_turn": {
+            "name": "Out of turn",
+            "description": "It didn't make sense for that character to speak at that point?"
+        },
+        "identity": {
+            "name": "Mistaken identity",
+            "description": "Does it speak like it is someone else?"
+        },
+        "contradictory": {
+            "name": "Contradictory",
+            "description": "Contradicts the character's desciption of what it said before?"
+        },
+        "nonsensical": {
+            "name": "Nonsensical",
+            "description": "Doesn't make any sense in this context."
+        },
+        "none": {
+            "name": "None",
+            "description": "A generic response that doesn't fit any of the other options."
+        }
+    },
+    "show_line_breaks": false
+}
