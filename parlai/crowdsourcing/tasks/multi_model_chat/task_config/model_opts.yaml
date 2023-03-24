@@ -1,5 +1,5 @@
-random_bb1: >
-    --model parlai_internal.agents.multiparty.agents:MultipartyModelChatAgent
-    --decision-agent parlai_internal.agents.multiparty.agents:RandomSpeakerDecicionsAgent
-    --speech-model-file zoo:blender/blender_90M/model
+random_light_prod: >
+    --model parlai.crowdsourcing.tasks.multi_model_chat.agents:MultipartyModelChatAgent
+    --decision-agent parlai.crowdsourcing.tasks.multi_model_chat.agents:RandomSpeakerDecicionsAgent
+    --speech-model-file zoo:light_whoami/profile_expanded_attention_128/model
     --context-format light

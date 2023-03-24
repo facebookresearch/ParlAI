@@ -234,7 +234,7 @@ def get_world_params():
     return {"agent_count": 1}
 
 
-def get_settings(opt):
+def get_settings(opt=None):
     """
     Returns the conversation settings.
 
@@ -250,16 +250,29 @@ def get_settings(opt):
                 },
                 {
                     'name': 'tribesman',
-                    'persona': "I am a tribesman in my group. I am known as a leader in my community and love to help my people. I'm very level headed and don't get angry easily. Many of my peers come to me to solve disagreements.",
+                    'persona': (
+                        "I am a tribesman in my group. I am known as a leader in my community and love to help my people. "
+                        " I'm very level headed and don't get angry easily. Many of my peers come to me to solve disagreements."
+                    ),
                 },
                 {
                     'name': 'thief',
-                    'persona': 'I live alone in a tent in the woods. I steal food from the townspeople and coal from the blacksmith. The village police can not find me to put me in jail.',
+                    'persona': (
+                        'I live alone in a tent in the woods. I steal food from the townspeople and coal from the blacksmith.'
+                        ' The village police can not find me to put me in jail.'
+                    ),
                 },
             ],
             'location': {
                 'name': 'Bamboo hut',
-                'description': "Built of bamboo trunks and a bamboo leaf roof, this small hut has one window on each side and a short door, where those who enter must stoop down so they don't hit their heads. A dirt floor is covered with palm fronds gathered from the jungle; four small rocks are placed around the center of the room, forming a place for the occupants to sit. A small fire burns just outside of the hut, and a wooden spit is suspended over the fire. One of the support poles of the hut has a woven grass bag hanging from it. The bag contains a half-dozen coconuts, clearly gathered for consuming at a later time. A colorful lizard is sleeping in the sun in one of the windows.",
+                'description': (
+                    "Built of bamboo trunks and a bamboo leaf roof, this small hut has one window on each side and a short door,"
+                    " where those who enter must stoop down so they don't hit their heads. A dirt floor is covered with palm fronds gathered from the jungle;"
+                    " four small rocks are placed around the center of the room, forming a place for the occupants to sit. "
+                    "A small fire burns just outside of the hut, and a wooden spit is suspended over the fire. "
+                    "One of the support poles of the hut has a woven grass bag hanging from it. The bag contains a half-dozen coconuts, "
+                    "clearly gathered for consuming at a later time. A colorful lizard is sleeping in the sun in one of the windows."
+                ),
             },
         },
         {
@@ -270,7 +283,11 @@ def get_settings(opt):
                 },
                 {
                     'name': 'Nuns',
-                    'persona': "I am a nun and I live in a monastery with others nuns and fathers who server the king. I pray to the lord everyday that Queen remains in good health. I was made a sister at a young age and didn't have a choice. I will never know what being with a man will feel like.",
+                    'persona': (
+                        "I am a nun and I live in a monastery with others nuns and fathers who server the king."
+                        " I pray to the lord everyday that Queen remains in good health. "
+                        "I was made a sister at a young age and didn't have a choice. I will never know what being with a man will feel like."
+                    ),
                 },
                 {
                     'name': 'priest',
@@ -290,6 +307,15 @@ class ContextGenerator:
     Generates contexts shown to crowdsourced workers during data collection.
     """
 
+    def __init__(self, opt, datatype: str = 'test', seed: int = None):
+        """
+        Initalize the context generator.
+        """
+        if seed is not None:
+            self.rng = random.Random(seed)
+        else:
+            self.rng = random.Random()
+
     def get_context(self) -> dict:
         """
         Get context information to be shown at the beginning of one conversation. Values
@@ -297,7 +323,7 @@ class ContextGenerator:
         - context_dataset: the dataset
         - personas: a list of dict where each dictionary is a persona as stored in this task messages.
         """
-        setting = random.choice(self.settings)
+        setting = random.choice(get_settings())
         return {
             'context_dataset': 'multi-modelchat',
             'personas': setting['personas'],

@@ -294,7 +294,7 @@ class MultipartyModelChatAgent(Agent):
 
     def get_next_turn(self):
         context = self.get_context(context_format=self.context_format)
-        logging.verbose(f'The decision model context:{context}')
+        logging.debug(f'The decision model context:{context}')
         self._decision_agent.observe({'text': context, 'episode_done': False})
         next_turn = self._decision_agent.act()
         self._decision_agent.reset()

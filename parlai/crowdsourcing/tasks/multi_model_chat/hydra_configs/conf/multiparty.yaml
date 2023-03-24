@@ -21,13 +21,13 @@ mephisto:
     task_model_parallel: true
     check_acceptability: false
     include_persona: true
-    conversation_start_mode: parlai.crowdsourcing.task.multi_model_chat.multiparty_worlds
+    conversation_start_mode: parlai.crowdsourcing.tasks.multi_model_chat.multiparty_worlds
     annotation_question: Does this comment from your partner have any of the following attributes? (Check all that apply)
-    conversations_needed_string: "random_bb1:2"
+    conversations_needed_string: "random_light_prod:2"
     override_opt:
-      context_generator: parlai.crowdsourcing.task.multi_model_chat.multiparty_worlds
+      context_generator: parlai.crowdsourcing.tasks.multi_model_chat.multiparty_worlds
   task:
-    allowed_concurrent: 10
+    allowed_concurrent: 2
     assignment_duration_in_seconds: 600
     max_num_concurrent_units: 0  # 0 means infinite; set this to a positive integer to limit concurrent HITs and prevent crashes
     maximum_units_per_worker: 3
