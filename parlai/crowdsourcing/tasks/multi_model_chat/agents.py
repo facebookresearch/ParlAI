@@ -13,8 +13,6 @@ from parlai.core.agents import create_agent_from_model_file
 from parlai.core.loader import load_agent_module
 from parlai.utils.logging import logging
 
-# PERSONA_SETTER_AGENT must match the value in the following module:
-# parlai_internal.crowdsourcing.projects.multilight.model_chat.multiparty_worlds
 PERSONA_SETTER_AGENT = 'persona-agent'
 
 
