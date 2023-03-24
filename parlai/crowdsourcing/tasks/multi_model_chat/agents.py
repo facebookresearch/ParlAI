@@ -151,7 +151,7 @@ class MultipartyModelChatAgent(Agent):
         agent.add_argument(
             '--speech-model-file',
             type=str,
-            help='Model file for generating the response text --speech-agent).',
+            help='Model file for generating the response text (will be ignored if used with --speech-agent).',
         )
         agent.add_argument(
             '--utterance-delimiter',
@@ -311,7 +311,7 @@ class MultipartyModelChatAgent(Agent):
                 context = self.utterance_delimiter.join(
                     [context, f'{speaker}{self.speaker_token_delimiter}']
                 )
-            logging.info(f'The speech model context:\n{context}')
+            logging.debug(f'The speech model context:\n{context}')
             self._speech_agent.observe({'text': context, 'episode_done': False})
             response = self._speech_agent.act()
             self._speech_agent.reset()
