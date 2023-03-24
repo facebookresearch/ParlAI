@@ -1,4 +1,5 @@
 import unittest
+import parlai.utils.testing as testing_utils
 
 
 def setUpModule():
@@ -6,6 +7,7 @@ def setUpModule():
 
 
 class TestClearMLLogger(unittest.TestCase):
+    @testing_utils.skipUnlessClearML
     def test_task_init(self):
         from clearml import Task
 
