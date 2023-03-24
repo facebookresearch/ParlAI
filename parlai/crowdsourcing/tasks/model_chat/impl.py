@@ -48,7 +48,7 @@ def run_task(cfg: DictConfig, task_directory: str, world_module=None):
     # Default to a task-specific name to avoid soft-block collisions
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
-    # TODO: this maybe moved to the parent class: SharedModelChatTaskState 
+    # TODO: this maybe moved to the parent class: SharedModelChatTaskState
     if cfg.mephisto.blueprint.allowed_worker_qualification is not None:
         use_qualifications = [
             make_qualification_dict(
