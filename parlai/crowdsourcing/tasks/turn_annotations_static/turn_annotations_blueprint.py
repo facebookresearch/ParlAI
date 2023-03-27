@@ -10,7 +10,7 @@ import math
 import os
 import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING
 
 import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
@@ -57,7 +57,9 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
     annotation_indices_jsonl: Optional[str] = field(
         default=None,
         metadata={
-            "help": "Specify which utterance indices to annotate per conversation in a JSONL file. Must be same length as conversations data-jsonl file. See example file in task_config/annotation_indices_example.jsonl"
+            "help": "Specify which utterance indices to annotate per conversation in a JSONL file. "
+            "Must be same length as conversations data-jsonl file. "
+            "See example file in task_config/annotation_indices_example.jsonl"
         },
     )
     annotation_last_only: Optional[bool] = field(
@@ -87,8 +89,8 @@ class TurnAnnotationsStaticBlueprintArgs(StaticReactBlueprintArgs):
     annotations_config_path: str = field(
         default="",
         metadata={
-            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in the frontend for worker to annotate an utterance. Set to "
-            " to disable checkboxes."
+            "help": "As per Turn Annotations task, path to annotation buckets which will be checkboxes in"
+            " the frontend for worker to annotate an utterance. Set to disable checkboxes."
         },
     )
     response_field: bool = field(
@@ -131,7 +133,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data = self._initialization_data_dicts
+        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts
 
         # Load from file if needed specifying which utterances within each
         # conversation to annotate
@@ -152,7 +154,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                     line = f.readline()
             if len(self.annotation_indices) != len(self.raw_data):
                 raise Exception(
-                    f'Cannot specify a different length of annotation indices ({len(self.annotation_indices)}) than conversations ({len(self.raw_data)}).'
+                    f'Cannot specify a different length of annotation indices '
+                    f'({len(self.annotation_indices)}) than conversations ({len(self.raw_data)}).'
                 )
             # TODO: should check that utterances specified are all bot
             # utterances (agent_idx == 1)
@@ -237,7 +240,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 # or bias the turkers
                 if len(annotation_indices[conv_idx]) > 1:
                     logging.info(
-                        f'Splitting {len(annotation_indices[conv_idx])} separate problematic utterance annotations in the same conversation into two separate conversations for this task. This avoids biasing the turkers with utterances that may come after one of the annotations.'
+                        f'Splitting {len(annotation_indices[conv_idx])} separate problematic utterance '
+                        'annotations in the same conversation into two separate conversations for this task. '
+                        'This avoids biasing the turkers with utterances that may come after one of the annotations.'
                     )
                 for a in annotation_indices[conv_idx]:
                     processed_dialog = self._process_conversation(d, [a])
@@ -259,7 +264,9 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 output.append(processed_dialog)
 
         print(
-            f'process_data: Processed {len(data_dicts)} total conversations into {len(output)} conversations in the full data with {total_annotation_count} total turn annotations. (Does not account for units per assignment value - i.e. multiple annotations.)'
+            f'process_data: Processed {len(data_dicts)} total conversations into {len(output)} '
+            f'conversations in the full data with {total_annotation_count} total turn annotations. '
+            f'(Does not account for units per assignment value - i.e. multiple annotations.)'
         )
 
         np.random.shuffle(output)
@@ -326,9 +333,12 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
             raise Exception(
                 f'Conversation had {adjusted_turn_idx} but max_turn_to_show was {max_turn_to_show}'
             )
-        assert any(
-            nd['do_annotate'] for nd in new_dialogue
-        ), f'Have to annotate at least one index in the conversation! But new_dialogue was: {new_dialogue}, raw dialogue was: {d["dialog"]}, annotation_indices was: {annotation_indices}, length of dialogue was {len(new_dialogue)}, adjusted_turn_idx was: {adjusted_turn_idx}, max_turn_to_show: {max_turn_to_show}'
+        assert any(nd['do_annotate'] for nd in new_dialogue), (
+            f'Have to annotate at least one index in the conversation! But new_dialogue was: {new_dialogue},'
+            f' raw dialogue was: {d["dialog"]}, annotation_indices was: {annotation_indices}, '
+            f'length of dialogue was {len(new_dialogue)}, adjusted_turn_idx was: {adjusted_turn_idx}, '
+            f'max_turn_to_show: {max_turn_to_show}'
+        )
 
         return new_dialogue
 
@@ -339,7 +349,10 @@ class TurnAnnotationsStaticInFlightQABlueprintArgs(TurnAnnotationsStaticBlueprin
     _group: str = field(
         default="TurnAnnotationsStaticInFlightQABlueprint",
         metadata={
-            'help': """This task mixes in a live onboarding as the last subtask (in addition to an onboarding at the start), and actually increases the number of subtasks per unit by 1."""
+            'help': (
+                "This task mixes in a live onboarding as the last subtask (in addition to an onboarding at the start),"
+                " and actually increases the number of subtasks per unit by 1."
+            )
         },
     )
     onboarding_in_flight_data: str = field(
@@ -401,5 +414,6 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
         self.subtasks_per_unit = len(chunk)
 
         print(
-            f'{self.__class__.__name__}: Grouped data into {len(self._initialization_data_dicts)} tasks with {self.subtasks_per_unit} subtasks each (added in-flight qualification task).'
+            f'{self.__class__.__name__}: Grouped data into {len(self._initialization_data_dicts)}'
+            f'tasks with {self.subtasks_per_unit} subtasks each (added in-flight qualification task).'
         )
