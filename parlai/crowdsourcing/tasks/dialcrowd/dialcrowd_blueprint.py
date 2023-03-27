@@ -8,7 +8,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, Iterable, TYPE_CHECKING
 
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
