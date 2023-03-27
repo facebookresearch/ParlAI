@@ -316,6 +316,13 @@ class SimpleOPTAgent(Agent):
             type=bool,
             help='Enable echo when generating completions.',
         )
+        # self-debiasing arguments
+        parser.add_argument(
+            "--self-debiasing",
+            action="store_true",  # store_true <> default is false
+            default=False,
+            help="Whether to apply the self-debiasing method (default is False).",
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -472,6 +479,9 @@ class SimpleOPTAgent(Agent):
             if not self.opt['penalize_ctxt_repetitions']:
                 self.opt['alpha_presence_src'] = 0
                 self.opt['alpha_frequency_src'] = 0
+            # added self-debiasing option
+            if self.opt['self_debiasing']:
+                self.opt['num_debiasing_prefixes'] = self.opt['batchsize'] - 1
 
             gen_params = {
                 'best_of': self.opt['beam_size'],
@@ -487,6 +497,9 @@ class SimpleOPTAgent(Agent):
                 'alpha_frequency': self.opt['alpha_frequency'],
                 'alpha_presence_src': self.opt['alpha_presence_src'],
                 'alpha_frequency_src': self.opt['alpha_frequency_src'],
+                # added for self-debiasing
+                "self_debiasing": self.opt['self_debiasing'],
+                "num_debiasing_prefixes": self.opt['num_debiasing_prefixes'],
             }
             logging.debug([o['prompt'] for o in observations])
 
