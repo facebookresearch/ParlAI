@@ -131,7 +131,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data = self._initialization_data_dicts
+        self.raw_data = self._initialization_data_dicts: Iterable[Dict[str, Any]]
 
         # Load from file if needed specifying which utterances within each
         # conversation to annotate
