@@ -9,6 +9,9 @@ import random
 from dataclasses import dataclass, field
 from typing import Optional
 
+from mephisto.abstractions.blueprints.static_react_task.static_react_blueprint import (
+    SharedStaticTaskState,
+)
 from mephisto.abstractions.database import MephistoDB
 from mephisto.abstractions.providers.mturk.mturk_agent import MTurkAgent
 from mephisto.abstractions.providers.mturk.utils.script_utils import (
@@ -96,6 +99,12 @@ def soft_block_mturk_workers(
             )
 
 
+def handle_onboarding(onboarding_data):
+    if onboarding_data["outputs"]["success"] is True:
+        return True
+    return False
+
+
 def run_static_task(cfg: DictConfig, task_directory: str, task_id: str):
     """
     Run static task, given configuration.
@@ -113,10 +122,28 @@ def run_static_task(cfg: DictConfig, task_directory: str, task_id: str):
     # Default to a task-specific name to avoid soft-block collisions
     soft_block_mturk_workers(cfg=cfg, db=db, soft_block_qual_name=soft_block_qual_name)
 
+    shared_state = SharedStaticTaskState(validate_onboarding=handle_onboarding)
+    # existing_qualifications = [
+    #     make_qualification_dict(ALLOWLIST_QUAL_NAME, QUAL_EXISTS, None)
+    # ]
+    # shared_state.qualifications = existing_qualifications
+    # if (
+    #     not cfg.skip_adding_allowlist
+    #     and cfg.allowlist_only
+    #     and cfg.mephisto.architect._architect_type != 'local'
+    # ):
+    #     direct_allow_mturk_workers(
+    #         db,
+    #         get_block_list('/checkpoint/daju/MturkList/allow_list.txt'),
+    #         ALLOWLIST_QUAL_NAME,
+    #         cfg.mephisto.provider.requester_name,
+    #     )
+    # TODO: enable allowlisting. This code is taken from https://github.com/fairinternal/ParlAI-Internal/blob/main/crowdsourcing/projects/bb3x/static_eval/run.py#L76-L79
+
     build_task(task_directory)
 
     operator = Operator(db)
-    operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=None)
+    operator.validate_and_run_config(run_config=cfg.mephisto, shared_state=shared_state)
     operator.wait_for_runs_then_shutdown(
         skip_input=True, log_rate=cfg.monitoring_log_rate
     )
