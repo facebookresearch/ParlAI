@@ -29,6 +29,12 @@ TASK_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 defaults = ["_self_", {"conf": 'example'}]
 
 
+def handle_onboarding(onboarding_data):
+    if onboarding_data["outputs"]["success"] is True:
+        return True
+    return False
+
+
 @dataclass
 class ScriptConfig(MTurkRunScriptConfig):
     defaults: List[Any] = field(default_factory=lambda: defaults)
