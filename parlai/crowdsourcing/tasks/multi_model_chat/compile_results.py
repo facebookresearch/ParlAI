@@ -4,9 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-import os
-from datetime import datetime
-
 import numpy as np
 import pandas as pd
 
@@ -25,7 +22,6 @@ class MultiLIGHTModelChatResultsCompiler(ModelChatResultsCompiler):
 
     def compile_results(self) -> pd.DataFrame:
         task_units_data = self.get_task_data()
-        now = datetime.now()
         # Read in each file
         num_convos_with_no_save_data = 0
         num_wrong_status_convos = 0
