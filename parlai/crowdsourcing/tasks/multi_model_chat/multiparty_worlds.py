@@ -267,11 +267,12 @@ def get_settings(opt=None):
                 'name': 'Bamboo hut',
                 'description': (
                     "Built of bamboo trunks and a bamboo leaf roof, this small hut has one window on each side and a short door,"
-                    " where those who enter must stoop down so they don't hit their heads. A dirt floor is covered with palm fronds gathered from the jungle;"
-                    " four small rocks are placed around the center of the room, forming a place for the occupants to sit. "
+                    " where those who enter must stoop down so they don't hit their heads. "
+                    "A dirt floor is covered with palm fronds gathered from the jungle; "
+                    "four small rocks are placed around the center of the room, forming a place for the occupants to sit. "
                     "A small fire burns just outside of the hut, and a wooden spit is suspended over the fire. "
-                    "One of the support poles of the hut has a woven grass bag hanging from it. The bag contains a half-dozen coconuts, "
-                    "clearly gathered for consuming at a later time. A colorful lizard is sleeping in the sun in one of the windows."
+                    "One of the support poles of the hut has a woven grass bag hanging from it. The bag contains a half-dozen coconuts,"
+                    " clearly gathered for consuming at a later time. A colorful lizard is sleeping in the sun in one of the windows."
                 ),
             },
         },
@@ -279,14 +280,18 @@ def get_settings(opt=None):
             'personas': [
                 {
                     'name': 'clergy',
-                    'persona': "I oversee the castle's chapel.  I collect alms for the poor.  I am the spiritual leader of the subjects of the kingdom.",
+                    'persona': (
+                        "I oversee the castle's chapel.  I collect alms for the poor. "
+                        "I am the spiritual leader of the subjects of the kingdom."
+                    ),
                 },
                 {
                     'name': 'Nuns',
                     'persona': (
                         "I am a nun and I live in a monastery with others nuns and fathers who server the king."
                         " I pray to the lord everyday that Queen remains in good health. "
-                        "I was made a sister at a young age and didn't have a choice. I will never know what being with a man will feel like."
+                        "I was made a sister at a young age and didn't have a choice. "
+                        "I will never know what being with a man will feel like."
                     ),
                 },
                 {
@@ -296,7 +301,11 @@ def get_settings(opt=None):
             ],
             'location': {
                 'name': 'Church Entryway',
-                'description': 'The church has marble floors and a huge frost window. There are benches made from wood and a big organ can be seen at the front stage. There is gold trim all around the church.',
+                'description': (
+                    'The church has marble floors and a huge frost window. '
+                    'There are benches made from wood and a big organ can be seen at the front stage.'
+                    ' There is gold trim all around the church.'
+                ),
             },
         },
     ]

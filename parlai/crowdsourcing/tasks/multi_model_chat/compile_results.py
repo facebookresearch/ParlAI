@@ -156,7 +156,8 @@ class MultiLIGHTModelChatResultsCompiler(ModelChatResultsCompiler):
             )
             if len(saved_data['dialog']) > 20:
                 print(
-                    f'Got long dialogue of {len(saved_data["dialog"])} utterances, hit id: {info_dict["hit_id"]}, model_nickname: {model_nickname}.'
+                    f'Got long dialogue of {len(saved_data["dialog"])} utterances, hit id:'
+                    f' {info_dict["hit_id"]}, model_nickname: {model_nickname}.'
                 )
 
             speaker_count = dict()
@@ -269,10 +270,12 @@ class MultiLIGHTModelChatResultsCompiler(ModelChatResultsCompiler):
                     continue
                 if p == 'ratings':
                     print(
-                        f'Average Engaging-ness Rating: {np.average(model_stats_dict["ratings"])} ({model_stats_dict["count_ratings"]} ratings)'
+                        f'Average Engaging-ness Rating: {np.average(model_stats_dict["ratings"])}'
+                        f' ({model_stats_dict["count_ratings"]} ratings)'
                     )
                     print(
-                        f'Engaging-ness Rating Variance: {np.std(model_stats_dict["ratings"])} ({model_stats_dict["count_ratings"]} ratings)'
+                        f'Engaging-ness Rating Variance: {np.std(model_stats_dict["ratings"])}'
+                        f' ({model_stats_dict["count_ratings"]} ratings)'
                     )
                 elif p == 'human_word_count' or p == 'human_question_count':
                     print(
