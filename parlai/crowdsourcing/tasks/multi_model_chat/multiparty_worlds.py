@@ -238,8 +238,8 @@ def get_settings(opt=None):
     """
     Returns the conversation settings.
 
-    This is a place-holder function with a few hand selected settings,
-    override with more for real data collection.
+    This is a place-holder function with a few hand selected settings, override with
+    more for real data collection.
     """
     return [
         {
@@ -320,6 +320,7 @@ class ContextGenerator:
         """
         Get context information to be shown at the beginning of one conversation. Values
         in return dict:
+
         - context_dataset: the dataset
         - personas: a list of dict where each dictionary is a persona as stored in this task messages.
         """

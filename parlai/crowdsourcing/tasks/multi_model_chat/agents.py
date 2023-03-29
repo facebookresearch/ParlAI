@@ -90,10 +90,11 @@ class RandomSpeakerDecicionsAgent(Agent):
 class MultipartyModelChatAgent(Agent):
     """
     Agent to use in a live chat with human.
+
     The assumption is that there is only 1 human; all other characters are handled by
     model. We still use the regular observe and act cycles of any other ParlAI agent,
-    But after each observe, model decides whose turn is next and if it is the
-    human character's turn it responds with silence. Otherwise it uses its utterance
+    But after each observe, model decides whose turn is next and if it is the human
+    character's turn it responds with silence. Otherwise it uses its utterance
     generation model and generates a text response.
     """
 

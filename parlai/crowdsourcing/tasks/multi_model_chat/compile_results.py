@@ -26,9 +26,6 @@ class MultiLIGHTModelChatResultsCompiler(ModelChatResultsCompiler):
     def compile_results(self) -> pd.DataFrame:
         task_units_data = self.get_task_data()
         now = datetime.now()
-        worker_results_file = os.path.join(
-            self.output_folder, f'worker_results_{now.strftime("%Y%m%d_%H%M%S")}.csv'
-        )
         # Read in each file
         num_convos_with_no_save_data = 0
         num_wrong_status_convos = 0
