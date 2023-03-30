@@ -157,7 +157,9 @@ class BaseModelChatBlueprintArgs(ParlAIChatBlueprintArgs):
     )
     allowed_worker_qualification: Optional[str] = field(
         default=None,
-        metadata="The qualification name for the workers that are exclusively allowed to do the HITs from this task.",
+        metadata={
+            "help": "The qualification name for the workers that are exclusively allowed to do the HITs from this task."
+        },
     )
 
 
@@ -203,9 +205,11 @@ class BaseModelChatBlueprint(ParlAIChatBlueprint, ABC):
             f'"~" can\'t currently be parsed in the chat data folder path '
             f'{args.blueprint.chat_data_folder}'
         )
-        # Currently Hydra overrides the tilde key at lower levels as described here: https://hydra.cc/docs/next/advanced/override_grammar/basic/#grammar
-        # Thus the TILDE key cannot be used in replacement for $HOME variable
-        # Some hacky solution can probably be achieved but won't be good code so for now this assert is written as a placeholder
+        # Currently Hydra overrides the tilde key at lower levels as described here:
+        # https://hydra.cc/docs/next/advanced/override_grammar/basic/#grammar
+        # Thus the TILDE key cannot be used in replacement for $HOME variable.
+        # Some hacky solution can probably be achieved but won't be good code so for now
+        # this assert is written as a placeholder
 
         if args.blueprint.get("annotations_config_path", "") != "":
             full_path = os.path.expanduser(args.blueprint.annotations_config_path)

@@ -1,0 +1,24 @@
+.location {
+    background-color: rgb(232, 147, 147);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.persona {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.player {
+    background-color: azure;
+}
+
+.npc {
+    background-color: bisque;
+}
+
+.rating-response {
+    background-color: rgb(216 81 30);
+    width: 20%;
+}
