@@ -53,7 +53,7 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
-    self._initialization_data_dicts: List[Dict[str, Any]]
+    _initialization_data_dicts: List[Dict[str, Any]]
 
     ArgsClass = DialCrowdStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
