@@ -10,7 +10,7 @@ import math
 import os
 import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
@@ -114,6 +114,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     It also has options for the onboarding data answers and the annotation bucket
     definitions.
     """
+    self._initialization_data_dicts: List[Dict[str, Any]]
 
     ArgsClass = TurnAnnotationsStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
@@ -133,7 +134,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts  # type: ignore
+        self.raw_data = self._initialization_data_dicts
 
         # Load from file if needed specifying which utterances within each
         # conversation to annotate
