@@ -67,15 +67,15 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts
+        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts # type: ignore
 
         # Now chunk the data into groups of <num_subtasks>
         grouped_data = []
         logging.info(
             f'Raw data length: {len(self.raw_data)}. self.subtasks_per_unit: {self.subtasks_per_unit}'
         )
-        for i in range(0, len(self._initialization_data_dicts), self.subtasks_per_unit):
-            chunk = self._initialization_data_dicts[i : i + self.subtasks_per_unit]
+        for i in range(0, len(self._initialization_data_dicts), self.subtasks_per_unit):  # type: ignore
+            chunk = self._initialization_data_dicts[i : i + self.subtasks_per_unit]  # type: ignore
             grouped_data.append(chunk)
         self._initialization_data_dicts = grouped_data
         # Last group may have less unless an exact multiple
