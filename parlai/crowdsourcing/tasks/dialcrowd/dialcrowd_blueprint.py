@@ -67,7 +67,7 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts # type: ignore
+        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts  # type: ignore
 
         # Now chunk the data into groups of <num_subtasks>
         grouped_data = []
