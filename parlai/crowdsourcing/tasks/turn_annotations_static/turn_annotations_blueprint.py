@@ -114,6 +114,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     It also has options for the onboarding data answers and the annotation bucket
     definitions.
     """
+
     self._initialization_data_dicts: List[Dict[str, Any]]
 
     ArgsClass = TurnAnnotationsStaticBlueprintArgs
