@@ -182,7 +182,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         for i in range(0, len(self._initialization_data_dicts), self.subtasks_per_unit):
             chunk = self._initialization_data_dicts[i : i + self.subtasks_per_unit]
             grouped_data.append(chunk)
-        self._initialization_data_dicts = grouped_data
+        self._initialization_data_dicts = grouped_data  # type: ignore
         # Last group may have less unless an exact multiple
         logging.info(
             f'Grouped data into {len(self._initialization_data_dicts)} tasks with {self.subtasks_per_unit} subtasks each.'
