@@ -8,7 +8,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
@@ -53,7 +53,7 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
-    _initialization_data_dicts: List[Dict[str, Any]]
+    _initialization_data_dicts: Union[List[List[Dict[str, Any]]], List[Dict[str, Any]]]
 
     ArgsClass = DialCrowdStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE

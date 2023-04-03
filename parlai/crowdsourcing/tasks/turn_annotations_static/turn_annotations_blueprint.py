@@ -10,7 +10,7 @@ import math
 import os
 import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
@@ -115,7 +115,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
-    _initialization_data_dicts: List[Dict[str, Any]]
+    _initialization_data_dicts: Union[List[List[Dict[str, Any]]], List[Dict[str, Any]]]
 
     ArgsClass = TurnAnnotationsStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
@@ -399,7 +399,7 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
         # (quality control will always be last subtask)
         # TODO: I don't think we need to re-chunk this actually; just iterate
         # over the data and add the quality control task
-        all_data = []
+        all_data: List[Any] = []
         for grp in self._initialization_data_dicts:
             all_data.extend(grp)
 
