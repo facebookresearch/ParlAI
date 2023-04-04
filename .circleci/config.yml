@@ -140,7 +140,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off 'torch==1.13.0' 'torchvision==0.14.0' 'torchaudio==0.13.0' -f https://download.pytorch.org/whl/torch_stable.html
-            python -m pip install --progress-bar off 'transformers==4.20' apex
+            python -m pip install --progress-bar off 'transformers==4.20'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
