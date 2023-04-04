@@ -91,15 +91,13 @@ commands:
       - run:
           name: Installs basic dependencies
           command: |
+            pip install --upgrade pip
             for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools==62.3.4 && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off coverage && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off codecov && s=0 && break || s=$? && sleep 10; done; (exit $s)
             mkdir -p ~/ParlAI/test-results
-            echo "1XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
             for i in $(seq 1 3); do pip install -v -r requirements.txt && s=0 && break || s=$? && sleep 10; done; (exit $s)
-            echo "2XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
             for i in $(seq 1 3); do python setup.py develop && s=0 && break || s=$? && sleep 10; done; (exit $s)
-            echo "3XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('punkt')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('stopwords')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('omw-1.4')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
