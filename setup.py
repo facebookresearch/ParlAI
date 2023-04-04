@@ -21,7 +21,7 @@ with open('README.md', encoding="utf8") as f:
 with open('requirements.txt') as f:
     reqs = []
     for line in f:
-        line = line.strip()
+        reqs.append(line.strip())
 
 
 if __name__ == '__main__':
