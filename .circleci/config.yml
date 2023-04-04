@@ -110,7 +110,7 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.13.0+cu113 torchvision==0.14.0+cu113 torchaudio==0.13.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+            python -m pip install --progress-bar off torch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 -f https://download.pytorch.org/whl/cu113/torch_stable.html
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.20'
