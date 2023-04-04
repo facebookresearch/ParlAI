@@ -92,7 +92,7 @@ commands:
           name: Installs basic dependencies
           command: |
             pip install --upgrade pip
-            for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools==62.3.4 && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off coverage && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off codecov && s=0 && break || s=$? && sleep 10; done; (exit $s)
             mkdir -p ~/ParlAI/test-results
@@ -313,8 +313,8 @@ jobs:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
-            python -m pip install --upgrade pip
-            python -m pip install --progress-bar off pip setuptools==62.3.4
+            python -m pip install --progress-bar off --upgrade pip
+            python -m pip install --progress-bar off pip setuptools
             python setup.py develop
             parlai display_data -t integration_tests
 
