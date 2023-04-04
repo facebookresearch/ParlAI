@@ -313,6 +313,7 @@ jobs:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
+            python -m pip install --upgrade pip
             python -m pip install --progress-bar off pip setuptools==62.3.4
             python setup.py develop
             parlai display_data -t integration_tests
