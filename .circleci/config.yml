@@ -6,14 +6,14 @@ version: 2.1
 executors:
   standard_cpu38:
     docker:
-      - image: circleci/python:3.8.0-buster-node
+      - image: cimg/python:3.8.0-buster-node
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
   small_cpu38:
     docker:
-      - image: circleci/python:3.8.0-buster-node
+      - image: cimg/python:3.8.0-buster-node
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
