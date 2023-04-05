@@ -330,7 +330,7 @@ commands:
 # -------------------------------------------------------------------------------------
 jobs:
   cleaninstall_38:
-    executor: small_cpu38_conda
+    executor: small_cpu38
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
