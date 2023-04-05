@@ -101,6 +101,7 @@ commands:
               echo "Conda installing ${package}."
               conda install --quiet --yes "${package}" -c pytorch -c nvidia
             done
+            echo "conda activate conda_parlai" >> $BASH_ENV
 
   codecov:
     description: Coverage report
