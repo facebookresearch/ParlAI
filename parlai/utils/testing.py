@@ -71,7 +71,7 @@ except ImportError:
 
 
 try:
-    import clearml
+    import clearml  # noqa: F401
 
     CLEARML__AVAILABLE = True
 except ImportError:
