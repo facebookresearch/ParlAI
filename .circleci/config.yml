@@ -82,6 +82,16 @@ commands:
             . ~/venv/bin/activate
             python --version
 
+  setup_conda:
+    description: Sets up the virtual environment
+    steps:
+      - run:
+          name: Sets up the virtual environment
+          command: |
+            conda create --name conda_parlai python=3.8
+            conda activate conda_parlai
+            conda install pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6 -c pytorch -c nvidia
+
   codecov:
     description: Coverage report
     steps:
@@ -315,14 +325,11 @@ jobs:
     steps:
       - checkout
       - fixgit
-      - setup
+      - setup_conda
       - run:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
-            conda create --name conda_parlai python=3.8
-            conda activate conda_parlai
-            conda install pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6 -c pytorch -c nvidia
             python -m pip install --progress-bar off --upgrade pip
             python -m pip install --progress-bar off pip setuptools
             python setup.py develop
