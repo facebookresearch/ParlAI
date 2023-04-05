@@ -20,7 +20,7 @@ executors:
 
   small_cpu38_conda:
     docker:
-      - image: cimg/python:3.8.0
+      - image: continuumio/miniconda3
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
