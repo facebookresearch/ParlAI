@@ -88,6 +88,7 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
+            conda deactivate
             conda create --name conda_parlai python=3.8
             conda init bash
             conda activate conda_parlai
