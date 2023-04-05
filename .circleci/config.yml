@@ -287,7 +287,6 @@ commands:
           key: deps-20230404-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
-      - installtorchgpu
       - save_cache:
           key: deps-20230404-bw-{{ checksum "requirements.txt" }}
           paths:
