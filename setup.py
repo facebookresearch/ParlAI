@@ -33,7 +33,7 @@ if __name__ == '__main__':
         long_description=readme,
         long_description_content_type='text/markdown',
         url='http://parl.ai/',
-        python_requires='>=3.7',
+        python_requires='>=3.8',
         packages=find_packages(exclude=('data', 'docs', 'tests', 'parlai_internal*')),
         install_requires=reqs,
         include_package_data=True,

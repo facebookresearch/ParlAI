@@ -10,7 +10,7 @@ import math
 import os
 import random
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, Union, TYPE_CHECKING
 
 import numpy as np
 from mephisto.operations.registry import register_mephisto_abstraction
@@ -115,6 +115,8 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
+    _initialization_data_dicts: Union[List[List[Dict[str, Any]]], List[Dict[str, Any]]]
+
     ArgsClass = TurnAnnotationsStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
 
@@ -133,7 +135,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts
+        self.raw_data = self._initialization_data_dicts
 
         # Load from file if needed specifying which utterances within each
         # conversation to annotate
@@ -180,7 +182,7 @@ class TurnAnnotationsStaticBlueprint(StaticReactBlueprint):
         for i in range(0, len(self._initialization_data_dicts), self.subtasks_per_unit):
             chunk = self._initialization_data_dicts[i : i + self.subtasks_per_unit]
             grouped_data.append(chunk)
-        self._initialization_data_dicts = grouped_data
+        self._initialization_data_dicts = grouped_data  # type: ignore
         # Last group may have less unless an exact multiple
         logging.info(
             f'Grouped data into {len(self._initialization_data_dicts)} tasks with {self.subtasks_per_unit} subtasks each.'
@@ -397,7 +399,7 @@ class TurnAnnotationsStaticInFlightQABlueprint(TurnAnnotationsStaticBlueprint):
         # (quality control will always be last subtask)
         # TODO: I don't think we need to re-chunk this actually; just iterate
         # over the data and add the quality control task
-        all_data = []
+        all_data: List[Any] = []
         for grp in self._initialization_data_dicts:
             all_data.extend(grp)
 

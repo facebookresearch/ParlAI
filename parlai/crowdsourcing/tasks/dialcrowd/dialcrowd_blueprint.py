@@ -8,7 +8,7 @@ import json
 import logging
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, TYPE_CHECKING
+from typing import Any, Dict, List, Union, TYPE_CHECKING
 
 from mephisto.operations.registry import register_mephisto_abstraction
 from mephisto.abstractions.blueprint import SharedTaskState
@@ -53,6 +53,8 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
     definitions.
     """
 
+    _initialization_data_dicts: Union[List[List[Dict[str, Any]]], List[Dict[str, Any]]]
+
     ArgsClass = DialCrowdStaticBlueprintArgs
     BLUEPRINT_TYPE = STATIC_BLUEPRINT_TYPE
 
@@ -67,7 +69,7 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
                 f'subtasks_per_unit must be greater than zero but was {self.subtasks_per_unit}'
             )
 
-        self.raw_data: Iterable[Dict[str, Any]] = self._initialization_data_dicts
+        self.raw_data = self._initialization_data_dicts
 
         # Now chunk the data into groups of <num_subtasks>
         grouped_data = []
@@ -77,7 +79,7 @@ class DialCrowdStaticBlueprint(StaticReactBlueprint):
         for i in range(0, len(self._initialization_data_dicts), self.subtasks_per_unit):
             chunk = self._initialization_data_dicts[i : i + self.subtasks_per_unit]
             grouped_data.append(chunk)
-        self._initialization_data_dicts = grouped_data
+        self._initialization_data_dicts = grouped_data  # type: ignore
         # Last group may have less unless an exact multiple
         logging.info(
             f'Grouped data into {len(self._initialization_data_dicts)} tasks with {self.subtasks_per_unit} subtasks each.'
