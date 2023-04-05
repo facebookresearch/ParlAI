@@ -18,6 +18,13 @@ executors:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
+  small_cpu38_conda:
+    docker:
+      - image: cimg/python:3.8.0
+    environment:
+      PYTHONUNBUFFERED: 1
+    resource_class: medium
+
   osx_cpu38:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
@@ -302,7 +309,7 @@ commands:
 # -------------------------------------------------------------------------------------
 jobs:
   cleaninstall_38:
-    executor: standard_cpu38
+    executor: small_cpu38_conda
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -313,6 +320,9 @@ jobs:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
+            conda create --name conda_parlai python=3.8
+            conda activate conda_parlai
+            conda install pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6 -c pytorch -c nvidia
             python -m pip install --progress-bar off --upgrade pip
             python -m pip install --progress-bar off pip setuptools
             python setup.py develop
