@@ -88,12 +88,13 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
+            echo "Started creating the ParlAI conda environment."
             conda create --quiet --yes --name conda_parlai python=3.8
-            echo "Created the ParlAI conda environment"
+            echo "Created the ParlAI conda environment."
             conda init bash
             bash
             conda deactivate
-            echo "Activating the ParlAI conda environment"
+            echo "Activating the ParlAI conda environment."
             conda activate conda_parlai
             for package in pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6
             do
