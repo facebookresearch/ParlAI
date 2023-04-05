@@ -93,7 +93,11 @@ commands:
             bash
             conda deactivate
             conda activate conda_parlai
-            conda install pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6 -c pytorch -c nvidia
+            for package in pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6 -c pytorch -c nvidia
+            do
+              echo "Conda installing ${package}."
+              conda install --quiet --yes "${package}"
+            done
 
   codecov:
     description: Coverage report
