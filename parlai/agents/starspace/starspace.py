@@ -242,7 +242,7 @@ class StarspaceAgent(Agent):
         :param weight:   weights of lookup table (nn.Embedding/nn.EmbeddingBag)
         :param emb_type: pretrained embedding type
         """
-        weight = self.model.lt.weight
+        weight = self.model.lt.weight.clone()
         emb_type = self.opt.get('embedding_type', 'random')
         if emb_type == 'random':
             return
