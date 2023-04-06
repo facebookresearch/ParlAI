@@ -191,7 +191,7 @@ commands:
       - run:
           name: Install checklist and dependencies
           command: |
-            python -m pip install --progress-bar off checklist
+            pip install --progress-bar off checklist
 
   setupcuda:
     description: Setup CUDA
