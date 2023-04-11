@@ -89,7 +89,7 @@ jobs:
           pip install -q -r requirements.txt
           pip install -q mypy mypy-extensions
           pip install -q git+https://github.com/numpy/numpy-stubs.git
-          pip install -q torch==1.5.1+cpu torchvision==0.6.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install -q torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
       - name: mypy
         run: |
           set -eux

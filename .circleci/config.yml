@@ -96,7 +96,7 @@ commands:
             conda deactivate
             echo "Activating the ParlAI conda environment."
             conda activate conda_parlai
-            for package in pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.6
+            for package in pytorch==2.0 torchvision==0.15.1 torchaudio==0.13.0 pytorch-cuda=11.6
             do
               echo "Conda installing ${package}."
               conda install --quiet --yes "${package}" -c pytorch -c nvidia
@@ -138,7 +138,7 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1
+            python -m pip install --progress-bar off torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.20'
@@ -157,7 +157,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off 'transformers==4.20'
-            python -m pip install --progress-bar off 'torch==1.13.1'
+            python -m pip install --progress-bar off torch torchvision torchaudio
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -167,7 +167,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'torch==1.13.1' 'torchvision==0.14.1' 'torchaudio==0.13.1'
+            python -m pip install --progress-bar off torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
             python -m pip install --progress-bar off 'transformers==4.20'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env

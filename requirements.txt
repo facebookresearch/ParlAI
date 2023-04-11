@@ -15,8 +15,8 @@ gitdb2==2.0.5
 GitPython==3.0.3
 hydra-core>=1.1.0
 ipython==7.31.1
-torch==1.13.1
-torchvision==0.14.1
+torch==2.0.0
+torchvision
 joblib==1.2.0
 nltk==3.6.6
 omegaconf>=2.1.1
@@ -44,7 +44,7 @@ subword-nmt==0.3.7
 tensorboardX<=2.5.0
 tokenizers>=0.8.0
 tomli>=2.0.0
-torchtext==0.14.1
+torchtext
 tornado==6.0.4
 tqdm~=4.62.1
 typing-extensions==3.7.4.3
