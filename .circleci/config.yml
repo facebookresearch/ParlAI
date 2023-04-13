@@ -103,16 +103,6 @@ commands:
             done
             echo "conda activate conda_parlai" >> $BASH_ENV
 
-  codecov:
-    description: Coverage report
-    steps:
-      - run:
-          name: Coverage report
-          when: always
-          command: |
-            python -m codecov --flags $CIRCLE_JOB
-            mkdir -p ~/ParlAI/data
-
   installdeps:
     description: Install basic dependencies
     steps:
@@ -122,7 +112,6 @@ commands:
             pip install --upgrade pip
             for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off coverage && s=0 && break || s=$? && sleep 10; done; (exit $s)
-            for i in $(seq 1 3); do python -m pip install --progress-bar off codecov && s=0 && break || s=$? && sleep 10; done; (exit $s)
             mkdir -p ~/ParlAI/test-results
             for i in $(seq 1 3); do pip install -v -r requirements.txt && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python setup.py develop && s=0 && break || s=$? && sleep 10; done; (exit $s)
@@ -270,7 +259,6 @@ commands:
           key: data-20230404-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
-      - codecov
       - store_test_results:
           path: test-results
 
