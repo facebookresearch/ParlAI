@@ -26,10 +26,13 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesN
     console.log('handleOnboardingSubmit');
     var countCorrect = 0;
     var countIncorrect = 0;
+    var onboardingAutoFail = false;
+
     var responses = [];
     for (var turnIdx = 0; turnIdx < onboardingData.dialog.length; turnIdx++) {
         var modelUtteranceForTurn = onboardingData.dialog[turnIdx][1];
         var answersForTurn = modelUtteranceForTurn.answers;
+        var mustPass = modelUtteranceForTurn.must_pass; // if true, this question *must* be correct for the user to pass the onboarding
         var responsesForTurn = []
         if (!answersForTurn) {
             continue
@@ -50,11 +53,18 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesN
                         countCorrect += 1
                     } else {
                         countIncorrect += 1
+                        if (mustPass) {
+                            onboardingAutoFail = true;
+                        }
                     }
-                } else {
+                // if radio then we only check if the single correct answer checked no need for the unchecked
+                } else if (annotationBuckets.type != "radio") {
                     responsesForTurn.push([turnIdx, utteranceIdx, j, c, 'unchecked'])
                     if (answersForTurn.indexOf(c) > - 1) {
                         countIncorrect += 1
+                        if (mustPass) {
+                            onboardingAutoFail = true;
+                        }
                     }
                     // If not checked *and* not an answer 
                     // don't increment anything
@@ -64,7 +74,7 @@ var handleOnboardingSubmit = function ({ onboardingData, annotationBuckets, yesN
         responses.push(responsesForTurn)
     }
     console.log('correct: ' + countCorrect + ', incorrect: ' + countIncorrect);
-    if (countCorrect >= ONBOARDING_MIN_CORRECT && countIncorrect <= ONBOARDING_MAX_INCORRECT) {
+    if (countCorrect >= ONBOARDING_MIN_CORRECT && countIncorrect <= ONBOARDING_MAX_INCORRECT && onboardingAutoFail == false) {
         onSubmit({ success: true, responses: responses });
     } else {
         if (onboardingFailuresCount < ONBOARDING_MAX_FAILURES_ALLOWED) {
