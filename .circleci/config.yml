@@ -37,23 +37,21 @@ executors:
 
   gpu_small:
     environment:
-      CUDA_VERSION: "11.2"
+      CUDA_VERSION: "11.8"
       PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.2
+      CUDA_HOME: /usr/local/cuda-11.8
     machine:
-       image: ubuntu-2004-cuda-11.2:202103-01
+       image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
     environment:
-      CUDA_VERSION: "11.2"
+      CUDA_VERSION: "11.8"
       PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.2
+      CUDA_HOME: /usr/local/cuda-11.8
     machine:
-       image: ubuntu-2004-cuda-11.2:202103-01
+       image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     resource_class: gpu.nvidia.medium.multi
-
-
 
 
 # -------------------------------------------------------------------------------------
@@ -96,7 +94,7 @@ commands:
             conda deactivate
             echo "Activating the ParlAI conda environment."
             conda activate conda_parlai
-            for package in pytorch==2.0 torchvision==0.15.1 torchaudio==0.13.0 pytorch-cuda=11.6
+            for package in pytorch==2.0.0 torchvision==0.15.1 torchaudio==0.13.0 pytorch-cuda=11.6
             do
               echo "Conda installing ${package}."
               conda install --quiet --yes "${package}" -c pytorch -c nvidia
@@ -127,7 +125,7 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+            python -m pip install --progress-bar off torch==2.0.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.20'
@@ -146,7 +144,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off 'transformers==4.20'
-            python -m pip install --progress-bar off torch torchvision torchaudio
+            python -m pip install --progress-bar off torch==2.0.0 torchvision torchaudio
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -156,7 +154,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+            python -m pip install --progress-bar off torch==2.0.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
             python -m pip install --progress-bar off 'transformers==4.20'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
