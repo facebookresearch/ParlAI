@@ -13,7 +13,6 @@ from parlai.core.metrics import (
     AverageMetric,
     SumMetric,
     FixedMetric,
-    Metric,
     Metrics,
     GlobalAverageMetric,
     MacroAverageMetric,
