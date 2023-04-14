@@ -178,7 +178,10 @@ commands:
       - run:
             name: Install Mephisto
             command: |
-              curl -fsSL https://deb.nodesource.com/setup_19.x | sudo -E bash - && sudo apt-get install -y nodejs npm
+              curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+              sudo apt update
+              sudo apt upgrade
+              sudo apt install -y nodejs npm
               node -v
               npm -v
               cd ..
