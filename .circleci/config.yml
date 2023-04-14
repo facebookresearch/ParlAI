@@ -180,7 +180,8 @@ commands:
           working_directory: ~/
           command: |
             nvidia-smi
-            sudo update-alternatives --set cuda /usr/local/cuda-11.6
+            sudo update-alternatives --set cuda /usr/local/cuda-11.8
+            nvcc --version
             PYTHON3_VENV=$(pyenv versions | grep '3\..*' | cut -f 2 -d ' ')
             echo "pyenv found Python ${PYTHON3_VENV}"
             pyenv global $PYTHON3_VENV
