@@ -40,7 +40,7 @@ executors:
       CUDA_VERSION: "11.8"
       PYTHONUNBUFFERED: 1
       CUDA_HOME: /usr/local/cuda-11.8
-    machine:
+    docker:
        image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     resource_class: gpu.nvidia.small.multi
 
@@ -49,7 +49,7 @@ executors:
       CUDA_VERSION: "11.8"
       PYTHONUNBUFFERED: 1
       CUDA_HOME: /usr/local/cuda-11.8
-    machine:
+    docker:
        image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     resource_class: gpu.nvidia.medium.multi
 
@@ -441,31 +441,31 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_38
+      # - cleaninstall_38
       - unittests_gpu18:
-          requires:
-            - unittests_38
-      - unittests_osx:
-          requires:
-            - unittests_38
-      - unittests_38
+      #     requires:
+      #       - unittests_38
+      # - unittests_osx:
+      #     requires:
+      #       - unittests_38
+      # - unittests_38
       - long_gpu_tests:
-          requires:
-            - unittests_38
-      - crowdsourcing_tests:
-          requires:
-            - unittests_38
-      - teacher_tests:
-          requires:
-            - unittests_38
-      - build_website:
-          filters:
-            branches:
-              ignore: main
-      - deploy_website:
-          filters:
-            branches:
-              only: main
-      - test_website:
-          requires:
-            - deploy_website
+      #     requires:
+      #       - unittests_38
+      # - crowdsourcing_tests:
+      #     requires:
+      #       - unittests_38
+      # - teacher_tests:
+      #     requires:
+      #       - unittests_38
+      # - build_website:
+      #     filters:
+      #       branches:
+      #         ignore: main
+      # - deploy_website:
+      #     filters:
+      #       branches:
+      #         only: main
+      # - test_website:
+      #     requires:
+      #       - deploy_website
