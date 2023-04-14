@@ -41,7 +41,7 @@ executors:
       PYTHONUNBUFFERED: 1
       CUDA_HOME: /usr/local/cuda-11.8
     docker:
-       image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+       - image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
@@ -50,7 +50,7 @@ executors:
       PYTHONUNBUFFERED: 1
       CUDA_HOME: /usr/local/cuda-11.8
     docker:
-       image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
+       - image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
     resource_class: gpu.nvidia.medium.multi
 
 
