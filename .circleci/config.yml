@@ -40,18 +40,18 @@ executors:
       CUDA_VERSION: "11.8"
       PYTHONUNBUFFERED: 1
       CUDA_HOME: /usr/local/cuda-11.8
-    docker:
-       - image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-    resource_class: gpu.nvidia.small
+    machine:
+       image: linux-cuda-11:2023.02.1
+    resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
     environment:
       CUDA_VERSION: "11.8"
       PYTHONUNBUFFERED: 1
       CUDA_HOME: /usr/local/cuda-11.8
-    docker:
-       - image: nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04
-    resource_class: gpu.nvidia.medium
+    machine:
+       image: linux-cuda-11:2023.02.1
+    resource_class: gpu.nvidia.medium.multi
 
 
 # -------------------------------------------------------------------------------------
