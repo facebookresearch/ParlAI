@@ -22,7 +22,7 @@
     <img src="https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social" alt="Twitter" />
   </a>
  </p>
- 
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 [ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
@@ -83,6 +83,12 @@ ParlAI:
 git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
 cd ~/ParlAI; python setup.py develop
 ```
+
+> **Note**
+> Sometimes the install from source maynot work due to dependencies (specially in PyTorch related packaged).
+> In that case try building a fresh conda environment and running the similar to the following:
+> `conda install pytorch==2.0.0 torchvision torchaudio torchtext pytorch-cuda=11.8 -c pytorch -c nvidia`.
+> Check torch setup documentation for your CUDA and OS versions.
 
 All needed data will be downloaded to `~/ParlAI/data`. If you need to clear out
 the space used by these files, you can safely delete these directories and any
