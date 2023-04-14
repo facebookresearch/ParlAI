@@ -36,19 +36,11 @@ executors:
     resource_class: macos.x86.medium.gen2
 
   gpu_small:
-    environment:
-      CUDA_VERSION: "11.8"
-      PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.8
     machine:
        image: linux-cuda-11:2023.02.1
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
-    environment:
-      CUDA_VERSION: "11.8"
-      PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.8
     machine:
        image: linux-cuda-11:2023.02.1
     resource_class: gpu.nvidia.medium.multi
@@ -94,7 +86,7 @@ commands:
             conda deactivate
             echo "Activating the ParlAI conda environment."
             conda activate conda_parlai
-            for package in pytorch==2.0.0 torchvision==0.15.1 torchaudio==0.13.0 pytorch-cuda=11.6
+            for package in pytorch==2.0.0 torchvision==0.15.1 torchaudio==0.13.0 pytorch-cuda=11.8
             do
               echo "Conda installing ${package}."
               conda install --quiet --yes "${package}" -c pytorch -c nvidia
@@ -187,9 +179,10 @@ commands:
           name: Setup CUDA
           working_directory: ~/
           command: |
-            pyenv versions
             nvidia-smi
-            pyenv global 3.9.2
+            PYTHON3_VENV=$(pyenv versions | grep '3\..*' | cut -f 2 -d ' ')
+            echo "pyenv found Python ${PYTHON3_VENV}"
+            pyenv global $PYTHON3_VENV
 
   findtests:
     description: Find tests to run
