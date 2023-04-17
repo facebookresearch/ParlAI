@@ -124,7 +124,7 @@ jobs:
         run: |
           set -eux
           npm install
-          yes | npm init @eslint/config
+          yes | npm init --silent @eslint/config
       - name: Run ESLint
         uses: stefanoeb/eslint-action@1.0.2
         with:
