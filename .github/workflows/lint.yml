@@ -125,7 +125,7 @@ jobs:
           set -eux
           npm install
           npm install -g eslint --save-dev
-          npm init @eslint/config -- --config semistandard
+          npm init @eslint/config -- --yes --config semistandard
       - name: Run ESLint
         uses: stefanoeb/eslint-action@1.0.2
         with:
