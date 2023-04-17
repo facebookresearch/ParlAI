@@ -120,6 +120,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Run ESLint
-      - uses: stefanoeb/eslint-action@1.0.2
+        uses: stefanoeb/eslint-action@1.0.2
         with:
           files: src/
