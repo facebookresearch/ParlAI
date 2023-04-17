@@ -460,31 +460,31 @@ workflows:
   version: 2
   commit:
     jobs:
-      # - cleaninstall_38
-      # - unittests_gpu18:
-      #     requires:
-      #       - unittests_38
-      # - unittests_osx:
-      #     requires:
-      #       - unittests_38
-      # - unittests_38
-      # - long_gpu_tests:
-      #     requires:
-      #       - unittests_38
+      - cleaninstall_38
+      - unittests_gpu18:
+          requires:
+            - unittests_38
+      - unittests_osx:
+          requires:
+            - unittests_38
+      - unittests_38
+      - long_gpu_tests:
+          requires:
+            - unittests_38
       - crowdsourcing_tests
-      #     requires:
-      #       - unittests_38
-      # - teacher_tests:
-      #     requires:
-      #       - unittests_38
-      # - build_website:
-      #     filters:
-      #       branches:
-      #         ignore: main
-      # - deploy_website:
-      #     filters:
-      #       branches:
-      #         only: main
-      # - test_website:
-      #     requires:
-      #       - deploy_website
+          requires:
+            - unittests_38
+      - teacher_tests:
+          requires:
+            - unittests_38
+      - build_website:
+          filters:
+            branches:
+              ignore: main
+      - deploy_website:
+          filters:
+            branches:
+              only: main
+      - test_website:
+          requires:
+            - deploy_website
