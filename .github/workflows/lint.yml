@@ -120,5 +120,6 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Run ESLint
-        working-directory: parlai/crowdsourcing/
         uses: stefanoeb/eslint-action@1.0.2
+        with:
+          files: parlai/crowdsourcing/
