@@ -119,6 +119,11 @@ jobs:
         uses: actions/checkout@v1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+     - name: Setup
+        working-directory: parlai/crowdsourcing/
+        run: |
+          set -eux
+          npm install
       - name: Run ESLint
         uses: stefanoeb/eslint-action@1.0.2
         with:
