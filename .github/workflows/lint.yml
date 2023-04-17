@@ -126,6 +126,7 @@ jobs:
           npm install
           npm install --save-dev -g eslint
       - name: Run ESLint
-        uses: stefanoeb/eslint-action@1.0.2
-        with:
-          workdir: parlai/crowdsourcing/
+        working-directory: parlai/crowdsourcing/
+        run: |
+          set -eux
+          npx eslint --fix .
