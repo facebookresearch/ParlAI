@@ -119,21 +119,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-      - name: Setup
-        working-directory: parlai/crowdsourcing/
-        run: |
-          set -eux
-          npm install
-          npm init @eslint/config
-          node_modules/.bin/eslint --format unix . | \
-            sed "s#${GITHUB_WORKSPACE}#.#" | \
-            tee ${GITHUB_WORKSPACE}/output-annotations.txt
-      - name: Add annotations
-        uses: pytorch/add-annotations-github-action@master
+      - name: Run ESLint
+      - uses: stefanoeb/eslint-action@1.0.2
         with:
-          check_name: 'jslint'
-          linter_output_path: 'output-annotations.txt'
-          commit_sha: ${{ github.event.pull_request.head.sha }}
-          regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorDesc>.*) \[(?<errorCode>.*)\]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: src/
