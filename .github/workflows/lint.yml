@@ -124,6 +124,7 @@ jobs:
         run: |
           set -eux
           npm install
+          npm init @eslint/config
           node_modules/.bin/eslint --format unix . | \
             sed "s#${GITHUB_WORKSPACE}#.#" | \
             tee ${GITHUB_WORKSPACE}/output-annotations.txt
