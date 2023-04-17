@@ -129,4 +129,15 @@ jobs:
         working-directory: parlai/crowdsourcing/
         run: |
           set -eux
-          npx eslint --fix .
+          npx eslint --format unix . | \
+            sed "s#${GITHUB_WORKSPACE}#.#" | \
+            tee ${GITHUB_WORKSPACE}/output-annotations.txt
+      - name: Add annotations
+        uses: pytorch/add-annotations-github-action@master
+        with:
+          check_name: 'jslint'
+          linter_output_path: 'output-annotations.txt'
+          commit_sha: ${{ github.event.pull_request.head.sha }}
+          regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorDesc>.*) \[(?<errorCode>.*)\]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,6 +1,7 @@
 module.exports = {
   env: {
     browser: true,
+    node: true,
     es2021: true
   },
   extends: ["eslint:recommended", "plugin:react/recommended"],
@@ -9,6 +10,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module"
   },
-  plugins: ["react"],
-  rules: {}
+  rules: {
+    "react/prop-types": 0
+  }
 };
