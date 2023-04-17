@@ -60,7 +60,7 @@ class AbstractCrowdsourcingTest:
             if self.operator is not None:
                 self.operator.force_shutdown()
         except InaccessiblePrometheusServer as e:
-            logging.warning('InaccessiblePrometheusServer: {e}')
+            logging.warning(f'InaccessiblePrometheusServer: {e}')
 
         if self.server is not None:
             self.server.shutdown_mock()
