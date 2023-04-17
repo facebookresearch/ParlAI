@@ -128,4 +128,4 @@ jobs:
       - name: Run ESLint
         uses: stefanoeb/eslint-action@1.0.2
         with:
-          files: parlai/crowdsourcing/
+          workdir: parlai/crowdsourcing/
