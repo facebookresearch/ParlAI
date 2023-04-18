@@ -4,28 +4,21 @@ version: 2.1
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
 executors:
-  standard_cpu38:
+  standard_cpu39:
     docker:
       - image: cimg/python:3.9.0
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
-  small_cpu38:
+  small_cpu39:
     docker:
       - image: cimg/python:3.9.0
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
-  small_cpu38_conda:
-    docker:
-      - image: continuumio/miniconda3
-    environment:
-      PYTHONUNBUFFERED: 1
-    resource_class: medium
-
-  osx_cpu38:
+  osx_cpu39:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
       xcode: "12.5.1"
@@ -289,8 +282,8 @@ commands:
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  cleaninstall_38:
-    executor: small_cpu38
+  cleaninstall_39:
+    executor: small_cpu39
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -307,7 +300,7 @@ jobs:
             parlai display_data -t integration_tests
 
   unittests_osx:
-    executor: osx_cpu38
+    executor: osx_cpu39
     working_directory: ~/ParlAI
     parallelism: 2
     steps:
@@ -315,15 +308,15 @@ jobs:
           cachename: osx
           marker: unit
 
-  unittests_38:
-    executor: standard_cpu38
+  unittests_39:
+    executor: standard_cpu39
     working_directory: ~/ParlAI
     parallelism: 2
     steps:
       - runtests:
           more_installs:
             - installtorchcpu
-          cachename: ut38
+          cachename: ut39
           marker: unit
 
   unittests_gpu18:
@@ -352,7 +345,7 @@ jobs:
           pytest_flags: -v -s
 
   crowdsourcing_tests:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -364,7 +357,7 @@ jobs:
             - installcrowdsourcingdeps
 
   teacher_tests:
-    executor: standard_cpu38
+    executor: standard_cpu39
     working_directory: ~/ParlAI
     parallelism: 16
     steps:
@@ -377,7 +370,7 @@ jobs:
           pytest_flags: -v -s
 
   build_website:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -385,14 +378,14 @@ jobs:
           deploy: false
 
   deploy_website:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     steps:
       - website:
           deploy: true
 
   test_website:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     steps:
       - run:
@@ -415,23 +408,23 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_38
+      - cleaninstall_39
       - unittests_gpu18:
           requires:
-            - unittests_38
+            - unittests_39
       - unittests_osx:
           requires:
-            - unittests_38
-      - unittests_38
+            - unittests_39
+      - unittests_39
       - long_gpu_tests:
           requires:
-            - unittests_38
+            - unittests_39
       - crowdsourcing_tests:
           requires:
-            - unittests_38
+            - unittests_39
       - teacher_tests:
           requires:
-            - unittests_38
+            - unittests_39
       - build_website:
           filters:
             branches:
