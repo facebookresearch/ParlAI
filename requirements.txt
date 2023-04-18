@@ -39,7 +39,7 @@ scipy==1.8.0
 sh==1.12.14
 sphinx_rtd_theme==0.4.3
 sphinx-autodoc-typehints~=1.10.3
-Sphinx~=2.2.0
+Sphinx~=6.1.0
 subword-nmt==0.3.7
 tensorboardX<=2.5.0
 tokenizers>=0.8.0
