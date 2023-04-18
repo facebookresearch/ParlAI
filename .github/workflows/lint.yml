@@ -124,7 +124,12 @@ jobs:
         run: |
           set -eux
           npm install
-          node_modules/.bin/eslint --format unix . | \
+          npm install --save-dev -g eslint
+      - name: Run ESLint
+        working-directory: parlai/crowdsourcing/
+        run: |
+          set -eux
+          npx eslint --format unix . | \
             sed "s#${GITHUB_WORKSPACE}#.#" | \
             tee ${GITHUB_WORKSPACE}/output-annotations.txt
       - name: Add annotations
