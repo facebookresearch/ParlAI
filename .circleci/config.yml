@@ -37,14 +37,12 @@ executors:
 
   gpu_small:
     machine:
-      # see this: https://discuss.circleci.com/t/cuda-11-8-gpu-cuda-image-any-plans/47240
-      image: linux-cuda-11:2023.02.1
+       image: linux-cuda-11:2023.02.1
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
     machine:
-      # see this: https://discuss.circleci.com/t/cuda-11-8-gpu-cuda-image-any-plans/47240
-      image: linux-cuda-11:2023.02.1
+       image: linux-cuda-11:2023.02.1
     resource_class: gpu.nvidia.medium.multi
 
 
@@ -69,31 +67,10 @@ commands:
           name: Sets up the virtual environment
           command: |
             mkdir -p ~/venv
-            virtualenv --python=python3.8 ~/venv
+            virtualenv --python=python3 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             python --version
-
-  setup_conda:
-    description: Sets up the virtual environment
-    steps:
-      - run:
-          name: Sets up the virtual environment
-          command: |
-            echo "Started creating the ParlAI conda environment."
-            conda create --quiet --yes --name conda_parlai python=3.8
-            echo "Created the ParlAI conda environment."
-            conda init bash
-            source ~/.bashrc
-            conda deactivate
-            echo "Activating the ParlAI conda environment."
-            conda activate conda_parlai
-            for package in pytorch==2.0.0 torchvision==0.15.1 torchaudio==0.13.0 pytorch-cuda=11.8
-            do
-              echo "Conda installing ${package}."
-              conda install --quiet --yes "${package}" -c pytorch -c nvidia
-            done
-            echo "conda activate conda_parlai" >> $BASH_ENV
 
   installdeps:
     description: Install basic dependencies
@@ -119,7 +96,7 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==2.0.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+            python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cu118
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -m pip install --progress-bar off 'transformers==4.20'
@@ -138,7 +115,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off 'transformers==4.20'
-            python -m pip install --progress-bar off torch==2.0.0 torchvision torchaudio
+            python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -148,7 +125,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==2.0.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+            python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.0 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cpu
             python -m pip install --progress-bar off 'transformers==4.20'
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -232,26 +209,26 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20230414-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20230404-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20230414-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20230404-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20230414-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20230404-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20230414-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20230404-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
       - store_test_results:
