@@ -59,8 +59,9 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
+            sudo apt install python3.9
             mkdir -p ~/venv
-            virtualenv --python=python3 ~/venv
+            virtualenv --python=python3.9 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             python --version
