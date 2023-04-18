@@ -59,7 +59,7 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
-            if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt update && sudo apt install python3.9; fi
+            if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt update && sudo apt install python3.9 python3.9-dev; fi
             mkdir -p ~/venv
             virtualenv --python=python3.9 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
