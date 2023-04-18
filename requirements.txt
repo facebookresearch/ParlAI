@@ -9,7 +9,7 @@ flake8-bugbear==19.8.0
 flake8==3.7.8
 fuzzywuzzy==0.18.0
 google-cloud-storage==1.43.0
-importlib-metadata<4.3
+importlib-metadata<6.0
 iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
