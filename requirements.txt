@@ -1,4 +1,4 @@
-# commenting to bump caches
+# comment to bump caches
 coloredlogs==14.0
 datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
@@ -9,7 +9,6 @@ flake8-bugbear==19.8.0
 flake8==3.7.8
 fuzzywuzzy==0.18.0
 google-cloud-storage==1.43.0
-importlib-metadata<6.0
 iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
@@ -30,7 +29,7 @@ py-rouge==1.1
 pyyaml==5.4
 pyzmq==18.1.0
 regex>=2021.8.3
-myst-parser~=0.12.2
+myst-parser<1
 attrs~=20.2.0
 requests-mock==1.7.0
 requests<3,>=2.21.0
