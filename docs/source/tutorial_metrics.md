@@ -409,7 +409,7 @@ When the teacher receives the response from the model, it utilizes the metrics
 field to update counters on its side.
 
 ## List of Metrics
-<a name="list-of-metrics"></a>
+{#list-of-metrics}
 Below is a list of metrics and a brief explanation of each.
 
 :::{note} List of metrics

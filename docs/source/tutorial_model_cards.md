@@ -65,7 +65,7 @@ parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M
 
 
 ##  Report Generation Details
-<a name="details-of-report-generation"></a>
+{#details-of-report-generation}
 ![imageonline-co-whitebackgroundremoved (4)](https://user-images.githubusercontent.com/14303605/128233882-4c77770d-9703-466f-b1a2-7f2395c5c2f6.png)
 
 In the end, it should generate the following reports under the `--folder-to-save`
