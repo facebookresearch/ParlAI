@@ -15,8 +15,8 @@ gitdb2==2.0.5
 GitPython==3.0.3
 hydra-core>=1.1.0
 ipython==7.31.1
-torch==2.0.0+cu117
-torchvision==0.15.0
+torch==2.0.0
+torchvision==0.15.1
 joblib==1.2.0
 nltk==3.6.6
 omegaconf>=2.1.1
