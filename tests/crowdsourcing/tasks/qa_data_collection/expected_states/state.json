@@ -1,7 +1,7 @@
 {
   "outputs": {
     "messages": [
-      {"episode_done": false, "id": "QA Collector", "passage": "Pope Paul VI became the first reigning pontiff ever to visit the Americas when he flew to New York in October 1965 to address the United Nations. As a gesture of goodwill, the pope gave to the UN two pieces of papal jewelry, a diamond cross and ring, with the hopes that the proceeds from their sale at auction would contribute to the UN's efforts to end human suffering. During the pope's visit, as the U.S. involvement in the Vietnam War escalated under President Johnson, Paul VI pleaded for peace before the UN:", "text": "Please provide a question given the passage."},
+      {"episode_done": false, "id": "QA Collector", "passage": "Instead, Nanjing, as a popular tourist destination, hosts a series of government-organised events throughout the year. The annual International Plum Blossom Festival held in Plum Blossom Hill, the largest plum collection in China, attracts thousands of tourists both domestically and internationally. Other events include Nanjing Baima Peach Blossom and Kite Festival, Jiangxin Zhou Fruit Festival and Linggu Temple Sweet Osmanthus Festival.", "text": "Please provide a question given the passage."},
       {"text": "Who was the first reigning pope to ever visit the Americas?", "task_data": {}, "id": "QA Agent", "episode_done": false},
       {"episode_done": false, "id": "QA Collector", "text": "Thanks. And what is the answer to your question?"},
       {"text": "Pope Paul VI", "task_data": {}, "id": "QA Agent", "episode_done": false},
