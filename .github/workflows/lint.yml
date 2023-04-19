@@ -137,7 +137,7 @@ jobs:
         with:
           check_name: 'jslint'
           linter_output_path: 'output-annotations.txt'
-          commit_sha: ${{ ${{ format('github.event.{0}.head.sha', github.event_name) }} }}
+          commit_sha: ${{ github.event.*.head.sha }}
           regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorDesc>.*) \[(?<errorCode>.*)\]'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
