@@ -120,8 +120,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Get head SHA
-        HEAD_SHA="NONE"
         run: |
+          HEAD_SHA="NONE"
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             HEAD_SHA="${{ github.event.pull_request.head.sha }}"
           else
