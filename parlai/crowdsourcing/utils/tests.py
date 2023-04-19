@@ -16,11 +16,14 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 import numpy as np
 import torch
+from parlai.utils import logging
 from hydra.experimental import compose, initialize
 from mephisto.abstractions.blueprint import SharedTaskState
 from mephisto.abstractions.databases.local_database import LocalMephistoDB
+from mephisto.data_model.task_run import TaskRunArgs
 from mephisto.operations.operator import Operator
 from mephisto.tools.scripts import augment_config_from_db
+from mephisto.utils.metrics import InaccessiblePrometheusServer
 from pytest_regressions.data_regression import DataRegressionFixture
 
 
@@ -53,8 +56,11 @@ class AbstractCrowdsourcingTest:
         Should be called in a pytest setup/teardown fixture.
         """
 
-        if self.operator is not None:
-            self.operator.force_shutdown()
+        try:
+            if self.operator is not None:
+                self.operator.force_shutdown()
+        except InaccessiblePrometheusServer as e:
+            logging.warning(f'InaccessiblePrometheusServer: {e}')
 
         if self.server is not None:
             self.server.shutdown_mock()
@@ -102,6 +108,9 @@ class AbstractCrowdsourcingTest:
         self.db = LocalMephistoDB(self.database_path)
         self.config = augment_config_from_db(self.config, self.db)
         self.config.mephisto.architect.should_run_server = True
+        self.config.mephisto.task = TaskRunArgs(
+            **self.config.mephisto.task, no_submission_patience=1
+        )
 
     def _set_up_server(self, shared_state: Optional[SharedTaskState] = None):
         """
