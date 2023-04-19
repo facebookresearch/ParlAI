@@ -26,7 +26,7 @@ def build_task(task_directory: str):
     os.chdir(frontend_source_dir)
     if os.path.exists(frontend_build_dir):
         shutil.rmtree(frontend_build_dir)
-    packages_installed = subprocess.call(["npm", "install"])
+    packages_installed = subprocess.call(["npm", "install", "--force"])
     if packages_installed != 0:
         raise Exception(
             "please make sure npm is installed, otherwise view "
