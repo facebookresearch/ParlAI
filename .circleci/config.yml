@@ -128,6 +128,8 @@ commands:
   installcrowdsourcingdeps:
     description: Install Mephisto
     steps:
+      - restore_cache:
+          key: mephisto-20230419-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - run:
             name: Install Mephisto
             command: |
@@ -143,6 +145,11 @@ commands:
               pip install .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
+      - save_cache:
+          key: mephisto-20230419-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
 
   installchecklist:
     description: Install checklist and dependencies
