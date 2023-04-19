@@ -61,7 +61,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'ParlAI'
-copyright = '2020, Facebook AI Research'
+copyright = '2023, Facebook AI Research'
 author = 'Facebook AI'
 
 # The version info for the project you're documenting, acts as replacement for
