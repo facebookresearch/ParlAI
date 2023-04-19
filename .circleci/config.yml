@@ -127,6 +127,10 @@ commands:
 
   installcrowdsourcingdeps:
     description: Install Mephisto
+    parameters:
+      cachename:
+        description: the key for our caches after Mephisto install. date and checksum will be added
+        type: string
     steps:
       - restore_cache:
           key: mephisto-20230419-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
