@@ -361,7 +361,7 @@ jobs:
           cachename: crowdsourcing
           marker: crowdsourcing
           more_installs:
-            - installtorchgpu
+            - installtorchcpu
             - installcrowdsourcingdeps
 
   teacher_tests:
