@@ -78,6 +78,16 @@ jobs:
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             git branch -f main origin/main
           fi
+      - name: Get head SHA
+        run: |
+          HEAD_SHA="NONE"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          else
+            HEAD_SHA="${{ github.event.push.head.sha }}"
+          fi
+          echo $HEAD_SHA
+          echo "HEAD_SHA=${HEAD_SHA}" >> $GITHUB_ENV
       - name: caching dependencies
         uses: actions/cache@v1
         with:
@@ -104,7 +114,7 @@ jobs:
         with:
           check_name: 'mypy'
           linter_output_path: 'output-annotations.txt'
-          commit_sha: ${{ github.event.pull_request.head.sha }}
+          commit_sha: ${{ env.HEAD_SHA }}
           regex: '^(?<filename>.*?):(?<lineNumber>\d+):(?<columnNumber>\d+): (?<errorCode>\w+): (?<errorDesc>.*)'
           annotation_level: warning
         env:
