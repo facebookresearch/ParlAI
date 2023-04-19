@@ -149,13 +149,6 @@ class T5Agent(TorchGeneratorAgent):
         """
         return T5DictionaryAgent(self.opt)
 
-    @staticmethod
-    def dictionary_class():
-        """
-        Overrides `dictionary_class` to use T5 dict.
-        """
-        return T5DictionaryAgent
-
     def vectorize(self, *args, **kwargs):
         """
         Override vectorize for T5.
