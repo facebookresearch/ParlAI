@@ -6,14 +6,14 @@ version: 2.1
 executors:
   standard_cpu39:
     docker:
-      - image: cimg/python:3.9.0
+      - image: cimg/python:3.9.16
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
   small_cpu39:
     docker:
-      - image: cimg/python:3.9.0
+      - image: cimg/python:3.9.16
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
@@ -23,7 +23,7 @@ executors:
       # https://circleci.com/docs/2.0/testing-ios/
       xcode: "12.5.1"
     environment:
-      PYTHON: 3.9.0
+      PYTHON: 3.9.16
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
     resource_class: macos.x86.medium.gen2
