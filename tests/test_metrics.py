@@ -13,7 +13,6 @@ from parlai.core.metrics import (
     AverageMetric,
     SumMetric,
     FixedMetric,
-    Metric,
     Metrics,
     GlobalAverageMetric,
     MacroAverageMetric,
@@ -53,7 +52,7 @@ class TestMetric(unittest.TestCase):
         failing_inputs = [
             ('4', AssertionError),
             ([6.8], AssertionError),
-            (torch.Tensor([1, 3.8]), ValueError),  # Tensor has more than 1 element
+            (torch.Tensor([1, 3.8]), RuntimeError),  # Tensor has more than 1 element
         ]
         for input_, error in failing_inputs:
             with self.assertRaises(error):
@@ -85,7 +84,7 @@ class TestMetric(unittest.TestCase):
 
         failing_inputs = [
             ((2, '4'), AssertionError),
-            ((torch.Tensor([1, 1]), torch.Tensor([2])), ValueError),
+            ((torch.Tensor([1, 1]), torch.Tensor([2])), RuntimeError),
         ]
         for input_, error in failing_inputs:
             with self.assertRaises(error):

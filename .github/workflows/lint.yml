@@ -20,7 +20,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8.x
+          python-version: 3.9.x
           architecture: x64
       - name: Fetch ParlAI
         uses: actions/checkout@v2
@@ -64,7 +64,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v1
         with:
-          python-version: 3.8.x
+          python-version: 3.9.x
           architecture: x64
       - name: Fetch ParlAI
         uses: actions/checkout@v2
@@ -89,7 +89,7 @@ jobs:
           pip install -q -r requirements.txt
           pip install -q mypy mypy-extensions
           pip install -q git+https://github.com/numpy/numpy-stubs.git
-          pip install -q torch==1.5.1+cpu torchvision==0.6.1+cpu -f https://download.pytorch.org/whl/torch_stable.html
+          pip install -q torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
       - name: mypy
         run: |
           set -eux
@@ -124,7 +124,12 @@ jobs:
         run: |
           set -eux
           npm install
-          node_modules/.bin/eslint --format unix . | \
+          npm install --save-dev -g eslint
+      - name: Run ESLint
+        working-directory: parlai/crowdsourcing/
+        run: |
+          set -eux
+          npx eslint --format unix . | \
             sed "s#${GITHUB_WORKSPACE}#.#" | \
             tee ${GITHUB_WORKSPACE}/output-annotations.txt
       - name: Add annotations
