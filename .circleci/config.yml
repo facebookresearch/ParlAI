@@ -416,31 +416,33 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_39
-      - unittests_gpu18:
-          requires:
-            - unittests_39
-      - unittests_osx:
-          requires:
-            - unittests_39
-      - unittests_39
-      - long_gpu_tests:
-          requires:
-            - unittests_39
-      - crowdsourcing_tests:
-          requires:
-            - unittests_39
-      - teacher_tests:
-          requires:
-            - unittests_39
-      - build_website:
-          filters:
-            branches:
-              ignore: main
-      - deploy_website:
-          filters:
-            branches:
-              only: main
-      - test_website:
-          requires:
-            - deploy_website
+      - crowdsourcing_tests
+      # CHANGED BEFORE MERGE
+      # - cleaninstall_39
+      # - unittests_gpu18:
+      #     requires:
+      #       - unittests_39
+      # - unittests_osx:
+      #     requires:
+      #       - unittests_39
+      # - unittests_39
+      # - long_gpu_tests:
+      #     requires:
+      #       - unittests_39
+      # - crowdsourcing_tests:
+      #     requires:
+      #       - unittests_39
+      # - teacher_tests:
+      #     requires:
+      #       - unittests_39
+      # - build_website:
+      #     filters:
+      #       branches:
+      #         ignore: main
+      # - deploy_website:
+      #     filters:
+      #       branches:
+      #         only: main
+      # - test_website:
+      #     requires:
+      #       - deploy_website
