@@ -127,13 +127,9 @@ commands:
 
   installcrowdsourcingdeps:
     description: Install Mephisto
-    parameters:
-      cachename:
-        description: the key for our caches after Mephisto install. date and checksum will be added
-        type: string
     steps:
       - restore_cache:
-          key: mephisto-20230419-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: mephisto-20230419-{{ checksum "requirements.txt" }}
       - run:
             name: Install Mephisto
             command: |
@@ -150,7 +146,7 @@ commands:
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
       - save_cache:
-          key: mephisto-20230419-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: mephisto-20230419-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
