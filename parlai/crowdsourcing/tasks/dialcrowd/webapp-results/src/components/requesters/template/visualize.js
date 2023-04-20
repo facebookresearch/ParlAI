@@ -83,6 +83,7 @@ class Bar extends Component {
           {segments}
         </div>
         <div>
+          {/* eslint-disable react/jsx-key */}
           {legends.map(legend => (
             <span>
               {" "}
@@ -90,6 +91,7 @@ class Bar extends Component {
               &nbsp;{" "}
             </span>
           ))}
+          {/* eslint-enable react/jsx-key */}
         </div>
       </div>
     );
