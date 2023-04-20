@@ -60,7 +60,7 @@ commands:
           name: Sets up the virtual environment
           command: |
             PYTHON39_VERSION=-1
-            if [[ -z $(which python3.9) ]]; then
+            if [[ ! -z $(which python3.9) ]]; then
               PYTHON39_VERSION=$(python3.9 --version | grep -o "[[:digit:]]\+\$")
             fi
 
