@@ -3,7 +3,9 @@
  * Carnegie Mellon University 2022
  *********************************************/
 
-/* eslint-disable  no-unused-vars */
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable react/jsx-key */
 
 import React, { Component } from "react";
 import {
@@ -364,10 +366,11 @@ class Configure extends Component {
     }
   }
 
+  /* eslint-disable react/require-render-return */
   render() {
     throw "Not implemented!";
-    return null;
   }
+  /* eslint-enable react/require-render-return */
 
   _showGeneralConfig() {
     const { formItemLayout, formItemLayoutWithOutLabel } = this;
@@ -1239,6 +1242,8 @@ function calcNoHits(nUnit, nAssignment, nconvo) {
   }
 }
 
-/* eslint-enable  no-unused-vars */
+/* eslint-enable react/jsx-key */
+/* eslint-enable react/no-unescaped-entities */
+/* eslint-enable no-unused-vars */
 
 export default Configure;
