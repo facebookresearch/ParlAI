@@ -280,6 +280,7 @@ class PreviewIntent extends Component {
                 }
                 hasFeedback
               >
+                {/* eslint-disable react/jsx-key */}
                 <Select placeholder="Please select a category">
                   {this.props.questions.map((question, j) => (
                     <Select.Option value={question.title}>
@@ -287,6 +288,7 @@ class PreviewIntent extends Component {
                     </Select.Option>
                   ))}
                 </Select>
+                {/* eslint-enable react/jsx-key */}
               </Form.Item>
               <Form.Item
                 {...formItemLayout2}

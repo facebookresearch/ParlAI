@@ -5,9 +5,9 @@
  */
 
 var path = require("path");
-/* eslint-disable  no-unused-vars */
+/* eslint-disable no-unused-vars */
 var webpack = require("webpack");
-/* eslint-enable  no-unused-vars */
+/* eslint-enable no-unused-vars */
 
 module.exports = {
   entry: "./src/main.js",
