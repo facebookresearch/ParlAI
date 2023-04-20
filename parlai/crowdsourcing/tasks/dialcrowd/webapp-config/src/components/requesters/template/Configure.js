@@ -3,6 +3,8 @@
  * Carnegie Mellon University 2022
  *********************************************/
 
+/* eslint-disable  no-unused-vars */
+
 import React, { Component } from "react";
 import {
   Button,
@@ -61,7 +63,7 @@ class Configure extends Component {
       questionFeedbacks: [] /* Feedback questions. */,
       questionSystems: [] /* System specific questions. */,
       loading: true
-      /* Indicate the loading state. It will be false after 
+      /* Indicate the loading state. It will be false after
          data is copied from `this.makeProps` */
     };
 
@@ -1029,7 +1031,7 @@ class Configure extends Component {
 
   _showAppearanceConfig(textStyleExtras = []) {
     /* Params:
-       {@Array} textStyleExtras: Specify extra text style configuration. 
+       {@Array} textStyleExtras: Specify extra text style configuration.
        Check the variable `textStyles` for the format of its elements.
      */
     const { formItemLayout, formItemLayoutWithOutLabel } = this;
@@ -1236,5 +1238,7 @@ function calcNoHits(nUnit, nAssignment, nconvo) {
     return (nconvo * nAssignment) / nUnit;
   }
 }
+
+/* eslint-enable  no-unused-vars */
 
 export default Configure;
