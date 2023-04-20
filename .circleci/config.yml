@@ -63,10 +63,11 @@ commands:
             if [[ -z $(which python3.9) ]]; then
               PYTHON39_VERSION=$(python3.9 --version | grep -o "[[:digit:]]\+\$")
             fi
-            
+
             if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ $PYTHON39_VERSION -lt 12 ]]; then 
               sudo apt update && \
               sudo apt install software-properties-common && \
+              sudo add-apt-repository --yes ppa:deadsnakes/ppa && \
               sudo apt install python3.9 python3.9-dev
               PYTHON39_VERSION=$(python3.9 --version)
               echo "Python version updated to ${PYTHON39_VERSION}"
