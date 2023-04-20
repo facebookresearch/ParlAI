@@ -23,7 +23,6 @@ class InstructionModal extends React.Component {
 
   render() {
     const visible = this.state.visible || this.state.forceShow;
-    const checkboxes = this.props.handleAccept || this.close;
 
     const footer = (
       <Button key="accept" type="primary" closable="false" onClick={this.close}>

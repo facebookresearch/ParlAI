@@ -189,7 +189,7 @@ class DataStatistics extends Component {
       <>
         <div>
           {" "}
-          Fleiss' Kappa indicates worker agreement of different levels:
+          Fleiss&apos; Kappa indicates worker agreement of different levels:
           <ul>
             <li>
               {" "}
