@@ -6,14 +6,14 @@ version: 2.1
 executors:
   standard_cpu39:
     docker:
-      - image: cimg/python:3.9.0
+      - image: cimg/python:3.9.16
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
   small_cpu39:
     docker:
-      - image: cimg/python:3.9.0
+      - image: cimg/python:3.9.16
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
@@ -23,7 +23,7 @@ executors:
       # https://circleci.com/docs/2.0/testing-ios/
       xcode: "12.5.1"
     environment:
-      PYTHON: 3.9.0
+      PYTHON: 3.9.16
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
     resource_class: macos.x86.medium.gen2
@@ -59,7 +59,20 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
-            if [[ "$OSTYPE" == "linux-gnu"* ]]; then sudo apt update && sudo apt install python3.9 python3.9-dev; fi
+            PYTHON39_VERSION=-1
+            if [[ ! -z $(which python3.9) ]]; then
+              PYTHON39_VERSION=$(python3.9 --version | grep -o "[[:digit:]]\+\$")
+            fi
+
+            if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ $PYTHON39_VERSION -lt 12 ]]; then 
+              sudo apt update && \
+              sudo apt install software-properties-common && \
+              sudo add-apt-repository --yes ppa:deadsnakes/ppa && \
+              sudo apt install python3.9 python3.9-dev
+              PYTHON39_VERSION=$(python3.9 --version)
+              echo "Python version updated to ${PYTHON39_VERSION}"
+            fi
+
             mkdir -p ~/venv
             virtualenv --python=python3.9 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
@@ -93,7 +106,7 @@ commands:
             python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1+cu118 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cu118
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers==4.20'
+            python -m pip install --progress-bar off 'transformers==4.22.1'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
             python -m pip uninstall dataclasses -y
@@ -108,7 +121,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'transformers==4.20'
+            python -m pip install --progress-bar off 'transformers==4.22.1'
             python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.0
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -128,15 +141,28 @@ commands:
   installcrowdsourcingdeps:
     description: Install Mephisto
     steps:
+      - restore_cache:
+          key: mephisto-20230419-{{ checksum "requirements.txt" }}
       - run:
             name: Install Mephisto
             command: |
+              curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+              sudo apt update
+              sudo apt upgrade
+              sudo apt install -y nodejs
+              node -v
+              npm -v
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v1.0.3 -b stable
+              cd Mephisto
               pip install -e .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
+      - save_cache:
+          key: mephisto-20230419-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
 
   installchecklist:
     description: Install checklist and dependencies
@@ -355,8 +381,9 @@ jobs:
           cachename: crowdsourcing
           marker: crowdsourcing
           more_installs:
-            - installtorchgpu
+            - installtorchcpu
             - installcrowdsourcingdeps
+          pytest_flags: -x
 
   teacher_tests:
     executor: standard_cpu39
