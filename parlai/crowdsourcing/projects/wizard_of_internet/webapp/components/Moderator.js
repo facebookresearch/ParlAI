@@ -10,8 +10,6 @@
 // are simple checks on the validity of user input (text or search query).
 // There might also be additional checks on the submitted input in ParlAI world.
 
-/*eslint no-useless-escape: "error"*/
-
 const STOPWORDS = [
   "",
   "''",
@@ -199,7 +197,7 @@ const MIN_NUM_WORDS_PER_UTTERANCE = 5;
 const GREETING_FAREWELL_WORDS = ["hi", "hello", "bye", "goodbye"];
 
 function split_tokenize(text) {
-  const res = text.replace(/[.|. . .|,|;|:|!|\?|\(|\)]/g, function(x) {
+  const res = text.replace(/[.|. . .|,|;|:|!|?|(|)]/g, function(x) {
     return ` ${x} `;
   });
   return res.split(" ").filter(w => w !== "");
@@ -332,7 +330,6 @@ function is_copy_pasted(text, docs) {
     for (var sentence_id in document.content) {
       const sentence = document.content[sentence_id].toLocaleLowerCase();
       if (too_much_char_overlap(text, sentence)) {
-        const q = '"';
         alert(
           "Your message has too much overlap with one of the candidates sentences. " +
             "Please retry and avoid copying and pasting."
