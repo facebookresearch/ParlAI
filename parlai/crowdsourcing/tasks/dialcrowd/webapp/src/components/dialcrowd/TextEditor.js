@@ -29,33 +29,31 @@ const styles = {
 };
 
 class TextEditor extends Component {
-  selectionAnchorNode: Node;
-  inputNode: HTMLInputElement;
-
   componentDidMount() {
     console.log(this.props);
     document.addEventListener(
       "selectionchange",
       () => {
-        const selection = window.getSelection();
-
-        if (
-          selection.anchorNode &&
-          selection.anchorNode === this.selectionAnchorNode
-        ) {
-          /*
-        setSelection(
-            example.id,
-            this.inputNode.selectionStart,
-            this.inputNode.selectionEnd,
-        )*/
-        }
+        // NOTE: this parts seems to be on doing anything. So commented it out (Mojtaba, 4/20/2023).
+        //
+        // const selection = window.getSelection();
+        // if (
+        //   selection.anchorNode &&
+        //   selection.anchorNode === this.selectionAnchorNode
+        // ) {
+        //   /*
+        // setSelection(
+        //     example.id,
+        //     this.inputNode.selectionStart,
+        //     this.inputNode.selectionEnd,
+        // )*/
+        // }
       },
       false
     );
   }
 
-  handleTextChange(event: Object) {
+  handleTextChange(event) {
     const { example, edit } = this.props;
     const { text: oldText, entities: oldEntities } = example;
     const text = event.target.value;
@@ -69,7 +67,7 @@ class TextEditor extends Component {
         oldEntity.end - oldEntity.start
       );
 
-      function findClosestStart(lastMatch: ?number) {
+      function findClosestStart(lastMatch) {
         if (!lastMatch) {
           const index = text.indexOf(oldSelection);
           if (index === -1) {
@@ -110,7 +108,7 @@ class TextEditor extends Component {
     });
   }
 
-  renderEntityHighlight(text: string, entity: Object, key: number) {
+  renderEntityHighlight(text, entity, key) {
     const { entityNames } = this.props;
     const start = text.substr(0, entity.start);
     const value = text.substr(entity.start, entity.end - entity.start);
@@ -134,6 +132,7 @@ class TextEditor extends Component {
     );
   }
 
+  /* eslint-disable react/no-find-dom-node */
   render() {
     const { example, style } = this.props;
     const { text, entities = [] } = example;
@@ -156,6 +155,7 @@ class TextEditor extends Component {
       </div>
     );
   }
+  /* eslint-disable react/no-find-dom-node */
 }
 
 export default connect(null, null)(TextEditor);
