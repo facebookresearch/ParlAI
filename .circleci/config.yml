@@ -59,7 +59,11 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
-            PYTHON39_VERSION=$(python3.9 --version | grep -o "[[:digit:]]\+\$")
+            PYTHON39_VERSION=-1
+            if [[ -z $(which python3.9) ]]; then
+              PYTHON39_VERSION=$(python3.9 --version | grep -o "[[:digit:]]\+\$")
+            fi
+            
             if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ $PYTHON39_VERSION -lt 12 ]]; then 
               sudo apt update && \
               sudo apt install software-properties-common && \
