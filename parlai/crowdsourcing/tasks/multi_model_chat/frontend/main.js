@@ -10,7 +10,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "bootstrap-chat/styles.css";
 
-import { CustomOnboardingChatApp } from "./components/chat_app_with_onboarding.jsx"
+import { CustomOnboardingChatApp } from "./components/chat_app_with_onboarding.jsx";
 import { TaskDescription } from "./components/sidepane.jsx";
 import { ResponseComponent } from "./components/response_panes.jsx";
 import { RenderChatMessage } from "./components/message.jsx";
@@ -20,10 +20,10 @@ function MainApp() {
 
   function newMessageHandler(messages) {
     const lastMessage = messages.at(messages.length - 1);
-    setNeedRating((lastMessage?.needs_rating === true) ? true : false);
+    setNeedRating(lastMessage?.needs_rating === true ? true : false);
   }
 
-  function TextResponse({taskConfig, appSettings, onMessageSend, active}) {
+  function TextResponse({ taskConfig, appSettings, onMessageSend, active }) {
     return (
       <ResponseComponent
         appSettings={appSettings}
@@ -32,7 +32,7 @@ function MainApp() {
         activeRating={needRating}
         onMessageSend={onMessageSend}
       />
-    )
+    );
   }
 
   return (
@@ -47,29 +47,26 @@ function MainApp() {
           key={message.message_id + "-" + idx}
         />
       )}
-      renderSidePane={({ mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
-        <TaskDescription
-          context={taskContext}
+      /* eslint-disable no-unused-vars */
+      renderSidePane={({
+        mephistoContext: { taskConfig },
+        appContext: { taskContext }
+      }) => <TaskDescription context={taskContext} />}
+      /* eslint-enable no-unused-vars */
+      renderTextResponse={({
+        mephistoContext: { taskConfig },
+        appContext: { appSettings },
+        onMessageSend,
+        active
+      }) => (
+        <TextResponse
+          appSettings={appSettings}
+          taskConfig={taskConfig}
+          active={active}
+          onMessageSend={onMessageSend}
         />
       )}
-      renderTextResponse={
-        ({
-          mephistoContext: { taskConfig },
-          appContext: { appSettings },
-          onMessageSend,
-          active,
-
-        }) => (
-          <TextResponse
-            appSettings={appSettings}
-            taskConfig={taskConfig}
-            active={active}
-            onMessageSend={onMessageSend}
-          />
-        )
-      }
-      onMessagesChange={(messages) => (
-        newMessageHandler(messages))}
+      onMessagesChange={messages => newMessageHandler(messages)}
     />
   );
 }

@@ -7,6 +7,8 @@ import React from "react";
 import { Input, Form, Button } from "antd";
 import { SketchPicker } from "react-color";
 
+/* eslint-disable  no-unused-vars */
+
 class ColorPicker extends React.Component {
   /* Args:
      form
@@ -152,5 +154,7 @@ class ColorPicker extends React.Component {
     }
   }
 }
+
+/* eslint-enable  no-unused-vars */
 
 export default ColorPicker;
