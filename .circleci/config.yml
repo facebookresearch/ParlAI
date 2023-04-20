@@ -369,6 +369,7 @@ jobs:
           more_installs:
             - installtorchcpu
             - installcrowdsourcingdeps
+          pytest_flags: -x
 
   teacher_tests:
     executor: standard_cpu39
