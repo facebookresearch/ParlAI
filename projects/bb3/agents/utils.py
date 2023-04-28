@@ -518,6 +518,8 @@ class APIUtils:
         # added self-debiasing args
         self_debiasing: bool = False,
         num_debiasing_prefixes: int = 0,
+        # inference metrics
+        collect_metrics: bool = False,
     ):
         data = {
             'prompt': prompt,
@@ -539,6 +541,8 @@ class APIUtils:
             "self_debiasing": self_debiasing,
             "num_debiasing_prefixes": num_debiasing_prefixes,
         }
+        if collect_metrics:
+            data["collect_metrics"] = True
         init_request_delay = request_delay
         past_exceptions = []
         while True:

@@ -323,6 +323,13 @@ class SimpleOPTAgent(Agent):
             default=False,
             help="Whether to apply the self-debiasing method (default is False).",
         )
+        # inference efficiency arguments
+        parser.add_argument(
+            "--collect-metrics",
+            action="store_true",  # store_true <> default is false
+            default=False,
+            help="Whether to request inference metrics from the server.",
+        )
         return parser
 
     def __init__(self, opt, shared=None):
@@ -498,8 +505,9 @@ class SimpleOPTAgent(Agent):
                 'alpha_presence_src': self.opt['alpha_presence_src'],
                 'alpha_frequency_src': self.opt['alpha_frequency_src'],
                 # added for self-debiasing
-                "self_debiasing": self.opt['self_debiasing'],
-                "num_debiasing_prefixes": self.opt['num_debiasing_prefixes'],
+                'self_debiasing': self.opt['self_debiasing'],
+                'num_debiasing_prefixes': self.opt.get('num_debiasing_prefixes', 1),
+                'collect_metrics': self.opt.get('collect_metrics', False),
             }
             logging.debug([o['prompt'] for o in observations])
 
@@ -533,6 +541,11 @@ class SimpleOPTAgent(Agent):
                         # API returns null logprob for EOS token
                         if logprob is not None
                     ]
+                    if (
+                        self.opt.get('collect_metrics', False)
+                        and 'metrics' in r['choices'][0]
+                    ):
+                        m['metrics'] = r['choices'][0]['metrics']
 
         # we might have batch padding that we skipped earlier. collate it back.
         messages_out = []
