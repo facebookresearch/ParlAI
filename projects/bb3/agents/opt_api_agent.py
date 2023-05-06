@@ -499,7 +499,7 @@ class SimpleOPTAgent(Agent):
                 'alpha_frequency_src': self.opt['alpha_frequency_src'],
                 # added for self-debiasing
                 "self_debiasing": self.opt['self_debiasing'],
-                "num_debiasing_prefixes": self.opt['num_debiasing_prefixes'],
+                "num_debiasing_prefixes": self.opt.get('num_debiasing_prefixes', 0),
             }
             logging.debug([o['prompt'] for o in observations])
 
