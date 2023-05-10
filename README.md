@@ -157,6 +157,11 @@ You can find information about contributing to ParlAI in our
 [Contributing](https://github.com/facebookresearch/ParlAI/blob/main/CONTRIBUTING.md)
 document.
 
+ParlAI thanks to all of our amazing contributors!
+
+<a href="https://github.com/facebookresearch/ParlAI/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=facebookresearch/ParlAI&r="  width="800px"/>
+</a>
 
 ## The Team
 ParlAI is currently maintained by Moya Chen, Emily Dinan, Dexter Ju, Mojtaba
