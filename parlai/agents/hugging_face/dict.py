@@ -203,6 +203,9 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         self.ind2tok[self.end_idx] = self.end_token
         self.ind2tok[self.start_idx] = self.start_token
         self.ind2tok[self.null_idx] = self.null_token
+        # HA
+        self.unk_token = self.hf_tokenizer.unk_token
+        self._unk_token_idx = self.hf_tokenizer.unk_token_id
 
 
 class DialoGPTDictionaryAgent(Gpt2DictionaryAgent):

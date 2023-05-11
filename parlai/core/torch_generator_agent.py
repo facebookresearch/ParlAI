@@ -913,6 +913,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
         self.model.eval()
         cand_scores = None
         token_losses = None
+        logits = None
         text_token_info = None
 
         if batch.label_vec is not None:
@@ -922,6 +923,7 @@ class TorchGeneratorAgent(TorchAgent, ABC):
                 token_losses = self._construct_label_token_losses(
                     batch.label_vec, model_output
                 )
+                logits = model_output
 
         beam_preds_scores = None
         preds = None
@@ -977,7 +979,11 @@ class TorchGeneratorAgent(TorchAgent, ABC):
             # compute additional bleu scores
             self._compute_fairseq_bleu(batch, preds)
         retval = Output(
-            text, cand_choices, token_losses=token_losses, cand_scores=cand_scores
+            text,
+            cand_choices,
+            token_losses=token_losses,
+            cand_scores=cand_scores,
+            logits=logits,
         )
 
         if not self.skip_generation:
