@@ -5,19 +5,21 @@
  */
 
 var path = require("path");
+/* eslint-disable no-unused-vars */
 var webpack = require("webpack");
+/* eslint-enable no-unused-vars */
 
 module.exports = {
   entry: "./src/main.js",
   output: {
     path: __dirname,
     filename: "build/bundle.js",
-    hashFunction: "sha256",
+    hashFunction: "sha256"
   },
   resolve: {
     alias: {
-      react: path.resolve("./node_modules/react"),
-    },
+      react: path.resolve("./node_modules/react")
+    }
   },
   module: {
     rules: [
@@ -25,21 +27,21 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: "babel-loader",
         exclude: /node_modules/,
-        options: { presets: ["@babel/env"] },
+        options: { presets: ["@babel/env"] }
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: ["style-loader", "css-loader"]
       },
       {
         test: /\.(svg|png|jpe?g|ttf)$/,
         loader: "url-loader",
-        options: { limit: 100000 },
+        options: { limit: 100000 }
       },
       {
         test: /\.jpg$/,
-        loader: "file-loader",
-      },
-    ],
-  },
+        loader: "file-loader"
+      }
+    ]
+  }
 };

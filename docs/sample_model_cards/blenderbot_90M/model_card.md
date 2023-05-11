@@ -67,7 +67,7 @@ Note: The display dataset commands were auto generated, so please visit [here](h
 
 ## Evaluation Results
 
-For evalution, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information
+For evaluation, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information
 We used the metric `ppl` as the validation metric. Recall that `ppl` is perplexity. Click [here](https://en.wikipedia.org/wiki/Perplexity) for more info.
 
 |  | All | Wizard_of_Wikipedia | ConvAI2 | Empathetic Dialogues

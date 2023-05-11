@@ -21,7 +21,7 @@ class FontPicker extends React.Component {
   /* Args:
      form
      {@Array} keys: Path to the config. e.g ['style', 'instruction'].
-     {@Function} updateByKey: 
+     {@Function} updateByKey:
      {@String} fontFamily
      {@String} fontSize
      {@String} color
@@ -272,9 +272,11 @@ class FontPicker extends React.Component {
     );
   }
 
+  /* eslint-disable no-unused-vars */
   handleColorPickerChange(color, event) {
     this.color = color;
   }
+  /* eslint-enable no-unused-vars */
 
   showPicker() {
     const popover = {
@@ -286,14 +288,6 @@ class FontPicker extends React.Component {
       left: 0,
       bottom: 0,
       position: "absolute"
-    };
-
-    const cover = {
-      position: "fixed",
-      top: "0px",
-      right: "0px",
-      bottom: "0px",
-      left: "0px"
     };
 
     if (this.state.visiblePicker) {
@@ -319,7 +313,7 @@ class FontPicker extends React.Component {
 }
 
 function path2Name(path) {
-  /* Convert a path to name of a form item. 
+  /* Convert a path to name of a form item.
      Args:
      {@Array} path
      Return: {@String}

@@ -10,7 +10,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "bootstrap-chat/styles.css";
 
-import { CustomOnboardingChatApp } from "./components/chat_app_with_onboarding.jsx"
+import { CustomOnboardingChatApp } from "./components/chat_app_with_onboarding.jsx";
 import { DefaultTaskDescription } from "bootstrap-chat";
 import { ResponseComponent } from "./components/response_panes.jsx";
 import { RenderChatMessage } from "./components/message.jsx";
@@ -28,48 +28,47 @@ function MainApp() {
           key={message.message_id + "-" + idx}
         />
       )}
-      renderSidePane={({ mephistoContext: { taskConfig }, appContext: { taskContext } }) => (
+      renderSidePane={({
+        mephistoContext: { taskConfig },
+        appContext: { taskContext }
+      }) => (
         <DefaultTaskDescription
           chatTitle={taskConfig.chat_title}
-          taskDescriptionHtml={
-              taskConfig.left_pane_text.replace(
-                  "[persona_string_1]", taskContext.human_persona_string_1,
-              ).replace(
-                  "[persona_string_2]", taskContext.human_persona_string_2,
-              )
-          }
+          taskDescriptionHtml={taskConfig.left_pane_text
+            .replace("[persona_string_1]", taskContext.human_persona_string_1)
+            .replace("[persona_string_2]", taskContext.human_persona_string_2)}
         >
-          {(taskContext.hasOwnProperty('image_src') && taskContext['image_src']) ? (
+          {/* eslint-disable no-prototype-builtins */}
+          {taskContext.hasOwnProperty("image_src") &&
+          taskContext["image_src"] ? (
             <div>
               <h4>Conversation image:</h4>
               <span id="image">
-                <img src={taskContext.image_src} alt='Image'/>
+                <img src={taskContext.image_src} alt="Image" />
               </span>
               <br />
             </div>
           ) : null}
+          {/* eslint-enable no-prototype-builtins */}
         </DefaultTaskDescription>
       )}
-      renderTextResponse={
-        ({ 
-          mephistoContext: { taskConfig }, 
-          appContext: { appSettings },
-          onMessageSend,
-          active,
-          appContext
-        }) => (
-          <ResponseComponent 
-            appContext={appContext}
-            appSettings={appSettings}
-            taskConfig={taskConfig}
-            active={active}
-            onMessageSend={onMessageSend}
-          />
-        )  
-      }
+      renderTextResponse={({
+        mephistoContext: { taskConfig },
+        appContext: { appSettings },
+        onMessageSend,
+        active,
+        appContext
+      }) => (
+        <ResponseComponent
+          appContext={appContext}
+          appSettings={appSettings}
+          taskConfig={taskConfig}
+          active={active}
+          onMessageSend={onMessageSend}
+        />
+      )}
     />
   );
 }
 
 ReactDOM.render(<MainApp />, document.getElementById("app"));
-
