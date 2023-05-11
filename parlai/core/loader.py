@@ -85,27 +85,23 @@ def register_teacher(name: str) -> Callable[[Type], Type]:
 ### PATH RESOLVER
 ##############################################################
 # For use to register related packages. Keys entered below
-# will have a mapping from the root key (such as 'internal:')
+# will have a mapping from the repo key (such as 'internal:')
 # to info about that related package: the module root (to where
-# tasks, agents, and projects are contained), the required
-# package, and the source.
+# tasks, agents, and projects are contained), and the source.
 REGISTERED_REPOS = {
     # To switch to local repo, useful for non-public projects
     # (make a directory called 'parlai_internal' with your private agents)
     # this will follow the same paths but look in parlai_internal instead
     'internal:': {
         'repo': 'parlai_internal',
-        'root': 'parlai_internal',
         'source': 'Check internal ParlAI documentation for access',
     },
     'fb:': {
         'repo': 'parlai_fb',
-        'root': 'parlai_fb',
         'source': 'Check internal ParlAI documentation for access',
     },
     'light:': {
         'repo': 'light.modeling',
-        'root': 'light',
         'source': 'https://github.com/facebookresearch/LIGHT',
     },
     # Do you have a repo with ParlAI tasks? Add it below!
@@ -116,9 +112,8 @@ def assert_get_source_repo(asset_path: str) -> Tuple[str, str]:
     for key, repo_info in REGISTERED_REPOS.items():
         if asset_path.startswith(key):
             repo = repo_info['repo']
-            root = repo_info['root']
             try:
-                importlib.import_module(root)
+                importlib.import_module(repo)
             except ImportError:
                 source = repo_info['source']
                 raise Exception(
