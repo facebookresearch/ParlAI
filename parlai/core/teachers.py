@@ -1732,6 +1732,18 @@ class ConversationTeacher(DialogTeacher):
             turn = {}
             turn['text'] = xturn.get('text').strip()
             turn['labels'] = [yturn.get('text').strip()]
+
+            # my fields
+            other_fields = {
+                f: v
+                for f, v in xturn.items()
+                if f not in ['labels', 'text', 'eval_labels']
+            }
+            turn.update(other_fields)
+            for f in ['labels', 'eval_labels']:
+                if f in xturn:
+                    turn['original_' + f] = xturn[f]
+
             eps.append(turn)
         return eps
 
