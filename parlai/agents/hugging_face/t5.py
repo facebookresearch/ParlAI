@@ -198,7 +198,7 @@ class T5Agent(TorchGeneratorAgent):
             'max_length': max_ts,
             'min_length': self.beam_min_length,
             'do_sample': self.opt['inference'] in ['topk', 'topp'],
-            'early_stopping': None,
+            'early_stopping': 'never',
             'num_beams': beam_size,
             'temperature': self.temperature,
             'top_k': self.opt['topk'] if method in ['topk', 'delayedbeam'] else None,
@@ -210,7 +210,7 @@ class T5Agent(TorchGeneratorAgent):
             'eos_token_id': self.END_IDX,
             'length_penalty': self.opt['beam_length_penalty'],
             'no_repeat_ngram_size': self.beam_block_ngram,
-            'num_return_sequences': None,
+            'num_return_sequences': 1,
             'attention_mask': batch.text_vec != self.NULL_IDX,
             'decoder_start_token_id': self.NULL_IDX,
         }
