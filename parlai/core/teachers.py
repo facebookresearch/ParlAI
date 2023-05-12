@@ -1733,7 +1733,7 @@ class ConversationTeacher(DialogTeacher):
             turn['text'] = xturn.get('text').strip()
             turn['labels'] = [yturn.get('text').strip()]
 
-            # my fields
+            # Add other fields in the original message.
             other_fields = {
                 f: v
                 for f, v in xturn.items()
