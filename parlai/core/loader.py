@@ -10,7 +10,7 @@ These functions are largely for converting strings specified in opts (like for -
 to the appropriate module.
 """
 
-from typing import Callable, Dict, Type
+from typing import Callable, Dict, Type, Tuple
 import importlib
 
 from collections import namedtuple
@@ -82,6 +82,48 @@ def register_teacher(name: str) -> Callable[[Type], Type]:
 
 
 ##############################################################
+### PATH RESOLVER
+##############################################################
+# For use to register related packages. Keys entered below
+# will have a mapping from the repo key (such as 'internal:')
+# to info about that related package: the module root (to where
+# tasks, agents, and projects are contained), and the source.
+REGISTERED_REPOS = {
+    # To switch to local repo, useful for non-public projects
+    # (make a directory called 'parlai_internal' with your private agents)
+    # this will follow the same paths but look in parlai_internal instead
+    'internal:': {
+        'repo': 'parlai_internal',
+        'source': 'Check internal ParlAI documentation for access',
+    },
+    'fb:': {
+        'repo': 'parlai_fb',
+        'source': 'Check internal ParlAI documentation for access',
+    },
+    'light:': {
+        'repo': 'light.modeling',
+        'source': 'https://github.com/facebookresearch/LIGHT',
+    },
+    # Do you have a repo with ParlAI tasks? Add it below!
+}
+
+
+def assert_get_source_repo(asset_path: str) -> Tuple[str, str]:
+    for key, repo_info in REGISTERED_REPOS.items():
+        if asset_path.startswith(key):
+            repo = repo_info['repo']
+            try:
+                importlib.import_module(repo)
+            except ImportError:
+                source = repo_info['source']
+                raise Exception(
+                    f"Error importing library for {key}, try to install from source: {source}"
+                )
+            return repo, asset_path[len(key) :]
+    return 'parlai', asset_path
+
+
+##############################################################
 ### AGENT LOADER
 ##############################################################
 def _name_to_agent_class(name: str):
@@ -139,16 +181,7 @@ def load_agent_module(agent_path: str):
     if agent_path in AGENT_REGISTRY:
         return AGENT_REGISTRY[agent_path]
 
-    repo = 'parlai'
-    if agent_path.startswith('internal:'):
-        # To switch to local repo, useful for non-public projects
-        # (make a directory called 'parlai_internal' with your private agents)
-        # this will follow the same paths but look in parlai_internal instead
-        repo = 'parlai_internal'
-        agent_path = agent_path[9:]
-    elif agent_path.startswith('fb:'):
-        repo = 'parlai_fb'
-        agent_path = agent_path[3:]
+    repo, agent_path = assert_get_source_repo(agent_path)
 
     if agent_path.startswith('projects:'):
         # e.g. -m projects:personachat:kvmemnn
@@ -202,16 +235,8 @@ def _get_task_path_and_repo(taskname: str):
     :param taskname: path to task class (specified in format detailed below)
     """
     task = taskname.strip()
-    repo = 'parlai'
-    if task.startswith('internal:'):
-        # To switch to local repo, useful for non-public projects
-        # (make a directory called 'parlai_internal' with your private agents)
-        repo = 'parlai_internal'
-        task = task[9:]
-    elif task.startswith('fb:'):
-        repo = 'parlai_fb'
-        task = task[3:]
 
+    repo, task = assert_get_source_repo(task)
     task_path_list = task.split(':')
 
     return task_path_list, repo
