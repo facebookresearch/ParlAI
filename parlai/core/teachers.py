@@ -1730,8 +1730,12 @@ class ConversationTeacher(DialogTeacher):
         eps = []
         for xturn, yturn in zip(xturns, yturns):
             turn = {}
-            turn['text'] = xturn.get('text').strip()
-            turn['labels'] = [yturn.get('text').strip()]
+            turn['text'] = xturn.get('text')
+            turn['labels'] = [yturn.get('text')]
+
+            turn['x_turn'] = xturn
+            turn['y_turn'] = yturn
+
             eps.append(turn)
         return eps
 

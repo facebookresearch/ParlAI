@@ -59,7 +59,10 @@ def simple_display(opt, world, turn):
     text = act.get('text', '[no text field]')
     print(colorize(text.encode('utf-16', 'surrogatepass').decode('utf-16'), 'text'))
     labels = act.get('labels', act.get('eval_labels', ['[no labels field]']))
-    labels = '|'.join(labels)
+    if len(labels) == 1 and labels[0] is None:
+        labels = str(labels)
+    else:
+        labels = '|'.join(labels)
     print('   ' + colorize(labels, 'labels'))
 
 
