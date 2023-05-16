@@ -1730,19 +1730,11 @@ class ConversationTeacher(DialogTeacher):
         eps = []
         for xturn, yturn in zip(xturns, yturns):
             turn = {}
-            turn['text'] = xturn.get('text').strip()
-            turn['labels'] = [yturn.get('text').strip()]
+            turn['text'] = xturn.get('text')
+            turn['labels'] = [yturn.get('text')]
 
-            # Add other fields in the original message.
-            other_fields = {
-                f: v
-                for f, v in xturn.items()
-                if f not in ['labels', 'text', 'eval_labels']
-            }
-            turn.update(other_fields)
-            for f in ['labels', 'eval_labels']:
-                if f in xturn:
-                    turn['original_' + f] = xturn[f]
+            turn['x_turn'] = xturn
+            turn['y_turn'] = yturn
 
             eps.append(turn)
         return eps
