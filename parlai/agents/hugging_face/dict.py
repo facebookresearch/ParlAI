@@ -16,7 +16,7 @@ from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer, T5TokenizerFast
+    from transformers import GPT2Tokenizer, T5TokenizerFast, LlamaTokenizer
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
@@ -31,6 +31,23 @@ SPECIAL_TOKENS = {
 }
 
 NO_OP = "x"
+
+
+def _init_llama_path(opt):
+    # load model path
+    model_size = opt['llama_size']
+    model_key = f'llama-{model_size}'
+
+    # check if datapath has the files that hugging face code looks for
+    hf_dir = os.path.join(opt["datapath"], "hf", model_key)
+    if all(
+        PathManager.exists(os.path.join(hf_dir, file_name))
+        for file_name in ["pytorch_model.bin", "config.json"]
+    ):
+        fle_key = PathManager.get_local_path(hf_dir, recursive=True)
+    else:
+        fle_key = opt['llama_model_dir']
+    return fle_key
 
 
 class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
@@ -248,6 +265,45 @@ class T5DictionaryAgent(HuggingFaceDictionaryAgent):
         self.start_token = self.hf_tokenizer.pad_token
         self.end_token = self.hf_tokenizer.eos_token
         self.null_token = self.hf_tokenizer.pad_token
+        self.unk_token = self.hf_tokenizer.unk_token
+
+        self._unk_token_idx = self.hf_tokenizer.unk_token_id
+
+        self.start_idx = self[self.start_token]
+        self.end_idx = self[self.end_token]
+        self.null_idx = self[self.null_token]
+
+
+class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
+    @property
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+        Llama default config set add_bos_token = True and add_eos_token = False
+        """
+        return True
+
+    @property
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to skip special tokens when converting tokens to text.
+        """
+        return True
+
+    def get_tokenizer(self, opt):
+        """
+        Instantiate tokenizer.
+        """
+        ## TODO LlamaTokenizer or LlamaTokenizerFast?
+        return LlamaTokenizer.from_pretrained(_init_llama_path(opt))
+
+    def override_special_tokens(self, opt):
+        self.hf_tokenizer.add_special_tokens({"pad_token": "<pad>"})
+
+        # now override
+        self.start_token = self.hf_tokenizer.bos_token
+        self.end_token = self.hf_tokenizer.eos_token
+        self.null_token = self.hf_tokenizer.pad_token  ## TODO
         self.unk_token = self.hf_tokenizer.unk_token
 
         self._unk_token_idx = self.hf_tokenizer.unk_token_id
