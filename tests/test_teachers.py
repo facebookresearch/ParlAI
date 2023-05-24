@@ -155,7 +155,7 @@ class TestConversationTeacher(unittest.TestCase):
                 )
             opt = {'task': 'jsonfile', 'jsonfile_datapath': fp, 'verbose': True}
 
-            train_out, _ , _ = testing_utils.display_data(opt)
+            train_out, _, _ = testing_utils.display_data(opt)
             self.assertTrue("'text': None" in train_out.split('\n')[1])
 
     def test_firstspeaker_label(self):
