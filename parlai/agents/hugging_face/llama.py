@@ -19,7 +19,7 @@ from parlai.agents.transformer.transformer import _check_positional_embeddings
 try:
     from transformers import LlamaModel, LlamaForCausalLM
 except ImportError:
-    raise ImportError("Please run `pip install transformers`.")
+    raise ImportError("Please run `pip install transformers --upgrade`.")
 
 
 def setup_llama_args(parser):
@@ -115,7 +115,6 @@ class ParlaiLlamaDecoder(torch.nn.Module):
             )
 
         model_input = model_input.clamp_(min=0)
-        # import ipdb; ipdb.set_trace()
         transformer_outputs = self.model(
             input_ids=model_input,
             attention_mask=attention_mask,
