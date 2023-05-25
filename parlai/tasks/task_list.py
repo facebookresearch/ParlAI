@@ -602,6 +602,18 @@ task_list = [
         "links": {"arXiv": "https://arxiv.org/abs/1506.02075"},
     },
     {
+        "id": "ReframeUnhelpfulThoughts",
+        "display_name": "Reframe Unhelpful Thoughts",
+        "task": "reframe_thoughts",
+        "tags": [],
+        "description": (
+            "Dataset of about 10k examples of thoughts containing unhelpful "
+            "thought patterns conditioned on a given persona, accompanied by about "
+            "27k positive reframes."
+        ),
+        "links": {},
+    },
+    {
         "id": "SNLI",
         "display_name": "The Stanford Natural Language Inference (SNLI) Corpus",
         "task": "snli",
