@@ -13,6 +13,7 @@ from typing import List
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.utils.io import PathManager
+import parlai.utils.logging as logging
 
 
 try:
@@ -47,6 +48,7 @@ def _init_llama_path(opt):
         fle_key = PathManager.get_local_path(hf_dir, recursive=True)
     else:
         fle_key = opt['llama_model_dir']
+    logging.info(f'Loading Llama from checkpoint {fle_key}')
     return fle_key
 
 
@@ -279,6 +281,7 @@ class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
     def add_special_tokens(self) -> bool:
         """
         Whether to add special tokens when tokenizing.
+
         Llama default config set add_bos_token = True and add_eos_token = False
         """
         return True
@@ -294,7 +297,7 @@ class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
         """
         Instantiate tokenizer.
         """
-        ## TODO LlamaTokenizer or LlamaTokenizerFast?
+        ## TODO LlamaTokenizerFast?
         return LlamaTokenizer.from_pretrained(_init_llama_path(opt))
 
     def override_special_tokens(self, opt):
@@ -303,7 +306,7 @@ class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
         # now override
         self.start_token = self.hf_tokenizer.bos_token
         self.end_token = self.hf_tokenizer.eos_token
-        self.null_token = self.hf_tokenizer.pad_token  ## TODO
+        self.null_token = self.hf_tokenizer.pad_token
         self.unk_token = self.hf_tokenizer.unk_token
 
         self._unk_token_idx = self.hf_tokenizer.unk_token_id

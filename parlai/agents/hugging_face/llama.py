@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-from typing import Optional, Tuple, Any
+from typing import Optional
 from parlai.core.params import ParlaiParser
 from parlai.core.opt import Opt
 
@@ -12,7 +12,6 @@ import torch
 from parlai.agents.hugging_face.dict import LlamaDictionaryAgent, _init_llama_path
 from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGeneratorModel
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
-from parlai.utils.misc import warn_once
 from parlai.utils.torch import IdentityLayer, padded_tensor
 from parlai.agents.transformer.transformer import _check_positional_embeddings
 
@@ -38,7 +37,11 @@ def setup_llama_args(parser):
         default=None,
         help="dir to llama model and tokenizer",
     )
-    # TODO add label_truncate, text_truncate, truncate default value by model sizes
+    parser.set_defaults(
+        text_truncate=2048,
+        label_truncate=2048,
+        dict_maxexs=0,  # skip building dictionary
+    )
     return parser
 
 
@@ -65,8 +68,6 @@ class ParlaiLlamaDecoder(torch.nn.Module):
         self.model = decoder
         self.padding_idx = padding_idx
         self.start_idx = start_idx
-        # use cuda
-        # self.use_cuda = not opt["no_cuda"] and torch.cuda.is_available()
 
     def forward(
         self, input, encoder_state, incr_state=None, sequence_classification=False
@@ -120,9 +121,9 @@ class ParlaiLlamaDecoder(torch.nn.Module):
             attention_mask=attention_mask,
             position_ids=position_ids,
             past_key_values=incr_state,
-            output_attentions=None,  # ??
+            output_attentions=None,
             output_hidden_states=None,
-            return_dict=None,  ## ??
+            return_dict=None,
         )
         hidden_states = transformer_outputs[0]
         new_incr_state = transformer_outputs[1]
@@ -209,25 +210,17 @@ class LlamaAgent(TorchGeneratorAgent):
     Llama comes in multiple sizes: 1.5B, 2.7B, 7B 30B, 65B. Use the
     flag `--llama-size` to choose the size.
 
-    parlai i -m hugging_face/llama --inference beam         --beam-size 10         --beam-context-block-ngram 3         --beam-block-ngram 3         --beam-min-length 1        --skip-generation False
-    parlai i -m hugging_face/llama --inference greedy --skip-generation False
-    parlai eval_model -m hugging_face/llama -bs 2 --skip-generation False --inference greedy -t jsonfile -jfdp /private/home/jingxu23/ParlAI/parlai/agents/hugging_face/test.jsonl --llama-model-dir /checkpoint/jingxu23/genesis/1.5B_1T_v0/hf_converted
+    parlai eval_model -m hugging_face/llama -bs 2 --skip-generation False --inference greedy -t convai2
     """
 
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
     ) -> ParlaiParser:
-        agent = parser.add_argument_group("LlamaAgent Args")
-        agent = setup_llama_args(agent)
-        parser.set_defaults(
-            # text_truncate=768,
-            # label_truncate=256,
-            dict_maxexs=0,  # skip building dictionary
-        )
         super().add_cmdline_args(parser, partial_opt=partial_opt)
-        warn_once("WARNING: this model is in beta and the API is subject to change.")
-        return agent
+        group = parser.add_argument_group("LlamaAgent Args")
+        group = setup_llama_args(group)
+        return parser
 
     def __init__(self, opt, shared=None):
         super().__init__(opt, shared)
@@ -260,7 +253,7 @@ class LlamaAgent(TorchGeneratorAgent):
 
     def _pad_tensor(self, items, is_label=False):
         """
-        Override to always set fp16friendly to False
+        Override to always set fp16friendly to False.
 
         Pads context tensor on the left and label tensor on the right, such that when
         they are concatenated the example meets in the middle to form a continuous
@@ -271,7 +264,7 @@ class LlamaAgent(TorchGeneratorAgent):
         )
 
     def _set_label_vec(self, obs, add_start, add_end, truncate):
-        obs = super()._set_label_vec(obs, add_start, add_end, truncate)
+        super()._set_label_vec(obs, add_start, add_end, truncate)
         # cut off the start_token in the label_vec if any (llama_tokenizer add_bos_token = True), don't compute the loss!!
         for label_vec_type in ['labels_vec', "eval_labels_vec"]:
             if label_vec_type in obs and obs[label_vec_type][0] == self.START_IDX:
@@ -317,7 +310,7 @@ class ParlaiLlamaForSequenceClassification(torch.nn.Module):
 
 class ParlaiLlamaClassifierAgent(TorchClassifierAgent):
     """
-    Hugging Face LlamaForSequenceClassification
+    Hugging Face LlamaForSequenceClassification.
 
     Llama is a multi-layer decoder-only Transformer. As such, the encoder
     is simply an identity layer. The decoder is initialized with pretrained
@@ -335,9 +328,9 @@ class ParlaiLlamaClassifierAgent(TorchClassifierAgent):
         Add CLI args.
         """
         super().add_cmdline_args(parser, partial_opt=partial_opt)
-        parser = parser.add_argument_group('ParlaiLlamaClassifierAgent Arguments')
+        group = parser.add_argument_group('ParlaiLlamaClassifierAgent Arguments')
         # class arguments
-        parser = setup_llama_args(parser)
+        group = setup_llama_args(group)
         return parser
 
     def build_model(self):
