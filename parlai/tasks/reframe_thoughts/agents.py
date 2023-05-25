@@ -4,14 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-
-from typing import Optional
-from parlai.core.params import ParlaiParser
-from parlai.core.opt import Opt
 import os
 import copy
 import json
-from parlai.core.teachers import register_teacher, DialogTeacher
+from parlai.core.teachers import DialogTeacher
 from .build import build
 
 
