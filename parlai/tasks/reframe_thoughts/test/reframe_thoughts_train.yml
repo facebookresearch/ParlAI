@@ -1,0 +1,55 @@
+acts:
+- - episode_done: true
+    id: reframe_thoughts
+    labels:
+    - I like my cats. I have a fun imagination, but I know it's not likely they are
+      plotting against me to eat me.
+    text: 'i have a pencil thin mustache . i have six tattoos , all of cats . my mother
+      is a ballet dancer . i am from baltimore md . [PAT] Catastrophizing (Catastrophizing:
+      Giving greater weight to the worst possible outcome, however unlikely, or experiencing
+      a situation as unbearable or impossible when it is just uncomfortable.) [THT]
+      I like my cats. I think one day they will plot against me and eat me in my sleep.'
+- - episode_done: true
+    id: reframe_thoughts
+    labels:
+    - I like my cats. I’ll get used to living with them and will be less afraid as
+      time goes on.
+    text: 'i have a pencil thin mustache . i have six tattoos , all of cats . my mother
+      is a ballet dancer . i am from baltimore md . [PAT] Catastrophizing (Catastrophizing:
+      Giving greater weight to the worst possible outcome, however unlikely, or experiencing
+      a situation as unbearable or impossible when it is just uncomfortable.) [THT]
+      I like my cats. I think one day they will plot against me and eat me in my sleep.'
+- - episode_done: true
+    id: reframe_thoughts
+    labels:
+    - I like my cats so I will make sure to give them all the exercise and playtime
+      that they need.
+    text: 'i have a pencil thin mustache . i have six tattoos , all of cats . my mother
+      is a ballet dancer . i am from baltimore md . [PAT] Catastrophizing (Catastrophizing:
+      Giving greater weight to the worst possible outcome, however unlikely, or experiencing
+      a situation as unbearable or impossible when it is just uncomfortable.) [THT]
+      I like my cats. I think one day they will plot against me and eat me in my sleep.'
+- - episode_done: true
+    id: reframe_thoughts
+    labels:
+    - I'm a vegan, and the restaurant served me a dis with fish in it. I believe I
+      should have told them I am a vegan.
+    text: i like visiting art museums in my spare time . i just started dating someone
+      new . i m a student . i am a vegan . [PAT] Overgeneralization (Someone who overgeneralizes
+      makes faulty generalizations from insufficient evidence. Even if something bad
+      happens only once, it is expected to happen over and over again.) [THT] I'm
+      a vegan, and the restaurant served me a dish with fish in it. They're trying
+      to kill me.
+- - episode_done: true
+    id: reframe_thoughts
+    labels:
+    - I'm vegan, and the restaurant served me a dish with a fish in it. I'll just
+      notify the waiter and have it sent back.
+    text: i like visiting art museums in my spare time . i just started dating someone
+      new . i m a student . i am a vegan . [PAT] Overgeneralization (Someone who overgeneralizes
+      makes faulty generalizations from insufficient evidence. Even if something bad
+      happens only once, it is expected to happen over and over again.) [THT] I'm
+      a vegan, and the restaurant served me a dish with fish in it. They're trying
+      to kill me.
+num_episodes: 5249
+num_examples: 5249
