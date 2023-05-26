@@ -15,5 +15,5 @@ def maybe_download(model_type, datapath):
     ddir = os.path.join(get_model_dir(datapath), PROJECT_NAME)
     if not built(os.path.join(ddir, model_type), VERSION):
         opt = {'datapath': datapath, 'model_type': model_type}
-        fnames = ['model.tgz']
+        fnames = ['model.tar.gz']
         download_models(opt, fnames, PROJECT_NAME, version=VERSION, use_model_type=True)
