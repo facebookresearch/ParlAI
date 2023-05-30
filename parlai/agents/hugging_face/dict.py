@@ -48,7 +48,6 @@ def _init_llama_path(opt):
         fle_key = PathManager.get_local_path(hf_dir, recursive=True)
     else:
         fle_key = opt['llama_model_dir']
-    logging.info(f'Loading Llama from checkpoint {fle_key}')
     return fle_key
 
 

@@ -14,6 +14,7 @@ from parlai.core.torch_generator_agent import TorchGeneratorAgent, TorchGenerato
 from parlai.core.torch_classifier_agent import TorchClassifierAgent
 from parlai.utils.torch import IdentityLayer, padded_tensor
 from parlai.agents.transformer.transformer import _check_positional_embeddings
+import parlai.utils.logging as logging
 
 try:
     from transformers import LlamaModel, LlamaForCausalLM
@@ -38,8 +39,8 @@ def setup_llama_args(parser):
         help="dir to llama model and tokenizer",
     )
     parser.set_defaults(
-        text_truncate=2048,
-        label_truncate=2048,
+        text_truncate=1792,
+        label_truncate=256,
         dict_maxexs=0,  # skip building dictionary
     )
     return parser
@@ -154,7 +155,9 @@ class ParlaiLlamaForCausalLM(TorchGeneratorModel):
     def __init__(self, opt, dict):
         super().__init__(dict.null_idx, dict.start_idx, dict.end_idx)
         # init the model
-        llama = LlamaForCausalLM.from_pretrained(_init_llama_path(opt))
+        llama_path = _init_llama_path(opt)
+        logging.info(f'Loading Llama model from {llama_path}')
+        llama = LlamaForCausalLM.from_pretrained(llama_path)
         self.encoder = IdentityLayer()
         self.pad_idx = dict.null_idx
         self.decoder = ParlaiLlamaDecoder(
@@ -210,7 +213,6 @@ class LlamaAgent(TorchGeneratorAgent):
     Llama comes in multiple sizes: 1.5B, 2.7B, 7B 30B, 65B. Use the
     flag `--llama-size` to choose the size.
 
-    parlai eval_model -m hugging_face/llama -bs 2 --skip-generation False --inference greedy -t convai2
     """
 
     @classmethod
@@ -284,7 +286,9 @@ class ParlaiLlamaForSequenceClassification(torch.nn.Module):
 
     def __init__(self, opt, dict, num_classes):
         super().__init__()
-        llama = LlamaForCausalLM.from_pretrained(_init_llama_path(opt))
+        llama_path = _init_llama_path(opt)
+        logging.info(f'Loading Llama model from {llama_path}')
+        llama = LlamaForCausalLM.from_pretrained(llama_path)
         self.base_model = ParlaiLlamaDecoder(
             opt, llama.get_decoder(), dict.null_idx, dict.start_idx
         )
