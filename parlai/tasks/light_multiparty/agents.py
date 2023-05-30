@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Meta, Inc. and its affiliates.
+# Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
@@ -74,6 +74,7 @@ def get_speaker_name_from_index(utt: Message, index: int) -> str:
 class BaseTeacher(DialogTeacher):
     """
     Base class for MultiLIGHT teacher.
+
     This is an abstract class: do NOT use directly!
     """
 
@@ -309,7 +310,8 @@ class BaseTeacher(DialogTeacher):
 
     def get_extra_context_before(self, conv: Message):
         """
-        Generates the persona and location, which goes *before* the conversation context.
+        Generates the persona and location, which goes *before* the conversation
+        context.
         """
         extra_context_before = []
 
@@ -321,7 +323,8 @@ class BaseTeacher(DialogTeacher):
 
     def get_extra_context_after(self, conv: Message):
         """
-        Generates the timestep and speaker prompt, which goes *after* the conversation context.
+        Generates the timestep and speaker prompt, which goes *after* the conversation
+        context.
         """
         extra_context_after = []
         if self.add_current_timestep_to_context:
@@ -441,8 +444,9 @@ class SpeakerPredictionTeacher(AllSpeakersTeacher):
 class SingleSpeakerTeacher(ABC, BaseTeacher):
     """
     Generaes the utterances for a single character only.
-    The label will be the silent token if that character doesn't speak that round.
-    This is an abstract class: do NOT use directly!
+
+    The label will be the silent token if that character doesn't speak that round. This
+    is an abstract class: do NOT use directly!
     """
 
     def __init__(self, opt: Opt, shared=None):

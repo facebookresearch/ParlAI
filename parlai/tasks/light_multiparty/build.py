@@ -3,11 +3,9 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-import os
+
 import parlai.core.build_data as build_data
 import parlai.utils.logging as logging
-
-import parlai.tasks.wizard_of_internet.constants as CONST
 
 
 DATASET_NAME = 'parlai_multilight'
