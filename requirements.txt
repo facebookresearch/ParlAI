@@ -21,7 +21,7 @@ nltk==3.6.6
 omegaconf>=2.1.1
 pandas==1.4.0
 pytest_regressions==2.4.2
-pytest==5.3.2
+pytest==7.3.0
 pexpect==4.7.0
 Pillow==9.3.0
 py-gfm==1.0.2
