@@ -1,0 +1,208 @@
+acts:
+- - characters:
+    - young boy
+    - boat captain
+    - captain
+    episode_done: true
+    full_context:
+    - 'captain: Greetings to both of you.'
+    id: multilight_dialogue_:all_speakers
+    labels:
+    - 'young boy: Hi Captains! It is so nice out on the ocean today!'
+    location:
+      description: A majestic, shimmering, black pirate ship sits upon the water.
+        Its numerous cannons give it a menacing look. Tons of pirates hop upon its
+        decks in a furious jig. The lone captain plods around in his cabin, plotting
+        on where to seize his treasure next.
+      name: Pirate Ship
+    personas:
+    - name: young boy
+      persona: I am the son of the ship's captain. I am being trained to take over
+        for my father when is no longer able to drive the boat safely. For now, I'm
+        a deck hand and I work just as hard as the other deck hands.
+    - name: boat captain
+      persona: I am the captain of the world's biggest boat. I know that I am paid
+        too much for the work I do. I have dark secrets I have told no one.
+    - name: captain
+      persona: I am the captain of a glorious ship in the king's naval fleet. I am
+        a boisterous man with a lot of ambition which is how I made it to my current
+        position. Everyone on my ship follows my every command because I am an excellent
+        leader.
+    quality_tier: 1
+    speaker: young boy
+    speaker_id: 1
+    speaker_worker_tier: 1
+    text: 'captain: Greetings to both of you.'
+    timestep: 00:00:03
+- - characters:
+    - young boy
+    - boat captain
+    - captain
+    episode_done: true
+    full_context:
+    - 'captain: Greetings to both of you.'
+    - 'young boy: Hi Captains! It is so nice out on the ocean today!'
+    id: multilight_dialogue_:all_speakers
+    labels:
+    - 'boat captain: Well I imagine this ship holds many secrets!'
+    location:
+      description: A majestic, shimmering, black pirate ship sits upon the water.
+        Its numerous cannons give it a menacing look. Tons of pirates hop upon its
+        decks in a furious jig. The lone captain plods around in his cabin, plotting
+        on where to seize his treasure next.
+      name: Pirate Ship
+    personas:
+    - name: young boy
+      persona: I am the son of the ship's captain. I am being trained to take over
+        for my father when is no longer able to drive the boat safely. For now, I'm
+        a deck hand and I work just as hard as the other deck hands.
+    - name: boat captain
+      persona: I am the captain of the world's biggest boat. I know that I am paid
+        too much for the work I do. I have dark secrets I have told no one.
+    - name: captain
+      persona: I am the captain of a glorious ship in the king's naval fleet. I am
+        a boisterous man with a lot of ambition which is how I made it to my current
+        position. Everyone on my ship follows my every command because I am an excellent
+        leader.
+    quality_tier: 1
+    speaker: boat captain
+    speaker_id: 2
+    speaker_worker_tier: 1
+    text: 'captain: Greetings to both of you.
+
+      young boy: Hi Captains! It is so nice out on the ocean today!'
+    timestep: 00:00:22
+- - characters:
+    - young boy
+    - boat captain
+    - captain
+    episode_done: true
+    full_context:
+    - 'captain: Greetings to both of you.'
+    - 'young boy: Hi Captains! It is so nice out on the ocean today!'
+    - 'boat captain: Well I imagine this ship holds many secrets!'
+    id: multilight_dialogue_:all_speakers
+    labels:
+    - 'young boy: It does! I saw a ghost on it last night!'
+    location:
+      description: A majestic, shimmering, black pirate ship sits upon the water.
+        Its numerous cannons give it a menacing look. Tons of pirates hop upon its
+        decks in a furious jig. The lone captain plods around in his cabin, plotting
+        on where to seize his treasure next.
+      name: Pirate Ship
+    personas:
+    - name: young boy
+      persona: I am the son of the ship's captain. I am being trained to take over
+        for my father when is no longer able to drive the boat safely. For now, I'm
+        a deck hand and I work just as hard as the other deck hands.
+    - name: boat captain
+      persona: I am the captain of the world's biggest boat. I know that I am paid
+        too much for the work I do. I have dark secrets I have told no one.
+    - name: captain
+      persona: I am the captain of a glorious ship in the king's naval fleet. I am
+        a boisterous man with a lot of ambition which is how I made it to my current
+        position. Everyone on my ship follows my every command because I am an excellent
+        leader.
+    quality_tier: 1
+    speaker: young boy
+    speaker_id: 1
+    speaker_worker_tier: 1
+    text: 'captain: Greetings to both of you.
+
+      young boy: Hi Captains! It is so nice out on the ocean today!
+
+      boat captain: Well I imagine this ship holds many secrets!'
+    timestep: 00:00:44
+- - characters:
+    - young boy
+    - boat captain
+    - captain
+    episode_done: true
+    full_context:
+    - 'captain: Greetings to both of you.'
+    - 'young boy: Hi Captains! It is so nice out on the ocean today!'
+    - 'boat captain: Well I imagine this ship holds many secrets!'
+    - 'young boy: It does! I saw a ghost on it last night!'
+    id: multilight_dialogue_:all_speakers
+    labels:
+    - 'captain: And what did this ghost look like?'
+    location:
+      description: A majestic, shimmering, black pirate ship sits upon the water.
+        Its numerous cannons give it a menacing look. Tons of pirates hop upon its
+        decks in a furious jig. The lone captain plods around in his cabin, plotting
+        on where to seize his treasure next.
+      name: Pirate Ship
+    personas:
+    - name: young boy
+      persona: I am the son of the ship's captain. I am being trained to take over
+        for my father when is no longer able to drive the boat safely. For now, I'm
+        a deck hand and I work just as hard as the other deck hands.
+    - name: boat captain
+      persona: I am the captain of the world's biggest boat. I know that I am paid
+        too much for the work I do. I have dark secrets I have told no one.
+    - name: captain
+      persona: I am the captain of a glorious ship in the king's naval fleet. I am
+        a boisterous man with a lot of ambition which is how I made it to my current
+        position. Everyone on my ship follows my every command because I am an excellent
+        leader.
+    quality_tier: 1
+    speaker: captain
+    speaker_id: 3
+    speaker_worker_tier: 1
+    text: 'captain: Greetings to both of you.
+
+      young boy: Hi Captains! It is so nice out on the ocean today!
+
+      boat captain: Well I imagine this ship holds many secrets!
+
+      young boy: It does! I saw a ghost on it last night!'
+    timestep: 00:01:03
+- - characters:
+    - young boy
+    - boat captain
+    - captain
+    episode_done: true
+    full_context:
+    - 'captain: Greetings to both of you.'
+    - 'young boy: Hi Captains! It is so nice out on the ocean today!'
+    - 'boat captain: Well I imagine this ship holds many secrets!'
+    - 'young boy: It does! I saw a ghost on it last night!'
+    - 'captain: And what did this ghost look like?'
+    id: multilight_dialogue_:all_speakers
+    labels:
+    - 'boat captain: Young boy do you know all the pirates milling about the ship? '
+    location:
+      description: A majestic, shimmering, black pirate ship sits upon the water.
+        Its numerous cannons give it a menacing look. Tons of pirates hop upon its
+        decks in a furious jig. The lone captain plods around in his cabin, plotting
+        on where to seize his treasure next.
+      name: Pirate Ship
+    personas:
+    - name: young boy
+      persona: I am the son of the ship's captain. I am being trained to take over
+        for my father when is no longer able to drive the boat safely. For now, I'm
+        a deck hand and I work just as hard as the other deck hands.
+    - name: boat captain
+      persona: I am the captain of the world's biggest boat. I know that I am paid
+        too much for the work I do. I have dark secrets I have told no one.
+    - name: captain
+      persona: I am the captain of a glorious ship in the king's naval fleet. I am
+        a boisterous man with a lot of ambition which is how I made it to my current
+        position. Everyone on my ship follows my every command because I am an excellent
+        leader.
+    quality_tier: 1
+    speaker: boat captain
+    speaker_id: 2
+    speaker_worker_tier: 1
+    text: 'captain: Greetings to both of you.
+
+      young boy: Hi Captains! It is so nice out on the ocean today!
+
+      boat captain: Well I imagine this ship holds many secrets!
+
+      young boy: It does! I saw a ghost on it last night!
+
+      captain: And what did this ghost look like?'
+    timestep: 00:01:07
+num_episodes: 293264
+num_examples: 293264
