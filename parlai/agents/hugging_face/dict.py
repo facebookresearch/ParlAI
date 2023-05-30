@@ -13,7 +13,6 @@ from typing import List
 from parlai.core.dict import DictionaryAgent
 from parlai.core.opt import Opt
 from parlai.utils.io import PathManager
-import parlai.utils.logging as logging
 
 
 try:

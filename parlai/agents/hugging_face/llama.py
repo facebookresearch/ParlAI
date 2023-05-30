@@ -212,7 +212,6 @@ class LlamaAgent(TorchGeneratorAgent):
 
     Llama comes in multiple sizes: 1.5B, 2.7B, 7B 30B, 65B. Use the
     flag `--llama-size` to choose the size.
-
     """
 
     @classmethod
@@ -321,7 +320,7 @@ class ParlaiLlamaClassifierAgent(TorchClassifierAgent):
     weights from Hugging Face. Read more about this model here
     <https://huggingface.co/transformers/model_doc/llama.html>.
 
-    parlai i -m parlai.agents.hugging_face.llama:ParlaiLlamaClassifierAgent --classes __notok__ __ok__
+    parlai em -m parlai.agents.hugging_face.llama:ParlaiLlamaClassifierAgent --classes __notok__ __ok__
     """
 
     @classmethod
