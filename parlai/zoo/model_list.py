@@ -46,6 +46,23 @@ There are a number of guidelines you should follow in the zoo:
 """
 
 model_list = [
+        {
+        "title": "Generative Pre-trained Transformer 3",
+        "id": "gpt3",
+        "path": "zoo:gpt3/model",
+        "description": ("An API wrapper around OpenAI's GPT-3 Model."),
+        "example": (
+            "parlai interactive -m gpt3 --openai-api-key <your_openai_api_key> --max-tokens 40 --model-name text-davinci-003"
+        ),
+        "result": (
+            """
+            [context]: Hi!
+            [Gpt3Agent_1]: Hello human!
+            [Gpt3Agent_2]: Hello human!
+            """ 
+        ),
+        "project": "https://platform.openai.com/docs/models/gpt-3",
+    },
     {
         "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
         "id": "wikipedia_full",
