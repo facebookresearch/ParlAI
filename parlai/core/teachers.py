@@ -1841,8 +1841,8 @@ class AbstractImageTeacher(FixedDialogTeacher):
         available_model_names = self.get_available_image_mode_names()
         if a not in available_model_names:
             raise argparse.ArgumentTypeError(
-                '\"%s\" unknown image model name. Choose from: %s. Currently suggested resnet is resnet152 and resnext is resnext101_32x48d_wsl.'
-                % (a, available_model_names)
+                f'"{a}" unknown image model name. Choose from: {available_model_names}.'
+                'Currently suggested resnet is resnet152 and resnext is resnext101_32x48d_wsl.'
             )
         return a
 
