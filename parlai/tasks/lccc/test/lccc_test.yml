@@ -4,25 +4,55 @@ acts:
     - 去相机家里吃……
     id: lccc
     text: 我饿了。
+    x_turn:
+      id: partner1
+      text: 我饿了。
+    y_turn:
+      id: partner2
+      text: 去相机家里吃……
 - - episode_done: true
     eval_labels:
     - 你过来我们什么关系
     id: lccc
     text: 网络大实话里说的是也许你能在网络里找到你想要的友情但永远不会找到你想要的爱情
+    x_turn:
+      id: partner1
+      text: 网络大实话里说的是也许你能在网络里找到你想要的友情但永远不会找到你想要的爱情
+    y_turn:
+      id: partner2
+      text: 你过来我们什么关系
 - - episode_done: true
     eval_labels:
     - 我不挑食
     id: lccc
     text: 老铁家好吃贾三不好吃
+    x_turn:
+      id: partner1
+      text: 老铁家好吃贾三不好吃
+    y_turn:
+      id: partner2
+      text: 我不挑食
 - - episode_done: true
     eval_labels:
     - 死鱼皮真会安慰人那不是翘臀是肥肉不！是赘肉！
     id: lccc
     text: 你有翘臀啊！！！！你的脸还不够小啊？？？？？
+    x_turn:
+      id: partner1
+      text: 你有翘臀啊！！！！你的脸还不够小啊？？？？？
+    y_turn:
+      id: partner2
+      text: 死鱼皮真会安慰人那不是翘臀是肥肉不！是赘肉！
 - - episode_done: false
     eval_labels:
     - 哈哈哈快到南方来
     id: lccc
     text: 好羡慕原来你们那真的可以光腿
+    x_turn:
+      id: partner1
+      text: 好羡慕原来你们那真的可以光腿
+    y_turn:
+      id: partner2
+      text: 哈哈哈快到南方来
 num_episodes: 10000
 num_examples: 12943
