@@ -1698,4 +1698,15 @@ task_list = [
             + "clauses and rules imply."
         ),
     },
+    {
+        "id": "MultiLIGHT",
+        "display_name": "Multi-party LIGHT",
+        "task": "light_multiparty",
+        "tags": ["All", "ChitChat"],
+        "links": {
+            "paper": "https://arxiv.org/pdf/2304.13835.pdf",
+            "website": "http://parl.ai/projects/light_multiparty",
+        },
+        "description": "Multi-party async conversation between 3 role-playing characters.",
+    },
 ]
