@@ -1733,8 +1733,8 @@ class ConversationTeacher(DialogTeacher):
             turn['text'] = xturn.get('text')
             turn['labels'] = [yturn.get('text')]
 
-            turn['x_turn'] = xturn
-            turn['y_turn'] = yturn
+            turn['x_turn'] = dict(xturn)
+            turn['y_turn'] = dict(yturn)
 
             eps.append(turn)
         return eps
