@@ -68,7 +68,7 @@ Note: The display dataset commands were auto generated, so please visit [here](h
 
 ## Evaluation Results
 
-For evalution, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information
+For evaluation, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information
 
 
 We used the metric `class notok f1`, the f1 scores for the class notok as the validation metric. Recall that `class___notok___f1` is unigram F1 overlap, under a standardized (model-independent) tokenizer.
