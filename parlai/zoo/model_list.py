@@ -1424,8 +1424,15 @@ model_list = [
         "agent": "projects.style_gen.classifier:ClassifierAgent",
         "task": "style_gen:LabeledBlendedSkillTalk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
-        "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance as the sole context.",
-        "example": "parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk --model-file zoo:style_gen/curr_only_classifier/model --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file",
+        "description": (
+            "Classifier trained on Image-Chat turns 2 and 3 to classify the personality"
+            " of an example given that utterance as the sole context."
+        ),
+        "example": """
+        parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk \
+            --model-file zoo:style_gen/curr_only_classifier/model \
+            --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file
+        """,
         "result": """
 16:46:41 | Finished evaluating tasks ['style_gen:CurrUttOnlyStyle'] using datatype valid
     accuracy  bleu-4  <PER_CLASS_METRICS_SNIPPED>  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   tpb   tps  \
