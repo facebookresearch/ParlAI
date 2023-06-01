@@ -13,42 +13,48 @@ Current dialogue research primarily studies pairwise (two-party) conversations, 
 
 ## Data
 
-We designed a new crowdsourcing task ([link](https://github.com/facebookresearch/LIGHT/tree/main/crowdsourcing/dialogues/multi_party_chat)) and collected a new dataset.
-Data is available via a ParlAI style teacher in [LIGHT](https://github.com/facebookresearch/LIGHT).
-```.sh
-light dd -t light:multilight \
---add-location-to-context true \
---add-personas-to-context true
-```
-See [this](https://github.com/facebookresearch/LIGHT/tree/main/light/modeling/tasks/multilight
-) for more details on available teachers and their flags.
+There are three types of teachers in this task. Two of them focus on the utterances and conversation content, the other one on predicting the next speaker.
 
-Rendered sample data:
+1. Utterances from all the characters:
+```.sh
+parlai dd -t light_multiparty --add-location-to-context true --add-personas-to-context true
+```
+
+2. Utterances from a single character only:
+```.sh
+parlai dd -t light_multiparty:FirstSpeakerTeacher --add-location-to-context true --add-personas-to-context true
+```
+
+3. Predicting the speaker for the next turn:
+```.sh
+parlai dd -t light_multiparty:SpeakerPredictionTeacher --add-location-to-context true --add-personas-to-context true
+```
+
+See the [agent](https://github.com/facebookresearch/ParlAI/blob/main/parlai/tasks/light_multiparty/agents.py) for up-to-date details on available teachers and flags.
+
+### Rendered sample
 <p align="center"><img width="50%" src="DatasetExample.png" /></p>
 
 ## Models
 
-We released three models from this project.
-These are the our best performing models that were included in our human evaulation.
+We released three models from this project:
 
-* `utterance_3B`: the best performing *Utterance only* model trained on LIGHT, LIGHT Wild and MultiLIGHT, multi-tasked (3B parameters size).
-* `utterance_400m`: the best performing *Utterance only* model trained on LIGHT, LIGHT Wild and MultiLIGHT, multi-tasked (400m parameters size).
-* `speaker`: predicts the next speaker (based on BART-large).
+* `zoo:multilight/utterance_3B/model`: the best performing *Utterance only* model trained on LIGHT, LIGHT Wild and MultiLIGHT, multi-tasked (3B parameters size).
+* `zoo:multilight/utterance_400m/model`: the best performing *Utterance only* model trained on LIGHT, LIGHT Wild and MultiLIGHT, multi-tasked (400m parameters size).
+* `zoo:multilight/speaker/model`: predicts the next speaker.
+
+`zoo:multilight/utterance_3B/model` and `zoo:multilight/speaker/model` were used in our human evals as reported in the paper.
 
 ### Running models
 
 You can run these models with the existing ParlAI dataset, for example
 ```.sh
-parlai eval_model -mf zoo:multilight/utterance_3B/model --task wizard_of_internet
+parlai eval_model -mf zoo:multilight/utterance_3B/model \
+--task light_multiparty --add-location-to-context true --add-personas-to-context true
 ```
 
-> *Note*: Due match the data distribution (location and persona descriptions, and their keywords, character names etc., you may not get high performance).
-
-The main dataset that were are fine-tuned on is available in LIGHT.
-You are able to run these models with commands templates identical to ParlAI, for example:
-
-```.sh
-light eval_model -mf zoo:multilight/utterance_3B/model -t light:multilight \
---add-location-to-context true --add-personas-to-context true \
---include-speaker-in-label false --add-speaker-to-context-end true
-```
+Utterance models performance on all character teachers:
+| utterance model                     | PPL   |
+|-------------------------------------|-------|
+| zoo:multilight/utterance_3B/model   | 13.25 |
+| zoo:multilight/utterance_400m/model | 15.08 |
