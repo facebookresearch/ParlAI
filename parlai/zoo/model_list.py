@@ -3060,4 +3060,68 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             [Bart]: I am an AI researcher. I love my job.
         """,
     },
+    {
+        "title": "Multi-party speaker prediction",
+        "id": "multilight",
+        "path": "zoo:multilight/speaker/model",
+        "agent": "bart",
+        "task": "light_multiparty:SpeakerPrediction",
+        "project": "https://parl.ai/projects/multilight",
+        "description": (
+            "Predicts the most plausible next speaker at any point during a three-player conversation in LIGHT."
+        ),
+        "example": (
+            """
+            parlai eval_model --model-file zoo:multilight/speaker/model --task light_multiparty:SpeakerPrediction \
+                --add-location-to-context true --add-personas-to-context true --include-speaker-in-label false
+            """
+        ),
+        "result": """
+            Report for light_multiparty:SpeakerPrediction:
+            clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  ppl  token_acc  token_em   tpb  tps
+            473.5 420.2  6130   .4140      54.44 14.59 11005    .1218 3.091 .3438 5e-10 3.091 45.09       0          0 1.41      .8462     .5256 423.3 6175
+            """,  # noqa: E501
+    },
+    {
+        "title": "Multi-party utterance only 3B",
+        "id": "multilight",
+        "path": "zoo:multilight/utterance_3B/model",
+        "agent": "bart",
+        "task": "light_multiparty",
+        "project": "https://parl.ai/projects/multilight",
+        "description": ("Utterance generation model for the multi-party LIGHT game."),
+        "example": (
+            """
+            parlai eval_model --model-file zoo:multilight/utterance_3B/model --task light_multiparty \
+                --add-location-to-context true --add-personas-to-context true --include-speaker-in-label false --add-speaker-to-context-end true
+            """
+        ),
+        "result": """
+            Report for light_multiparty:
+            clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em  tpb  tps
+            478.6 423.2  5603   .4249      56.58 13.24 11005    .7931 15.83 2.584 5e-07 15.83 209.6       0          0 13.25      .4308         0  439 5813
+            """,  # noqa: E501
+    },
+    {
+        "title": "Multi-party utterance only 400m",
+        "id": "multilight",
+        "path": "zoo:multilight/utterance_400m/model",
+        "agent": "bart",
+        "task": "light_multiparty",
+        "project": "https://parl.ai/projects/multilight",
+        "description": (
+            "Utterance generation model for the multi-party LIGHT game. This is the smaller version of the original 3B model presented in the paper."
+        ),
+        "example": (
+            """
+            parlai eval_model --model-file zoo:multilight/utterance_400m/model --task light_multiparty \
+                --add-location-to-context true --add-personas-to-context true --include-speaker-in-label false --add-speaker-to-context-end true
+            """
+        ),
+        "result": """
+            Report for light_multiparty:
+            clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb  tps
+            477.6 422.6  7264   .4222      56.16 17.19 11005    .1204 15.83 2.714 1e-06 15.83 272.1       0          0 15.08      .4140         0 438.4 7536
+            """,  # noqa: E501
+    },
 ]
