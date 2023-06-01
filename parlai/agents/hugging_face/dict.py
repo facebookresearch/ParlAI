@@ -20,7 +20,7 @@ try:
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
-        "Try `pip install transformers`."
+        "Try `pip install transformers --upgrade`."
     )
 
 SPECIAL_TOKENS = {
