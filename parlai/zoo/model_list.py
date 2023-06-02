@@ -46,23 +46,6 @@ There are a number of guidelines you should follow in the zoo:
 """
 
 model_list = [
-        {
-        "title": "Generative Pre-trained Transformer 3",
-        "id": "gpt3",
-        "path": "zoo:gpt3/model",
-        "description": ("An API wrapper around OpenAI's GPT-3 Model."),
-        "example": (
-            "parlai interactive -m gpt3 --openai-api-key <your_openai_api_key> --max-tokens 40 --model-name text-davinci-003"
-        ),
-        "result": (
-            """
-            [context]: Hi!
-            [Gpt3Agent_1]: Hello human!
-            [Gpt3Agent_2]: Hello human!
-            """ 
-        ),
-        "project": "https://platform.openai.com/docs/models/gpt-3",
-    },
     {
         "title": "Wikipedia Retriever (used for Wizard of Wikipedia)",
         "id": "wikipedia_full",
@@ -3149,5 +3132,23 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb  tps
             477.6 422.6  7264   .4222      56.16 17.19 11005    .1204 15.83 2.714 1e-06 15.83 272.1       0          0 15.08      .4140         0 438.4 7536
             """,  # noqa: E501
+    },
+    {
+        "title": "Generative Pre-trained Transformer 3",
+        "id": "gpt3",
+        "path": "zoo:gpt3/model",
+        "task": "TBD",
+        "description": ("An API wrapper around OpenAI's GPT-3 Model."),
+        "example": (
+            "parlai interactive -m gpt3 --openai-api-key <your_openai_api_key> --max-tokens 40 --model-name text-davinci-003"
+        ),
+        "result": (
+            """
+            [context]: Hi!
+            [Gpt3Agent_1]: Hello human!
+            [Gpt3Agent_2]: Hello human!
+            """ 
+        ),
+        "project": "https://platform.openai.com/docs/models/gpt-3",
     },
 ]
