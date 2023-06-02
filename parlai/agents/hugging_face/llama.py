@@ -26,13 +26,6 @@ def setup_llama_args(parser):
     if parser is None:
         return parser
     parser.add_argument(
-        "--llama-size",
-        type=str,
-        default="1.5B",
-        choices=["1.5B", "7B", "30B", "65B"],
-        help="Which size model to initialize.",
-    )
-    parser.add_argument(
         "--llama-model-dir",
         type=str,
         default=None,
@@ -149,7 +142,7 @@ class ParlaiLlamaForCausalLM(TorchGeneratorModel):
     Llama is a multi-layer decoder-only Transformer. As such, the encoder
     is simply an identity layer. The decoder is initialized with pretrained
     weights from the original Llama Model. Read more about this model here
-    <https://huggingface.co/transformers/model_doc/llama.html>.
+    <https://huggingface.co/docs/transformers/main/model_doc/llama>.
     """
 
     def __init__(self, opt, dict):
@@ -208,10 +201,7 @@ class LlamaAgent(TorchGeneratorAgent):
     LlamaForCausalLM is a multi-layer decoder-only Transformer.
     The decoder is initialized with pretrained weights from Hugging Face.
     Read more about this model here
-    <https://huggingface.co/transformers/model_doc/llama.html>.
-
-    Llama comes in multiple sizes: 1.5B, 2.7B, 7B 30B, 65B. Use the
-    flag `--llama-size` to choose the size.
+    <https://huggingface.co/docs/transformers/main/model_doc/llama>.
     """
 
     @classmethod
@@ -318,7 +308,7 @@ class ParlaiLlamaClassifierAgent(TorchClassifierAgent):
     Llama is a multi-layer decoder-only Transformer. As such, the encoder
     is simply an identity layer. The decoder is initialized with pretrained
     weights from Hugging Face. Read more about this model here
-    <https://huggingface.co/transformers/model_doc/llama.html>.
+    <https://huggingface.co/docs/transformers/main/model_doc/llama>.
 
     parlai em -m parlai.agents.hugging_face.llama:ParlaiLlamaClassifierAgent --classes __notok__ __ok__
     """

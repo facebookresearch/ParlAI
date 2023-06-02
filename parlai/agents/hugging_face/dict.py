@@ -16,7 +16,7 @@ from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer, T5TokenizerFast, LlamaTokenizer
+    from transformers import GPT2Tokenizer, T5TokenizerFast, LlamaTokenizerFast
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
@@ -35,18 +35,12 @@ NO_OP = "x"
 
 def _init_llama_path(opt):
     # load model path
-    model_size = opt['llama_size']
-    model_key = f'llama-{model_size}'
-
+    fle_key = opt['llama_model_dir']
     # check if datapath has the files that hugging face code looks for
-    hf_dir = os.path.join(opt["datapath"], "hf", model_key)
-    if all(
-        PathManager.exists(os.path.join(hf_dir, file_name))
-        for file_name in ["pytorch_model.bin", "config.json"]
-    ):
-        fle_key = PathManager.get_local_path(hf_dir, recursive=True)
-    else:
-        fle_key = opt['llama_model_dir']
+    assert all(
+        PathManager.exists(os.path.join(fle_key, file_name))
+        for file_name in ["pytorch_model.bin", "config.json", "tokenizer.model"]
+    )
     return fle_key
 
 
@@ -295,8 +289,7 @@ class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
         """
         Instantiate tokenizer.
         """
-        ## TODO LlamaTokenizerFast?
-        return LlamaTokenizer.from_pretrained(_init_llama_path(opt))
+        return LlamaTokenizerFast.from_pretrained(_init_llama_path(opt))
 
     def override_special_tokens(self, opt):
         self.hf_tokenizer.add_special_tokens({"pad_token": "<pad>"})
