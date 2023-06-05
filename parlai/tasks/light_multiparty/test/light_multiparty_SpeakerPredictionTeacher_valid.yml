@@ -1,0 +1,206 @@
+acts:
+- - characters:
+    - princess
+    - unicorn hunters
+    - king
+    episode_done: true
+    eval_labels:
+    - princess
+    full_context:
+    - 'unicorn hunters: It is great to be in such a wonderful place. '
+    id: SpeakerPrediction
+    label_candidates:
+    - princess
+    - unicorn hunters
+    - king
+    location:
+      description: The unicorn palace is so beautiful! It is covered in pastel colors,
+        and wherever you look they form a rainbow.  The floor is made of special glittering
+        grass that the unicorns feed on.
+      name: Inside the Unicorn palace
+    personas:
+    - name: princess
+      persona: My mother is the queen.  I will be queen one day.  The kingdom will
+        be mine soon enough.  I to wear jewels.
+    - name: unicorn hunters
+      persona: I am a unicorn hunter who is very brave and loyal . I travel around
+        the world looking for unicorns . I eat unicorn meat and take the horns for
+        magic.
+    - name: king
+      persona: I am ruler over all I see.  I think my subjects admire me.  I love
+        gold.
+    quality_tier: 1
+    speaker: princess
+    speaker_id: 1
+    speaker_worker_tier: 1
+    text: 'unicorn hunters: It is great to be in such a wonderful place. '
+    timestep: 00:00:06
+- - characters:
+    - princess
+    - unicorn hunters
+    - king
+    episode_done: true
+    eval_labels:
+    - king
+    full_context:
+    - 'unicorn hunters: It is great to be in such a wonderful place. '
+    - 'princess: Oh yes of course!'
+    id: SpeakerPrediction
+    label_candidates:
+    - princess
+    - unicorn hunters
+    - king
+    location:
+      description: The unicorn palace is so beautiful! It is covered in pastel colors,
+        and wherever you look they form a rainbow.  The floor is made of special glittering
+        grass that the unicorns feed on.
+      name: Inside the Unicorn palace
+    personas:
+    - name: princess
+      persona: My mother is the queen.  I will be queen one day.  The kingdom will
+        be mine soon enough.  I to wear jewels.
+    - name: unicorn hunters
+      persona: I am a unicorn hunter who is very brave and loyal . I travel around
+        the world looking for unicorns . I eat unicorn meat and take the horns for
+        magic.
+    - name: king
+      persona: I am ruler over all I see.  I think my subjects admire me.  I love
+        gold.
+    quality_tier: 1
+    speaker: king
+    speaker_id: 3
+    speaker_worker_tier: 1
+    text: "unicorn hunters: It is great to be in such a wonderful place. \nprincess:\
+      \ Oh yes of course!"
+    timestep: 00:00:17
+- - characters:
+    - princess
+    - unicorn hunters
+    - king
+    episode_done: true
+    eval_labels:
+    - princess
+    full_context:
+    - 'unicorn hunters: It is great to be in such a wonderful place. '
+    - 'princess: Oh yes of course!'
+    - 'king: I am proud to call this my place! '
+    id: SpeakerPrediction
+    label_candidates:
+    - princess
+    - unicorn hunters
+    - king
+    location:
+      description: The unicorn palace is so beautiful! It is covered in pastel colors,
+        and wherever you look they form a rainbow.  The floor is made of special glittering
+        grass that the unicorns feed on.
+      name: Inside the Unicorn palace
+    personas:
+    - name: princess
+      persona: My mother is the queen.  I will be queen one day.  The kingdom will
+        be mine soon enough.  I to wear jewels.
+    - name: unicorn hunters
+      persona: I am a unicorn hunter who is very brave and loyal . I travel around
+        the world looking for unicorns . I eat unicorn meat and take the horns for
+        magic.
+    - name: king
+      persona: I am ruler over all I see.  I think my subjects admire me.  I love
+        gold.
+    quality_tier: 1
+    speaker: princess
+    speaker_id: 1
+    speaker_worker_tier: 1
+    text: "unicorn hunters: It is great to be in such a wonderful place. \nprincess:\
+      \ Oh yes of course!\nking: I am proud to call this my place! "
+    timestep: 00:00:29
+- - characters:
+    - princess
+    - unicorn hunters
+    - king
+    episode_done: true
+    eval_labels:
+    - unicorn hunters
+    full_context:
+    - 'unicorn hunters: It is great to be in such a wonderful place. '
+    - 'princess: Oh yes of course!'
+    - 'king: I am proud to call this my place! '
+    - 'princess: Just look out upon the hills, the rolling hills!  The kingdom that
+      is all mine!  It is nearly as beautiful as my glimmering jewels!'
+    id: SpeakerPrediction
+    label_candidates:
+    - princess
+    - unicorn hunters
+    - king
+    location:
+      description: The unicorn palace is so beautiful! It is covered in pastel colors,
+        and wherever you look they form a rainbow.  The floor is made of special glittering
+        grass that the unicorns feed on.
+      name: Inside the Unicorn palace
+    personas:
+    - name: princess
+      persona: My mother is the queen.  I will be queen one day.  The kingdom will
+        be mine soon enough.  I to wear jewels.
+    - name: unicorn hunters
+      persona: I am a unicorn hunter who is very brave and loyal . I travel around
+        the world looking for unicorns . I eat unicorn meat and take the horns for
+        magic.
+    - name: king
+      persona: I am ruler over all I see.  I think my subjects admire me.  I love
+        gold.
+    quality_tier: 1
+    speaker: unicorn hunters
+    speaker_id: 2
+    speaker_worker_tier: 1
+    text: "unicorn hunters: It is great to be in such a wonderful place. \nprincess:\
+      \ Oh yes of course!\nking: I am proud to call this my place! \nprincess: Just\
+      \ look out upon the hills, the rolling hills!  The kingdom that is all mine!\
+      \  It is nearly as beautiful as my glimmering jewels!"
+    timestep: 00:00:34
+- - characters:
+    - princess
+    - unicorn hunters
+    - king
+    episode_done: true
+    eval_labels:
+    - king
+    full_context:
+    - 'unicorn hunters: It is great to be in such a wonderful place. '
+    - 'princess: Oh yes of course!'
+    - 'king: I am proud to call this my place! '
+    - 'princess: Just look out upon the hills, the rolling hills!  The kingdom that
+      is all mine!  It is nearly as beautiful as my glimmering jewels!'
+    - 'unicorn hunters: I dont know what I have done to deserve to be in the presence
+      of royalty. I am glad I am here. '
+    id: SpeakerPrediction
+    label_candidates:
+    - princess
+    - unicorn hunters
+    - king
+    location:
+      description: The unicorn palace is so beautiful! It is covered in pastel colors,
+        and wherever you look they form a rainbow.  The floor is made of special glittering
+        grass that the unicorns feed on.
+      name: Inside the Unicorn palace
+    personas:
+    - name: princess
+      persona: My mother is the queen.  I will be queen one day.  The kingdom will
+        be mine soon enough.  I to wear jewels.
+    - name: unicorn hunters
+      persona: I am a unicorn hunter who is very brave and loyal . I travel around
+        the world looking for unicorns . I eat unicorn meat and take the horns for
+        magic.
+    - name: king
+      persona: I am ruler over all I see.  I think my subjects admire me.  I love
+        gold.
+    quality_tier: 1
+    speaker: king
+    speaker_id: 3
+    speaker_worker_tier: 1
+    text: "unicorn hunters: It is great to be in such a wonderful place. \nprincess:\
+      \ Oh yes of course!\nking: I am proud to call this my place! \nprincess: Just\
+      \ look out upon the hills, the rolling hills!  The kingdom that is all mine!\
+      \  It is nearly as beautiful as my glimmering jewels!\nunicorn hunters: I dont\
+      \ know what I have done to deserve to be in the presence of royalty. I am glad\
+      \ I am here. "
+    timestep: 00:00:59
+num_episodes: 11005
+num_examples: 11005

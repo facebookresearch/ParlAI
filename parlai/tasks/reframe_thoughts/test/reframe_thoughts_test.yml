@@ -1,0 +1,70 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - My neighbor calls me by my first name instead of my nickname. He may think he
+      doesn't know me well enough to use it. I will let him know that I don't mind
+      if he calls me Bubblegum.
+    id: reframe_thoughts
+    text: 'i''ve found the cure for the common cold . my nickname is bubblegum . i
+      am plotting on taking over the world . my brother and i''ve bright red hair
+      . [PAT] Jumping to conclusions: mind reading (Inferring a person''s possible
+      or probable (usually negative) thoughts from their behavior and nonverbal communication;
+      taking precautions against the worst suspected case without asking the person.
+
+      ) [THT] My neighbor calls me by my first name instead of my nickname. He probably
+      thinks bubblegum is a tacky nickname.'
+- - episode_done: true
+    eval_labels:
+    - My neighbor calls me by my silly first name, but since it's my name he is obliged
+      to call me by it.
+    id: reframe_thoughts
+    text: 'i''ve found the cure for the common cold . my nickname is bubblegum . i
+      am plotting on taking over the world . my brother and i''ve bright red hair
+      . [PAT] Jumping to conclusions: mind reading (Inferring a person''s possible
+      or probable (usually negative) thoughts from their behavior and nonverbal communication;
+      taking precautions against the worst suspected case without asking the person.
+
+      ) [THT] My neighbor calls me by my first name instead of my nickname. He probably
+      thinks bubblegum is a tacky nickname.'
+- - episode_done: true
+    eval_labels:
+    - My neighbor calls me by my first name instead of my nickname. He is such a formal
+      gentleman.
+    id: reframe_thoughts
+    text: 'i''ve found the cure for the common cold . my nickname is bubblegum . i
+      am plotting on taking over the world . my brother and i''ve bright red hair
+      . [PAT] Jumping to conclusions: mind reading (Inferring a person''s possible
+      or probable (usually negative) thoughts from their behavior and nonverbal communication;
+      taking precautions against the worst suspected case without asking the person.
+
+      ) [THT] My neighbor calls me by my first name instead of my nickname. He probably
+      thinks bubblegum is a tacky nickname.'
+- - episode_done: true
+    eval_labels:
+    - My wife recently got laid off from her job and since I'm creating my own start
+      up company she can come to work with me now instead of having to worry about
+      looking for another one.
+    id: reframe_thoughts
+    text: 'i design video games for a living . my wife recently got laid off from
+      her human resources job . my son plays on the local football team . i have been
+      on the design team for over 65 video games . i am trying to create my own startup
+      company in the gaming industry . [PAT] Catastrophizing (Catastrophizing: Giving
+      greater weight to the worst possible outcome, however unlikely, or experiencing
+      a situation as unbearable or impossible when it is just uncomfortable.) [THT]
+      My wife recently got laid off from her huyman resources job, she''ll never be
+      able to find another job and we will lose our house soon.'
+- - episode_done: true
+    eval_labels:
+    - My wife recently got laid off from her human resources job. I'm sure she will
+      be able to find another job soon.
+    id: reframe_thoughts
+    text: 'i design video games for a living . my wife recently got laid off from
+      her human resources job . my son plays on the local football team . i have been
+      on the design team for over 65 video games . i am trying to create my own startup
+      company in the gaming industry . [PAT] Catastrophizing (Catastrophizing: Giving
+      greater weight to the worst possible outcome, however unlikely, or experiencing
+      a situation as unbearable or impossible when it is just uncomfortable.) [THT]
+      My wife recently got laid off from her huyman resources job, she''ll never be
+      able to find another job and we will lose our house soon.'
+num_episodes: 18635
+num_examples: 18635

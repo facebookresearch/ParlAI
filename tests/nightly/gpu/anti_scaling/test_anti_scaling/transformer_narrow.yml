@@ -6,5 +6,5 @@ enc_emb_loss: 0.00210945
 enc_hid_loss: 0.279337
 enc_loss: 0.284342
 enc_self_attn_loss: 371.567
-loss: 11.7944
+loss: 11.7943
 pred_loss: 6.80161

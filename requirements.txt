@@ -1,4 +1,4 @@
-# comment to bump caches
+# Comment to bump caches
 coloredlogs==14.0
 datasets<2.2.2,>=1.4.1
 docutils<0.16,>=0.14
@@ -9,20 +9,19 @@ flake8-bugbear==19.8.0
 flake8==3.7.8
 fuzzywuzzy==0.18.0
 google-cloud-storage==1.43.0
-importlib-metadata<4.3
 iopath~=0.1.8
 gitdb2==2.0.5
 GitPython==3.0.3
 hydra-core>=1.1.0
 ipython==7.31.1
-torch==1.13.1
-torchvision==0.14.1
+torch==2.0.0
+torchvision==0.15.1
 joblib==1.2.0
 nltk==3.6.6
 omegaconf>=2.1.1
 pandas==1.4.0
-pytest_regressions==2.1.1
-pytest==5.3.2
+pytest_regressions==2.4.2
+pytest==7.3.0
 pexpect==4.7.0
 Pillow==9.3.0
 py-gfm==1.0.2
@@ -30,7 +29,7 @@ py-rouge==1.1
 pyyaml==5.4
 pyzmq==18.1.0
 regex>=2021.8.3
-myst-parser~=0.12.2
+myst-parser<1
 attrs~=20.2.0
 requests-mock==1.7.0
 requests<3,>=2.21.0
@@ -39,15 +38,15 @@ scipy==1.8.0
 sh==1.12.14
 sphinx_rtd_theme==0.4.3
 sphinx-autodoc-typehints~=1.10.3
-Sphinx~=2.2.0
+Sphinx~=5.1.0
 subword-nmt==0.3.7
 tensorboardX<=2.5.0
 tokenizers>=0.8.0
 tomli>=2.0.0
-torchtext==0.14.1
-tornado==6.0.4
+torchtext==0.15.1
+tornado==6.3.2
 tqdm~=4.62.1
-typing-extensions==3.7.4.3
+typing-extensions==4.5.0
 Unidecode==1.1.1
 urllib3<1.27,>=1.26.5
 websocket-client==0.56.0

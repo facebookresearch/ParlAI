@@ -5,24 +5,23 @@
  */
 
 var path = require("path");
-var webpack = require("webpack");
 
 module.exports = {
   entry: "./src/main.js",
   output: {
     path: __dirname,
     filename: "build/bundle.js",
-    hashFunction: "sha256",
+    hashFunction: "sha256"
   },
   node: {
     net: "empty",
-    dns: "empty",
+    dns: "empty"
   },
   resolve: {
     alias: {
       react: path.resolve("./node_modules/react"),
-      "mephisto-task": path.resolve("./node_modules/mephisto-task"),
-    },
+      "mephisto-task": path.resolve("./node_modules/mephisto-task")
+    }
   },
   module: {
     rules: [
@@ -30,20 +29,20 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: "babel-loader",
         exclude: /node_modules/,
-        options: { presets: ["@babel/env"] },
+        options: { presets: ["@babel/env"] }
       },
       {
         test: /\.css$/,
-        loader: "style-loader!css-loader",
+        loader: "style-loader!css-loader"
       },
       {
         test: /\.(svg|png|jpe?g|ttf)$/,
-        loader: "url-loader?limit=100000",
+        loader: "url-loader?limit=100000"
       },
       {
         test: /\.jpg$/,
-        loader: "file-loader",
-      },
-    ],
-  },
+        loader: "file-loader"
+      }
+    ]
+  }
 };

@@ -1,12 +1,13 @@
 /*********************************************
-* @ Jessica Huynh, Ting-Rui Chiang, Kyusong Lee 
-* Carnegie Mellon University 2022
-*********************************************/
+ * @ Jessica Huynh, Ting-Rui Chiang, Kyusong Lee
+ * Carnegie Mellon University 2022
+ *********************************************/
 
 import React from "react";
-import {Button, Modal, Divider, Tooltip} from 'antd';
-import {QuestionCircleOutlined} from '@ant-design/icons';
+import { Button, Modal, Divider, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
+/* eslint-disable react/jsx-key */
 
 class InstructionModal extends React.Component {
   /* Render instruction panel for worker
@@ -14,27 +15,30 @@ class InstructionModal extends React.Component {
    * @{bool} initState: Whether the window is visible or not.
    * question
    */
-  constructor (props) {
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       visible: this.props.initState || false
     };
   }
-  
+
   render() {
     const visible = this.state.visible || this.state.forceShow;
-    const checkboxes = this.props.handleAccept || this.close;
 
     const footer = (
-      <Button key="accept" type="primary"
-              closable="false" onClick={this.close}>
+      <Button key="accept" type="primary" closable="false" onClick={this.close}>
         Close
       </Button>
     );
 
     return (
       <>
-        <a onClick={ () => {this.setState({visible: true})} } style={{fontSize: '0.8em'}}>
+        <a
+          onClick={() => {
+            this.setState({ visible: true });
+          }}
+          style={{ fontSize: "0.8em" }}
+        >
           <QuestionCircleOutlined />
           &nbsp; show instruction
         </a>
@@ -50,7 +54,7 @@ class InstructionModal extends React.Component {
           width="80%"
           closable={true}
           maskClosable={false}
-          bodyStyle={{flexGrow: 1}}
+          bodyStyle={{ flexGrow: 1 }}
           centered
           zIndex={1000}
           footer={footer}
@@ -62,113 +66,115 @@ class InstructionModal extends React.Component {
     );
   }
 
-  renderInstruction () {
+  renderInstruction() {
     const styleInst = {
-      color: 'black',
+      color: "black",
       fontSize: 18
     };
     const styleExp = {
-      color: 'black',
+      color: "black",
       fontSize: 16
     };
 
-    return <>
-      <div style={styleInst} >
-        {showInstruction(this.props.question)}
-      </div>
-      <div style={styleExp} >
-        {showExamples(this.props.question)}
-      </div>
-    </>
+    return (
+      <>
+        <div style={styleInst}>{showInstruction(this.props.question)}</div>
+        <div style={styleExp}>{showExamples(this.props.question)}</div>
+      </>
+    );
   }
   close = () => {
-    this.setState({visible: false});
-  }
-
+    this.setState({ visible: false });
+  };
 }
 
-
 function showInstruction(question) {
-  if (question.type == 'Radio') {
+  if (question.type == "Radio") {
     let instructionOpts = [];
     for (let i = 0; i < (question.options || []).length; i += 1) {
       if (question[`instructionOpt${i}`] !== undefined) {
         instructionOpts.push(
           <li>
-            <b><i>{question.options[i].content}</i></b>: &nbsp;
-          {question[`instructionOpt${i}`]}
+            <b>
+              <i>{question.options[i].content}</i>
+            </b>
+            : &nbsp;
+            {question[`instructionOpt${i}`]}
           </li>
-        )          
+        );
       }
     }
 
     if (instructionOpts.length == 0) {
-        return question.instruction;
+      return question.instruction;
     } else {
-        return (<>
+      return (
+        <>
           <p>{question.instruction}</p>
           <span>
-            <ul>
-              {instructionOpts}
-            </ul>
+            <ul>{instructionOpts}</ul>
           </span>
-        </>);
+        </>
+      );
     }
   } else {
     return question.instruction;
   }
 }
 
-
 function showExamples(question) {
   switch (question.type) {
-    case 'Likert Scale': {
-      if ((question.examples || []).length === 0
-          && (question.counterexamples || []).length === 0) {
+    case "Likert Scale": {
+      if (
+        (question.examples || []).length === 0 &&
+        (question.counterexamples || []).length === 0
+      ) {
         return null;
       } else {
-        return <>
-          <div>
-            Examples that strongly agree with the description:
-            <ul>
-              {
-                (question.examples || []).map(
-                  exp => (
-                    <li>
-                      {exp.content}
-                      {exp.explain !== undefined ?
-                       <Tooltip title={exp.explain}>
-                      &nbsp; <sub><a>because...</a></sub>
-                       </Tooltip> : null}
-                    </li>
-                  )
-                )
-              }
-            </ul>
-          </div>
-          <div>
-            Examples that strongly disagree with the description:
-            <ul>
-              {
-                (question.counterexamples || []).map(
-                  exp => (
-                    <li>
-                      {exp.content}
-                      {exp.explain !== undefined ?
-                       <Tooltip title={exp.explain}>
-                      &nbsp; <sub><a>because...</a></sub>
-                       </Tooltip> : null}
-                    </li>
-                  )
-                )
-              }
-            </ul>
-          </div>
-        </>;
+        return (
+          <>
+            <div>
+              Examples that strongly agree with the description:
+              <ul>
+                {(question.examples || []).map(exp => (
+                  <li>
+                    {exp.content}
+                    {exp.explain !== undefined ? (
+                      <Tooltip title={exp.explain}>
+                        &nbsp;{" "}
+                        <sub>
+                          <a>because...</a>
+                        </sub>
+                      </Tooltip>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              Examples that strongly disagree with the description:
+              <ul>
+                {(question.counterexamples || []).map(exp => (
+                  <li>
+                    {exp.content}
+                    {exp.explain !== undefined ? (
+                      <Tooltip title={exp.explain}>
+                        &nbsp;{" "}
+                        <sub>
+                          <a>because...</a>
+                        </sub>
+                      </Tooltip>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </>
+        );
       }
     }
-      
-    case 'Radio': {
+
+    case "Radio": {
       let noExp = true;
       for (let i = 0; i < question.options.length; i += 1) {
         if ((question[`exampleOpt${i}`] || []).length > 0) {
@@ -178,36 +184,41 @@ function showExamples(question) {
       if (noExp) {
         return null;
       }
-      return (<>
-        <Divider> Examples </Divider>
-        { question.options.map(
-          (opt, i) => (
+      return (
+        <>
+          <Divider> Examples </Divider>
+          {question.options.map((opt, i) => (
             <div>
-              Examples for choice <i><b> {opt.content} </b></i>
+              Examples for choice{" "}
+              <i>
+                <b> {opt.content} </b>
+              </i>
               <ul>
-                {
-                  (question[`exampleOpt${i}`] || []).map(
-                    exp => (
-                      <li>
-                        {exp.content}
-                        {exp.explain !== undefined ?
-                         <Tooltip title={exp.explain}>
-                        &nbsp; <sub><a>because...</a></sub>
-                         </Tooltip> : null}
-                      </li>
-                    )
-                  )
-                }
+                {(question[`exampleOpt${i}`] || []).map(exp => (
+                  <li>
+                    {exp.content}
+                    {exp.explain !== undefined ? (
+                      <Tooltip title={exp.explain}>
+                        &nbsp;{" "}
+                        <sub>
+                          <a>because...</a>
+                        </sub>
+                      </Tooltip>
+                    ) : null}
+                  </li>
+                ))}
               </ul>
             </div>
-          )
-        ) }
-      </>);
+          ))}
+        </>
+      );
     }
 
     default: {
-      if ((question.examples || []).length === 0
-        && (question.counterexamples || []).length === 0) {
+      if (
+        (question.examples || []).length === 0 &&
+        (question.counterexamples || []).length === 0
+      ) {
         return null;
       } else {
         return (
@@ -215,45 +226,46 @@ function showExamples(question) {
             <div>
               Examples:
               <ul>
-                {
-                  question.examples.map(
-                    exp => (
-                      <li>
-                        {exp.content}
-                        {exp.explain !== undefined ?
-                         <Tooltip title={exp.explain}>
-                        &nbsp; <sub><a>because...</a></sub>
-                         </Tooltip> : null}
-                      </li>
-                    )
-                  )
-                }
+                {question.examples.map(exp => (
+                  <li>
+                    {exp.content}
+                    {exp.explain !== undefined ? (
+                      <Tooltip title={exp.explain}>
+                        &nbsp;{" "}
+                        <sub>
+                          <a>because...</a>
+                        </sub>
+                      </Tooltip>
+                    ) : null}
+                  </li>
+                ))}
               </ul>
             </div>
             <div>
               Counterexamples:
               <ul>
-                {
-                  question.counterexamples.map(
-                    exp => (
-                      <li>
-                        {exp.content}
-                        {exp.explain !== undefined ?
-                         <Tooltip title={exp.explain}>
-                        &nbsp; <sub><a>because...</a></sub>
-                         </Tooltip> : null}
-                      </li>
-                    )
-                  )
-                }
+                {question.counterexamples.map(exp => (
+                  <li>
+                    {exp.content}
+                    {exp.explain !== undefined ? (
+                      <Tooltip title={exp.explain}>
+                        &nbsp;{" "}
+                        <sub>
+                          <a>because...</a>
+                        </sub>
+                      </Tooltip>
+                    ) : null}
+                  </li>
+                ))}
               </ul>
             </div>
           </>
-        )
-      }      
+        );
+      }
     }
   }
 }
 
+/* eslint-enable react/jsx-key */
 
-export {InstructionModal,};
+export { InstructionModal };
