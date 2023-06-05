@@ -31,6 +31,12 @@ def setup_llama_args(parser):
         default=None,
         help="dir to llama model and tokenizer",
     )
+    parser.add_argument(
+        "--llama-tokenizer-fast",
+        type=bool,
+        default=True,
+        help="whether to load llama fast tokenizer, LlamaTokenizerFast is slower to load but fast in tokenization",
+    )
     parser.set_defaults(
         text_truncate=1792,
         label_truncate=256,

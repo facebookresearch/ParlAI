@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import re
 
 from abc import ABC, abstractmethod, abstractproperty
 from collections import defaultdict
@@ -16,7 +17,12 @@ from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer, T5TokenizerFast, LlamaTokenizerFast
+    from transformers import (
+        GPT2Tokenizer,
+        T5TokenizerFast,
+        LlamaTokenizerFast,
+        LlamaTokenizer,
+    )
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
@@ -37,9 +43,16 @@ def _init_llama_path(opt):
     # load model path
     fle_key = opt['llama_model_dir']
     # check if datapath has the files that hugging face code looks for
-    assert all(
-        PathManager.exists(os.path.join(fle_key, file_name))
-        for file_name in ["pytorch_model.bin", "config.json", "tokenizer.model"]
+    model_pattern = re.compile("pytorch_model.*.bin$")
+    assert (
+        all(
+            PathManager.exists(os.path.join(fle_key, file_name))
+            for file_name in ["config.json", "tokenizer.model"]
+        )
+        and len(
+            [file for file in os.listdir(fle_key) if re.search(model_pattern, file)]
+        )
+        > 0
     )
     return fle_key
 
@@ -289,7 +302,10 @@ class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
         """
         Instantiate tokenizer.
         """
-        return LlamaTokenizerFast.from_pretrained(_init_llama_path(opt))
+        if opt['llama_tokenizer_fast'] is True:
+            return LlamaTokenizerFast.from_pretrained(_init_llama_path(opt))
+        else:
+            return LlamaTokenizer.from_pretrained(_init_llama_path(opt))
 
     def override_special_tokens(self, opt):
         self.hf_tokenizer.add_special_tokens({"pad_token": "<pad>"})
