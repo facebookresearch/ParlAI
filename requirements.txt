@@ -59,3 +59,4 @@ protobuf<=3.20.3, >=3.8.0
 contractions~=0.1.72
 fsspec~=2022.2.0
 google-api-core<=2.11.0
+openai>=0.26.5
