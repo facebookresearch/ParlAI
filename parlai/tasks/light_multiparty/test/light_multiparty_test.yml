@@ -1,0 +1,193 @@
+acts:
+- - characters:
+    - Albino fish, totally blind
+    - bear
+    - undead warrior
+    episode_done: true
+    eval_labels:
+    - 'undead warrior: Bear, there is an albino fish. It looks blind.'
+    full_context:
+    - 'bear: I need to get out of this dark gave and eat I am starving'
+    id: multilight_dialogue_:all_speakers
+    location:
+      description: Its dark, not much light can be seen in this hollow and empty cave
+        site. Its made of stone that has been here seemingly since time began, the
+        walls are hard as diamond, yet black like darkness itself.
+      name: Dark Cave
+    personas:
+    - name: Albino fish, totally blind
+      persona: I am an albino blind fish. I like to swim in a tiny pool. I lost my
+        sight at birth.
+    - name: bear
+      persona: I am a very large mammal. I have a lot of fur and a lot of body fat
+        and muscle. I need to eat a lot of food including river beds full of salmon.
+        I usually hibernate and wake up even hungrier than before.
+    - name: undead warrior
+      persona: I am an undead warrior from the nearby village. I have slain many men.
+        I am decaying and rotting.
+    quality_tier: 1
+    speaker: undead warrior
+    speaker_id: 3
+    speaker_worker_tier: 1
+    text: 'bear: I need to get out of this dark gave and eat I am starving'
+    timestep: 00:00:11
+- - characters:
+    - Albino fish, totally blind
+    - bear
+    - undead warrior
+    episode_done: true
+    eval_labels:
+    - 'Albino fish, totally blind: I am blind, but it''s a good thing you see...'
+    full_context:
+    - 'bear: I need to get out of this dark gave and eat I am starving'
+    - 'undead warrior: Bear, there is an albino fish. It looks blind.'
+    id: multilight_dialogue_:all_speakers
+    location:
+      description: Its dark, not much light can be seen in this hollow and empty cave
+        site. Its made of stone that has been here seemingly since time began, the
+        walls are hard as diamond, yet black like darkness itself.
+      name: Dark Cave
+    personas:
+    - name: Albino fish, totally blind
+      persona: I am an albino blind fish. I like to swim in a tiny pool. I lost my
+        sight at birth.
+    - name: bear
+      persona: I am a very large mammal. I have a lot of fur and a lot of body fat
+        and muscle. I need to eat a lot of food including river beds full of salmon.
+        I usually hibernate and wake up even hungrier than before.
+    - name: undead warrior
+      persona: I am an undead warrior from the nearby village. I have slain many men.
+        I am decaying and rotting.
+    quality_tier: 1
+    speaker: Albino fish, totally blind
+    speaker_id: 1
+    speaker_worker_tier: 1
+    text: 'bear: I need to get out of this dark gave and eat I am starving
+
+      undead warrior: Bear, there is an albino fish. It looks blind.'
+    timestep: 00:00:26
+- - characters:
+    - Albino fish, totally blind
+    - bear
+    - undead warrior
+    episode_done: true
+    eval_labels:
+    - 'bear: I wont eat him I prefer salmon'
+    full_context:
+    - 'bear: I need to get out of this dark gave and eat I am starving'
+    - 'undead warrior: Bear, there is an albino fish. It looks blind.'
+    - 'Albino fish, totally blind: I am blind, but it''s a good thing you see...'
+    id: multilight_dialogue_:all_speakers
+    location:
+      description: Its dark, not much light can be seen in this hollow and empty cave
+        site. Its made of stone that has been here seemingly since time began, the
+        walls are hard as diamond, yet black like darkness itself.
+      name: Dark Cave
+    personas:
+    - name: Albino fish, totally blind
+      persona: I am an albino blind fish. I like to swim in a tiny pool. I lost my
+        sight at birth.
+    - name: bear
+      persona: I am a very large mammal. I have a lot of fur and a lot of body fat
+        and muscle. I need to eat a lot of food including river beds full of salmon.
+        I usually hibernate and wake up even hungrier than before.
+    - name: undead warrior
+      persona: I am an undead warrior from the nearby village. I have slain many men.
+        I am decaying and rotting.
+    quality_tier: 1
+    speaker: bear
+    speaker_id: 2
+    speaker_worker_tier: 1
+    text: 'bear: I need to get out of this dark gave and eat I am starving
+
+      undead warrior: Bear, there is an albino fish. It looks blind.
+
+      Albino fish, totally blind: I am blind, but it''s a good thing you see...'
+    timestep: 00:00:31
+- - characters:
+    - Albino fish, totally blind
+    - bear
+    - undead warrior
+    episode_done: true
+    eval_labels:
+    - 'undead warrior: What is a fish doing in a dark cave anyway?'
+    full_context:
+    - 'bear: I need to get out of this dark gave and eat I am starving'
+    - 'undead warrior: Bear, there is an albino fish. It looks blind.'
+    - 'Albino fish, totally blind: I am blind, but it''s a good thing you see...'
+    - 'bear: I wont eat him I prefer salmon'
+    id: multilight_dialogue_:all_speakers
+    location:
+      description: Its dark, not much light can be seen in this hollow and empty cave
+        site. Its made of stone that has been here seemingly since time began, the
+        walls are hard as diamond, yet black like darkness itself.
+      name: Dark Cave
+    personas:
+    - name: Albino fish, totally blind
+      persona: I am an albino blind fish. I like to swim in a tiny pool. I lost my
+        sight at birth.
+    - name: bear
+      persona: I am a very large mammal. I have a lot of fur and a lot of body fat
+        and muscle. I need to eat a lot of food including river beds full of salmon.
+        I usually hibernate and wake up even hungrier than before.
+    - name: undead warrior
+      persona: I am an undead warrior from the nearby village. I have slain many men.
+        I am decaying and rotting.
+    quality_tier: 1
+    speaker: undead warrior
+    speaker_id: 3
+    speaker_worker_tier: 1
+    text: 'bear: I need to get out of this dark gave and eat I am starving
+
+      undead warrior: Bear, there is an albino fish. It looks blind.
+
+      Albino fish, totally blind: I am blind, but it''s a good thing you see...
+
+      bear: I wont eat him I prefer salmon'
+    timestep: 00:00:45
+- - characters:
+    - Albino fish, totally blind
+    - bear
+    - undead warrior
+    episode_done: true
+    eval_labels:
+    - 'bear: He probably lost his way since he can''t see.'
+    full_context:
+    - 'bear: I need to get out of this dark gave and eat I am starving'
+    - 'undead warrior: Bear, there is an albino fish. It looks blind.'
+    - 'Albino fish, totally blind: I am blind, but it''s a good thing you see...'
+    - 'bear: I wont eat him I prefer salmon'
+    - 'undead warrior: What is a fish doing in a dark cave anyway?'
+    id: multilight_dialogue_:all_speakers
+    location:
+      description: Its dark, not much light can be seen in this hollow and empty cave
+        site. Its made of stone that has been here seemingly since time began, the
+        walls are hard as diamond, yet black like darkness itself.
+      name: Dark Cave
+    personas:
+    - name: Albino fish, totally blind
+      persona: I am an albino blind fish. I like to swim in a tiny pool. I lost my
+        sight at birth.
+    - name: bear
+      persona: I am a very large mammal. I have a lot of fur and a lot of body fat
+        and muscle. I need to eat a lot of food including river beds full of salmon.
+        I usually hibernate and wake up even hungrier than before.
+    - name: undead warrior
+      persona: I am an undead warrior from the nearby village. I have slain many men.
+        I am decaying and rotting.
+    quality_tier: 1
+    speaker: bear
+    speaker_id: 2
+    speaker_worker_tier: 1
+    text: 'bear: I need to get out of this dark gave and eat I am starving
+
+      undead warrior: Bear, there is an albino fish. It looks blind.
+
+      Albino fish, totally blind: I am blind, but it''s a good thing you see...
+
+      bear: I wont eat him I prefer salmon
+
+      undead warrior: What is a fish doing in a dark cave anyway?'
+    timestep: 00:01:00
+num_episodes: 9164
+num_examples: 9164
