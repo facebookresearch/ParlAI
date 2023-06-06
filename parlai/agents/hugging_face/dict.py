@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import re
 
 from abc import ABC, abstractmethod, abstractproperty
 from collections import defaultdict
@@ -16,11 +17,16 @@ from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer, T5TokenizerFast
+    from transformers import (
+        GPT2Tokenizer,
+        T5TokenizerFast,
+        LlamaTokenizerFast,
+        LlamaTokenizer,
+    )
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
-        "Try `pip install transformers`."
+        "Try `pip install transformers --upgrade`."
     )
 
 SPECIAL_TOKENS = {
@@ -31,6 +37,24 @@ SPECIAL_TOKENS = {
 }
 
 NO_OP = "x"
+
+
+def _init_llama_path(opt):
+    # load model path
+    fle_key = opt['llama_model_dir']
+    # check if datapath has the files that hugging face code looks for
+    model_pattern = re.compile("pytorch_model.*.bin$")
+    assert (
+        all(
+            PathManager.exists(os.path.join(fle_key, file_name))
+            for file_name in ["config.json", "tokenizer.model"]
+        )
+        and len(
+            [file for file in os.listdir(fle_key) if re.search(model_pattern, file)]
+        )
+        > 0
+    )
+    return fle_key
 
 
 class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
@@ -246,6 +270,48 @@ class T5DictionaryAgent(HuggingFaceDictionaryAgent):
     def override_special_tokens(self, opt):
         # now override
         self.start_token = self.hf_tokenizer.pad_token
+        self.end_token = self.hf_tokenizer.eos_token
+        self.null_token = self.hf_tokenizer.pad_token
+        self.unk_token = self.hf_tokenizer.unk_token
+
+        self._unk_token_idx = self.hf_tokenizer.unk_token_id
+
+        self.start_idx = self[self.start_token]
+        self.end_idx = self[self.end_token]
+        self.null_idx = self[self.null_token]
+
+
+class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
+    @property
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+
+        Llama default config set add_bos_token = True and add_eos_token = False
+        """
+        return True
+
+    @property
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to skip special tokens when converting tokens to text.
+        """
+        return True
+
+    def get_tokenizer(self, opt):
+        """
+        Instantiate tokenizer.
+        """
+        if opt['llama_tokenizer_fast'] is True:
+            return LlamaTokenizerFast.from_pretrained(_init_llama_path(opt))
+        else:
+            return LlamaTokenizer.from_pretrained(_init_llama_path(opt))
+
+    def override_special_tokens(self, opt):
+        self.hf_tokenizer.add_special_tokens({"pad_token": "<pad>"})
+
+        # now override
+        self.start_token = self.hf_tokenizer.bos_token
         self.end_token = self.hf_tokenizer.eos_token
         self.null_token = self.hf_tokenizer.pad_token
         self.unk_token = self.hf_tokenizer.unk_token
