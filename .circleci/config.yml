@@ -106,7 +106,7 @@ commands:
             python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1+cu118 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cu118
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers==4.22.1'
+            python -m pip install --progress-bar off 'transformers~=4.29.0'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
             python -m pip uninstall dataclasses -y
@@ -121,7 +121,7 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'transformers==4.22.1'
+            python -m pip install --progress-bar off 'transformers~=4.29.0'
             python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.0
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
@@ -133,7 +133,7 @@ commands:
           name: Install torch CPU and dependencies
           command: |
             python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cpu
-            python -m pip install --progress-bar off 'transformers==4.20'
+            python -m pip install --progress-bar off 'transformers~=4.29.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
