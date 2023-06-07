@@ -8,13 +8,14 @@ Transformer Agent with a contrastive loss.
 import torch
 from torch.nn import CrossEntropyLoss
 from torch.distributions.categorical import Categorical
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Tuple, Any
 from parlai.core.message import Message
 
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.agents.transformer.transformer import TransformerGeneratorAgent
-from parlai.core.torch_generator_agent import PPLMetric
+from parlai.agents.fid.fid import FidAgent
+from parlai.core.torch_generator_agent import PPLMetric, TorchGeneratorAgent
 from parlai.core.metrics import AverageMetric
 
 from parlai.agents.fid.fid import (
@@ -24,6 +25,9 @@ from projects.blenderbot2.agents.blenderbot2 import (
     BlenderBot2FidAgent,
     BlenderBot2FidModel,
     T5BlenderBot2FidModel,
+)
+from projects.seeker.agents.seeker import (
+    ComboFidAgent,
 )
 
 
@@ -113,7 +117,7 @@ class ContrastiveCrossEntropyLoss(CrossEntropyLoss):
         return loss, ce_loss, ct_loss, classifier_labels_ce, classifier_labels_ct
 
 
-class ContrastiveTransformerGeneratorAgent(TransformerGeneratorAgent):
+class ContrastiveTorchGeneratorAgent(TorchGeneratorAgent):
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -121,9 +125,7 @@ class ContrastiveTransformerGeneratorAgent(TransformerGeneratorAgent):
         """
         Add command line arguments.
         """
-        agent = parser.add_argument_group(
-            'ContrastiveTransformerGeneratorAgent arguments'
-        )
+        agent = parser.add_argument_group('ContrastiveTorchGeneratorAgent arguments')
         parser.add_argument(
             '--ct-loss-weight',
             type=float,
@@ -219,10 +221,13 @@ class ContrastiveTransformerGeneratorAgent(TransformerGeneratorAgent):
         )
         return batch
 
+    def _model_output(self, batch) -> Tuple[Any]:
+        return self.model(*self._model_input(batch), ys=batch.label_vec)
+
     def compute_loss(self, batch, return_output=False):
         if batch.label_vec is None:
             raise ValueError('Cannot compute loss without a label.')
-        model_output = self.model(*self._model_input(batch), ys=batch.label_vec)
+        model_output = self._model_output(batch)
         scores, preds, *_ = model_output
         score_view = scores.reshape(-1, scores.size(-1))
         (loss, ce_loss, ct_loss, ce_mask, ct_mask) = self.criterion(
@@ -357,7 +362,35 @@ class ContrastiveTransformerGeneratorAgent(TransformerGeneratorAgent):
             return loss
 
 
-class ContrastiveBB2Agent(ContrastiveTransformerGeneratorAgent, BlenderBot2FidAgent):
+class ContrastiveTransformerGeneratorAgent(
+    ContrastiveTorchGeneratorAgent, TransformerGeneratorAgent
+):
+    pass
+
+
+class ContrastiveFidAgent(ContrastiveTorchGeneratorAgent, FidAgent):
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add command line arguments.
+        """
+        super().add_cmdline_args(parser, partial_opt=partial_opt)
+        FidAgent.add_cmdline_args(parser, partial_opt=partial_opt)
+        return parser
+
+    def _model_output(self, batch):
+        scores, preds, enc_state, *_ = self.get_model_output(batch)
+        if scores.size(1) != batch.label_vec.size(1):
+            assert self.generation_model == 'bart'
+            # ignore start
+            scores = scores[:, 1:, :]
+            preds = preds[:, 1:]  # type: ignore
+        return scores, preds, enc_state
+
+
+class ContrastiveBB2Agent(ContrastiveFidAgent, BlenderBot2FidAgent):
     @classmethod
     def add_cmdline_args(
         cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
@@ -383,5 +416,15 @@ class ContrastiveBB2Agent(ContrastiveTransformerGeneratorAgent, BlenderBot2FidAg
 
 class ContrastiveBB2WizIntGoldDocRetrieverFiDAgent(
     WizIntGoldDocRetrieverFiDAgent, ContrastiveBB2Agent
+):
+    pass
+
+
+class ContrastiveComboFidAgent(ContrastiveFidAgent, ComboFidAgent):
+    pass
+
+
+class ContrastiveComboFidGoldDocumentAgent(
+    ContrastiveComboFidAgent, WizIntGoldDocRetrieverFiDAgent
 ):
     pass
