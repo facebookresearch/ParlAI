@@ -3147,7 +3147,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             [context]: Hi!
             [Gpt3Agent_1]: Hello human!
             [Gpt3Agent_2]: Hello human!
-            """ 
+            """
         ),
         "project": "https://platform.openai.com/docs/models/gpt-3",
     },
