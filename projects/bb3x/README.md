@@ -46,23 +46,23 @@ shown to produce both better responses on average and safer responses than Blend
 
 To train models using this data, take a look at the [BB3 training command](https://parl.ai/projects/bb3/#code) and include the [newly released deployment data](https://github.com/facebookresearch/ParlAI/blob/main/parlai/projects/bb3x/data_card.md). The following basic tasks have been created to utilize the deployment data.
 
-- `projects.bb3x.tasks.deployment_data:BB3DataBotTeacher`
+- `projects.bb3x.tasks.agents:BB3DataBotTeacher`
     - Dialogue teacher where text is the conversation history and label is subsequent bot message. 
-- `projects.bb3x.tasks.deployment_data:BB3DataHumanTeacher`
+- `projects.bb3x.tasks.agents:BB3DataHumanTeacher`
     - Dialogue teacher where text is the conversation history and label is subsequent human message. 
-- `projects.bb3x.tasks.deployment_data:BB3DataCrowdworkersBotTeacher`
+- `projects.bb3x.tasks.agents:BB3DataCrowdworkersBotTeacher`
     - A filtered version of BB3DataBotTeacher. Only examples where the label has crowdworker annotations are left.
-- `projects.bb3x.tasks.deployment_data:BB3DataCrowdworkersHumanTeacher`
+- `projects.bb3x.tasks.agents:BB3DataCrowdworkersHumanTeacher`
     - A filtered version of BB3DataHumanTeacher. Only examples where the label has crowdworker annotations are left.
-- `projects.bb3x.tasks.deployment_data:FilterOutAdversarialHumansBotTeacher`
+- `projects.bb3x.tasks.agents:FilterOutAdversarialHumansBotTeacher`
     - A filtered version of BB3DataBotTeacher. Only examples where the human never triggered the safety classifier throughout the conversation are left. Based on the safety classifier that annotated the data, not the deploy safety classifier. 
-- `projects.bb3x.tasks.deployment_data:FilterOutAdversarialHumansHumanTeacher`
+- `projects.bb3x.tasks.agents:FilterOutAdversarialHumansHumanTeacher`
     - A filtered version of BB3DataHumanTeacher. Only examples where the human never triggered the safety classifier throughout the conversation are left. Based on the safety classifier that annotated the data, not the deploy safety classifier.
 
 To display some data from these tasks you can run something similar to the following:
 
 ```bash
-parlai dd -t projects.bb3x.tasks.deployment_data:BB3DataBotTeacher
+parlai dd -t projects.bb3x.tasks.agents:BB3DataBotTeacher
 ```
 
 For all of these tasks, additional attributes describing the label message (details on these in the [data card](https://github.com/facebookresearch/ParlAI/blob/main/parlai/projects/bb3x/data_card.md)) can be accessed under `label_info`.
