@@ -17,8 +17,8 @@ Jason Weston<sup>∗</sup>, Kurt Shuster<sup>∗</sup>
 
 ## Data
 
-When we released BlenderBot 3 in early August 2022, we included the option for adults in the United States to choose to share their de-identified interactions to help the  AI community improve the ability of conversational models. From the people who chose to share, we collected, and are releasing, over 353,000 conversations, approximately 6.2 million utterances, and more than 155,000 instances of feedback, where people flagged messages as good or bad, and why – for example, whether they are nonsensical, off-topic or inappropriate. See [here](https://github.com/facebookresearch/ParlAI/blob/main/parlai/projects/bb3x/data_card.md) for the deployment data card.
-
+When we released BlenderBot 3 in early August 2022, we included the option for adults in the United States to choose to share their de-identified interactions to help the  AI community improve the ability of conversational models. From the people who chose to share, we collected, and are releasing, over 353,000 conversations, approximately 6.2 million utterances, and more than 155,000 instances of feedback, where people flagged messages as good or bad, and why – for example, whether they are nonsensical, off-topic or inappropriate. See [here](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3x/data_card.md) for the deployment data card.
+                          
 To make sense of this data, we used paid crowdworkers to help us determine the quality of the conversations. At a high level, we learned:
 
 - Around 70% of participants conducted a wide range of reciprocal conversations (which we refer to as “standard conversations”), while the other 30% of conversationalists conducted either adversarial conversations or sent toxic messages (termed “adversarial conversations”) – in line with research findings from other systems. 
@@ -44,7 +44,7 @@ shown to produce both better responses on average and safer responses than Blend
 
 **How to access deployment Data**
 
-To train models using this data, take a look at the [BB3 training command](https://parl.ai/projects/bb3/#code) and include the [newly released deployment data](https://github.com/facebookresearch/ParlAI/blob/main/parlai/projects/bb3x/data_card.md). The following basic tasks have been created to utilize the deployment data.
+To train models using this data, take a look at the [BB3 training command](https://parl.ai/projects/bb3/#code) and include the [newly released deployment data](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3x/data_card.md). The following basic tasks have been created to utilize the deployment data.
 
 - `projects.bb3x.tasks.agents:BB3DataBotTeacher`
     - Dialogue teacher where text is the conversation history and label is subsequent bot message. 
@@ -65,7 +65,7 @@ To display some data from these tasks you can run something similar to the follo
 parlai dd -t projects.bb3x.tasks.agents:BB3DataBotTeacher
 ```
 
-For all of these tasks, additional attributes describing the label message (details on these in the [data card](https://github.com/facebookresearch/ParlAI/blob/main/parlai/projects/bb3x/data_card.md)) can be accessed under `label_info`.
+For all of these tasks, additional attributes describing the label message (details on these in the [data card](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3x/data_card.md)) can be accessed under `label_info`.
 The cringe loss code can also be seen [here](https://parl.ai/projects/cringe).
 
 
