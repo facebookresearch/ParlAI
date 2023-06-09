@@ -12,8 +12,8 @@ Jason Weston<sup>∗</sup>, Kurt Shuster<sup>∗</sup>
 
 ## Papers
 
-- [ArXiv link to paper describing our work on BlenderBot 3x](arxiv).
-- We are also releasing a study of the HCI/UX elements of our BB3 chatbot public deployment in a [separate paper](morty).
+- [ArXiv link to paper describing our work on BlenderBot 3x](https://arxiv.org/abs/2306.04707).
+- We are also releasing a study of the HCI/UX elements of our BB3 chatbot public deployment in a [separate paper](https://arxiv.org/abs/2306.04765).
 
 ## Data
 
