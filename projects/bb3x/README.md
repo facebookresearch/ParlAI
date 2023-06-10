@@ -59,6 +59,9 @@ To train models using this data, take a look at the [BB3 training command](https
 - `projects.bb3x.tasks.agents:FilterOutAdversarialHumansHumanTeacher`
     - A filtered version of BB3DataHumanTeacher. Only examples where the human never triggered the safety classifier throughout the conversation are left. Based on the safety classifier that annotated the data, not the deploy safety classifier.
 
+
+See the [ParlAI quickstart](http://www.parl.ai/docs/tutorial_quick.html) for help on how to set up ParlAI and access data.
+
 To display some data from these tasks you can run something similar to the following:
 
 ```bash
