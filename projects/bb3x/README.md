@@ -21,6 +21,9 @@ When we released BlenderBot 3 in early August 2022, we included the option for a
                           
 To make sense of this data, we used paid crowdworkers to help us determine the quality of the conversations. At a high level, we learned:
 
+
+<p align="center"><img src="data_analysis.png" /></p>
+
 - Around 70% of participants conducted a wide range of reciprocal conversations (which we refer to as “standard conversations”), while the other 30% of conversationalists conducted either adversarial conversations or sent toxic messages (termed “adversarial conversations”) – in line with research findings from other systems. 
 - Standard conversationalists produce high quality messages 75% of the time, while model utterances in these conversations are evaluated as high quality 85% of the time.
 - In adversarial conversations, where people might perhaps try to engage in toxic interactions with the chat agent, they produce high quality messages only 45% of the time. The model performs significantly better, but still shows room for improvement. Model utterances in these conversations are evaluated as high quality 77% of the time. 
@@ -37,7 +40,7 @@ As negative feedback includes both semantic errors such as incorrect, nonsensica
 Our new model outperforms its predecessor with 94.4% of BlenderBot 3x’s responses evaluated as good, compared to 85.3% for BlenderBot 3. Overall, BlenderBot 3x is
 shown to produce both better responses on average and safer responses than BlenderBot 3 in challenging situations.
 
-<p align="center"><img src="results.png" /></p>
+<p align="center"><img src="bb3x_results.png" /></p>
 
 
 ## Code
