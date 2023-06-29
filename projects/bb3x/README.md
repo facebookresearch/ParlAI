@@ -68,7 +68,7 @@ See the [ParlAI quickstart](http://www.parl.ai/docs/tutorial_quick.html) for hel
 To display some data from these tasks you can run something similar to the following:
 
 ```bash
-parlai dd -t projects.bb3x.tasks.agents:BB3DataBotTeacher
+parlai dd -t projects.bb3x.tasks.agents:FilterOutAdversarialHumansBotTeacher
 ```
 
 For all of these tasks, additional attributes describing the label message (details on these in the [data card](https://github.com/facebookresearch/ParlAI/blob/main/projects/bb3x/data_card.md)) can be accessed under `label_info`.
