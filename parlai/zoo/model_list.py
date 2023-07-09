@@ -3154,7 +3154,7 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
         "title": "OpenAI Chat Completions",
         "id": "openai_chat_completions",
         "path": "zoo:openai_chat_completions/model",
-        "task": "TBD",
+        "task": "NA",
         "description": ("An API wrapper around OpenAI's Chat Completion Model."),
         "example": (
             "parlai interactive -m openaichatcompletion --openai-api-key <your_openai_api_key> --model-name gpt-4"
