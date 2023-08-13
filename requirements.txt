@@ -33,7 +33,7 @@ myst-parser<1
 attrs~=20.2.0
 requests-mock==1.7.0
 requests<3,>=2.21.0
-scikit-learn==0.23 --no-build-isolation
+# scikit-learn==0.23.1
 scipy==1.10.0
 sh==1.12.14
 sphinx_rtd_theme==0.4.3
@@ -60,4 +60,3 @@ contractions~=0.1.72
 fsspec~=2022.2.0
 google-api-core<=2.11.0
 openai<=0.27.7
-Cython==0.29.36

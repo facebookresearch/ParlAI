@@ -88,9 +88,10 @@ commands:
             pip install --upgrade pip
             for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off coverage && s=0 && break || s=$? && sleep 10; done; (exit $s)
-            for i in $(seq 1 3); do python -m pip install --progress-bar off scikit-learn==0.23 --no-build-isolation && s=0 && break || s=$? && sleep 10; done; (exit $s)
             mkdir -p ~/ParlAI/test-results
             for i in $(seq 1 3); do pip install -v -r requirements.txt && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do pip install -v Cython==0.29.36 && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do pip install -v scikit-learn==0.23 --no-build-isolation && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python setup.py develop && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('punkt')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('stopwords')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
