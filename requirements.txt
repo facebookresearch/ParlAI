@@ -33,7 +33,7 @@ myst-parser<1
 attrs~=20.2.0
 requests-mock==1.7.0
 requests<3,>=2.21.0
-scikit-learn==0.23.1
+scikit-learn==0.23 --no-build-isolation
 scipy==1.10.0
 sh==1.12.14
 sphinx_rtd_theme==0.4.3
