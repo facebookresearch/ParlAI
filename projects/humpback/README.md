@@ -11,6 +11,12 @@ from among these candidates (self-curation). This data is then used to finetune 
 - Finetuning LLaMa on two iterations of our approach yields a model, _Humpback_, that outperforms all other LLaMa-based models on the Alpaca leaderboard not relying on distillation data, demonstrating highly effective self-alignment.
 
 
+
+## Paper
+
+- [ArXiv link to paper here](https://arxiv.org/abs/2308.06259).
+
+
 ## Motivation 
 
 Aligning large language models (LLMs) to perform instruction following has become a (really!) important topic!
