@@ -44,7 +44,7 @@ tensorboardX<=2.5.0
 tokenizers>=0.13.3
 tomli>=2.0.0
 torchtext==0.15.1
-tornado==6.3.2
+tornado==6.3.3
 tqdm~=4.62.1
 typing-extensions==4.5.0
 Unidecode==1.1.1
