@@ -5,7 +5,6 @@
 # LICENSE file in the root directory of this source tree.
 
 # flake8: noqa
-
 """
 The Model Zoo.
 
@@ -3150,5 +3149,23 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             """
         ),
         "project": "https://platform.openai.com/docs/models/gpt-3",
+    },
+    {
+        "title": "OpenAI Chat Completions",
+        "id": "openai_chat_completions",
+        "path": "zoo:openai_chat_completions/model",
+        "task": "NA",
+        "description": ("An API wrapper around OpenAI's Chat Completion Model."),
+        "example": (
+            "parlai interactive -m openaichatcompletion --openai-api-key <your_openai_api_key> --model-name gpt-4"
+        ),
+        "result": (
+            """
+            [context]: Hi!
+            [OpenaiChatCompletionsAgent_1]: Hello fellow wizard. What seems to be the problem?
+            [OpenaiChatCompletionsAgent_2]: Greetings. The village is under attack by a swarm of dragons. We need to defend it and drive them away before any harm is done to the villagers. How do you suggest we proceed?
+            """
+        ),
+        "project": "https://platform.openai.com/docs/guides/gpt/chat-completions-api",
     },
 ]
