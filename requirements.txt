@@ -11,7 +11,7 @@ fuzzywuzzy==0.18.0
 google-cloud-storage==1.43.0
 iopath~=0.1.8
 gitdb2==2.0.5
-GitPython==3.1.32
+GitPython==3.1.34
 hydra-core>=1.1.0
 ipython==7.31.1
 torch==2.0.0
