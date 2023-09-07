@@ -11,9 +11,9 @@ from parlai.core.agents import Agent
 from parlai.core.message import Message
 
 try:
-    import openai
+    import litellm
 except ImportError:
-    raise ImportError('Please run `pip install openai`.')
+    raise ImportError('Please run `pip install litellm`.')
 
 
 class OpenaiChatCompletionsAgent(Agent):
@@ -127,7 +127,7 @@ class OpenaiChatCompletionsAgent(Agent):
         if self.init_prompt:
             self.turns.append({'role': 'system', 'content': self.init_prompt})
 
-        openai.api_key = opt.get('openai_api_key')
+        litellm.api_key = opt.get('openai_api_key')
 
     def reset(self):
         """
@@ -169,7 +169,7 @@ class OpenaiChatCompletionsAgent(Agent):
         return Message({'id': self.getID(), 'text': resp_txt, 'episode_done': False})
 
     def query_chat_completion_api(self):
-        response = openai.ChatCompletion.create(
+        response = litellm.completion(
             model=self.model_name,
             messages=self.turns,
             temperature=self.temperature,
