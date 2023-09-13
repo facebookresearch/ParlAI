@@ -17,7 +17,7 @@
     "async-lock": "1.0.0",
     "body-parser": "1.17.2",
     "express": "4.15.3",
-    "nunjucks": "3.0.1",
+    "nunjucks": "3.2.4",
     "wait-until": "0.0.2",
     "ws": "5.2.3"
   }
