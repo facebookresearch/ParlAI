@@ -1,0 +1,53 @@
+acts:
+- - episode_done: true
+    eval_labels:
+    - I tried making my own hummus for the party. My friends will appreciate my hard
+      work.
+    id: reframe_thoughts
+    text: 'i love to eat pita bread with hummus . i am bipolar . i am thinking of
+      becoming a mother next year . i go to work early in the morning as a nurse .
+      i am a mother of three . [PAT] Jumping to conclusions: Fortune-telling (Predicting
+      outcomes (usually negative) of events.) [THT] I tried making my own hummus for
+      the party. My friends will hate it.'
+- - episode_done: true
+    eval_labels:
+    - Working from home is convenient and allows me to spend more time with my family.
+    id: reframe_thoughts
+    text: i have a cat . i hope to move out soon . i work at home , editing . i've
+      depression and anxiety so i don't really go out a lot . i live at home with
+      my dad and brother . [PAT] Discounting the positive (Rejecting positive experiences
+      by insisting they "don't count" for some reason or other.) [THT] Although working
+      from home is convenient, my family gets tired of me being around.
+- - episode_done: true
+    eval_labels:
+    - Working from home is convenient. My family probably appreciates that I have
+      a good job.
+    id: reframe_thoughts
+    text: i have a cat . i hope to move out soon . i work at home , editing . i've
+      depression and anxiety so i don't really go out a lot . i live at home with
+      my dad and brother . [PAT] Discounting the positive (Rejecting positive experiences
+      by insisting they "don't count" for some reason or other.) [THT] Although working
+      from home is convenient, my family gets tired of me being around.
+- - episode_done: true
+    eval_labels:
+    - Although working at home is convenient, my family hopes I will start working
+      more at the office which would allow me to focus more.
+    id: reframe_thoughts
+    text: i have a cat . i hope to move out soon . i work at home , editing . i've
+      depression and anxiety so i don't really go out a lot . i live at home with
+      my dad and brother . [PAT] Discounting the positive (Rejecting positive experiences
+      by insisting they "don't count" for some reason or other.) [THT] Although working
+      from home is convenient, my family gets tired of me being around.
+- - episode_done: true
+    eval_labels:
+    - I have been dieting for two months now, and today I had a setback because I
+      ate a cupcake. That's okay though, I'll go to the gym and work off that cupcake
+      and get stronger at the same time!
+    id: reframe_thoughts
+    text: i cannot drive . i'm on a diet . i am thirty two years old . i've been married
+      eight years . i'm a house wife . [PAT] Mental filtering (Filtering distortions
+      occur when an individual dwells only on the negative details of a situation
+      and filters out the positive aspects.) [THT] My diet is ruined. Sure I have
+      done it for 2 months now and lost weight but I ate a cupcake today.
+num_episodes: 2623
+num_examples: 2623

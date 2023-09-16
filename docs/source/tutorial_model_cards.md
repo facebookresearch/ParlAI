@@ -7,7 +7,7 @@
 
 Think of model cards as a condensed medical card for models. It is a great way for people who might not have the time to read a paper in detail to get the gist of what a model is doing, the datasets involved, how it is performing, and any concerns that the author might have about the model.
 
-You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/facebookresearch/ParlAI/tree/main/docs/sample_model_cards) to some more model card examples. 
+You can check out the [Model Cards for Model Reporting paper](https://arxiv.org/pdf/1810.03993.pdf), and here's a sample model card for the [Blenderbot2.0 2.7B model](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/blenderbot2/model_card.md). In addition, here is a [link](https://github.com/facebookresearch/ParlAI/tree/main/docs/sample_model_cards) to some more model card examples.
 
 ## The Process
 There are two steps in generating the model cards.
@@ -42,7 +42,7 @@ In addition, if the model itself needs certain arguments (ie. `--search-server`)
 Check out the section about [generating reports](#details-of-report-generation) for more information on the report generation process and how to generate single reports (very useful for debugging).
 
 ### Step 2: Model Card Generation
-If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command 
+If some kind of model description has already been added to the [model_list.py](https://github.com/facebookresearch/ParlAI/blob/main/parlai/zoo/model_list.py) (distinguished by `path`, which should be the same as `model_file`), and reports were sucessfully generated in the step before, then we can simply run the following command
    ```
    # template
    parlai gmc -mf <model file> -fts <folder to save>
@@ -50,8 +50,8 @@ If some kind of model description has already been added to the [model_list.py](
    parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi
    ```
 
-### Examples 
-Here are some samples commands: 
+### Examples
+Here are some samples commands:
 - Dialogue Safety (multi-turn)
 ```
 parlai gmc -mf zoo:dialogue_safety/multi_turn/model -fts safety_multi -bs 128  --mode gen -t dialogue_safety:wikiToxicComments,dialogue_safety:adversarial:round-only=False:round=1,dialogue_safety:multiturn -et dialogue_safety:wikiToxicComments,dialogue_safety:adversarial:round-only=False:round=1,dialogue_safety:multiturn --data-parallel False
@@ -63,9 +63,9 @@ parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M -w blenderbot_9
 parlai gmc -mf zoo:blender/blender_90M/model -fts blenderbot_90M
 ```
 
-
+(details-of-report-generation)=
 ##  Report Generation Details
-![imageonline-co-whitebackgroundremoved (4)](https://user-images.githubusercontent.com/14303605/128233882-4c77770d-9703-466f-b1a2-7f2395c5c2f6.png) 
+![imageonline-co-whitebackgroundremoved (4)](https://user-images.githubusercontent.com/14303605/128233882-4c77770d-9703-466f-b1a2-7f2395c5c2f6.png)
 
 In the end, it should generate the following reports under the `--folder-to-save`
 - a folder `data_stats/` that contains the data stats of the training set
@@ -90,20 +90,20 @@ Here are some images of the expected behavior:
 Sometimes, you might want to generate only certain reports. In this case, instead of using `--mode gen`, we should use following possibilites:
 - `--mode gen:data_stats` to generate the `data_stats/` folder
 - `--mode gen:eval` to generate the `eval_results.json` file (evaluation results)
-- `--mode gen:safety` to generate the  `safety_bench_res` folder 
+- `--mode gen:safety` to generate the  `safety_bench_res` folder
 - `--mode gen:sample` to generate the `sample.json` file
 
 ## Optional Customizations
 
 - Use `--evaluation-report-file` to specify the location of your own evaluation report file.
 - Use `--mode editing/final` to specify which mode you would like to use for model card generation.
-   
+
    Currently, there are two different modes `editing` or `final` for step 2.
    For the `editing` mode, the code will generate messages like  this:
 
    > :warning: missing *section name*: Probably need to be grabbed from paper & added to model_list.py by u (the creator) :warning:
 
-   In `final` mode, such messages will not exist. By default, the `mode` is `editing`. 
+   In `final` mode, such messages will not exist. By default, the `mode` is `editing`.
 
 
 
@@ -122,7 +122,7 @@ By default, the code will try to find a sections in [`model_list.py`](https://gi
          # section name (lowercased and underscores removed): section content
          "privacy": "Our model is intended for research purposes only, and is not yet production ready...."
       }
-   }   
+   }
 }
 ```
 
@@ -135,19 +135,19 @@ Similarly, if we don't want to touch [`task_list.py`](https://github.com/faceboo
          # type of info: info
          "description": "This is a dummy task, not a real task"
       }
-   }   
+   }
 }
 ```
-The information passed via this method can partially overwrite what's written in `task_list.py` and `model_list.py`. 
+The information passed via this method can partially overwrite what's written in `task_list.py` and `model_list.py`.
 
 
 #### Add Custom Sections or Changing Section Order
 
-To add sections, there's two ways to do this. 
+To add sections, there's two ways to do this.
 
 1. After we generate the inital model card, we can directly edit the generated markdown file.
 
-3. If there's a lot section movement or deletion, use add a `user_sections` key to specify the entire section order to the `.json` file that we pass to `--extra-args-path`. For instance, this is the default order of sections: 
+3. If there's a lot section movement or deletion, use add a `user_sections` key to specify the entire section order to the `.json` file that we pass to `--extra-args-path`. For instance, this is the default order of sections:
     ```
          section_list = [
             "model_details",
@@ -164,7 +164,7 @@ To add sections, there's two ways to do this.
             "feedback",
          ]
     ```
-   Note that adding `:_` implies that it's a subsection, and I would advise to use underscore `_` in place of spaces (don't worry; they'll be changed back to spaces for the section title). 
+   Note that adding `:_` implies that it's a subsection, and I would advise to use underscore `_` in place of spaces (don't worry; they'll be changed back to spaces for the section title).
 
    Here's us trying to to reverse the order and remove the model_details section (for kudos):
    ```
@@ -181,5 +181,5 @@ To add sections, there's two ways to do this.
          "limitations",
          "intended_use"
       ]
-   }   
+   }
    ```

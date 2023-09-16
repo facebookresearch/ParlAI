@@ -408,8 +408,8 @@ return message. This is a dictionary which maps field name to a metric value.
 When the teacher receives the response from the model, it utilizes the metrics
 field to update counters on its side.
 
+(list-of-metrics)=
 ## List of Metrics
-
 Below is a list of metrics and a brief explanation of each.
 
 :::{note} List of metrics

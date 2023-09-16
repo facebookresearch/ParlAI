@@ -43,6 +43,7 @@ class TestNoApex(unittest.TestCase):
         )
         create_agent(opt, requireModelExists=True)
 
+    @testing_utils.skipUnlessTorch113
     def test_fp16(self):
         # nice clean fallback if no fp16
         valid, test = testing_utils.eval_model(

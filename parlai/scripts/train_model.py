@@ -37,7 +37,7 @@ import numpy as np
 import parlai.utils.logging as logging
 from parlai.core.agents import create_agent, create_agent_from_shared
 from parlai.core.exceptions import StopTrainException
-from parlai.core.logs import TensorboardLogger, WandbLogger
+from parlai.core.logs import TensorboardLogger, WandbLogger, ClearMLLogger
 from parlai.core.metrics import Metric
 from parlai.core.metrics import (
     aggregate_named_reports,
@@ -289,6 +289,7 @@ def setup_args(parser=None) -> ParlaiParser:
     WorldLogger.add_cmdline_args(parser, partial_opt=None)
     TensorboardLogger.add_cmdline_args(parser, partial_opt=None)
     WandbLogger.add_cmdline_args(parser, partial_opt=None)
+    ClearMLLogger.add_cmdline_args(parser, partial_opt=None)
     parser = setup_dict_args(parser)
     return parser
 
@@ -483,6 +484,8 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             model = self.agent.model if hasattr(self.agent, 'model') else None
             self.wb_logger = WandbLogger(opt, model)
+        if opt['clearml_log'] and is_primary_worker():
+            self.clearml_logger = ClearMLLogger(opt)
 
     def save_model(self, suffix=None):
         """
@@ -578,6 +581,11 @@ class TrainLoop:
         if opt['wandb_log'] and is_primary_worker():
             valid_report['total_exs'] = self._total_exs
             self.wb_logger.log_metrics('valid', self.parleys, valid_report)
+
+        if opt['clearml_log'] and is_primary_worker():
+            valid_report['total_exs'] = self._total_exs
+            self.clearml_logger.log_metrics('valid', self.parleys, valid_report)
+            self.clearml_logger.flush()
 
         # send valid metrics to agent if the agent wants them
         if hasattr(self.agent, 'receive_metrics'):
@@ -693,7 +701,9 @@ class TrainLoop:
             self.best_k_models[ind][0] = str(new_model_path)
 
 
-    def _run_single_eval(self, opt, valid_world, max_exs, datatype, is_multitask, task):
+    def _run_single_eval(
+        self, opt, valid_world, max_exs, datatype, is_multitask, task, index
+    ):
 
         # run evaluation on a single world
         valid_world.reset()
@@ -716,6 +726,10 @@ class TrainLoop:
             if cnt == 0 and opt['display_examples']:
                 print(valid_world.display() + '\n~~')
                 print(valid_world.report())
+                if opt['clearml_log'] and is_primary_worker():
+                    self.clearml_logger.log_debug_samples(
+                        datatype, valid_world.display(), index=index
+                    )
             cnt = valid_world.report().get('exs') or 0
 
         if world_logger is not None:
@@ -771,7 +785,7 @@ class TrainLoop:
             else:
                 task = opt['task'].split(',')[index]
             task_report = self._run_single_eval(
-                opt, v_world, max_exs_per_worker, datatype, is_multitask, task
+                opt, v_world, max_exs_per_worker, datatype, is_multitask, task, index
             )
             reports.append(task_report)
 
@@ -821,6 +835,8 @@ class TrainLoop:
         )
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_final(final_datatype, final_valid_report)
+        if opt['clearml_log'] and is_primary_worker():
+            self.clearml_logger.log_final(final_datatype, final_valid_report)
 
         return final_valid_report
 
@@ -962,6 +978,8 @@ class TrainLoop:
             self.tb_logger.log_metrics('train', self.parleys, train_report)
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.log_metrics('train', self.parleys, train_report)
+        if opt['clearml_log'] and is_primary_worker():
+            self.clearml_logger.log_metrics('train', self.parleys, train_report)
 
         return train_report
 
@@ -1090,6 +1108,9 @@ class TrainLoop:
             self.wb_logger.log_final('valid', self.final_valid_report)
             self.wb_logger.log_final('test', self.final_test_report)
             self.wb_logger.finish()
+        if opt['clearml_log'] and is_primary_worker():
+            self.clearml_logger.log_final('Validation Report', self.final_valid_report)
+            self.clearml_logger.log_final('Test Report', self.final_test_report)
 
         if valid_worlds:
             for valid_world in valid_worlds:
@@ -1105,6 +1126,10 @@ class TrainLoop:
 
         if opt['wandb_log'] and is_primary_worker():
             self.wb_logger.finish()
+
+        if opt['clearml_log'] and is_primary_worker():
+            self.clearml_logger.upload_artifact('dictionary', opt['dict_file'])
+            self.clearml_logger.close()
 
         self._save_train_stats()
 

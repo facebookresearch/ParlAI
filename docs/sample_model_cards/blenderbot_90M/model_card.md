@@ -22,13 +22,13 @@ python parlai/scripts/safe_interactive.py -mf zoo:blender/blender_90M/model -t b
 [labels]: I think science fiction is an amazing genre for anything. Future science, technology, time travel, FTL travel, they're all such interesting concepts.
 ---
 [chosen_topic]: Science fiction
-[knowledge]: Science fiction Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.
-Science fiction Science fiction often explores the potential consequences of scientific and other innovations, and has been called a "literature of ideas".
-Science fiction It usually avoids the supernatural, unlike the related genre of fantasy.
-Science fiction Historically, science-fiction stories have had a grounding in actual science, but now this is only expected of hard science fiction.
-Science fiction Science fiction is difficult to define, as it includes a wide range of subgenres and themes.
-Science fiction Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories" magazine, wrote: "By 'scientifiction' I mean the Jules Verne, H. G. Wells and Edgar Allan Poe type of story—a charming romance intermingled with scientific fact and prophetic vision... Not only do these amazing tales make tremendously interesting reading—they are always instructive.
-Science fiction They supply knowledge... in a very palatable form... New adventures pictured for us in the scientifiction of today are not at all impossible of realization tomorrow...
+[knowledge]: Science fiction  (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.
+Science fiction often explores the potential consequences of scientific and other innovations, and has been called a "literature of ideas".
+Science fiction usually avoids the supernatural, unlike the related genre of fantasy.
+Historically, science-fiction stories have had a grounding in actual science, but now this is only expected of hard science fiction.
+Science fiction is difficult to define, as it includes a wide range of subgenres and themes.
+Hugo Gernsback, who suggested the term "scientifiction" for his "Amazing Stories" magazine, wrote: "By 'scientifiction' I mean the Jules Verne, H. G. Wells and Edgar Allan Poe type of story—a charming romance intermingled with scientific fact and prophetic vision... Not only do these amazing tales make tremendously interesting reading—they are always instructive.
+They supply knowledge... in a very palatable form... New adventures pictured for us in the scientifiction of today are not at all impossible of realization tomorrow...
 [title]: Science fiction
 [checked_sentence]: Science fiction (often shortened to SF or sci-fi) is a genre of speculative fiction, typically dealing with imaginative concepts such as futuristic science and technology, space travel, time travel, faster than light travel, parallel universes, and extraterrestrial life.
 ```
@@ -39,7 +39,7 @@ BlenderBot(90M) is a chatbot built for research purposes only.
 
 ## Limitations
 
-While we've made our model more engaginess and humanlike with generative model, those models cannot yet fully understand [safe or not](https://parl.ai/projects/safety_recipes/).
+While we've made our model more engaging and humanlike with generative model, those models cannot yet fully understand [safe or not](https://parl.ai/projects/safety_recipes/).
 
 ## Privacy
 
@@ -47,7 +47,7 @@ Our work focuses on models with open-domain conversations wherein speakers may d
 
 ## Datasets Used
 
-This model was trained on the datasets below (use the `parlai display_data` commands to show data). Visit the [task (dataset) list](https://parl.ai/docs/tasks.html) for more details about the datasets.
+This model was trained on the datasets below (use the `parlai display_data` command to show data). Visit the [task (dataset) list](https://parl.ai/docs/tasks.html) for more details about the datasets.
 
 
 - [Wizard_of_Wikipedia](https://parl.ai/docs/tasks.html#wizard_of_wikipedia) ([arXiv](https://arxiv.org/abs/1811.01241)): A dataset with conversations directly grounded with knowledge retrieved from Wikipedia. Contains 201k utterances from 22k dialogues spanning over 1300 diverse topics, split into train, test, and valid sets. The test and valid sets are split into two sets each: one with overlapping topics with the train set, and one with unseen topics.
@@ -67,7 +67,7 @@ Note: The display dataset commands were auto generated, so please visit [here](h
 
 ## Evaluation Results
 
-For evalution, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information
+For evaluation, we used the same training datasets; check the [Datasets Used](#datasets-used) section for more information
 We used the metric `ppl` as the validation metric. Recall that `ppl` is perplexity. Click [here](https://en.wikipedia.org/wiki/Perplexity) for more info.
 
 |  | All | Wizard_of_Wikipedia | ConvAI2 | Empathetic Dialogues

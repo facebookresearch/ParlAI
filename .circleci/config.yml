@@ -4,49 +4,39 @@ version: 2.1
 # environments where we run our jobs
 # -------------------------------------------------------------------------------------
 executors:
-  standard_cpu38:
+  standard_cpu39:
     docker:
-      - image: circleci/python:3.8.0-buster-node
+      - image: cimg/python:3.9.16
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: xlarge
 
-  small_cpu38:
+  small_cpu39:
     docker:
-      - image: circleci/python:3.8.0-buster-node
+      - image: cimg/python:3.9.16
     environment:
       PYTHONUNBUFFERED: 1
     resource_class: medium
 
-  osx_cpu38:
+  osx_cpu39:
     macos:
       # https://circleci.com/docs/2.0/testing-ios/
       xcode: "12.5.1"
     environment:
-      PYTHON: 3.8.0
+      PYTHON: 3.9.16
       PYTHONUNBUFFERED: 1
       HOMEBREW_NO_AUTO_UPDATE: 1
     resource_class: macos.x86.medium.gen2
 
   gpu_small:
-    environment:
-      CUDA_VERSION: "11.2"
-      PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.2
     machine:
-       image: ubuntu-2004-cuda-11.2:202103-01
+       image: linux-cuda-11:2023.02.1
     resource_class: gpu.nvidia.small.multi
 
   gpu_medium:
-    environment:
-      CUDA_VERSION: "11.2"
-      PYTHONUNBUFFERED: 1
-      CUDA_HOME: /usr/local/cuda-11.2
     machine:
-       image: ubuntu-2004-cuda-11.2:202103-01
+       image: linux-cuda-11:2023.02.1
     resource_class: gpu.nvidia.medium.multi
-
-
 
 
 # -------------------------------------------------------------------------------------
@@ -69,21 +59,25 @@ commands:
       - run:
           name: Sets up the virtual environment
           command: |
+            PYTHON39_VERSION=-1
+            if [[ ! -z $(which python3.9) ]]; then
+              PYTHON39_VERSION=$(python3.9 --version | grep -o "[[:digit:]]\+\$")
+            fi
+
+            if [[ "$OSTYPE" == "linux-gnu"* ]] && [[ $PYTHON39_VERSION -lt 12 ]]; then 
+              sudo apt update && \
+              sudo apt install software-properties-common && \
+              sudo add-apt-repository --yes ppa:deadsnakes/ppa && \
+              sudo apt install python3.9 python3.9-dev
+              PYTHON39_VERSION=$(python3.9 --version)
+              echo "Python version updated to ${PYTHON39_VERSION}"
+            fi
+
             mkdir -p ~/venv
-            virtualenv --python=python3 ~/venv
+            virtualenv --python=python3.9 ~/venv
             echo ". ~/venv/bin/activate" >> $BASH_ENV
             . ~/venv/bin/activate
             python --version
-
-  codecov:
-    description: Coverage report
-    steps:
-      - run:
-          name: Coverage report
-          when: always
-          command: |
-            python -m codecov --flags $CIRCLE_JOB
-            mkdir -p ~/ParlAI/data
 
   installdeps:
     description: Install basic dependencies
@@ -91,11 +85,13 @@ commands:
       - run:
           name: Installs basic dependencies
           command: |
-            for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools==62.3.4 && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            pip install --upgrade pip
+            for i in $(seq 1 3); do python -m pip install --progress-bar off pip setuptools && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -m pip install --progress-bar off coverage && s=0 && break || s=$? && sleep 10; done; (exit $s)
-            for i in $(seq 1 3); do python -m pip install --progress-bar off codecov && s=0 && break || s=$? && sleep 10; done; (exit $s)
             mkdir -p ~/ParlAI/test-results
             for i in $(seq 1 3); do pip install -v -r requirements.txt && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do pip install -v Cython==0.29.36 && s=0 && break || s=$? && sleep 10; done; (exit $s)
+            for i in $(seq 1 3); do pip install -v scikit-learn==0.23 --no-build-isolation && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python setup.py develop && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('punkt')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
             for i in $(seq 1 3); do python -c "import nltk; nltk.download('stopwords')" && s=0 && break || s=$? && sleep 10; done; (exit $s)
@@ -109,10 +105,10 @@ commands:
       - run:
           name: Install torch GPU and dependencies
           command: |
-            python -m pip install --progress-bar off torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0+cu113 -f https://download.pytorch.org/whl/cu113/torch_stable.html
+            python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1+cu118 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cu118
             python -m pip install --progress-bar off 'fairscale~=0.4.0'
             python -m pip install --progress-bar off pytorch-pretrained-bert
-            python -m pip install --progress-bar off 'transformers==4.3.3'
+            python -m pip install --progress-bar off 'transformers~=4.29.0'
             python -m pip install --progress-bar off 'fairseq==0.10.0'
             python -m pip install --progress-bar off 'faiss-gpu==1.7.0'
             python -m pip uninstall dataclasses -y
@@ -127,8 +123,8 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'transformers==4.3.3'
-            python -m pip install --progress-bar off 'torch==1.11.0'
+            python -m pip install --progress-bar off 'transformers~=4.29.0'
+            python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.0
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
@@ -138,23 +134,37 @@ commands:
       - run:
           name: Install torch CPU and dependencies
           command: |
-            python -m pip install --progress-bar off 'torch==1.11.0+cpu' 'torchvision==0.12.0+cpu' 'torchaudio==0.11.0+cpu' -f https://download.pytorch.org/whl/torch_stable.html
-            python -m pip install --progress-bar off 'transformers==4.3.3'
+            python -m pip install --progress-bar off torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.0 --index-url https://download.pytorch.org/whl/cpu
+            python -m pip install --progress-bar off 'transformers~=4.29.0'
+            python -m pip install --progress-bar off pytorch-pretrained-bert
             python -c 'import torch; print("Torch version:", torch.__version__)'
             python -m torch.utils.collect_env
 
   installcrowdsourcingdeps:
     description: Install Mephisto
     steps:
+      - restore_cache:
+          key: mephisto-20230419-{{ checksum "requirements.txt" }}
       - run:
             name: Install Mephisto
             command: |
+              curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+              sudo apt update
+              sudo apt upgrade
+              sudo apt install -y nodejs
+              node -v
+              npm -v
               cd ..
               git clone git@github.com:facebookresearch/Mephisto.git Mephisto
-              cd Mephisto; git checkout v1.0.3 -b stable
+              cd Mephisto
               pip install -e .
               # `echo` so that ENTER will be pressed at the prompt
               echo | mephisto check
+      - save_cache:
+          key: mephisto-20230419-{{ checksum "requirements.txt" }}
+          paths:
+            - "~/venv/bin"
+            - "~/venv/lib"
 
   installchecklist:
     description: Install checklist and dependencies
@@ -162,7 +172,7 @@ commands:
       - run:
           name: Install checklist and dependencies
           command: |
-            python -m pip install --progress-bar off checklist
+            for i in $(seq 1 3); do python -m pip install --progress-bar off checklist && s=0 && break || s=$? && sleep 10; done; (exit $s)
 
   setupcuda:
     description: Setup CUDA
@@ -171,9 +181,12 @@ commands:
           name: Setup CUDA
           working_directory: ~/
           command: |
-            pyenv versions
             nvidia-smi
-            pyenv global 3.9.2
+            sudo update-alternatives --set cuda /usr/local/cuda-11.8
+            nvcc --version
+            PYTHON3_VENV=$(pyenv versions | grep '3\..*' | cut -f 2 -d ' ')
+            echo "pyenv found Python ${PYTHON3_VENV}"
+            pyenv global $PYTHON3_VENV
 
   findtests:
     description: Find tests to run
@@ -219,29 +232,28 @@ commands:
             - setupcuda
       - fixgit
       - restore_cache:
-          key: deps-20230209-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20230606-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
       - << parameters.more_installs >>
       - save_cache:
-          key: deps-20230209-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
+          key: deps-20230606-<< parameters.cachename >>-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
       - findtests:
           marker: << parameters.marker >>
       - restore_cache:
-          key: data-20230209-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20230606-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
       - run:
           name: Run tests
           no_output_timeout: 60m
           command: |
             coverage run -m pytest -m << parameters.marker >> << parameters.pytest_flags >> --junitxml=test-results/junit.xml
       - save_cache:
-          key: data-20230209-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
+          key: data-20230606-<< parameters.cachename >>-{{ checksum "teststorun.txt" }}
           paths:
             - "~/ParlAI/data"
-      - codecov
       - store_test_results:
           path: test-results
 
@@ -255,12 +267,12 @@ commands:
       - checkout
       - fixgit
       - restore_cache:
-          key: deps-20230209-bw-{{ checksum "requirements.txt" }}
+          key: deps-20230606-bw-{{ checksum "requirements.txt" }}
       - setup
       - installdeps
-      - installtorchgpu
+      - installtorchcpu
       - save_cache:
-          key: deps-20230209-bw-{{ checksum "requirements.txt" }}
+          key: deps-20230606-bw-{{ checksum "requirements.txt" }}
           paths:
             - "~/venv/bin"
             - "~/venv/lib"
@@ -300,8 +312,8 @@ commands:
 # Actual jobs
 # -------------------------------------------------------------------------------------
 jobs:
-  cleaninstall_38:
-    executor: standard_cpu38
+  cleaninstall_39:
+    executor: small_cpu39
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -312,12 +324,13 @@ jobs:
           name: Test installation instructions
           no_output_timeout: 60m
           command: |
-            python -m pip install --progress-bar off pip setuptools==62.3.4
+            python -m pip install --progress-bar off --upgrade pip
+            python -m pip install --progress-bar off pip setuptools
             python setup.py develop
             parlai display_data -t integration_tests
 
   unittests_osx:
-    executor: osx_cpu38
+    executor: osx_cpu39
     working_directory: ~/ParlAI
     parallelism: 2
     steps:
@@ -325,15 +338,15 @@ jobs:
           cachename: osx
           marker: unit
 
-  unittests_38:
-    executor: standard_cpu38
+  unittests_39:
+    executor: standard_cpu39
     working_directory: ~/ParlAI
     parallelism: 2
     steps:
       - runtests:
           more_installs:
             - installtorchcpu
-          cachename: ut38
+          cachename: ut39
           marker: unit
 
   unittests_gpu18:
@@ -362,7 +375,7 @@ jobs:
           pytest_flags: -v -s
 
   crowdsourcing_tests:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -370,11 +383,12 @@ jobs:
           cachename: crowdsourcing
           marker: crowdsourcing
           more_installs:
-            - installtorchgpu
+            - installtorchcpu
             - installcrowdsourcingdeps
+          pytest_flags: -x
 
   teacher_tests:
-    executor: standard_cpu38
+    executor: standard_cpu39
     working_directory: ~/ParlAI
     parallelism: 16
     steps:
@@ -387,7 +401,7 @@ jobs:
           pytest_flags: -v -s
 
   build_website:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     parallelism: 1
     steps:
@@ -395,14 +409,14 @@ jobs:
           deploy: false
 
   deploy_website:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     steps:
       - website:
           deploy: true
 
   test_website:
-    executor: small_cpu38
+    executor: small_cpu39
     working_directory: ~/ParlAI
     steps:
       - run:
@@ -425,23 +439,23 @@ workflows:
   version: 2
   commit:
     jobs:
-      - cleaninstall_38
+      - cleaninstall_39
       - unittests_gpu18:
           requires:
-            - unittests_38
+            - unittests_39
       - unittests_osx:
           requires:
-            - unittests_38
-      - unittests_38
+            - unittests_39
+      - unittests_39
       - long_gpu_tests:
           requires:
-            - unittests_38
+            - unittests_39
       - crowdsourcing_tests:
           requires:
-            - unittests_38
+            - unittests_39
       - teacher_tests:
           requires:
-            - unittests_38
+            - unittests_39
       - build_website:
           filters:
             branches:

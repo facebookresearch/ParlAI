@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+# flake8: noqa
 """
 The Model Zoo.
 
@@ -1424,8 +1425,15 @@ model_list = [
         "agent": "projects.style_gen.classifier:ClassifierAgent",
         "task": "style_gen:LabeledBlendedSkillTalk",
         "project": 'https://github.com/facebookresearch/ParlAI/tree/main/projects/style_gen',
-        "description": "Classifier trained on Image-Chat turns 2 and 3 to classify the personality of an example given that utterance as the sole context.",
-        "example": "parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk --model-file zoo:style_gen/curr_only_classifier/model --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file",
+        "description": (
+            "Classifier trained on Image-Chat turns 2 and 3 to classify the personality"
+            " of an example given that utterance as the sole context."
+        ),
+        "example": """
+        parlai eval_model --task style_gen:CurrUttOnlyStyle --wrapper-task style_gen:LabeledBlendedSkillTalk \
+            --model-file zoo:style_gen/curr_only_classifier/model \
+            --model projects.style_gen.classifier:ClassifierAgent --classes-from-file image_chat_personalities_file
+        """,
         "result": """
 16:46:41 | Finished evaluating tasks ['style_gen:CurrUttOnlyStyle'] using datatype valid
     accuracy  bleu-4  <PER_CLASS_METRICS_SNIPPED>  clen  ctpb  ctps  ctrunc  ctrunclen  exps  exs    f1  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   tpb   tps  \
@@ -3059,5 +3067,105 @@ Finished evaluating tasks ['google_sgd_simulation_splits:OutDomainSystemTeacher'
             Enter Your Message: I love my job as an AI researcher - I get to work on so many cool problems!
             [Bart]: I am an AI researcher. I love my job.
         """,
+    },
+    {
+        "title": "Multi-party speaker prediction",
+        "id": "multilight",
+        "path": "zoo:multilight/speaker/model",
+        "agent": "bart",
+        "task": "light_multiparty:SpeakerPrediction",
+        "project": "https://parl.ai/projects/multilight",
+        "description": (
+            "Predicts the most plausible next speaker at any point during a three-player conversation in LIGHT."
+        ),
+        "example": (
+            """
+            parlai eval_model --model-file zoo:multilight/speaker/model --task light_multiparty:SpeakerPrediction \
+                --add-location-to-context true --add-personas-to-context true --include-speaker-in-label false
+            """
+        ),
+        "result": """
+            Report for light_multiparty:SpeakerPrediction:
+            clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen  ppl  token_acc  token_em   tpb  tps
+            473.5 420.2  6130   .4140      54.44 14.59 11005    .1218 3.091 .3438 5e-10 3.091 45.09       0          0 1.41      .8462     .5256 423.3 6175
+            """,  # noqa: E501
+    },
+    {
+        "title": "Multi-party utterance only 3B",
+        "id": "multilight",
+        "path": "zoo:multilight/utterance_3B/model",
+        "agent": "bart",
+        "task": "light_multiparty",
+        "project": "https://parl.ai/projects/multilight",
+        "description": ("Utterance generation model for the multi-party LIGHT game."),
+        "example": (
+            """
+            parlai eval_model --model-file zoo:multilight/utterance_3B/model --task light_multiparty \
+                --add-location-to-context true --add-personas-to-context true --include-speaker-in-label false --add-speaker-to-context-end true
+            """
+        ),
+        "result": """
+            Report for light_multiparty:
+            clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em  tpb  tps
+            478.6 423.2  5603   .4249      56.58 13.24 11005    .7931 15.83 2.584 5e-07 15.83 209.6       0          0 13.25      .4308         0  439 5813
+            """,  # noqa: E501
+    },
+    {
+        "title": "Multi-party utterance only 400m",
+        "id": "multilight",
+        "path": "zoo:multilight/utterance_400m/model",
+        "agent": "bart",
+        "task": "light_multiparty",
+        "project": "https://parl.ai/projects/multilight",
+        "description": (
+            "Utterance generation model for the multi-party LIGHT game. This is the smaller version of the original 3B model presented in the paper."
+        ),
+        "example": (
+            """
+            parlai eval_model --model-file zoo:multilight/utterance_400m/model --task light_multiparty \
+                --add-location-to-context true --add-personas-to-context true --include-speaker-in-label false --add-speaker-to-context-end true
+            """
+        ),
+        "result": """
+            Report for light_multiparty:
+            clen  ctpb  ctps  ctrunc  ctrunclen  exps   exs  gpu_mem  llen  loss    lr  ltpb  ltps  ltrunc  ltrunclen   ppl  token_acc  token_em   tpb  tps
+            477.6 422.6  7264   .4222      56.16 17.19 11005    .1204 15.83 2.714 1e-06 15.83 272.1       0          0 15.08      .4140         0 438.4 7536
+            """,  # noqa: E501
+    },
+    {
+        "title": "Generative Pre-trained Transformer 3",
+        "id": "gpt3",
+        "path": "zoo:gpt3/model",
+        "task": "TBD",
+        "description": ("An API wrapper around OpenAI's GPT-3 Model."),
+        "example": (
+            "parlai interactive -m gpt3 --openai-api-key <your_openai_api_key> --max-tokens 40 --model-name text-davinci-003"
+        ),
+        "result": (
+            """
+            [context]: Hi!
+            [Gpt3Agent_1]: Hello human!
+            [Gpt3Agent_2]: Hello human!
+            """
+        ),
+        "project": "https://platform.openai.com/docs/models/gpt-3",
+    },
+    {
+        "title": "OpenAI Chat Completions",
+        "id": "openai_chat_completions",
+        "path": "zoo:openai_chat_completions/model",
+        "task": "NA",
+        "description": ("An API wrapper around OpenAI's Chat Completion Model."),
+        "example": (
+            "parlai interactive -m openaichatcompletion --openai-api-key <your_openai_api_key> --model-name gpt-4"
+        ),
+        "result": (
+            """
+            [context]: Hi!
+            [OpenaiChatCompletionsAgent_1]: Hello fellow wizard. What seems to be the problem?
+            [OpenaiChatCompletionsAgent_2]: Greetings. The village is under attack by a swarm of dragons. We need to defend it and drive them away before any harm is done to the villagers. How do you suggest we proceed?
+            """
+        ),
+        "project": "https://platform.openai.com/docs/guides/gpt/chat-completions-api",
     },
 ]

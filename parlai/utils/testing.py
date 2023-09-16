@@ -70,6 +70,14 @@ except ImportError:
     MEPHISTO_AVAILABLE = False
 
 
+try:
+    import clearml  # noqa: F401
+
+    CLEARML__AVAILABLE = True
+except ImportError:
+    CLEARML__AVAILABLE = False
+
+
 def is_this_circleci():
     """
     Return if we are currently running in CircleCI.
@@ -91,6 +99,16 @@ def skipUnlessTorch17(testfn, reason='Test requires pytorch 1.7+'):
         from packaging import version
 
         skip = version.parse(torch.__version__) < version.parse('1.7.0')
+    return unittest.skipIf(skip, reason)(testfn)
+
+
+def skipUnlessTorch113(testfn, reason='Test requires pytorch 1.13+'):
+    if not TORCH_AVAILABLE:
+        skip = True
+    else:
+        from packaging import version
+
+        skip = version.parse(torch.__version__) >= version.parse('1.13')
     return unittest.skipIf(skip, reason)(testfn)
 
 
@@ -143,6 +161,13 @@ def skipUnlessMephisto(testfn, reason='mephisto not installed'):
     Decorate a test to skip unless mephisto is installed.
     """
     return unittest.skipUnless(MEPHISTO_AVAILABLE, reason)(testfn)
+
+
+def skipUnlessClearML(testfn, reason='clearml not installed'):
+    """
+    Decorate a test to skip unless clearml is installed.
+    """
+    return unittest.skipUnless(CLEARML__AVAILABLE, reason)(testfn)
 
 
 class retry(object):

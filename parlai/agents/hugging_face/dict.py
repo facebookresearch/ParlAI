@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import os
+import re
 
 from abc import ABC, abstractmethod, abstractproperty
 from collections import defaultdict
@@ -16,16 +17,44 @@ from parlai.utils.io import PathManager
 
 
 try:
-    from transformers import GPT2Tokenizer, T5TokenizerFast
+    from transformers import (
+        GPT2Tokenizer,
+        T5TokenizerFast,
+        LlamaTokenizerFast,
+        LlamaTokenizer,
+    )
 except ImportError:
     raise ImportError(
         "Need to install Hugging Face transformers repository. "
-        "Try `pip install transformers`."
+        "Try `pip install transformers --upgrade`."
     )
 
-SPECIAL_TOKENS = {"bos_token": "<bos>", "eos_token": "<eos>", "pad_token": "<pad>"}
+SPECIAL_TOKENS = {
+    "bos_token": "<bos>",
+    "eos_token": "<eos>",
+    "pad_token": "<pad>",
+    "unk_token": "<unk>",
+}
 
 NO_OP = "x"
+
+
+def _init_llama_path(opt):
+    # load model path
+    fle_key = opt['llama_model_dir']
+    # check if datapath has the files that hugging face code looks for
+    model_pattern = re.compile("pytorch_model.*.bin$")
+    assert (
+        all(
+            PathManager.exists(os.path.join(fle_key, file_name))
+            for file_name in ["config.json", "tokenizer.model"]
+        )
+        and len(
+            [file for file in os.listdir(fle_key) if re.search(model_pattern, file)]
+        )
+        > 0
+    )
+    return fle_key
 
 
 class HuggingFaceDictionaryAgent(DictionaryAgent, ABC):
@@ -182,11 +211,13 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
             self.start_token = SPECIAL_TOKENS["bos_token"]
             self.end_token = SPECIAL_TOKENS["eos_token"]
             self.null_token = SPECIAL_TOKENS["pad_token"]
+            self.unk_token = SPECIAL_TOKENS["unk_token"]
         else:
             # Only special token is end of text
             self.start_token = NO_OP  # hack, we cut off the start token
             self.end_token = "<|endoftext|>"
             self.null_token = "<|endoftext|>"
+            self.unk_token = "<|endoftext|>"
 
     def override_special_tokens(self, opt):
         # define special tokens
@@ -195,14 +226,17 @@ class Gpt2DictionaryAgent(HuggingFaceDictionaryAgent):
         self.start_idx = self.hf_tokenizer.convert_tokens_to_ids([self.start_token])[0]
         self.end_idx = self.hf_tokenizer.convert_tokens_to_ids([self.end_token])[0]
         self.null_idx = self.hf_tokenizer.convert_tokens_to_ids([self.null_token])[0]
+        self.unk_idx = self.hf_tokenizer.convert_tokens_to_ids([self.unk_token])[0]
         # set tok2ind for special tokens
         self.tok2ind[self.end_token] = self.end_idx
         self.tok2ind[self.start_token] = self.start_idx
         self.tok2ind[self.null_token] = self.null_idx
+        self.tok2ind[self.unk_token] = self.unk_idx
         # set ind2tok for special tokens
         self.ind2tok[self.end_idx] = self.end_token
         self.ind2tok[self.start_idx] = self.start_token
         self.ind2tok[self.null_idx] = self.null_token
+        self.ind2tok[self.unk_idx] = self.unk_token
 
 
 class DialoGPTDictionaryAgent(Gpt2DictionaryAgent):
@@ -236,6 +270,48 @@ class T5DictionaryAgent(HuggingFaceDictionaryAgent):
     def override_special_tokens(self, opt):
         # now override
         self.start_token = self.hf_tokenizer.pad_token
+        self.end_token = self.hf_tokenizer.eos_token
+        self.null_token = self.hf_tokenizer.pad_token
+        self.unk_token = self.hf_tokenizer.unk_token
+
+        self._unk_token_idx = self.hf_tokenizer.unk_token_id
+
+        self.start_idx = self[self.start_token]
+        self.end_idx = self[self.end_token]
+        self.null_idx = self[self.null_token]
+
+
+class LlamaDictionaryAgent(HuggingFaceDictionaryAgent):
+    @property
+    def add_special_tokens(self) -> bool:
+        """
+        Whether to add special tokens when tokenizing.
+
+        Llama default config set add_bos_token = True and add_eos_token = False
+        """
+        return True
+
+    @property
+    def skip_decode_special_tokens(self) -> bool:
+        """
+        Whether to skip special tokens when converting tokens to text.
+        """
+        return True
+
+    def get_tokenizer(self, opt):
+        """
+        Instantiate tokenizer.
+        """
+        if opt['llama_tokenizer_fast'] is True:
+            return LlamaTokenizerFast.from_pretrained(_init_llama_path(opt))
+        else:
+            return LlamaTokenizer.from_pretrained(_init_llama_path(opt))
+
+    def override_special_tokens(self, opt):
+        self.hf_tokenizer.add_special_tokens({"pad_token": "<pad>"})
+
+        # now override
+        self.start_token = self.hf_tokenizer.bos_token
         self.end_token = self.hf_tokenizer.eos_token
         self.null_token = self.hf_tokenizer.pad_token
         self.unk_token = self.hf_tokenizer.unk_token

@@ -1,0 +1,67 @@
+{
+    "dialog": [
+        [
+            {
+                "text": "Nice to see you stranger. I am a traveler coming from far lands.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Welcome to our village. I am the innkeeper here, do you need rest?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": ["consistent", "engaging"]
+            }
+        ],
+        [
+            {
+                "text": "My gratitudes. Indeed I am in dire need of a room to rest.",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "I am also a merchant coming to this village for the first time. Do you know any place for us to rest?",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": ["identity", "contradictory"]
+            }
+        ],
+        [
+            {
+                "text": "",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "Oh, I am sorry. What I said was a mistake, I am sometimes very confused. So tell me, how long do you intend to stay in our village.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": ["consistent", "engaging"]
+            }
+        ],
+        [
+            {
+                "text": "",
+                "agent_idx": 0,
+                "id": "human_evaluator",
+                "episode_done": false
+            },
+            {
+                "text": "I am happy to hear that.",
+                "agent_idx": 1,
+                "episode_done": false,
+                "id": "model",
+                "answers": ["out_of_turn"]
+            }
+        ]
+    ],
+    "min_correct": 2,
+    "max_incorrect": 2,
+    "max_failures_allowed": 3
+}

@@ -276,3 +276,171 @@ class WandbLogger(object):
 
     def flush(self):
         pass
+
+
+class ClearMLLogger(object):
+    """
+    Log objects to ClearML.
+
+    To log all the necessary details for a ParlAI experiment using MLOps. After logging,
+    details can be viewed in ClearML Experiment Manager Web UI.
+    """
+
+    @classmethod
+    def add_cmdline_args(
+        cls, parser: ParlaiParser, partial_opt: Optional[Opt] = None
+    ) -> ParlaiParser:
+        """
+        Add ClearML CLI args.
+        """
+        logger = parser.add_argument_group('ClearML Arguments')
+        logger.add_argument(
+            '-clearmllog',
+            '--clearml-log',
+            type=bool,
+            default=False,
+            help="Creates a ClearML Task. Default: False. If True, ClearML logging will be enabled.",
+            hidden=False,
+        )
+
+        logger.add_argument(
+            '-clearmlproject',
+            '--clearml-project-name',
+            type=str,
+            default="ParlAI",
+            help='ClearML Project Name. All the logs will be stored under this project in ClearML WebUI. If not set, default will set to ParlAI.',
+            hidden=False,
+        )
+
+        logger.add_argument(
+            '-clearmltask',
+            '--clearml-task-name',
+            type=str,
+            default="Default Task",
+            help='ClearML Task Name. All the logs will be stored under this task in ClearML WebUI. If not set, default will set to "Default Task".',
+            hidden=False,
+        )
+
+        return logger
+
+    def __init__(self, opt: Opt):
+        try:
+            from clearml import Task, Logger
+        except ImportError:
+            raise ImportError('Please run `pip install clearml`.')
+
+        # Set ClearML Project Name
+        project_name = opt.get('clearml_project_name')
+        # Set ClearML Task Name
+        task_name = opt.get('clearml_task_name')
+        # Instantiate CleaML Task
+        if Task.current_task():
+            self.clearml_task = Task.current_task()
+        else:
+            self.clearml_task = Task.init(
+                project_name=project_name,
+                task_name=task_name,
+                auto_connect_arg_parser=False,
+                auto_connect_frameworks={'tensorboard': False},
+                output_uri=True,
+            )
+
+        # Report Hyperparameter Configurations
+        self.clearml_task.connect(opt)
+
+        # Initialize ClearML Logger
+        self.clearml_logger = Logger.current_logger()
+
+    def log_metrics(self, setting, step, report):
+        """
+        Log all metrics (iteratively during training) to ClearML WebUI.
+
+        :param setting:
+            One of train/valid/test. Here, it will be "train". Will be used as the title for the graph/table/chart.
+        :param step:
+            Number of parleys
+        :param report:
+            The report to log
+        """
+        for k, v in report.items():
+            v = v.value() if isinstance(v, Metric) else v
+            if not isinstance(v, numbers.Number):
+                logging.error(f'k {k} v {v} is not a number')
+                continue
+            display = get_metric_display_data(metric=k)
+
+            try:
+                self.clearml_logger.report_scalar(
+                    title=f"{display.title} ({k})",
+                    series=f'{setting}',
+                    value=v,
+                    iteration=step,
+                )
+
+            except Exception as exception:
+                print(exception)
+
+    def log_final(self, setting, report):
+        """
+        Log final single value metrics to ClearML WebUI.
+
+        :param setting:
+            One of train/valid/test. Here, it will be either "valid" or "test". Will be used as the title for the graph/table/chart.
+        :param report:
+            The report to log
+        """
+        report = dict_report(report)
+        for k, v in report.items():
+            if isinstance(v, numbers.Number):
+                self.clearml_logger.report_single_value(
+                    f'{get_metric_display_data(metric=k).title} - {setting}', v
+                )
+
+    def log_debug_samples(self, series, debug_samples, index=0, title="dialogues"):
+        """
+        Log/Report Test/Validation Samples as debug samples in ClearML WebUI.
+
+        :param series:
+            Name of series to show on WebUI. One of train/valid/test  or similar.
+        :param debug_samples:
+            The sample to log.
+        :param index:
+            Specifies iteration number. Default: 0.
+        :param title:
+            Type of metric (For ClearML WebUI). Default set to "dialouges".
+        """
+
+        # Report Test/Validation Samples as debug samples
+        self.clearml_logger.report_media(
+            title=title,
+            series=series,
+            iteration=index,
+            stream=debug_samples,
+            file_extension=".txt",
+        )
+
+    def upload_artifact(self, artifact_name, artifact_path):
+        """
+        Upload custom artifacts/models to ClearML.
+
+        :param artifact_name:
+            Name of artifact/model to log or display in ClearML WebUI
+        :param artifact_path:
+            The disk location of the artifact/model for uploading.
+        """
+
+        self.clearml_task.update_output_model(
+            model_path=artifact_path, model_name=artifact_name, auto_delete_file=False
+        )
+
+    def flush(self):
+        """
+        Flush logger manually.
+        """
+        self.clearml_logger.flush()
+
+    def close(self):
+        """
+        Close current ClearML Task after completing the experiment.
+        """
+        self.clearml_task.close()

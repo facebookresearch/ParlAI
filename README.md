@@ -22,7 +22,7 @@
     <img src="https://img.shields.io/twitter/follow/parlai_parley?label=Twitter&style=social" alt="Twitter" />
   </a>
  </p>
- 
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 [ParlAI](http://parl.ai) (pronounced “par-lay”) is a python framework for
@@ -58,22 +58,35 @@ For those who want to start with ParlAI now, you can try our [Colab Tutorial](ht
 
 ## Installing ParlAI
 
-ParlAI currently requires Python3.8+ and [Pytorch](https://pytorch.org) 1.6 or higher.
-Dependencies of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/main/requirements.txt). Some
-models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents)) have additional requirements.
-We *strongly* recommend you install ParlAI in a [venv](https://docs.python.org/3/library/venv.html) or [conda](https://www.anaconda.com/) environment.
+### Operating System
 
-We do not support Windows at this time, but many users [report success on Windows using Python 3.8](https://github.com/facebookresearch/ParlAI/issues/3989) and issues with Python 3.9. We are happy to accept patches that improve Windows support.
+ParlAI should work as inteded under Linux or macOS. We do not support Windows at this time, but many users [report success on Windows using Python 3.8](https://github.com/facebookresearch/ParlAI/issues/3989) and issues with Python 3.9. We are happy to accept patches that improve Windows support.
 
-**Standard Installation**
+### Python Interpreter
+
+ParlAI currently requires Python3.8+.
+
+### Requirements
+
+ParlAI supports [Pytorch](https://pytorch.org) 1.6 or higher.
+All requirements of the core modules are listed in [`requirements.txt`](https://github.com/facebookresearch/ParlAI/blob/main/requirements.txt). However, some models included (in [`parlai/agents`](https://github.com/facebookresearch/ParlAI/tree/main/parlai/agents)) have additional requirements.
+
+## Virtual Environment
+
+We *strongly* recommend you install ParlAI in a virtual environment using [venv](https://docs.python.org/3/library/venv.html) or [conda](https://www.anaconda.com/).
+
+### End User Installation
 
 If you want to use ParlAI without modifications, you can install it with:
 
 ```bash
-pip install parlai
+cd /path/to/your/parlai-app
+python3.8 -m venv venv
+venv/bin/pip install --upgrade pip setuptools wheel
+venv/bin/pip install parlai
 ```
 
-**Development Installation**
+### Developer Installation
 
 Many users will want to modify some parts of ParlAI. To set up a development
 environment, run the following commands to clone the repository and install
@@ -81,8 +94,17 @@ ParlAI:
 
 ```bash
 git clone https://github.com/facebookresearch/ParlAI.git ~/ParlAI
-cd ~/ParlAI; python setup.py develop
+cd ~/ParlAI
+python3.8 -m venv venv
+venv/bin/pip install --upgrade pip setuptools wheel
+venv/bin/python setup.py develop
 ```
+
+> **Note**
+> Sometimes the install from source maynot work due to dependencies (specially in PyTorch related packaged).
+> In that case try building a fresh conda environment and running the similar to the following:
+> `conda install pytorch==2.0.0 torchvision torchaudio torchtext pytorch-cuda=11.8 -c pytorch -c nvidia`.
+> Check torch setup documentation for your CUDA and OS versions.
 
 All needed data will be downloaded to `~/ParlAI/data`. If you need to clear out
 the space used by these files, you can safely delete these directories and any

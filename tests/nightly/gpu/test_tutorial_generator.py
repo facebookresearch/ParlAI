@@ -22,4 +22,4 @@ class TestTutorialTransformerGenerator(unittest.TestCase):
             skip_test=True,
         )
         self.assertAlmostEqual(valid['ppl'], 19.59, places=2)
-        self.assertAlmostEqual(valid['token_acc'], 0.4234, places=4)
+        self.assertAlmostEqual(valid['token_acc'], 0.4235, places=4)

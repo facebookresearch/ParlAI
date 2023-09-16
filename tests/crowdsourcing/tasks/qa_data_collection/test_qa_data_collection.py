@@ -13,6 +13,8 @@ import unittest
 
 
 # Inputs
+# The conversation is not exactly making sense if put in context.
+# It is just to have the interaction between the agents simulated.
 AGENT_DISPLAY_IDS = ('QA Agent',)
 AGENT_MESSAGES = [("Who was the first reigning pope to ever visit the Americas?",)]
 FORM_MESSAGES = ("Pope Paul VI",)
@@ -64,6 +66,8 @@ try:
 
             self._set_up_config(task_directory=TASK_DIRECTORY, overrides=overrides)
 
+            # 'train:ordered' in order to avoid randomness that might break the test.
+            self.config.teacher.datatype = 'train:ordered'
             # Set up the operator and server
             teacher = get_teacher(self.config)
             world_opt = {"turn_timeout": self.config.turn_timeout, "teacher": teacher}

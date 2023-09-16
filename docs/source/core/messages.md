@@ -4,7 +4,7 @@
 .. automodule:: parlai.core.message
   :members:
 ```
-<img src="/_static/img/act-obs-dict.png" width="60%"/>
+<img src="/docs/_static/img/act-obs-dict.png" width="60%"/>
 
 The primary medium for information flow (messages between agents and the environment)
 in ParlAI is a Message, a subclass of a python `dict` containing the actions of an agent

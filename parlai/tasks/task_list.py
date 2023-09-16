@@ -490,10 +490,10 @@ task_list = [
             "An open domain question answering dataset. "
             "Each example contains real questions that people searched "
             "for in Google and the content of the a Wikipedia article that "
-            "was amongst the top 5 search resutls for that query, "
+            "was amongst the top 5 search results for that query, "
             "and its annotations. The annotations have the options of a long "
             "answer that is seleced from span of major content entities in "
-            "the Wikipedia article (e.g., paragraphs, tables), a short answer"
+            "the Wikipedia article (e.g., paragraphs, tables), a short answer "
             "that is selected from one or more short span of words in the "
             "article, or 'yes/no'. The existence of any of these answer "
             "formats depends on whether the main question can be answered, "
@@ -600,6 +600,18 @@ task_list = [
         "tags": ["QA"],
         "description": ("Open-domain QA dataset based on Freebase triples."),
         "links": {"arXiv": "https://arxiv.org/abs/1506.02075"},
+    },
+    {
+        "id": "ReframeUnhelpfulThoughts",
+        "display_name": "Reframe Unhelpful Thoughts",
+        "task": "reframe_thoughts",
+        "tags": [],
+        "description": (
+            "Dataset of about 10k examples of thoughts containing unhelpful "
+            "thought patterns conditioned on a given persona, accompanied by about "
+            "27k positive reframes."
+        ),
+        "links": {},
     },
     {
         "id": "SNLI",
@@ -1685,5 +1697,16 @@ task_list = [
             "A synthentically dataset of initial clauses and rules, with questions about statements that these initial"
             + "clauses and rules imply."
         ),
+    },
+    {
+        "id": "MultiLIGHT",
+        "display_name": "Multi-party LIGHT",
+        "task": "light_multiparty",
+        "tags": ["All", "ChitChat"],
+        "links": {
+            "paper": "https://arxiv.org/pdf/2304.13835.pdf",
+            "website": "http://parl.ai/projects/light_multiparty",
+        },
+        "description": "Multi-party async conversation between 3 role-playing characters.",
     },
 ]

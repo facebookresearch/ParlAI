@@ -150,7 +150,7 @@ class WizardOfInternetBaseTeacher(DialogTeacher):
 
     def __init__(self, opt: Opt, shared=None):
         opt = deepcopy(opt)
-        self.datatype = get_dtype(opt)
+        self.datatype = opt.get('datatype', 'train')
         opt['datafile'] = _path(opt)
         self.include_persona = opt.get('include_persona', CONST.INCLUDE_PERSONA_DEFAULT)
         self.skip_empty_text = opt.get(
