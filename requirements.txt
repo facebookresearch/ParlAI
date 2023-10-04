@@ -23,7 +23,7 @@ pandas==1.4.0
 pytest_regressions==2.4.2
 pytest==7.3.0
 pexpect==4.7.0
-Pillow==9.3.0
+Pillow==10.0.1
 py-gfm==1.0.2
 py-rouge==1.1
 pyyaml==5.4
