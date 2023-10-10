@@ -66,7 +66,7 @@ def add_common_cmdline_args(parser):
         '--dropout',
         type=float,
         default=0.0,
-        help='Dropout used around embeddings and before layer layer normalizations. '
+        help='Dropout used around embeddings and before layer normalizations. '
         'This is used in Vaswani 2017 and works well on large datasets.',
     )
     parser.add_argument(
@@ -142,14 +142,14 @@ def add_common_cmdline_args(parser):
         '--n-encoder-layers',
         type=int,
         default=-1,
-        help='This will overidde the n-layers for asymmetrical transformers',
+        help='This will override the n-layers for asymmetrical transformers',
     )
     parser.add_argument(
         '-ndl',
         '--n-decoder-layers',
         type=int,
         default=-1,
-        help='This will overidde the n-layers for asymmetrical transformers',
+        help='This will override the n-layers for asymmetrical transformers',
     )
     parser.add_argument(
         '--model-parallel',
