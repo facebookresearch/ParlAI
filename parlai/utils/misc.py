@@ -323,6 +323,16 @@ def _report_sort_key(report_key: str) -> Tuple[str, str]:
     sub_key = '/'.join(fields)
     return (sub_key or 'all', main_key)
 
+def ordinal(n: int):
+    """
+    Convert a number to its ordinal counterpart
+    """
+    if 11 <= (n % 100) <= 13:
+        suffix = 'th'
+    else:
+        suffix = ['th', 'st', 'nd', 'rd', 'th'][min(n % 10, 4)]
+    return str(n) + suffix
+
 
 def float_formatter(f: Union[float, int]) -> str:
     """
